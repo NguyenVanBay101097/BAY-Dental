@@ -117,7 +117,7 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _toaThuocService.GetToaThuocPrint(id);
 
-            var html = _view.Render("ToathuocPrint", res);
+            var html = _view.Render("ToaThuoc/Print", res);
 
             return Ok(new PrintData() { html = html });
         }

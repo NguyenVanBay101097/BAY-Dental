@@ -4,7 +4,7 @@
     </ol>
     <div class="o_cp_searchview">
         <div class="o_searchview">
-            <input type="text" class="o_searchview_input" placeholder="Theo mã, tên hoặc số điện thoại"
+            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên, mã hoặc số điện thoại"
                 [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
         </div>
     </div>
@@ -19,29 +19,39 @@
         </div>
     </div>
     <div class="o_cp_right">
+        <kendo-combobox [(ngModel)]="defaultFilterActive" (selectionChange)="onChangeFilterActive($event)" placeholder="Tất cả" class="kendo-combobox-sm mr-1" [data]="filterActive" [textField]="'name'" [valueField]="'value'"  [popupSettings]="{ width: 200}">
+        </kendo-combobox>
     </div>
 </div>
 
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
         [loading]="loading">
-        <kendo-grid-column field="ref" title="Mã" width="100"></kendo-grid-column>
-        <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
+        <kendo-grid-column field="ref" title="Mã NCC" width="100"></kendo-grid-column>
+        <kendo-grid-column field="name" title="Tên NCC" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a routerLink="/partners/supplier/{{dataItem.id}}" class="text-primary">{{dataItem.name}}</a>
+            </ng-template>
+        </kendo-grid-column>
         <kendo-grid-column field="phone" title="Điện thoại" width="120"></kendo-grid-column>
-        <!-- <kendo-grid-column field="debit" title="Công nợ" width="120">
+        <kendo-grid-column field="debit" title="Công nợ NCC" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.debit | number}}
             </ng-template>
-        </kendo-grid-column> -->
+        </kendo-grid-column>
         <kendo-grid-command-column title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button title="Sửa" (click)="editItem(dataItem)" class="btn btn-success btn-sm mr-1"><i
                         class="fas fa-edit"></i></button>
-                <button title="Xóa" (click)="deleteItem(dataItem)" class="btn btn-danger btn-sm"><i
+                <button title="Xóa" (click)="deleteItem(dataItem)" class="btn btn-danger btn-sm mr-1"><i
                         class="far fa-trash-alt"></i></button>
+                <button *ngIf="dataItem.active == true"  (click)="onClickActive(dataItem)"
+                    class="btn btn-danger btn-sm"><i title="Ẩn nhà cung cấp" class="fas fa-eye-slash" ></i></button>
+                <button *ngIf="dataItem.active == false" (click)="onClickActive(dataItem)"
+                    class="btn btn-success btn-sm"><i title="Hiện nhà cung cấp" class="fas fa-eye" ></i></button>
             </ng-template>
         </kendo-grid-command-column>
-        <div *kendoGridDetailTemplate="let dataItem">
+        <!-- <div *kendoGridDetailTemplate="let dataItem">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info_{{dataItem.id}}" role="tab"
@@ -64,6 +74,6 @@
                     </app-partner-payments>
                 </div>
             </div>
-        </div>
+        </div> -->
     </kendo-grid>
 </div>

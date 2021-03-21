@@ -24,8 +24,8 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   loading = false;
   precscriptionPaymentReport: PrecscriptionPaymentReport = new PrecscriptionPaymentReport();
   state: string = '';
-  limit = 10;
-  offset = 0;
+  limit = 20;
+  skip = 0;
   states = [
     // { value: "draft", name: "Chưa thanh toán" },
     { value: "confirmed", name: "Đã thanh toán" },
@@ -47,6 +47,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
       distinctUntilChanged())
       .subscribe((value) => {
         this.search = value || '';
+        this.skip = 0;
         this.loadDataFromApi();
       });
     this.loadDataFromApi();
@@ -57,7 +58,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
     this.loading = true;
     var paged = new PrecscriptionPaymentPaged();
     paged.limit = this.limit;
-    paged.offset = this.offset;
+    paged.offset = this.skip;
     paged.search = this.search ? this.search : '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
@@ -79,7 +80,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   }
 
   public pageChange(event: PageChangeEvent): void {
-    this.offset = event.skip;
+    this.skip = event.skip;
     this.loadDataFromApi();
   }
 
@@ -100,6 +101,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
     this.getReport();
   }
@@ -120,6 +122,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
 
   stateChange(item) {
     this.state = item ? item.value : '';
+    this.skip = 0;
     this.loadDataFromApi();
   }
 

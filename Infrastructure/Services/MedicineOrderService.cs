@@ -58,6 +58,7 @@ namespace Infrastructure.Services
             {
                 Items = _mapper.Map<IEnumerable<MedicineOrderBasic>>(items)
             };
+
             return paged;
         }
 
@@ -108,11 +109,14 @@ namespace Infrastructure.Services
             };
 
             var medicineOrderLines = new List<MedicineOrderLineDisplay>();
-            var toathuocLines = await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id)
+            var toathuocLines = await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id 
+            //(x.ToInvoiceQuantity == null || (x.ToInvoiceQuantity != null && x.ToInvoiceQuantity > 0))
+            )
                 .Include(x => x.Product.UOM)
                 .Include(x => x.ProductUoM).ToListAsync();
             foreach (var line in toathuocLines)
             {
+                var uom = line.ProductUoM != null ? line.ProductUoM : line.Product.UOM;
                 medicineOrderLines.Add(new MedicineOrderLineDisplay
                 {
                     Quantity = line.Quantity,
@@ -122,7 +126,8 @@ namespace Infrastructure.Services
                     ToaThuocLineId = line.Id,
                     ProductId = line.ProductId,
                     Product = _mapper.Map<ProductBasic>(line.Product),
-                    ProductUoM = line.ProductUoM != null ? _mapper.Map<UoMBasic>(line.ProductUoM) : _mapper.Map<UoMBasic>(line.Product.UOM)
+                    ProductUoM = _mapper.Map<UoMBasic>(uom),
+                    ProductUoMId = uom.Id
                 });
             }
             medicineOrder.MedicineOrderLines = medicineOrderLines;
@@ -203,6 +208,10 @@ namespace Infrastructure.Services
 
             await UpdateAsync(medicineOrder);
 
+            //update invoice status toa thuoc
+            var toaThuocObj = GetService<IToaThuocService>();
+            await toaThuocObj.ComputeToInvoiceQuantityLines(medicineOrder.ToathuocId);
+
             var basic = _mapper.Map<MedicineOrderBasic>(medicineOrder);
             return basic;
 
@@ -255,12 +264,12 @@ namespace Infrastructure.Services
 
                 var sequence = 1;
                 var moves = new List<StockMove>();
-                foreach(var line in order.MedicineOrderLines.Where(x => productTypes.Contains(x.Product.Type) && x.Quantity != 0))
+                foreach (var line in order.MedicineOrderLines.Where(x => productTypes.Contains(x.Product.Type) && x.Quantity != 0))
                 {
                     var move = new StockMove
                     {
                         Name = line.Product.Name,
-                        ProductUOMId = line.Product.UOMId,
+                        ProductUOMId = line.ProductUoMId.HasValue ? line.ProductUoMId.Value : line.Product.UOMId,
                         PickingId = picking_vals.Id,
                         ProductId = line.Product.Id,
                         ProductUOMQty = line.Quantity,
@@ -389,6 +398,7 @@ namespace Infrastructure.Services
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
             var moveObj = GetService<IAccountMoveService>();
+            var toaThuocObj = GetService<IToaThuocService>();
             var accountPaymentObj = GetService<IAccountPaymentService>();
             var medicineOrders = await SearchQuery(x => ids.Contains(x.Id))
                .Include(x => x.Company)
@@ -420,9 +430,12 @@ namespace Infrastructure.Services
                 }
 
                 //tạo và ghi sổ phiếu nhập kho
-                await _CreatePicking(new List<MedicineOrder>() { order } , true);
+                await _CreatePicking(new List<MedicineOrder>() { order }, true);
 
                 order.State = "cancel";
+
+                //update invoice status toa thuoc
+                await toaThuocObj.ComputeToInvoiceQuantityLines(order.ToathuocId);
             }
 
             if (move_ids.Any())
@@ -432,10 +445,7 @@ namespace Infrastructure.Services
             }
 
             if (payment_ids.Any())
-                await accountPaymentObj.ActionDraftUnlink(payment_ids);
-
-           
-
+                await accountPaymentObj.CancelAsync(payment_ids);
 
             await UpdateAsync(medicineOrders);
         }
@@ -462,7 +472,6 @@ namespace Infrastructure.Services
                 if (line.Id == Guid.Empty)
                 {
                     var item = _mapper.Map<MedicineOrderLine>(line);
-                    item.ProductId =  line.ProductId;
                     order.MedicineOrderLines.Add(item);
                 }
                 else
@@ -484,7 +493,8 @@ namespace Infrastructure.Services
                 entity.Name = await sequenceService.NextByCode("medicine.order");
             }
 
-            await base.CreateAsync(entity);
+            await base.CreateAsync(entity); 
+
             return entity;
         }
 
@@ -541,8 +551,48 @@ namespace Infrastructure.Services
         }
 
 
+        public async Task InsertIMedicineOrderRuleIfNotExists()
+        {
+            var modelObj = GetService<IIRModelService>();
+            var modelDataObj = GetService<IIRModelDataService>();
+            var iruleObj = GetService<IIRRuleService>();        
+            var model = await modelDataObj.GetRef<IRRule>("medicineOrder.medicine_order_comp_rule");
+            if (model == null)
+            {
+                var irModel = await modelObj.SearchQuery(x => x.Model == "MedicineOrders").FirstOrDefaultAsync();
+                if(irModel == null)
+                {
+                    irModel = new IRModel
+                    {
+                        Name = "Hóa đơn thuốc",
+                        Model = "MedicineOrder",
+                    };
 
+                    modelObj.Sudo = true;
+                    await modelObj.CreateAsync(irModel);
+                }
+              
+                var irule = new IRRule
+                {
+                    Name = "MedicineOrder multi-company",
+                    ModelId = irModel.Id,
+                    Code = "medicineOrder.medicine_order_comp_rule"
+                };
 
+                iruleObj.Sudo = true;
+                await iruleObj.CreateAsync(irule);
+
+                var reference = irule.Code.Split('.');
+
+                await modelDataObj.CreateAsync(new IRModelData
+                {
+                    Module = reference[0],
+                    Name = reference[1],                  
+                    Model = "ir.rule",
+                    ResId = irule.Id.ToString()
+                });
+            }
+        }
 
         public override ISpecification<MedicineOrder> RuleDomainGet(IRRule rule)
         {
@@ -550,8 +600,8 @@ namespace Infrastructure.Services
             var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
-                case "base.medicine_order_comp_rule":
-                    return new InitialSpecification<MedicineOrder>(x => x.CompanyId != Guid.Empty || companyIds.Contains(x.CompanyId));
+                case "medicineOrder.medicine_order_comp_rule":
+                    return new InitialSpecification<MedicineOrder>(x => companyIds.Contains(x.CompanyId));
                 default:
                     return null;
             }

@@ -40,13 +40,15 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   filteredPartners: PartnerSimple[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
-
-
   productList: ProductBasic2[] = [];
   productSearch: string;
   searchUpdate = new Subject<string>();
   productSelectedIndex = 0;
   uomByProduct: { [id: string]: UoMDisplay[] } = {}
+
+  submitted = false;
+
+  get f() { return this.formGroup.controls; }
 
   constructor(
     private fb: FormBuilder,
@@ -174,6 +176,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     var val = new PartnerPaged();
     val.supplier = true;
     val.search = filter;
+    val.active = true;
     return this.partnerService.getAutocompleteSimple(val);
   }
 
@@ -230,6 +233,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       });
       return false;
     }
+
+    this.submitted = true;
 
     if (!this.formGroup.valid) {
       return false;
@@ -375,6 +380,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       });
       return false;
     }
+
+    this.submitted = true;
 
     if (!this.formGroup.valid) {
       return false;

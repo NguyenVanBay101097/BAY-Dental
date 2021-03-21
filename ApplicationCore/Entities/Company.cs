@@ -9,6 +9,11 @@ namespace ApplicationCore.Entities
     /// </summary>
     public class Company: BaseEntity
     {
+        public Company()
+        {
+            Active = true;
+        }
+
         public string Name { get; set; }
 
         public Guid PartnerId { get; set; }
@@ -33,5 +38,10 @@ namespace ApplicationCore.Entities
         public AccountAccount AccountExpense { get; set; }
 
         public string Logo { get; set; }
+
+        /// <summary>
+        /// Trạng thái chi nhánh
+        /// </summary>
+        public bool Active { get; set; }
     }
 }

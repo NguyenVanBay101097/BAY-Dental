@@ -1,6 +1,6 @@
 ﻿@model Umbraco.Web.Models.ContentEditing.SaleOrderPrintVM
 @{
-    Layout = "~/Views/Shared/_LayoutA5.cshtml";
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
     var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
 }
 
@@ -187,22 +187,23 @@
                     <tr>
                         <th>Đợt khám</th>
                         <th>Ngày</th>
-                        <th>Bác sĩ</th>
+                        <th style="width:100px">Bác sĩ</th>
                         <th>Mô tả</th>
-                        <th>Dịch vụ</th>
-                        <th>Công đoạn</th>
-                        <th>Răng, Chi tiết điều trị</th>
+                        <th style="width:100px">Dịch vụ</th>
+                        <th style="width:100px">Công đoạn</th>
+                        <th style="width:120px">Răng, Chi tiết điều trị</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var dotkham in Model.DotKhams)
+                    @foreach (var item in Model.DotKhams.Select((value,i) => (value,i)))
                     {
+                        var dotkham = item.value;
                         @foreach (var line in dotkham.Lines)
                         {
                     <tr>
                         @if (dotkham.Lines.FirstOrDefault().Id == line.Id)
                         {
-                            <td class="align-middle" rowspan="@dotkham.Lines.Count()"> Đợt khám @dotkham.Sequence</td>
+                            <td class="align-middle" rowspan="@dotkham.Lines.Count()"> Đợt khám @(i)</td>
                             <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Date.ToString("dd/MM/yyyy")</td>
                             <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Doctor.Name</td>
                             <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Reason</td>
@@ -235,7 +236,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                @*<span class="font-weight-600">@(Model.User.Name.ToUpper())</span>*@
+                <span class="font-weight-600">@(Model.User != null && !string.IsNullOrEmpty(Model.User.Name)? Model.User.Name.ToUpper() : "")</span>
             </div>
         </div>
         <div class="col col-sm">

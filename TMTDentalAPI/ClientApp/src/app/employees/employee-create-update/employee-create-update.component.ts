@@ -1,5 +1,5 @@
 import { HrPayrollStructureTypePaged, HrPayrollStructureTypeService } from './../../hrs/hr-payroll-structure-type.service';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { EmployeeService } from '../employee.service';
 import { WindowRef, WindowCloseResult, WindowService } from '@progress/kendo-angular-dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -12,13 +12,18 @@ import { CommissionPaged, CommissionService, Commission } from 'src/app/commissi
 import * as _ from 'lodash';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { UserSimple } from 'src/app/users/user-simple';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { HrPayrollStructureTypeSimple } from 'src/app/hrs/hr-payroll-structure-type.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { MustMatch } from 'src/app/shared/must-match-validator';
+import { validator } from 'fast-json-patch';
+import { ResGroupBasic, ResGroupService } from 'src/app/res-groups/res-group.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { PermissionService } from 'src/app/shared/permission.service';
+import { ApplicationRolePaged, RoleService } from 'src/app/roles/role.service';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -34,10 +39,17 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     public activeModal: NgbActiveModal,
     private modalService: NgbModal, private notificationService: NotificationService,
     private intlService: IntlService, private commissionService: CommissionService, private userService: UserService,
-    private companyService: CompanyService) { }
+    private companyService: CompanyService,
+    private resGroupService: ResGroupService,
+    private authService: AuthService,
+    private permissionService: PermissionService,
+    private roleService: RoleService
+  ) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('commissionCbx', { static: false }) commissionCbx: ComboBoxComponent;
+  @ViewChild("name", { static: true }) private nameEL: ElementRef;
+
 
   isChange: boolean = false;
   formCreate: FormGroup;
@@ -46,6 +58,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   isDoctor: boolean;
   isAssistant: boolean;
   isShowSalary = false;
+  submitted = false;
 
   filteredstructureTypes: HrPayrollStructureTypeSimple[] = [];
   categoriesList: EmployeeCategoryBasic[] = [];
@@ -53,6 +66,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   filteredUsers: UserSimple[] = [];
   listCommissions: Commission[] = [];
   listCompanies: CompanyBasic[] = [];
+  groupSurvey: any[] = [];
+  roles: any[] = [];
 
   ngOnInit() {
     this.formCreate = this.fb.group({
@@ -85,9 +100,13 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       userCompany: null,
       userCompanies: [[]],
       userName: null,
-      userPassword: null,
-      createChangePassword: false,
-      userAvatar: null
+      userPassword: [null],
+      createChangePassword: true,
+      avatar: null,
+      userAvatar: null,
+      groupId: null,
+      isAllowSurvey: false,
+      roles: null
     });
 
     setTimeout(() => {
@@ -105,8 +124,11 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       //   this.filteredUsers = result;
       //   this.userCbx.loading = false;
       // });
+      this.loadGroupSurvey();
 
+      this.loadRoles();
     });
+    document.getElementById('name').focus();
   }
 
   ngAfterViewInit(): void {
@@ -128,12 +150,20 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     return this.formCreate.get('createChangePassword').value;
   }
 
-  get userAvatar() {
-    return this.formCreate.get('userAvatar').value;
+  get avatar() {
+    return this.formCreate.get('avatar').value;
+  }
+
+  get f() {
+    return this.formCreate.controls;
   }
 
   getValueForm(key) {
     return this.formCreate.get(key).value;
+  }
+
+  getControlForm(key) {
+    return this.formCreate.get(key);
   }
 
   loadUsers() {
@@ -144,6 +174,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   loadListCompanies() {
     var val = new CompanyPaged();
+    val.active = true;
     this.companyService.getPaged(val).subscribe(result => {
       this.listCompanies = _.unionBy(this.listCompanies, result.items, 'id');
     });
@@ -153,6 +184,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     if (this.createChangePassword) {
       this.formCreate.get('userPassword').setValidators([Validators.required]);
       this.formCreate.get('userPassword').updateValueAndValidity();
+      this.f.userPassword.markAsDirty();
     } else {
       this.formCreate.get('userPassword').setValidators([]);
       this.formCreate.get('userPassword').updateValueAndValidity();
@@ -177,8 +209,16 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   onChangeIsUser(e) {
     if (this.isUser) {
+      setTimeout(() => {
+        this.nameEL.nativeElement.focus();
+      }, 300);
+
       this.formCreate.get('userName').setValidators([Validators.required]);
       this.formCreate.get('userName').updateValueAndValidity();
+
+      this.formCreate.get('userPassword').setValidators([Validators.required]);
+      this.formCreate.get('userPassword').updateValueAndValidity();
+      this.formCreate.get('createChangePassword').setValue(true);
 
       this.formCreate.get('userCompany').setValidators([Validators.required]);
       this.formCreate.get('userCompany').updateValueAndValidity();
@@ -197,6 +237,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     } else {
       this.formCreate.get('userName').setValidators([]);
       this.formCreate.get('userName').updateValueAndValidity();
+
+      this.formCreate.get('userPassword').setValidators([]);
+      this.formCreate.get('userPassword').updateValueAndValidity();
+      this.formCreate.get('createChangePassword').setValue(false);
 
       this.formCreate.get('userCompany').setValidators([]);
       this.formCreate.get('userCompany').updateValueAndValidity();
@@ -225,9 +269,11 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   getEmployeeInfo() {
     if (this.empId != null) {
       this.employeeService.getEmployee(this.empId).subscribe(
-        rs => {
+        (rs: any) => {
           rs.birthDay = rs.birthDay ? new Date(rs.birthDay) : null;
           rs.startWorkDate = rs.startWorkDate ? new Date(rs.startWorkDate) : null;
+          this.formCreate.get('createChangePassword').setValue(false);
+          this.onChangeCreateChangePassword(null);
           this.formCreate.patchValue(rs);
 
           this.updateValidation();
@@ -241,11 +287,13 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   onAvatarUploaded(data) {
     var fileUrl = data ? data.fileUrl : null;
-    this.formCreate.get('userAvatar').setValue(fileUrl);
+    this.formCreate.get('avatar').setValue(fileUrl);
   }
 
   //Tạo hoặc cập nhật NV
   createUpdateEmployee() {
+    this.submitted = true;
+
     if (!this.formCreate.valid) {
       return false;
     }
@@ -256,8 +304,9 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     if (value.isUser) {
       value.userCompanyId = value.userCompany.id;
       value.userCompanyIds = value.userCompanies.map(x => x.id);
+      value.roleIds = value.roles && value.roles.length > 0 ? value.roles.map(x => x.id) : [];
     }
-    
+
     value.commissionId = value.commission ? value.commission.id : null;
 
     this.isChange = true;
@@ -270,9 +319,14 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
         } else {
           this.activeModal.close(rs);
         }
+        //nếu có đổi group survey thì reload groups
+        // this.authService.getGroups().subscribe((result: any) => {
+        //   this.permissionService.define(result);
+        // });
       },
       er => {
         console.log(er);
+        this.submitted = false;
       }
     );
   }
@@ -311,6 +365,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   // }
 
   closeModal() {
+    this.submitted = false;
     if (this.isChange) {
       this.activeModal.close(true);
     }
@@ -393,7 +448,36 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     )
   }
 
-  toggleVisibility(e){
-    this.isShowSalary= e.target.checked;
+  toggleVisibility(e) {
+    this.isShowSalary = e.target.checked;
+  }
+
+  loadGroupSurvey() {
+    this.resGroupService.getListForSurvey()
+      .subscribe(
+        (res: any) => {
+          this.groupSurvey = res;
+        }
+      );
+  }
+
+  onChangeIsAllowSurvey(e) {
+    var value = e.target.checked;
+    if (value == false) {
+      this.getControlForm('groupId').setValue(null);
+    } else {
+      if (this.groupSurvey.length) {
+        this.getControlForm('groupId').setValue(this.groupSurvey[0].id);
+      }
+    }
+  }
+
+  loadRoles() {
+    var page = new ApplicationRolePaged();
+    page.limit = 100;
+    page.offset = 0;
+    this.roleService.getPaged(page).subscribe((res: any) => {
+      this.roles = res.items;
+    });
   }
 }

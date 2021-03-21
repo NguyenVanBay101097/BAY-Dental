@@ -165,7 +165,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.EntityType<SalaryPaymentVm>()
                .Collection
             .Action("DefaulCreateBy")
-            .ReturnsCollection<SalaryPaymentDisplay>();
+            .ReturnsCollection<SalaryPaymentDefaulCreateByVM>();
             #endregion
 
             #region AccountJournal

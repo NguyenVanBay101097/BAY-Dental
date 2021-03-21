@@ -28,6 +28,8 @@
     <PackageReference Include="HangFire" Version="1.7.11" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.18" />
     <PackageReference Include="Ical.Net" Version="4.1.11" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />
@@ -36,7 +38,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="SaasKit.Multitenancy" Version="1.1.4" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
@@ -47,12 +49,8 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
-    <Compile Remove="Views\SaleOrder\**" />
     <Content Remove="$(SpaRoot)**" />
-    <Content Remove="Views\SaleOrder\**" />
-    <EmbeddedResource Remove="Views\SaleOrder\**" />
     <None Remove="$(SpaRoot)**" />
-    <None Remove="Views\SaleOrder\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 

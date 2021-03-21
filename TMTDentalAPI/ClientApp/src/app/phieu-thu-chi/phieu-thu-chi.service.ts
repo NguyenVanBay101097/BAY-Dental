@@ -1,7 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PagedResult2 } from '../core/paged-result-2';
 
 export class PhieuThuChiPaged {
   limit: number;
@@ -60,7 +59,7 @@ export class PhieuThuChiSave {
   loaiThuChi: any;
 }
 
-export class PhieuThuChi {
+export class PhieuThuChiDisplay {
   id: string;
   companyId: string;
   company: any;

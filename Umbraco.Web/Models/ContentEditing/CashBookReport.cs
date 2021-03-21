@@ -18,4 +18,19 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal TotalChi { get; set; }
         public decimal TotalThu { get; set; }
     }
+
+    public class CashBookReportDetail
+    {
+        public DateTime? Date { get; set; }
+
+        public string PartnerName { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public string AccountName { get; set; }
+
+        public string JournalName { get; set; }
+
+        public string Name { get; set; }
+    }
 }

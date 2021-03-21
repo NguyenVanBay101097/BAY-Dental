@@ -9,6 +9,13 @@ a {
     }
 }
 
+/* @media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 650px;
+        margin: 1.75rem auto;
+    }
+} */
+
 .modal .modal-dialog .o_form_view .o_form_sheet_bg {
     padding: 0;
     width: 100%;
@@ -69,13 +76,14 @@ html .o_web_client .o_action_manager {
 
 html .o_web_client .o_action_manager .o_action {
     height: 100%;
-    width: 100%;
     display: -webkit-box;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-flow: column nowrap;
     flex-flow: column nowrap;
     position: relative;
+    flex: 1 1 100%;
+    overflow: hidden;
 }
 
 
@@ -99,6 +107,7 @@ html .o_web_client .o_action_manager .o_action .o_cp_controller {
 html .o_web_client .o_action_manager .o_action .o_content {
     flex: 1 1 100%;
     position: relative;
+    -webkit-box-flex: 1;
 }
 
 html .o_web_client>.o_action_manager .o_action .o_cp_controller {
@@ -118,6 +127,13 @@ html .o_web_client>.o_action_manager .o_action .o_content {
         overflow: auto;
         -webkit-overflow-scrolling: touch;
     }
+}
+
+.modal.o_technical_modal .modal-content .modal-footer {
+    flex-wrap: wrap;
+    text-align: left;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
 }
 
 .o_cp_searchview_group {

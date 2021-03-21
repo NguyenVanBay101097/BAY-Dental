@@ -37,6 +37,18 @@ namespace Infrastructure.Services
         //public override Task<AccountMove> CreateAsync(AccountMove self)
         //{
         //    var amlObj = GetService<IAccountMoveLineService>();
+
+        //    foreach (var line in self.Lines)
+        //    {
+        //        line.Date = self.Date;
+        //        line.ParentState = self.State;
+        //        line.JournalId = self.JournalId;
+        //        line.CompanyId = self.CompanyId;
+        //        if (line.Account == null)
+        //            throw new Exception("Null Account");
+        //        line.AccountInternalType = line.Account.InternalType;
+        //    }
+
         //    amlObj._AmountResidual(self.Lines);
         //    amlObj._StoreBalance(self.Lines);
 
@@ -44,6 +56,8 @@ namespace Infrastructure.Services
         //    _ComputePartner(new List<AccountMove>() { self });
         //    return base.CreateAsync(self);
         //}
+
+
 
         public async Task<IEnumerable<AccountMove>> _ComputePaymentsWidgetReconciledInfo(IEnumerable<Guid> ids)
         {
@@ -79,7 +93,7 @@ namespace Infrastructure.Services
             foreach(var partial in partials)
             {
                 var counterpart_lines = await amlObj.SearchQuery(x => x.Id == partial.DebitMoveId || x.Id == partial.CreditMoveId)
-                    .Include(x => x.Journal).Include(x => x.Move).ToListAsync();
+                    .Include(x => x.Journal).Include(x => x.Move).Include(x => x.Payment).ToListAsync();
 
                 var counterpart_line = counterpart_lines.Where(x => !self.Lines.Contains(x)).FirstOrDefault();
                 var amount = partial.Amount;
@@ -99,8 +113,10 @@ namespace Infrastructure.Services
                     Date = counterpart_line.Date,
                     PaymentId = counterpart_line.Id,                  
                     AccountPaymentId = counterpart_line.PaymentId,
+                    AccountPaymentName = counterpart_line.Payment?.Name,
                     MoveId = counterpart_line.MoveId,
-                    Ref = reference
+                    Ref = reference,
+
                 });
             }
 

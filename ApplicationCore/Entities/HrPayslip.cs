@@ -158,6 +158,5 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? SalaryPaymentId { get; set; }
         public SalaryPayment SalaryPayment { get; set; }
-
     }
 }

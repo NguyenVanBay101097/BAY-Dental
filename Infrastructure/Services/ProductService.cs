@@ -82,7 +82,7 @@ namespace Infrastructure.Services
         private async Task _GenerateCodeIfEmpty(IEnumerable<Product> self)
         {
             var seqObj = GetService<IIRSequenceService>();
-            foreach(var product in self)
+            foreach (var product in self)
             {
                 if (!string.IsNullOrWhiteSpace(product.DefaultCode))
                     continue;
@@ -109,7 +109,7 @@ namespace Infrastructure.Services
         private async Task<IEnumerable<Product>> _GetProductsExistCode(IEnumerable<Product> self)
         {
             var list = new List<Product>();
-            foreach(var product in self)
+            foreach (var product in self)
             {
                 if (string.IsNullOrWhiteSpace(product.DefaultCode))
                     continue;
@@ -192,7 +192,13 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val)
         {
             var query = GetQueryPaged(val);
-            var items =  await _mapper.ProjectTo<ProductBasic>(query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            query = query.OrderBy(x=> x.Name);
+
+            var totalItems = await query.CountAsync();
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await _mapper.ProjectTo<ProductBasic>(query).ToListAsync();
 
             //Tính lại giá bán
             await _ProcessListPrice(items);
@@ -200,14 +206,12 @@ namespace Infrastructure.Services
             //Tính tồn kho
             _CalcQtyAvailable(items);
 
-            var totalItems = await query.CountAsync();
-
             return new PagedResult2<ProductBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };
         }
-       
+
         public async Task<List<ProductServiceExportExcel>> GetServiceExportExcel(ProductPaged val)
         {
             var query = SearchQuery(x => x.Active && x.Type2 == "service");
@@ -215,28 +219,31 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search));
             if (val.CategId.HasValue)
                 query = query.Where(x => x.CategId == val.CategId);
-            var products = await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).Include(x => x.ProductCompanyRels)
+            var products = await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
+                .Include(x => x.ProductCompanyRels)
                 .Include(x => x.Categ)
-                .Include(x => x.UOM)
-                .Include(x => x.UOMPO).ToListAsync();
+                .Include(x => x.Steps)
+                .ToListAsync();
 
             //check listPrice product
-            foreach (var product in products)           
+            foreach (var product in products)
                 product.ListPrice = await _GetListPrice(product);
-            
 
-            var res = products.Select(x => new ProductServiceExportExcel { 
-            Id = x.Id,
-            CategName = x.Categ.Name,
-            DefaultCode = x.DefaultCode,
-            Name = x.Name,
-            IsLabo = x.IsLabo,
-            ListPrice = x.ListPrice,
-            PurchasePrice = x.PurchasePrice,
-            StepList = x.Steps.Select(s => new ProductStepSimple { 
-            Id = s.Id,
-            Name = s.Name
-            })
+            var res = products.Select(x => new ProductServiceExportExcel
+            {
+                Id = x.Id,
+                CategName = x.Categ.Name,
+                DefaultCode = x.DefaultCode,
+                Name = x.Name,
+                IsLabo = x.IsLabo,
+                ListPrice = x.ListPrice,
+                LaboPrice = x.LaboPrice,
+                PurchasePrice = x.PurchasePrice,
+                StepList = x.Steps.Select(s => new ProductStepSimple
+                {
+                    Id = s.Id,
+                    Name = s.Name
+                })
             }).ToList();
 
             return res;
@@ -338,7 +345,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrWhiteSpace(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search));
 
-            var items = await query.OrderBy(x => x.Name).OrderByDescending(x=>x.DateCreated).Skip(val.Offset).Take(val.Limit)
+            var items = await query.OrderBy(x => x.Name).OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit)
                 .Select(x => new ProductLaboBasic
                 {
                     Id = x.Id,
@@ -420,12 +427,8 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Type2))
                 query = query.Where(x => x.Type2 == val.Type2);
 
-            return await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).Select(x => new ProductSimple
-            {
-                Id = x.Id,
-                Name = x.Name,
-                PriceUnit = x.ListPrice
-            }).ToListAsync();
+            var res = await query.Include(x => x.UOM).OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).ToListAsync();
+            return _mapper.Map<IEnumerable<ProductSimple>>(res);
         }
 
         public async Task<Product> CreateProduct(ProductDisplay val)
@@ -460,7 +463,7 @@ namespace Infrastructure.Services
             var propertyObj = GetService<IIRPropertyService>();
 
             //Store the standard price change in order to be able to retrieve the cost of a product for a given date'''
-            propertyObj.set_multi("standard_price", "product.product", list.ToDictionary(x => string.Format("product.product,{0}", x.Id), x => (object)value),force_company: force_company);
+            propertyObj.set_multi("standard_price", "product.product", list.ToDictionary(x => string.Format("product.product,{0}", x.Id), x => (object)value), force_company: force_company);
 
             var priceHistoryObj = GetService<IProductPriceHistoryService>();
             priceHistoryObj.Create(new ProductPriceHistory
@@ -488,33 +491,68 @@ namespace Infrastructure.Services
 
             _SaveProductSteps(product, val.StepList);
 
+            _SaveProductBoms(product, val.Boms);
+
             _SaveUoMRels(product, val);
 
-            return await CreateAsync(product);
+            UpdateProductCriteriaRel(product, val);
+
+            product = await CreateAsync(product);
+
+            return product;
         }
 
         public async Task UpdateProduct(Guid id, ProductSave val)
         {
-            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps)
-                .Include(x => x.ProductUoMRels).FirstOrDefaultAsync();
+            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps).Include(x => x.Boms)
+                .Include(x => x.ProductUoMRels).Include(x => x.ProductStockInventoryCriteriaRels).FirstOrDefaultAsync();
 
             product = _mapper.Map(val, product);
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
 
             _SaveProductSteps(product, val.StepList);
+
+            _SaveProductBoms(product, val.Boms);
+
             _SaveUoMRels(product, val);
 
             //_SetStandardPrice(product, val.StandardPrice);
 
             await _SetListPrice(product, val.ListPrice);
+
+            UpdateProductCriteriaRel(product, val);
+
             await UpdateAsync(product);
+        }
+
+        private void UpdateProductCriteriaRel(Product product, ProductSave val)
+        {
+            var toRemove = product.ProductStockInventoryCriteriaRels.Where(x => !val.ProductCriteriaIds.Contains(x.StockInventoryCriteriaId)).ToList();
+            foreach (var hist in toRemove)
+            {
+                product.ProductStockInventoryCriteriaRels.Remove(hist);
+            }
+            if (val.ProductCriteriaIds != null)
+            {
+                foreach (var hist in val.ProductCriteriaIds)
+                {
+                    if (product.ProductStockInventoryCriteriaRels.Any(x => x.StockInventoryCriteriaId == hist))
+                        continue;
+
+                    product.ProductStockInventoryCriteriaRels.Add(new ProductStockInventoryCriteriaRel
+                    {
+                        StockInventoryCriteriaId = hist
+                    });
+
+                }
+            }
         }
 
         private void _SaveUoMRels(Product product, ProductSave val)
         {
             var rels_remove = new List<ProductUoMRel>();
             var uom_ids = new List<Guid>() { val.UOMId, val.UOMPOId };
-            foreach(var rel in product.ProductUoMRels)
+            foreach (var rel in product.ProductUoMRels)
             {
                 if (!uom_ids.Contains(rel.UoMId))
                     rels_remove.Add(rel);
@@ -523,7 +561,7 @@ namespace Infrastructure.Services
             foreach (var rel in rels_remove)
                 product.ProductUoMRels.Remove(rel);
 
-            foreach(var uom_id in uom_ids)
+            foreach (var uom_id in uom_ids)
             {
                 if (!product.ProductUoMRels.Any(x => x.UoMId == uom_id))
                     product.ProductUoMRels.Add(new ProductUoMRel() { UoMId = uom_id });
@@ -576,6 +614,39 @@ namespace Infrastructure.Services
             }
         }
 
+        private void _SaveProductBoms(Product product, IEnumerable<ProductBomSave> val)
+        {
+            var existBoms = product.Boms.ToList();
+            var ToRemoves = new List<ProductBom>();
+
+            var valIds = val.Select(x => x.Id).ToList();
+            ToRemoves = existBoms.Where(x => !valIds.Contains(x.Id)).ToList();
+
+            foreach (var bom in ToRemoves)
+                product.Boms.Remove(bom);
+
+            int sequence = 0;
+            foreach (var line in val)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var item = _mapper.Map<ProductBom>(line);
+                    item.Sequence = sequence++;
+                    product.Boms.Add(item);
+                }
+                else
+                {
+                    var item = product.Boms.SingleOrDefault(c => c.Id == line.Id);
+                    if (item != null)
+                    {
+                        _mapper.Map(line, item);
+                        item.Sequence = sequence++;
+                    }
+                }
+
+            }
+        }
+
         public async Task UpdateProduct(Guid id, ProductLaboSave val)
         {
             var product = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
@@ -587,13 +658,28 @@ namespace Infrastructure.Services
 
         public async Task<ProductDisplay> GetProductDisplay(Guid id)
         {
-            var product = await SearchQuery(x => x.Id == id).Include(x => x.ProductCompanyRels)
+            var criteriaObj = GetService<IStockInventoryCriteriaService>();
+            //tách ra nhiều câu query nhỏ hơn và map view model trả về
+            var product = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Categ)
                 .Include(x => x.UOM)
-                .Include(x => x.UOMPO).FirstOrDefaultAsync();
+                .Include(x => x.UOMPO)
+                .Include(x => x.ProductStockInventoryCriteriaRels)
+                .ThenInclude(x => x.StockInventoryCriteria)
+                .FirstOrDefaultAsync();
             var res = _mapper.Map<ProductDisplay>(product);
+
+            var bomObj = GetService<IProductBomService>();
+            var boms = await bomObj.SearchQuery(x => x.ProductId == id, orderBy: x => x.OrderBy(s => s.Sequence))
+                .Include(x => x.MaterialProduct)
+                .Include(x => x.ProductUOM)
+                .ToListAsync();
+
+            res.Boms = _mapper.Map<IEnumerable<ProductBomBasic>>(boms);
+
             //res.StandardPrice = _GetStandardPrice(product);
             res.ListPrice = await _GetListPrice(product);
+
             return res;
         }
 
@@ -643,7 +729,7 @@ namespace Infrastructure.Services
         public double GetStandardPrice(Guid id, Guid? force_company_id = null)
         {
             var propertyObj = GetService<IIRPropertyService>();
-            var val = propertyObj.get("standard_price", "product.product", res_id: $"product.product,{id}", force_company : force_company_id);
+            var val = propertyObj.get("standard_price", "product.product", res_id: $"product.product,{id}", force_company: force_company_id);
             return Convert.ToDouble(val);
         }
 
@@ -660,6 +746,32 @@ namespace Infrastructure.Services
                 res.UOMPOId = uom.Id;
                 res.UOMPO = _mapper.Map<UoMBasic>(uom);
             }
+
+            res.CompanyId = CompanyId;
+
+            return res;
+        }
+
+        public async Task<ProductDisplay> GetDefaultProductMedicine()
+        {
+            var uomObj = GetService<IUoMService>();
+            var userObj = GetService<IUserService>();
+            var uom = await uomObj.DefaultUOM();
+            var isGroupMedicine = await userObj.HasGroup("medicineOrder.group_medicine");
+            var res = new ProductDisplay();
+            if (uom != null)
+            {
+                res.UOMId = uom.Id;
+                res.UOM = _mapper.Map<UoMBasic>(uom);
+
+                res.UOMPOId = uom.Id;
+                res.UOMPO = _mapper.Map<UoMBasic>(uom);
+            }
+
+            if (isGroupMedicine)
+                res.Type = "product";
+            else
+                res.Type = "consu";
 
             res.CompanyId = CompanyId;
 
@@ -725,7 +837,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-       
+
 
         //public override ISpecification<Product> RuleDomainGet(IRRule rule)
         //{
@@ -800,10 +912,10 @@ namespace Infrastructure.Services
             }).ToDictionary(x => x.ProductId, x => x.Qty);
 
             var movesOut = moveObj.SearchQuery(domain_move_out_todo.AsExpression()).GroupBy(x => x.ProductId).Select(x => new
-           {
-               ProductId = x.Key,
-               Qty = x.Sum(s => s.ProductQty),
-           }).ToDictionary(x => x.ProductId, x => x.Qty);
+            {
+                ProductId = x.Key,
+                Qty = x.Sum(s => s.ProductQty),
+            }).ToDictionary(x => x.ProductId, x => x.Qty);
 
             var moves_in_res_past = new Dictionary<Guid, decimal?>();
             var moves_out_res_past = new Dictionary<Guid, decimal?>();
@@ -814,16 +926,16 @@ namespace Infrastructure.Services
                 var domain_move_out_done = domain_move_out.And(new InitialSpecification<StockMove>(x => x.State == "done" && x.Date > to_date));
 
                 moves_in_res_past = moveObj.SearchQuery(domain_move_in_done.AsExpression()).GroupBy(x => x.ProductId).Select(x => new
-                    {
-                        ProductId = x.Key,
-                        Qty = x.Sum(s => s.ProductQty),
-                    }).ToDictionary(x => x.ProductId, x => x.Qty);
+                {
+                    ProductId = x.Key,
+                    Qty = x.Sum(s => s.ProductQty),
+                }).ToDictionary(x => x.ProductId, x => x.Qty);
 
                 moves_out_res_past = moveObj.SearchQuery(domain_move_out_done.AsExpression()).GroupBy(x => x.ProductId).Select(x => new
-                    {
-                        ProductId = x.Key,
-                        Qty = x.Sum(s => s.ProductQty),
-                    }).ToDictionary(x => x.ProductId, x => x.Qty);
+                {
+                    ProductId = x.Key,
+                    Qty = x.Sum(s => s.ProductQty),
+                }).ToDictionary(x => x.ProductId, x => x.Qty);
             }
 
             var res = new Dictionary<Guid, ProductAvailableRes>();
@@ -968,15 +1080,19 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<ProductProductExportExcel>> GetMedicineExportExcel(ProductPaged val)
         {
             var query = SearchQuery(x => x.Active && x.Type2 == "medicine");
+            query.Include(x => x.UOM);
             if (!string.IsNullOrWhiteSpace(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search));
             if (val.CategId.HasValue)
                 query = query.Where(x => x.CategId == val.CategId);
             var res = await query.OrderBy(x => x.Name).Select(x => new ProductProductExportExcel
             {
+                DefaultCode = x.DefaultCode,
                 CategName = x.Categ.Name,
                 Name = x.Name,
                 Type = x.Type,
+                ListPrice = x.ListPrice,
+                UomName = x.UOM.Name
             }).ToListAsync();
 
             return res;
@@ -1003,5 +1119,5 @@ namespace Infrastructure.Services
         public ISpecification<StockMove> domain_move_out_loc { get; set; }
     }
 
-   
+
 }

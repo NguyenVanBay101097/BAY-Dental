@@ -33,11 +33,13 @@ namespace TMTDentalAPI.Controllers
         private readonly ICompanyService _companyService;
         private readonly IResGroupService _resGroupService;
         private readonly IIRModelDataService _iRModelDataService;
+        private readonly IEmployeeService _employeeService;
 
         public ApplicationUsersController(UserManager<ApplicationUser> userManager,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
             IIRModelAccessService modelAccessService, IUserService userService,
             IUploadService uploadService, ICompanyService companyService, IResGroupService resGroupService,
+            IEmployeeService employeeService,
             IIRModelDataService iRModelDataService)
         {
             _userManager = userManager;
@@ -50,6 +52,7 @@ namespace TMTDentalAPI.Controllers
             _companyService = companyService;
             _resGroupService = resGroupService;
             _iRModelDataService = iRModelDataService;
+            _employeeService = employeeService;
         }
 
         [HttpGet]
@@ -61,6 +64,10 @@ namespace TMTDentalAPI.Controllers
                 query = query.Where(x => x.Name.Contains(val.SearchNameUserName) || x.UserName.Contains(val.SearchNameUserName));
             if (!val.hasRoot.HasValue || val.hasRoot == false)
                 query = query.Where(x=> x.IsUserRoot != true);
+            // không lấy những user mà employee bị ẩn
+            var exIds = await _employeeService.SearchQuery(x => x.Active == false && x.UserId != null).Select(x=> x.UserId).ToListAsync();
+            if (exIds.Any())
+                query = query.Where(x=> !exIds.Contains(x.Id)) ;
 
             var companyId = CompanyId;
             query = query.Where(x => x.CompanyId == companyId);
@@ -362,7 +369,7 @@ namespace TMTDentalAPI.Controllers
             var res = new UserChangeCurrentCompanyVM
             {
                 CurrentCompany = _mapper.Map<CompanyBasic>(user.Company),
-                Companies = _mapper.Map<IEnumerable<CompanyBasic>>(user.ResCompanyUsersRels.Select(x => x.Company))
+                Companies = _mapper.Map<IEnumerable<CompanyBasic>>(user.ResCompanyUsersRels.Select(x => x.Company).Where(x => x.Active == true))
             };
 
             return Ok(res);

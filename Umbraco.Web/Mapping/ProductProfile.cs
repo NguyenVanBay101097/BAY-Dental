@@ -17,13 +17,14 @@ namespace Umbraco.Web.Mapping
             CreateMap<Product, ProductServiceExportExcel>()
              .ForMember(x => x.StepList, x => x.MapFrom(s => s.Steps));
             CreateMap<Product, ProductDisplay>()
-                 .ForMember(x => x.StepList, x => x.MapFrom(s => s.Steps));
+                 .ForMember(x => x.StepList, x => x.MapFrom(s => s.Steps))
+                 .ForMember(x => x.StockInventoryCriterias, x => x.MapFrom(s => s.ProductStockInventoryCriteriaRels.Select(m => m.StockInventoryCriteria)));
             CreateMap<ProductDisplay, Product>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Categ, x => x.Ignore())
                 .ForMember(x => x.UOM, x => x.Ignore())
                 .ForMember(x => x.UOMPO, x => x.Ignore());
-            
+
 
             CreateMap<Product, ProductSimple>();
 
@@ -33,8 +34,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<ProductLaboSave, Product>();
 
             //Thắng
-            CreateMap<ProductSave, Product>();
-  
+            CreateMap<ProductSave, Product>()
+                .ForMember(x => x.Boms, x => x.Ignore());
         }
     }
 }

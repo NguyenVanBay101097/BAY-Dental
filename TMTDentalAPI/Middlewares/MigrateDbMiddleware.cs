@@ -6,6 +6,7 @@ using Infrastructure.Data;
 using Infrastructure.Services;
 using Infrastructure.TenantData;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -34,44 +35,41 @@ namespace TMTDentalAPI.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            //var key = AppConstants.GetLockRequestKey(context.Request.Host.Host, "__migrate");
-            //var lockObj = LockUtils.Get(key);
-            //await lockObj.WaitAsync();
+            //nếu có nhiều request cùng vào, nếu tenant version chưa update thì chỉ cho phép 1 thằng được thực thi,
+            //đến khi version update xong thì request sau vào thì không chạy vào đoạn code update database
 
-            try
+            var tenantContext = context.GetTenantContext<AppTenant>();
+            var tenant = tenantContext == null ? null : tenantContext.Tenant;
+            if (tenant != null && _appSettings.Version == tenant.Version)
             {
-                var tenant = context.GetTenant<AppTenant>();
+                await _next.Invoke(context);
+            }
+            else
+            {
+                var key = AppConstants.GetLockRequestKey(context.Request.Host.Host, "__migrate");
+                var lockObj = LockUtils.Get(key);
+                await lockObj.WaitAsync();
+
                 if (tenant != null && _appSettings.Version != tenant.Version)
                 {
                     var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
                     var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
                     if (pendingMigrations.Any())
                         await dbContext.Database.MigrateAsync();
-
-                    //add data nếu cần
-                    await AddMissingData(context);
-                    //update version
-                    var tenantContext = (TenantDbContext)context.RequestServices.GetService(typeof(TenantDbContext));
-                    var tnt = await tenantContext.Tenants.Where(x => x.Hostname == tenant.Hostname).FirstOrDefaultAsync();
-                    if (tnt != null)
-                    {
-                        tnt.Version = _appSettings.Version;
-                        tenantContext.SaveChanges();
-
-                        _cache.Remove(tenant.Hostname); //clear cache
-                    }
                 }
-            }
-            catch
-            {
-            }
 
-            await _next.Invoke(context);
-
-            //lockObj.Release();
+                await _next.Invoke(context);
+                lockObj.Release();
+            }
         }
 
         public async Task AddMissingData(HttpContext context)
+        {
+            await AddMissingModelField(context);
+            await AddMissingResGroupUserRel(context);
+        }
+
+        public async Task AddMissingModelField(HttpContext context)
         {
             var fieldObj = (IIRModelFieldService)context.RequestServices.GetService(typeof(IIRModelFieldService));
             var fieldStd = await fieldObj.SearchQuery(x => x.Name == "standard_price" && x.Model == "product.product").FirstOrDefaultAsync();
@@ -84,11 +82,32 @@ namespace TMTDentalAPI.Middlewares
                     IRModelId = model.Id,
                     Model = "product.product",
                     Name = "standard_price",
-                    TType = "decimal",
+                    TType = "float",
                 };
 
                 await fieldObj.CreateAsync(fieldStd);
             }
+        }
+
+        public async Task AddMissingResGroupUserRel(HttpContext context)
+        {
+            var _userManager = (UserManager<ApplicationUser>)context.RequestServices.GetService(typeof(UserManager<ApplicationUser>));
+            var _iRModelDataService = (IIRModelDataService)context.RequestServices.GetService(typeof(IIRModelDataService));
+            var _resGroupService = (IResGroupService)context.RequestServices.GetService(typeof(IResGroupService));
+            //get group internal user to add to user then call function add all group to user
+            var groupInternalUser = await _iRModelDataService.GetRef<ResGroup>("base.group_user");
+            //find all users who don't have internal group
+            var users = await _userManager.Users.Where(x => !x.ResGroupsUsersRels.Any(x => x.GroupId == groupInternalUser.Id)).Include(x => x.ResGroupsUsersRels).ToListAsync();
+            if (!users.Any())
+                return;
+
+            foreach (var user in users)
+            {
+                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = groupInternalUser.Id });
+                await _userManager.UpdateAsync(user);
+            }
+
+            await _resGroupService.AddAllImpliedGroupsToAllUser(new List<ResGroup>() { groupInternalUser });
         }
     }
 }

@@ -37,6 +37,7 @@ export class LaboFinishLineListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 
@@ -114,7 +115,7 @@ export class LaboFinishLineListComponent implements OnInit {
   }
 
   onImport() {
-    let modalRef = this.modalService.open(LaboFinnishLineImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(LaboFinnishLineImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable:true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.componentInstance.type = 'finish_line';
     modalRef.result.then(() => {

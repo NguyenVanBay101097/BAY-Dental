@@ -17,8 +17,6 @@ import localeVi from '@angular/common/locales/vi';
 import { IntlModule } from '@progress/kendo-angular-intl';
 // Load all required data for the bg locale
 import '@progress/kendo-angular-intl/locales/vi/all';
-import { TrialRegistrationComponent } from './trial-registration/trial-registration.component';
-import { TrialRegistrationSuccessComponent } from './trial-registration-success/trial-registration-success.component';
 import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from '@app/core.module';
 import { AuthLayoutComponent } from './layout/auth-layout/auth-layout.component';
@@ -26,6 +24,7 @@ import { ContentLayoutComponent } from './layout/content-layout/content-layout.c
 import { HttpErrorInterceptor } from '@app/interceptors/http-error.interceptor';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { HeaderComponent } from './layout/header/header.component';
+import { EmployeeAdminModule } from './employee-admins/employee-admins.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -39,8 +38,6 @@ registerLocaleData(localeVi, 'vi');
     ContentLayoutComponent,
     AppComponent,
     NavMenuComponent,
-    TrialRegistrationComponent,
-    TrialRegistrationSuccessComponent,
     SidebarComponent,
     HeaderComponent
   ],
@@ -54,6 +51,7 @@ registerLocaleData(localeVi, 'vi');
     AuthModule,
     CoreModule,
     SharedModule,
+    EmployeeAdminModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,

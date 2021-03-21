@@ -45,6 +45,9 @@ namespace Infrastructure.Services
 
         public async Task<string> GetParam(string key)
         {
+            /// check irrules
+            var companyObj = GetService<ICompanyService>();
+            
             var value = await SearchQuery(x => x.Key == key).Select(x => x.Value).FirstOrDefaultAsync();
             return value;
         }

@@ -42,6 +42,7 @@ export class ProductLaboListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 
@@ -119,7 +120,7 @@ export class ProductLaboListComponent implements OnInit {
   }
 
   onImport() {
-    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable:true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.componentInstance.type = 'labo';
     modalRef.result.then(() => {

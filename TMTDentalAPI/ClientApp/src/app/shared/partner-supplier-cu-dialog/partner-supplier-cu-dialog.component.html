@@ -11,10 +11,10 @@
         <div class="oe_title">
           <label class="o_form_label oe_edit_only">Tên</label>
           <h1>
-            <input class="form-control" formControlName="name" name="name">
+            <input class="form-control" formControlName="name">
           </h1>
         </div>
-        <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+        <div *ngIf="f.name.errors && ( f.name.touched || f.name.dirty || submitted)" class="text-danger">
           <div *ngIf="f.name.errors.required">Nhập tên nhà cung cấp</div>
         </div>
         <div class="o_group">
@@ -26,14 +26,6 @@
                 </td>
                 <td colspan="1" style="width: 100%;">
                   <input type="text" class="form-control" formControlName="phone" />
-                </td>
-              </tr>
-              <tr>
-                <td colspan="1" class="o_td_label">
-                  <label class="o_form_label">Mã</label>
-                </td>
-                <td colspan="1" style="width: 100%;">
-                  <input class="form-control" formControlName="ref" />
                 </td>
               </tr>
               <tr>
@@ -55,6 +47,21 @@
           </table>
           <table class="o_group o_inner_group o_group_col_6">
             <tbody>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                    <label class="o_form_label">Ngày tạo</label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                    <kendo-datepicker formControlName="dateObj">
+                    </kendo-datepicker>
+                </td>
+            </tr>
+              <tr>
+                <td colspan="1" class="o_td_label"><label class="o_form_label">Số fax</label></td>
+                <td colspan="1" style="width: 100%;">
+                  <input class="form-control" formControlName="fax" />
+                </td>
+              </tr>
               <tr>
                 <td colspan="1" class="o_td_label">
                   <label class="o_form_label">
@@ -97,6 +104,6 @@
 <div class="modal-footer">
   <div>
     <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
   </div>
 </div>

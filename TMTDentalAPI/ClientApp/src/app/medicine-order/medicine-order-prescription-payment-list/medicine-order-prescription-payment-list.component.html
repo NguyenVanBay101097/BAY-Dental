@@ -13,51 +13,50 @@
     </div>
 </div> -->
 
-    <div class="report-prescription-payment">
-        <div class="revenue">
-            <div class="title">
-                <h6>Doanh thu thuốc</h6>
-            </div>
-            <h4 class="text-primary">
-                {{precscriptionPaymentReport ? (precscriptionPaymentReport.amountTotal | number) : 0}}
-            </h4>
+<div class="report-prescription-payment">
+    <div class="revenue">
+        <div class="title">
+            <h6>Doanh thu thuốc</h6>
         </div>
-        <div class="number-payment">
-            <div class="title">
-                <h6>Số hóa đơn</h6>
-            </div>
-            <h4 class="text-primary">
-                {{precscriptionPaymentReport ? (precscriptionPaymentReport.medicineOrderCount | number) : 0}}
-            </h4>
-        </div>
+        <h4 class="text-primary">
+            {{precscriptionPaymentReport ? (precscriptionPaymentReport.amountTotal | number) : 0}}
+        </h4>
     </div>
-    <div class="o_control_panel">
-        <div class="o_cp_t_left">
-            <div class="o_cp_buttons">
-                <div class="o_form_buttons_view">
-                    <div class="d-flex">
-                        <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm"
-                            [placeholder]="'Tất cả trạng thái'" (valueChange)="stateChange($event)"
-                            [valueField]="'value'">
-                        </kendo-combobox>
-                        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'"
-                            [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
-                        </app-tai-date-range-filter-dropdown>
-                    </div>
-
+    <div class="number-payment">
+        <div class="title">
+            <h6>Số hóa đơn</h6>
+        </div>
+        <h4 class="text-primary">
+            {{precscriptionPaymentReport ? (precscriptionPaymentReport.medicineOrderCount | number) : 0}}
+        </h4>
+    </div>
+</div>
+<div class="o_control_panel">
+    <div class="o_cp_t_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <div class="d-flex">
+                    <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm"
+                        [placeholder]="'Tất cả trạng thái'" (valueChange)="stateChange($event)" [valueField]="'value'">
+                    </kendo-combobox>
+                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
+                        (searchChange)="onSearchDateChange($event)">
+                    </app-tai-date-range-filter-dropdown>
                 </div>
-            </div>
-            <div class="o_cp_sidebar">
+
             </div>
         </div>
-        <div class="o_cp_t_right">
-            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc"
-                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        <div class="o_cp_sidebar">
         </div>
     </div>
+    <div class="o_cp_t_right">
+        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc"
+            type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+    </div>
+</div>
 
 <div class="o_content">
-    <kendo-grid id="medicineOrder" class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset"
+    <kendo-grid id="medicineOrder" class="pointer" [data]="gridData" [pageSize]="limit" [skip]="skip"
         [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true"
         (cellClick)="clickItem($event)">
         <kendo-grid-column field="orderDate" title="Ngày thanh toán" width="100">

@@ -1,13 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { AccountJournalFilter } from 'src/app/account-journals/account-journal.service';
+import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
+import { AccountPaymentSave, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { SalaryPaymentService } from 'src/app/salary-payment/salary-payment.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { AccountJournalService } from 'src/app/shared/services/account-journal.service';
 import { PrintService } from 'src/app/shared/services/print.service';
-import { SalaryPaymentSave, SalaryPaymentSaveDefault, SalaryPaymentService } from 'src/app/shared/services/salary-payment.service';
+import { SalaryPaymentSaveDefault } from 'src/app/shared/services/salary-payment.service';
 
 @Component({
   selector: 'app-hr-salary-payment',
@@ -15,13 +17,15 @@ import { SalaryPaymentSave, SalaryPaymentSaveDefault, SalaryPaymentService } fro
   styleUrls: ['./hr-salary-payment.component.css']
 })
 export class HrSalaryPaymentComponent implements OnInit {
-  @Input() defaultPara: any;
+  @Input() payslipIds: any;
   isDisable = false;
 
   filteredJournals: any;
   // paymentFA: FormArray;
   paymentForm: FormGroup;
+  payments = [];
   title: string;
+  payslipRunId: string;
 
   constructor(
     private authService: AuthService,
@@ -31,13 +35,14 @@ export class HrSalaryPaymentComponent implements OnInit {
     private journalService: AccountJournalService,
     private notificationService: NotificationService,
     private printService: PrintService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private intlService: IntlService
   ) { }
 
   ngOnInit() {
     // this.paymentFA = new FormArray([]);
     this.paymentForm = this.fb.group({
-      paymentFA: new FormArray([])
+      paymentFA: this.fb.array([])
     });
     setTimeout(() => {
       this.loadDefaultRecord();
@@ -48,57 +53,25 @@ export class HrSalaryPaymentComponent implements OnInit {
   get paymentFA() { return this.paymentForm.get('paymentFA') as FormArray; }
 
   loadDefaultRecord() {
-    if (!this.defaultPara.PayslipIds || !this.defaultPara.PayslipIds.length) {
+      if (!this.payslipIds || !this.payslipIds.length) {
       this.isDisable = true;
     }
-    if (this.defaultPara) {
-      this.paymentService.defaulCreateBy(this.defaultPara).subscribe((res: any) => {
+    if (this.payments.length > 0) {
         this.paymentFA.clear();
-        res.value.forEach(e => {
-          const fg = this.fb.group(new SalaryPaymentSaveDefault());
-          fg.patchValue(e);
-          this.paymentFA.push(fg);
+        this.payments.forEach(e => {
+            const fg = this.fb.group(e);
+            this.paymentFA.push(fg);
         });
-      },
-        (error: any) => {
-          this.isDisable = true;
-        }
-      );
     }
   }
 
   loadFilteredJournals() {
-    const state = {
-      filter: {
-        logic: 'and',
-        filters: [
-          {
-            logic: 'or',
-            filters: [
-              { field: 'Type', operator: 'eq', value: 'bank' },
-              { field: 'Type', operator: 'eq', value: 'cash' }
-            ]
-          },
-          { field: 'CompanyId ', operator: 'eq', value: this.authService.userInfo.companyId }
-        ]
-      }
-    };
-
-    this.journalService.fetch2(state).subscribe(
-      (result: any) => {
-        this.filteredJournals = result.data;
-
-        // if (this.filteredJournals.length) {
-        //   this.paymentFA.controls.forEach(fc => {
-        //     fc.get('Journal').patchValue(this.filteredJournals[0]);
-        //     fc.get('JournalId').patchValue(this.filteredJournals[0].id);
-        //   });
-        // }
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    var val = new AccountJournalFilter();
+    val.type = 'bank,cash';
+    val.companyId = this.authService.userInfo.companyId;
+    this.journalService.autocomplete(val).subscribe(result => {
+      this.filteredJournals = result;
+    });
   }
 
   onChangeJournal(e) {
@@ -112,8 +85,19 @@ export class HrSalaryPaymentComponent implements OnInit {
     modalRef.componentInstance.title = 'Chi lương';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn chi lương?';
     modalRef.result.then(() => {
+      debugger;
       const val = this.paymentFA.value;
-      this.paymentService.actionMultiSalaryPayment(val).subscribe(() => {
+      var data = val.map(x => {
+        return {
+          date: x.date,
+          employeeId: x.employee.id,
+          journalId: x.journal.id,
+          amount: x.amount,
+          reason: x.reason,
+          payslipId: x.payslipId
+        };
+      });
+      this.paymentService.actionMultiSalaryPayment(data).subscribe(() => {
         this.notify('success', 'Xác nhận thành công');
         this.activeModal.close();
       });
@@ -132,7 +116,7 @@ export class HrSalaryPaymentComponent implements OnInit {
         if (!res.value) {
           this.notify('error', 'Không có phiếu chi lương để in');
         }
-        this.paymentService.onPrint(res.value).subscribe(
+        this.paymentService.getPrint(res.value).subscribe(
           result => {
             this.printService.printHtml(result['html']);
           }

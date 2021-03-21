@@ -13,7 +13,9 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<SalaryPayment, SalaryPaymentVm>();
             CreateMap<SalaryPayment, SalaryPaymentBasic>();
-            CreateMap<SalaryPayment, SalaryPaymentPrintVm>();
+            CreateMap<SalaryPayment, SalaryPaymentPrintVm>()
+                .ForMember(x => x.UserName, x => x.MapFrom(s => s.CreatedBy.Name));
+            CreateMap<SalaryPayment, SalaryPaymentDisplay>();
 
             CreateMap<SalaryPayment, SalaryPaymentSave>();
             CreateMap<SalaryPaymentSave, SalaryPayment>();

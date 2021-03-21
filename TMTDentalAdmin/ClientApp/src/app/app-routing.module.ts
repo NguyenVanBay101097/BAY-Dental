@@ -3,8 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './auth/auth.guard';
 import { AuthLayoutComponent } from './layout/auth-layout/auth-layout.component';
 import { ContentLayoutComponent } from './layout/content-layout/content-layout.component';
-import { TrialRegistrationSuccessComponent } from './trial-registration-success/trial-registration-success.component';
-import { TrialRegistrationComponent } from './trial-registration/trial-registration.component';
 
 const routes: Routes = [
   {
@@ -22,15 +20,12 @@ const routes: Routes = [
         loadChildren: () =>
           import('./tenants/tenants.module').then(m => m.TenantsModule)
       },
+      {
+        path: 'employee-admins',
+        loadChildren: () =>
+          import('./employee-admins/employee-admins.module').then(m => m.EmployeeAdminModule)
+      },
     ]
-  },
-  {
-    path: 'register',
-    component: TrialRegistrationComponent
-  },
-  {
-    path: 'register-success',
-    component: TrialRegistrationSuccessComponent
   },
   {
     path: 'auth',
@@ -43,7 +38,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true })],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
   providers: []
 })

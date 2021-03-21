@@ -13,20 +13,29 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Tài khoản</label>
                             <div class="col-sm-10">
-                                <input class="form-control" type="text" required formControlName="userName"
+                                <input class="form-control" type="text" formControlName="userName"
                                     disabled=true />
+                                <div *ngIf="f.userName.errors && (f.userName.touched || f.userName.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.userName.errors.required">Nhập tài khoản</div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Tên</label>
                             <div class="col-sm-10">
-                                <input class="form-control" type="text" required formControlName="name" />
+                                <input class="form-control" type="text" formControlName="name" />
+                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.name.errors.required">Nhập tên</div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Email</label>
                             <div class="col-sm-10">
-                                <input class="form-control" type="email" required formControlName="email" />
+                                <input class="form-control" type="email" formControlName="email" />
+                                <div *ngIf="f.email.errors && (f.email.touched || f.email.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.email.errors.required">Nhập email</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -42,7 +51,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="!editForm.valid">
+    <button type="button" class="btn btn-primary" (click)="submit()">
         Lưu
     </button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"

@@ -38,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IAuthorizationService _authorizationService;
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IAccountInvoiceService _accountInvoiceService;
+        private readonly IAccountCommonPartnerReportService _accReportService;
         private readonly IAccountPaymentService _paymentService;
         private readonly IServiceCardCardService _serviceCardService;
         private readonly IPartnerSourceService _partnerSourceService;
@@ -53,8 +54,10 @@ namespace TMTDentalAPI.Controllers
             IAccountPaymentService paymentService,
             IServiceCardCardService serviceCardService,
             IPartnerSourceService partnerSourceService,
-            IIRModelDataService iRModelDataService)
+            IIRModelDataService iRModelDataService,
+            IAccountCommonPartnerReportService accReportService)
         {
+            _accReportService = accReportService;
             _partnerService = partnerService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
@@ -379,6 +382,20 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Create")]
+        public async Task<IActionResult> ActionImportUpdate(PartnerImportExcelViewModel val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            var result = await _partnerService.ActionImportUpdate(val);
+
+            if (result.Success)
+                _unitOfWork.Commit();
+
+            return Ok(result);
+        }
+
         [HttpGet("{id}/Print")]
         [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
@@ -422,6 +439,67 @@ namespace TMTDentalAPI.Controllers
         {
             var rec = await _paymentService.PartnerDefaultGet(id);
             return Ok(rec);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetDefaultPayment(PartnerDefaultSearch val)
+        {
+            var rec = await _paymentService.PartnerDefaultGetV2(val);
+            return Ok(rec);
+        }
+
+        //xuất excel danh sách hóa đơn còn nợ của 1 partner
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> ExportUnreconcileInvoices(Guid id)
+        {
+            var stream = new MemoryStream();
+            var data = await _partnerService.GetDebtPaged(id, new PartnerGetDebtPagedFilter { Limit = int.MaxValue });
+            byte[] fileContent;
+
+            var showTypeDict = new Dictionary<string, string>()
+            {
+                { "in_invoice", "Mua hàng" },
+                { "in_refund", "Trả hàng" },
+                { "out_invoice", "Bán hàng" },
+                { "out_refund", "Trả hàng" }
+            };
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+
+                worksheet.Cells[1, 1].Value = "Ngày";
+                worksheet.Cells[1, 2].Value = "Nguồn";
+                worksheet.Cells[1, 3].Value = "Tổng tiền";
+                worksheet.Cells[1, 4].Value = "Còn nợ";
+
+                worksheet.Cells["A1:P1"].Style.Font.Bold = true;
+
+                var row = 2;
+                foreach (var item in data.Items)
+                {
+                    worksheet.Cells[row, 1].Value = item.Date;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 2].Value = item.Origin;
+                    worksheet.Cells[row, 3].Value = item.Balance;
+                    worksheet.Cells[row, 3].Style.Numberformat.Format = "#,##";
+                    worksheet.Cells[row, 4].Value = item.AmountResidual;
+                    worksheet.Cells[row, 4].Style.Numberformat.Format = "#,##";
+
+                    row++;
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
         }
 
         [HttpPost("[action]")]
@@ -600,6 +678,42 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _partnerService.GetCustomerStatistics(val);
             return Ok(result);
+        }
+
+        //lấy danh sách hóa đơn còn nợ của 1 partner
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetUnreconcileInvoices(Guid id, [FromQuery] string search = "")
+        {
+            var moves = await _partnerService.GetUnreconcileInvoices(id, search);
+            return Ok(_mapper.Map<IEnumerable<AccountMoveBasic>>(moves));
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetDebtPaged(Guid id, [FromQuery] PartnerGetDebtPagedFilter val)
+        {
+            var result = await _partnerService.GetDebtPaged(id, val);
+            return Ok(result);
+        }
+
+        [HttpPatch("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
+        public async Task<IActionResult> PatchActive(Guid id, PartnerActivePatch result)
+        {
+            var entity = await _partnerService.GetByIdAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var patch = new JsonPatchDocument<PartnerActivePatch>();
+            patch.Replace(x => x.Active, result.Active);
+            var entityMap = _mapper.Map<PartnerActivePatch>(entity);
+            patch.ApplyTo(entityMap);
+
+            entity = _mapper.Map(entityMap, entity);
+            await _partnerService.UpdateAsync(entity);
+
+            return NoContent();
         }
     }
 }

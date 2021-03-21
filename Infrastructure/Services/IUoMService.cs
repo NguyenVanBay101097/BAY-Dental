@@ -14,5 +14,6 @@ namespace Infrastructure.Services
         Task<PagedResult2<UoMBasic>> GetPagedResultAsync(UoMPaged val);
         decimal ComputePrice(UoM fromUOM, decimal price, UoM toUOM);
         decimal ComputeQtyObj(UoM fromUOM, decimal qty, UoM toUOM, string roundingMethod = "UP");
+        decimal ComputeQty(Guid fromUOMId, decimal qty, Guid toUOMId, string roundingMethod = "UP");
     }
 }

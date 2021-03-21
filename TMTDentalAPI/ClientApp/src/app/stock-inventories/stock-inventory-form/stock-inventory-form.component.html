@@ -1,0 +1,363 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a [routerLink]="['/stock/stock-inventories']">
+                    <span>Kiểm kho</span>
+                </a>
+            </li>
+            <li class="active">
+                <span>Phiếu kiểm kho</span>
+            </li>
+            <li class="active">
+                <span *ngIf="id">{{stockInventory.name}}</span>
+                <span *ngIf="!id">Mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" *ngIf="['done'].indexOf(stateControl) === -1"
+                        (click)="onSave()" accesskey="s">
+                        Lưu</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
+                        *ngIf="id">
+                        Thêm mới</button>
+
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <!-- <div class="dropdown">
+                <button class="btn btn-secondary btn-sm dropdown-toggle" *ngIf="id" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
+                    Thao tác
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a *ngIf="id" class="dropdown-item" (click)="printstockInventory()">In phiếu</a>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <button type="button" *ngIf="id && stateControl == 'draft'" class="btn btn-primary btn-sm"
+                        (click)="prepareInventory()" accesskey="1">
+                        Bắt đầu kiểm kho
+                    </button>
+                    <button type="button" *ngIf="id && stateControl == 'confirmed'" class="btn btn-primary btn-sm"
+                        (click)="actionDone()" accesskey="1">
+                        Xác nhận kiểm kho
+                    </button>
+                    <button type="button" *ngIf="id && stateControl == 'confirmed'" class="btn btn-danger btn-sm"
+                        (click)="actionCancel()" accesskey="1">
+                        Hủy phiếu
+                    </button>
+                    <button type="button" *ngIf="id && stateControl != 'draft'" class="btn btn-primary btn-sm" (click)="onPrintStockInventory()">
+                        In phiếu</button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="stateControl !== 'done'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': stateControl === 'done', 'btn-secondary': stateControl !== 'done'}"
+                        type="button">
+                        Hoàn thành
+                    </button>
+                    <button [disabled]="stateControl !== 'confirmed'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': stateControl === 'confirmed', 'btn-secondary': stateControl !== 'confirmed'}"
+                        type="button">
+                        Đang xử lý
+                    </button>
+                    <button [disabled]="stateControl !== 'draft'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': stateControl === 'draft', 'btn-secondary': stateControl !== 'draft'}"
+                        type="button">
+                        Nháp
+                    </button>
+
+                </div>
+            </div>
+
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Địa điểm kiểm kho
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>{{stockInventory.location ?
+                                        stockInventory.location.nameGet : ''}}</span>
+                                </td>
+                            </tr> -->
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Kiểm kho
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div *ngIf="stateControl == 'draft'">
+                                        <div class="form-check" *ngFor="let filter of filterInventories; let i = index">
+                                            <input class="form-check-input" (change)="onChangeFilter()"
+                                                formControlName='filter' type="radio" id="{{filter.value}}"
+                                                [value]="filter.value">
+                                            <label class="form-check-label" for="{{filter.value}}">
+                                                {{filter.name}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <span *ngIf="stateControl != 'draft'">{{getFilter(stockInventory.filter)}}</span>
+                                </td>
+                            </tr>
+                            <!-- <tr [ngClass]="filterControl == 'category' && stateControl == 'draft'"> -->
+                            <tr [class.d-none]="filterControl != 'category'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Nhóm sản phẩm
+                                    </label>
+                                </td>
+                                <td colspan="1">
+                                    <kendo-combobox [class.d-none]="stateControl != 'draft'" [data]="filterdCategories"
+                                        [textField]="'name'" [filterable]="true" #categCbx formControlName="category"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <div *ngIf="f.category.errors && (f.category.touched || f.category.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.category.errors.required">Chọn nhóm sản phẩm</div>
+                                    </div>
+                                    <span *ngIf="stateControl != 'draft'">{{stockInventory.category?.name}}</span>
+                                </td>
+                            </tr>
+                            <tr [class.d-none]="filterControl != 'criteria'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Tiêu chí kiểm kho
+                                    </label>
+                                </td>
+                                <td colspan="1">
+                                    <kendo-combobox [class.d-none]="stateControl != 'draft'" [data]="filterdCriterias"
+                                        [textField]="'name'" [filterable]="true" #criteriaCbx formControlName="criteria"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <div *ngIf="f.criteria.errors && (f.criteria.touched || f.criteria.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.criteria.errors.required">Chọn tiêu chí kiểm kho</div>
+                                    </div>
+                                    <span *ngIf="stateControl != 'draft'">{{stockInventory.criteria?.name}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Bao gồm sản phẩm hết hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="checkbox" [attr.disabled]="stateControl !== 'draft' ? true : null"
+                                        formControlName="exhausted" kendoCheckBox />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        <span>Ngày kiểm</span>
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker [format]="'dd/MM/yyyy'" *ngIf="stateControl == 'draft'"
+                                        formControlName="dateObj">
+                                    </kendo-datepicker>
+                                    <div *ngIf="stateControl == 'draft' && f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.dateObj.errors.required">Chọn ngày kiểm</div>
+                                    </div>
+                                    <span *ngIf="stateControl != 'draft'">{{stockInventory.date |
+                                        date:'shortDate'}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        <span>Ghi chú</span>
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea class="form-control"
+                                        [attr.disabled]="stateControl === 'done' ? true : null"
+                                        formControlName="note"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs flex-0-0-auto" id="myTab" role="tablist" *ngIf=" id && stateControl != 'draft'">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                            aria-controls="home" aria-selected="true">Chi tiết kiểm kho</a>
+                    </li>
+                    <li class="nav-item" *ngIf="stateControl === 'done'">
+                        <a class="nav-link" id="move-tab" data-toggle="tab" href="#move" role="tab" aria-controls="move"
+                            aria-selected="false">Kết quả điều chỉnh</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content flex-1-1-100 mt-2 overflow-hidden" *ngIf=" id && stateControl != 'draft'">
+                    <div class="tab-pane active h-100" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="o_form_section">
+                            <div class="o_form_section_left"
+                                *ngIf="stateControl == 'confirmed' && filterControl == 'partial'">
+                                <div class="t_search_wrapper">
+                                    <div class="flex-0-0-auto has-search">
+                                        <span class="fa fa-search form-control-feedback"></span>
+                                        <input #search accesskey="C" class="form-control size-text-14"
+                                            placeholder="Tìm kiếm ..." type="text" id="search"
+                                            (keyup)="onChangeSearch($event.target.value);">
+                                    </div>
+                                </div>
+                                <div class="t_scroll">
+                                    <app-stock-inventory-product-list [searchText]="valueSearch" [inventoryId]="id"
+                                    (newEventEmiter)="addLine($event)"></app-stock-inventory-product-list>
+                                </div>
+                               
+                            </div>
+
+                            <div class="o_form_section_right">
+                                <table class="table table-sm table-bordered" id="table_details">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" style="width: 100px;">STT</th>
+                                            <th scope="col" style="width: 120px;">Mã sản phẩm</th>
+                                            <th scope="col" style="width: 200px;">Sản phẩm</th>
+                                            <th scope="col" style="width: 120px;" hasGroups
+                                                [groups]="'product.group_uom'">ĐVT</th>
+                                            <th scope="col" style="width: 10%;">Tồn kho</th>
+                                            <th scope="col" style="width: 10%;">Thực tế</th>
+                                            <th *ngIf="stateControl != 'done'" scope="col" style="width: 10%;">Thao tác
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody formArrayName="lines">
+                                        <ng-container *ngFor="let line of lines.controls; let i=index">
+                                            <tr [formGroupName]="i">
+                                                <td class="align-middle">{{ i + 1 }}</td>
+                                                <td class="align-middle">{{ line.get('product').value.defaultCode}}</td>
+                                                <td class="align-middle">{{ line.get('product').value.name}}</td>
+                                                <td class="align-middle" hasGroups [groups]="'product.group_uom'">
+                                                    <span
+                                                        *ngIf="stateControl != 'draft'">{{line.get('productUOM').value.name}}</span>
+                                                </td>
+                                                <td class="text-right align-middle">
+                                                    <span
+                                                        *ngIf="stateControl != 'draft'">{{line.get('theoreticalQty').value
+                                                        | number}}</span>
+                                                </td>
+                                                <td class="text-right">
+                                                    <kendo-numerictextbox [format]="'n0'" [autoCorrect]="true"
+                                                        *ngIf="stateControl == 'confirmed'" formControlName="productQty"
+                                                        style="width: 120px;">
+                                                    </kendo-numerictextbox>
+                                                    <span
+                                                        *ngIf="stateControl != 'confirmed'">{{line.get('productQty').value
+                                                        | number}}</span>
+                                                </td>
+                                                <td *ngIf="stateControl != 'done' " class="text-center align-middle">
+                                                    <button type="button" title="Hủy" class="btn btn-danger btn-sm"
+                                                        (click)="deleteLine(i)">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>
+                                </table>
+
+                                <!-- <table class="o_group o_inner_group oe_subtotal_footer oe_right">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label pb-0">
+                                                <label class="o_form_label oe_subtotal_footer_separator">
+                                                    Tổng tiền
+                                                </label>
+                                            </td>
+                                            <td colspan="1">
+                                                <span
+                                                    class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal
+                                                    | number}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="stateControl != 'draft'">
+                                            <td colspan="1" class="o_td_label pb-0">
+                                                <label class="o_form_label o_form_label_help oe_subtotal_footer_separator">
+                                                    Còn nợ
+                                                </label>
+                                            </td>
+                                            <td colspan="1">
+                                                <span
+                                                    class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{stockInventory.amountResidual
+                                                    | number}}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table> -->
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane h-100" *ngIf="stateControl != 'draft'" id="move" role="tabpanel"
+                        aria-labelledby="move-tab">
+                        <table class="table table-sm table-bordered" id="table_details">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style="width: 15%;">STT</th>
+                                    <!-- <th scope="col" style="width: 120px;">Mã sản phẩm</th> -->
+                                    <th scope="col" style="width: 40%;">Sản phẩm</th>
+                                    <th scope="col" style="width: 5%;" hasGroups [groups]="'product.group_uom'">ĐVT</th>
+                                    <th scope="col" style="width: 10%;">Số lượng chênh lệch</th>
+                                    <!-- <th scope="col" style="width: 10%;">Thực tế</th> -->
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="moves" *ngIf="moves">
+                                <ng-container *ngFor="let move of moves.controls; let i=index">
+                                    <tr [formGroupName]="i">
+                                        <td class="align-middle">{{ i + 1 }}</td>
+                                        <!-- <td class="align-middle">{{ move.get('product').value.defaultCode}}</td> -->
+                                        <td class="align-middle">{{ move.get('product').value?.name}}</td>
+                                        <td class="align-middle" hasGroups [groups]="'product.group_uom'">
+                                            <span>{{move.get('productUOM').value?.name}}</span>
+                                        </td>
+                                        <td class="text-right align-middle">
+                                            <span>{{move.get('productUOMQty')?.value | number}}</span>
+                                        </td>
+                                        <!-- <td class="text-right" w>
+                                            <kendo-numerictextbox [format]="'n0'"
+                                                *ngIf="stateControl == 'confirmed'"
+                                                formControlName="theoreticalQty" style="width: 120px;">
+                                            </kendo-numerictextbox>
+                                            <span
+                                                *ngIf="stateControl != 'confirmed'">{{line.get('theoreticalQty').value
+                                                | number}}</span>
+                                        </td> -->
+
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>

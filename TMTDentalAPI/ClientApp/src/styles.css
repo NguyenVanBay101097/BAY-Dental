@@ -109,7 +109,7 @@
 }
 
 .o_form_view .o_group .k-widget.k-combobox, .o_form_view .o_group .k-widget.k-numerictextbox, .o_form_view .o_group .k-widget.k-dateinput,
-.o_form_view .o_group .k-widget.k-datepicker, .o_form_view .o_group .k-widget.k-datetimepicker  {
+.o_form_view .o_group .k-widget.k-datepicker, .o_form_view .o_group .k-widget.k-datetimepicker, .o_form_view .o_group .k-widget.k-dropdown  {
   width: 100%;
 }
 
@@ -228,7 +228,7 @@
   border-style: solid;
   border-color: #ccc;
   border-image: initial;
-  border-radius: 4px 0 0 4px !important;
+  border-radius: 5px !important;
   padding: 1px 25px 3px 5px;
 }
 

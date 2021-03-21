@@ -56,6 +56,7 @@ export class HrSalaryReportListComponent implements OnInit {
 
     this.route.queryParamMap.subscribe(params => {
       this.resultSelection = params.get('result_selection');
+      this.skip = 0;
       this.loadDataFromApi();
     });
 
@@ -63,6 +64,7 @@ export class HrSalaryReportListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 
@@ -78,6 +80,7 @@ export class HrSalaryReportListComponent implements OnInit {
 
   onChangeDate(value: any) {
     setTimeout(() => {
+      this.skip = 0;
       this.loadDataFromApi();
     }, 200);
   }
@@ -115,9 +118,9 @@ export class HrSalaryReportListComponent implements OnInit {
     var month = this.formGroup.get('month') && this.formGroup.get('month').value ? this.formGroup.get('month').value.getMonth() : 0
     this.dateFrom = new Date(new Date().getFullYear(), month, 1);
     this.dateTo = new Date(new Date().getFullYear(), month + 1, 0);
+    this.skip = 0;
     this.loadDataFromApi();
   }
-
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;

@@ -51,13 +51,24 @@ export class PartnerOverviewComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.partnerId = this.activeRoute.parent.snapshot.paramMap.get('id');
-    this.GetPartner();
-    this.loadCustomerAppointment();
-    // this.getSaleQoutation();
-    // this.loadPromotion();
-    this.getSaleOrders();
-    this.loadReport();
+    // this.partnerId = this.activeRoute.parent.snapshot.paramMap.get('id');
+    this.activeRoute.parent.params.subscribe(
+      params => {
+        this.partnerId = params.id;
+        this.GetPartner();
+        this.loadCustomerAppointment();
+        // this.getSaleQoutation();
+        // this.loadPromotion();
+        this.getSaleOrders();
+        this.loadReport();  
+      }
+    )
+    // this.GetPartner();
+    // this.loadCustomerAppointment();
+    // // this.getSaleQoutation();
+    // // this.loadPromotion();
+    // this.getSaleOrders();
+    // this.loadReport();
   }
 
   GetPartner() {
@@ -74,18 +85,14 @@ export class PartnerOverviewComponent implements OnInit {
   }
 
   getSaleOrders() {
-    var val = {
-      id: this.partnerId,
-      func: "GetSaleOrders",
-      options: {
-        params: new HttpParams().set('$count', 'true').set('$orderby', 'dateOrder desc')
-      }
-    }
-
-    this.PartnerOdataService.getSaleOrderByPartner(val).subscribe(
+    var val = new SaleOrderPaged();
+    val.limit = 10000;
+    val.companyId = this.authService.userInfo.companyId;
+    val.partnerId = this.partnerId;
+    this.saleOrderService.getPaged(val).subscribe(
       result => {
-        this.saleOrders = result['value'];
-        this.saleCount = result['@odata.count'];
+        this.saleOrders = result.items;
+        this.saleCount = result.totalItems;
       }
     )
   }

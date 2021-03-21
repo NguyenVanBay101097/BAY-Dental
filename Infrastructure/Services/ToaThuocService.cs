@@ -98,7 +98,7 @@ namespace Infrastructure.Services
             if (val.ProductId.HasValue)
             {
                 var productObj = GetService<IProductService>();
-                var product = await productObj.SearchQuery(x => x.Id == val.ProductId).Include(x=>x.ProductUoMRels).Include(x => x.UOM)
+                var product = await productObj.SearchQuery(x => x.Id == val.ProductId).Include(x => x.ProductUoMRels).Include(x => x.UOM)
                     .FirstOrDefaultAsync();
                 res.ProductId = product.Id;
                 res.Product = _mapper.Map<ProductBasic>(product);
@@ -139,8 +139,12 @@ namespace Infrastructure.Services
 
         public async Task<ToaThuocBasic> CreateToaThuocFromUIAsync(ToaThuocSaveFromUI val)
         {
+            var toaThuocLineObj = GetService<IToaThuocLineService>();
             var toathuoc = _mapper.Map<ToaThuoc>(val);
             SaveOrderLines(val, toathuoc);
+            toaThuocLineObj.ComputeQtyToInvoice(toathuoc.Lines);
+
+            _ComputeInvoiceStatus(toathuoc);
             await CreateAsync(toathuoc);
 
             if (val.SaveSamplePrescription)
@@ -149,6 +153,16 @@ namespace Infrastructure.Services
             var result = _mapper.Map<ToaThuocBasic>(toathuoc);
 
             return result;
+        }
+
+        private void _ComputeInvoiceStatus(ToaThuoc self)
+        {
+            if (self.Lines.All(x => x.ToInvoiceQuantity == x.Quantity))
+                self.InvoiceStatus = "no";
+            else if (self.Lines.All(x => x.ToInvoiceQuantity == 0))
+                self.InvoiceStatus = "invoiced";
+            else
+                self.InvoiceStatus = "partially_invoice";
         }
 
         public async Task UpdateToaThuocFromUIAsync(Guid id, ToaThuocSaveFromUI val)
@@ -271,7 +285,7 @@ namespace Infrastructure.Services
 
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
             var items = await _mapper.ProjectTo<ToaThuocBasic>(query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(limit)).ToListAsync();
-          
+
             return new PagedResult2<ToaThuocBasic>(totalItems, val.Offset, limit)
             {
                 Items = items
@@ -312,6 +326,26 @@ namespace Infrastructure.Services
 
                 sequence++;
             }
+        }
+
+        public async Task ComputeToInvoiceQuantityLines(Guid id)
+        {
+            //compute invoice to qty của lines
+            var toaThuocLineObj = GetService<IToaThuocLineService>();
+            var lines = await toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id)
+                .Include(x => x.MedicineOrderLines).ThenInclude(x => x.MedicineOrder)
+                .ToListAsync();
+
+            toaThuocLineObj.ComputeQtyToInvoice(lines);
+            await toaThuocLineObj.UpdateAsync(lines);
+
+            //compute đến invoice status toa thuoc
+            //nếu có line nào mà qty to invoice > 0 thì to_invoice
+            //else thì invoiced
+            var toathuoc = await GetByIdAsync(id);
+            _ComputeInvoiceStatus(toathuoc);
+
+            await UpdateAsync(toathuoc);
         }
     }
 }

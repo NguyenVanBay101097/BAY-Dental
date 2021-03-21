@@ -42,6 +42,7 @@ export class ProductManagementServicesComponent implements OnInit {
     this.searchServiceUpdate
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((value) => {
+        this.skip = 0;
         this.loadServices();
       });
     this.loadServices();
@@ -178,8 +179,9 @@ export class ProductManagementServicesComponent implements OnInit {
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
+      scrollable: true
     });
-    modalRef.componentInstance.title = "Import excel";
+    modalRef.componentInstance.title = "Import Excel";
     modalRef.componentInstance.type = "service";
     modalRef.result.then(
       () => {
@@ -212,6 +214,24 @@ export class ProductManagementServicesComponent implements OnInit {
         window.URL.revokeObjectURL(data);
       }, 100);
     });
+  }
+
+  updateServiceFromExcel(){
+    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, {
+      size: "lg",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Cập nhật Excel";
+    modalRef.componentInstance.type = "service";
+    modalRef.componentInstance.isUpdate = true;
+    modalRef.result.then(
+      () => {
+        this.loadServices();
+      },
+      () => { }
+    );
   }
 
 }

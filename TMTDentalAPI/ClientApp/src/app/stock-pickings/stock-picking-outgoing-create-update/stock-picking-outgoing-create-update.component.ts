@@ -18,6 +18,9 @@ import { PrintService } from 'src/app/shared/services/print.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { forkJoin } from 'rxjs';
+import { unionBy } from 'lodash';
+import { observe } from 'fast-json-patch';
 
 declare var jquery: any;
 declare var $: any;
@@ -38,6 +41,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   filteredPartners: PartnerSimple[] = [];
   productSearch: string;
   productList: ProductBasic2[] = [];
+  sourceProductList = [];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild(TaiProductListSelectableComponent, { static: false }) productListSelectable: TaiProductListSelectableComponent;
 
@@ -82,10 +86,10 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       debounceTime(300),
       tap(() => (this.partnerCbx.loading = true)),
       switchMap(value => this.searchPartners(value))
-    ).subscribe(result => {
-      this.filteredPartners = result;
-      this.partnerCbx.loading = false;
-    });
+      ).subscribe(results => {
+        this.filteredPartners =_.unionBy(results[0], results[1],results[2], 'id');
+        this.partnerCbx.loading = false;
+      });
 
     this.loadFilteredPartners();
   }
@@ -95,12 +99,13 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
   loadProductList() {
     var val = new ProductPaged();
-    val.limit = 10;
+    val.limit = 0;
     val.offset = 0;
     val.type = 'product,consu';
     val.search = this.productSearch || '';
     this.productService.getPaged(val).subscribe(res => {
       this.productList = res.items;
+      this.sourceProductList = res.items;
       this.productListSelectable.resetIndex();
     }, err => {
     });
@@ -118,20 +123,47 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
   onProductInputSearchChange(text) {
     this.productSearch = text;
-    this.loadProductList();
+
+    if(!this.productSearch || this.productSearch.trim() == '')
+     this.productList = this.sourceProductList;
+     else {
+       this.productSearch = this.productSearch.trim().toLocaleLowerCase();
+      this.productList = this.sourceProductList.filter(x=> x.name.toLocaleLowerCase().indexOf(this.productSearch) >= 0
+      || x.nameNoSign.toLocaleLowerCase().indexOf(this.productSearch) >= 0 
+      || x.defaultCode.toLocaleLowerCase().indexOf(this.productSearch) >=0
+      );
+     }
+
+     this.productListSelectable.resetIndex();
   }
 
   loadFilteredPartners() {
-    this.searchPartners().subscribe(result => {
-      this.filteredPartners = result;
-    });
+    this.searchPartners().subscribe(
+      results => {
+        this.filteredPartners =_.unionBy(results[0], results[1],results[2], 'id');
+      }
+    );
   }
 
   searchPartners(search?: string) {
     var val = new PartnerPaged();
     val.search = search;
-    // val.customer = true;
-    return this.partnerService.getAutocompleteSimple(val);
+    val.customer = true;
+    val.limit = 10;
+    val.active = true;
+    var partner$ = this.partnerService.getAutocompleteSimple(val);
+
+    var val2 = Object.assign({},val);
+    delete val2.customer;
+    val2.supplier = true;
+    var supplier$ = this.partnerService.getAutocompleteSimple(val2);
+
+    var val3 = Object.assign({},val);
+    delete val3.customer;
+    val3.employee = true;
+    var employee$ = this.partnerService.getAutocompleteSimple(val3);
+
+    return forkJoin([partner$, supplier$, employee$]);
   }
 
   loadDefault() {
@@ -145,6 +177,8 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     this.stockPickingService.get(this.id).subscribe(result => {
       this.picking = result;
       this.pickingForm.patchValue(result);
+      let date = this.intlService.parseDate(result.date);
+      this.pickingForm.get('dateObj').patchValue(date);
       this.moveLines.clear();
       result.moveLines.forEach(line => {
         this.moveLines.push(this.fb.group(line));
@@ -253,6 +287,13 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       });
     } else {
       this.stockPickingService.create(val).subscribe(result => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.router.navigate(['stock/outgoing-pickings/edit/', result.id]);
       });
     }
@@ -278,12 +319,26 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
         this.stockPickingService.update(this.id, val).subscribe(() => {
           this.stockPickingService.actionDone([this.id]).subscribe(() => {
+            this.notificationService.show({
+              content: 'Xác nhận thành công',
+              hideAfter: 3000,
+              position: { horizontal: 'center', vertical: 'top' },
+              animation: { type: 'fade', duration: 400 },
+              type: { style: 'success', icon: true }
+            });
             this.loadRecord();
           });
         });
       } else {
         //only need done
         this.stockPickingService.actionDone([this.id]).subscribe(() => {
+          this.notificationService.show({
+            content: 'Xác nhận thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
           this.loadRecord();
         });
       }
@@ -305,6 +360,13 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
       this.stockPickingService.create(val).subscribe(result => {
         this.stockPickingService.actionDone([result.id]).subscribe(() => {
+          this.notificationService.show({
+            content: 'Xác nhận thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
           this.router.navigate(['stock/outgoing-pickings/edit/', result.id]);
         }, () => {
           this.router.navigate(['stock/outgoing-pickings/edit/', result.id]);

@@ -34,7 +34,11 @@
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="name" title="Diễn giải" width="100"></kendo-grid-column>
-    <!-- <kendo-grid-column field="ref" title="Loại thu chi" width="120"></kendo-grid-column> -->
+    <kendo-grid-column *ngIf="paged.resultSelection == 'cash_bank'" field="ref" title="Phương thức thanh toán" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{getTypePayment(dataItem.journalType)}}
+        </ng-template>
+    </kendo-grid-column>
     <kendo-grid-column field="debit" title="Thu" width="100" class="text-right">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.debit | number}}

@@ -1,6 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -12,7 +13,7 @@
                     <h1>
                         <input type="text" name="name" class="form-control" formControlName="name">
                     </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger mb-1">
                         <div *ngIf="f.name.errors.required">Nhập tên dịch vụ</div>
                     </div>
                     <div>
@@ -29,10 +30,16 @@
                 <div class="o_notebook">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab" aria-controls="home" aria-selected="true">Thông tin</a>
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab"
+                                aria-controls="home" aria-selected="true">Thông tin</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#step" role="tab" aria-controls="profile" aria-selected="false">Công đoạn</a>
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#step" role="tab"
+                                aria-controls="profile" aria-selected="false">Công đoạn</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="bom-tab" data-toggle="tab" href="#productBom" role="tab"
+                                aria-controls="profile" aria-selected="false">Định mức vật tư</a>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -48,13 +55,18 @@
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <div class="d-flex">
-                                                    <kendo-combobox [data]="filterdCategories" [textField]="'completeName'" [filterable]="true" #categCbx formControlName="categ" [valueField]="'id'" (filterChange)="categCbxFilterChange2($event)" [loading]="categCbxLoading">
+                                                    <kendo-combobox [data]="filterdCategories"
+                                                        [textField]="'completeName'" [filterable]="true" #categCbx
+                                                        formControlName="categ" [valueField]="'id'"
+                                                        (filterChange)="categCbxFilterChange2($event)"
+                                                        [loading]="categCbxLoading">
                                                     </kendo-combobox>
                                                     <a class="btn btn-sm btn-light" (click)="quickCreateCateg()">
                                                         <span class="k-icon k-i-plus"></span>
                                                     </a>
                                                 </div>
-                                                <div *ngIf="f.categ.errors && (f.categ.touched || f.categ.dirty || submitted)" class="text-danger">
+                                                <div *ngIf="f.categ.errors && (f.categ.touched || f.categ.dirty || submitted)"
+                                                    class="text-danger">
                                                     <div *ngIf="f.categ.errors.required">Chọn nhóm dịch vụ</div>
                                                 </div>
                                             </td>
@@ -90,7 +102,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="listPrice">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                    formControlName="listPrice">
                                                 </kendo-numerictextbox>
                                             </td>
                                         </tr>
@@ -101,7 +114,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="laboPrice">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                    formControlName="laboPrice">
                                                 </kendo-numerictextbox>
                                             </td>
                                         </tr>
@@ -114,12 +128,17 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="input-group mb-3">
-                                        <input type="text" class="form-control" formControlName="stepName" placeholder="Nhập tên công đoạn sau đó nhấn enter" (keydown)="onKeyDownStepName($event)" />
+                                        <input type="text" class="form-control" formControlName="stepName"
+                                            placeholder="Nhập tên công đoạn sau đó nhấn enter"
+                                            (keydown)="onKeyDownStepName($event)" />
                                         <div class="input-group-append">
-                                            <button type="button" class="btn btn-primary btn-sm" (click)="createTempProductStepList()">Thêm</button>
+                                            <button type="button" class="btn btn-primary btn-sm"
+                                                (click)="createTempProductStepList()">Thêm</button>
                                         </div>
-                                        <i class="fas fa-question-circle ml-2 text-primary" style="font-size: 25px; padding: 7px;" triggers="mouseenter:mouseleave" ngbPopover="Click vào biểu tượng bút trên mỗi dòng trong danh sách công đoạn, sau khi sửa tên xong nhấn Enter để lưu" placement="right"
-                                            popoverTitle="Hướng dẫn cập nhật công đoạn"></i>
+                                        <i class="fas fa-question-circle ml-2 text-primary"
+                                            style="font-size: 25px; padding: 7px;" triggers="mouseenter:mouseleave"
+                                            ngbPopover="Click vào biểu tượng bút trên mỗi dòng trong danh sách công đoạn, sau khi sửa tên xong nhấn Enter để lưu"
+                                            placement="right" popoverTitle="Hướng dẫn cập nhật công đoạn"></i>
                                     </div>
                                 </div>
                                 <div class="col"></div>
@@ -140,21 +159,87 @@
                                         </td>
                                         <td #stepName>
                                             <span *ngIf="showInput(i.order)">{{i.name}}</span>
-                                            <form *ngIf="!showInput(i.order)" [formGroup]="formStepEdit" (ngSubmit)="submitStepName(i.order)">
+                                            <form *ngIf="!showInput(i.order)" [formGroup]="formStepEdit"
+                                                (ngSubmit)="submitStepName(i.order)">
                                                 <input type="text" formControlName="name" />
                                             </form>
                                         </td>
                                         <td colspan="1">
-                                            <button type="button" [disabled]=" disableButton(i.order,true)" class="btn btn-light btn-sm mr-2" (click)="editStepOrCancel(i.order, i.name)">
+                                            <button type="button" [disabled]=" disableButton(i.order,true)"
+                                                class="btn btn-light btn-sm mr-2"
+                                                (click)="editStepOrCancel(i.order, i.name)">
                                                 <i class="fas fa-pen"></i>
                                             </button>
-                                            <button type="button" class="btn btn-light btn-sm mr-2" (click)="removeStepListItem(i.order)" [disabled]=" disableButton(i.order,false)">
+                                            <button type="button" class="btn btn-light btn-sm mr-2"
+                                                (click)="removeStepListItem(i.order)"
+                                                [disabled]=" disableButton(i.order,false)">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <div class="tab-pane" id="productBom" role="tabpanel" aria-labelledby="bom-tab">
+                            <div>
+                                <div class="mb-2">
+                                    <button type="button" (click)="createMaterialProduct()" 
+                                    class="btn btn-sm btn-primary">Thêm vật tư mới</button>
+                                </div>
+                             
+                                <table class="table table-sm b-table-border table-tbody-ver-align-middle border-bottom">
+                                    <thead>
+                                        <tr>
+                                            <th width="50">STT</th>
+                                            <th width="250">Vật tư</th>
+                                            <th width="100">ĐVT</th>
+                                            <th width="150">Số lượng tối đa</th>
+                                            <th width="50">#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody formArrayName="boms">
+                                        <ng-container *ngFor="let item of boms.controls; let i=index">
+                                            <tr [formGroupName]="i">
+                                                <td>{{i+1}}</td>
+                                                <td>
+                                                    <kendo-combobox [data]="filteredProducts" 
+                                                        [valueField]="'id'" [textField]="'name'" style="width:70%;"
+                                                        #productCbx (valueChange)="onValueChange($event, i)"
+                                                        formControlName="materialProduct">
+                                                    </kendo-combobox>
+                                                    <div *ngIf="item.get('materialProduct').errors && (item.get('materialProduct').touched || item.get('materialProduct').dirty || submitted)" class="text-danger">
+                                                        <div *ngIf="item.get('materialProduct').errors.required">Chọn vật tư</div>
+                                                        <div *ngIf="item.get('materialProduct').errors.incorrect">Vật tư đã tồn tại</div>
+                                                    </div>
+            
+                                                
+                                                </td>
+                                                <td>
+                                                    <span>{{item.get('productUOM') && item.get('productUOM').value ?
+                                                        item.get('productUOM').value.name : ''}}</span>
+                                                </td>
+                                                <td>
+                                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="quantity">
+                                                    </kendo-numerictextbox>
+                                                    <div *ngIf="item.get('quantity').errors && (item.get('quantity').touched || item.get('quantity').dirty || submitted)" class="text-danger">
+                                                        <div *ngIf="item.get('quantity').errors.required">Chọn số lượng</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <button type="button" (click)="deleteMaterialProduct(i)"
+                                                        class="btn btn-icon btn-sm btn-light text-right">
+                                                        <span class="k-icon k-i-delete"></span>
+                                                    </button>
+                                                </td>
+
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>
+                                </table>
+                                <button type="button" (click)="addMaterialProduct()"
+                                    class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Thêm vật tư</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -164,6 +249,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-primary" (click)="saveOrUpdate()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q">Đóng</button>
 </footer>

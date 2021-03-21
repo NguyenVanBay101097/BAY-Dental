@@ -7,7 +7,7 @@
         <span class="fa fa-trash-alt o_clear_file_button float-right" (click)="onClear()" title="Hủy"></span>
         <span class="o_form_binary_progress" *ngIf="uploading">Uploading...</span>
         <div class="o_hidden_input_file hidden">
-            <input #inputfile class="o_input_file" name="ufile" type="file" (change)="onFileChange($event)">
+            <input #inputfile class="o_input_file" accept="image/*" name="ufile" type="file" (change)="onFileChange($event)">
         </div>
     </div>
 </div>

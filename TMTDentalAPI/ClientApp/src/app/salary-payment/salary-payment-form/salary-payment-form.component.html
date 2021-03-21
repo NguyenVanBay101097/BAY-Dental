@@ -1,6 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.close()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -10,16 +11,16 @@
                 <div class="o_group">
                     <table class="o_group o_inner_group">
                         <tbody>
-                            <!-- <tr>
+                            <tr *ngIf="salaryPayment.name">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Mã phiếu
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                  <span style="font-weight: 600;">{{id?(salaryPayment?salaryPayment.Name:''):'Hệ thống sẽ tạo tự động'}}</span>
+                                  <span style="font-weight: 600;">{{salaryPayment.name}}</span>
                                 </td>
-                            </tr> -->
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -27,10 +28,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker [min]="minDateTime" [navigation]="false" [max]="maxDateTime" formControlName="DateObj" [rangeValidation]="true" (valueChange)="onChangeDate($event)" [disableControl]="checkIsDisable(id)">
+                                    <kendo-datepicker [min]="minDateTime" [navigation]="false" [max]="maxDateTime"
+                                        formControlName="dateObj" [rangeValidation]="true" [disableControl]="!editable">
                                     </kendo-datepicker>
-                                    <div *ngIf="f.DateObj.errors" class="text-danger">
-                                        <div>Chọn ngày trong khoảng {{minDateTime | date:'dd/MM/yyyy'}} - {{monthEnd | date:'dd/MM/yyyy'}}</div>
+                                    <div *ngIf="f.dateObj.errors" class="text-danger">
+                                        <div>Chọn ngày trong khoảng {{minDateTime | date:'dd/MM/yyyy'}} - {{monthEnd |
+                                            date:'dd/MM/yyyy'}}</div>
                                     </div>
                                 </td>
                             </tr>
@@ -41,8 +44,14 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true" [disableControl]="checkIsDisable(id)" #journalCbx formControlName="Journal" [valueField]="'id'">
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
+                                        [disableControl]="!editable" #journalCbx formControlName="journal"
+                                        [valueField]="'id'">
                                     </kendo-combobox>
+                                    <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.journal.errors.required">Chọn phương thức</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -52,10 +61,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" [filterable]="true" [disableControl]="checkIsDisable(id)" #employeeCbx formControlName="Employee" [valueField]="'id'">
+                                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" [filterable]="true"
+                                        [disableControl]="!editable" #employeeCbx formControlName="employee"
+                                        [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.Employee.errors && (f.Employee.touched || f.Employee.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.Employee.errors.required">Vui lòng chọn người nhận</div>
+                                    <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.employee.errors.required">Chọn người nhận</div>
                                     </div>
                                 </td>
                             </tr>
@@ -66,10 +78,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="Amount" [disableControl]="checkIsDisable(id)">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="amount"
+                                        [disableControl]="!editable">
                                     </kendo-numerictextbox>
-                                    <div *ngIf="f.Amount.errors && (f.Amount.touched || f.Amount.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.Amount.errors.required">Vui lòng nhập số tiền ứng</div>
+                                    <div *ngIf="f.amount.errors && (f.amount.touched || f.amount.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.amount.errors.required">Nhập số tiền ứng</div>
                                     </div>
                                 </td>
                             </tr>
@@ -80,7 +94,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea class="form-control" [disableControl]="checkIsDisable(id)" formControlName="Reason"></textarea>
+                                    <textarea class="form-control" [disableControl]="!editable"
+                                        formControlName="reason"></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -92,16 +107,9 @@
 </div>
 
 <footer class="modal-footer">
-    <div *ngIf="salaryPayment ? salaryPayment.State === 'waiting' : '';else other_content">
-        <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu và In</button>
-        <button type="button" *ngIf="id" class="btn btn-primary ml-1" (click)="actionConfirm()">Xác nhận</button>
-    </div>
-    <ng-template #other_content>
-        <button type="button" *ngIf="id" class="btn btn-primary" (click)="printSalaryPayment(id)">In</button>
-    </ng-template>
-    <div *ngIf="!salaryPayment">
-        <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu và In</button>
-        <button type="button" class="btn btn-primary ml-1" (click)="actionConfirm()">Xác nhận</button>
-    </div>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.close()" accesskey="q">Đóng</button>
+    <button type="button" *ngIf="editable" class="btn btn-primary" (click)="onSavePrint()" accesskey="s">Lưu và In</button>
+    <button type="button" *ngIf="editable" class="btn btn-primary ml-1" (click)="actionConfirm()">Xác nhận</button>
+    <button type="button" *ngIf="salaryPayment.state == 'done'" class="btn btn-primary" (click)="printItem(id)">In phiếu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
 </footer>

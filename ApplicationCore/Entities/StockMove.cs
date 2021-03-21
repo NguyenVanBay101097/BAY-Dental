@@ -114,6 +114,9 @@ namespace ApplicationCore.Entities
         public Guid? PurchaseLineId { get; set; }
         public PurchaseOrderLine PurchaseLine { get; set; }
 
+        public Guid? InventoryId { get; set; }
+        public StockInventory Inventory { get; set; }
+
         public bool IsIn()
         {
             if (!Location.ShouldBeValued() && LocationDest.ShouldBeValued())

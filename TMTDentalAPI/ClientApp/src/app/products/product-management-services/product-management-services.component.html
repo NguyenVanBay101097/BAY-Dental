@@ -1,39 +1,27 @@
 <div class="pms-wrapper d-flex">
     <div class="pms-left border mr-2">
-        <app-product-category-list (onDelete)="onDeleteCate($event)" (createBtnEvent)="onCreateBtnEvent($event)" [categories]="categories" (onSelect)="onSelectedCate($event)" [type]="type">
+        <app-product-category-list (onDelete)="onDeleteCate($event)" (createBtnEvent)="onCreateBtnEvent($event)"
+            [categories]="categories" (onSelect)="onSelectedCate($event)" [type]="type">
         </app-product-category-list>
     </div>
     <div class="pms-right border h-100 overflow-auto d-flex flex-column p-2">
         <div class="flex-0-0-auto mb-3 d-flex align-items-center">
-            <div>
-                <div class="d-flex">
-                    <div class="mr-2">
-                        <div class="RNNXgb">
-                            <div class="SDkEP">
-                                <div class="iblpc">
-                                    <div class="hsuHs">
-                                        <span class="wFncld z1asCe MZy1Rb">
-                                            <span class="fa fa-search"></span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="a4bIc">
-                                    <div class="pR49Ae gsfi"></div>
-                                    <input [(ngModel)]="searchService" (ngModelChange)="this.searchServiceUpdate.next($event)"
-                                    class="gLFyf" placeholder="Tìm kiếm theo mã hoặc tên ..." type="text">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex-fill">
-                        <button class="btn btn-sm btn-primary mr-2" (click)="createService()">Thêm mới</button>
-                        <button type="button" class="btn btn-light bg-white btn-sm mr-2" (click)="importFromExcel()">
-                            <i class="fas fa-upload"></i> Import
-                        </button>
-                        <button type="button" class="btn btn-light bg-white btn-sm" (click)="exportExcelFile()">
-                            <i class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
-                    </div>
-                </div>
+            <div class="has-search mr-1 flex-fill">
+                <span class="fa fa-search form-control-feedback"></span>
+                <input [(ngModel)]="searchService" (ngModelChange)="this.searchServiceUpdate.next($event)"
+                    class="form-control size-text-14" placeholder="Tìm kiếm theo mã hoặc tên ..." type="text">
+            </div>
+            <div class="flex-fill">
+                <button class="btn btn-sm btn-primary mr-2" (click)="createService()">Thêm mới</button>
+                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="importFromExcel()">
+                    <i class="fas fa-upload"></i> Import
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="exportExcelFile()">
+                    <i class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
+                <button class="btn btn-sm btn-secondary mr-2" (click)="updateServiceFromExcel()">
+                    <i class="fas fa-upload"></i>
+                    Cập nhật Excel</button>
+
             </div>
         </div>
         <div class="flex-1-1-100 h-100 overflow-hidden">

@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-stock-picking-incoming-list',
@@ -24,18 +25,21 @@ export class StockPickingIncomingListComponent implements OnInit {
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
-  dateFrom: Date;
-  dateTo: Date;
+  dateFrom: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 1);;
+  dateTo: Date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
 
   constructor(private route: ActivatedRoute, private stockPickingService: StockPickingService,
     private pickingTypeService: StockPickingTypeService, private router: Router,
-    private modalService: NgbModal, private intlService: IntlService) { }
+    private modalService: NgbModal, private intlService: IntlService, 
+    private notificationService: NotificationService 
+  ) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 
@@ -47,7 +51,7 @@ export class StockPickingIncomingListComponent implements OnInit {
       case 'done':
         return 'Hoàn thành';
       default:
-        return 'Mới';
+        return 'Nháp';
     }
   }
 
@@ -82,6 +86,7 @@ export class StockPickingIncomingListComponent implements OnInit {
   onDateSearchChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
@@ -99,11 +104,18 @@ export class StockPickingIncomingListComponent implements OnInit {
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa phiếu nhập';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa phiếu nhập kho';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn xóa phiếu nhập kho?';
     modalRef.result.then(() => {
       this.stockPickingService.delete(item.id).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xóa thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.loadDataFromApi();
       });
     });

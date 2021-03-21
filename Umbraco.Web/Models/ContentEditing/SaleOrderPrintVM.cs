@@ -50,6 +50,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Ref { get; set; }
 
         public Guid? AccountPaymentId { get; set; }
+        public string AccountPaymentName { get; set; }
 
         public string PaymentPartnerType { get; set; }
     }

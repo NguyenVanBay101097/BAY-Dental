@@ -6,7 +6,7 @@ import { CompanyListComponent } from './company-list/company-list.component';
 import { CompanyService } from './company.service';
 import { CompanyCuDialogComponent } from './company-cu-dialog/company-cu-dialog.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CompanyCreateUpdateComponent } from './company-create-update/company-create-update.component';
 import { SharedModule } from '../shared/shared.module';
 
@@ -17,7 +17,8 @@ import { SharedModule } from '../shared/shared.module';
     CompaniesRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    FormsModule
   ],
   providers: [
     CompanyService

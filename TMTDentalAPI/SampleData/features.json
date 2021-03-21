@@ -116,6 +116,32 @@
             "Permission": "Basic.AccountPayment.Delete"
           }
         ]
+      },
+      {
+        "Name": "Yêu cầu vật tư",
+        "Permission": "Basic.ProductRequest",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.ProductRequest.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.ProductRequest.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.ProductRequest.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.ProductRequest.Delete"
+          },
+          {
+            "Name": "Xuất kho",
+            "Permission": "Basic.ProductRequest.Done"
+          }
+        ]
       }
     ]
   },
@@ -216,6 +242,50 @@
           {
             "Name": "Xóa",
             "Permission": "Stock.Picking.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Tiêu chí kiểm kho",
+        "Permission": "Stock.Criteria",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Stock.Criteria.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Stock.Criteria.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Stock.Criteria.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Stock.Criteria.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Kiểm kho",
+        "Permission": "Stock.Inventory",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Stock.Inventory.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Stock.Inventory.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Stock.Inventory.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Stock.Inventory.Delete"
           }
         ]
       }
@@ -1129,5 +1199,73 @@
       }
     ],
     "Groups": "tcare.group_tcare"
+  },
+  {
+    "Name": "Khảo sát đánh giá",
+    "Permission": "Survey",
+    "Children": [
+      {
+        "Name": "Danh sách công việc",
+        "Permission": "Survey.Assignment",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Survey.Assignment.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.Assignment.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Survey.Assignment.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Survey.Assignment.Delete"
+          },
+          {
+            "Name": "Hủy khảo sát",
+            "Permission": "Survey.Assignment.DeleteUserInput"
+          }
+        ]
+      },
+      {
+        "Name": "Khảo sát",
+        "Permission": "Survey.UserInput",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Survey.UserInput.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.UserInput.Create"
+          }
+        ]
+      },
+      {
+        "Name": "Câu hỏi khảo sát",
+        "Permission": "Survey.Question",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Survey.Question.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.Question.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Survey.Question.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Survey.Question.Delete"
+          }
+        ]
+      }
+    ]
   }
 ]

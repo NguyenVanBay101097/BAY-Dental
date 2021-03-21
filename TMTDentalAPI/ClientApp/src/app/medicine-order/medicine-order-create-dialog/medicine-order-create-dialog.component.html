@@ -1,7 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -23,16 +22,29 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span
-                                        *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
-                                        {{precscriptPayment && precscriptPayment.journal ?
-                                        precscriptPayment.journal.name : ''}}
-                                    </span>
-                                    <kendo-combobox
-                                        [ngClass]="{'d-none': precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'}"
-                                        [data]="filteredJournals" [textField]="'name'" [filterable]="true" #journalCbx
-                                        formControlName="journal" [valueField]="'id'">
+                                    <kendo-combobox [class.d-none]="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'"
+                                        [data]="filteredJournals" [textField]="'name'" [valueField]="'id'"
+                                        [filterable]="true" #journalCbx formControlName="journal">
                                     </kendo-combobox>
+                                    <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
+                                    </div>
+                                    <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
+                                        {{ precscriptPayment && precscriptPayment.journal ? precscriptPayment.journal.name : '' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Nội dung
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
+                                        {{precscriptPayment ? precscriptPayment.note : ''}}
+                                    </span>
+                                    <textarea *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" formControlName="note" class="form-control"></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -46,32 +58,18 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span
-                                        *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
-                                        {{precscriptPayment ? precscriptPayment.orderDate : 'dd/MM/yyyy'}}
-                                    </span>
-                                    <kendo-datepicker
-                                        *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
+                                    <kendo-datepicker [class.d-none]="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'" 
                                         [format]="'dd/MM/yyyy'" formControlName="orderDate">
                                     </kendo-datepicker>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Nội dung
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <span
-                                        *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
-                                        {{precscriptPayment ? precscriptPayment.note : ''}}
+                                    <div *ngIf="f.orderDate.errors && (f.orderDate.touched || f.orderDate.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.orderDate.errors.required">Chọn ngày thanh toán</div>
+                                    </div>
+                                    <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
+                                        {{precscriptPayment ? precscriptPayment.orderDate : 'dd/MM/yyyy'}}
                                     </span>
-                                    <textarea
-                                        *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
-                                        formControlName="note" class="form-control"></textarea>
                                 </td>
                             </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -120,8 +118,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{precscriptPayment.partner ? computeGender(precscriptPayment.partner.gender) :
-                                    ''}}
+                                    {{precscriptPayment.partner ? computeGender(precscriptPayment.partner.gender) : ''}}
                                 </td>
                             </tr>
                             <tr>
@@ -144,44 +141,35 @@
                                 <th scope="col">Tên thuốc</th>
                                 <th scope="col" class="text-center">Ngày uống</th>
                                 <th scope="col" class="text-center">Mỗi lần</th>
-                                <th scope="col" class="text-center">Số ngày</th>
+                                <!-- <th scope="col" class="text-center">Số ngày</th> -->
                                 <th scope="col">Sử dụng</th>
                                 <th scope="col" class="text-center">Số lượng</th>
-                                <th scope="col" class="text-right">Đơn giá</th>
+                                <th scope="col" style="width: 150px;" class="text-right">Đơn giá</th>
                                 <th scope="col" class="text-right">Thành tiền</th>
-                                <th scope="col" class="text-center"
-                                    *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'">
+                                <th scope="col" class="text-center" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'">
                                     Thao tác</th>
                             </tr>
                         </thead>
                         <tbody formArrayName="medicineOrderLines">
                             <ng-container *ngFor="let line of medicineOrderLines.controls; let i=index">
                                 <tr [formGroupName]="i">
-                                    <td>{{line.get('toaThuocLine') && line.get('toaThuocLine').value ?
-                                        line.get('toaThuocLine').value.product.name : ''}}</td>
+                                    <td>{{line.get('product').value.name}}</td>
                                     <td class="text-center">
-                                        {{line.get('toaThuocLine') &&
-                                        line.get('toaThuocLine').value ?
-                                        line.get('toaThuocLine').value.numberOfTimes : ''}} lần
+                                        {{line.get('toaThuocLine') && line.get('toaThuocLine').value ? line.get('toaThuocLine').value.numberOfTimes : ''}} lần
                                     </td>
                                     <td class="text-center">
-                                        {{line.get('toaThuocLine') &&
-                                        line.get('toaThuocLine').value ?
-                                        line.get('toaThuocLine').value.amountOfTimes : ''}}
-                                        {{line.get('toaThuocLine').value.product.uomName}}</td>
-                                    <td class="text-center">
-                                        {{line.get('toaThuocLine') &&
-                                        line.get('toaThuocLine').value ? line.get('toaThuocLine').value.numberOfDays
-                                        : ''}}</td>
-                                    <td>{{line.get('toaThuocLine') ?
-                                        computeUseAt(line.get('toaThuocLine').value.useAt) :
-                                        ''}}</td>
+                                        {{line.get('toaThuocLine') && line.get('toaThuocLine').value ? line.get('toaThuocLine').value.amountOfTimes : ''}} {{line.get('productUoM') && line.get('productUoM').value?.name}}
+                                    </td>
+                                    <!-- <td class="text-center">
+                                        {{line.get('toaThuocLine') && line.get('toaThuocLine').value ?
+                                        line.get('toaThuocLine').value.numberOfDays : ''}}</td> -->
+                                    <td>{{line.get('toaThuocLine') ? computeUseAt(line.get('toaThuocLine').value.useAt) : ''}}
+                                    </td>
                                     <td class="text-center" style="width: 10%;">
-                                        <span
-                                            *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
-                                            {{line.get('quantity') ? line.get('quantity').value : 1}}
+                                        <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
+                                            {{line.get('quantity').value | number}}
                                         </span>
-                                        <kendo-numerictextbox (valueChange)="computeTotalAmount()" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [min]="0" [format]="'n0'" formControlName="quantity">
+                                        <kendo-numerictextbox (valueChange)="computeTotalAmount()" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [min]="0" [format]="'n0'" [autoCorrect]="true" formControlName="quantity">
                                         </kendo-numerictextbox>
                                         <!-- <input [min]="0"
                                             *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
@@ -189,24 +177,26 @@
                                             (change)="computeTotalAmount()" (keyup)="computeTotalAmount()"> -->
                                     </td>
                                     <td class="text-right">
-                                        {{line.get('price') ? (line.get('price').value | number) : ''}}
+                                        <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
+                                            {{line.get('price').value | number}}
+                                        </span>
+                                        <kendo-numerictextbox (valueChange)="computeTotalAmount()" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [min]="0" [format]="'n0'" formControlName="price">
+                                        </kendo-numerictextbox>
                                     </td>
                                     <td class="text-right">{{computeAmountOfLine(line) | number}}</td>
-                                    <td class="text-center cursor-pointer"
-                                        *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'">
-                                        <button title="Xóa thuốc khỏi hóa đơn thanh toán" (click)="removeLine(line)"
-                                            class="btn btn-danger btn-sm">
+                                    <td class="text-center cursor-pointer" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'">
+                                        <button title="Xóa thuốc khỏi hóa đơn thanh toán" (click)="removeLine(line)" class="btn btn-danger btn-sm">
                                             <i class="text-white" class="far fa-trash-alt"></i>
                                         </button>
                                     </td>
                                 </tr>
                             </ng-container>
                         </tbody>
-                    </table> 
+                    </table>
                     <table class="o_group o_inner_group o_group_col_8">
                     </table>
                     <table class="o_group o_inner_group oe_subtotal_footer oe_right o_group_col_4">
-                        <tbody>                              
+                        <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label pb-0">
                                     <label class="o_form_label oe_subtotal_footer_separator">
@@ -214,13 +204,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1">
-                                    <span
-                                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
+                                    <span class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal
+                                        | number}}</span>
                                 </td>
                             </tr>
-                           
+
                         </tbody>
-                    </table>            
+                    </table>
                 </div>
                 <div class="o_group my-0">
                     <table class="o_group o_inner_group o_group_col_12">
@@ -235,7 +225,7 @@
                                     <span>{{getState(precscriptPayment.state)}}</span>
                                 </td>
                             </tr>
-                            <tr *ngIf="precscriptPayment.toaThuoc.note">
+                            <tr *ngIf="precscriptPayment.toaThuoc?.note">
                                 <th colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Lời dặn
@@ -245,19 +235,18 @@
                                     {{precscriptPayment.toaThuoc ? precscriptPayment.toaThuoc.note : ''}}
                                 </td>
                             </tr>
-                            <tr *ngIf="precscriptPayment.toaThuoc.reExaminationDate">
+                            <tr *ngIf="precscriptPayment.toaThuoc?.reExaminationDate">
                                 <th colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Tái khám
                                     </label>
                                 </th>
                                 <td colspan="1" style="width: 100%;">
-                                    {{precscriptPayment.toaThuoc ? (precscriptPayment.toaThuoc.reExaminationDate |
-                                    date:'shortDate') : ''}}
+                                    {{precscriptPayment.toaThuoc ? (precscriptPayment.toaThuoc.reExaminationDate | date:'shortDate') : ''}}
                                 </td>
                             </tr>
                         </tbody>
-                    </table>    
+                    </table>
                 </div>
             </div>
         </div>
@@ -267,18 +256,13 @@
 <footer class="modal-footer">
     <!-- <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
         Lưu</button> -->
-    <button type="button" *ngIf="!id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm"
-        accesskey="t" (click)="onSavePayment()">
+    <button type="button" *ngIf="!id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm" accesskey="t" (click)="onSavePayment()">
         Thanh toán</button>
-    <button type="button" *ngIf="!id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm"
-        accesskey="p" (click)="onSavePaymentPrint()">
+    <button type="button" *ngIf="!id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm" accesskey="p" (click)="onSavePaymentPrint()">
         Thanh toán và in</button>
-    <button type="button" *ngIf="id && precscriptPayment.state != 'cancel'" class="btn btn-danger btn-sm" accesskey="c"
-        (click)="onCancelPayment()">
+    <button type="button" *ngIf="id && precscriptPayment.state != 'cancel'" class="btn btn-danger btn-sm" accesskey="c" (click)="onCancelPayment()">
         Hủy thanh toán</button>
-    <button type="button" *ngIf="id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm" accesskey="s"
-        (click)="onPrintPayment()">
+    <button type="button" *ngIf="id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm" accesskey="s" (click)="onPrintPayment()">
         In hóa đơn</button>
-    <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="activeModal.dismiss()"
-        accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </footer>

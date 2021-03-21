@@ -56,6 +56,8 @@ namespace Infrastructure.Services
 
         public async Task<PhieuThuChi> CreatePhieuThuChi(PhieuThuChiSave val)
         {
+            var partnerObj = GetService<IPartnerService>();
+
             var phieuThuChi = _mapper.Map<PhieuThuChi>(val);
 
             if (string.IsNullOrEmpty(phieuThuChi.Name))
@@ -83,7 +85,23 @@ namespace Infrastructure.Services
                     throw new Exception("Not support");
             }
 
+            if(val.PartnerId.HasValue )
+            {
+                var partner = await partnerObj.SearchQuery(x => x.Id == val.PartnerId).FirstOrDefaultAsync();
+                if (partner == null) throw new Exception("Không tìm thấy người");
+                phieuThuChi.PayerReceiver = partner.Name;
+                phieuThuChi.Address = partner.GetAddress();
+            }
+
+            await ComputeProps(phieuThuChi);
             return await CreateAsync(phieuThuChi);
+        }
+
+        public async Task ComputeProps(PhieuThuChi self)
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            var journal = await journalObj.GetByIdAsync(self.JournalId);
+            self.CompanyId = journal.CompanyId;
         }
 
         private async Task _InsertPhieuThuSequence()
@@ -118,6 +136,7 @@ namespace Infrastructure.Services
 
             phieuthuchi = _mapper.Map(val, phieuthuchi);
 
+            await ComputeProps(phieuthuchi);
             await UpdateAsync(phieuthuchi);
         }
 
@@ -204,12 +223,7 @@ namespace Infrastructure.Services
                     liquidity_line_account = phieu.Journal.DefaultCreditAccount;
                 }
 
-                var rec_pay_line_name = "/";
-                if (phieu.Type == "thu")
-                    rec_pay_line_name = "Thu tiền";
-                else if (phieu.Type == "chi")
-                    rec_pay_line_name = "Chi tiền";
-
+                var rec_pay_line_name = phieu.Reason;
                 var balance = counterpart_amount;
                 var liquidity_line_name = phieu.Name;
 
@@ -220,13 +234,14 @@ namespace Infrastructure.Services
                     JournalId = phieu.JournalId,
                     Journal = phieu.Journal,
                     CompanyId = phieu.CompanyId,
+                    PartnerId = phieu.PartnerId,
                 };
 
                 var lines = new List<AccountMoveLine>()
                 {
                     new AccountMoveLine
                     {
-                        Name = !string.IsNullOrEmpty(phieu.Reason) ? phieu.Reason : rec_pay_line_name,
+                        Name = !string.IsNullOrEmpty(rec_pay_line_name) ? rec_pay_line_name : "/",
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         DateMaturity = phieu.Date,
@@ -234,6 +249,7 @@ namespace Infrastructure.Services
                         Account = phieu.LoaiThuChi.Account,
                         PhieuThuChiId = phieu.Id,
                         Move = move_vals,
+                        PartnerId = phieu.PartnerId,
                     },
                     new AccountMoveLine
                     {
@@ -245,6 +261,7 @@ namespace Infrastructure.Services
                         Account = liquidity_line_account,
                         PhieuThuChiId = phieu.Id,
                         Move = move_vals,
+                        PartnerId = phieu.PartnerId,
                     },
                 };
 
@@ -271,7 +288,7 @@ namespace Infrastructure.Services
                 await moveObj.ButtonCancel(move_ids);
                 await moveObj.Unlink(move_ids);
 
-                phieuthuchi.State = "draft";
+                phieuthuchi.State = "cancel";
             }
 
             await UpdateAsync(self);
@@ -279,17 +296,15 @@ namespace Infrastructure.Services
 
         public async Task Unlink(Guid id)
         {
-            var phieuthuchi = await SearchQuery(x => x.Id == id).Include(x => x.Company)
-               .Include(x => x.Journal)
-               .Include(x => x.LoaiThuChi)
-               .Include(x => x.LoaiThuChi.Account)
-               .Include(x => x.MoveLines)
-               .FirstOrDefaultAsync();
+            var phieuthuchi = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (phieuthuchi == null)
                 throw new Exception("Phiếu không tồn tại");
 
             if (phieuthuchi.State == "posted")
                 throw new Exception("Bạn không thể xóa phiếu khi đã xác nhận");
+
+            if (phieuthuchi.State == "cancel")
+                throw new Exception("Bạn không thể xóa phiếu khi đã hủy");
 
             await DeleteAsync(phieuthuchi);
         }
@@ -374,17 +389,17 @@ namespace Infrastructure.Services
 
             query = query.Skip(val.Offset).Take(val.Limit);
 
-            var res = query.Select(x => new PhieuThuChiExportExcel
+            var res = await query.Select(x => new PhieuThuChiExportExcel
             {
                 Date = x.Date,
                 Name = x.Name,
                 JournalName = x.Journal.Name,
                 LoaiThuChiName = x.LoaiThuChi.Name,
                 Amount = x.Amount,
-                PayerReceiver = x.PayerReceiver,
+                PartnerDisplayName = x.Partner.DisplayName,
                 Reason = x.Reason,
-                State = (x.State == "posted") ? "Đã xác nhận" : "Nháp",
-            }).ToList();
+                State = x.State,
+            }).ToListAsync();
 
             return res;
         }

@@ -69,6 +69,11 @@ import { PartnerTitlesModule } from '../partner-titles/partner-titles.module';
 import { PartnerSourcesModule } from '../partner-sources/partner-sources.module';
 import { PartnerCategoriesModule } from '../partner-categories/partner-categories.module';
 import { HistoryModule } from '../history/history.module';
+import { PartnerSupplierFormComponent } from './partner-supplier-form/partner-supplier-form.component';
+import { PartnerSupplierFormInforComponent } from './partner-supplier-form-infor/partner-supplier-form-infor.component';
+import { PartnerSupplierFormDebitComponent } from './partner-supplier-form-debit/partner-supplier-form-debit.component';
+import { PartnerSupplierFormPaymentComponent } from './partner-supplier-form-payment/partner-supplier-form-payment.component';
+import { PartnerSupplierFormDebitPaymentDialogComponent } from './partner-supplier-form-debit-payment-dialog/partner-supplier-form-debit-payment-dialog.component';
 
 
 @NgModule({
@@ -125,7 +130,12 @@ import { HistoryModule } from '../history/history.module';
     PartnerOverviewSaleOrderLineComponent,
     ApplyDiscountSaleOrderLinePopoverComponent,
     PartnerCustomerTreatmentPaymentFastComponent,
-    PartnerInfoCustomerManagementComponent
+    PartnerInfoCustomerManagementComponent,
+    PartnerSupplierFormComponent,
+    PartnerSupplierFormInforComponent,
+    PartnerSupplierFormDebitComponent,
+    PartnerSupplierFormPaymentComponent,
+    PartnerSupplierFormDebitPaymentDialogComponent
   ],
   imports: [
     CommonModule,
@@ -151,6 +161,7 @@ import { HistoryModule } from '../history/history.module';
     PartnerCustomerAutoGenerateCodeDialogComponent,
     SaleOrderApplyCouponDialogComponent,
     SaleOrderApplyServiceCardsDialogComponent,
+    PartnerSupplierFormDebitPaymentDialogComponent,
     SaleOrderApplyDiscountDefaultDialogComponent,
     PartnerCustomerAutoGenerateCodeDialogComponent,
     PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent
@@ -159,6 +170,6 @@ import { HistoryModule } from '../history/history.module';
   exports: [
     PartnerCustomerDetailComponent,
     PartnerCustomerTreatmentPaymentDetailComponent
-  ],schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+  ], schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class PartnersModule { }

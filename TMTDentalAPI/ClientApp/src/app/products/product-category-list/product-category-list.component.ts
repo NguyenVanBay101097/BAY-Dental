@@ -37,7 +37,7 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
   }
 
   onSearchChange(val: string) {
-    this.sourceCategories = this.categories.filter(x => x.name.toLowerCase().includes(val));
+    this.sourceCategories = this.categories.filter(x => x.name.toLowerCase().includes(val.toLowerCase()));
   }
 
   loadCategories() {
@@ -66,7 +66,7 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
   }
 
   createCate() {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.getTitle();
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(result => {
@@ -77,7 +77,7 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
   }
 
   editCate(item: ProductCategory, index) {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: ' + this.getTitle();
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.type = this.type;
@@ -91,7 +91,7 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
 
   deleteCate(item, index) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa: ' +  + this.getTitle();
+    modalRef.componentInstance.title = 'Xóa: ' + this.getTitle();
     modalRef.result.then(() => {
       this.productCategoryService.delete(item.id).subscribe(() => {
         this.sourceCategories.splice(index, 1);

@@ -12,8 +12,8 @@
                     <h1>
                         <input type="text" name="name" class="form-control" formControlName="name" #nameInput>
                     </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
-                        <div *ngIf="f.name.errors.required">Vui lòng điền tên thuốc</div>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger mb-1">
+                        <div *ngIf="f.name.errors.required">Nhập tên thuốc</div>
                     </div>
                     <div hasGroups [groups]="'medicineOrder.group_medicine'">
                         <div class="form-check">
@@ -52,7 +52,7 @@
                                                     </a>
                                                 </div>
                                                 <div *ngIf="f.categ.errors && (f.categ.touched || f.categ.dirty || submitted)" class="text-danger">
-                                                    <div *ngIf="f.categ.errors.required">Vui lòng chọn nhóm thuốc</div>
+                                                    <div *ngIf="f.categ.errors.required">Chọn nhóm thuốc</div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -68,7 +68,7 @@
                                                     </kendo-numerictextbox>
                                                 </div>
                                                 <div *ngIf="f.listPrice.errors && (f.listPrice.touched || f.listPrice.dirty || submitted)" class="text-danger">
-                                                    <div *ngIf="f.listPrice.errors.required">Vui lòng điền giá thuốc</div>
+                                                    <div *ngIf="f.listPrice.errors.required">Nhập giá thuốc</div>
                                                 </div>
 
                                             </td>
@@ -86,6 +86,18 @@
                                             <td colspan="1" style="width: 100%;">
                                                 <kendo-combobox [data]="filterdUoMs" [textField]="'name'" [filterable]="true" #uoMCbx formControlName="uom" [valueField]="'id'" (valueChange)="uoMChange($event)">
                                                 </kendo-combobox>
+                                            </td>
+                                        </tr>
+                                        <tr hasGroups [groups]="'medicineOrder.group_medicine'">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Tiêu chí kiểm kho
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-multiselect [filterable]="true" #criteriaMultiSelect class="mr-3" [data]="listProductCriteria" [textField]="'name'" [valueField]="'id'" formControlName="productCriterias">
+                                                </kendo-multiselect>
+                                                
                                             </td>
                                         </tr>
                                         <!-- <tr hasGroups [groups]="'product.group_uom'">

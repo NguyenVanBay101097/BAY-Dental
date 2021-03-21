@@ -9,7 +9,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public AccountRegisterPaymentDisplay()
         {
-            PaymentDate = DateTime.Now;
+            PaymentDate = DateTime.Today;
         }
 
         public Guid Id { get; set; }
@@ -36,6 +36,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> ServiceCardOrderIds { get; set; } = new List<Guid>();
 
         public IEnumerable<SaleOrderLinePaymentRelDisplay> SaleOrderLinePaymentRels { get; set; } = new List<SaleOrderLinePaymentRelDisplay>();
+        public IEnumerable<PartnerGetDebtPagedItem> DebitItems { get; set; } = new List<PartnerGetDebtPagedItem>();
     }
 
     public class SaleOrderLinePaymentRelDisplay

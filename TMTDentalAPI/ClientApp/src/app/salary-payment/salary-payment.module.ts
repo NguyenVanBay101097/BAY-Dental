@@ -8,18 +8,20 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../shared/shared.module';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
+import { SalaryPaymentListV2Component } from './salary-payment-list-v2/salary-payment-list-v2.component';
+import { SalaryPaymentDialogV2Component } from './salary-payment-dialog-v2/salary-payment-dialog-v2.component';
 
 @NgModule({
-  declarations: [SalaryPaymentListComponent, SalaryPaymentFormComponent],
+  declarations: [SalaryPaymentListComponent, SalaryPaymentFormComponent, SalaryPaymentListV2Component, SalaryPaymentDialogV2Component],
   imports: [
     CommonModule,
-    SalaryPaymentRoutingModule, 
-    FormsModule, 
+    SalaryPaymentRoutingModule,
+    FormsModule,
     ReactiveFormsModule,
-    NgbModule, 
+    NgbModule,
     SharedModule,
     MyCustomKendoModule
   ],
-  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+  entryComponents: [SalaryPaymentDialogV2Component],
 })
 export class SalaryPaymentModule { }

@@ -22,12 +22,14 @@ namespace Infrastructure.Services
     public class SaleOrderService : BaseService<SaleOrder>, ISaleOrderService
     {
         private readonly IMapper _mapper;
+        private UserManager<ApplicationUser> _userManager;
 
-        public SaleOrderService(IAsyncRepository<SaleOrder> repository, IHttpContextAccessor httpContextAccessor,
+        public SaleOrderService(IAsyncRepository<SaleOrder> repository, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager,
             IMapper mapper)
         : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         // Tao moi 1 phieu dieu tri
@@ -214,6 +216,10 @@ namespace Infrastructure.Services
                 var states = val.State.Split(",");
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => states.Contains(x.State)));
             }
+            if (val.CompanyId.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.CompanyId == val.CompanyId));
+            }
 
             if (val.IsQuotation.HasValue)
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => (!x.IsQuotation.HasValue && val.IsQuotation == false) || x.IsQuotation == val.IsQuotation));
@@ -352,6 +358,7 @@ namespace Infrastructure.Services
                 }
 
                 sale.State = "done";
+                sale.DateDone = DateTime.Now;
 
                 var card = await cardObj.GetValidCard(sale.PartnerId);
                 if (card == null)
@@ -372,7 +379,12 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
 
             foreach (var sale in self)
+            {
                 sale.State = "sale";
+                sale.DateDone = null;
+            }
+
+
 
             await UpdateAsync(self);
         }
@@ -843,7 +855,6 @@ namespace Infrastructure.Services
                 ((program.DiscountPercentage ?? 0) / 100);
             return discount_amount;
         }
-
 
         private decimal _GetRewardValuesDiscountFixedAmount(SaleOrder self, SaleCouponProgram program)
         {
@@ -1644,7 +1655,7 @@ namespace Infrastructure.Services
                     PartnerDistrictName = x.Company.Partner.DistrictName,
                     PartnerWardName = x.Company.Partner.WardName,
                     PartnerStreet = x.Company.Partner.Street,
-                } : null,            
+                } : null,
                 Name = x.Name,
                 DateOrder = x.DateOrder,
                 AmountTotal = x.AmountTotal.HasValue ? x.AmountTotal.Value : 0,
@@ -1675,6 +1686,8 @@ namespace Infrastructure.Services
             //order.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);        
             order.DotKhams = await _GetListDotkhamInfo(order.Id);
             order.HistoryPayments = await _GetPaymentInfoPrint(order.Id);
+            //get currentuser
+            order.User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId));
             return order;
         }
 
@@ -1951,8 +1964,6 @@ namespace Infrastructure.Services
             }
         }
 
-
-
         public void _ComputeResidual(IEnumerable<AccountInvoice> invoices)
         {
             var invoiceObj = GetService<IAccountInvoiceService>();
@@ -2164,6 +2175,7 @@ namespace Infrastructure.Services
             await UpdateAsync(order);
             //confirm sale order       
             order.State = "done";
+            order.DateDone = DateTime.Now;
             foreach (var line in order.OrderLines)
             {
                 if (line.State == "cancel")
@@ -2261,8 +2273,6 @@ namespace Infrastructure.Services
 
         }
 
-
-
         //kiểm tra product chiết khấu tổng có tồn tại chưa
         private async Task<Product> CheckProductDiscount(ApplyDiscountSaleOrderViewModel val)
         {
@@ -2358,12 +2368,110 @@ namespace Infrastructure.Services
                 }).ToListAsync();
 
             //chỉ lấy những dịch vụ có danh sách công đoạn 
-            lines = lines.Where(x => x.Steps.Any()).ToList();
+            //lines = lines.Where(x => x.Steps.Any()).ToList();
 
             return lines;
         }
+
+        public async Task<IEnumerable<SaleOrderLineForProductRequest>> GetLineForProductRequest(Guid id)
+        {
+            var lineObj = GetService<ISaleOrderLineService>();
+            var requestedObj = GetService<ISaleOrderLineProductRequestedService>();
+
+            var res = await lineObj.SearchQuery(x => x.OrderId == id)
+                .Select(x => new SaleOrderLineForProductRequest()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    ProductId = x.ProductId.Value
+                })
+                .ToListAsync();
+
+            var bomObj = GetService<IProductBomService>();
+            var productIds = res.Select(x => x.ProductId).ToList();
+            var boms = await bomObj.SearchQuery(x => productIds.Contains(x.ProductId))
+                .OrderBy(x => x.Sequence)
+                .Select(z => new ProductBomForSaleOrderLine()
+                {
+                    MaterialProductName = z.MaterialProduct.Name,
+                    MaterialProductId = z.MaterialProductId.Value,
+                    Id = z.Id,
+                    ProductUOMName = z.ProductUOM.Name,
+                    Quantity = z.Quantity,
+                    Sequence = z.Sequence,
+                    ProductId = z.ProductId
+                }).ToListAsync();
+
+            var saleOrderLineIds = res.Select(x => x.Id).ToList();
+            var requesteds = requestedObj.SearchQuery(x => saleOrderLineIds.Contains(x.SaleOrderLineId));
+
+            foreach (var item in res)
+            {
+                item.Boms = boms.Where(x => x.ProductId == item.ProductId).ToList();
+                foreach (var bom in item.Boms)
+                {
+                    var requested = requesteds.FirstOrDefault(x => x.SaleOrderLineId == item.Id && x.ProductId == bom.MaterialProductId);
+                    bom.RequestedQuantity = requested == null ? 0 : requested.RequestedQuantity;
+                }
+            }
+
+            return res;
+        }
+
+        public async Task<PagedResult2<SaleOrderToSurvey>> GetToSurveyPagedAsync(SaleOrderToSurveyFilter val)
+        {
+            Sudo = true;
+            var query = SearchQuery(x => x.State == "done" && !x.Assignments.Any());
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search));
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateDone >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateDone <= dateTo);
+            }
+
+            var totalItem = await query.CountAsync();
+            var items = await query.OrderBy(x => x.DateDone).Skip(val.Offset).Take(val.Limit).Select(x => new SaleOrderToSurvey()
+            {
+                DateOrder = x.DateOrder,
+                PartnerName = x.Partner.Name,
+                PartnerPhone = x.Partner.Phone,
+                PartnerRef = x.Partner.Ref,
+                Id = x.Id,
+                Name = x.Name,
+                DateDone = x.DateDone
+            }).ToListAsync();
+
+            return new PagedResult2<SaleOrderToSurvey>(totalItem, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
+
+        public async Task<List<SearchAllViewModel>> SearchAll(SaleOrderPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+
+            var res = await query.OrderByDescending(x => x.DateCreated)
+                       .Take(val.Limit)
+                       .Select(x => new SearchAllViewModel
+                       {
+                           Id = x.Id,
+                           Name = "Phiếu điều trị: " + x.Name,
+                           SaleOrderName = x.Name,
+                           Address = x.Partner.GetAddress(),
+                           Phone = x.Partner.Phone,
+                           Type = "sale-order",
+                           State = x.State
+                       }).ToListAsync();
+            return res;
+        }
     }
-
-
-
 }

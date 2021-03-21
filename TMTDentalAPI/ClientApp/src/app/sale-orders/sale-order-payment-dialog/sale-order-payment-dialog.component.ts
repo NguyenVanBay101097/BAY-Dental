@@ -25,7 +25,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   loading = false;
   title: string;
   maxAmount: number = 0;
-
+  submitted: boolean = false;
   showPrint = false;
   showError_1 = false;
   showError_2 = false;
@@ -34,6 +34,10 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
     private errorService: AppSharedShowErrorService, private authService: AuthService,
     private accountPaymenetOdataService: AccountPaymentsOdataService) { }
+
+  get f(){
+    return this.paymentForm.controls;
+  }
 
   ngOnInit() {
     this.paymentForm = this.fb.group({
@@ -105,6 +109,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   save() {
+    this.submitted = true;
     if (!this.paymentForm.valid) {
       return;
     }
@@ -125,6 +130,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   saveAndPrint() {
+    this.submitted = true;
     if (!this.paymentForm.valid) {
       return;
     }

@@ -19,6 +19,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Phone { get; set; }
 
+        public DateTime? DateCreated { get; set; }
         /// <summary>
         /// Mã khách hàng
         /// </summary>
@@ -85,6 +86,20 @@ namespace Umbraco.Web.Models.ContentEditing
             {
                 var list = new List<string>();
                 foreach (var item in this.Histories)
+                {
+                    list.Add(item.Name);
+                }
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+
+        public string Tags
+        {
+            get
+            {
+                var list = new List<string>();
+                foreach (var item in this.Categories)
                 {
                     list.Add(item.Name);
                 }
@@ -206,7 +221,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? Date { get; set; }
 
 
-        public string DisplayName { get; set; }
+        public string DisplayName
+        {
+            get;set;
+        }
 
         public string Age
         {

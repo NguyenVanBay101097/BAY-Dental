@@ -16,6 +16,7 @@ export class AccountRegisterPaymentDisplay {
     paymentType: string;
     partnerId: string;
     invoiceIds: string[];
+    debitItems: []
 }
 
 export class AccountRegisterPaymentCreatePayment {

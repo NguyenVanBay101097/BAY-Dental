@@ -32,6 +32,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? PurchasePrice { get; set; }
 
+        public decimal? LaboPrice { get; set; }
+
         public IEnumerable<ProductStepSimple> StepList { get; set; } = new List<ProductStepSimple>();
     }
 
@@ -46,5 +48,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string CategName { get; set; }
 
         public decimal? PurchasePrice { get; set; }
+
+        public decimal? ListPrice { get; set; }
+
+        public string UomName { get; set; }
     }
 }

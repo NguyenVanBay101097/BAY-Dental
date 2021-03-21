@@ -1,4 +1,3 @@
-
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <div class="o_cp_t_left">
@@ -19,7 +18,7 @@
     </div>
 </div>
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading"
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="date" title="Ngày tạo" width="80">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -35,19 +34,13 @@
                     {{dataItem.saleOrderName}}
                 </a>
             </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="name" title="Số đơn thuốc" width="100">
-
-        </kendo-grid-column>
-        <kendo-grid-column field="employeeName" title="Bác sĩ" width="100">
-        </kendo-grid-column>
+        </kendo-grid-column>      
         <kendo-grid-column class="text-center" field="id" width="100">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-primary btn-sm" title="Tạo thanh toán toán hóa đơn thuốc"
-                    (click)="createPrescriptionPayment(dataItem)">
+                <button class="btn btn-primary btn-sm" title="Tạo thanh toán hóa đơn thuốc" (click)="createPrescriptionPayment(dataItem)">
                     <img src="./assets/images/add-payment.png" alt="">Tạo hóa đơn
                 </button>
             </ng-template>

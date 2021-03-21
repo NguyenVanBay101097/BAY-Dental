@@ -9,6 +9,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TMTDentalAdmin.BackgroundTasks.Services;
 using Umbraco.Web.Mapping;
 
 namespace TMTDentalAdmin
@@ -33,11 +35,13 @@ namespace TMTDentalAdmin
         }
 
         public IConfiguration Configuration { get; }
-
+        public IHttpContextAccessor HttpContextAccessor { get; }
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<TenantDbContext>(c => c.UseSqlServer(Configuration.GetConnectionString("TenantConnection")));
+
+            services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
 
             // configure jwt authentication
             var appSettingsSection = Configuration.GetSection("AdminAppSettings");
@@ -90,12 +94,25 @@ namespace TMTDentalAdmin
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IAdminBaseService<>), typeof(AdminBaseService<>));
             services.AddScoped<ITenantService, TenantService>();
+            services.AddScoped<IEmployeeAdminService, EmployeeAdminService>();
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
             services.AddSingleton<IMailSender, SendGridSender>();
+            services.AddScoped<ITenantExtendHistoryService, TenantExtendHistoryService>();
+            services.AddSingleton<UpdateExpiredDateTenantService>();
+            services.AddHostedService<UpdateExpiredBackgroundService>();
+            //services.AddCronJob<ScheduleJobService>(c =>
+            //{
+            //    c.TimeZoneInfo = TimeZoneInfo.Local;
+            //    c.CronExpression = @"55 14 * * *"; //chay moi ngay voi so gio dc set san
+            //    c.ConnectionStrings = Configuration.GetConnectionString("TenantConnection");
+            //    c.appSettings = appSettings;
+            //});
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AppTenantProfile());
+                mc.AddProfile(new TenantExtendHistoryProfile());
+                mc.AddProfile(new EmployeeAdminProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
@@ -144,7 +161,6 @@ namespace TMTDentalAdmin
             }
 
             app.UseRouting();
-
             app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));

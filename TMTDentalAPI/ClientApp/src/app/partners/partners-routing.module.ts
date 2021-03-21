@@ -21,16 +21,18 @@ import { PartnerCategoryListComponent } from '../partner-categories/partner-cate
 import { PartnerSourceListComponent } from '../partner-sources/partner-source-list/partner-source-list.component';
 import { PartnerTitleListComponent } from '../partner-titles/partner-title-list/partner-title-list.component';
 import { HistoriesListComponent } from '../history/histories-list/histories-list.component';
+import { PartnerSupplierFormComponent } from './partner-supplier-form/partner-supplier-form.component';
+import { PartnerSupplierFormInforComponent } from './partner-supplier-form-infor/partner-supplier-form-infor.component';
+import { PartnerSupplierFormDebitComponent } from './partner-supplier-form-debit/partner-supplier-form-debit.component';
+import { PartnerSupplierFormPaymentComponent } from './partner-supplier-form-payment/partner-supplier-form-payment.component';
 
 const routes: Routes = [
   {
     path: 'customers', component: PartnerCustomerListComponent
   },
+
   {
-    path: 'suppliers', component: PartnerSupplierListComponent
-  },
-  {
-    path:'treatment-paymentfast/from',
+    path: 'treatment-paymentfast/from',
     component: PartnerCustomerTreatmentPaymentFastComponent
   },
   {
@@ -49,7 +51,7 @@ const routes: Routes = [
       { path: 'treatment-histories/form', component: PartnerCustomerTreatmentHistoryFormComponent },
       { path: 'overview', component: PartnerOverviewComponent },
     ]
-  }, 
+  },
   {
     path: 'customer-management',
     component: PartnerInfoCustomerManagementComponent,
@@ -58,9 +60,25 @@ const routes: Routes = [
       { path: 'customer-categ', component: PartnerCategoryListComponent },
       { path: 'customer-source', component: PartnerSourceListComponent },
       { path: 'customer-title', component: PartnerTitleListComponent },
-      { path: 'customer-history', component: HistoriesListComponent },    
+      { path: 'customer-history', component: HistoriesListComponent },
+    ]
+  },
+
+  {
+    path: 'suppliers', component: PartnerSupplierListComponent
+  },
+  
+  {
+    path: 'supplier/:id',
+    component: PartnerSupplierFormComponent,
+    children: [
+      { path: '', redirectTo: 'info', pathMatch: 'full' },
+      { path: 'info', component: PartnerSupplierFormInforComponent },
+      { path: 'debit', component: PartnerSupplierFormDebitComponent },
+      { path: 'payment', component: PartnerSupplierFormPaymentComponent },
     ]
   }
+
 ];
 
 @NgModule({

@@ -44,8 +44,6 @@ namespace Infrastructure.EntityConfigurations
                .WithMany(x => x.Slips)
                .HasForeignKey(x => x.PayslipRunId);
 
-            
-
             builder.HasOne(x => x.CreatedBy)
           .WithMany()
           .HasForeignKey(x => x.CreatedById);

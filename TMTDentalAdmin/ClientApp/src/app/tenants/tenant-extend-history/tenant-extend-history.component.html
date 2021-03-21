@@ -1,0 +1,29 @@
+<kendo-grid [data]="gridData" [loading]="loading">
+    <kendo-grid-column field="dateCreated" title="Ngày tạo" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.dateCreated | date : 'short'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="startDate" title="Ngày áp dụng" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.startDate | date : 'short'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="expirationDate" title="Ngày hết hạn" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.expirationDate | date : 'short'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="activeCompaniesNbr" class="text-right" title="Số chi nhánh" width="120">
+    </kendo-grid-column>
+    <!-- <kendo-grid-column field="id" width="140">
+        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+            Thao tác
+        </ng-template>
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <button class="btn btn-danger btn-sm" (click)="deleteItem(dataItem)">
+                Xóa
+            </button>
+        </ng-template>
+    </kendo-grid-column> -->
+</kendo-grid>

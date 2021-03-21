@@ -14,6 +14,13 @@ export class CashBookPaged {
   begin: boolean;
 }
 
+export class CashBookSummarySearch {
+  companyId: string;
+  resultSelection: string;
+  dateFrom: string;
+  dateTo: string;
+}
+
 export class AccountMoveLineCashBookVM {
   date: string;
   name: string;
@@ -43,6 +50,16 @@ export class ReportDataResult {
   totalThu: number;
 }
 
+export class CashBookDetailFilter {
+  companyId: string;
+  resultSelection: string;
+  dateFrom: string;
+  dateTo: string;
+  search: string;
+  limit: number;
+  offset: number;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -68,9 +85,16 @@ export class CashBookService {
     );
   }
 
-  getTotalReport(val: any): Observable<ReportDataResult> {
-    return this.http.post<ReportDataResult>(
-      this.baseApi + this.apiUrl + "/GetTotalReport",
+  getDetails(val: any) {
+    return this.http.post(
+      this.baseApi + this.apiUrl + "/GetDetails",
+      val
+    );
+  }
+
+  getTotal(val: any): Observable<number> {
+    return this.http.post<number>(
+      this.baseApi + this.apiUrl + "/GetTotal",
       val
     );
   }
@@ -80,5 +104,9 @@ export class CashBookService {
       responseType: "blob",
       params: val,
     });
+  }
+
+  changeData(){
+    return this.http.post(this.baseApi + this.apiUrl + "/ChangeData", null);
   }
 }

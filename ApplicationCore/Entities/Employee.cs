@@ -119,5 +119,15 @@ namespace ApplicationCore.Entities
         /// trợ cấp
         /// </summary>
         public decimal? Allowance { get; set; }
+        public string Avatar { get; set; }
+        /// <summary>
+        /// được phép làm khảo sát hay không
+        /// </summary>
+        public bool IsAllowSurvey { get; set; }
+        /// <summary>
+        /// để phân biệt chức vụ trong survey: quản lý khảo sát hay là nhân viên khảo sát
+        /// </summary>
+        public ResGroup Group { get; set; }
+        public Guid? GroupId { get; set; }
     }
 }

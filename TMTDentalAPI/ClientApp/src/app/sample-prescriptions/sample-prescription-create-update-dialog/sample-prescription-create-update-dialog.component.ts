@@ -23,6 +23,9 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   title: string;
  
+  get f() { return this.PrescriptionForm.controls; }
+  get lines() { return this.PrescriptionForm.get('lines') as FormArray; }
+
   constructor(private fb: FormBuilder, private samplePrescriptionsService: SamplePrescriptionsService, private intlService: IntlService,
     private productService: ProductService, public activeModal: NgbActiveModal,
     private errorService: AppSharedShowErrorService, private samplePrescriptionLineService: SamplePrescriptionLineService) { }
@@ -55,7 +58,7 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
 
         result.lines.forEach(line => {
           this.lines.push(this.fb.group({
-            product: [line.product, Validators.required],
+            product: line.product,
             productUoM: line.productUoM,
             numberOfTimes: line.numberOfTimes, 
             amountOfTimes: line.amountOfTimes, 
@@ -71,10 +74,6 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
     caseSensitive: false,
     operator: 'startsWith'
   };
-
-  get lines() {
-    return this.PrescriptionForm.get('lines') as FormArray;
-  }
 
   loadFilteredProducts() {
     return this.searchProducts().subscribe(result => {
@@ -95,8 +94,18 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
+    
     if (!this.PrescriptionForm.valid) {
       return false;
+    }
+
+    var i = 0;
+    while (i < this.lines.value.length) {
+      if (this.lines.value[i]["product"] == null) {
+        this.lines.removeAt(i);
+        i--;
+      }
+      i++;
     }
 
     var val = Object.assign({}, this.PrescriptionForm.value);   
@@ -132,7 +141,7 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
   onCreate() {
     var lines = this.PrescriptionForm.get('lines') as FormArray;
     lines.push(this.fb.group({
-      product: [null, Validators.required],
+      product: null,
       productUoM: null,
       numberOfTimes: 1, 
       amountOfTimes: 1, 
@@ -169,10 +178,6 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
       default:
         return 'sau khi ăn';
     }
-  }
-
-  get f() {
-    return this.PrescriptionForm.controls;
   }
 
 }

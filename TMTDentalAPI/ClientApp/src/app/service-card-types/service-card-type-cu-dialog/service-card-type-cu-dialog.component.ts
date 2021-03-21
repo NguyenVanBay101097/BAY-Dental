@@ -14,6 +14,10 @@ export class ServiceCardTypeCuDialogComponent implements OnInit {
   title: string;
   id: string;
 
+  submitted = false;
+
+  get f() { return this.formGroup.controls; }
+
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal,
     private cardTypeService: ServiceCardTypeService) { }
 
@@ -34,6 +38,8 @@ export class ServiceCardTypeCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return false;
     }

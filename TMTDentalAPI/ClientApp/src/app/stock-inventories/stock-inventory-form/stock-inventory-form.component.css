@@ -1,0 +1,54 @@
+.o_form_view .o_form_sheet_bg .o_form_sheet {
+  min-width: 650px;
+  max-width: 80%;
+  min-height: 330px;
+  background: #fff;
+  padding: 16px;
+  margin: 10px auto;
+}
+
+.o_form_section .o_form_section_left {
+  -webkit-box-flex: 1;
+  flex: 1 1 auto;
+  width: 100px;
+  padding-right: 15px;
+}
+
+.t_search_wrapper {
+  margin-bottom: 5px;
+  flex: 0 0 auto;
+}
+
+.has-search .form-control {
+  padding-left: 2.375rem;
+}
+
+.has-search .form-control:focus {
+  box-shadow: none !important;
+}
+
+.has-search .form-control-feedback {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  width: 2.375rem;
+  height: 2.375rem;
+  line-height: 2.375rem;
+  text-align: center;
+  pointer-events: none;
+  color: #aaa;
+}
+
+.t_scroll {
+  -webkit-box-flex: 1;
+  flex: 1 1 100%;
+  overflow-y: auto;
+}
+
+.flex-0-0-auto {
+  flex: 0 0 auto;
+}
+
+.flex-1-1-100 {
+  flex: 1 1 100%;
+}

@@ -74,6 +74,7 @@ export class AccountFinancialViewReportComponent implements OnInit {
     params.limit = 20;
     params.offset = 0;
     params.search = search || '';
+    params.active = true;
     return this.companyService.getPaged(params);
   }
 

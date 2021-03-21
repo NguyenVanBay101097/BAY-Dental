@@ -2,11 +2,11 @@
 <div class="p-3">
     <div class="mb-2 d-flex justify-content-between">
         <div class="d-flex">
-            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="paged.dateFrom"
-                [dateTo]="paged.dateTo" [quickOption]="quickOptionDate" (searchChange)="searchChangeDate($event)">
+            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="dateFrom"
+                [dateTo]="dateTo" (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
             <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createItem()">
-                <i class="fas fa-plus mr-2"></i>Phiếu {{convertType(type)}}
+                <i class="fas fa-plus mr-2"></i> {{getType(type)}}
             </button>
             <button type="button" class="btn btn-primary btn-sm mr-2" (click)="exportExcelFile()">
                 <i class="fas fa-download mr-2"></i>Xuất file
@@ -14,7 +14,7 @@
         </div>
         <div class="t-search t-search-left">
             <input type="text" class="form-control form-control-sm w-fit-content" placeholder="Tìm kiếm theo số phiếu"
-                [(ngModel)]="paged.search" (ngModelChange)="this.searchUpdate.next($event)">
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             <span class="fas fa-search form-control-icon form-control-sm"></span>
         </div>
     </div>
@@ -27,7 +27,7 @@
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="name" title="Số phiếu" width="100"></kendo-grid-column>
-            <kendo-grid-column field="journalName" title="Phương thức thanh toán" width="120">
+            <kendo-grid-column field="journalName" title="Phương thức" width="120">
             </kendo-grid-column>
             <kendo-grid-column field="loaiThuChiName" title="Loại" width="100">
             </kendo-grid-column>
@@ -46,10 +46,14 @@
                     Thao tác
                 </ng-template>
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
-                        <span class="far fa-edit"></span></button>
-                    <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
-                        <span class="far fa-trash-alt"></span></button>
+                    <div class="d-flex">
+                        <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                            <span class="far fa-edit"></span>
+                        </button>
+                        <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                            <span class="far fa-trash-alt"></span>
+                        </button>
+                    </div>
                 </ng-template>
             </kendo-grid-column>
         </kendo-grid>

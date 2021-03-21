@@ -6,7 +6,7 @@ import { ProductCategoryService, ProductCategoryPaged, ProductCategoryBasic } fr
 import { ProductCategory } from 'src/app/product-categories/product-category';
 import { debounceTime, switchMap, tap, map, distinctUntilChanged } from 'rxjs/operators';
 import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable, Subject } from 'rxjs';
 import * as _ from 'lodash';
 import { ProductStepDisplay } from '../product-step';
@@ -15,6 +15,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UoMPaged, UoMBasic, UomService } from 'src/app/uoms/uom.service';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
+import { StockInventoryCriteriaPaged, StockInventoryCriteriaService } from 'src/app/stock-inventories/stock-inventory-criteria.service';
 
 @Component({
   selector: 'app-product-medicine-cu-dialog',
@@ -29,6 +30,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
   filterdCategories: ProductCategoryBasic[] = [];
   filterdUoMs: UoMBasic[] = [];
   filterdUoMPOs: UoMBasic[] = [];
+  listProductCriteria = [];
   categoryIdSave: string;
   opened = false;
   submitted = false;
@@ -36,7 +38,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('uoMCbx', { static: true }) uoMCbx: ComboBoxComponent;
   @ViewChild('uoMPOCbx', { static: true }) uoMPOCbx: ComboBoxComponent;
-
+  @ViewChild('criteriaMultiSelect', { static: true }) criteriaMultiSelect: MultiSelectComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -44,7 +46,8 @@ export class ProductMedicineCuDialogComponent implements OnInit {
     private productCategoryService: ProductCategoryService,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
-    private uoMService: UomService
+    private uoMService: UomService,
+    private productCriteriaService: StockInventoryCriteriaService
   ) {
   }
 
@@ -60,6 +63,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
       type2: 'medicine',
       listPrice: [1000, Validators.required],
       standardPrice: 0,
+      productCriterias: null,
       companyId: null,
       defaultCode: '',
       keToaNote: null,
@@ -79,9 +83,24 @@ export class ProductMedicineCuDialogComponent implements OnInit {
         this.filterdUoMs = _.unionBy(this.filterdUoMs, result.items, 'id');
       });
 
+      this.searchProductCriterias().subscribe((result: any) => {
+        this.listProductCriteria = _.unionBy(this.listProductCriteria, result.items, 'id');
+      });
+
+      this.criteriaMultiSelect.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.criteriaMultiSelect.loading = true)),
+        switchMap(value => this.searchProductCriterias(value))
+      ).subscribe(result => {
+        this.listProductCriteria = result.items;
+        this.criteriaMultiSelect.loading = false;
+      });
+
+      this.loadProductCriteriaList();
       this.categCbxFilterChange();
       this.uoMCbxFilterChange();
       this.uoMPOCbxFilterChange();
+
     });
   }
 
@@ -117,6 +136,11 @@ export class ProductMedicineCuDialogComponent implements OnInit {
 
         this.filterdUoMs = _.unionBy(this.filterdUoMs, [result.uom], 'id');
 
+        if(result.stockInventoryCriterias.length > 0){      
+          this.productForm.get('productCriterias').setValue(result.stockInventoryCriterias);
+          this.listProductCriteria = _.unionBy(result.stockInventoryCriterias, this.listProductCriteria, 'id');
+        }
+  
         if (result.uompo) {
           this.uoMService.getPaged({ categoryId: result.uompo.categoryId }).subscribe((result2: any) => {
             this.filterdUoMPOs = result2.items;
@@ -125,7 +149,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
         }
       });
     } else {
-      this.productService.defaultGet().subscribe((result: any) => {
+      this.productService.getDefaultProducMedicine().subscribe((result: any) => {
         this.productForm.patchValue(result);
 
         if (result.categ) {
@@ -143,7 +167,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
           });
         }
 
-        this.productForm.get('type').setValue('consu');
+        this.productForm.get('type').setValue(result.type);
         this.productForm.get('type2').setValue('medicine');
         this.productForm.get('saleOK').setValue(false);
         this.productForm.get('purchaseOK').setValue(false);
@@ -152,6 +176,19 @@ export class ProductMedicineCuDialogComponent implements OnInit {
     }
   }
 
+  loadProductCriteriaList() {
+    this.searchProductCriterias().subscribe((result) => {
+      this.listProductCriteria = _.unionBy(this.listProductCriteria, result.items, 'id');;
+    });
+  }
+
+  searchProductCriterias(q?: string) {
+    var val = new StockInventoryCriteriaPaged();
+    val.limit = 0;
+    val.offset = 0;
+    val.search = q || '';
+    return this.productCriteriaService.getPaged(val);
+  }
 
   uoMCbxFilterChange() {
     this.uoMCbx.filterChange.asObservable().pipe(
@@ -226,7 +263,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
   }
 
   quickCreateCateg() {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm nhóm thuốc';
     modalRef.componentInstance.type = 'medicine';
     modalRef.result.then(result => {
@@ -268,6 +305,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
     data.categId = data.categ.id;
     data.uoMIds = [];
     data.uomId = data.uom.id;
+    data.productCriteriaIds = data.productCriterias ? data.productCriterias.map(x => x.id) : [];
     // data.uompoId = data.uompo.id;
     // data.uoMIds.push(data.uompo.id);
     data.uompoId = data.uom.id;
@@ -282,6 +320,18 @@ export class ProductMedicineCuDialogComponent implements OnInit {
 
   get f() {
     return this.productForm.controls;
+  }
+
+  loadListProductCriteria() {
+    var page = {
+      limit: 0,
+      offset: 0
+    }
+    this.productCriteriaService.getPaged(page).subscribe(
+      (res: any) => {
+        this.listProductCriteria = res.items;
+      }
+    );
   }
 }
 

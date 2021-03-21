@@ -22,6 +22,14 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class StockReportXuatNhapTonItem
     {
+        public StockReportXuatNhapTonItem()
+        {
+            Begin = 0;
+            Import = 0;
+            Export = 0;
+            End = 0;
+        }
+
         public Guid ProductId { get; set; }
         public string ProductName { get; set; }
 

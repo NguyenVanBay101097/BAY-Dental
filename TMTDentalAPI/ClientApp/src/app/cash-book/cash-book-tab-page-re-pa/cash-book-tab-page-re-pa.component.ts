@@ -5,12 +5,13 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { PhieuThuChiService, PhieuThuChiPaged } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
-import { PrintService } from 'src/app/shared/services/print.service';
-import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
-import { CashBookPaged } from '../cash-book.service';
+import { CashBookCuDialogComponent } from '../../shared/cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { AuthService } from 'src/app/auth/auth.service';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { PhieuThuChiPaged, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 
 @Component({
   selector: 'app-cash-book-tab-page-re-pa',
@@ -19,28 +20,34 @@ import { IntlService } from '@progress/kendo-angular-intl';
 })
 export class CashBookTabPageRePaComponent implements OnInit {
   loading = false;
-  items: any[];
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
   type: string;
-  quickOptionDate: string;
-  paged: PhieuThuChiPaged;
-  changeDateFirst: boolean = true;
+  search: string;
   searchUpdate = new Subject<string>();
+  dateFrom: Date;
+  dateTo: Date;
+
+  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
   constructor(private route: ActivatedRoute, 
     private modalService: NgbModal, 
-    private phieuThuChiService: PhieuThuChiService, 
     private intlService: IntlService, 
-    private authService: AuthService) { }
+    private authService: AuthService, 
+    private phieuThuChiService: PhieuThuChiService,
+    private notificationService: NotificationService,
+    private printService: PrintService
+  ) { }
 
   ngOnInit() {
-    this.paged = new PhieuThuChiPaged();
-    this.paged.companyId = this.authService.userInfo.companyId;
-    this.quickOptionDate = "Tháng này"; // Auto Call this.searchChangeDate()
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
+
     this.route.queryParamMap.subscribe(params => {
       this.type = params.get('type');
+      this.skip = 0;
       this.loadDataFromApi();
     });
 
@@ -48,31 +55,28 @@ export class CashBookTabPageRePaComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
   }
 
   getType(type) {
-    if (type == "inbound") {
+    if (type == "thu") {
       return "Phiếu thu";
     } else {
       return "Phiếu chi";
     }
   }
 
-  convertType(type) {
-    if (type == "inbound") {
-      return "thu";
-    } else {
-      return "chi";
-    }
-  }
-
   getState(state) {
     if (state == "posted") {
       return "Đã xác nhận";
+    } else if (state == "draft") {
+      return "Nháp";
+    } else if (state == "cancel") {
+      return "Đã hủy";
     } else {
-      return "Nháp"
+      return "";
     }
   }
 
@@ -82,15 +86,17 @@ export class CashBookTabPageRePaComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    if (this.changeDateFirst == true) {
-      this.changeDateFirst = false;
-      return;
-    }
+    var paged = new PhieuThuChiPaged();
+    paged.companyId = this.authService.userInfo.companyId;
+    paged.limit = this.limit;
+    paged.offset = this.skip;
+    paged.type = this.type;
+    paged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
+    paged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : '';
+    paged.search = this.search || '';
+
     this.loading = true;
-    this.paged.limit = this.limit;
-    this.paged.offset = this.skip;
-    this.paged.type = this.convertType(this.type);
-    this.phieuThuChiService.getPaged(this.paged).pipe(
+    this.phieuThuChiService.getPaged(paged).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -105,53 +111,78 @@ export class CashBookTabPageRePaComponent implements OnInit {
   }
 
   searchChangeDate(value) {
-    this.paged.dateFrom = value.dateFrom ? this.intlService.formatDate(value.dateFrom, "yyyy-MM-dd") : '';
-    this.paged.dateTo = value.dateTo ? this.intlService.formatDate(value.dateTo, "yyyy-MM-ddT23:59") : '';
+    this.dateFrom = value.dateFrom;
+    this.dateTo = value.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
   createItem() {
-    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.type = this.type;
-    modalRef.result.then((res) => {
+    modalRef.result.then((res: any) => {
       this.loadDataFromApi();
+      if (res && res.print) {
+        this.printPhieu(res.id);
+      }
     }, (err) => { });
   }
 
+  printPhieu(id: string) {
+    this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
+      this.printService.printHtml(data.html);
+    });
+  }
+
   editItem(item) {
-    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.type = this.type;
-    modalRef.componentInstance.itemId = item.id;
+    modalRef.componentInstance.id = item.id;
     modalRef.result.then((res) => {
       this.loadDataFromApi();
+      if (res && res.print) {
+        this.printPhieu(item.id);
+      }
     }, (err) => { });
   }
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `Xóa ${this.getType(this.type).toLowerCase()}`;
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.type).toLowerCase()}?`;
-    modalRef.result.then((res) => {
-      this.phieuThuChiService.delete(item.id).subscribe(() => {
-        this.loadDataFromApi();
-      }, (res) => {
+      modalRef.componentInstance.title = `Xóa ${this.getType(this.type).toLowerCase()}`;
+      modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.type).toLowerCase()}?`;
+      modalRef.result.then((res) => {
+        this.phieuThuChiService.delete(item.id).subscribe(() => {
+          this.notificationService.show({
+            content: "Xóa thành công",
+            hideAfter: 3000,
+            position: { horizontal: "center", vertical: "top" },
+            animation: { type: "fade", duration: 400 },
+            type: { style: "success", icon: true },
+          });
+          this.loadDataFromApi();
+        }, (res) => {
+        });
+      }, (err) => {
       });
-    }, (err) => {
-    });
   }
 
   exportExcelFile() {
-    this.phieuThuChiService.exportExcelFile(this.paged).subscribe((res) => {
-      let filename = "PhieuThu";
-      if (this.type == "outbound") {
-        filename = "PhieuChi";
-      }
+    var paged = new PhieuThuChiPaged();
+    paged.companyId = this.authService.userInfo.companyId;
+    paged.limit = this.limit;
+    paged.offset = this.skip;
+    paged.type = this.type;
+    paged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
+    paged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : '';
+    paged.search = this.search || '';
+
+    this.phieuThuChiService.exportExcelFile(paged).subscribe((res) => {
+      let filename = this.type == "thu" ? "PhieuThu" : "PhieuChi";
 
       let newBlob = new Blob([res], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      console.log(res);
 
       let data = window.URL.createObjectURL(newBlob);
       let link = document.createElement("a");

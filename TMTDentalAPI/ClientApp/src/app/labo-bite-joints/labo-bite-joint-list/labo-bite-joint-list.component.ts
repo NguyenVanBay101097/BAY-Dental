@@ -36,6 +36,7 @@ export class LaboBiteJointListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 
@@ -72,7 +73,7 @@ export class LaboBiteJointListComponent implements OnInit {
 
   createItem() {
     let modalRef = this.modalService.open(LaboBiteJointCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm kiểu nhịp Labo';
+    modalRef.componentInstance.title = 'Thêm khớp cắn Labo';
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {
@@ -81,7 +82,7 @@ export class LaboBiteJointListComponent implements OnInit {
 
   editItem(item: LaboBiteJointBasic) {
     let modalRef = this.modalService.open(LaboBiteJointCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa kiểu nhịp Labo';
+    modalRef.componentInstance.title = 'Sửa khớp cắn Labo';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -113,7 +114,7 @@ export class LaboBiteJointListComponent implements OnInit {
   }
 
   onImport() {
-    let modalRef = this.modalService.open(LaboFinnishLineImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(LaboFinnishLineImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static',scrollable:true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.componentInstance.type = 'labo_bitejoint';
     modalRef.result.then(() => {

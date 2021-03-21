@@ -1,0 +1,344 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a [routerLink]="['/surveys']">
+                    <span>Danh sách công việc</span>
+                </a>
+            </li>
+            <li class="active">
+                <span>{{surveyAssignment.partner?.name}}</span>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <button type="button" *ngIf="surveyAssignment.status == 'draft'" class="btn btn-primary btn-sm"
+                        (click)="actionContact()">
+                        Liên hệ
+                    </button>
+                    <button type="button" *ngIf="surveyAssignment.status != 'done'" class="btn btn-primary btn-sm"
+                        (click)="actionDone()">
+                        Khảo sát
+                    </button>
+                    <button type="button" *ngIf="surveyAssignment.status == 'done'" class="btn btn-danger btn-sm"
+                        (click)="actionCancel()">
+                        Hủy khảo sát
+                    </button>
+                    <button type="button" *ngIf="surveyAssignment.status == 'done'" class="btn btn-primary btn-sm"
+                        (click)="actionDone()">
+                        Xem đánh giá
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="surveyAssignment.status !== 'done'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': surveyAssignment.status === 'done', 'btn-secondary': surveyAssignment.status !== 'done'}"
+                        type="button">
+                        Hoàn thành
+                    </button>
+                    <button [disabled]="surveyAssignment.status !== 'contact'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': surveyAssignment.status === 'contact', 'btn-secondary': surveyAssignment.status !== 'contact'}"
+                        type="button">
+                        Đang liên hệ
+                    </button>
+                    <button [disabled]="surveyAssignment.status !== 'draft'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': surveyAssignment.status === 'draft', 'btn-secondary': surveyAssignment.status !== 'draft'}"
+                        type="button">
+                        Chưa gọi
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <h5>
+                        <span>THÔNG TIN KHÁCH HÀNG</span>
+                    </h5>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="media">
+                        <img class="img-fluid mr-3" *ngIf="surveyAssignment.partner?.avatar"
+                            [src]="surveyAssignment.partner?.avatar + '?width=100&height=100'" />
+                        <div class="media-body">
+                            <h4>{{surveyAssignment.partner?.name}}</h4>
+                            <!-- <div class="t_sub_title">
+                                Mã khách hàng: {{surveyAssignment.partner?.ref}} <br />
+                                Ngày tạo: {{surveyAssignment.partner?.date | date : 'shortDate' }}
+                            </div> -->
+                        </div>
+                    </div>
+                    <div *ngIf="surveyAssignment.status === 'done'" class="report-prescription-payment">
+                        <div class="revenue">
+                            <div class="title">
+                                <h6>Điểm đánh giá</h6>
+                            </div>
+                            <h4 class="text-primary">
+                                {{surveyAssignment?.userInput?.score}}/{{surveyAssignment.userInput?.maxScore}}
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Mã khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{surveyAssignment.partner?.ref}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Tuổi
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{surveyAssignment.partner?.age}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Địa chỉ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{surveyAssignment.partner?.address}}
+                                </td>
+                            </tr>
+
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Nghề nghiệp
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{surveyAssignment.partner?.jobTitle}}
+                                </td>
+                            </tr> -->
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Tiểu sử bệnh
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{surveyAssignment.partner?.histories.join(', ')}}
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Điện thoại
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{surveyAssignment.partner?.phone}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Email
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{surveyAssignment.partner?.email}}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Nhãn khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{surveyAssignment.partner?.categories.join(', ')}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="oe_title">
+                    <h5 class="mb-0">
+                        <span>THÔNG TIN PHIẾU ĐIỀU TRỊ</span>
+                    </h5>
+                </div>
+                <div class="o_group mt-0 mb-0">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Số phiếu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{surveyAssignment.saleOrder?.name}}
+                                </td>
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Ngày lập phiếu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{surveyAssignment.saleOrder?.dateOrder | date:'shortDate'}}
+                                </td>
+                            </tr>
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Trạng thái
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{surveyAssignment.saleOrder?.stateDisplay}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Tổng tiền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <strong>{{surveyAssignment.saleOrder?.amountTotal | number}}</strong>
+                                </td>
+                            </tr> -->
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="oe_title">
+                    <h5 class="mb-0">
+                        <span>THÔNG TIN DỊCH VỤ</span>
+                    </h5>
+                </div>
+                <div class="o_group">
+                    <div class="table-wrapper">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 120px">Dịch vụ</th>
+                                        <th scope="col" style="width: 80px">Bác sĩ</th>
+                                        <th scope="col" style="width: 50px">SL</th>
+                                        <th scope="col" style="width: 150px">Thông tin bổ sung</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ng-container *ngFor="let line of surveyAssignment.saleLines; let i=index">
+                                        <tr>
+                                            <td>{{line.productName }}</td>
+                                            <td>
+                                                {{line.employeeName}}
+                                            </td>
+                                            <td class="text-right">
+                                                <span>{{line.productUOMQty | number }}</span>
+                                            </td>
+                                            <td>
+                                                <span>{{line.teeth.join(',')}} {{line.diagnostic}}</span>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="oe_title">
+                    <h5 class="mb-0">
+                        <span>THÔNG TIN ĐỢT KHÁM</span>
+                    </h5>
+                </div>
+                <div class="o_group">
+                    <div class="table-wrapper">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 120px">Đợt khám</th>
+                                        <th scope="col" style="width: 80px">Ngày</th>
+                                        <th scope="col" style="width: 80px">Bác sĩ</th>
+                                        <th scope="col" style="width: 100px">Dịch vụ</th>
+                                        <th scope="col" style="width: 100px">Công đoạn</th>
+                                        <th scope="col" style="width: 100px">Răng,Chi tiết điều trị</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ng-container *ngFor="let dotkham of surveyAssignment.dotKhams; let i=index">
+                                        <tr *ngFor="let dkline of dotkham.lines; let x=index">
+
+                                            <td *ngIf="x==0" [attr.rowspan]="dotkham.lines.length">
+                                                Đợt khám {{i+1}}
+                                            </td>
+                                            <td *ngIf="x==0" [attr.rowspan]="dotkham.lines.length">
+                                                {{dotkham.date | date:'shortDate'}}
+                                            </td>
+                                            <td *ngIf="x==0" [attr.rowspan]="dotkham.lines.length">
+                                                <span>{{dotkham.doctorName}}</span>
+                                            </td>
+                                            <td>
+                                                {{dkline.productName}}
+                                            </td>
+                                            <td>
+                                                {{dkline.nameStep}}
+                                            </td>
+                                            <td>
+                                                {{dkline.teeth.join(', ')}} <br />
+                                                {{dkline.note}}
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div *ngIf="surveyAssignment.status !== 'draft'">
+                    <div class="oe_title">
+                        <h5>
+                            <span>NHẬT KÝ CUỘC GỌI</span>
+                        </h5>
+                    </div>
+                    <div class="o_group">
+                        <app-survey-call-content-list (addBtnEvent)="onAddCallContent()"
+                            (cancelBtnEvent)="onCancelCallContent($event)"
+                            (removeBtnEvent)="onRemoveCallContent($event)" (saveBtnEvent)="onSaveCallContent($event)"
+                            [data]="surveyAssignment.callContents" [id]="surveyAssignment.id" [view]="false"
+                            [surveyStatus]="surveyAssignment.status">
+                        </app-survey-call-content-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

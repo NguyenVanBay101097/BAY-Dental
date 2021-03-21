@@ -21,7 +21,7 @@ export class CardTypeCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
   cardType: CardTypeDisplay = new CardTypeDisplay();
-
+  submitted = false;
   filteredPricelists: ProductPriceListBasic[];
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
 
@@ -56,6 +56,10 @@ export class CardTypeCreateUpdateComponent implements OnInit {
     // this.loadPricelists();
   }
 
+  get f() {
+    return this.formGroup.controls;
+  }
+
   loadPricelists() {
     this.searchPricelists().subscribe(result => {
       this.filteredPricelists = _.unionBy(this.filteredPricelists, result.items, 'id');
@@ -82,6 +86,7 @@ export class CardTypeCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
     }

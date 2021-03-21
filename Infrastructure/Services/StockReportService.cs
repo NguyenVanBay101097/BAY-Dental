@@ -80,9 +80,9 @@ namespace Infrastructure.Services
                         ProductName = item.ProductName,
                         ProductCode = item.ProductCode,
                         ProductUomName = item.ProductUomName,
-                        Begin = item.Begin,
                         DateFrom = date_from,
-                        DateTo = date_to
+                        DateTo = date_to,
+                        Begin = item.Begin,
                     });
                 }
             }
@@ -133,13 +133,21 @@ namespace Infrastructure.Services
                         ProductCode = item.ProductCode,
                         ProductUomName = item.productUomName,
                         DateFrom = date_from,
-                        DateTo = date_to
+                        DateTo = date_to,
+                        Import = item.Import,
+                        Export = item.Export
                     });
+                } 
+                else
+                {
+                    dict[item.ProductId].Import = item.Import;
+                    dict[item.ProductId].Export = item.Export;
                 }
+            }
 
-                dict[item.ProductId].Import = item.Import;
-                dict[item.ProductId].Export = item.Export;
-                dict[item.ProductId].End = dict[item.ProductId].Begin + dict[item.ProductId].Import - dict[item.ProductId].Export;
+            foreach (var item in dict.ToArray())
+            {
+                dict[item.Key].End = dict[item.Key].Begin + dict[item.Key].Import - dict[item.Key].Export;
             }
 
             return dict.Values;

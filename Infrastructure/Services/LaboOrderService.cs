@@ -42,11 +42,12 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
-                x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+                x.Partner.NameNoSign.Contains(val.Search) || 
+                x.Partner.Ref.Contains(val.Search));
 
             if (val.SaleOrderLineId.HasValue)
             {
-                query = query.Where(x => x.SaleOrderLineId == val.SaleOrderLineId);          
+                query = query.Where(x => x.SaleOrderLineId == val.SaleOrderLineId);
             }
 
             if (!string.IsNullOrEmpty(val.State))
@@ -108,7 +109,9 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
-                x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+                x.Partner.NameNoSign.Contains(val.Search) || 
+                x.Partner.Ref.Contains(val.Search) || 
+                x.SaleOrderLine.Order.Name.Contains(val.Search));
 
             var now = DateTime.Now;
 
@@ -151,7 +154,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) || x.Partner.DisplayName.Contains(val.Search) ||
-                x.Partner.Ref.Contains(val.Search)));
+                x.Partner.Ref.Contains(val.Search) || x.SaleOrderLine.Order.Name.Contains(val.Search)));
 
             if (!string.IsNullOrEmpty(val.State))
             {
@@ -176,9 +179,15 @@ namespace Infrastructure.Services
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
+            var totalItems = await query.CountAsync();
+
+            if(val.Limit > 0)
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            }
+
             var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();
 
-            var totalItems = await query.CountAsync();
             return new PagedResult2<LaboOrderBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
@@ -295,7 +304,6 @@ namespace Infrastructure.Services
         {
             var labo = _mapper.Map<LaboOrder>(val);
             labo.CompanyId = CompanyId;
-
             ///thêm răng
             foreach (var tooth in val.Teeth)
             {
@@ -407,33 +415,64 @@ namespace Infrastructure.Services
 
 
 
+        public async Task ButtonConfirm(IEnumerable<Guid> ids)
+        {
+            var moveObj = GetService<IAccountMoveService>();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Partner)
+                .Include(x => x.LaboBridge)
+                .Include(x => x.LaboBiteJoint)
+                .Include(x => x.LaboFinishLine)
+                .Include(x => x.Product)
+                .Include(x => x.SaleOrderLine)
+                .Include(x => x.LaboOrderProductRel)
+                .Include(x => x.LaboOrderToothRel)
+                .Include("SaleOrderLine.Product").ToListAsync();
+
+            foreach (var order in self)
+            {
+                if (order.State != "draft")
+                    throw new Exception("Chỉ có thể xác nhận ở trạng thái nháp.");
+                order.State = "confirmed";
+            }
+
+            var invoices = await _CreateInvoices(self);
+            await moveObj.ActionPost(invoices);
+
+            await UpdateAsync(self);
+        }
 
         public async Task<IEnumerable<AccountMove>> _CreateInvoices(IEnumerable<LaboOrder> self)
         {
-            var lbLineObj = GetService<ILaboOrderLineService>();
+            var moveObj = GetService<IAccountMoveService>();
             var invoice_vals_list = new List<AccountMove>();
             foreach (var order in self)
             {
                 var invoice_vals = await PrepareInvoice(order);
-                foreach (var poLine in order.OrderLines)
-                {
-                    invoice_vals.InvoiceLines.Add(lbLineObj._PrepareAccountMoveLine(poLine, invoice_vals));
-                }
+                invoice_vals.InvoiceLines.Add(_PrepareAccountMoveLine(order, invoice_vals));
+                invoice_vals_list.Add(invoice_vals);
 
-                if (!invoice_vals.InvoiceLines.Any())
-                    throw new Exception("There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.");
+                var moves = await moveObj.CreateMoves(new List<AccountMove>() { invoice_vals }, default_type: "in_invoice");
+                order.AccountMoveId = invoice_vals.Id;
 
                 invoice_vals_list.Add(invoice_vals);
             }
 
-            var in_invoice_vals_list = invoice_vals_list.Where(x => x.Type == "in_invoice").ToList();
-            var refund_invoice_vals_list = invoice_vals_list.Where(x => x.Type == "in_refund").ToList();
+            return invoice_vals_list;
+        }
 
-            var moveObj = GetService<IAccountMoveService>();
-            var moves = await moveObj.CreateMoves(in_invoice_vals_list, default_type: "in_invoice");
-            moves = moves.Concat(await moveObj.CreateMoves(refund_invoice_vals_list, default_type: "in_refund"));
-
-            return moves;
+        public AccountMoveLine _PrepareAccountMoveLine(LaboOrder self, AccountMove move)
+        {
+            var qty = self.Quantity;
+            return new AccountMoveLine
+            {
+                Name = self.SaleOrderLine.Name,
+                Move = move,
+                ProductUoMId = self.SaleOrderLine.ProductUOMId,
+                ProductId = self.SaleOrderLine.ProductId,
+                PriceUnit = self.PriceUnit,
+                Quantity = qty,
+                PartnerId = move.PartnerId,
+            };
         }
 
         private async Task<AccountMove> PrepareInvoice(LaboOrder self)
@@ -450,82 +489,8 @@ namespace Infrastructure.Services
                 JournalId = journal.Id,
                 Journal = journal,
                 CompanyId = self.CompanyId,
-                InvoiceUserId = UserId,
                 InvoiceOrigin = self.Name,
             };
-        }
-
-        public async Task ButtonConfirm(IEnumerable<Guid> ids)
-        {
-            var moveObj = GetService<IAccountMoveService>();
-            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-            foreach (var order in self)
-            {
-                if (order.State != "draft")
-                    throw new Exception("Chỉ có thể xác nhận ở trạng thái nháp.");
-                var move = await _PrepareAccountMove(order);
-
-                var amlObj = GetService<IAccountMoveLineService>();
-                amlObj.PrepareLines(move.Lines);
-
-                await moveObj.CreateMoves(new List<AccountMove>() { move });
-                await moveObj.ActionPost(new List<AccountMove>() { move });
-
-                order.State = "confirmed";
-                order.AccountMoveId = move.Id;
-            }
-
-            await UpdateAsync(self);
-        }
-
-        private async Task<AccountMove> _PrepareAccountMove(LaboOrder self)
-        {
-            var accountObj = GetService<IAccountAccountService>();
-            var account = await accountObj.SearchQuery(x => x.InternalType == "payable" && x.CompanyId == self.CompanyId).FirstOrDefaultAsync();
-
-            var accountMoveObj = GetService<IAccountMoveService>();
-            var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "in_invoice", default_company_id: self.CompanyId);
-            if (journal == null)
-                throw new Exception($"Please define an accounting purchase journal for the company {CompanyId}.");
-
-            var balance = self.AmountTotal;
-            var move_vals = new AccountMove
-            {
-                JournalId = journal.Id,
-                Journal = journal,
-                PartnerId = self.PartnerId,
-                CompanyId = journal.CompanyId,
-            };
-
-            var lines = new List<AccountMoveLine>()
-            {
-                new AccountMoveLine
-                {
-                    Name = self.Name,
-                    Debit = balance,
-                    Credit = 0,
-                    PartnerId = self.PartnerId,
-                    AccountId = journal.DefaultDebitAccount.Id,
-                    Account = journal.DefaultDebitAccount,
-                    CompanyId = self.CompanyId,
-                    Move = move_vals,
-                },
-                new AccountMoveLine
-                {
-                    Name = self.Name,
-                    Debit = 0,
-                    Credit = balance,
-                    PartnerId = self.PartnerId,
-                    AccountId = account.Id,
-                    Account = account,
-                    CompanyId = self.CompanyId,
-                    Move = move_vals,
-                },
-            };
-
-            move_vals.Lines = lines;
-
-            return move_vals;
         }
 
         public async Task ButtonCancel(IEnumerable<Guid> ids)
@@ -754,12 +719,12 @@ namespace Infrastructure.Services
                 if (val.State == "danhan")
                 {
                     query = query.Where(x => x.DateReceipt.HasValue);
-                }             
+                }
                 else if (val.State == "toihan")
                 {
                     query = query.Where(x => x.DatePlanned.HasValue && now.Date == x.DatePlanned.Value && !x.DateReceipt.HasValue);
                 }
-            }         
+            }
 
             return await query.LongCountAsync();
         }

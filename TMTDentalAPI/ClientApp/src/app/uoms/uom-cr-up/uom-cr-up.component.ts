@@ -22,6 +22,10 @@ export class UomCrUpComponent implements OnInit {
   filterdCategories: UoMCategoryBasic[] = [];
   uom: UoMDisplay;
 
+  submitted = false;
+
+  get f() { return this.formGroup.controls; }
+
   constructor(
     private uoMService: UomService,
     public activeModal: NgbActiveModal,
@@ -51,7 +55,7 @@ export class UomCrUpComponent implements OnInit {
       tap(() => (this.cateCbx.loading = true)),
       switchMap(value => this.searchUoMCategories(value))
     ).subscribe(result => {
-      this.filterdCategories = result;
+      this.filterdCategories = result ? result.items : [];
       this.cateCbx.loading = false;
     });
 
@@ -81,7 +85,7 @@ export class UomCrUpComponent implements OnInit {
   loadUoMCategory() {
     this.searchUoMCategories().subscribe(
       result => {
-        this.filterdCategories = result;
+        this.filterdCategories = result ? result.items : [];
       }
     )
   }
@@ -91,7 +95,7 @@ export class UomCrUpComponent implements OnInit {
     val.search = q || '';
     val.limit = 20;
     val.offset = 0;
-    return this.uomCategoryService.autocomplete(val);
+    return this.uomCategoryService.getPaged(val);
   }
 
   onCancel() {
@@ -99,6 +103,8 @@ export class UomCrUpComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+    
     if (this.formGroup.invalid) {
       return false;
     }

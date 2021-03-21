@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Infrastructure.Data;
@@ -67,7 +68,7 @@ namespace Infrastructure.Services
                             if (rec.PaymentType == "inbound")
                                 sequence_code = "account.payment.customer.invoice";
                         }
-                        if (rec.PartnerType == "supplier")
+                        else if (rec.PartnerType == "supplier")
                         {
                             if (rec.PaymentType == "outbound")
                                 sequence_code = "account.payment.supplier.invoice";
@@ -130,16 +131,16 @@ namespace Infrastructure.Services
                     }
                     else if (rec.CardOrderPaymentRels.Any())
                     {
-                        //tìm tất cả các moves của các sale orders
-                        var sale_order_ids = rec.CardOrderPaymentRels.Select(x => x.CardOrderId).ToList();
-                        var sale_moves = await moveObj.SearchQuery(x => x.Lines.Any(s => s.CardOrderLineRels.Any(m => sale_order_ids.Contains(m.OrderLine.OrderId))))
+                        //tìm tất cả các moves của các card orders
+                        var card_order_ids = rec.CardOrderPaymentRels.Select(x => x.CardOrderId).ToList();
+                        var card_moves = await moveObj.SearchQuery(x => x.Lines.Any(s => s.CardOrderLineRels.Any(m => card_order_ids.Contains(m.OrderLine.OrderId))))
                             .Include(x => x.Lines).Include("Lines.Account").ToListAsync();
 
-                        var invoices = moves.Concat(sale_moves);
+                        var invoices = moves.Concat(card_moves);
                         await _AutoReconcile(rec, invoices);
 
                         var cardOrderObj = GetService<IServiceCardOrderService>();
-                        await cardOrderObj.UpdateResidual(sale_order_ids);
+                        await cardOrderObj.UpdateResidual(card_order_ids);
                     }
                     else
                     {
@@ -241,32 +242,31 @@ namespace Infrastructure.Services
 
                 var rec_pay_line_name = "";
                 if (payment.PaymentType == "transfer")
-                    rec_pay_line_name = payment.Name;
-                else
                 {
-                    if (payment.PartnerType == "customer")
-                    {
-                        if (payment.PaymentType == "inbound")
-                            rec_pay_line_name += "Khách hàng thanh toán";
-                        else if (payment.PaymentType == "outbound")
-                            rec_pay_line_name += "Hoàn tiền khách hàng";
-                    }
-                    else if (payment.PartnerType == "supplier")
-                    {
-                        if (payment.PaymentType == "inbound")
-                            rec_pay_line_name += "Nhà cung cấp hoàn tiền";
-                        else if (payment.PaymentType == "outbound")
-                            rec_pay_line_name += "Thanh toán nhà cung cấp";
-                    }
-
-                    if (payment.AccountMovePaymentRels.Any())
-                    {
-                        var moveObj = GetService<IAccountMoveService>();
-                        var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId);
-                        var move_names = await moveObj.SearchQuery(x => move_ids.Contains(x.Id)).Select(x => x.Name).ToListAsync();
-                        rec_pay_line_name += $": {string.Join(", ", move_names)}";
-                    }
+                    rec_pay_line_name = payment.Name;
                 }
+                else if (payment.PartnerType == "customer")
+                {
+                    if (payment.PaymentType == "inbound")
+                        rec_pay_line_name += "Khách hàng thanh toán";
+                    else if (payment.PaymentType == "outbound")
+                        rec_pay_line_name += "Hoàn tiền khách hàng";
+                }
+                else if (payment.PartnerType == "supplier")
+                {
+                    if (payment.PaymentType == "inbound")
+                        rec_pay_line_name += "Nhà cung cấp hoàn tiền";
+                    else if (payment.PaymentType == "outbound")
+                        rec_pay_line_name += "Thanh toán nhà cung cấp";
+                }
+
+                //if (payment.AccountMovePaymentRels.Any())
+                //{
+                //    var moveObj = GetService<IAccountMoveService>();
+                //    var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId);
+                //    var move_names = await moveObj.SearchQuery(x => move_ids.Contains(x.Id)).Select(x => x.Name).ToListAsync();
+                //    rec_pay_line_name += $": {string.Join(", ", move_names)}";
+                //}
 
                 var liquidity_line_name = "";
                 if (payment.PaymentType == "transfer")
@@ -319,8 +319,6 @@ namespace Infrastructure.Services
 
             return all_move_vals;
         }
-
-
 
         private async Task<AccountMove> _GetMoveVals(AccountPayment rec, AccountJournal journal = null)
         {
@@ -580,6 +578,34 @@ namespace Infrastructure.Services
             return rec;
         }
 
+        public async Task<AccountPaymentDisplay> ThuChiDefaultGet(AccountPaymentThuChiDefaultGetRequest val)
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+            var rec = new AccountPaymentDisplay
+            {
+                Journal = _mapper.Map<AccountJournalBasic>(cashJournal),
+                PaymentType = val.PaymentType,
+                PartnerType = "customer",
+            };
+
+            return rec;
+        }
+
+        public async Task<AccountPaymentDisplay> SalaryPaymentDefaultGet()
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+            var rec = new AccountPaymentDisplay
+            {
+                Journal = _mapper.Map<AccountJournalBasic>(cashJournal),
+                PaymentType = "outbound",
+                PartnerType = "employee",
+            };
+
+            return rec;
+        }
+
         public async Task<AccountRegisterPaymentDisplay> PurchaseDefaultGet(IEnumerable<Guid> purchaseOrderIds)
         {
             var orderObj = GetService<IPurchaseOrderService>();
@@ -602,16 +628,19 @@ namespace Infrastructure.Services
                 if (inv.Type != dtype)
                 {
                     if ((dtype == "in_refund" && inv.Type == "in_invoice") || (dtype == "in_invoice" && inv.Type == "in_refund"))
-                        throw new Exception("You cannot register payments for vendor bills and supplier refunds at the same time.");
+                        throw new Exception("Bạn không thể tạo thanh toán cho mua hàng và trả hàng cùng một lúc.");
 
                     if ((dtype == "out_refund" && inv.Type == "out_invoice") || (dtype == "out_invoice" && inv.Type == "out_refund"))
-                        throw new Exception("You cannot register payments for customer invoices and credit notes at the same time.");
+                        throw new Exception("Bạn không thể tạo thanh toán cho bán hàng và trả hàng cùng một lúc.");
                 }
             }
 
             var total_amount = invoices.Sum(x => x.AmountResidual * MAP_INVOICE_TYPE_PAYMENT_SIGN[x.Type]);
             var communication = !string.IsNullOrEmpty(invoices[0].InvoicePaymentRef) ? invoices[0].InvoicePaymentRef :
                 (!string.IsNullOrEmpty(invoices[0].Ref) ? invoices[0].Ref : invoices[0].Name);
+
+            var journalObj = GetService<IAccountJournalService>();
+            var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
 
             var rec = new AccountRegisterPaymentDisplay
             {
@@ -620,8 +649,21 @@ namespace Infrastructure.Services
                 PartnerId = invoices[0].PartnerId,
                 PartnerType = MAP_INVOICE_TYPE_PARTNER_TYPE[invoices[0].Type],
                 //Communication = communication,
-                InvoiceIds = invoice_ids
+                InvoiceIds = invoice_ids,
+                Journal = _mapper.Map<AccountJournalSimple>(cashJournal),
+                JournalId = cashJournal.Id
             };
+
+            //get debit items
+            rec.DebitItems = invoices.Select(x => new PartnerGetDebtPagedItem
+            {
+                Date = x.Date,
+                AmountResidual = x.AmountResidual.GetValueOrDefault(),
+                Balance = x.AmountTotal.GetValueOrDefault(),
+                Origin = x.InvoiceOrigin,
+                MoveId = x.Id,
+                MoveType = x.Type
+            });
 
             return rec;
         }
@@ -656,6 +698,7 @@ namespace Infrastructure.Services
         public async Task<AccountRegisterPaymentDisplay> PartnerDefaultGet(Guid partnerId)
         {
             //Tính số tiền còn nợ của partner
+            var journalObj = GetService<IAccountJournalService>();
             var partnerObj = GetService<IPartnerService>();
             var creditDebitGet = partnerObj.CreditDebitGet(new List<Guid>() { partnerId });
 
@@ -677,7 +720,7 @@ namespace Infrastructure.Services
             }
 
             if (total_amount == 0)
-                throw new Exception("Không có gì để thanh toán");
+                throw new Exception("Bạn không còn hóa đơn để thanh toán");
 
             string payment_type = "";
             if (partner.Customer)
@@ -685,15 +728,43 @@ namespace Infrastructure.Services
             else if (partner.Supplier)
                 payment_type = total_amount > 0 ? "outbound" : "inbound";
 
+            var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+
             var rec = new AccountRegisterPaymentDisplay
             {
                 Amount = Math.Abs(total_amount),
                 PaymentType = payment_type,
                 PartnerId = partnerId,
                 PartnerType = partner_type,
+                Journal = _mapper.Map<AccountJournalSimple>(cashJournal),
+                JournalId = cashJournal.Id
             };
 
             return rec;
+        }
+
+        public async Task<AccountRegisterPaymentDisplay> PartnerDefaultGetV2(PartnerDefaultSearch val)
+        {
+            var accMoveObj = GetService<IAccountMoveService>();
+            var queryAccMove = accMoveObj.SearchQuery(x => x.Type == "in_invoice" && x.InvoicePaymentState == "not_paid" && x.AmountResidual != 0);
+            if (val.InvoiceIds != null && val.InvoiceIds.Any())
+                queryAccMove = queryAccMove.Where(x => val.InvoiceIds.Contains(x.Id));
+
+            if (val.PartnerId.HasValue)
+                queryAccMove = queryAccMove.Where(x => x.PartnerId == val.PartnerId.Value);
+
+            if (val.CompanyId.HasValue)
+                queryAccMove = queryAccMove.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            var result = await queryAccMove.Select(x => new AccountRegisterPaymentDisplay
+            {
+                Amount = queryAccMove.Sum(x => x.AmountResidual.Value),
+                PaymentType = "outbound",
+                PartnerId = x.PartnerId,
+                PartnerType = x.Partner.Customer ? "customer" : (x.Partner.Supplier ? "supplier" : ""),
+                InvoiceIds = queryAccMove.Select(x => x.Id)
+            }).FirstOrDefaultAsync();
+            return result;
         }
 
         public async Task<AccountPayment> CreateUI(AccountPaymentSave val)
@@ -703,7 +774,6 @@ namespace Infrastructure.Services
             var journal = await journalObj.GetByIdAsync(payment.JournalId);
 
             payment.CompanyId = journal.CompanyId;
-
 
             foreach (var invoice_id in val.InvoiceIds)
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = invoice_id });
@@ -717,9 +787,37 @@ namespace Infrastructure.Services
             foreach (var rel in val.SaleOrderLinePaymentRels)
                 payment.SaleOrderLinePaymentRels.Add(new SaleOrderLinePaymentRel { SaleOrderLineId = rel.SaleOrderLineId, AmountPrepaid = rel.AmountPrepaid });
 
+            await _ComputeDestinationAccount(new List<AccountPayment>() { payment });
+
             await CreateAsync(payment);
 
             return payment;
+        }
+
+        public async Task<IEnumerable<AccountPayment>> CreateMultipleAndConfirmUI(IEnumerable<AccountPaymentSave> vals)
+        {
+            var payments = new List<AccountPayment>();
+            var listHrPaySlip = new List<HrPayslip>();
+            var hrPayslipObj = GetService<IHrPayslipService>();
+            var hrPaySlips = hrPayslipObj.SearchQuery(x => vals.Select(s => s.HrPayslipId).Contains(x.Id));
+            foreach (var val in vals)
+            {
+                var payment = await CreateUI(val);
+
+                var slip = await hrPaySlips.Where(x => x.Id == val.HrPayslipId).FirstOrDefaultAsync();
+                if (slip != null)
+                {
+                    //slip.AccountPaymentId = payment.Id;
+                    slip.State = "posted";
+                    listHrPaySlip.Add(slip);
+                }
+                payments.Add(payment);
+            }
+
+            await Post(payments.Select(x => x.Id));
+            await hrPayslipObj.UpdateAsync(listHrPaySlip);
+
+            return payments;
         }
 
         /// <summary>
@@ -743,7 +841,6 @@ namespace Infrastructure.Services
             await base.CreateAsync(payment);
             return payment;
         }
-
 
         public async Task _ComputeSaleOrderLines(Guid saleOrderId)
         {
@@ -825,7 +922,6 @@ namespace Infrastructure.Services
             return Math.Abs(total);
         }
 
-
         private async Task<AccountMoveLine> _GetCounterpartMoveLineVals(AccountPayment rec, IEnumerable<AccountInvoice> invoices = null)
         {
             string name = "";
@@ -881,24 +977,26 @@ namespace Infrastructure.Services
 
         public async Task _ComputeDestinationAccount(IEnumerable<AccountPayment> self)
         {
+            var accountObj = GetService<IAccountAccountService>();
+            var amlObj = GetService<IAccountMoveLineService>();
+            var loaiThuChiObj = GetService<ILoaiThuChiService>();
             foreach (var payment in self)
             {
                 if (payment.AccountMovePaymentRels.Any())
                 {
-                    var amlObj = GetService<IAccountMoveLineService>();
                     var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId).ToList();
                     payment.DestinationAccount = amlObj.SearchQuery(x => move_ids.Contains(x.MoveId))
                         .Include(x => x.Account).Select(x => x.Account).Where(x => x.InternalType == "receivable" || x.InternalType == "payable").FirstOrDefault();
                 }
                 else if (payment.PartnerType == "customer")
                 {
-                    var accountObj = GetService<IAccountAccountService>();
-                    payment.DestinationAccount = await accountObj.GetAccountReceivableCurrentCompany();
+                    var account = await accountObj.GetAccountReceivableCurrentCompany();
+                    payment.DestinationAccount = account;
                 }
                 else if (payment.PartnerType == "supplier")
                 {
-                    var accountObj = GetService<IAccountAccountService>();
-                    payment.DestinationAccount = await accountObj.GetAccountPayableCurrentCompany();
+                    var account = await accountObj.GetAccountPayableCurrentCompany();
+                    payment.DestinationAccount = account;
                 }
             }
         }
@@ -938,13 +1036,19 @@ namespace Infrastructure.Services
             }
 
             if (val.PaymentDateFrom.HasValue)
-                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate <= val.PaymentDateFrom));
-
+            {
+                var paymentDateFrom = val.PaymentDateFrom.Value.AbsoluteBeginOfDate();
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate >= paymentDateFrom));
+            }
+               
             if (val.PaymentDateTo.HasValue)
             {
-                var paymentDateTo = val.PaymentDateTo.Value.AddDays(1);
+                var paymentDateTo = val.PaymentDateTo.Value.AbsoluteEndOfDate();
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate < paymentDateTo));
             }
+
+            if (val.CompanyId.HasValue)
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.CompanyId.Equals(val.CompanyId)));
 
             if (val.SaleOrderId.HasValue)
             {
@@ -964,9 +1068,13 @@ namespace Infrastructure.Services
             }
 
             if (val.PartnerId.HasValue)
-            {
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PartnerId.Equals(val.PartnerId)));
-            }
+
+            if (!string.IsNullOrEmpty(val.PaymentType))
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentType == val.PaymentType));
+
+            if (!string.IsNullOrEmpty(val.JournalType))
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.Journal.Type == val.JournalType));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
@@ -981,29 +1089,10 @@ namespace Infrastructure.Services
 
         public async Task CancelAsync(IEnumerable<Guid> ids)
         {
-            await CancelAsync(SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines)
-                .Include("MoveLines.Move").Include("MoveLines.Move.Lines").Include(x => x.AccountMovePaymentRels).ToList());
-        }
-
-        public async Task<IEnumerable<AccountPayment>> ActionDraft(IEnumerable<Guid> ids)
-        {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).Include(x => x.SaleOrderPaymentRels).Include(x => x.SaleOrderLinePaymentRels).ToListAsync();
-            var moveObj = GetService<IAccountMoveService>();
-            var move_ids = self.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList();
-            var moves = await moveObj.ButtonDraft(move_ids);
-
-            await moveObj.Unlink(move_ids);
-
-
-            foreach (var rec in self)
-            {
-
-
-                rec.State = "draft";
-            }
-
-            await UpdateAsync(self);
-            return self;
+            await CancelAsync(SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.MoveLines).ThenInclude(x => x.Move)
+                .Include(x => x.MoveLines).ThenInclude(x => x.Move).ThenInclude(x => x.Lines)
+                .Include(x => x.AccountMovePaymentRels).ToList());
         }
 
         public async Task CancelAsync(IEnumerable<AccountPayment> payments)
@@ -1014,33 +1103,38 @@ namespace Infrastructure.Services
             {
                 foreach (var move in rec.MoveLines.Select(x => x.Move).Distinct().ToList())
                 {
-                    if (rec.AccountInvoicePaymentRels.Any())
+                    if (rec.AccountMovePaymentRels.Any())
                         await moveLineObj.RemoveMoveReconcile(move.Lines.Select(x => x.Id).ToList());
+                    else
+                        await moveLineObj.RemoveMoveReconcile(rec.MoveLines.Select(x => x.Id).ToList());
 
                     await moveObj.ButtonCancel(new List<Guid>() { move.Id });
                     await moveObj.Unlink(new List<Guid>() { move.Id });
                 }
 
-                rec.State = "draft";
+                rec.State = "cancel";
             }
 
             await UpdateAsync(payments);
         }
 
-        public async Task ActionDraftUnlink(IEnumerable<Guid> ids)
-        {
-            var self = await ActionDraft(ids);
-            await UnlinkAsync(ids);
-        }
-
         public async Task UnlinkAsync(IEnumerable<Guid> ids)
         {
+            //Chỉ có thể xóa phiếu thu chi ở trạng thái nháp
             var settlementObj = GetService<ICommissionSettlementService>();
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
-            foreach (var rec in self)
 
+            foreach (var rec in self)
+            {
+                if (rec.State == "posted")
+                    throw new Exception("Bạn không thể xóa phiếu khi đã xác nhận");
+                if (rec.State == "cancel")
+                    throw new Exception("Bạn không thể xóa phiếu khi đã hủy");
                 if (rec.MoveLines.Any())
+                {
                     throw new Exception("Bạn không thể xóa thanh toán đã được vào sổ.");
+                }
+            }
 
             await settlementObj.Unlink(ids);
 
@@ -1132,8 +1226,10 @@ namespace Infrastructure.Services
                 CompanyStreet = x.Company.Partner.Street,
                 CompanyCity = x.Company.Partner.CityName,
                 CompanyDistrict = x.Company.Partner.DistrictName,
+
                 CompanyWard = x.Company.Partner.WardName,
                 Amount = x.Amount,
+                AmountText = AmountToText.amount_to_text(x.Amount, "VND"),
                 Communication = x.Communication,
                 CompanyEmail = x.Company.Email,
                 CompanyPhone = x.Company.Phone,
@@ -1145,9 +1241,12 @@ namespace Infrastructure.Services
                 PartnerPhone = x.Partner.Phone,
                 PartnerRef = x.Partner.Ref,
                 PartnerStreet = x.Partner.Street,
+                PartnerType = x.PartnerType,
                 PartnerWard = x.Partner.WardName,
                 PaymentDate = x.PaymentDate,
-                UserName = user.Name,
+                PaymentName = x.Name,
+                PaymentType = x.PaymentType,
+                UserName = user == null ? null : user.Name,
                 SaleOrders = x.SaleOrderPaymentRels.Select(s => new AccountPaymentSaleOrderPrintVM
                 {
                     AmountTotal = s.SaleOrder.AmountTotal,
@@ -1183,12 +1282,7 @@ namespace Infrastructure.Services
                 tmp2.Add(res.PartnerCity);
 
             res.PartnerAddress = string.Join(", ", tmp2);
-
-
             return res;
         }
-
     }
-
-
 }

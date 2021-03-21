@@ -116,7 +116,31 @@ namespace Umbraco.Web.Models.ContentEditing
     public class SalaryPaymentBasic
     {
         public Guid Id { get; set; }
+
+        /// <summary>
+        /// Ngày lập phiếu
+        /// </summary>
+        public DateTime Date { get; set; }
+
+        public string JournalName { get; set; }
+
+        public string State { get; set; }
+
         public string Name { get; set; }
 
+        public string Type { get; set; }
+
+        /// <summary>
+        /// Số tiền
+        /// </summary>
+        public decimal Amount { get; set; }
+
+        public string EmployeeName { get; set; }
+    }
+
+    public class SalaryPaymentDefaulCreateByVM
+    {
+        public IEnumerable<PayslipCreateSalaryPaymentDisplay> Data { get; set; } = new List<PayslipCreateSalaryPaymentDisplay>();
+        public IEnumerable<string> Errors { get; set; } = new List<string>();
     }
 }

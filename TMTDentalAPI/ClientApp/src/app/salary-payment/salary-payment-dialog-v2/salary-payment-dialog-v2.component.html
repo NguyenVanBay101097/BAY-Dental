@@ -1,0 +1,115 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg overflow-hidden">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr *ngIf="paymentDisplay.name">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Mã phiếu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span style="font-weight: 600;">{{paymentDisplay.name}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker [min]="minDateTime" [navigation]="false" [max]="maxDateTime"
+                                        formControlName="paymentDateObj" [rangeValidation]="true"
+                                        [disableControl]="checkIsDisable()">
+                                    </kendo-datepicker>
+                                    <div *ngIf="f.paymentDateObj.errors && (f.paymentDateObj.touched || f.paymentDateObj.dirty || submitted)" class="text-danger">
+                                        <div>Chọn ngày trong khoảng {{minDateTime | date:'dd/MM/yyyy'}} - {{monthEnd |
+                                            date:'dd/MM/yyyy'}}</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Phương thức
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
+                                        [disableControl]="checkIsDisable()" #journalCbx formControlName="journal"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.journal.errors.required">Chọn phương thức</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Người nhận
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredPartners" [textField]="'name'" [filterable]="true"
+                                        [disableControl]="checkIsDisable()" #partnerCbx formControlName="partner"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.partner.errors.required">Chọn người nhận</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số tiền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="amount"
+                                        [disableControl]="checkIsDisable()">
+                                    </kendo-numerictextbox>
+                                    <div *ngIf="f.amount.errors && (f.amount.touched || f.amount.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.amount.errors.required">Nhập số tiền ứng</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nội dung
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea class="form-control" [disableControl]="checkIsDisable()"
+                                        formControlName="communication"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button *ngIf="paymentDisplay.state == 'draft'" type="button" class="btn btn-primary ml-1" (click)="actionConfirm(false)">Xác nhận</button>
+    <button *ngIf="paymentDisplay.state == 'draft'" type="button" class="btn btn-primary" (click)="actionConfirm(true)" accesskey="s">Xác nhận và In</button>
+    <button *ngIf="paymentDisplay.state == 'posted'" type="button" class="btn btn-danger" (click)="actionCancel()">Hủy phiếu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

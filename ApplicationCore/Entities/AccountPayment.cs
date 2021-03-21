@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class AccountPayment: BaseEntity
+    public class AccountPayment : BaseEntity
     {
         public AccountPayment()
         {
@@ -29,6 +29,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// customer
         /// supplier
+        /// employee
         /// </summary>
         public string PartnerType { get; set; }
 

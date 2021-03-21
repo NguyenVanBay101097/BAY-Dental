@@ -67,5 +67,12 @@ namespace ApplicationCore.Entities
                     return "";
             }
         }
+
+        /// <summary>
+        /// số lượng còn lại để tạo hóa đơn thuốc
+        /// </summary>
+        public decimal? ToInvoiceQuantity { get; set; }
+
+        public ICollection<MedicineOrderLine> MedicineOrderLines { get; set; } = new List<MedicineOrderLine>();
     }
 }

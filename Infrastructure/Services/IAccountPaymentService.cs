@@ -8,7 +8,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface IAccountPaymentService: IBaseService<AccountPayment>
+    public interface IAccountPaymentService : IBaseService<AccountPayment>
     {
         Task Post(IEnumerable<Guid> ids);
         Task<PagedResult2<AccountPaymentBasic>> GetPagedResultAsync(AccountPaymentPaged val);
@@ -19,11 +19,13 @@ namespace Infrastructure.Services
         Task<AccountRegisterPaymentDisplay> SaleDefaultGet(IEnumerable<Guid> saleOrderIds);
         Task<AccountPayment> CreateUI(AccountPaymentSave val);
         Task<AccountRegisterPaymentDisplay> PartnerDefaultGet(Guid partnerId);
-        Task ActionDraftUnlink(IEnumerable<Guid> ids);
         Task<AccountRegisterPaymentDisplay> ServiceCardOrderDefaultGet(IEnumerable<Guid> order_ids);
-
         Task<AccountPaymentPrintVM> GetPrint(Guid id);
-
+        Task<IEnumerable<AccountPayment>> CreateMultipleAndConfirmUI(IEnumerable<AccountPaymentSave> vals);
         Task<AccountRegisterPaymentDisplay> PurchaseDefaultGet(IEnumerable<Guid> purchaseOrderIds);
+        Task<AccountRegisterPaymentDisplay> PartnerDefaultGetV2(PartnerDefaultSearch val);
+        Task<AccountPaymentDisplay> ThuChiDefaultGet(AccountPaymentThuChiDefaultGetRequest val);
+        Task<AccountPaymentDisplay> SalaryPaymentDefaultGet();
+        Task<AccountRegisterPaymentDisplay> DefaultGet(IEnumerable<Guid> invoice_ids);
     }
 }

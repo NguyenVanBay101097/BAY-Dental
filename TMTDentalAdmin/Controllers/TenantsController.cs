@@ -34,12 +34,17 @@ namespace TMTDentalAdmin.Controllers
         private readonly UserManager<ApplicationAdminUser> _userManager;
         private readonly AdminAppSettings _appSettings;
         private readonly IConfiguration _configuration;
+        private readonly ITenantExtendHistoryService _tenantExtendHistoryService;
         public TenantsController(ITenantService tenantService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork,
-            UserManager<ApplicationAdminUser> userManager, IConfiguration configuration,
-            IOptions<AdminAppSettings> appSettings)
+            UserManager<ApplicationAdminUser> userManager,
+            IConfiguration configuration,
+            IOptions<AdminAppSettings> appSettings,
+            ITenantExtendHistoryService tenantExtendHistoryService
+            )
         {
             _tenantService = tenantService;
+            _tenantExtendHistoryService = tenantExtendHistoryService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _userManager = userManager;
@@ -48,43 +53,23 @@ namespace TMTDentalAdmin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]TenantPaged val)
+        public async Task<IActionResult> Get([FromQuery] TenantPaged val)
         {
             var result = await _tenantService.GetPagedResultAsync(val);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(TenantDisplay val)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
         {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-
-            await _unitOfWork.BeginTransactionAsync();
-            var tenant = _mapper.Map<AppTenant>(val);
-
-            await _tenantService.CreateAsync(tenant);
-
-            HttpClient client = new HttpClient();
-            HttpResponseMessage response = await client.PostAsJsonAsync($"http://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new {
-                CompanyName = val.CompanyName,
-                Name = val.Name,
-                Username = "dangthetai",
-                Password = "123123",
-                Phone = val.Phone,
-                Email = val.Email
-            });
-
-            _unitOfWork.Commit();
-
-            val.Id = tenant.Id;
-            return Ok(val);
+            var res = await _tenantService.GetDisplay(id);
+            return Ok(res);
         }
 
-        [AllowAnonymous]
-        [HttpPost("Register")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> Register(TenantRegisterViewModel val)
         {
+            //Khi đăng ký gọi api sang app -> app check xem bên tenant có đăng ký hay chưa? Nếu có thì tạo database và setup tenant
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
 
@@ -93,8 +78,14 @@ namespace TMTDentalAdmin.Controllers
                 throw new Exception("Địa chỉ gian hàng đã được sử dụng");
 
             tenant = _mapper.Map<AppTenant>(val);
-            tenant.DateExpired = DateTime.Today.AddDays(15);
+            tenant.DateExpired = DateTime.Now.AddDays(15);
             await _tenantService.CreateAsync(tenant);
+
+            var tenantExtendHistory = new TenantExtendHistory();
+            tenantExtendHistory.TenantId = tenant.Id;
+            tenantExtendHistory.ExpirationDate = tenant.DateExpired.Value;
+            tenantExtendHistory.ActiveCompaniesNbr = tenant.ActiveCompaniesNbr;
+            await _tenantExtendHistoryService.CreateAsync(tenantExtendHistory);
 
             try
             {
@@ -102,7 +93,6 @@ namespace TMTDentalAdmin.Controllers
                 CatalogDbContext context = DbContextHelper.GetCatalogDbContext(db, _configuration);
                 await context.Database.MigrateAsync();
 
-                //chạy api setuptenant -> fail
                 HttpResponseMessage response = null;
                 HttpClientHandler clientHandler = new HttpClientHandler();
                 clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
@@ -128,9 +118,8 @@ namespace TMTDentalAdmin.Controllers
                 throw e;
             }
 
-            return NoContent();
+            return Ok(val);
         }
-
 
         [HttpPost("[action]")]
         public async Task<IActionResult> UpdateDateExpired(TenantUpdateDateExpiredViewModel val)
@@ -140,7 +129,9 @@ namespace TMTDentalAdmin.Controllers
 
             var tenant = await _tenantService.GetByIdAsync(val.Id);
             var oldDateExpired = tenant.DateExpired;
+            var oldActiveCompaniesNbr = tenant.ActiveCompaniesNbr;
             tenant.DateExpired = val.DateExpired;
+            tenant.ActiveCompaniesNbr = val.ActiveCompaniesNbr;
             await _tenantService.UpdateAsync(tenant);
 
             try
@@ -157,9 +148,10 @@ namespace TMTDentalAdmin.Controllers
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Có lỗi xảy ra");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 tenant.DateExpired = oldDateExpired;
+                tenant.ActiveCompaniesNbr = oldActiveCompaniesNbr;
                 await _tenantService.UpdateAsync(tenant);
                 throw e;
             }
@@ -167,5 +159,66 @@ namespace TMTDentalAdmin.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ExtendExpired(TenantExtendExpiredViewModel val)
+        {
+            if (null == val || !ModelState.IsValid)
+                return BadRequest();
+
+            var tenant = await _tenantService.GetByIdAsync(val.TenantId);
+            var now = DateTime.Now;
+            if (val.CheckOption == "time")
+            {
+                //Trường hợp: Tên miền gần hết hạn gia hạn thêm, có thể thêm chi nhánh
+                //Trường hợp đã hết hạn, gia hạn thời gian
+                var startDate = tenant.DateExpired.HasValue ? tenant.DateExpired.Value : DateTime.Now;
+                if (startDate < now)
+                    startDate = now;
+                var endDate = startDate;
+                if (val.LimitOption == "day")
+                    endDate = endDate.AddDays(val.Limit);
+                if (val.LimitOption == "month")
+                    endDate = endDate.AddMonths(val.Limit);
+                if (val.LimitOption == "year")
+                    endDate = endDate.AddYears(val.Limit);
+
+                var history = new TenantExtendHistory
+                {
+                    StartDate = startDate,
+                    ActiveCompaniesNbr = val.ActiveCompaniesNbr,
+                    ExpirationDate = endDate,
+                    TenantId = tenant.Id
+                };
+                await _tenantExtendHistoryService.CreateAsync(history);
+            }
+            else if (val.CheckOption == "company")
+            {
+                //Thêm/bớt chi nhánh trong khi vẫn chưa hết hạn phần mềm, nếu phần mềm đã hết hạn thì ko cho phép
+                if (now > tenant.DateExpired)
+                    throw new Exception("Không thể thêm chi nhánh cho tên miền đã hết hạn");
+
+                var history = new TenantExtendHistory
+                {
+                    StartDate = DateTime.Now,
+                    ActiveCompaniesNbr = val.ActiveCompaniesNbr,
+                    ExpirationDate = tenant.DateExpired.HasValue ? tenant.DateExpired.Value : DateTime.Now,
+                    TenantId = tenant.Id
+                };
+
+                await _tenantExtendHistoryService.CreateAsync(history);
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> UpdateInfo(Guid id, TenantUpdateInfoViewModel val)
+        {
+            var tenant = await _tenantService.GetByIdAsync(id);
+            tenant = _mapper.Map(val, tenant);
+            await _tenantService.UpdateAsync(tenant);
+
+            return NoContent();
+        }
     }
 }

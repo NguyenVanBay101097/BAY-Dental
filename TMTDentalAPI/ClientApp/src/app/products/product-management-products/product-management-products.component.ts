@@ -43,6 +43,7 @@ export class ProductManagementProductsComponent implements OnInit {
     this.searchProductUpdate
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((value) => {
+        this.skip = 0;
         this.loadProducts();
       });
     this.loadProducts();
@@ -179,6 +180,7 @@ export class ProductManagementProductsComponent implements OnInit {
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
+      scrollable: true
     });
     modalRef.componentInstance.title = "Import excel";
     modalRef.componentInstance.type = "product";
@@ -213,6 +215,25 @@ export class ProductManagementProductsComponent implements OnInit {
         window.URL.revokeObjectURL(data);
       }, 100);
     });
+  }
+
+  updateServiceFromExcel(){
+    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, {
+      size: "lg",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+      scrollable: true
+    });
+    modalRef.componentInstance.title = "Cập nhật Excel";
+    modalRef.componentInstance.type = "product";
+    modalRef.componentInstance.isUpdate = true;
+    modalRef.result.then(
+      () => {
+        this.loadProducts();
+      },
+      () => { }
+    );
   }
 
 }

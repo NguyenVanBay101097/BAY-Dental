@@ -18,7 +18,7 @@ import { IrConfigParameterService } from './core/services/ir-config-parameter.se
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'tmt-dental';
+  title = 'TDental';
   _areAccessKeyVisible = false;
   value: string;
   constructor(
@@ -43,7 +43,6 @@ export class AppComponent {
         });
       }
     });
-    
     if (this.authService.isAuthenticated()) {
       this.loadIrConfigParam();
       this.authService.getGroups().subscribe((result: any) => {
@@ -51,6 +50,7 @@ export class AppComponent {
       });
     }
   }
+
   @HostListener('document:keydown', ['$event']) onKeydownHandler(keyDownEvent: KeyboardEvent) {
     if (!this._areAccessKeyVisible &&
       (keyDownEvent.altKey || keyDownEvent.key === 'Alt') &&
@@ -102,13 +102,18 @@ export class AppComponent {
 
   loadGroups() {
     if (this.authService.isAuthenticated()) {
-      this.authService.currentUser.subscribe(user => {
-        if (user) {
-          this.authService.getGroups().subscribe((result: any) => {
-            this.permissionService.define(result);
-          });
-        }
+      this.authService.getGroups().subscribe((result: any) => {
+        console.log(result);
+        this.permissionService.define(result);
       });
+      // this.authService.currentUser.subscribe(user => {
+      //   if (user) {
+      //     this.authService.getGroups().subscribe((result: any) => {
+      //       console.log(result);
+      //       this.permissionService.define(result);
+      //     });
+      //   }
+      // });
     }
   }
 

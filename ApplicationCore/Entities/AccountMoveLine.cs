@@ -79,8 +79,14 @@ namespace ApplicationCore.Entities
         /// </summary>
         public bool? ExcludeFromInvoiceTab { get; set; }
 
+        /// <summary>
+        /// related: Move.Name
+        /// </summary>
         public string MoveName { get; set; }
 
+        /// <summary>
+        /// related: Move.State
+        /// </summary>
         public string ParentState { get; set; }
 
         public string AccountInternalType { get; set; }

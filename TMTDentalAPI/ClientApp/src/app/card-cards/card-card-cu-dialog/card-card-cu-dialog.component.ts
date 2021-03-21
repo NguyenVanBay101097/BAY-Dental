@@ -22,7 +22,7 @@ export class CardCardCuDialogComponent implements OnInit {
   partner: PartnerSimple;
   card: CardCardDisplay;
   title = 'Thẻ thành viên';
-
+  submitted = false;
   filteredPartners: PartnerSimple[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
@@ -72,6 +72,10 @@ export class CardCardCuDialogComponent implements OnInit {
       this.loadFilteredPartners();
       this.loadFilteredTypes();
     });
+  }
+
+  get f() {
+    return this.formGroup.controls;
   }
 
   getTitle() {
@@ -233,6 +237,7 @@ export class CardCardCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid) {
       return false;
     }

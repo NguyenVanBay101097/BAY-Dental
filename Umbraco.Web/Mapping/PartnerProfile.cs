@@ -27,7 +27,9 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.ReferralUser, x => x.Ignore())
                 .ForMember(x => x.Title, x => x.Ignore())
                 .ForMember(x => x.Avatar, x => x.Ignore())
+                .ForMember(x => x.DateCreated, x => x.Ignore())
                 .ForMember(x => x.ZaloId, x => x.Ignore());
+
 
             CreateMap<Partner, PartnerSimple>();
             CreateMap<Partner, PartnerSimpleInfo>()
@@ -56,6 +58,13 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<Partner, PartnerInfoVm>();
             CreateMap<Partner, PartnerCustomerDonThuoc>();
+
+            CreateMap<Partner, PartnerActivePatch>();
+            CreateMap<PartnerActivePatch, Partner>()
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.Source, x => x.Ignore())
+                .ForMember(x => x.ReferralUser, x => x.Ignore())
+                .ForMember(x => x.Title, x => x.Ignore());
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -30,8 +31,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? IsQuotation { get; set; }
     }
 
+    public class SaleOrderSurveyBasic
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public DateTime DateOrder { get; set; }
+        public DateTime LastUpdated { get; set; }
+        public DateTime? DateDone { get; set; }
+    }
+
     public class ActionDonePar
     {
         public IEnumerable<Guid> Ids { get; set; }
     }
+
 }

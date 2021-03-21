@@ -61,6 +61,7 @@ export class HistoriesListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
+        this.skip = 0;
         this.getList();
       });
   }
@@ -85,7 +86,7 @@ export class HistoriesListComponent implements OnInit {
   }
 
   importFromExcel() {
-    let modalRef = this.modalService.open(HistoryImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(HistoryImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static',scrollable:true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.result.then(() => {
       this.getList();

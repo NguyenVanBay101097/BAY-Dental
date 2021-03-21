@@ -23,14 +23,16 @@ namespace Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IMyCache _cache;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
-        public ResGroupService(IAsyncRepository<ResGroup> repository, IHttpContextAccessor httpContextAccessor,
+        public ResGroupService(IAsyncRepository<ResGroup> repository, IHttpContextAccessor httpContextAccessor, RoleManager<ApplicationRole> roleManager,
             IMapper mapper, IHostingEnvironment hostingEnvironment, IMyCache cache)
         : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _hostingEnvironment = hostingEnvironment;
             _cache = cache;
+            _roleManager = roleManager;
         }
 
         private IQueryable<ResGroup> GetQueryPaged(ResGroupPaged val)
@@ -63,7 +65,7 @@ namespace Infrastructure.Services
             var modelObj = GetService<IIRModelService>();
             var models = await modelObj.SearchQuery(x => !x.Transient, orderBy: x => x.OrderBy(s => s.Name)).ToListAsync();
             var list = new List<IRModelAccessDisplay>();
-            foreach(var model in models)
+            foreach (var model in models)
             {
                 list.Add(new IRModelAccessDisplay
                 {
@@ -84,7 +86,7 @@ namespace Infrastructure.Services
         //function to add all implied groups (to all users of each group)
         public async Task AddAllImpliedGroupsToAllUser(IEnumerable<ResGroup> self)
         {
-            foreach(var group in self)
+            foreach (var group in self)
             {
                 await ExcuteSqlCommandAsync(" WITH group_imply(gid, hid) AS ( " +
                         "SELECT GId as gid, HId as hid " +
@@ -167,8 +169,9 @@ namespace Infrastructure.Services
 
                     await modelDataObj.CreateAsync(categModelData);
                 }
-              
-                group = new ResGroup {
+
+                group = new ResGroup
+                {
                     Name = "Internal User",
                     CategoryId = category.Id
                 };
@@ -224,7 +227,7 @@ namespace Infrastructure.Services
         public async Task UpdateAllGroupImpliedGroupUser(ResGroup groupUser)
         {
             var groups = await SearchQuery(x => x.Id != groupUser.Id && (x.Category == null || x.Category.Visible == false)).Include(x => x.ImpliedRels).ToListAsync();
-            foreach(var group in groups)
+            foreach (var group in groups)
             {
                 if (!group.ImpliedRels.Any(x => x.HId == groupUser.Id))
                     group.ImpliedRels.Add(new ResGroupImpliedRel { HId = groupUser.Id });
@@ -270,7 +273,7 @@ namespace Infrastructure.Services
                 await CreateAsync(group);
 
                 var referenceSplit = reference.Split(".");
-               
+
                 var modelData = new IRModelData()
                 {
                     Model = "res.groups",
@@ -370,7 +373,7 @@ namespace Infrastructure.Services
             var ruleDict = new Dictionary<string, IRRule>();
             var accessDict = new Dictionary<string, IRModelAccess>();
 
-           
+
             modelDataList.AddRange(GetModelData(moduleCategDict, "ir.module.category"));
 
             void GetGroupRuleDict(string fileName, string module = "base")
@@ -415,7 +418,7 @@ namespace Infrastructure.Services
                                     throw new Exception($"Không tìm thấy users với id: {string.Join(", ", vals)}");
 
                                 var usrs = vals.Select(x => base_user_dict[x]).ToList();
-                                foreach(var usr in usrs)
+                                foreach (var usr in usrs)
                                     mdl.ResGroupsUsersRels.Add(new ResGroupsUsersRel { UserId = usr.Id });
                             }
                             else if (field_name == "category_id")
@@ -508,7 +511,7 @@ namespace Infrastructure.Services
         private IEnumerable<IRModelData> GetModelData<T>(IDictionary<string, T> dict, string model)
         {
             var list = new List<IRModelData>();
-            foreach(var item in dict)
+            foreach (var item in dict)
             {
                 var key = item.Key;
                 var arr = key.Split(".");
@@ -540,7 +543,7 @@ namespace Infrastructure.Services
             {
                 XmlElement record = (XmlElement)records[i];
                 var model = record.GetAttribute("model");
-                var id = module + "." + record.GetAttribute("id");
+                var id = record.GetAttribute("id").IndexOf(".") != -1 ? record.GetAttribute("id") : module + "." + record.GetAttribute("id");
                 if (model == "ir.module.category")
                 {
                     var categ = new IrModuleCategory();
@@ -628,6 +631,25 @@ namespace Infrastructure.Services
             }
 
             return res;
+        }
+
+        public async Task<IEnumerable<ResGroupBasic>> GetByModelDataModuleName(ResGroupByModulePar val)
+        {
+            var modelDataObj = GetService<IIRModelDataService>();
+
+            var moduleCate = await modelDataObj.GetRef<IrModuleCategory>(val.ModuleName);
+
+            int max = 1;
+            if (moduleCate == null && max > 0 && val.ModuleName == "survey.survey_assignment")
+            {
+                max = max - 1;
+                var surAssObj = GetService<ISurveyAssignmentService>();
+                await surAssObj.AddIrDataForSurvey();
+                return await GetByModelDataModuleName(val);
+            }
+
+            var res = await SearchQuery(x => x.CategoryId == moduleCate.Id).ToListAsync();
+            return _mapper.Map<IEnumerable<ResGroupBasic>>(res);
         }
     }
 }

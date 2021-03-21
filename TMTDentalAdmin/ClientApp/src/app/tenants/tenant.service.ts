@@ -26,7 +26,6 @@ export class TenantPaged {
     offset: number;
 }
 
-
 export class TenantPaging {
     offset: number;
     limit: number;
@@ -43,11 +42,23 @@ export class TenantService {
         return this.http.get<TenantPaging>(this.baseApi + this.apiUrl, { params: val });
     }
 
+    get(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id);
+    }
+
     register(val: TenantRegisterViewModel) {
         return this.http.post(this.baseApi + this.apiUrl + "/register", val);
     }
 
     updateDateExpired(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + "/UpdateDateExpired", val);
+    }
+
+    extendExpired(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ExtendExpired", val);
+    }
+
+    updateInfo(id: string, val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/UpdateInfo', val);
     }
 }

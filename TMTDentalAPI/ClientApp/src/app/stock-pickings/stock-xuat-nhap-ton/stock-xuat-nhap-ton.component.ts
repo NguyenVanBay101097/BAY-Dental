@@ -35,19 +35,20 @@ export class StockXuatNhapTonComponent implements OnInit {
   filteredCategs: ProductCategoryBasic[];
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
-  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate())).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
   constructor(private reportService: StockReportService, private intlService: IntlService) { }
 
   ngOnInit() {
-    this.dateFrom = new Date(this.monthStart);
-    this.dateTo = new Date(this.monthEnd);
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
   }
@@ -55,6 +56,7 @@ export class StockXuatNhapTonComponent implements OnInit {
   onSearchChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
@@ -99,7 +101,7 @@ export class StockXuatNhapTonComponent implements OnInit {
     val.search = this.search ? this.search : null;
     this.reportService.exportExcel(val).subscribe(
       rs => {
-        let filename = 'file_xuat_nhap_ton';
+        let filename = 'NhapXuatTon';
         let newBlob = new Blob([rs], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
         console.log(rs);
 

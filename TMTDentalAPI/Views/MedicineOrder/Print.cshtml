@@ -5,86 +5,54 @@
     var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
 }
 
-<div class="o_form_view">
-    <div class="media mb-2">
+<div>
+    <div class="d-flex mb-2">
         @if (!string.IsNullOrEmpty(Model.Company.Logo))
         {
-            <img class="mr-3 company_logo" src="@Model.Company.Logo" alt="@Model.Company.Name">
+            <img class="img-fluid me-3 w-20" src="@Model.Company.Logo" alt="@Model.Company.Name">
         }
-
-    <div class="media-body">
-        @if (!string.IsNullOrEmpty(Model.Company.Name))
-        {
-            <h5> @Model.Company.Name</h5>
-        }
-        @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
-        {
-            <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
-        }
-        @if (!string.IsNullOrEmpty(Model.Company.Phone))
-        {
-            <div>Điện thoại: @Model.Company.Phone</div>
-        }
-        @if (!string.IsNullOrEmpty(Model.Company.Email))
-        {
-            <div>Email: @Model.Company.Email</div>
-        }
+        <div>
+            <div class="text-xl font-semibold">@Model.Company.Name</div>
+            @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
+            {
+                <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Phone))
+            {
+                <div>ĐT: @Model.Company.Phone</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Email))
+            {
+                <div>Email: @Model.Company.Email</div>
+            }
+        </div>
     </div>
-    </div>
-    <div class="text-center mb-3">
-        <h3 class="mb-0">HÓA ĐƠN THUỐC</h3>
+    <div class="text-center mb-2">
+        <div class="text-3xl font-semibold">HÓA ĐƠN THUỐC</div>
         <div>Ngày @Model.OrderDate.Day tháng @Model.OrderDate.Month năm @Model.OrderDate.Year </div>
-        <div class="font-weight-600">Số: @Model.Name</div>
+        <div class="font-semibold">Số: @Model.Name</div>
     </div>
-    <div>
-        <div class="row">
-            <table class="o_group o_inner_group col-6">
+    <div class="o_form_view mb-2">
+        <div class="d-flex">
+            <table class="o_group o_inner_group">
                 <tbody>
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
-                                Khách hàng:
+                                Khách hàng
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">[@Model.Partner.Ref] &nbsp; @Model.Partner.Name</td>
+                        <td colspan="1" style="width: 100%;">@Model.Partner.Name</td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
-                                Giới tính
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@Model.Partner.GetGender()</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Tuổi
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@Model.Partner.GetAge()</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Địa chỉ:
+                                Địa chỉ
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
                             @Model.Partner.GetAddress()
                         </td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="o_group o_inner_group col-6">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Số đơn thuốc:
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@Model.ToaThuoc.Name</td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
@@ -94,38 +62,14 @@
                         </td>
                         <td colspan="1" style="width: 100%;">@(Model.Employee == null ? "" : Model.Employee.Name)</td>
                     </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Ngày thanh toán
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            @Model.OrderDate.ToString("dd/MM/yyyy")
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Phương thức:
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            @Model.Journal.Name
-                        </td>
-                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="">
-        <table class="table table-sm mb-0">
+    <div class="o_form_view mb-2">
+        <table class="table table-sm table-bordered mb-0">
             <tr>
                 <th>Tên thuốc</th>
-                <th class="text-center">Ngày uống</th>
-                <th class="text-center">Mỗi lần</th>
-                <th class="text-center">Số ngày</th>
-                <th>Sử dụng</th>
                 <th class="text-center">Số lượng</th>
                 <th class="text-center">Đơn giá</th>
                 <th class="text-right">Thành tiền</th>
@@ -134,11 +78,14 @@
                 foreach (var line in Model.MedicineOrderLines)
                 {
                     <tr>
-                        <td>@line.Product.Name</td>
-                        <td class="text-center">@line.ToaThuocLine.NumberOfTimes.ToString("n0") lần</td>
-                        <td class="text-center">@line.ToaThuocLine.AmountOfTimes.ToString("n0") @line.Product.UOM.Name</td>
-                        <td class="text-center">@line.ToaThuocLine.NumberOfDays.ToString("n0")</td>
-                        <td>@line.ToaThuocLine.GetUseAtDisplay()</td>
+                        <td>
+                            <div class="font-semibold">@line.Product.Name</div>
+                            <i>
+                                Ngày uống @line.ToaThuocLine.NumberOfTimes.ToString("n0") lần,
+                                mỗi lần @line.ToaThuocLine.AmountOfTimes.ToString("n0") @line.Product.UOM.Name,
+                                @line.ToaThuocLine.GetUseAtDisplay()
+                            </i>
+                        </td>
                         <td class="text-center">@line.Quantity.ToString("n0", culture)</td>
                         <td class="text-center">@(line.Price.ToString("n0", culture))</td>
                         <td class="text-right">@(line.AmountTotal.ToString("n0", culture))</td>
@@ -148,40 +95,44 @@
 
         </table>
     </div>
-    <div class="d-flex justify-content-end">
-        <div>
-            <table class="o_group o_inner_group">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Tổng tiền
-                            </label>
-                        </td>
-                        <td class="pr-0 text-right font-weight-600" colspan="1" style="width: 100%;">@(Model.Amount.ToString("n0", culture))</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Thanh toán
-                            </label>
-                        </td>
-                        <td class="pr-0 text-right font-weight-600" colspan="1" style="width: 100%;">@(Model.AccountPayment == null ? "0": Model.AccountPayment.Amount.ToString("n0", culture))</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Còn lại
-                            </label>
-                        </td>
-                        <td class="pr-0 text-right font-weight-600" colspan="1" style="width: 100%;">@(string.Format(culture, "{0:n0}", (Model.Amount - (Model.AccountPayment == null ? 0 : Model.AccountPayment.Amount))))</td>
-                    </tr>
-                </tbody>
-            </table>
+    <div class="o_form_view float-right mb-2">
+        <div class="d-flex">
+            <div>
+                <table class="o_group o_inner_group">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Tổng tiền
+                                </label>
+                            </td>
+                            <td class="pe-0 text-right font-semibold" colspan="1" style="width: 100%;">@(Model.Amount.ToString("n0", culture))</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Thanh toán
+                                </label>
+                            </td>
+                            <td class="pe-0 text-right font-semibold" colspan="1" style="width: 100%;">@(Model.AccountPayment == null ? "0": Model.AccountPayment.Amount.ToString("n0", culture))</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Còn lại
+                                </label>
+                            </td>
+                            <td class="pe-0 text-right font-semibold" colspan="1" style="width: 100%;">@(string.Format(culture, "{0:n0}", (Model.Amount - (Model.AccountPayment == null ? 0 : Model.AccountPayment.Amount))))</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
     </div>
+    <div class="clearfix"></div>
     <div class="">
-        <div class="">
+        <div class="o_form_view">
             <table class="o_group o_inner_group">
                 <tbody>
                     <tr>
@@ -204,25 +155,25 @@
             </table>
         </div>
     </div>
-    <div class="row">
-        <div class="col col-sm">
+    <div class="d-flex">
+        <div class="col">
             <div class="text-center">
-                <span class="font-weight-600">Người lập phiếu</span> <br />
+                <span class="font-semibold">Người lập phiếu</span> <br />
                 <i>(Ký, họ tên)</i> <br />
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-weight-600">@(Model.Employee == null ? "" : Model.Employee.Name.ToUpper())</span>
+                <span class="font-semibold">@(Model.Employee == null ? "" : Model.Employee.Name.ToUpper())</span>
             </div>
         </div>
-        <div class="col col-sm">
+        <div class="col">
             <div class="text-center">
-                <span class="font-weight-600"> Bệnh nhân</span> <br />
+                <span class="font-semibold"> Bệnh nhân</span> <br />
                 <i>(Ký, họ tên)</i> <br />
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-weight-600">@Model.Partner.Name.ToUpper()</span>
+                <span class="font-semibold">@Model.Partner.Name.ToUpper()</span>
             </div>
         </div>
     </div>

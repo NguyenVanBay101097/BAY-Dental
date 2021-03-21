@@ -119,7 +119,7 @@ export class ProductProductListComponent implements OnInit {
   }
 
   importFromExcel() {
-    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.componentInstance.type = 'product';
     modalRef.result.then(() => {

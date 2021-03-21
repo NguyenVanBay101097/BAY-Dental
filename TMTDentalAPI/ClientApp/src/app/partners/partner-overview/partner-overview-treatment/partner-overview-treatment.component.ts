@@ -33,7 +33,7 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa phiếu điều trị';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
-      this.saleOrderService.unlink([item.Id]).subscribe(() => {
+      this.saleOrderService.unlink([item.id]).subscribe(() => {
         this.deleteItemEvent.emit(null);
       });
     });

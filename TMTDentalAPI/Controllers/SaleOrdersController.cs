@@ -420,10 +420,23 @@ namespace TMTDentalAPI.Controllers
             if (phieu == null)
                 return NotFound();
 
-            var html = _viewRenderService.Render("SaleOrderPrint", phieu);
+            var html = _viewRenderService.Render("SaleOrder/Print", phieu);
 
             return Ok(new PrintData() { html = html });
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ToSurvey([FromBody]SaleOrderToSurveyFilter val)
+        {
+            var paged = await _saleOrderService.GetToSurveyPagedAsync(val);
+            return Ok(paged);
+        }
+        
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> GetLineForProductRequest(Guid id)
+        {
+            var res = await _saleOrderService.GetLineForProductRequest(id);
+            return Ok(res);
+        }
     }
 }

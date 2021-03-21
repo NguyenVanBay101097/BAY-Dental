@@ -16,6 +16,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore());
             CreateMap<TenantRegisterViewModel, AppTenant>();
             CreateMap<AppTenant, TenantBasic>();
+            CreateMap<AppTenant, TenantDisplay>();
+            CreateMap<TenantUpdateInfoViewModel, AppTenant>();
         }
     }
 }

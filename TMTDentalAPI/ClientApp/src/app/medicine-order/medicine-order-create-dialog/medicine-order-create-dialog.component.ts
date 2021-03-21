@@ -27,6 +27,11 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   formGroup: FormGroup;
   title: string;
   id: string;
+
+  submitted = false;
+
+  get f() { return this.formGroup.controls; }
+
   constructor(
     private accountJournalService: AccountJournalService,
     private fb: FormBuilder,
@@ -43,28 +48,30 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       journal: [null, Validators.required],
-      orderDate: new Date(),
+      orderDate: [new Date(), Validators.required],
       note: '',
       amount: 0,
       medicineOrderLines: this.fb.array([])
     });
 
-    this.journalCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.journalCbx.loading = true)),
-      switchMap(value => this.searchJournals(value))
-    ).subscribe(result => {
-      this.filteredJournals = result;
-      this.journalCbx.loading = false;
-    });
-    this.loadFilteredJournals();
+    setTimeout(() => {
+      this.journalCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.journalCbx.loading = true)),
+        switchMap(value => this.searchJournals(value))
+      ).subscribe(result => {
+        this.filteredJournals = result;
+        this.journalCbx.loading = false;
+      });
 
-    if (this.idToaThuoc) {
-      this.getDefault();
-    }
-    if (this.id) {
-      this.loadRecord();
-    }
+      this.loadFilteredJournals();
+  
+      if (this.idToaThuoc) {
+        this.getDefault();
+      } else if (this.id) {
+        this.loadRecord();
+      }
+    });
   }
 
   loadRecord() {
@@ -106,6 +113,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   getDefault() {
     this.medicineOrderService.getDefault(this.idToaThuoc).subscribe(
       result => {
+        console.log(result);
         this.precscriptPayment = result;
         if (result) {
           this.precscriptPayment = result;
@@ -208,7 +216,9 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   }
 
   onSavePayment() {
-    if (this.formGroup.invalid) {
+    this.submitted = true;
+
+    if (!this.formGroup.valid) {
       return false;
     }
      
@@ -229,8 +239,12 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   }
 
   onSavePaymentPrint() {
-    if (this.formGroup.invalid)
-      return
+    this.submitted = true;
+
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
     var val = this.formGroup.value;
     val = this.computeForm(val)
     this.medicineOrderService.confirmPayment(val).subscribe(
@@ -281,6 +295,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       return;
     }
     this.medicineOrderService.getPrint(this.id).subscribe((result: any) => {
+      console.log(result.html);
       this.printService.printHtml(result.html);
     });
   }

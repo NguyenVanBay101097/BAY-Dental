@@ -13,6 +13,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 export class ChangePasswordDialogComponent implements OnInit {
   resetPwdForm: FormGroup;
   error: string;
+  submitted = false;
   constructor(public authService: AuthService, public router: Router, private fb: FormBuilder, private notificationService: NotificationService,
     private route: ActivatedRoute, public activeModal: NgbActiveModal) { }
 
@@ -24,7 +25,12 @@ export class ChangePasswordDialogComponent implements OnInit {
     });
   }
 
+  get f(){
+    return this.resetPwdForm.controls;
+  }
+
   submit() {
+    this.submitted = true;
     if (!this.resetPwdForm.valid) {
       return;
     }

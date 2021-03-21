@@ -46,11 +46,8 @@
                         <ng-container *ngIf="!payslipRun; else elseTemplate">
                             <div class="text-center">
                                 <p>
-                                    <label for="">Bảng lương tháng
-                                                <span class="font-weight-600">{{dateFC.value.getMonth()+1}}/{{dateFC.value?.getFullYear()}}</span> chưa
-                                                có. Bạn có thể khởi tạo bảng</label> <br>
-                                    <label for="">lương từ ngày <span class="font-weight-600"> {{ dateNext | date:'dd/MM/yyyy'}}</span></label> <br>
-                                    <label for="">Vui lòng bấm nút <span class="font-weight-600">"Tính Lương"</span> bên dưới để khởi tạo.</label>
+                                    Bảng lương tháng
+                                    <span class="font-weight-600">{{dateFC.value.getMonth()+1}}/{{dateFC.value?.getFullYear()}}</span> chưa có. Vui lòng bấm nút <span class="font-weight-600">"Tính Lương"</span> bên dưới để khởi tạo.
                                 </p>
                                 <div class="d-flex justify-content-center">
                                     <button *ngIf="!payslipRun" (click)="ComputeSalary()" class="btn btn-sm btn-info">Tính lương</button>
@@ -114,16 +111,16 @@
                                                     </kendo-numerictextbox>
                                                 </td>
                                                 <td>
-                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="rewardSalary" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="rewardSalary" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>
                                                 </td>
                                                 <td>
-                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="holidayAllowance" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="holidayAllowance" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>
                                                 </td>
                                                 <td class="text-right">{{item.get('commissionSalary').value | number }}</td>
                                                 <td>
-                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="amercementMoney" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="amercementMoney" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>
                                                 </td>
                                                 <td class="text-right" [hidden]="isCompact">{{item.get('totalSalary').value | number }}
@@ -132,7 +129,7 @@
                                                 <td class="b-sticky-right2 text-right">{{item.get('netSalary').value | number}}
                                                 </td>
                                                 <td class="b-sticky-right">
-                                                    {{item.get('salaryPayment').value? item.get('salaryPayment').value?.name : 'Chưa chi' }}
+                                                    {{item.get('salaryPayment') && item.get('salaryPayment').value ? item.get('salaryPayment').value.name : 'Chưa chi' }}
                                                 </td>
                                             </tr>
                                         </ng-container>

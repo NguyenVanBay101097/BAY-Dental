@@ -12,7 +12,7 @@
     <ul class="list-group flex-1-1-100 overflow-auto">
         <li [ngClass]="{'active': category && cate.id == category.id}" (click)="onSelectCate(cate)" *ngFor="let cate of sourceCategories;index as i" class="list-group-item cate-item d-flex justify-content-between align-items-center">
             <span class="mr-1">{{cate.name}}</span>
-            <div class="edit_remove_action">
+            <div class="edit_remove_action d-flex">
                 <!-- <i class="far fa-edit text-primary"></i>
             <i class="far fa-trash-alt text-danger"></i> -->
                 <button (click)="$event.stopPropagation();editCate(cate, i)">

@@ -16,6 +16,7 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<PartnerPartnerCategoryRel, PartnerCategoryBasic>()
                .ForMember(x => x.Id, x => x.MapFrom(s => s.CategoryId))
+               .ForMember(x => x.Color, x => x.MapFrom(s => s.Category.Color))
                .ForMember(x => x.Name, x => x.MapFrom(s => s.Category.Name))
                .ForMember(x => x.CompleteName, x => x.MapFrom(s => s.Category.CompleteName));
         }

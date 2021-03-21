@@ -1,14 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { SalaryPaymentService } from 'src/app/shared/services/salary-payment.service';
 import { SalaryPaymentBindingDirective } from 'src/app/shared/directives/salary-payment-binding.directive';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
 import { SalaryPaymentFormComponent } from '../salary-payment-form/salary-payment-form.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { SalaryPaymentPaged, SalaryPaymentService } from '../salary-payment.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-salary-payment-list',
@@ -19,29 +21,15 @@ export class SalaryPaymentListComponent implements OnInit {
   type: string;
   search: string;
   searchUpdate = new Subject<string>();
-  loading = false;
+  gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  gridData: GridDataResult;
-
-  @ViewChild(SalaryPaymentBindingDirective, { static: true }) dataBinding: SalaryPaymentBindingDirective;
-
-  gridFilter: CompositeFilterDescriptor = {
-    logic: "and",
-    filters: []
-  };
-  gridSort = [];
-  advanceFilter: any = {
-    params: {},
-    orderby: "Date desc"
-    // expand : "Employee,Journal",
-  };
+  loading = false;
 
   constructor(
-    private route: ActivatedRoute,
     private modalService: NgbModal,
     private salaryPaymentService: SalaryPaymentService,
-    private router: Router
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -49,55 +37,73 @@ export class SalaryPaymentListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
-        this.dataBinding.filter = this.generateFilter();       
-        this.refreshData();
+        this.skip = 0;
+        this.loadData();
       });
+
+    this.loadData();
   }
 
-  updateFilter() {
-    this.gridFilter = this.generateFilter();
+  loadData() {
+    var paged = new SalaryPaymentPaged();
+    paged.limit = this.limit;
+    paged.offset = this.skip;
+    paged.search = this.search ? this.search : '';
+    this.loading = true;
+    this.salaryPaymentService.getPaged(paged).pipe(
+      map((response: any) => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe((res) => {
+      this.gridData = res;
+      this.loading = false;
+    }, (err) => {
+      console.log(err);
+      this.loading = false;
+    });
   }
 
-
-
-  refreshData() {
-    this.dataBinding.rebind();
-  }
-
-  generateFilter() {
-    var filter: CompositeFilterDescriptor = {
-      logic: "and",
-      filters: []
-    };
-
-    if (this.search) {
-      filter.filters.push({
-        logic: "or",
-        filters: [
-          { field: "Name", operator: "contains", value: this.search }
-        ]
-       
-      });
-    }
-    return filter;
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadData();
   }
 
   createItem() {
     let modalRef = this.modalService.open(SalaryPaymentFormComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Phiếu chi tạm ứng';
-    modalRef.result.then(() => {
-      this.refreshData();
+    modalRef.componentInstance.type = 'advance';
+    modalRef.result.then((result) => {
+      this.loadData();
+      if (result.print && result.id) {
+        this.printItem(result.id);
+      }
     }, () => {
     });
   }
 
+  printItem(id) {
+    this.salaryPaymentService.getPrint([id]).subscribe(
+      result => {
+        if (result && result['html']) {
+          this.printService.printHtml(result['html']);
+        } else {
+          alert('Có lỗi xảy ra, thử lại sau');
+        }
+      }
+    )
+  }
+
   editItem(item) {
     let modalRef = this.modalService.open(SalaryPaymentFormComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = (item.Type == "advance" ? "Phiếu chi tạm ứng" : "Phiếu chi lương");
-    modalRef.componentInstance.id = item.Id;
+    modalRef.componentInstance.title = (item.type == "advance" ? "Phiếu chi tạm ứng" : "Phiếu chi lương");
+    modalRef.componentInstance.id = item.id;
     modalRef.result.then(
-      () => {
-        this.refreshData();
+      (result: any) => {
+        this.loadData();
+        if (result && result.print) {
+          this.printItem(item.id);
+        }
       },
       () => { }
     );
@@ -105,12 +111,12 @@ export class SalaryPaymentListComponent implements OnInit {
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Xóa: " + (item.Type == "advance" ? "phiếu chi tạm ứng" : "phiếu chi lương");
+    modalRef.componentInstance.title = "Xóa: " + (item.type == "advance" ? "phiếu chi tạm ứng" : "phiếu chi lương");
     modalRef.result.then(
       () => {
-        this.salaryPaymentService.delete(item.Id).subscribe(
+        this.salaryPaymentService.delete(item.id).subscribe(
           () => {
-            this.refreshData();
+            this.loadData();
           },
           (err) => {
             console.log(err);
@@ -120,8 +126,6 @@ export class SalaryPaymentListComponent implements OnInit {
       () => { }
     );
   }
-
-
 
   stateGet(value) {
     switch (value) {

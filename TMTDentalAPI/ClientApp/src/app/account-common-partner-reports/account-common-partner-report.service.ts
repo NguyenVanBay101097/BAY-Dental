@@ -57,6 +57,21 @@ export class AccountCommonPartnerReport {
     countSaleOrder: number;
 }
 
+export class AccountMoveBasic {
+    id: string;
+    name: string;
+    state: string;
+    partnerName: string;
+    type: string;
+    invoiceOrigin: string;
+    amountTotal: number;
+    amountTotalSigned: number;
+    amountResidual: number;
+    amountResidualSigned: number;
+    invoiceDate: string;
+    invoiceUserName: string;
+}
+
 @Injectable()
 export class AccountCommonPartnerReportService {
     apiUrl = 'api/AccountCommonPartnerReports';
@@ -72,6 +87,10 @@ export class AccountCommonPartnerReportService {
 
     getReportSalaryEmployee(val: AccountCommonPartnerReportSearch): Observable<AccountCommonPartnerReportItem[]> {
         return this.http.post<AccountCommonPartnerReportItem[]>(this.baseApi + this.apiUrl + "/GetSalaryReportEmployee", val);
+    }
+
+    getListReportPartner(val: AccountCommonPartnerReportSearch): Observable<AccountMoveBasic[]> {
+        return this.http.post<AccountMoveBasic[]>(this.baseApi + this.apiUrl + "/GetListReportPartner", val);
     }
 
     getReportSalaryEmployeeDetail(val: AccountCommonPartnerReportItem): Observable<AccountCommonPartnerReportItemDetail[]> {

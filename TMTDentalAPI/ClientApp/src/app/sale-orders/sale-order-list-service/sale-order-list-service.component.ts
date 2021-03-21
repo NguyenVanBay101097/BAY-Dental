@@ -77,7 +77,8 @@ export class SaleOrderListServiceComponent implements OnInit {
       filter: {
         logic: 'and',
         filters: [
-          { field: 'Type2', operator: 'eq', value: 'service' }
+          { field: 'Type2', operator: 'eq', value: 'service' },
+          { field: 'Active', operator: 'eq', value: true }
         ]
       }
     };

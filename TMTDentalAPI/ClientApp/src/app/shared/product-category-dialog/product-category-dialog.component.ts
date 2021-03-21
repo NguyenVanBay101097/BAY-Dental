@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, ViewChild, ElementRef, Input } from '@angula
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable } from 'rxjs';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductCategoryBasic, ProductCategoryDisplay, ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
@@ -27,6 +27,8 @@ export class ProductCategoryDialogComponent implements OnInit {
   type: string;
   submitted = false;
 
+  get f() { return this.myform.controls; }
+
   constructor(private fb: FormBuilder, private productCategoryService: ProductCategoryService,
     public activeModal: NgbActiveModal) {
   }
@@ -44,7 +46,8 @@ export class ProductCategoryDialogComponent implements OnInit {
 
     setTimeout(() => {
       if (this.id) {
-        this.productCategoryService.get(this.id).subscribe((result) => {
+        this.productCategoryService.get(this.id)
+        .subscribe((result) => {
           this.myform.patchValue(result);
           if (result.parent) {
             this.filterdCategories = _.unionBy(this.filterdCategories, [result.parent], 'id');
@@ -67,6 +70,19 @@ export class ProductCategoryDialogComponent implements OnInit {
     });
   }
 
+  getType() {
+    switch (this.type) {
+      case "service":
+        return "dịch vụ";
+      case "product":
+        return "vật tư";
+      case "medicine":
+        return "thuốc";
+      default:
+        return "";
+    }
+  }
+
   searchCategories(q?: string): Observable<ProductCategoryBasic[]> {
     var val = new ProductCategoryPaged();
     val.search = q;
@@ -81,6 +97,7 @@ export class ProductCategoryDialogComponent implements OnInit {
     }
 
     this.saveOrUpdate().subscribe(result => {
+      this.submitted = false;
       if (result) {
         this.activeModal.close(result);
       } else {
@@ -88,6 +105,7 @@ export class ProductCategoryDialogComponent implements OnInit {
       }
     }, err => {
       console.log(err);
+      this.submitted = false;
     });
   }
 
@@ -105,10 +123,6 @@ export class ProductCategoryDialogComponent implements OnInit {
   onCancel() {
     this.submitted = false;
     this.activeModal.dismiss();
-  }
-
-  get f() {
-    return this.myform.controls;
   }
 }
 

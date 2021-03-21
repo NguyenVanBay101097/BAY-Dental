@@ -63,7 +63,7 @@ namespace TMTDentalAPI.Controllers
             if (ids != null && ids.Any())
             {
                 res.Slips = res.Slips.Where(x => ids.Contains(x.Id));
-                var html = _view.Render("SalaryEmployeePrint", res);
+                var html = _view.Render("SalaryEmployee/Print", res);
                 return Ok(new PrintData() { html = html });
             }
             else

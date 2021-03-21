@@ -1,7 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" ngbAutofocus aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" ngbAutofocus aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -18,9 +17,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'"
-                                        [filterable]="true" #journalCbx formControlName="journal" [valueField]="'id'">
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [valueField]="'id'" [filterable]="true" #journalCbx formControlName="journal">
                                     </kendo-combobox>
+                                    <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -30,7 +31,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" formControlName="amount" [format]="'n0'">
+                                    <kendo-numerictextbox [min]="0" [max]="defaultVal.amount" [autoCorrect]="true" formControlName="amount" [format]="'n0'">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -46,6 +47,9 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker formControlName="paymentDateObj"></kendo-datepicker>
+                                    <div *ngIf="f.paymentDateObj.errors && (f.paymentDateObj.touched || f.paymentDateObj.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.paymentDateObj.errors.required">Chọn ngày thanh toán</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -61,15 +65,39 @@
                         </tbody>
                     </table>
                 </div>
+                <table *ngIf="defaultVal?.debitItems?.length > 0" class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Nguồn</th>
+                            <th>Loại</th>
+                            <th>Tổng tiền</th>
+                            <th>Thanh Toán</th>
+                            <th>Còn nợ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of defaultVal.debitItems">
+                            <td>{{item.date | date:'shortDate'}}</td>
+                            <td>{{item.origin}}</td>
+                            <td> {{item.moveType == 'in_invoice' ? 'Mua hàng': 'Trả hàng'}}</td>
+                            <td>{{item.balance | number}}</td>
+                            <td>{{(item.balance - item.amountResidual) | number}}</td>
+                            <td>{{item.amountResidual | number}}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </form>
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="loading" accesskey="s">Thanh
-        toán</button>
-    <button type="button" *ngIf="showPrint" class="btn btn-primary" (click)="saveAndPrint()" [disabled]="loading">Thanh
-        toán và in</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="loading" accesskey="s">
+        Thanh toán
+    </button>
+    <button type="button" *ngIf="showPrint" class="btn btn-primary" (click)="saveAndPrint()" [disabled]="loading">
+        Thanh toán và in
+    </button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()" accesskey="q">Đóng</button>
 </footer>

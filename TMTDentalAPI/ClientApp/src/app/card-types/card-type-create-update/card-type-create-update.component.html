@@ -39,6 +39,9 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" class="form-control" formControlName="name" required />
+                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.name.errors.required">Nhập tên loại thẻ</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -74,6 +77,9 @@
                                     <kendo-numerictextbox [min]="0" [format]="'n0'" [max]="100" [autoCorrect]="true"
                                         formControlName="discount">
                                     </kendo-numerictextbox>
+                                    <div *ngIf="f.discount.errors && (f.discount.touched || f.discount.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.discount.errors.required">Nhập chiết khấu</div>
+                                    </div>
                                 </td>
                             </tr>
                             <!-- <tr *ngIf="cardType.pricelist">
@@ -114,6 +120,9 @@
                                         <option value="month">Tháng</option>
                                         <option value="year">Năm</option>
                                     </select>
+                                    <div *ngIf="f.period.errors && (f.period.touched || f.period.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.period.errors.required">Chọn thời hạn thẻ</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -125,6 +134,9 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="nbPeriod">
                                     </kendo-numerictextbox>
+                                    <div *ngIf="f.nbPeriod.errors && (f.nbPeriod.touched || f.nbPeriod.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.nbPeriod.errors.required">Nhập số lượng</div>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

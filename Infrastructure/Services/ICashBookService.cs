@@ -10,9 +10,9 @@ namespace Infrastructure.Services
 {
     public interface ICashBookService
     {
-        Task<PagedResult2<AccountMoveLineCashBookVM>> GetMoney(CashBookSearch val);
         Task<CashBookReport> GetSumary(CashBookSearch val);
-        Task<CashBookReport> GetTotalReport(CashBookSearch val);
-        Task<List<CashBookExportExcel>> GetExportExcel(CashBookSearch val);
+
+        Task<PagedResult2<CashBookReportDetail>> GetDetails(CashBookDetailFilter val);
+        Task<decimal> GetTotal(CashBookSearch val);
     }
 }

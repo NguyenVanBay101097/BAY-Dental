@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService, ProductImportExcelViewModel, ProductImportExcelBaseViewModel } from '../product.service';
+import { ProductService, ProductImportExcelViewModel, ProductImportExcelBaseViewModel, ProductPaged } from '../product.service';
 import { WindowRef } from '@progress/kendo-angular-dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-product-import-excel-dialog',
@@ -15,6 +16,7 @@ export class ProductImportExcelDialogComponent implements OnInit {
   type: string;
   errors: string[];
   title: string;
+  isUpdate: boolean = false;
   constructor(private productService: ProductService, public activeModal: NgbActiveModal, private notificationService: NotificationService,
     private errorService: AppSharedShowErrorService) { }
 
@@ -37,20 +39,41 @@ export class ProductImportExcelDialogComponent implements OnInit {
 
   onSave() {
     if (!this.fileBase64 || this.fileBase64 === '') {
-      this.notify('error','Vui lòng chọn file để import');
+      if (this.isUpdate) {
+        this.notify('error', 'Vui lòng chọn file để cập nhật');
+      }
+      else {
+        this.notify('error', 'Vui lòng chọn file để import');
+      }
       return;
     }
+
+    if (this.errors.length > 0)
+      return;
+
     var val = new ProductImportExcelBaseViewModel();
     val.fileBase64 = this.fileBase64;
-    this.actionImport(val).subscribe((result: any) => {
-      if (result.success) {
-        this.notify('success', 'Import dữ liệu thành công');
-        this.activeModal.close(true);
-      } else {
-        this.errors = result.errors;
-      }
-    }, err => {
-    });
+
+    if (!this.isUpdate) {
+      this.actionImport(val).subscribe((result: any) => {
+        if (result.success) {
+          this.notify('success', 'Import dữ liệu thành công');
+          this.activeModal.close(true);
+        } else {
+          this.errors = result.errors;
+        }
+      }, err => {
+      });
+    } else {
+      this.actionUpdateExcel(val).subscribe((result: any) => {
+        if (result.success) {
+          this.notify('success', 'Cập nhật dữ liệu thành công');
+          this.activeModal.close(true);
+        } else {
+          this.errors = result.errors;
+        }
+      });
+    }
   }
 
   actionImport(val: any) {
@@ -60,17 +83,29 @@ export class ProductImportExcelDialogComponent implements OnInit {
       return this.productService.importMedicine(val);
     } else if (this.type == 'product') {
       return this.productService.importProduct(val);
-    } else if(this.type == 'labo') {
+    } else if (this.type == 'labo') {
       return this.productService.importLabo(val);
-    } if(this.type == 'labo_attach') {
+    } if (this.type == 'labo_attach') {
       return this.productService.importLaboAttach(val);
     }
-     else {
+  }
 
+  actionUpdateExcel(val: any) {
+    if (this.type == 'service') {
+      return this.productService.updateServiceFromExcel(val);
+    } else if (this.type == 'medicine') {
+      return this.productService.updateMedicineFromExcel(val);
+    } else if (this.type == 'product') {
+      return this.productService.updateProductFromExcel(val);
+    } else {
     }
   }
 
   onCancel() {
     this.activeModal.dismiss();
+  }
+
+  notifyError(value) {
+    this.errors = value;
   }
 }

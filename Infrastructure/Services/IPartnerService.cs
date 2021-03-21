@@ -27,12 +27,11 @@ namespace Infrastructure.Services
         Task<string> UploadImage(IFormFile file);
         Task<PartnerInfoViewModel> GetInfo(Guid id);
         Task<PagedResult2<AccountInvoiceDisplay>> GetCustomerInvoices(AccountInvoicePaged val);
-        Task ImportExcel(IFormFile file);
         Task ImportExcel2(IFormFile file, Ex_ImportExcelDirect dir);
         Dictionary<Guid, PartnerCreditDebitItem> CreditDebitGet(IEnumerable<Guid> ids = null,
        DateTime? fromDate = null,
        DateTime? toDate = null);
-
+        Task<PartnerDisplay> GetInfoPartner(Guid id);
         Task<IEnumerable<PartnerReportLocationItem>> ReportLocationCompanyDistrict(PartnerReportLocationCompanySearch val);
         Task<IEnumerable<PartnerReportLocationItem>> ReportLocationCompanyWard(PartnerReportLocationCompanySearch val);
         Task<IEnumerable<PartnerReportLocationCity>> ReportLocationCity(ReportLocationCitySearch val);
@@ -46,6 +45,9 @@ namespace Infrastructure.Services
         //Task<PartnerInfoViewModel> CheckPartner(CheckMergeFacebookPage val);
 
         Task<PartnerImportResponse> ActionImport(PartnerImportExcelViewModel val);
+
+        Task<PartnerImportResponse> ActionImportUpdate(PartnerImportExcelViewModel val);
+
         Task<PartnerImportResponse> ImportSupplier(PartnerImportExcelViewModel val);
 
         Task<PartnerPrintProfileVM> GetPrint(Guid id);
@@ -63,5 +65,8 @@ namespace Infrastructure.Services
 
         Task<PartnerCustomerReportOutput> GetPartnerCustomerReportV2(PartnerCustomerReportInput val);
         Task<CustomerStatisticsOutput> GetCustomerStatistics(CustomerStatisticsInput val);
+        Task<IEnumerable<AccountMove>> GetUnreconcileInvoices(Guid id, string search = "");
+        Task<List<SearchAllViewModel>> SearchAll(PartnerPaged val);
+        Task<PagedResult2<PartnerGetDebtPagedItem>> GetDebtPaged(Guid id, PartnerGetDebtPagedFilter val);
     }
 }

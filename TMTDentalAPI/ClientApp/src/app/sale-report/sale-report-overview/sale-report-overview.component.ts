@@ -74,6 +74,7 @@ export class SaleReportOverviewComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 
@@ -91,6 +92,7 @@ export class SaleReportOverviewComponent implements OnInit {
 
   loadCompanies() {
     var val = new CompanyPaged();
+    val.active = true;
     this.companyService.getPaged(val)
       .subscribe(res => {
         this.listCompanies = res.items;
@@ -99,6 +101,7 @@ export class SaleReportOverviewComponent implements OnInit {
 
   changeCompany(event) {
     this.companyFilter = event;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
@@ -149,16 +152,19 @@ export class SaleReportOverviewComponent implements OnInit {
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
   setGroupBy(groupBy) {
     this.groupBy = groupBy;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
   setGroupBy2(groupBy) {
     this.groupBy2 = groupBy;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 }

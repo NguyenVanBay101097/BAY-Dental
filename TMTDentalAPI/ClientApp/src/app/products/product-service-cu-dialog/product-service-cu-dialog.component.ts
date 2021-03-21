@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef, Input } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { ProductService } from '../product.service';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { ProductFilter, ProductService } from '../product.service';
 import { Product } from '../product';
 import { ProductCategoryService, ProductCategoryPaged, ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
 import { ProductCategory } from 'src/app/product-categories/product-category';
@@ -15,6 +15,11 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
+import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/product-product-cu-dialog.component';
+import { ProductBomDisplay } from '../product-bom';
+import { result } from 'lodash';
+import { Console } from 'console';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-product-service-cu-dialog',
@@ -34,23 +39,28 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   stepNameEdit = true;
   categCbxLoading = false;
+  productCbxLoading = false;
+  uoM: any;
   searchCategory = new Subject<string>();
 
   stepTab: boolean;
   order: number;
   stepList: ProductStepDisplay[] = [];
+  productBomList: ProductBomDisplay[] = [];
   stepListMore: ProductStepDisplay[] = [];
   lengthStepList: number = 0; // độ dài step list
-
+  filteredProducts: any[] = [];
+  isExist: boolean = false;
   @Input() productDefaultVal: Product;
 
   @ViewChild('form', { static: true }) formView: any;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
-    private modalService: NgbModal, private showErrorService: AppSharedShowErrorService) {
+    private modalService: NgbModal, private showErrorService: AppSharedShowErrorService, private notificationService: NotificationService) {
   }
 
   formStepEdit = this.fb.group({
@@ -82,39 +92,64 @@ export class ProductServiceCuDialogComponent implements OnInit {
       default: true,
       order: this.order,
       purchasePrice: 0,
-      firm: null
+      firm: null,
+      // Định mức vật tư
+      boms: this.fb.array([]),
+    });
+   
+
+    this.searchCategories('').subscribe(result => {
+      this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
     });
 
-    setTimeout(() => {
-      this.default();
+    this.searchProducts().subscribe(result => {
+      this.filteredProducts = result;
+    });
 
-      this.searchCategories('').subscribe(result => {
-        this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
-      });
+    if (this.id) {
+      this.loadDataFromApi();
+    } else {
+      this.loadDefault();
+    }
 
-      this.categCbxFilterChange();
+    this.categCbxFilterChange();
+    this.productCbxFilterChange();
+   
+  }
+
+  loadDataFromApi() {
+    this.productService.get(this.id).subscribe(result => {
+      this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
+      this.productForm.patchValue(result);
+
+      this.loadStepList();
+      this.productForm.get('type').value == 'service' ? this.stepTab = true : this.stepTab = false;
+      
+      if (result.boms.length > 0) {
+        var array = this.productForm.get('boms') as FormArray;
+        result.boms.forEach(bom => {
+          array.push(this.fb.group({
+            id: bom.id,
+            materialProduct: [bom.materialProduct,Validators.required],
+            productUOM: bom.productUOM,
+            quantity: [bom.quantity, Validators.required]
+          }))
+        });
+      }
     });
   }
 
-  default() {
-    if (this.id) {
-      this.productService.get(this.id).subscribe(result => {
+  loadDefault() {
+    this.productService.defaultGet().subscribe(result => {
+      if (result.categ) {
         this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
-        this.productForm.patchValue(result);
-        this.loadStepList();
-        this.productForm.get('type').value == 'service' ? this.stepTab = true : this.stepTab = false;
-      });
-    } else {
-      this.productService.defaultGet().subscribe(result => {
-        if (result.categ) {
-          this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
-        }
-        this.productForm.patchValue(result);
-        this.productForm.get('type').setValue('service');
-        this.productForm.get('type2').setValue('service');
-        this.productForm.get('purchaseOK').setValue(false);
-      });
-    }
+      }
+      this.productForm.patchValue(result);
+      this.productForm.get('type').setValue('service');
+      this.productForm.get('type2').setValue('service');
+      this.productForm.get('purchaseOK').setValue(false);
+    });
+
   }
 
   get saleOK() {
@@ -136,11 +171,30 @@ export class ProductServiceCuDialogComponent implements OnInit {
     });
   }
 
+  productCbxFilterChange() {
+    this.productCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.productCbx.loading = true)),
+      switchMap(value => this.searchProducts(value))
+    ).subscribe(result => {
+      this.filteredProducts = result;
+      this.productCbx.loading = false;
+    });
+  }
+
   categCbxFilterChange2(e: string) {
     debounceTime(300);
     this.searchCategories(e.toLowerCase()).subscribe(result => {
       this.filterdCategories = result;
       this.categCbxLoading = false;
+    });
+  }
+
+  productCbxFilterChange2(e: string) {
+    debounceTime(300);
+    this.searchProducts(e.toLowerCase()).subscribe(result => {
+      this.filteredProducts = result;
+      this.productCbxLoading = false;
     });
   }
 
@@ -164,7 +218,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   quickCreateCateg() {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm nhóm dịch vụ';
     modalRef.componentInstance.type = 'service';
     modalRef.result.then(result => {
@@ -174,32 +228,41 @@ export class ProductServiceCuDialogComponent implements OnInit {
     });
   }
 
-  onSave() {
-    this.submitted = true;
-
-    if (!this.productForm.valid) {
-      return;
-    }
-
-    this.saveOrUpdate().subscribe(result => {
-      if (result) {
-        this.activeModal.close(result);
-      } else {
-        this.activeModal.close(true);
-      }
-    });
-  }
-
   get isLabo() {
     return this.productForm.get('isLabo').value;
   }
 
   saveOrUpdate() {
+    this.submitted = true;
+    if (!this.productForm.valid || this.isExist == true) {
+      return;
+    }
+
     var data = this.getBodyData();
     if (this.id) {
-      return this.productService.update(this.id, data);
+      this.productService.update(this.id, data).subscribe(
+        result => {
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+    this.activeModal.close(result);
+        });
     } else {
-      return this.productService.create(data);
+      this.productService.create(data).subscribe(
+        result => {
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.activeModal.close(result);
+        });
     }
   }
 
@@ -207,6 +270,11 @@ export class ProductServiceCuDialogComponent implements OnInit {
     var data = this.productForm.value;
     data.categId = data.categ.id;
     data.stepList = this.stepList;
+    data.boms.forEach(bom => {
+      bom.materialProductId = bom.materialProduct ? bom.materialProduct.id : null;
+      bom.productUOMId = bom.productUOM ? bom.productUOM.id : null;
+    });
+
     return data;
   }
 
@@ -237,7 +305,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
     }
   }
 
-
   changeType() {
     this.productForm.get('type').value == 'service' ? this.stepTab = true : this.stepTab = false;
   }
@@ -264,29 +331,15 @@ export class ProductServiceCuDialogComponent implements OnInit {
     }
   }
 
+  searchProducts(q?: string) {
+    var filter = new ProductFilter();
+    filter.search = q || '';
+    filter.type2 = 'product';
+    filter.limit = 1000;
+    filter.offset = 0;
+    return this.productService.autocomplete2(filter);
+  }
 
-  // moveUp(order) {
-  //   var index = order - 1;
-
-  //   var temp = this.stepList[index];
-  //   this.stepList[index] = this.stepList[index - 1];
-  //   this.stepList[index - 1] = temp;
-
-  //   this.reorder();
-  //   console.log(this.stepList);
-  // }
-
-  // moveDown(order) {
-  //   var index = order - 1;
-  //   var temp = this.stepList[index];
-  //   this.stepList[index] = this.stepList[index + 1];
-  //   this.stepList[index + 1] = temp;
-
-  //   this.reorder();
-  //   console.log(this.stepList);
-  // }
-
-  //=============Sắp xếp lại step list
   reorder() {
     for (var i = 0; i < this.stepList.length; i++) {
       this.stepList[i].order = i + 1;
@@ -374,6 +427,87 @@ export class ProductServiceCuDialogComponent implements OnInit {
   get f() {
     return this.productForm.controls;
   }
+
+  createMaterialProduct() {
+    let modalRef = this.modalService.open(ProductProductCuDialogComponent, {
+      size: "lg",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Thêm: vật tư";
+    modalRef.result.then(
+      result => {
+        this.loadFilteredProducts();
+      },
+      () => { }
+    );
+  }
+
+  loadFilteredProducts() {
+    this.searchProducts().subscribe(res => {
+      this.filteredProducts = res;
+    });
+  }
+
+  get boms() {
+    return this.productForm.get('boms') as FormArray;
+  }
+
+  getListProductBom() {
+    this.productBomList.forEach((element, index) => {
+      if (element.materialProductId == null) {
+        this.productBomList.splice(index, 1);
+      }
+    });
+  }
+
+  addMaterialProduct() {
+    var line = this.fb.group({
+      materialProduct: [null, Validators.required],
+      productUOM: null,
+      quantity: [1, Validators.required]
+    });
+
+    this.boms.push(line);
+    console.log(this.productForm);
+    
+  }
+
+  deleteMaterialProduct(index) {
+    this.boms.removeAt(index);
+    this.boms.markAsDirty();
+  }
+
+  onValueChange(item, i) {
+    if (item) {
+      var temp = this.boms.value.filter(x => x.materialProduct ? x.materialProduct.id == item.id : false);
+      if (temp.length > 1) {
+        // this.notificationService.show({
+        //   content: 'Vật tư đã tồn tại',
+        //   hideAfter: 3000,
+        //   position: { horizontal: 'center', vertical: 'top' },
+        //   animation: { type: 'fade', duration: 400 },
+        //   type: { style: 'error', icon: true }
+        // });
+
+       // this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
+       // this.isExist = true;
+       this.boms.at(i).get('materialProduct').setErrors({'incorrect': true});
+       this.boms.at(i).patchValue({ productUOM: item.uom });
+       this.isExist = true;
+      }
+      else {
+        this.boms.at(i).patchValue({ productUOM: item.uom });
+        this.isExist = false;
+      }
+    }
+    else {
+      this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
+    }
+  }
 }
+
+
 
 
