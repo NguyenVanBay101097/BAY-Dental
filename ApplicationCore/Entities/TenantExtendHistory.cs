@@ -17,5 +17,7 @@ namespace ApplicationCore.Entities
 
         public Guid TenantId { get; set; }
         public AppTenant AppTenant { get; set; }
+
+        public DateTime? ApplyDate { get; set; }
     }
 }

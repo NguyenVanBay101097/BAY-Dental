@@ -44,7 +44,7 @@ namespace TMTDentalAdmin.BackgroundTasks.Services
 
                 await CheckUpdateExpiredTenants();
 
-                await Task.Delay(10000, stoppingToken);
+                await Task.Delay(60000, stoppingToken);
             }
 
             _logger.LogDebug("UpdateExpiredBackgroundService background task is stopping.");
@@ -57,10 +57,10 @@ namespace TMTDentalAdmin.BackgroundTasks.Services
             var context = new TenantDbContext(optionsBuilder.Options);
 
             var now = DateTime.Now;
-            var histories = await context.TenantExtendHistories.Where(x => now >= x.StartDate &&
+            var histories = await context.TenantExtendHistories.Where(x => now >= x.StartDate && !x.ApplyDate.HasValue &&
                 (x.ExpirationDate != x.AppTenant.DateExpired || x.ActiveCompaniesNbr != x.AppTenant.ActiveCompaniesNbr))
                 .OrderBy(x => x.StartDate).ToListAsync();
-            var dict = histories.GroupBy(x => x.TenantId).ToDictionary(x => x.Key, x => x.OrderByDescending(s => s.StartDate).First());
+            var dict = histories.GroupBy(x => x.TenantId).ToDictionary(x => x.Key, x => x.OrderBy(s => s.StartDate).First());
             var throttler = new SemaphoreSlim(10);
             var allTasks = new List<Task>();
             foreach (var item in dict)
@@ -90,6 +90,7 @@ namespace TMTDentalAdmin.BackgroundTasks.Services
             var oldActiveCompaniesNbr = tenant.ActiveCompaniesNbr;
             tenant.ActiveCompaniesNbr = history.ActiveCompaniesNbr;
             tenant.DateExpired = history.ExpirationDate;
+            history.ApplyDate = DateTime.Now;
             context.SaveChanges();
 
             try
@@ -105,11 +106,15 @@ namespace TMTDentalAdmin.BackgroundTasks.Services
 
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Có lỗi xảy ra");
+
+                _logger.LogInformation("UpdateExpiredBackgroundService success");
             }
-            catch
+            catch(Exception e)
             {
+                _logger.LogInformation("UpdateExpiredBackgroundService fail " + e.Message);
                 tenant.DateExpired = oldDateExpired;
                 tenant.ActiveCompaniesNbr = oldActiveCompaniesNbr;
+                history.ApplyDate = null;
                 context.SaveChanges();
             }
         }
