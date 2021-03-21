@@ -91,6 +91,23 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         ResId = categ.Id.ToString(),
                         Model = "ir.module.category"
                     });
+
+                    context.IRModelDatas.Add(new IRModelData() // for show combobox
+                    {
+                        Name = "group_manager",
+                        Module = "survey",
+                        ResId = manageGroup.Id.ToString(),
+                        Model = "res.groups"
+                    });
+
+                    context.IRModelDatas.Add(new IRModelData() // for show combobox
+                    {
+                        Name = "group_user",
+                        Module = "survey",
+                        ResId = empGroup.Id.ToString(),
+                        Model = "res.groups"
+                    });
+                    context.SaveChanges();
                 }
             }
 
