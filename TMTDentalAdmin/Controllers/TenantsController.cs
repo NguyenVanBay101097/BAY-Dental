@@ -97,7 +97,7 @@ namespace TMTDentalAdmin.Controllers
                 HttpResponseMessage response = null;
                 HttpClientHandler clientHandler = new HttpClientHandler();
                 clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
-                using (var client = new HttpClient(new RetryHandler(clientHandler)))
+                using (var client = new HttpClient())
                 {
                     response = await client.PostAsJsonAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
                     {
