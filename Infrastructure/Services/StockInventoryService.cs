@@ -191,8 +191,8 @@ namespace Infrastructure.Services
                 products_to_filter = products_to_filter.Union(criteria_products);
             }
 
+            //không cần điều kiện product active
             var group = await stockQuantObj.SearchQuery(x => locationIds.Contains(x.LocationId) &&
-                x.CompanyId == self.CompanyId && x.Product.Active &&
                 (!self.ProductId.HasValue || x.ProductId == self.ProductId.Value) &&
                 (!self.CategoryId.HasValue || x.Product.CategId == self.CategoryId.Value) &&
                 (!self.CriteriaId.HasValue || productIds_to_Criteria.Contains(x.ProductId)))
@@ -238,7 +238,7 @@ namespace Infrastructure.Services
             var productObj = GetService<IProductService>();
             var vals = new List<StockInventoryLine>();
             var types = new List<string>() { "service", "consu" };
-            var query = productObj.SearchQuery(x => !types.Contains(x.Type) && x.Active); //có cần search active true
+            var query = productObj.SearchQuery(x => !types.Contains(x.Type)); //có cần search active true
             if (products.Any())
             {
                 var exhausted_products = products.Except(quant_products);
@@ -371,9 +371,8 @@ namespace Infrastructure.Services
                 {
                     if (line.ProductQty < 0 && line.ProductQty != line.TheoreticalQty)
                     {
-                        //throw new Exception(string.Format("Bạn không được gán số lượng âm cho chi tiết điều chỉnh: {0} - số lượng: {1}", line.Product.Name, line.ProductQty));
-                        throw new Exception(string.Format(" Bạn không được gán số lượng thực tế âm"));
-                       
+                        //thông báo như thế này rõ ràng hơn, biết sản phẩm nào? số lượng?
+                        throw new Exception(string.Format("Bạn không được gán số lượng âm cho chi tiết điều chỉnh: {0} - số lượng: {1}", line.Product.Name, line.ProductQty));
                     }
                 }
             }

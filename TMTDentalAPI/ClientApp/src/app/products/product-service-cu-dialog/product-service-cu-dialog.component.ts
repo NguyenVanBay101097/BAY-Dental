@@ -267,7 +267,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   getBodyData() {
-    debugger
     var data = this.productForm.value;
     data.categId = data.categ.id;
     data.stepList = this.stepList;
