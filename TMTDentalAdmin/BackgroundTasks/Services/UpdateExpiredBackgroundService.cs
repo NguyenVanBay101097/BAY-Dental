@@ -44,7 +44,7 @@ namespace TMTDentalAdmin.BackgroundTasks.Services
 
                 await CheckUpdateExpiredTenants();
 
-                await Task.Delay(60000, stoppingToken);
+                await Task.Delay(10000, stoppingToken);
             }
 
             _logger.LogDebug("UpdateExpiredBackgroundService background task is stopping.");
@@ -57,52 +57,60 @@ namespace TMTDentalAdmin.BackgroundTasks.Services
             var context = new TenantDbContext(optionsBuilder.Options);
 
             var now = DateTime.Now;
-            var tenants = await context.Tenants.ToListAsync();
-            var tasks = tenants.Select(x => ProcessUpdate(x.Id));
-            await Task.WhenAll(tasks);
+            var histories = await context.TenantExtendHistories.Where(x => now >= x.StartDate &&
+                (x.ExpirationDate != x.AppTenant.DateExpired || x.ActiveCompaniesNbr != x.AppTenant.ActiveCompaniesNbr))
+                .OrderBy(x => x.StartDate).ToListAsync();
+            var dict = histories.GroupBy(x => x.TenantId).ToDictionary(x => x.Key, x => x.OrderByDescending(s => s.StartDate).First());
+            var throttler = new SemaphoreSlim(10);
+            var allTasks = new List<Task>();
+            foreach (var item in dict)
+            {
+                allTasks.Add(Task.Run(async () =>
+                {
+                    await throttler.WaitAsync();
+                    try
+                    {
+                        await ProcessUpdate(item.Key, item.Value, context);
+                    }
+                    finally
+                    {
+                        throttler.Release();
+                    }
+                }));
+            }
+        
+
+            Task.WaitAll(allTasks.ToArray()); //block main thread wail all complete
         }
 
-        private async Task ProcessUpdate(Guid tenantId)
+        private async Task ProcessUpdate(Guid tenantId, TenantExtendHistory history, TenantDbContext context)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<TenantDbContext>();
-            optionsBuilder.UseSqlServer(_connectionStrings.TenantConnection);
-            var context = new TenantDbContext(optionsBuilder.Options);
+            var tenant = context.Tenants.Find(tenantId);
+            var oldDateExpired = tenant.DateExpired;
+            var oldActiveCompaniesNbr = tenant.ActiveCompaniesNbr;
+            tenant.ActiveCompaniesNbr = history.ActiveCompaniesNbr;
+            tenant.DateExpired = history.ExpirationDate;
+            context.SaveChanges();
 
-            var now = DateTime.Now;
-            var history = await context.TenantExtendHistories.Where(x => x.TenantId == tenantId && now >= x.StartDate &&
-                (x.ExpirationDate != x.AppTenant.DateExpired || x.ActiveCompaniesNbr != x.AppTenant.ActiveCompaniesNbr))
-                   .OrderByDescending(x => x.StartDate)
-                   .FirstOrDefaultAsync();
-           
-            if (history != null)
+            try
             {
-                var tenant = context.Tenants.Find(tenantId);
-                var oldDateExpired = tenant.DateExpired;
-                var oldActiveCompaniesNbr = tenant.ActiveCompaniesNbr;
-                tenant.ActiveCompaniesNbr = history.ActiveCompaniesNbr;
-                tenant.DateExpired = history.ExpirationDate;
+                HttpClientHandler clientHandler = new HttpClientHandler();
+                clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
+
+                HttpResponseMessage response = null;
+                using (var client = new HttpClient(new RetryHandler(clientHandler)))
+                {
+                    response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant");
+                }
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Có lỗi xảy ra");
+            }
+            catch
+            {
+                tenant.DateExpired = oldDateExpired;
+                tenant.ActiveCompaniesNbr = oldActiveCompaniesNbr;
                 context.SaveChanges();
-
-                try
-                {
-                    HttpClientHandler clientHandler = new HttpClientHandler();
-                    clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
-
-                    HttpResponseMessage response = null;
-                    using (var client = new HttpClient(new RetryHandler(clientHandler)))
-                    {
-                        response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant");
-                    }
-
-                    if (!response.IsSuccessStatusCode)
-                        throw new Exception("Có lỗi xảy ra");
-                }
-                catch
-                {
-                    tenant.DateExpired = oldDateExpired;
-                    tenant.ActiveCompaniesNbr = oldActiveCompaniesNbr;
-                    context.SaveChanges();
-                }
             }
         }
     }

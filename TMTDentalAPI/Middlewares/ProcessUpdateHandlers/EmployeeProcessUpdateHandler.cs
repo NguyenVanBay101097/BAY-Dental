@@ -38,12 +38,11 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 var context = scope.ServiceProvider.GetService<CatalogDbContext>();
 
                 var partners = context.Partners.Where(x => string.IsNullOrEmpty(x.DisplayName)).ToList();
-                if(partners.Any())
+                if (partners.Any())
                 {
-
                     foreach (var partner in partners)
                     {
-                        partner.DisplayName = string.IsNullOrEmpty(partner.Ref)? partner.Name : "[" + partner.Ref + "] " + partner.Name;
+                        partner.DisplayName = string.IsNullOrEmpty(partner.Ref) ? partner.Name : "[" + partner.Ref + "] " + partner.Name;
                     }
                     context.SaveChanges();
                 }
