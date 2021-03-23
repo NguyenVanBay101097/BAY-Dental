@@ -850,7 +850,8 @@ namespace Infrastructure.Services
             var order = await orderObj.SearchQuery(x => x.Id == saleOrderId && x.Residual > 0).Include(x => x.OrderLines).FirstOrDefaultAsync();
             foreach (var line in order.OrderLines)
             {
-                var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id && x.Payment.State != "draft").SumAsync(x => x.AmountPrepaid.Value);
+                var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id && x.Payment.State != "draft" && x.Payment.State != "cancel")
+                    .SumAsync(x => x.AmountPrepaid.Value);
                 line.AmountPaid = amountPaid;
                 line.AmountResidual = line.PriceSubTotal - amountPaid;
             }
@@ -1092,7 +1093,9 @@ namespace Infrastructure.Services
             await CancelAsync(SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.MoveLines).ThenInclude(x => x.Move)
                 .Include(x => x.MoveLines).ThenInclude(x => x.Move).ThenInclude(x => x.Lines)
-                .Include(x => x.AccountMovePaymentRels).ToList());
+                .Include(x => x.AccountMovePaymentRels)
+                .Include(x => x.SaleOrderPaymentRels)
+                .ToList());
         }
 
         public async Task CancelAsync(IEnumerable<AccountPayment> payments)
@@ -1116,14 +1119,24 @@ namespace Infrastructure.Services
             }
 
             await UpdateAsync(payments);
+
+            //delete commission
+            var settlementObj = GetService<ICommissionSettlementService>();
+            await settlementObj.Unlink(payments.Select(x => x.Id).ToList());
+
+            //update saleorderline
+            var saleOrderIds = payments.SelectMany(x => x.SaleOrderPaymentRels).Select(x => x.SaleOrderId).ToList();
+            if (saleOrderIds.Any())
+            {
+                foreach (var saleOrderId in saleOrderIds)
+                    await _ComputeSaleOrderLines(saleOrderId);
+            }
         }
 
         public async Task UnlinkAsync(IEnumerable<Guid> ids)
         {
             //Chỉ có thể xóa phiếu thu chi ở trạng thái nháp
-            var settlementObj = GetService<ICommissionSettlementService>();
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
-
             foreach (var rec in self)
             {
                 if (rec.State == "posted")
@@ -1136,17 +1149,7 @@ namespace Infrastructure.Services
                 }
             }
 
-            await settlementObj.Unlink(ids);
-
             await DeleteAsync(self);
-
-            ///update saleorderline
-            var saleOrderIds = self.SelectMany(x => x.SaleOrderPaymentRels).Select(x => x.SaleOrderId).ToList();
-            if (saleOrderIds.Any())
-            {
-                foreach (var saleOrderId in saleOrderIds)
-                    await _ComputeSaleOrderLines(saleOrderId);
-            }
         }
 
         public async Task<IEnumerable<AccountPaymentBasic>> GetPaymentBasicList(AccountPaymentFilter val)
