@@ -82,6 +82,7 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<AppointmentBasic>> GetPagedResultAsync(AppointmentPaged val)
         {
             var query = SearchQuery();
+            var today = DateTime.Today;
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
                 || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
@@ -90,11 +91,14 @@ namespace Infrastructure.Services
             if (val.DateTimeFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateTimeFrom);
 
-            if (val.DateTimeTo.HasValue)
+            if (val.DateTimeTo.HasValue && !val.Cancel)
             {
                 var dateTo = val.DateTimeTo.Value.AbsoluteEndOfDate();
                 query = query.Where(x => x.Date <= dateTo);
             }
+
+            if (val.Cancel)
+                query = query.Where(x => x.Date < today);
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
@@ -134,6 +138,7 @@ namespace Infrastructure.Services
             var items = await query
                 .Include(x => x.Partner)
                 .Include(x => x.Doctor)
+                .Include(x => x.AppointmentServices).ThenInclude(x => x.Product)
                 .OrderBy(x => x.Date).ThenBy(x => x.Time)
                 .Skip(val.Offset)
                 .Take(limit)
@@ -144,6 +149,7 @@ namespace Infrastructure.Services
                 Items = _mapper.Map<IEnumerable<AppointmentBasic>>(items)
             };
         }
+
 
         public async Task<AppointmentDisplay> DefaultGet(AppointmentDefaultGet val)
         {
@@ -207,7 +213,7 @@ namespace Infrastructure.Services
         public async Task<long> GetCount(AppointmentGetCountVM val)
         {
             var query = SearchQuery();
-
+            var today = DateTime.Today;
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State == val.State);
 
@@ -217,10 +223,23 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date >= val.DateFrom);
             }
 
-            if (val.DateTo.HasValue)
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
+                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
+                || x.Partner.Ref.Contains(val.Search));
+
+            if (val.DoctorId.HasValue)
+                query = query.Where(x => x.DoctorId == val.DoctorId);
+
+            if (val.DateTo.HasValue && !val.Cancel)
             {
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
                 query = query.Where(x => x.Date <= dateTo);
+            }
+
+            if (val.Cancel)
+            {
+                query = query.Where(x => x.Date < today);
             }
 
             return await query.LongCountAsync();
@@ -355,6 +374,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<AppointmentBasic>> GetExcelData(AppointmentPaged val)
         {
             var query = SearchQuery();
+            var today = DateTime.Today;
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
                 || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
@@ -363,11 +383,14 @@ namespace Infrastructure.Services
             if (val.DateTimeFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateTimeFrom);
 
-            if (val.DateTimeTo.HasValue)
+            if (val.DateTimeTo.HasValue && !val.Cancel)
             {
                 var dateTo = val.DateTimeTo.Value.AbsoluteEndOfDate();
                 query = query.Where(x => x.Date <= dateTo);
             }
+
+            if (val.Cancel)
+                query = query.Where(x => x.Date < today);
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
@@ -407,6 +430,7 @@ namespace Infrastructure.Services
             var items = await query
                 .Include(x => x.Partner).Include("Partner.PartnerPartnerCategoryRels.Category")
                 .Include(x => x.Doctor)
+                .Include(x => x.AppointmentServices).ThenInclude(x => x.Product)
                 .OrderBy(x => x.Date).ThenBy(x => x.Time)
                 .Skip(val.Offset)
                 .Take(limit)
@@ -438,7 +462,7 @@ namespace Infrastructure.Services
         {
             var appointment = await SearchQuery(x => x.Id == id).Include(x => x.AppointmentServices).ThenInclude(x => x.Product).FirstOrDefaultAsync();
             await ComputeAppointmentService(appointment, val);
-            appointment = _mapper.Map(val,appointment);
+            appointment = _mapper.Map(val, appointment);
             await UpdateAsync(appointment);
         }
 

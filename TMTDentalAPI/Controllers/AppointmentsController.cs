@@ -85,7 +85,7 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            await _appointmentService.UpdateAsync(id,val);
+            await _appointmentService.UpdateAsync(id, val);
 
             return NoContent();
         }
@@ -323,5 +323,6 @@ namespace TMTDentalAPI.Controllers
 
             return new FileContentResult(fileContent, mimeType);
         }
+
     }
 }

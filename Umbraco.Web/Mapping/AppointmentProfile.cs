@@ -12,7 +12,8 @@ namespace Umbraco.Web.Mapping
     {
         public AppointmentProfile()
         {
-            CreateMap<Appointment, AppointmentBasic>();
+            CreateMap<Appointment, AppointmentBasic>()
+                 .ForMember(x => x.Services, x => x.MapFrom(s => s.AppointmentServices.Select(q => q.Product)));
 
             CreateMap<Appointment, AppointmentDisplay>()
                 .ForMember(x => x.Services, x => x.MapFrom(s => s.AppointmentServices.Select(q => q.Product)));

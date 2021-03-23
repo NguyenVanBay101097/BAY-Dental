@@ -1,0 +1,13 @@
+.service {
+    overflow: hidden;
+    max-width: 400px;
+    text-overflow: ellipsis;
+    white-space: pre;
+}
+
+.text-service {
+    overflow: hidden;
+    max-width: 150px;
+    text-overflow: ellipsis;
+    white-space: pre;
+}

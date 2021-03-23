@@ -18,7 +18,12 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers'
     },
     {
-      name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
+      name: 'Quản lý lịch hẹn',
+      icon: 'fas fa-calendar-alt',
+      children: [
+        { name: 'Lịch hẹn', link: '/appointments/kanban' },
+        { name: 'Quá hạn/ Hủy hẹn', link: '/appointments/over-cancel' }
+      ],
     },
     { name: 'Bán thuốc', icon: 'fas fa-capsules', children: [], link: '/medicine-orders', groups: 'medicineOrder.group_medicine' },
 
@@ -54,9 +59,9 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Danh sách khảo sát', link: '/surveys', groups: 'survey.group_user,survey.group_manager' },
         { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey.group_manager' },
-        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.group_manager'  },
+        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.group_manager' },
       ],
-      groups: 'survey.group_user,survey.group_manager' 
+      groups: 'survey.group_user,survey.group_manager'
     },
     {
       name: 'Mua hàng',
@@ -145,7 +150,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-list',
       children: [
         { name: 'Thông tin khách hàng', link: '/partners/customer-management' },
-        { name: 'Nhãn khảo sát', link: '/surveys/survey-tag', groups: 'survey.group_survey'},
+        { name: 'Nhãn khảo sát', link: '/surveys/survey-tag', groups: 'survey.group_survey' },
         // { name: "Nguồn khách hàng", link: "/partner-sources" },
         { name: 'Nhà cung cấp', link: '/partners/suppliers' },
         { name: 'Dịch vụ - Vật tư - Thuốc', link: '/products' },
@@ -157,8 +162,8 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
         { name: 'Thông số Labo', link: '/labo-orders/labo-managerment' },
-        { name: 'Loại thu chi', link: '/loai-thu-chi'},
-        { name: 'Tiêu chí kiểm kho', link: '/stock/criterias'},
+        { name: 'Loại thu chi', link: '/loai-thu-chi' },
+        { name: 'Tiêu chí kiểm kho', link: '/stock/criterias' },
         // { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' }},
         // { name: 'Vật liệu Labo', link: '/products/labos' },
         // { name: 'Đường hoàn tất', link: '/labo-finish-lines' },

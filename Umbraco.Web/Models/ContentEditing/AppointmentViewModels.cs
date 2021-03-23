@@ -40,6 +40,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string State { get; set; }
         public string Reason { get; set; }
+        //danh sach dv
+        public IEnumerable<ProductSimple> Services { get; set; } = new List<ProductSimple>();
 
         //Hẹn khách hàng nào?
         public Guid PartnerId { get; set; }
@@ -118,7 +120,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool HasDotKhamRef { get; set; }
         public Guid? SaleOrderId { get; set; }
     }
-    
+
     public class AppointmentPaged
     {
         public AppointmentPaged()
@@ -139,7 +141,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTimeTo { get; set; }
 
         public string State { get; set; }
-
+        public bool Cancel { get; set; }
         public Guid? DotKhamId { get; set; }
 
         public string UserId { get; set; }
@@ -216,11 +218,19 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class AppointmentGetCountVM
     {
+        public AppointmentGetCountVM()
+        {
+            Cancel = false;
+        }
+        public string Search { get; set; }
+        public Guid? DoctorId { get; set; }
         public string State { get; set; }
 
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
+
+        public bool Cancel { get; set; }
     }
 
 }
