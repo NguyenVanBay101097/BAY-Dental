@@ -11,9 +11,6 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="name" title="Đợt khám" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]='{id: dataItem.saleOrderId}'>{{dataItem.name}}</a>
-            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="doctor" title="Bác sĩ" width="120">
             <ng-template kendoGridCellTemplate let-dataItem>
