@@ -1,6 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -14,7 +15,9 @@
                         </label>
                     </td>
                     <td colspan="1" style="width: 100%;">
-                        <app-binary-file-input [accept]="'.xlsm,.xls,.xlsx,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'" (valueChange)="onFileChange($event)">
+                        <app-binary-file-input
+                            [accept]="'.xlsm,.xls,.xlsx,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'"
+                            (valueChange)="onFileChange($event)" (error)="notifyError($event)">
                         </app-binary-file-input>
                     </td>
                 </tr>
@@ -47,12 +50,13 @@
 <footer class="modal-footer">
     <button *ngIf="isUpdate" type="button" class="btn btn-primary btn-sm" (click)="updateFileExcel()">
         Cập nhật
-        </button>
+    </button>
     <button *ngIf="!isUpdate" type="button" class="btn btn-primary btn-sm" (click)="import()">
         Import
-        </button>
+    </button>
 
-    <a *ngIf="type == 'customer' && isUpdate != true" href="assets/files/Mau_File_KH_V2.xlsx" class="btn btn-info btn-sm">
+    <a *ngIf="type == 'customer' && isUpdate != true" href="assets/files/Mau_File_KH_V2.xlsx"
+        class="btn btn-info btn-sm">
         Tải file mẫu
     </a>
     <a *ngIf="type == 'supplier'" href="assets/files/Mau_File_NCC_V2.xlsx" class="btn btn-info btn-sm">

@@ -928,10 +928,11 @@ namespace Infrastructure.Services
                 {
                     partner.Customer = false;
                     partner.Supplier = true;
+                    partner.Fax = item.Fax;
                 }
 
                 partners.Add(partner);
-            } 
+            }
 
             try
             {
