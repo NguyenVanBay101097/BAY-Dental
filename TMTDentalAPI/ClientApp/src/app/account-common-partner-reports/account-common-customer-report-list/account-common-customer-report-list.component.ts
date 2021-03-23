@@ -27,7 +27,6 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
   skip = 0;
   dateFrom: Date;
   dateTo: Date;
-  searchPartner: PartnerSimple;
   resultSelection: string;
   public total: any;
 
@@ -47,7 +46,6 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
 
 
   ngOnInit() {
-    var date = new Date();
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 
@@ -76,7 +74,7 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     var val = new AccountCommonPartnerReportSearch();
     val.fromDate = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
     val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
-    val.partnerId = this.searchPartner ? this.searchPartner.id : null;
+    val.partnerId = null;
     val.search = this.search ? this.search : '';
     val.resultSelection = this.resultSelection;
 
@@ -106,11 +104,11 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     var val = new AccountCommonPartnerReportSearch();
     val.fromDate = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
     val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
-    val.partnerId = this.searchPartner ? this.searchPartner.id : null;
+    val.partnerId = null;
     val.search = this.search ? this.search : '';
     val.resultSelection = this.resultSelection;
 
-    this.reportService.ExportExcelFile(val).subscribe((res: any) => {
+    this.reportService.exportExcelFile(val).subscribe((res: any) => {
       const filename = this.resultSelection == 'customer'? `BaoCaoCongNoKhachHang` : 'BaoCaoCongNoNCC';
       const newBlob = new Blob([res], {
         type:
@@ -128,14 +126,13 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     });
   }
 
-  Sum(field) : any{
+  sum(field) : any{
     if(this.items.length == 0 ) 
     {
-      var a = {};
-      a[field] = {sum: 0};
-      return a;
+     return 0;
     } else {
-      return aggregateBy(this.items, [ { aggregate: "sum", field: field }]);
+      var res =  aggregateBy(this.items, [ { aggregate: "sum", field: field }]);
+      return res[field].sum;
     }
   }
 }

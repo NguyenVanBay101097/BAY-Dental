@@ -29,19 +29,19 @@
 <div class="p-3 d-flex flex-row summary">
     <div class="p-3 mr-3 border text-center d-flex flex-column mw-200">
         <label> Nợ đầu kỳ </label>
-        <h5 style="color: hsl(198deg 98% 47%);">{{Sum('begin')?.begin?.sum | number }}</h5>
+        <h5 style="color: hsl(198deg 98% 47%);">{{sum('begin') | number }}</h5>
     </div>
     <div class="p-3 mr-3 border text-center d-flex flex-column mw-200">
         <label> Tiền phát sinh </label>
-        <h5 style="color: hsl(241deg 98% 47%);">{{Sum('debit')?.debit?.sum | number }}</h5>
+        <h5 style="color: hsl(241deg 98% 47%);">{{sum('debit') | number }}</h5>
     </div>
     <div class="p-3 mr-3 border text-center d-flex flex-column mw-200">
         <label> Tiền thanh toán </label>
-        <h5 style="color: hsl(83deg 97% 36%);">{{Sum('credit')?.credit?.sum | number }}</h5>
+        <h5 style="color: hsl(83deg 97% 36%);">{{sum('credit') | number }}</h5>
     </div>
     <div class="p-3 mr-3 border text-center d-flex flex-column mw-200">
         <label> Nợ cuối kỳ </label>
-        <h5 style="color: hsl(353deg 100% 43%);">{{Sum('end')?.end?.sum | number }}</h5>
+        <h5 style="color: hsl(353deg 100% 43%);">{{sum('end') | number }}</h5>
     </div>
 </div>
 
