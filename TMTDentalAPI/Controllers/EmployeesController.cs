@@ -162,6 +162,7 @@ namespace TMTDentalAPI.Controllers
                         if (isMapped == true) throw new Exception("Tài khoản đã tồn tại");
                         user = existUser;
                         employee.UserId = existUser.Id;
+                        employee.User = existUser;
                     }
                     else
                     {
