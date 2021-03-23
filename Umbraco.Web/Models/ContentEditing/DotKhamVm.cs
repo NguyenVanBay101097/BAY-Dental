@@ -94,6 +94,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public IEnumerable<PartnerImageDisplay> DotKhamImages { get; set; } = new List<PartnerImageDisplay>();
 
+        public string Name { get; set; }
+
     }
 
 

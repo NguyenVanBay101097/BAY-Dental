@@ -28,7 +28,35 @@ namespace Infrastructure.Services
 
         public async Task<DotKhamDisplay> GetDotKhamDisplayAsync(Guid id)
         {
-            return await _mapper.ProjectTo<DotKhamDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+
+            var dkLineObj= GetService<IDotKhamLineService>();
+            var pnImageObj = GetService<IPartnerImageService>();
+
+            var res = _mapper.Map<DotKhamDisplay>( await SearchQuery(x => x.Id == id).Include(x=> x.Doctor).FirstOrDefaultAsync());
+
+            if (res == null) return null;
+
+            res.Lines = await dkLineObj.SearchQuery(x => x.DotKhamId == id).OrderBy(x => x.Sequence).Select(x => new DotKhamLineDisplay
+            {
+                Teeth = x.ToothRels.Select(x => new ToothDisplay
+                {
+                    Id = x.ToothId,
+                    Name = x.Tooth.Name
+                }),
+                Id = x.Id,
+                NameStep = x.NameStep,
+                Note = x.Note,
+                Product = new ProductSimple
+                {
+                    Id = x.ProductId.Value,
+                    Name = x.Product.Name
+                },
+                SaleOrderLineId = x.SaleOrderLineId
+            }).ToListAsync();
+
+            res.DotKhamImages = await _mapper.ProjectTo<PartnerImageDisplay>(pnImageObj.SearchQuery(x => x.DotkhamId.Value == id)).ToListAsync();
+
+            return res;
         }
 
         public async Task Unlink(IEnumerable<Guid> ids)
@@ -245,9 +273,12 @@ namespace Infrastructure.Services
             if (val.AppointmentId.HasValue)
                 query = query.Where(x => x.AppointmentId.Equals(val.AppointmentId));
 
-            var items = await _mapper.ProjectTo<DotKhamBasic>(query.OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit))
-                .ToListAsync();
             var totalItems = await query.CountAsync();
+
+            if (val.Limit > 0)  
+                query = query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x => x.Date);
+
+            var items = await _mapper.ProjectTo<DotKhamBasic>(query.Include(x => x.Doctor).Include(z => z.SaleOrder).OrderByDescending(x => x.Date)).ToListAsync();
 
             return new PagedResult2<DotKhamBasic>(totalItems, val.Offset, val.Limit)
             {

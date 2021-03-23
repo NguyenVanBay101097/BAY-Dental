@@ -26,12 +26,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Nhân viên
         /// </summary>
         public Guid? DoctorId { get; set; }
-        public EmployeeBasic Doctor { get; set; }
+        public EmployeeSimple Doctor { get; set; }
 
         public string Note { get; set; }
 
         public Guid? AssistantId { get; set; }
-        public EmployeeBasic Assistant { get; set; }
+        public EmployeeSimple Assistant { get; set; }
 
         /// <summary>
         /// Ngày khám
@@ -39,6 +39,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime Date { get; set; }
 
         public Guid? SaleOrderId { get; set; }
+        public string SaleOrderName { get; set; }
     }
 
     public class DotKhamPaged
@@ -94,6 +95,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
 
         public Guid CompanyId { get; set; }
+
+        public IEnumerable<DotKhamLineDisplay> Lines { get; set; } = new List<DotKhamLineDisplay>();
+
+        public IEnumerable<PartnerImageDisplay> DotKhamImages { get; set; } = new List<PartnerImageDisplay>();
     }
 
     public class DotKhamSave
