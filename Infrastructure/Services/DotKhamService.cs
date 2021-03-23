@@ -36,7 +36,7 @@ namespace Infrastructure.Services
 
             if (res == null) return null;
 
-            res.Lines = await dkLineObj.SearchQuery(x => x.DotKhamId == id).OrderBy(x => x.Sequence).Select(x => new DotKhamLineDisplay
+            res.Lines = await dkLineObj.SearchQuery(x => x.DotKhamId == id).OrderBy(x=> x.Sequence).Select(x => new DotKhamLineDisplay
             {
                 Teeth = x.ToothRels.Select(x => new ToothDisplay
                 {
@@ -273,12 +273,15 @@ namespace Infrastructure.Services
             if (val.AppointmentId.HasValue)
                 query = query.Where(x => x.AppointmentId.Equals(val.AppointmentId));
 
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
             var totalItems = await query.CountAsync();
 
             if (val.Limit > 0)  
-                query = query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x => x.Date);
+                query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await _mapper.ProjectTo<DotKhamBasic>(query.Include(x => x.Doctor).Include(z => z.SaleOrder).OrderByDescending(x => x.Date)).ToListAsync();
+            var items = await _mapper.ProjectTo<DotKhamBasic>(query.Include(x => x.Doctor).Include(z => z.SaleOrder).OrderByDescending(x => x.DateCreated).ThenByDescending(x => x.Sequence)).ToListAsync();
 
             return new PagedResult2<DotKhamBasic>(totalItems, val.Offset, val.Limit)
             {

@@ -55,6 +55,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Search { get; set; }
         public Guid? AppointmentId { get; set; }
+
+        public Guid? PartnerId { get; set; }
     }
 
     public class DotKhamDisplay
@@ -80,7 +82,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? AssistantId { get; set; }
         public EmployeeBasic Assistant { get; set; }
 
-        public string Note { get; set; }
+        public string Reason { get; set; }
 
         /// <summary>
         /// Ngày khám

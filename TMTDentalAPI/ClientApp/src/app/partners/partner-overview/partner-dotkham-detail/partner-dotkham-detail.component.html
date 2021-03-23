@@ -1,0 +1,64 @@
+<div class="border px-2">
+    <div class="operation mt-2">
+        <h6>Công đoạn thực hiện</h6>
+        <table class="table table-sm table-hover border">
+            <thead>
+                <tr>
+                    <th style="width: 35%">Dịch vụ</th>
+                    <th style="width: 30%">Công đoạn</th>
+                    <th style="width: 30%">Răng, Chi tiết điều trị</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let line of dotkham.lines; let i=index">
+                    <tr>
+                        <td>{{line.product?.name}}</td>
+                        <td>
+                            {{line.nameStep}}
+                        </td>
+                        <td>
+                            <div class="d-flex">
+                                <div>
+                                    <div *ngIf="line.teeth?.length">
+                                        {{showLineTeeth(line.teeth)}}
+                                    </div>
+                                    <div>
+                                        {{line.note}}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+    <div class="note">
+        <h6>Mô tả</h6>
+        <label style="white-space: pre-line;">
+            {{dotkham.reason}}
+        </label>
+    </div>
+    <div class="image mt-2 mb-1">
+        <h6>Hình ảnh</h6>
+        <div class="o_attachments_previews">
+            <ng-container>
+                <div *ngFor="let img of dotkham.dotKhamImages; let i=index" class=" o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                    <div class="o_attachment_wrap" (click)="onViewImg(img)">
+                        <div class="o_image_box">
+                            <div class="o_attachment_image" id="{{img.name}}">
+                                <img width="100%" [src]="img.uploadId + '?width=240&height=240)'" alt="">
+                            </div>
+                            <div class="o_image_overlay o_attachment_view">
+                                <span class="o_attachment_title text-white">{{img.name}}</span>
+                                <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{img.uploadId}}" target="_blank">
+                                    <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

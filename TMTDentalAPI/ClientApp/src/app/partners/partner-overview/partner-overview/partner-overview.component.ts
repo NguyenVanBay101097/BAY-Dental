@@ -7,6 +7,8 @@ import { AppointmentDisplay } from 'src/app/appointment/appointment';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderLineService, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
+import { DotKhamBasic, DotKhamPaged } from 'src/app/dot-khams/dot-khams';
 import { PromotionProgramBasic, PromotionProgramPaged, PromotionProgramService } from 'src/app/promotion-programs/promotion-program.service';
 import { SaleCouponProgramBasic, SaleCouponProgramPaged, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
@@ -32,6 +34,7 @@ export class PartnerOverviewComponent implements OnInit {
   accountCommonPartnerReport: AccountCommonPartnerReport = new AccountCommonPartnerReport();
   skip = 0;
   search: string;
+  dotkhams: DotKhamBasic[] = [];
 
   //for report
   debit: number = 0;
@@ -48,6 +51,7 @@ export class PartnerOverviewComponent implements OnInit {
     private saleOrderService: SaleOrderService,
     private saleCouponProgramService: SaleCouponProgramService,
     private router: Router,
+    private dotkhamService: DotKhamService
   ) { }
 
   ngOnInit() {
@@ -59,7 +63,8 @@ export class PartnerOverviewComponent implements OnInit {
         this.loadCustomerAppointment();
         // this.getSaleQoutation();
         // this.loadPromotion();
-        this.getSaleOrders();
+        // this.getSaleOrders();
+        this.getDotkhams();
         this.loadReport();  
       }
     )
@@ -95,6 +100,17 @@ export class PartnerOverviewComponent implements OnInit {
         this.saleCount = result.totalItems;
       }
     )
+  }
+
+  getDotkhams() {
+    var val = new DotKhamPaged();
+    val.limit = 0;
+    val.partnerId = this.partnerId;
+    this.dotkhamService.getPaged(val).subscribe(
+      res=> {
+        this.dotkhams = res.items;
+      }
+    );
   }
 
   createNewSaleOrder() {

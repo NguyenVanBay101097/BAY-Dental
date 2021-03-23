@@ -11,13 +11,14 @@
     <div class="t_section_right">
         <div class="t_treatment_wrapper">
             <div class="d-flex align-items-center justify-content-between">
-                <h3 class="t_treatment_title">Phiếu điều trị</h3>
-                <button type="button" (click)="createNewSaleOrder()" class="btn btn-primary btn-sm"><i
-                        class="fas fa-folder-plus"></i> Thêm</button>
+                <h3 class="t_treatment_title">Đợt khám gần nhất</h3>
+                <!-- <button type="button" (click)="createNewSaleOrder()" class="btn btn-primary btn-sm"><i
+                        class="fas fa-folder-plus"></i> Thêm</button> -->
             </div>
             <div class="t_treatment_grid">
-                <app-partner-overview-treatment [saleOrders]="saleOrders" (deleteItemEvent)="onDeleteSaleOrder()">
-                </app-partner-overview-treatment>
+                <!-- <app-partner-overview-treatment [saleOrders]="saleOrders" (deleteItemEvent)="onDeleteSaleOrder()">
+                </app-partner-overview-treatment> -->
+                <app-partner-dotkham-list [dotkhams]='dotkhams'></app-partner-dotkham-list>
             </div>
         </div>
         <div class="row p-3">
