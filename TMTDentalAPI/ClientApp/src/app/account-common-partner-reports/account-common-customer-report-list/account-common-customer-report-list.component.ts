@@ -128,14 +128,12 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     });
   }
 
-  Sum(field){
+  Sum(field) : any{
     if(this.items.length == 0 ) 
     {
-      return {
-        field: {
-          sum: 0
-        }
-      }
+      var a = {};
+      a[field] = {sum: 0};
+      return a;
     } else {
       return aggregateBy(this.items, [ { aggregate: "sum", field: field }]);
     }
