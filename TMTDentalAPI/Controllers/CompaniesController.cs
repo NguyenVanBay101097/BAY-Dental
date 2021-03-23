@@ -224,14 +224,7 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                await _companyService.SetupTenant(new CompanySetupTenant { 
-                    CompanyName = _tenant.CompanyName,
-                    Email = _tenant.Email,
-                    Name = _tenant.Name,
-                    Password = _tenant.Phone,
-                    Phone = _tenant.Phone,
-                    Username = "admin"
-                });
+                await _companyService.SetupTenant(val);
 
                 _unitOfWork.Commit();
 

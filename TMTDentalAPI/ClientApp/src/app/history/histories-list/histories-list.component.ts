@@ -61,6 +61,7 @@ export class HistoriesListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
+        this.skip = 0;
         this.getList();
       });
   }

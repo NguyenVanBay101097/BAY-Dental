@@ -54,6 +54,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadGridData();
       });
   }
@@ -127,14 +128,16 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   searchChangeDate(value) {
     this.dateFrom = value.dateFrom;
     this.dateTo = value.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
     this.loadGridData();
   }
 
   clickTab(value) {
     this.resultSelection = value;
-    this.loadGridData();
+    this.skip = 0;
     this.loadDataFromApi();
+    this.loadGridData();
   }
 
   getPartnerType(partnerType) {

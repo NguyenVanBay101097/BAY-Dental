@@ -18,10 +18,10 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   search: string;
   loading = false;
-  limit = 10;
+  limit = 20;
   dateFrom: Date;
   dateTo: Date;
-  offset = 0;
+  skip = 0;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   constructor(
@@ -38,6 +38,7 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
       distinctUntilChanged())
       .subscribe((value) => {
         this.search = value || '';
+        this.skip = 0;
         this.loadDataFromApi();
       });
     this.loadDataFromApi();
@@ -47,7 +48,7 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
     this.loading = true;
     var paged = new ToaThuocPaged();
     paged.limit = this.limit;
-    paged.offset = this.offset;
+    paged.offset = this.skip;
     paged.search = this.search ? this.search : '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd")
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59")
@@ -66,7 +67,7 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
   }
 
   pageChange(event: PageChangeEvent): void {
-    this.offset = event.skip;
+    this.skip = event.skip;
     this.loadDataFromApi();
   }
 
@@ -84,6 +85,7 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 

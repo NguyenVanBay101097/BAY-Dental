@@ -56,7 +56,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid id="medicineOrder" class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset"
+    <kendo-grid id="medicineOrder" class="pointer" [data]="gridData" [pageSize]="limit" [skip]="skip"
         [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true"
         (cellClick)="clickItem($event)">
         <kendo-grid-column field="orderDate" title="Ngày thanh toán" width="100">

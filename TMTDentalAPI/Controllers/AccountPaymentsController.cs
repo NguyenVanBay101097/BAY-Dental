@@ -184,7 +184,11 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _paymentService.GetPrint(id);
-            var html = _viewRenderService.Render("AccountPayments/Print", res);
+            string html;
+            if (res.PartnerType == "customer")
+                html = _viewRenderService.Render("AccountPayments/Print", res);
+            else
+                html = _viewRenderService.Render("PaymentSupplier/Print", res);
             return Ok(new PrintData() { html = html });
         }
 

@@ -350,23 +350,27 @@ export class CashBookCuDialogComponent implements OnInit {
         }
       );
     } else {
-      this.phieuThuChiService.actionConfirm([this.id]).subscribe(
-        (result) => {
-          this.notificationService.show({
-            content: "Xác nhận thành công",
-            hideAfter: 3000,
-            position: { horizontal: "center", vertical: "top" },
-            animation: { type: "fade", duration: 400 },
-            type: { style: "success", icon: true },
-          });
+      this.phieuThuChiService.update(this.id, val).subscribe(
+        (result: any) => {
+          this.phieuThuChiService.actionConfirm([this.id]).subscribe(
+            (result) => {
+              this.notificationService.show({
+                content: "Xác nhận thành công",
+                hideAfter: 3000,
+                position: { horizontal: "center", vertical: "top" },
+                animation: { type: "fade", duration: 400 },
+                type: { style: "success", icon: true },
+              });
 
-          this.activeModal.close({
-            print: print
-          });
-        },
-        (error) => {
-          console.log(error);
-          this.submitted = false;
+              this.activeModal.close({
+                print: print
+              });
+            },
+            (error) => {
+              console.log(error);
+              this.submitted = false;
+            }
+          );
         }
       );
     }
@@ -397,7 +401,7 @@ export class CashBookCuDialogComponent implements OnInit {
     modalRef.result.then((result) => {
       this.phieuThuChiService.actionCancel([this.id]).subscribe((result) => {
         this.notificationService.show({
-          content: "Hủy phiếu thành công",
+          content: "Hủy thành công",
           hideAfter: 3000,
           position: { horizontal: "center", vertical: "top" },
           animation: { type: "fade", duration: 400 },

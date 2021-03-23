@@ -32,7 +32,7 @@ export class SurveyManageListComponent implements OnInit {
   filteredEmployees: EmployeeSimple[];
   employees: EmployeeSimple[] = [];
   search: string;
-  limit = 10;
+  limit = 20;
   offset = 0;
   edit = false;
   dateFrom: Date;
@@ -107,7 +107,6 @@ export class SurveyManageListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
-      console.log(this.gridData);
       this.loading = false;
     }, err => {
       this.loading = false;
@@ -125,13 +124,21 @@ export class SurveyManageListComponent implements OnInit {
     val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
     this.surveyAssignmentService.getSumary(val).subscribe((result: any) => {
-      result.forEach(item => {
-        this.statusCount[item.status] = item.count;
-        var total = 0;
-        total = total + item.count;
-        this.statusCount['total'] = total;
+      this.resetStatusCount();
+      result.forEach(res => {
+        this.statusCount[res.status] = res.count;
+        this.statusCount['total'] += res.count;
       });
     });
+  }
+
+  resetStatusCount() {
+    this.statusCount = {
+      total: 0,
+      contact: 0,
+      done: 0,
+      draft: 0
+    }
   }
 
   loadEmployees() {
@@ -144,8 +151,9 @@ export class SurveyManageListComponent implements OnInit {
   onSearchDateChange(event) {
     this.dateTo = event.dateTo;
     this.dateFrom = event.dateFrom;
-    this.loadDataFromApi();
+    this.offset = 0;
     this.loadSummary();
+    this.loadDataFromApi();
   }
 
   createEmpAssign() {
@@ -161,6 +169,7 @@ export class SurveyManageListComponent implements OnInit {
     this.status = state ? state.value : '';
     this.offset = 0;
     this.loadDataFromApi();
+    this.loadSummary();
   }
 
   // click in cell to edit
@@ -186,13 +195,14 @@ export class SurveyManageListComponent implements OnInit {
   }
 
   public saveHandler({ sender, rowIndex, formGroup, isNew }): void {
+    var indexData = rowIndex % 10;
     const formValue = formGroup.value;
     if (!formValue.employee) {
       this.closeEditor(sender, rowIndex);
       return;
     }
 
-    var dataItem = this.gridData.data[rowIndex];
+    var dataItem = this.gridData.data[indexData];
 
     var val = new SurveyAssignmentUpdateEmployee();
     val.id = dataItem.id;

@@ -39,7 +39,12 @@ export class ProductImportExcelDialogComponent implements OnInit {
 
   onSave() {
     if (!this.fileBase64 || this.fileBase64 === '') {
-      this.notify('error','Vui lòng chọn file để import');
+      if (this.isUpdate) {
+        this.notify('error', 'Vui lòng chọn file để cập nhật');
+      }
+      else {
+        this.notify('error', 'Vui lòng chọn file để import');
+      }
       return;
     }
 
@@ -78,9 +83,9 @@ export class ProductImportExcelDialogComponent implements OnInit {
       return this.productService.importMedicine(val);
     } else if (this.type == 'product') {
       return this.productService.importProduct(val);
-    } else if(this.type == 'labo') {
+    } else if (this.type == 'labo') {
       return this.productService.importLabo(val);
-    } if(this.type == 'labo_attach') {
+    } if (this.type == 'labo_attach') {
       return this.productService.importLaboAttach(val);
     }
   }
@@ -100,7 +105,7 @@ export class ProductImportExcelDialogComponent implements OnInit {
     this.activeModal.dismiss();
   }
 
-  notifyError(value){
+  notifyError(value) {
     this.errors = value;
   }
 }

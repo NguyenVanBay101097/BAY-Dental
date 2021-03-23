@@ -33,6 +33,7 @@
     </div>
     <div class="o_form_view">
         <div class="o_group mt-0 mb-0">
+            <div class="text-lg font-semibold mb-1">THÔNG TIN CHI TIẾT</div>
             <table class="o_group o_inner_group">
                 <tbody>
                     <tr>
@@ -156,7 +157,7 @@
             <table class="table table-sm table-bordered">
                 <thead>
                     <tr>
-                        @*<th>Số phiếu</th>*@
+                        <th>Số phiếu</th>
                         <th>Ngày</th>
                         <th>Phương thức</th>
                         <th>Nội dung</th>
@@ -167,7 +168,7 @@
                     @foreach (var payment in Model.HistoryPayments)
                     {
                         <tr>
-                            @*<td>@payment.Ref</td>*@
+                            <td>@payment.AccountPaymentName</td>
                             <td>@payment.Date.Value.ToString("dd/MM/yyyy")</td>
                             <td>@payment.JournalName</td>
                             <td>@payment.Communication</td>
@@ -207,15 +208,15 @@
                             <tr>
                                 @if (dotkham.Lines.FirstOrDefault().Id == line.Id)
                                 {
-                                    <td class="align-middle" rowspan="@dotkham.Lines.Count()"> Đợt khám @(i)</td>
+                                    <td class="align-middle text-center" rowspan="@dotkham.Lines.Count()"> @(i)</td>
                                     <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Date.ToString("dd/MM/yyyy")</td>
                                     <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Doctor.Name</td>
-                                    <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Reason</td>
+                                    <td class="align-middle" style="vertical-align: top" rowspan="@dotkham.Lines.Count()">@dotkham.Reason</td>
                                 }
 
-                                <td>@line.Product.Name</td>
-                                <td>@line.NameStep</td>
-                                <td class="text-left">
+                                <td  style="vertical-align: top">@line.Product.Name</td>
+                                <td  style="vertical-align: top">@line.NameStep</td>
+                                <td class="text-left" style="vertical-align: top">
                                     <span>@String.Join(", ", line.Teeth.Select(x => x.Name).ToArray())</span>
                                     <p>@line.Note</p>
                                 </td>

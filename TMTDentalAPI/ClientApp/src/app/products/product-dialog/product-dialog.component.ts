@@ -179,7 +179,7 @@ export class ProductDialogComponent implements OnInit {
   }
 
   quickCreateCateg() {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm nhóm ' + this.getLabelTitle();
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(result => {

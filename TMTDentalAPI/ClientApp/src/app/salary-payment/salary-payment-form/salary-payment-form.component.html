@@ -48,6 +48,10 @@
                                         [disableControl]="!editable" #journalCbx formControlName="journal"
                                         [valueField]="'id'">
                                     </kendo-combobox>
+                                    <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.journal.errors.required">Chọn phương thức</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -63,7 +67,7 @@
                                     </kendo-combobox>
                                     <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)"
                                         class="text-danger">
-                                        <div *ngIf="f.employee.errors.required">Vui lòng chọn người nhận</div>
+                                        <div *ngIf="f.employee.errors.required">Chọn người nhận</div>
                                     </div>
                                 </td>
                             </tr>
@@ -79,7 +83,7 @@
                                     </kendo-numerictextbox>
                                     <div *ngIf="f.amount.errors && (f.amount.touched || f.amount.dirty || submitted)"
                                         class="text-danger">
-                                        <div *ngIf="f.amount.errors.required">Vui lòng nhập số tiền ứng</div>
+                                        <div *ngIf="f.amount.errors.required">Nhập số tiền ứng</div>
                                     </div>
                                 </td>
                             </tr>

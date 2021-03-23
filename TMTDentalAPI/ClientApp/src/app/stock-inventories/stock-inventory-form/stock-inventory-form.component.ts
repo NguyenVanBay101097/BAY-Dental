@@ -44,7 +44,7 @@ export class StockInventoryFormComponent implements OnInit {
 
   filterInventories = [
     { name: 'Tất cả sản phẩm', value: 'none' },
-    { name: 'Một nhóm sản phẩm', value: 'category' },
+    { name: 'Nhóm sản phẩm', value: 'category' },
     { name: 'Chọn sản phẩm thủ công', value: 'partial' },
     { name: 'Tiêu chí kiểm kho', value: 'criteria' },
   ];
@@ -164,8 +164,7 @@ export class StockInventoryFormComponent implements OnInit {
           var g = this.fb.group(move);
           moveControl.push(g);
         });
-        console.log(moveControl);
-
+        this.onChangeFilter();
       });
     } else {
       var companyId = this.authService.userInfo.companyId;
@@ -202,6 +201,7 @@ export class StockInventoryFormComponent implements OnInit {
 
   onChangeFilter() {
     var res = this.formGroup.value;
+    this.submitted = false;
     if (res.filter === 'category') {
       this.formGroup.get("category").setValidators([Validators.minLength(0), Validators.required]);
       this.formGroup.get("category").updateValueAndValidity();
@@ -252,6 +252,7 @@ export class StockInventoryFormComponent implements OnInit {
 
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid) {
       return false;
     }
@@ -269,6 +270,7 @@ export class StockInventoryFormComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
+          this.submitted = false;
           this.loadDataFromApi();
         }
       );
@@ -283,6 +285,7 @@ export class StockInventoryFormComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
+          this.submitted = false;
         }
       );
     }
@@ -320,12 +323,18 @@ export class StockInventoryFormComponent implements OnInit {
 
   prepareInventory() {
     if (this.id) {
+      this.submitted = true;
+      if (this.formGroup.invalid) {
+        return false;
+      }
+
       var val = this.formGroup.value;
       val = this.computeForm(val);
       this.stockInventorySevice.update(this.id, val).subscribe(
         () => {
           this.stockInventorySevice.prepareInventory([this.id]).subscribe(rs => {
             this.loadDataFromApi();
+            this.submitted = false;
           })
         }
       );
@@ -334,6 +343,11 @@ export class StockInventoryFormComponent implements OnInit {
 
   actionDone() {
     if (this.id) {
+      this.submitted = true;
+      if (this.formGroup.invalid) {
+        return false;
+      }
+
       var val = this.formGroup.value;
       val = this.computeForm(val);
       this.stockInventorySevice.update(this.id, val).subscribe(() => {
@@ -345,6 +359,7 @@ export class StockInventoryFormComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
+          this.submitted = false;
           this.loadDataFromApi();
         })
       })
@@ -362,7 +377,7 @@ export class StockInventoryFormComponent implements OnInit {
         this.stockInventorySevice.actionCancel(ids).subscribe(
           () => {
             this.notificationService.show({
-              content: 'Hủythành công',
+              content: 'Hủy thành công',
               hideAfter: 3000,
               position: { horizontal: 'center', vertical: 'top' },
               animation: { type: 'fade', duration: 400 },
@@ -381,7 +396,6 @@ export class StockInventoryFormComponent implements OnInit {
       return;
     }
     this.stockInventorySevice.getPrint(this.id).subscribe((result: any) => {
-      console.log(result.html);
       this.printService.printHtml(result.html);
     });
   }

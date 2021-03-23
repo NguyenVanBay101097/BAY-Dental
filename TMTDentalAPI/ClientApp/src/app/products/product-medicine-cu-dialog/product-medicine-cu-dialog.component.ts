@@ -83,6 +83,10 @@ export class ProductMedicineCuDialogComponent implements OnInit {
         this.filterdUoMs = _.unionBy(this.filterdUoMs, result.items, 'id');
       });
 
+      this.searchProductCriterias().subscribe((result: any) => {
+        this.listProductCriteria = _.unionBy(this.listProductCriteria, result.items, 'id');
+      });
+
       this.criteriaMultiSelect.filterChange.asObservable().pipe(
         debounceTime(300),
         tap(() => (this.criteriaMultiSelect.loading = true)),
@@ -134,7 +138,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
 
         if(result.stockInventoryCriterias.length > 0){      
           this.productForm.get('productCriterias').setValue(result.stockInventoryCriterias);
-          this.listProductCriteria = _.unionBy(result.stockInventoryCriterias, result.stockInventoryCriterias, 'id');
+          this.listProductCriteria = _.unionBy(result.stockInventoryCriterias, this.listProductCriteria, 'id');
         }
   
         if (result.uompo) {
@@ -259,7 +263,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
   }
 
   quickCreateCateg() {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm nhóm thuốc';
     modalRef.componentInstance.type = 'medicine';
     modalRef.result.then(result => {

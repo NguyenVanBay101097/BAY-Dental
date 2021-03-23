@@ -26,6 +26,8 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
   submitted = false;
   colorSelected = 0;
 
+  get f() { return this.myform.controls; }
+
   constructor(private fb: FormBuilder, private partnerCategoryService: PartnerCategoryService,
     public activeModal: NgbActiveModal) {
   }
@@ -75,6 +77,7 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
       }
     }, err => {
       console.log(err);
+      this.submitted = false;
     });
   }
 
@@ -92,10 +95,6 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
   onCancel() {
     this.submitted = false;
     this.activeModal.close();
-  }
-
-  get f() {
-    return this.myform.controls;
   }
 
   clickColor(i) {

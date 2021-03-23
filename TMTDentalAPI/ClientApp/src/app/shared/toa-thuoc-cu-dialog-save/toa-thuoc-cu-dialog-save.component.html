@@ -178,6 +178,9 @@
                         </div>
                         <input *ngIf="getFBValueItem('saveSamplePrescription')" type="text" class="form-control w-75" 
                             formControlName="nameSamplePrescription" placeholder="Nhập tên đơn thuốc mẫu ..." />
+                        <div *ngIf="f.nameSamplePrescription.errors && (f.nameSamplePrescription.touched || f.nameSamplePrescription.dirty || submitted)" class="text-danger">
+                            <div *ngIf="f.nameSamplePrescription.errors.required">Nhập tên đơn thuốc mẫu</div>
+                        </div>
                     </div>
                 </div>
             </div>

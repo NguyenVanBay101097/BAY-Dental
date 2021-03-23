@@ -18,6 +18,9 @@ import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { forkJoin } from 'rxjs';
+import { unionBy } from 'lodash';
+import { observe } from 'fast-json-patch';
 declare var jquery: any;
 declare var $: any;
 
@@ -37,6 +40,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
   productSearch: string;
   productList: ProductBasic2[] = [];
+  sourceProductList = [];
 
   filteredPartners: PartnerSimple[] = [];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
@@ -85,8 +89,8 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
       debounceTime(300),
       tap(() => (this.partnerCbx.loading = true)),
       switchMap(value => this.searchPartners(value))
-    ).subscribe(result => {
-      this.filteredPartners = result;
+    ).subscribe(results => {
+      this.filteredPartners =_.unionBy(results[0], results[1],results[2], 'id');
       this.partnerCbx.loading = false;
     });
 
@@ -98,26 +102,43 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   get note() {return this.pickingForm.get('note').value;}
 
   loadFilteredPartners() {
-    this.searchPartners().subscribe(result => {
-      this.filteredPartners = result;
-    });
+    this.searchPartners().subscribe(
+      results => {
+        this.filteredPartners =_.unionBy(results[0], results[1],results[2], 'id');
+      }
+    );
   }
 
   searchPartners(search?: string) {
     var val = new PartnerPaged();
     val.search = search;
-    // val.supplier = true;
-    return this.partnerService.getAutocompleteSimple(val);
+    val.customer = true;
+    val.limit = 10;
+    val.active = true;
+    var partner$ = this.partnerService.getAutocompleteSimple(val);
+
+    var val2 = Object.assign({},val);
+    delete val2.customer;
+    val2.supplier = true;
+    var supplier$ = this.partnerService.getAutocompleteSimple(val2);
+
+    var val3 = Object.assign({},val);
+    delete val3.customer;
+    val3.employee = true;
+    var employee$ = this.partnerService.getAutocompleteSimple(val3);
+
+    return forkJoin([partner$, supplier$, employee$]);
   }
 
   loadProductList() {
     var val = new ProductPaged();
-    val.limit = 10;
+    val.limit = 0;
     val.offset = 0;
     val.type = 'product,consu';
     val.search = this.productSearch || '';
     this.productService.getPaged(val).subscribe(res => {
       this.productList = res.items;
+      this.sourceProductList = res.items;
       this.productListSelectable.resetIndex();
     }, err => {
     });
@@ -135,7 +156,18 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
   onProductInputSearchChange(text) {
     this.productSearch = text;
-    this.loadProductList();
+
+    if(!this.productSearch || this.productSearch.trim() == '')
+     this.productList = this.sourceProductList;
+     else {
+       this.productSearch = this.productSearch.trim().toLocaleLowerCase();
+      this.productList = this.sourceProductList.filter(x=> x.name.toLocaleLowerCase().indexOf(this.productSearch) >= 0
+      || x.nameNoSign.toLocaleLowerCase().indexOf(this.productSearch) >= 0 
+      || x.defaultCode.toLocaleLowerCase().indexOf(this.productSearch) >=0
+      );
+     }
+
+     this.productListSelectable.resetIndex();
   }
 
   loadDefault() {

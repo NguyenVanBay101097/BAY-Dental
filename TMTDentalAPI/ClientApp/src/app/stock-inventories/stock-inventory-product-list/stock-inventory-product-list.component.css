@@ -23,6 +23,7 @@
 .sticky-table {
   width: 100% !important;
   border-collapse: separate !important;
+ 
   /* Don't collapse */
   border-spacing: 0 !important;
 }
@@ -45,4 +46,23 @@
 .sticky-table .sticky-th:first-child, .sticky-table .sticky-td:first-child {
   /* Apply a left border on the first <td> or <th> in a row */
   border-left: 1px solid #dee2e6 !important;
+}
+
+.flex-0-0-auto {
+  flex: 0 0 auto;
+}
+
+.flex-1-1-100 {
+  flex: 1 1 100%;
+  min-height: 300px;
+  max-height: 450px;
+}
+
+.sticky-table .sticky-th {
+  position: sticky!important;
+  top: 0!important;
+  background-color: #f9f9f9!important;
+  border-top: 1px solid #dee2e6!important;
+  border-bottom: 1px solid #dee2e6!important;
+  border-right: 1px solid #dee2e6!important;
 }

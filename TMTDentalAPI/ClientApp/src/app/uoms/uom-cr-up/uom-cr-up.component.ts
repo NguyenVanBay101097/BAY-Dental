@@ -22,6 +22,10 @@ export class UomCrUpComponent implements OnInit {
   filterdCategories: UoMCategoryBasic[] = [];
   uom: UoMDisplay;
 
+  submitted = false;
+
+  get f() { return this.formGroup.controls; }
+
   constructor(
     private uoMService: UomService,
     public activeModal: NgbActiveModal,
@@ -99,6 +103,8 @@ export class UomCrUpComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+    
     if (this.formGroup.invalid) {
       return false;
     }

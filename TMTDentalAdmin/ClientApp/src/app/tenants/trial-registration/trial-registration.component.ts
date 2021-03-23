@@ -32,10 +32,12 @@ export class TrialRegistrationComponent implements OnInit {
       employeeAdmin: null,
       companyName: ['', Validators.required],
       hostName: ['', [Validators.required, Validators.pattern('^[a-z0-9]*$'), Validators.minLength(4)]],
-      // userName: ['', Validators.required],
-      // password: ['', [Validators.required, Validators.minLength(6)]],
-      // confirmPassword: null,
+      userName: ['admin', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: null,
       address: null
+    }, {
+      validators: MustMatch('password', 'confirmPassword')
     });
 
     this.empCbx.filterChange.asObservable().pipe(

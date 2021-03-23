@@ -48,14 +48,15 @@ export class StockXuatNhapTonComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
   }
 
   onSearchChange(data) {
-    debugger
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 

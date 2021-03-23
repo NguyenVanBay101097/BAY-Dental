@@ -19,7 +19,7 @@ export class PartnerImportComponent implements OnInit {
     private notificationService: NotificationService) { }
 
   formGroup: FormGroup;
-  title = 'Import excel';
+  title = "";
   type: string;
   update:string;
   isUpdate:boolean;
@@ -49,7 +49,7 @@ export class PartnerImportComponent implements OnInit {
   import() {
     if (!this.formGroup.valid) {
       this.notificationService.show({
-        content: 'Vui lòng chọn file để import',
+        content: 'Vui lòng chọn file đúng định dạng để import',
         hideAfter: 3000,
         position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },
@@ -84,7 +84,7 @@ export class PartnerImportComponent implements OnInit {
 
     var val = this.formGroup.value;
     val.type = this.type;
-    this.partnerService.actionUpdateFromExcel(val).subscribe((result: any) => {
+    this.partnerService.actionImportUpdate(val).subscribe((result: any) => {
       if (result.success) {
         this.activeModal.close(true);
         this.notify('success', 'Cập nhật dữ liệu thành công');

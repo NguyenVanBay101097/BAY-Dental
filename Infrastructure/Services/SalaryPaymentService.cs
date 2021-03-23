@@ -406,21 +406,28 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<IEnumerable<PayslipCreateSalaryPaymentDisplay>> DefaulCreateBy(IEnumerable<Guid> payslipIds)
+        public async Task<SalaryPaymentDefaulCreateByVM> DefaulCreateBy(IEnumerable<Guid> payslipIds)
         {
             var slipRunObj = GetService<IHrPayslipRunService>();
             var payslipObj = GetService<IHrPayslipService>();
             var journalObj = GetService<IAccountJournalService>();
 
-            var payslips = await payslipObj.SearchQuery(x => payslipIds.Contains(x.Id) && !x.SalaryPaymentId.HasValue)
+            var payslips = await payslipObj.SearchQuery(x => payslipIds.Contains(x.Id))
                 .Include(x => x.PayslipRun)
                 .Include(x => x.Employee)
                 .ToListAsync();
 
             var journal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
             var payments = new List<PayslipCreateSalaryPaymentDisplay>();
+            var errors = new List<string>();
             foreach (var slip in payslips)
             {
+                if (slip.SalaryPaymentId.HasValue)
+                {
+                    errors.Add(@$"{slip.Employee.Name} đã chi lương");
+                    continue;
+                };
+
                 payments.Add(new PayslipCreateSalaryPaymentDisplay()
                 {
                     Amount = slip.NetSalary.GetValueOrDefault(),
@@ -431,7 +438,7 @@ namespace Infrastructure.Services
                     PayslipId = slip.Id
                 });
             }
-            return payments;
+            return new SalaryPaymentDefaulCreateByVM() {Data = payments, Errors = errors };
         }
     }
 }

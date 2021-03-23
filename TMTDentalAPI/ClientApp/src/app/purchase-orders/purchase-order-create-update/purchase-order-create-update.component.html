@@ -98,8 +98,12 @@
                                         [class.d-none]="purchaseOrder.state != 'draft'" [filterable]="true" #partnerCbx
                                         formControlName="partner" [valueField]="'id'">
                                     </kendo-combobox>
-                                    <span
-                                        [class.d-none]="purchaseOrder.state == 'draft'">{{purchaseOrder.partner ? purchaseOrder.partner.name: ''}}</span>
+                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.partner.errors.required">Chọn cung cấp</div>
+                                    </div>
+                                    <span [class.d-none]="purchaseOrder.state == 'draft'">
+                                        {{purchaseOrder.partner ? purchaseOrder.partner.name: ''}}
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>
@@ -117,8 +121,12 @@
                                     <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'"
                                         *ngIf="purchaseOrder.state == 'draft'" formControlName="dateOrderObj">
                                     </kendo-datepicker>
-                                    <span
-                                        *ngIf="purchaseOrder.state != 'draft'">{{purchaseOrder.dateOrder | date: 'short'}}</span>
+                                    <div *ngIf="purchaseOrder.state == 'draft' && f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày {{purchaseOrder.type == 'order' ? 'mua' : 'trả'}}</div>
+                                    </div>
+                                    <span *ngIf="purchaseOrder.state != 'draft'">
+                                        {{purchaseOrder.dateOrder | date: 'short'}}
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>

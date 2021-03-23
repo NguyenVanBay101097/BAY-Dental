@@ -45,7 +45,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   differ: IterableDiffer<any>;
   webImageApi: string;
   webContentApi: string;
-
+  submitted = false;
   editModeActive = false;
 
   constructor(
@@ -138,7 +138,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   setEditModeActive(val: boolean) {
     this.editModeActive = val;
   }
-
+  get f() { return this.dotkhamForm.controls;}
   get Id() { return this.dotkhamForm.get('Id').value; }
   get Sequence() { return this.dotkhamForm.get('Sequence').value; }
   get imgsFA() { return this.dotkhamForm.get('DotKhamImages') as FormArray; }
@@ -265,6 +265,13 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     modalRef.result.then(() => {
       this.dotKhamService.delete(this.dotkham.Id).subscribe(() => {
         this.btnDeleteEvent.emit(this.dotkham);
+        this.notificationService.show({
+          content: 'Xóa thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
       }, (err) => {
         console.log(err);
       });
@@ -272,6 +279,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.dotkhamForm.invalid) {
       return;
     }
@@ -327,6 +335,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   onCancel() {
     // this.onEmitDotkham(this.dotkham, true, null);
     this.btnCancelEvent.emit(null);
+    this.submitted = false;
   }
 
   onClose() {

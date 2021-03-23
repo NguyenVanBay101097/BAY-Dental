@@ -323,7 +323,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
           val.push(employee);
           this.loadAllChamCong(val);
           this.notificationService.show({
-            content: 'cập nhật thành công',
+            content: 'Cập nhật thành công',
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },

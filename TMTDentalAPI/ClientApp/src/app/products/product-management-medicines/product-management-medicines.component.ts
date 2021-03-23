@@ -46,6 +46,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
     this.searchMedicineUpdate
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((value) => {
+        this.skip = 0;
         this.loadMedicines();
       });
     this.loadMedicines();

@@ -185,6 +185,9 @@ namespace Infrastructure.TenantData.Migrations
                     b.Property<int>("ActiveCompaniesNbr")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("ApplyDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 

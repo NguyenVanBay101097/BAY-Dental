@@ -22,8 +22,10 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   loading = false;
   title: string;
-
   showPrint = false;
+  submitted = false;
+
+  get f() { return this.paymentForm.controls; }
 
   constructor(private paymentService: AccountPaymentService, private fb: FormBuilder, private intlService: IntlService,
     public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
@@ -80,6 +82,8 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   }
 
   save() {
+    this.submitted = true;
+    
     if (!this.paymentForm.valid) {
       return;
     }
@@ -96,6 +100,8 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   }
 
   saveAndPrint() {
+    this.submitted = true;
+
     if (!this.paymentForm.valid) {
       return;
     }

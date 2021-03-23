@@ -54,6 +54,7 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
         debounceTime(400),
         distinctUntilChanged())
         .subscribe(() => {
+          this.skip = 0;
           this.loadDataFromApi();
         });
 
@@ -148,6 +149,24 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
           });
 
           this.selectedIds = [];
+          this.loadDataFromApi();
+        }, () => {
+        });
+      })
+    } else {
+      this.partnerService.getDefaultRegisterPayment(this.id).subscribe(rs2 => {
+        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Thanh toán';
+        modalRef.componentInstance.defaultVal = rs2;
+        modalRef.result.then(() => {
+          this.notificationService.show({
+            content: 'Thanh toán thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+
           this.loadDataFromApi();
         }, () => {
         });

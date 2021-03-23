@@ -96,6 +96,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
       // Định mức vật tư
       boms: this.fb.array([]),
     });
+   
 
     this.searchCategories('').subscribe(result => {
       this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
@@ -105,14 +106,15 @@ export class ProductServiceCuDialogComponent implements OnInit {
       this.filteredProducts = result;
     });
 
-    this.categCbxFilterChange();
-    this.productCbxFilterChange();
     if (this.id) {
       this.loadDataFromApi();
     } else {
       this.loadDefault();
     }
 
+    this.categCbxFilterChange();
+    this.productCbxFilterChange();
+   
   }
 
   loadDataFromApi() {
@@ -170,9 +172,9 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   productCbxFilterChange() {
-    this.categCbx.filterChange.asObservable().pipe(
+    this.productCbx.filterChange.asObservable().pipe(
       debounceTime(300),
-      tap(() => (this.categCbx.loading = true)),
+      tap(() => (this.productCbx.loading = true)),
       switchMap(value => this.searchProducts(value))
     ).subscribe(result => {
       this.filteredProducts = result;
@@ -216,7 +218,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   quickCreateCateg() {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm nhóm dịch vụ';
     modalRef.componentInstance.type = 'service';
     modalRef.result.then(result => {
@@ -247,6 +249,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
+    this.activeModal.close(result);
         });
     } else {
       this.productService.create(data).subscribe(
@@ -258,9 +261,9 @@ export class ProductServiceCuDialogComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
-        });;
+          this.activeModal.close(result);
+        });
     }
-    this.activeModal.close(result);
   }
 
   getBodyData() {

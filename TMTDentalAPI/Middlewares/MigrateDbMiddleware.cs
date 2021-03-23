@@ -58,8 +58,8 @@ namespace TMTDentalAPI.Middlewares
                         await dbContext.Database.MigrateAsync();
                 }
 
-                await _next.Invoke(context);
                 lockObj.Release();
+                await _next.Invoke(context);
             }
         }
 

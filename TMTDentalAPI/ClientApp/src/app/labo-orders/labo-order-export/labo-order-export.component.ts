@@ -58,18 +58,21 @@ export class LaboOrderExportComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
   }
 
   onStateSelectChange(e) {
     this.stateFilter = e? e.value : null;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
   onDateSearchChange(data) {
     this.dateExportFrom = data.dateFrom;
     this.dateExportTo = data.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 

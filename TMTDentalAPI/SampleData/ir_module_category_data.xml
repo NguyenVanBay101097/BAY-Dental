@@ -25,6 +25,12 @@
       <field name="sequence">100</field>
       <field name="visible" eval="0" />
     </record>
+
+    <record model="ir.module.category" id="survey.module_category_survey">
+      <field name="name">Survey</field>
+      <field name="sequence">100</field>
+      <field name="visible" eval="0" />
+    </record>
   </data>
 </odoo>
 

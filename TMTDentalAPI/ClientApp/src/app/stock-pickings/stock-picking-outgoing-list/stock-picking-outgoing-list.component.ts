@@ -25,8 +25,8 @@ export class StockPickingOutgoingListComponent implements OnInit {
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
-  dateFrom: Date;
-  dateTo: Date;
+  dateFrom: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 1);;
+  dateTo: Date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
 
   constructor(private route: ActivatedRoute, private stockPickingService: StockPickingService,
     private pickingTypeService: StockPickingTypeService, private router: Router,
@@ -39,6 +39,7 @@ export class StockPickingOutgoingListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 
@@ -50,7 +51,7 @@ export class StockPickingOutgoingListComponent implements OnInit {
       case 'done':
         return 'Hoàn thành';
       default:
-        return 'Mới';
+        return 'Nháp';
     }
   }
 
@@ -85,6 +86,7 @@ export class StockPickingOutgoingListComponent implements OnInit {
   onDateSearchChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 

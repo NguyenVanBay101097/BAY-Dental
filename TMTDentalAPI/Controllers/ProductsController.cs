@@ -321,7 +321,7 @@ namespace TMTDentalAPI.Controllers
             }
             catch (Exception e)
             {
-                return Ok(new { success = false, errors = new List<string>() { $"Lỗi đọc dữ liệu: {e.Message}" } });
+                return Ok(new { success = false, errors = new List<string>() { $"File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng" } });
             }
 
             if (errors.Any())
@@ -454,7 +454,7 @@ namespace TMTDentalAPI.Controllers
             }
             catch (Exception e)
             {
-                return Ok(new { success = false, errors = new List<string>() { $"Lỗi đọc dữ liệu: {e.Message}" } });
+                return Ok(new { success = false, errors = new List<string>() { $"File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng" } });
             }
 
             if (errors.Any())
@@ -593,7 +593,7 @@ namespace TMTDentalAPI.Controllers
             }
             catch (Exception e)
             {
-                return Ok(new { success = false, errors = new List<string>() { $"Lỗi đọc dữ liệu: {e.Message}" } });
+                return Ok(new { success = false, errors = new List<string>() { $"File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng" } });
             }
 
             if (errors.Any())
@@ -629,8 +629,8 @@ namespace TMTDentalAPI.Controllers
                     {
                         var uomCateg = await _uomCategService.SearchQuery(x => x.MeasureType == "unit").FirstOrDefaultAsync();
                         uom = await _uomService.CreateAsync(new UoM { Name = uomName, CategoryId = uomCateg.Id });
-                        uomDict.Add(uomName, uom);
                     }
+                    uomDict.Add(uomName, uom);
                 }
             }
 
@@ -735,7 +735,7 @@ namespace TMTDentalAPI.Controllers
             }
             catch (Exception e)
             {
-                return Ok(new { success = false, errors = new List<string>() { $"Lỗi đọc dữ liệu: {e.Message}" } });
+                return Ok(new { success = false, errors = new List<string>() { $"File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng" } });
             }
 
             if (errors.Any())
@@ -868,7 +868,7 @@ namespace TMTDentalAPI.Controllers
             }
             catch (Exception e)
             {
-                return Ok(new { success = false, errors = new List<string>() { $"Lỗi đọc dữ liệu: {e.Message}" } });
+                return Ok(new { success = false, errors = new List<string>() { $"File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng" } });
             }
 
             if (errors.Any())
@@ -984,7 +984,7 @@ namespace TMTDentalAPI.Controllers
             }
             catch (Exception e)
             {
-                return Ok(new { success = false, errors = new List<string>() { $"Lỗi đọc dữ liệu: {e.Message}" } });
+                return Ok(new { success = false, errors = new List<string>() { $"File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng" } });
             }
 
             if (errors.Any())

@@ -16,6 +16,9 @@
                     <h1>
                         <input type="text" class="form-control" formControlName="name" #nameInput>
                     </h1>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger mb-1">
+                        <div *ngIf="f.name.errors.required">Nhập tên chi nhánh</div>
+                    </div>
                 </div>
                 <div class="clearfix"></div>
                 <div class="o_notebook">

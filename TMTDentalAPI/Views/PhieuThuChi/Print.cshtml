@@ -57,7 +57,7 @@
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            @Model.PayerReceiver
+                            @Model.PartnerName
                         </td>
                     </tr>
                     <tr>
@@ -139,7 +139,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-semibold"></span>
+                <span class="font-semibold">@(Model.CreatedByName == null ? "" : Model.CreatedByName.ToUpper())</span>
             </div>
         </div>
         <div class="col">
@@ -156,7 +156,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-semibold">@(Model.PayerReceiver == null ? "" : Model.PayerReceiver)</span>
+                <span class="font-semibold">@(Model.PartnerName == null ? "" : Model.PartnerName.ToUpper())</span>
             </div>
         </div>
     </div>

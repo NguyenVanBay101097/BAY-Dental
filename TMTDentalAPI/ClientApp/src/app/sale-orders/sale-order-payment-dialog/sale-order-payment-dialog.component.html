@@ -21,6 +21,9 @@
                                     <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
                                         #journalCbx formControlName="journal" [valueField]="'id'">
                                     </kendo-combobox>
+                                    <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.journal.errors.required">Chọn phương thức</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -63,6 +66,9 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker formControlName="paymentDateObj"></kendo-datepicker>
+                                    <div *ngIf="f.paymentDateObj.errors && (f.paymentDateObj.touched || f.paymentDateObj.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.paymentDateObj.errors.required">Chọn ngày thanh toán</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -80,10 +86,10 @@
                 </div>
                 <div class="o_group">
                     <div *ngIf="showError_1" class="text-danger">
-                        Vui lòng nhấn "Nhập tiền" để phân bổ tiền thanh toán cho từng dịch vụ
+                        Nhấn "Nhập tiền" để phân bổ tiền thanh toán cho từng dịch vụ
                     </div>
                     <div *ngIf="showError_2" class="text-danger">
-                        Vui lòng nhập số tiền thanh toán
+                        Nhập số tiền thanh toán
                     </div>
                     <table class="table table-sm">
                         <thead>

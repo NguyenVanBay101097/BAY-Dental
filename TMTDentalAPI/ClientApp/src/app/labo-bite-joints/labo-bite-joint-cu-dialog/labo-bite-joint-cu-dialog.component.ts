@@ -14,6 +14,10 @@ export class LaboBiteJointCuDialogComponent implements OnInit {
   id: string;
   title: string;
 
+  submitted = false;
+
+  get f() { return this.formGroup.controls; }
+
   constructor(private laboBiteJointService: LaboBiteJointService, public activeModal: NgbActiveModal, private notificationService: NotificationService,
     private fb: FormBuilder) {
   }
@@ -48,9 +52,12 @@ export class LaboBiteJointCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return;
     }
+    
     var val = this.formGroup.value;
     if (this.id) {
       this.laboBiteJointService.update(this.id, val).subscribe(() => {

@@ -46,6 +46,7 @@ import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-cre
 import { SaleOrderPaymentListComponent } from '../sale-order-payment-list/sale-order-payment-list.component';
 import { AccountPaymentsOdataService } from 'src/app/shared/services/account-payments-odata.service';
 import { ToaThuocCuDialogComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog/toa-thuoc-cu-dialog.component';
+import { ToaThuocLinesSaveCuFormComponent } from 'src/app/toa-thuocs/toa-thuoc-lines-save-cu-form/toa-thuoc-lines-save-cu-form.component';
 
 declare var $: any;
 
@@ -86,6 +87,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   searchCardBarcode: string;
   type: string;
+  submitted = false;
 
   constructor(
     private fb: FormBuilder,
@@ -132,6 +134,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.getAccountPaymentReconcicles();
     this.loadToothCategories();
     this.loadTeethList();
+  }
+
+  get f() {
+    return this.formGroup.controls;
   }
 
   loadEmployees() {
@@ -725,6 +731,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSaveConfirm() {
+    this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
     }
@@ -803,6 +810,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
     }

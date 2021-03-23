@@ -14,13 +14,14 @@ export class UserProfileEditComponent implements OnInit {
   @Input() id: string//id user
   editForm: FormGroup;
   appUserDisplay: UserDisplay;
+  submitted = false;
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, private userService: UserService) { }
 
   ngOnInit() {
     this.editForm = this.fb.group({
-      userName: null,
-      name: null,
-      email: null,
+      userName: [null,Validators.required],
+      name: [null,Validators.required],
+      email: [null,Validators.required],
       avatar: null,
       passWord: null,
       companyId: null,
@@ -33,6 +34,10 @@ export class UserProfileEditComponent implements OnInit {
 
   }
 
+  get f(){
+    return this.editForm.controls;
+  }
+
   onAvatarUploaded(data: any) {
     var fileUrl = data ? data.fileUrl : null;
     this.editForm.get('avatar').setValue(fileUrl);
@@ -40,6 +45,7 @@ export class UserProfileEditComponent implements OnInit {
 
 
   submit() {
+    this.submitted = true;
     var data = this.editForm.value;
     data.companyId = data.company.id;
     this.userService.update(this.id, data).subscribe(() => {

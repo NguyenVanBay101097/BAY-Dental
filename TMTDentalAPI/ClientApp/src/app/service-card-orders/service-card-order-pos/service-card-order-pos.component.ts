@@ -42,7 +42,9 @@ export class ServiceCardOrderPosComponent implements OnInit {
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   public keypressed;
 
+  submitted = false;
 
+  get f() { return this.formGroup.controls; }
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService, private userService: UserService,
     private cardOrderService: ServiceCardOrderService, private route: ActivatedRoute,

@@ -174,7 +174,7 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
             var newQuestion = new SurveyQuestion()
             {
-                Name = question.Name,
+                Name = question.Name + " - Copy",
                 Type = question.Type,
                 Sequence = question.Sequence
             };

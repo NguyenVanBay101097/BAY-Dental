@@ -38,7 +38,7 @@
         <div class="font-semibold">Số: @Model.PaymentName</div>
     </div>
     <div class="o_form_view mb-2">
-        <div class="o_group mb-0">
+        <div class="o_group mb-0 d-flex">
             <table class="o_group o_inner_group col-6">
                 <tbody>
                     <tr>
@@ -56,6 +56,23 @@
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">@(Model.JournalName)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Loại:
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            @if (Model.PaymentType == "inbound")
+                            {
+                                <span>Hoàn tiền</span>
+                            }
+                            else
+                            {
+                                <span>Trả tiền</span>
+                            }
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">

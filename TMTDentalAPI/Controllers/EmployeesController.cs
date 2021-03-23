@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
@@ -10,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SaasKit.Multitenancy;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -28,11 +31,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IApplicationRoleFunctionService _roleFunctionService;
         private readonly IIRModelDataService _iRModelDataService;
         private readonly IResGroupService _resGroupService;
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IMyCache _cache;
+        private readonly AppTenant _tenant;
 
         public EmployeesController(IEmployeeService employeeService, IHrPayrollStructureTypeService structureTypeService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
             UserManager<ApplicationUser> userManager, IApplicationRoleFunctionService roleFunctionService,
-            IIRModelDataService iRModelDataService, IResGroupService resGroupService
+            IIRModelDataService iRModelDataService, IResGroupService resGroupService, RoleManager<ApplicationRole> roleManager,
+            IMyCache cache, ITenant<AppTenant> tenant
             )
         {
             _employeeService = employeeService;
@@ -44,6 +51,9 @@ namespace TMTDentalAPI.Controllers
             _roleFunctionService = roleFunctionService;
             _iRModelDataService = iRModelDataService;
             _resGroupService = resGroupService;
+            _roleManager = roleManager;
+            _cache = cache;
+            _tenant = tenant?.Value;
         }
 
         [HttpGet]
@@ -67,7 +77,15 @@ namespace TMTDentalAPI.Controllers
                 .FirstOrDefaultAsync();
             if (employee == null)
                 return NotFound();
-            return Ok(_mapper.Map<EmployeeDisplay>(employee));
+            var res = _mapper.Map<EmployeeDisplay>(employee);
+            //get role
+            if (employee.User != null)
+            {
+                var roleNames = await _userManager.GetRolesAsync(employee.User);
+                res.Roles = await _roleManager.Roles.Where(x => roleNames.Contains(x.Name))
+                    .Select(x => new ApplicationRoleBasic() { Id = x.Id, Name = x.Name }).ToListAsync();
+            }
+            return Ok(res);
         }
 
         [HttpPost]
@@ -79,20 +97,7 @@ namespace TMTDentalAPI.Controllers
 
             await _unitOfWork.BeginTransactionAsync();
 
-            var employeePartner = new Partner()
-            {
-                Name = val.Name,
-                Employee = true,
-                Ref = val.Ref,
-                Phone = val.Phone,
-                Email = val.Email,
-                Customer = false
-            };
-
-            await _partnerService.CreateAsync(employeePartner);
-
             var employee = _mapper.Map<Employee>(val);
-            employee.PartnerId = employeePartner.Id;
             if (!employee.CompanyId.HasValue)
                 employee.CompanyId = CompanyId;
 
@@ -131,13 +136,17 @@ namespace TMTDentalAPI.Controllers
                     {
                         if (string.IsNullOrEmpty(val.UserName))
                             throw new Exception("Tên đăng nhập không được trống");
+                        var exist = await _userManager.FindByNameAsync(val.UserName);
+                        if (exist != null)
+                            throw new Exception("Tài khoản đã tồn tại!");
+
                         user.UserName = val.UserName;
                     }
 
                     user.Active = true;
                     user.Email = employee.Email;
                     user.PhoneNumber = employee.Phone;
-                    user.CompanyId = val.UserCompanyId.HasValue? val.UserCompanyId.Value : user.CompanyId;
+                    user.CompanyId = val.UserCompanyId.HasValue ? val.UserCompanyId.Value : user.CompanyId;
                     var updateResult = await _userManager.UpdateAsync(user);
                     if (!updateResult.Succeeded)
                         throw new Exception($"Cập nhật người dùng không thành công");
@@ -150,7 +159,7 @@ namespace TMTDentalAPI.Controllers
                     {
                         //check user đã đk map chưa
                         var isMapped = await _employeeService.SearchQuery(x => x.UserId == existUser.Id).AnyAsync();
-                        if (isMapped == true) throw new Exception("Tài khoản đã được sử dụng");
+                        if (isMapped == true) throw new Exception("Tài khoản đã tồn tại");
                         user = existUser;
                         employee.UserId = existUser.Id;
                     }
@@ -227,7 +236,12 @@ namespace TMTDentalAPI.Controllers
                     }
                 }
 
+
+
                 await _userManager.UpdateAsync(user);
+
+                //update role
+                await UpdateRole(employee, val);
             }
             else
             {
@@ -239,7 +253,29 @@ namespace TMTDentalAPI.Controllers
             }
         }
 
-        private async Task SaveUserResGroup( ApplicationUser user)
+        private async Task UpdateRole(Employee employee, EmployeeSave val)
+        {
+            var currentRoleNames = await this._userManager.GetRolesAsync(employee.User);
+            //remove all role
+            var result = await _userManager.RemoveFromRolesAsync(employee.User, currentRoleNames);
+            if (!result.Succeeded)
+            {
+                throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
+            }
+            //add role
+            var idsAdd = val.RoleIds.Select(x => x.ToString()).ToList();
+            var roleNamesAdd = await this._roleManager.Roles.Where(x => idsAdd.Contains(x.Id)).Include(x => x.Functions).Select(x => x.Name).ToListAsync();
+            var resultAdd = await _userManager.AddToRolesAsync(employee.User, roleNamesAdd);
+            if (!result.Succeeded)
+            {
+                throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
+            }
+
+            //clear cache
+            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{employee.UserId}");
+        }
+
+        private async Task SaveUserResGroup(ApplicationUser user)
         {
             //get group internal user to add to user then call function add all group to user
             var groupInternalUser = await _iRModelDataService.GetRef<ResGroup>("base.group_user");
@@ -266,21 +302,14 @@ namespace TMTDentalAPI.Controllers
             await _resGroupService.AddAllImpliedGroupsToAllUser(to_add);
         }
 
-        private void UpdatePartnerToEmployee(Employee employee)
+        private async Task UpdatePartnerToEmployee(Employee employee)
         {
-            if (employee.Partner == null) return;
+            if (employee.Partner == null)
+                return;
             var pn = employee.Partner;
             pn.Name = employee.Name;
-            pn.Employee = true;
-            pn.Ref = employee.Ref;
             pn.Phone = employee.Phone;
-            pn.Email = employee.Email;
-            //pn.BirthDay = employee.BirthDay.HasValue ? employee.BirthDay.Value.Day : 1;
-            //pn.BirthMonth = employee.BirthDay.HasValue ? employee.BirthDay.Value.Month : 1;
-            //pn.BirthYear = employee.BirthDay.HasValue ? employee.BirthDay.Value.Year : DateTime.Now.Year;
-            //pn.Barcode = employee.EnrollNumber;
-            pn.Supplier = false;
-            pn.Customer = false;
+            await _partnerService.UpdateAsync(pn);
         }
 
         private async Task UpdateSalary(EmployeeSave val, Employee emp)
@@ -310,6 +339,7 @@ namespace TMTDentalAPI.Controllers
                 .Include(x => x.User.Partner)
                 .Include(x => x.User.Company)
                 .Include(x => x.User).ThenInclude(x => x.ResCompanyUsersRels).ThenInclude(x => x.Company)
+                .Include(x => x.Partner)
                 .FirstOrDefaultAsync();
 
             if (employee == null)
@@ -320,7 +350,7 @@ namespace TMTDentalAPI.Controllers
             employee = _mapper.Map(val, employee);
             await UpdateSalary(val, employee);
 
-            UpdatePartnerToEmployee(employee);
+            await UpdatePartnerToEmployee(employee);
 
             await _employeeService.UpdateResgroupForSurvey(employee);
 
@@ -338,16 +368,31 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Remove(Guid id)
         {
             //var employee = await _employeeService.GetByIdAsync(id);
+            var listPartnerDelete = new List<Partner>();
             await _unitOfWork.BeginTransactionAsync();
-            var employee = await _employeeService.SearchQuery(x => x.Id == id).Include(x => x.User).FirstOrDefaultAsync();
+            var employee = await _employeeService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .Include(x => x.User).ThenInclude(x => x.Partner)
+                .FirstOrDefaultAsync();
 
             if (employee == null)
                 return NotFound();
-            if(employee.User != null )
+
+            if (employee.Partner != null)
+                listPartnerDelete.Add(employee.Partner);
+
+            if (employee.User != null)
             {
+                if (employee.User.Partner != null)
+                    listPartnerDelete.Add(employee.User.Partner);
                 await _userManager.DeleteAsync(employee.User);
             }
+
             await _employeeService.DeleteAsync(employee);
+
+            if (listPartnerDelete.Any())
+                await _partnerService.DeleteAsync(listPartnerDelete);
+
             _unitOfWork.Commit();
             return NoContent();
         }

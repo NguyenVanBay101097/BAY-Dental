@@ -80,12 +80,15 @@
                     </div>
                     <div class="summary-item">
                         <div class="text-center">
-                            <span *ngIf="resultSelection == 'cash'" class="font-weight-bold">Tồn quỹ tiền
-                                mặt</span>
-                            <span *ngIf="resultSelection == 'bank'" class="font-weight-bold">Tồn quỹ ngân
-                                hàng</span>
-                            <span *ngIf="resultSelection == 'cash_bank'" class="font-weight-bold">Tồn sổ
-                                quỹ</span>
+                            <span *ngIf="resultSelection == 'cash'" class="font-weight-bold">
+                                Tồn quỹ tiền mặt
+                            </span>
+                            <span *ngIf="resultSelection == 'bank'" class="font-weight-bold">
+                                Tồn quỹ ngân hàng
+                            </span>
+                            <span *ngIf="resultSelection == 'cash_bank'" class="font-weight-bold">
+                                Tồn sổ quỹ
+                            </span>
                             <h4 class="text-success">{{(summarySearchResult ? summarySearchResult.totalAmount : 0) | number}}</h4>
                         </div>
                     </div>

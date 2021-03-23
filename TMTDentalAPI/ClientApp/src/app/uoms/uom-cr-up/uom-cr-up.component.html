@@ -17,6 +17,9 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input class="form-control" formControlName="name" />
+                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.name.errors.required">Nhập tên đơn vị</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -28,6 +31,9 @@
                                         [filterable]="true" #cateCbx formControlName="categoryId" [valueField]="'id'"
                                         [valuePrimitive]="true">
                                     </kendo-combobox>
+                                    <div *ngIf="f.categoryId.errors && (f.categoryId.touched || f.categoryId.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.categoryId.errors.required">Chọn nhóm đơn vị</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -37,15 +43,9 @@
                                 <td colspan="1" style="width: 100%;">
                                     <select formControlName="uomType" class="form-control"
                                         (change)="onChangeUoMType($event.currentTarget.value)">
-                                        <option value="bigger">Lớn hơn đơn
-                                            vị
-                                            gốc</option>
-                                        <option value="reference">Là
-                                            đơn
-                                            vị gốc của nhóm này</option>
-                                        <option value="smaller">Nhỏ hơn
-                                            đơn
-                                            vị gốc</option>
+                                        <option value="bigger">Lớn hơn đơn vị gốc</option>
+                                        <option value="reference">Là đơn vị gốc của nhóm này</option>
+                                        <option value="smaller">Nhỏ hơn đơn vị gốc</option>
                                     </select>
                                 </td>
                             </tr>

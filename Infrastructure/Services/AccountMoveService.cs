@@ -93,7 +93,7 @@ namespace Infrastructure.Services
             foreach(var partial in partials)
             {
                 var counterpart_lines = await amlObj.SearchQuery(x => x.Id == partial.DebitMoveId || x.Id == partial.CreditMoveId)
-                    .Include(x => x.Journal).Include(x => x.Move).ToListAsync();
+                    .Include(x => x.Journal).Include(x => x.Move).Include(x => x.Payment).ToListAsync();
 
                 var counterpart_line = counterpart_lines.Where(x => !self.Lines.Contains(x)).FirstOrDefault();
                 var amount = partial.Amount;
@@ -113,8 +113,10 @@ namespace Infrastructure.Services
                     Date = counterpart_line.Date,
                     PaymentId = counterpart_line.Id,                  
                     AccountPaymentId = counterpart_line.PaymentId,
+                    AccountPaymentName = counterpart_line.Payment?.Name,
                     MoveId = counterpart_line.MoveId,
-                    Ref = reference
+                    Ref = reference,
+
                 });
             }
 

@@ -47,6 +47,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
     this.route.queryParamMap.subscribe(params => {
       this.type = params.get('type');
+      this.skip = 0;
       this.loadDataFromApi();
     });
 
@@ -54,6 +55,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
   }
@@ -111,6 +113,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
   searchChangeDate(value) {
     this.dateFrom = value.dateFrom;
     this.dateTo = value.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 

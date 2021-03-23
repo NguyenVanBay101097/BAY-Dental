@@ -80,15 +80,15 @@ namespace Umbraco.Web.Models.ContentEditing
         [MinLength(4)]
         public string Hostname { get; set; }
 
-        //[Required]
-        //public string Username { get; set; }
+        [Required]
+        public string Username { get; set; }
 
-        //[Required]
-        //[MinLength(6)]
-        //public string Password { get; set; }
+        [Required]
+        [MinLength(6)]
+        public string Password { get; set; }
 
-        //[Compare("Password")]
-        //public string ConfirmPassword { get; set; }
+        [Compare("Password")]
+        public string ConfirmPassword { get; set; }
 
         /// <summary>
         /// Nguồn khách hàng

@@ -69,6 +69,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   timeList: string[] = [];
   timeSource: string[] = [];
 
+  submitted = false;
+
+  get f() { return this.formGroup.controls; }
+
   constructor(
     private fb: FormBuilder,
     private appointmentService: AppointmentService,
@@ -185,6 +189,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+    
     if (!this.formGroup.valid) {
       return false;
     }
@@ -208,6 +214,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         },
         er => {
           this.errorService.show(er);
+          this.submitted = false;
         },
       )
     } else {
@@ -217,6 +224,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         },
         er => {
           this.errorService.show(er);
+          this.submitted = false;
         },
       )
     }

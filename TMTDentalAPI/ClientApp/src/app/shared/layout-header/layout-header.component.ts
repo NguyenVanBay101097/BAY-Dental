@@ -24,18 +24,10 @@ import { NgSelectComponent } from '@ng-select/ng-select';
   styleUrls: ['./layout-header.component.css']
 })
 export class LayoutHeaderComponent implements OnInit {
-  searchResults: any[] = [];
-  selectedResult: any;
-  arrowkeyLocation = 0;
-  resultSelection: string = 'all';
   userChangeCurrentCompany: UserChangeCurrentCompanyVM;
   searchString: string = '';
   searchUpdate = new Subject<string>();
   expire = '';
-
-  search$: Observable<any[]>;
-  searchLoading = false;
-  searchInput$ = new Subject<string>();
   @ViewChild('searchAllSelect', {static: true}) searchAllSelect: NgSelectComponent;
   constructor(
     private sidebarService: NavSidebarService,
@@ -59,16 +51,6 @@ export class LayoutHeaderComponent implements OnInit {
         this.loadExpire();
       }
     });
-
-    this.search$ = this.searchInput$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => this.searchLoading = true),
-      switchMap(term => this.onSearch(term).pipe(
-          catchError(() => of([])), // empty list on error
-          tap(() => this.searchLoading = false)
-      ))
-  );
   }
 
   loadExpire() {
@@ -164,34 +146,5 @@ export class LayoutHeaderComponent implements OnInit {
       )
     }, () => {
     });
-  }
-
-  onSearchChange(item) {
-    setTimeout(() => {
-      this.selectedResult = null;
-    });
-
-    switch (item.type) {
-      case "customer":
-        window.open(`/partners/customer/${item.id}/overview`, '_blank');
-        break;
-      case "supplier":
-        window.open(`/partners/supplier/${item.id}/info`, '_blank');
-        break;
-      case "sale-order":
-        window.open(`/sale-orders/form?id=${item.id}`, '_blank');
-        break;
-      default:
-        break;
-    }
-  }
-
-  onSearch(q?: string) {
-    var value = {
-      limit: 20,
-      search: q || '',
-      resultSelection: this.resultSelection ? this.resultSelection : ''
-    }
-    return this.searchAllService.getAll(value);
   }
 }

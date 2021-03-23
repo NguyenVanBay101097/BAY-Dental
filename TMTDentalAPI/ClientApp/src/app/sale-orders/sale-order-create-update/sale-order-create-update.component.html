@@ -103,6 +103,9 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datetimepicker [class.d-none]="saleOrder.State != 'draft'" formControlName="dateOrderObj">
                                     </kendo-datetimepicker>
+                                    <div *ngIf="f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày lập phiếu</div>
+                                    </div>
                                     <span [class.d-none]="saleOrder.State == 'draft'">{{saleOrder.DateOrder | date: 'short'}}</span>
                                 </td>
                             </tr>
@@ -183,7 +186,7 @@
                                                     </td>
                                                     <td class="text-right">
                                                         <span *ngIf="stateControl.value !== 'draft'">{{line.get('ProductUOMQty').value | number }}</span>
-                                                        <input type="number" *ngIf="stateControl.value === 'draft'" style="width:100%;" class="form-control" formControlName="ProductUOMQty" (change)="onChangeQuantity(line)" (keyup)="onChangeQuantity(line)">
+                                                        <input type="number" min="1" *ngIf="stateControl.value === 'draft'" style="width:100%;" class="form-control" formControlName="ProductUOMQty" (change)="onChangeQuantity(line)" (keyup)="onChangeQuantity(line)">
                                                     </td>
                                                     <td class="text-right">
                                                         <span *ngIf="stateControl.value !== 'draft'">{{ line.get('PriceUnit').value | number }}</span>

@@ -19,8 +19,8 @@
 </div>
 
 <div class="o_content">
-    <div class="o_form_view" [formGroup]="pickingForm">
-        <div class="o_form_sheet_bg">
+    <div class="o_form_view h-100" [formGroup]="pickingForm">
+        <div class="o_form_sheet_bg h-100 d-flex flex-column">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
                     <button type="button" *ngIf="state != 'done'" class="btn btn-primary btn-sm" accesskey="s" (click)="onSaveOrUpdate()">
@@ -45,7 +45,7 @@
                     </button>
                 </div>
             </div>
-            <div class="o_form_sheet">
+            <div class="o_form_sheet h-100 d-flex flex-column">
                 <h1 class="hidden-xs" *ngIf="pickingName != '/'"><span class="o_form_field">{{pickingName}}</span>
                 </h1>
                 <div class="o_group">
@@ -71,7 +71,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <ng-container *ngIf="state != 'done'; else dateLable">
-                                        <kendo-datepicker formControlName="dateObj" format="dd/MM/yyyy HH:mm">
+                                        <kendo-datepicker formControlName="dateObj" format="dd/MM/yyyy">
                                         </kendo-datepicker>
                                     </ng-container>
                                     <ng-template #dateLable>
@@ -113,8 +113,8 @@
                     </div>
                 </div>
 
-                <div class="o_form_section">
-                    <div class="o_form_section_left" [class.d-none]="picking.state == 'done'">
+                <div class="o_form_section overflow-hidden">
+                    <div class="o_form_section_left overflow-auto" [class.d-none]="picking.state == 'done'">
                         <app-tai-product-list-selectable #productListSelectable [productList]="productList" (changeProduct)="onChangeProduct($event)"></app-tai-product-list-selectable>
                     </div>
                     <div class="o_form_section_right">

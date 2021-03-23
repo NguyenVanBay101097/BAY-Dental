@@ -192,15 +192,19 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val)
         {
             var query = GetQueryPaged(val);
-            var items = await _mapper.ProjectTo<ProductBasic>(query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            query = query.OrderBy(x=> x.Name);
+
+            var totalItems = await query.CountAsync();
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await _mapper.ProjectTo<ProductBasic>(query).ToListAsync();
 
             //Tính lại giá bán
             await _ProcessListPrice(items);
 
             //Tính tồn kho
             _CalcQtyAvailable(items);
-
-            var totalItems = await query.CountAsync();
 
             return new PagedResult2<ProductBasic>(totalItems, val.Offset, val.Limit)
             {

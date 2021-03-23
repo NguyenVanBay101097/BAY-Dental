@@ -50,6 +50,10 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     operator: "startsWith",
   };
 
+  submitted = false;
+
+  get f() { return this.toaThuocForm.controls; }
+
   constructor(
     private fb: FormBuilder,
     private toaThuocService: ToaThuocService,
@@ -291,6 +295,8 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   }
 
   onSave(print) {
+    this.submitted = true;
+    
     if (!this.toaThuocForm.valid) {
       return false;
     }

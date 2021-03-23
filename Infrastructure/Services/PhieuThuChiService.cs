@@ -56,6 +56,8 @@ namespace Infrastructure.Services
 
         public async Task<PhieuThuChi> CreatePhieuThuChi(PhieuThuChiSave val)
         {
+            var partnerObj = GetService<IPartnerService>();
+
             var phieuThuChi = _mapper.Map<PhieuThuChi>(val);
 
             if (string.IsNullOrEmpty(phieuThuChi.Name))
@@ -81,6 +83,14 @@ namespace Infrastructure.Services
                 }
                 else
                     throw new Exception("Not support");
+            }
+
+            if(val.PartnerId.HasValue )
+            {
+                var partner = await partnerObj.SearchQuery(x => x.Id == val.PartnerId).FirstOrDefaultAsync();
+                if (partner == null) throw new Exception("Không tìm thấy người");
+                phieuThuChi.PayerReceiver = partner.Name;
+                phieuThuChi.Address = partner.GetAddress();
             }
 
             await ComputeProps(phieuThuChi);
@@ -290,8 +300,11 @@ namespace Infrastructure.Services
             if (phieuthuchi == null)
                 throw new Exception("Phiếu không tồn tại");
 
-            if (phieuthuchi.State != "draft")
-                throw new Exception("Bạn chỉ có thể xóa phiếu ở trạng thái nháp");
+            if (phieuthuchi.State == "posted")
+                throw new Exception("Bạn không thể xóa phiếu khi đã xác nhận");
+
+            if (phieuthuchi.State == "cancel")
+                throw new Exception("Bạn không thể xóa phiếu khi đã hủy");
 
             await DeleteAsync(phieuthuchi);
         }

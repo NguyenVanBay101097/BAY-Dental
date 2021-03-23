@@ -17,15 +17,14 @@
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" formControlName="cancelState" id="cancelState">
                 <label class="form-check-label" for="cancelState">
-                    Đã hủy
+                    Hủy hẹn
                 </label>
             </div>
         </div>
         <div class="dropdown-divider"></div>
         <h5>Theo ngày hẹn</h5>
         <div class="form-group">
-            <select class="form-control" [(ngModel)]="dateOption" [ngModelOptions]="{standalone: true}"
-                (change)="changeDateOption($event)">
+            <select class="form-control" [(ngModel)]="dateOption" [ngModelOptions]="{standalone: true}" (change)="changeDateOption($event)">
                 <option value="all">Tất cả</option>
                 <option value="today">Hôm nay</option>
                 <option value="yesterday">Hôm qua</option>

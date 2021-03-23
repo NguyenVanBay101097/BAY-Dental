@@ -67,6 +67,7 @@ export class RevenueReportManagerComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
     this.searchUpdateCompanies.pipe(
@@ -123,11 +124,13 @@ export class RevenueReportManagerComponent implements OnInit {
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
   setGroupBy(groupBy) {
     this.groupBy = groupBy;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
@@ -151,6 +154,7 @@ export class RevenueReportManagerComponent implements OnInit {
 
   changeCompany(event) {
     this.selectedCompany = event;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 }

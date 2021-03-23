@@ -187,6 +187,10 @@ export class SalaryPaymentFormComponent implements OnInit {
   }
 
   actionConfirm() {
+    this.submitted = true;
+    if (!this.formGroup.valid) {
+      return false;
+    }
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
     modalRef.componentInstance.title = "Xác nhận tạm ứng lương";
     modalRef.componentInstance.body = "Bạn có chắc chắn muốn tạm ứng lương?";

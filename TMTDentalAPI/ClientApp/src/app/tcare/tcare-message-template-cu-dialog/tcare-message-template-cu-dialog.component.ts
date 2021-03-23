@@ -20,6 +20,7 @@ export class TcareMessageTemplateCuDialogComponent implements OnInit {
   title: string;
   formGroup: FormGroup;
   listCoupon: any;
+  submitted = false;
   templates: any[] = [
     {
       text: null,
@@ -66,6 +67,9 @@ export class TcareMessageTemplateCuDialogComponent implements OnInit {
 
   }
 
+  get f() {
+    return this.formGroup.controls;
+  }
   get contentControl() { return this.formGroup.get('content'); }
   get typeControl() { return this.formGroup.get('type'); }
 
@@ -101,6 +105,7 @@ export class TcareMessageTemplateCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     this.updateValue();
 
     if (this.formGroup.invalid) { return false; }
