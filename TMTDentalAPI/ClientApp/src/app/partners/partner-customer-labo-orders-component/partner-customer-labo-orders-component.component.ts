@@ -55,7 +55,6 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
     val.state = this.state == undefined ? '' : this.state;
     val.customerId = this.customerId || '';
     val.search = this.search || '';
-    console.log(val);
     this.laboOrderService.getLaboForSaleOrderLine(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -64,7 +63,6 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
     ).subscribe(res => {
       this.gridData = res;
       this.loading = false;
-      console.log(res);
     }, err => {
       console.log(err);
       this.loading = false;

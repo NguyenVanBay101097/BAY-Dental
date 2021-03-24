@@ -44,7 +44,6 @@ export class LaboOrderDetailListComponent implements OnInit {
     ).subscribe(res => {
       this.gridData = res;
       this.loading = false;
-      console.log(res);
     }, err => {
       console.log(err);
       this.loading = false;
