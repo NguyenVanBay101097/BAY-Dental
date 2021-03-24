@@ -15,27 +15,12 @@
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
                     <div class="state-filter-wrapper">
-
-                        <button type="button" class="btn btn-sm btn-primary mr-2" (click)="setStateFilter('all')">Tất
-                            cả<span class="badge badge-light ml-2 bg-white">{{stateCount['all'] ||
-                                0}}</span>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-primary mr-2"
-                            (click)="setStateFilter('confirmed')">Quá hạn<span
-                                class="badge badge-light ml-2 bg-white">{{stateCount['confirmed'] ||
-                                0}}</span>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger" (click)="setStateFilter('cancel')">Hủy
-                            hẹn<span class="badge badge-light  ml-2 bg-white">{{stateCount['cancel'] ||
-                                0}}</span>
-                        </button>
-
+                        <button class="btn btn-secondary btn-sm float-right" (click)="onExportExcelFile()">Xuất
+                            Excel</button>
                     </div>
                 </div>
             </div>
             <div class="o_cp_sidebar">
-                <button class="btn btn-secondary btn-sm ml-2 float-right" (click)="onExportExcelFile()">Xuất
-                    Excel</button>
             </div>
         </div>
         <div class="o_cp_right">
@@ -54,6 +39,35 @@
 </div>
 
 <div class="o_content">
+    <div class="o_cp_controller">
+        <div class="o_control_panel">
+            <div class="o_cp_left o_cp_left_custom">
+                <div class="o_cp_buttons">
+                    <div class="o_form_buttons_view">
+                        <div class="state-filter-wrapper">
+                            <button type="button" class="btn btn-sm btn-primary mr-2"
+                                (click)="setStateFilter('all')">Tất
+                                cả<span class="badge badge-light ml-2 bg-white">{{stateCount['all'] || 0}}</span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-primary mr-2"
+                                (click)="setStateFilter('confirmed')">Quá hạn<span
+                                    class="badge badge-light ml-2 bg-white">{{stateCount['confirmed'] || 0}}</span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger" (click)="setStateFilter('cancel')">Hủy
+                                hẹn<span class="badge badge-light  ml-2 bg-white">{{stateCount['cancel'] || 0}}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="o_cp_sidebar">
+
+                </div>
+            </div>
+            <div class="o_cp_right">
+
+            </div>
+        </div>
+    </div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset" [pageable]="true"
         [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="250">

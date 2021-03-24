@@ -5,9 +5,6 @@
     white-space: pre;
 }
 
-.text-service {
-    overflow: hidden;
-    max-width: 150px;
-    text-overflow: ellipsis;
-    white-space: pre;
+.o_cp_left_custom {
+    margin-top: 0;
 }
