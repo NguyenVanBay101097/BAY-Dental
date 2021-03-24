@@ -69,7 +69,7 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
       modalRef.componentInstance.title = 'Cập nhật phiếu labo';
       modalRef.componentInstance.id = item.id;
     } else {
-      modalRef.componentInstance.title = 'Tạo phiếu labo';
+      modalRef.componentInstance.title = 'Tạo phiếu Labo';
     }
 
     modalRef.componentInstance.saleOrderLineId = this.saleOrderLineId;
