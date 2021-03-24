@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -20,8 +20,10 @@ export class ChangePasswordDialogComponent implements OnInit {
   ngOnInit() {
     this.resetPwdForm = this.fb.group({
       oldPassword: ['', Validators.required],
-      newPassword: ['', Validators.required],
-      confirmPassword: ['', Validators.required],
+      passwords: this.fb.group({
+        newPassword: ['', Validators.required],
+        confirmPassword: ['', Validators.required],
+      },{validators: this.passwordConfirming})
     });
   }
 
@@ -31,23 +33,31 @@ export class ChangePasswordDialogComponent implements OnInit {
 
   submit() {
     this.submitted = true;
-    if (!this.resetPwdForm.valid) {
-      return;
+    console.log(this.resetPwdForm);
+    
+    // if (!this.resetPwdForm.valid) {
+    //   return;
+    // }
+
+    // var val = this.resetPwdForm.value;
+
+    // this.authService.changePassword(val).subscribe((result: any) => {
+    //   if (result.success) {
+    //     this.activeModal.close(true);
+    //     this.authService.logout();
+    //     this.router.navigate(['/auth/login']);
+    //   } else {
+    //     this.error = result.message;
+    //   }
+    // }, error => {
+    //   this.error = error.error.error;
+    // });
+  }
+
+  passwordConfirming(c: AbstractControl): {invalid: boolean}{
+    if (c.get('newPassword').value !== c.get('confirmPassword').value) {
+      return {invalid: true};
     }
-
-    var val = this.resetPwdForm.value;
-
-    this.authService.changePassword(val).subscribe((result: any) => {
-      if (result.success) {
-        this.activeModal.close(true);
-        this.authService.logout();
-        this.router.navigate(['/auth/login']);
-      } else {
-        this.error = result.message;
-      }
-    }, error => {
-      this.error = error.error.error;
-    });
   }
 }
 
