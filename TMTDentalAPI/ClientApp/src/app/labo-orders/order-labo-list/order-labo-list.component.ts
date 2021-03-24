@@ -113,7 +113,7 @@ export class OrderLaboListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  editItem(item) {
+  editItem(e,item) {
     const modalRef = this.modalService.open(LaboOrderReceiptDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.labo = item;
     modalRef.result.then(() => {
@@ -128,9 +128,11 @@ export class OrderLaboListComponent implements OnInit {
     modalRef.componentInstance.title = 'Thông tin phiếu Labo';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.saleOrderLineId = item.saleOrderLineId;
-    modalRef.componentInstance.isRead = true;
 
     modalRef.result.then(res => {
+      if(res) {
+        this.loadDataFromApi();
+      }
     }, () => {
     });
   }

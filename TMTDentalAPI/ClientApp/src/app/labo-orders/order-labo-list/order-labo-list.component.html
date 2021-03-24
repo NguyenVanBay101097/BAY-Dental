@@ -104,7 +104,7 @@
                 Nhận labo
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm" title="Sửa" (click)="editItem(dataItem)">
+                <button class="btn btn-success btn-sm" title="Sửa" (click)="$event.stopPropagation(); editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
             </ng-template>
         </kendo-grid-column>

@@ -43,7 +43,6 @@ export class LaboOrderCuDialogComponent implements OnInit {
   biteJoints: LaboBiteJointBasic[] = [];
   bridges: LaboBridgeBasic[] = [];
   attachs: ProductSimple[] = [];
-  isRead = false;
 
   constructor(private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -403,7 +402,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   onCancel() {
     this.laboOrderService.buttonCancel([this.id]).subscribe(() => {
       this.notify('success', 'Hủy phiếu thành công');
-      this.activeModal.close();
+      this.activeModal.close(true);
     });
   }
 
