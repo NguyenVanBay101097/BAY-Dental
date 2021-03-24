@@ -55,25 +55,15 @@ export class PartnerOverviewComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.partnerId = this.activeRoute.parent.snapshot.paramMap.get('id');
     this.activeRoute.parent.params.subscribe(
       params => {
         this.partnerId = params.id;
         this.GetPartner();
         this.loadCustomerAppointment();
-        // this.getSaleQoutation();
-        // this.loadPromotion();
-        // this.getSaleOrders();
         this.getDotkhams();
         this.loadReport();  
       }
     )
-    // this.GetPartner();
-    // this.loadCustomerAppointment();
-    // // this.getSaleQoutation();
-    // // this.loadPromotion();
-    // this.getSaleOrders();
-    // this.loadReport();
   }
 
   GetPartner() {

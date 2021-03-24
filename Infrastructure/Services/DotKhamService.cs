@@ -30,10 +30,8 @@ namespace Infrastructure.Services
         {
 
             var dkLineObj= GetService<IDotKhamLineService>();
-            var pnImageObj = GetService<IPartnerImageService>();
 
-            var res = _mapper.Map<DotKhamDisplay>( await SearchQuery(x => x.Id == id).Include(x=> x.Doctor).FirstOrDefaultAsync());
-
+            var res = _mapper.Map<DotKhamDisplay>( await SearchQuery(x => x.Id == id).Include(x=> x.Doctor).Include(x=> x.DotKhamImages).FirstOrDefaultAsync());
             if (res == null) return null;
 
             res.Lines = await dkLineObj.SearchQuery(x => x.DotKhamId == id).OrderBy(x=> x.Sequence).Select(x => new DotKhamLineDisplay
@@ -53,8 +51,6 @@ namespace Infrastructure.Services
                 },
                 SaleOrderLineId = x.SaleOrderLineId
             }).ToListAsync();
-
-            res.DotKhamImages = await _mapper.ProjectTo<PartnerImageDisplay>(pnImageObj.SearchQuery(x => x.DotkhamId.Value == id)).ToListAsync();
 
             return res;
         }
