@@ -25,7 +25,7 @@ import { PartnerSupplierFormComponent } from './partner-supplier-form/partner-su
 import { PartnerSupplierFormInforComponent } from './partner-supplier-form-infor/partner-supplier-form-infor.component';
 import { PartnerSupplierFormDebitComponent } from './partner-supplier-form-debit/partner-supplier-form-debit.component';
 import { PartnerSupplierFormPaymentComponent } from './partner-supplier-form-payment/partner-supplier-form-payment.component';
-import { PartnerCustomerTreatmentComponent } from './partner-customer-treatment/partner-customer-treatment.component';
+import { PartnerCustomerTreatmentListComponent } from './partner-customer-treatment/partner-customer-treatment-list/partner-customer-treatment-list.component';
 
 const routes: Routes = [
   {
@@ -51,7 +51,7 @@ const routes: Routes = [
       { path: 'treatment-histories', component: PartnerCustomerTreatmentHistoryComponent },
       { path: 'treatment-histories/form', component: PartnerCustomerTreatmentHistoryFormComponent },
       { path: 'overview', component: PartnerOverviewComponent },
-      { path: 'treatment', component: PartnerCustomerTreatmentComponent },
+      { path: 'treatment', component: PartnerCustomerTreatmentListComponent },
     ]
   },
   {

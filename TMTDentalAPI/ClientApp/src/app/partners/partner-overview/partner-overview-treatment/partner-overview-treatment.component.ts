@@ -16,12 +16,8 @@ import { PartnersService } from 'src/app/shared/services/partners.service';
   styleUrls: ['./partner-overview-treatment.component.css']
 })
 export class PartnerOverviewTreatmentComponent implements OnInit {
-  // @Input() saleOrders: SaleOrderBasic[] = [];
-  @Input() saleOrdersData: GridDataResult;
-  @Input() limit: number;
-  @Input() skip: number;
+  @Input() saleOrders: SaleOrderBasic[] = [];
   @Output() deleteItemEvent = new EventEmitter<any>();
-  @Output() pageChageEvent = new EventEmitter<any>();
 
   
 
@@ -59,10 +55,5 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: Style, icon: true }
     });
-  }
-
-  pageChange(event: PageChangeEvent){
-    this.skip = event.skip;
-    this.pageChageEvent.emit(this.skip);
   }
 }

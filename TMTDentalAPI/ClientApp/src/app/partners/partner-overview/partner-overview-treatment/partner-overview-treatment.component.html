@@ -1,6 +1,5 @@
 <div class="kendo-grid-data">
-    <kendo-grid [data]="saleOrdersData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
-    [loading]="loading" [resizable]="true">
+    <kendo-grid [data]="saleOrders">
         <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="Name" title="Số phiếu" width="100">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <a class="text-primary" (click)="viewSaleOrder(dataItem.id)">{{dataItem.name}}</a>

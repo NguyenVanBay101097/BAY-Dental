@@ -1,19 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
-import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector: 'app-partner-customer-treatment',
-  templateUrl: './partner-customer-treatment.component.html',
-  styleUrls: ['./partner-customer-treatment.component.css']
+  selector: 'app-partner-customer-treatment-list',
+  templateUrl: './partner-customer-treatment-list.component.html',
+  styleUrls: ['./partner-customer-treatment-list.component.css']
 })
-export class PartnerCustomerTreatmentComponent implements OnInit {
+export class PartnerCustomerTreatmentListComponent implements OnInit {
+
   partnerId : string;
   dateFrom : Date;
   dateTo : Date;
@@ -30,10 +33,13 @@ export class PartnerCustomerTreatmentComponent implements OnInit {
     private authService: AuthService,
     private activeRoute: ActivatedRoute,
     private router: Router,
-    private intlService: IntlService
+    private intlService: IntlService,
+    private modalService: NgbModal,
+    private notificationService: NotificationService,
   ) { }
 
   ngOnInit() {
+    this.loading = true;
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
     this.activeRoute.parent.params.subscribe(
@@ -77,14 +83,14 @@ export class PartnerCustomerTreatmentComponent implements OnInit {
       }))
     ).subscribe(
       result => {
-        this.loading = true;
         this.saleOrdersData = result;
+        this.loading = false;
       }
     )
   }
 
-  pageChange(skip){
-    this.skip = skip;
+  pageChange(event){
+    this.skip = event.skip;
     this.getSaleOrders();
   }
 
@@ -94,4 +100,27 @@ export class PartnerCustomerTreatmentComponent implements OnInit {
     this.skip = 0;
     this.getSaleOrders();
   }
+
+  deleteItem(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa phiếu điều trị';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa phiếu điều trị?';
+    modalRef.result.then(() => {
+      this.saleOrderService.unlink([item.id]).subscribe(() => {
+        this.notify("success","Xóa thành công");
+        this.getSaleOrders();
+      });
+    });
+  }
+
+  notify(Style, Content) {
+    this.notificationService.show({
+      content: Content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: Style, icon: true }
+    });
+  }
+
 }
