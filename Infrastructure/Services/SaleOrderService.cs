@@ -238,7 +238,7 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
                 .Include(x => x.DotKhams)
-                .Include("OrderLines.SaleOrderLinePaymentRels")
+                .Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLinePaymentRels).ThenInclude(x => x.Payment)
                 .ToListAsync();
 
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
@@ -284,7 +284,7 @@ namespace Infrastructure.Services
             {
                 foreach (var line in sale.OrderLines)
                 {
-                    if (line.SaleOrderLinePaymentRels.Any())
+                    if (line.SaleOrderLinePaymentRels.Any(x => x.Payment.State != "draft" && x.Payment.State != "cancel"))
                         throw new Exception("Có dịch vụ đã thanh toán, cần hủy những thanh toán trước khi hủy phiếu");
 
                     if (line.State == "cancel")
