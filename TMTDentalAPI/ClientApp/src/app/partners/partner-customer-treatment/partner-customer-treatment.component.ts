@@ -14,7 +14,6 @@ import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
   styleUrls: ['./partner-customer-treatment.component.css']
 })
 export class PartnerCustomerTreatmentComponent implements OnInit {
-  saleOrders: SaleOrderBasic[] = [];
   partnerId : string;
   dateFrom : Date;
   dateTo : Date;
