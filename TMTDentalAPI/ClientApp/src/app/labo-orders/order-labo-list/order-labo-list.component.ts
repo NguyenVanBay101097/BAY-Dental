@@ -113,7 +113,7 @@ export class OrderLaboListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  editItem(e,item) {
+  editItem(item) {
     const modalRef = this.modalService.open(LaboOrderReceiptDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.labo = item;
     modalRef.result.then(() => {
