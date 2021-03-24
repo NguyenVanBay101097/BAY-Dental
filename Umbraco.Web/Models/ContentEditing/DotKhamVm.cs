@@ -86,6 +86,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Reason { get; set; }
 
         public EmployeeSimple Doctor { get; set; }
+        public EmployeeSimple Assistant { get; set; }
 
         public IEnumerable<DotKhamLineDisplay> Lines { get; set; } = new List<DotKhamLineDisplay>();
 
@@ -120,6 +121,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Bác sĩ
         /// </summary>
         public Guid? DoctorId { get; set; }
+        public Guid? AssistantId { get; set; }
 
         public IEnumerable<DotKhamLineSaveVM> Lines { get; set; } = new List<DotKhamLineSaveVM>();
 

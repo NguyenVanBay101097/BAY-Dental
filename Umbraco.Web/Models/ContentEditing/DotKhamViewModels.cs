@@ -77,7 +77,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeBasic Doctor { get; set; }
 
         public Guid? AssistantId { get; set; }
-        public EmployeeBasic Assistant { get; set; }
+        public EmployeeSimple Assistant { get; set; }
 
         public string Note { get; set; }
 

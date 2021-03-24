@@ -28,6 +28,7 @@ import { environment } from 'src/environments/environment';
 export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
 
   @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
+  @ViewChild('assCbx', { static: true }) assCbx: ComboBoxComponent;
   @Input() dotkham: any;
   @Output() dotkhamChange = new EventEmitter<any>();
   @Input() activeDotkham: any;
@@ -41,6 +42,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
 
   dotkhamForm: FormGroup;
   empList: any[];
+  assList: any[];
   kvDiffer: KeyValueDiffer<string, any>;
   differ: IterableDiffer<any>;
   webImageApi: string;
@@ -119,7 +121,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       Doctor: [null, Validators.required],
       Lines: this.fb.array([]),
       DotKhamImages: this.fb.array([]),
-      sequence: this.sequence
+      sequence: this.sequence,
+      Assistant: null
     });
 
     this.loadRecord();
@@ -133,6 +136,15 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       this.empList = result.data;
       this.empCbx.loading = false;
     });
+
+    this.assCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.assCbx.loading = true)),
+      switchMap(value => this.searchEmp(value))
+    ).subscribe((result: any) => {
+      this.assList = result.data;
+      this.assCbx.loading = false;
+    });
   }
 
   setEditModeActive(val: boolean) {
@@ -145,6 +157,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   get linesFA() { return this.dotkhamForm.get('Lines') as FormArray; }
   get dotkhamDate() { return this.dotkhamForm.get('Date').value; }
   get employee() { return this.dotkhamForm.get('Doctor').value; }
+  get assistant() { return this.dotkhamForm.get('Assistant').value; }
   get reason() { return this.dotkhamForm.get('Reason').value; }
 
   stopPropagation(e) {
@@ -152,9 +165,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
 
   loadRecord() {
-    this.dotkhamForm.get('Date').setValue(new Date(this.dotkham.Date));
-    this.dotkhamForm.get('Doctor').setValue(this.dotkham.Doctor);
-    this.dotkhamForm.get('Reason').setValue(this.dotkham.Reason);
+    this.dotkham.Date = new Date(this.dotkham.Date);
+    this.dotkhamForm.patchValue(this.dotkham);
     this.imgsFA.clear();
     this.linesFA.clear();
 
@@ -213,8 +225,13 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     this.searchEmp('').subscribe(
       (result: any) => {
         this.empList = result.data;
+        this.assList = result.data;
         if (this.dotkham.Doctor) {
           this.empList = _.unionBy(this.empList, [this.dotkham.Doctor], 'Id');
+        }
+
+        if (this.dotkham.Assistant) {
+          this.assList = _.unionBy(this.assList, [this.dotkham.Assistant], 'Id');
         }
       }
     );
@@ -286,6 +303,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     const val = this.dotkhamForm.value;
     val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-dd');
     val.DoctorId = val.Doctor ? val.Doctor.Id : null;
+    val.AssistantId = val.Assistant ? val.Assistant.Id : null;
     // val.CompanyId = this.authService.userInfo.companyId;
     val.Lines.forEach(line => {
       line.ToothIds = line.Teeth.map(x => x.Id);

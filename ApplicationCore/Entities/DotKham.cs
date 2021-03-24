@@ -67,5 +67,11 @@ namespace ApplicationCore.Entities
         /// hình ảnh
         /// </summary>
         public ICollection<PartnerImage> DotKhamImages { get; set; } = new List<PartnerImage>();
+
+        /// <summary>
+        /// phụ tá
+        /// </summary>
+        public Guid? AssistantId { get; set; }
+        public Employee Assistant { get; set; }
     }
 }
