@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/fo
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/auth/auth.service';
+import { ChangePasswordViewModel } from 'src/app/auth/auth.resource';
 
 @Component({
   selector: 'app-change-password-dialog',
@@ -33,29 +34,35 @@ export class ChangePasswordDialogComponent implements OnInit {
 
   submit() {
     this.submitted = true;
-    console.log(this.resetPwdForm);
-    
-    // if (!this.resetPwdForm.valid) {
-    //   return;
-    // }
+    if (!this.resetPwdForm.valid) {
+      return;
+    }
 
-    // var val = this.resetPwdForm.value;
+    var val = new ChangePasswordViewModel();
+    val.oldPassword = this.f.oldPassword.value;
+    val.newPassword = this.f.passwords.get('newPassword').value;
+    val.confirmPassword = this.f.passwords.get('confirmPassword').value;
 
-    // this.authService.changePassword(val).subscribe((result: any) => {
-    //   if (result.success) {
-    //     this.activeModal.close(true);
-    //     this.authService.logout();
-    //     this.router.navigate(['/auth/login']);
-    //   } else {
-    //     this.error = result.message;
-    //   }
-    // }, error => {
-    //   this.error = error.error.error;
-    // });
+    this.authService.changePassword(val).subscribe((result: any) => {
+      if (result.success) {
+        this.activeModal.close(true);
+        this.notificationService.show({
+          content: 'Đổi mật khẩu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      } else {
+        this.error = result.message;
+      }
+    }, error => {
+      this.error = error.error.error;
+    });
   }
 
   passwordConfirming(c: AbstractControl): {invalid: boolean}{
-    if (c.get('newPassword').value !== c.get('confirmPassword').value) {
+    if (c.get('confirmPassword').value && c.get('newPassword').value !== c.get('confirmPassword').value) {
       return {invalid: true};
     }
   }

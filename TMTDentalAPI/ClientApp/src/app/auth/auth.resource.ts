@@ -65,6 +65,12 @@ export class ForgotPasswordResponse {
     message: string;
 }
 
+export class ChangePasswordViewModel {
+    oldPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
