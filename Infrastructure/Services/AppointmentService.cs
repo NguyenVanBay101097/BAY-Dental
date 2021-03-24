@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 using ApplicationCore.Utilities;
+using OfficeOpenXml;
 
 namespace Infrastructure.Services
 {
@@ -498,6 +499,41 @@ namespace Infrastructure.Services
             }
             await _productAppointmentRelService.CreateAsync(listAdd);
             await _productAppointmentRelService.DeleteAsync(listRemove);
+        }
+
+        public void ComputeDataExcel(ExcelWorksheet worksheet, IEnumerable<AppointmentBasic> data, Dictionary<string, string> stateDict)
+        {
+            worksheet.Cells[1, 1].Value = "Khách hàng";
+            worksheet.Cells[1, 2].Value = "Thời gian hẹn";
+            worksheet.Cells[1, 3].Value = "Dịch vụ";
+            worksheet.Cells[1, 4].Value = "Bác sĩ";
+            worksheet.Cells[1, 5].Value = "Trạng thái";
+            worksheet.Cells[1, 6].Value = "Lý do hủy hẹn";
+            worksheet.Cells[1, 7].Value = "Nhãn khách hàng";
+            worksheet.Cells[1, 8].Value = "SĐT";
+            worksheet.Cells[1, 9].Value = "Tuổi";
+            worksheet.Cells[1, 10].Value = "Nội dung";
+
+            worksheet.Cells["A1:P1"].Style.Font.Bold = true;
+
+            var row = 2;
+            foreach (var item in data)
+            {
+                worksheet.Cells[row, 1].Value = item.PartnerDisplayName;
+                worksheet.Cells[row, 2].Value = (item.Date.HasValue ? item.Date.Value.ToShortDateString() + ", " : "") + item.Time;
+                worksheet.Cells[row, 3].Value = string.Join(", ", item.Services.Select(x => x.Name));
+                worksheet.Cells[row, 4].Value = item.DoctorName;
+                worksheet.Cells[row, 5].Value = !string.IsNullOrEmpty(item.State) && stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";
+                worksheet.Cells[row, 6].Value = item.Reason;
+                worksheet.Cells[row, 7].Value = string.Join(", ", item.Partner.Categories.OrderBy(x => x.Name).Select(x => x.Name));
+                worksheet.Cells[row, 8].Value = item.PartnerPhone;
+                worksheet.Cells[row, 9].Value = item.Partner.Age;
+                worksheet.Cells[row, 10].Value = item.Note;
+
+                row++;
+            }
+            worksheet.Column(4).Style.Numberformat.Format = "@";
+            worksheet.Cells.AutoFitColumns();
         }
     }
 }

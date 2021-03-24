@@ -270,6 +270,7 @@ namespace TMTDentalAPI.Controllers
         {
             var data = await _appointmentService.GetExcelData(appointmentPaged);
             var stream = new MemoryStream();
+            string sheetName = "";
             byte[] fileContent;
             var stateDict = new Dictionary<string, string>() {
                 {"confirmed", "Đang hẹn" },
@@ -285,67 +286,16 @@ namespace TMTDentalAPI.Controllers
                 {
                     foreach (var group in data.GroupBy(x => x.Date).OrderBy(x => x.Key))
                     {
-                        var sheetName = group.Key.Value.ToString("dddd, dd-MM-yyyy", new CultureInfo("vi-VN"));
+                        sheetName = group.Key.Value.ToString("dddd, dd-MM-yyyy", new CultureInfo("vi-VN"));
                         var worksheet = package.Workbook.Worksheets.Add(sheetName);
-                        worksheet.Cells[1, 1].Value = "Khách hàng";
-                        worksheet.Cells[1, 2].Value = "Bác sĩ";
-                        worksheet.Cells[1, 3].Value = "Thời gian";
-                        worksheet.Cells[1, 4].Value = "Số điện thoại";
-                        worksheet.Cells[1, 5].Value = "Tuổi";
-                        worksheet.Cells[1, 6].Value = "Nhãn khách hàng";
-                        worksheet.Cells[1, 7].Value = "Trạng thái";
-                        worksheet.Cells[1, 8].Value = "Nội dung";
-
-                        worksheet.Cells["A1:P1"].Style.Font.Bold = true;
-
-                        var row = 2;
-                        foreach (var item in group.ToList())
-                        {
-                            worksheet.Cells[row, 1].Value = item.PartnerDisplayName;
-                            worksheet.Cells[row, 2].Value = item.DoctorName;
-                            worksheet.Cells[row, 3].Value = item.Time;
-                            worksheet.Cells[row, 4].Value = item.PartnerPhone;
-                            worksheet.Cells[row, 5].Value = item.Partner.Age;
-                            worksheet.Cells[row, 6].Value = string.Join(", ", item.Partner.Categories.OrderBy(x => x.Name).Select(x => x.Name));
-                            worksheet.Cells[row, 7].Value = !string.IsNullOrEmpty(item.State) && stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";
-                            worksheet.Cells[row, 8].Value = item.Note;
-
-                            row++;
-                        }
-                        worksheet.Column(4).Style.Numberformat.Format = "@";
-                        worksheet.Cells.AutoFitColumns();
+                        _appointmentService.ComputeDataExcel(worksheet, group.ToList(), stateDict);
                     }
                 }
                 else
                 {
-                    var worksheet = package.Workbook.Worksheets.Add("Sheet1");
-                    worksheet.Cells[1, 1].Value = "Khách hàng";
-                    worksheet.Cells[1, 2].Value = "Bác sĩ";
-                    worksheet.Cells[1, 3].Value = "Thời gian";
-                    worksheet.Cells[1, 4].Value = "Số điện thoại";
-                    worksheet.Cells[1, 5].Value = "Tuổi";
-                    worksheet.Cells[1, 6].Value = "Nhãn khách hàng";
-                    worksheet.Cells[1, 7].Value = "Trạng thái";
-                    worksheet.Cells[1, 8].Value = "Nội dung";
-
-                    worksheet.Cells["A1:P1"].Style.Font.Bold = true;
-
-                    var row = 2;
-                    foreach (var item in data)
-                    {
-                        worksheet.Cells[row, 1].Value = item.PartnerDisplayName;
-                        worksheet.Cells[row, 2].Value = item.DoctorName;
-                        worksheet.Cells[row, 3].Value = item.Time;
-                        worksheet.Cells[row, 4].Value = item.PartnerPhone;
-                        worksheet.Cells[row, 5].Value = item.Partner.Age;
-                        worksheet.Cells[row, 6].Value = string.Join(", ", item.Partner.Categories.OrderBy(x => x.Name).Select(x => x.Name));
-                        worksheet.Cells[row, 7].Value = !string.IsNullOrEmpty(item.State) && stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";
-                        worksheet.Cells[row, 8].Value = item.Note;
-
-                        row++;
-                    }
-                    worksheet.Column(4).Style.Numberformat.Format = "@";
-                    worksheet.Cells.AutoFitColumns();
+                    sheetName = appointmentPaged.State == "cancel" ? "Hủy hẹn" : (appointmentPaged.State == "confirmed" ? "Quá hạn" : "Quá hạn - hủy hẹn");
+                    var worksheet = package.Workbook.Worksheets.Add(sheetName);
+                    _appointmentService.ComputeDataExcel(worksheet, data, stateDict);
                 }
 
                 package.Save();
@@ -357,6 +307,8 @@ namespace TMTDentalAPI.Controllers
 
             return new FileContentResult(fileContent, mimeType);
         }
+
+
 
     }
 }

@@ -29,12 +29,13 @@
                             hẹn<span class="badge badge-light  ml-2 bg-white">{{stateCount['cancel'] ||
                                 0}}</span>
                         </button>
-                       
+
                     </div>
                 </div>
             </div>
             <div class="o_cp_sidebar">
-                <button class="btn btn-secondary btn-sm ml-2 float-right" (click)="onExportExcelFile()">Xuất Excel</button>
+                <button class="btn btn-secondary btn-sm ml-2 float-right" (click)="onExportExcelFile()">Xuất
+                    Excel</button>
             </div>
         </div>
         <div class="o_cp_right">
@@ -68,9 +69,7 @@
         </kendo-grid-column>
         <kendo-grid-column title="Dịch vụ" width="250">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <span class="service" *ngFor="let item of dataItem.services; let i = index">
-                    {{item.name}}<span *ngIf="i < dataItem.services?.length - 1">, </span>
-                </span>
+                <span class="service">{{computeNameSerivc(dataItem.services)}}</span>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="doctorName" title="Bác sĩ" width="150">

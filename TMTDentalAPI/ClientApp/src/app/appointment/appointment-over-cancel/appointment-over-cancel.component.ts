@@ -180,8 +180,12 @@ export class AppointmentOverCancelComponent implements OnInit {
     }
   }
 
-  computeNameSerivc(items) {
-
+  computeNameSerivc(items: any[]) {
+    var serviceName = "";
+    if (items && items.length > 0) {
+      serviceName = items.map(x=>x.name).join(', ');
+    }
+    return serviceName;
   }
 
   onExportExcelFile() {
@@ -199,7 +203,7 @@ export class AppointmentOverCancelComponent implements OnInit {
     val.dateTimeTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
     val.cancel = true;
     this.appointmentService.exportExcel(val).subscribe((result: any) => {
-      let filenam = 'Danh_sach_lich_hen_quan_han_va_huy_hen';
+      let filenam = this.state == "confirmed" ? "Danh sách lịch hẹn quá hạn" : (this.state == "cancel" ? "Danh sách lịch hẹn đã hủy" : 'Danh sách lịch hẹn quá hạn và hủy hẹn')
       let newBlob = new Blob([result], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
       let data = window.URL.createObjectURL(newBlob);
       let link = document.createElement('a');
