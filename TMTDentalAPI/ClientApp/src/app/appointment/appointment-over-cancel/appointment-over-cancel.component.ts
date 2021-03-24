@@ -83,8 +83,8 @@ export class AppointmentOverCancelComponent implements OnInit {
   getCountState() {
     var dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     var dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
-    let confirmed = this.appointmentService.getCount({ state: "confirmed", search: this.search || "", doctorId: this.filterEmployee ? this.filterEmployee.id : null, dateFrom, dateTo: dateTo, cancel: true });
-    let cancel = this.appointmentService.getCount({ state: "cancel", search: this.search || "", doctorId: this.filterEmployee ? this.filterEmployee.id : null, dateFrom, dateTo: dateTo, cancel: true });
+    let confirmed = this.appointmentService.getCount({ state: "confirmed", search: this.search || "", doctorId: this.filterEmployee ? this.filterEmployee.id : null, dateFrom: dateFrom, dateTo: dateTo, isLate: true });
+    let cancel = this.appointmentService.getCount({ state: "cancel", search: this.search || "", doctorId: this.filterEmployee ? this.filterEmployee.id : null, dateFrom: dateFrom, dateTo: dateTo, isLate: true });
 
     forkJoin([confirmed, cancel]).subscribe(results => {
       this.stateCount['confirmed'] = results[0] || 0;
@@ -106,7 +106,7 @@ export class AppointmentOverCancelComponent implements OnInit {
     val.doctorId = this.filterEmployee ? this.filterEmployee.id : '';
     val.dateTimeFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateTimeTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
-    val.cancel = true;
+    val.isLate = true;
     this.appointmentService.getPaged(val).pipe(
       map((response: any) =>
       (<GridDataResult>{
@@ -183,15 +183,14 @@ export class AppointmentOverCancelComponent implements OnInit {
   computeNameSerivc(items: any[]) {
     var serviceName = "";
     if (items && items.length > 0) {
-      serviceName = items.map(x=>x.name).join(', ');
+      serviceName = items.map(x => x.name).join(', ');
     }
     return serviceName;
   }
 
   onExportExcelFile() {
     var val = new AppointmentPaged();
-    val.limit = this.limit;
-    val.offset = this.offset;
+    val.limit = 0;
     if (this.state) {
       val.state = this.state;
     }
@@ -201,7 +200,7 @@ export class AppointmentOverCancelComponent implements OnInit {
     val.doctorId = this.filterEmployee ? this.filterEmployee.id : '';
     val.dateTimeFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateTimeTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
-    val.cancel = true;
+    val.isLate = true;
     this.appointmentService.exportExcel(val).subscribe((result: any) => {
       let filenam = this.state == "confirmed" ? "Danh sách lịch hẹn quá hạn" : (this.state == "cancel" ? "Danh sách lịch hẹn đã hủy" : 'Danh sách lịch hẹn quá hạn và hủy hẹn')
       let newBlob = new Blob([result], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });

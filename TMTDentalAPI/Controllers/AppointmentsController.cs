@@ -282,7 +282,7 @@ namespace TMTDentalAPI.Controllers
 
             using (var package = new ExcelPackage(stream))
             {
-                if (!appointmentPaged.Cancel)
+                if (!appointmentPaged.IsLate.HasValue)
                 {
                     foreach (var group in data.GroupBy(x => x.Date).OrderBy(x => x.Key))
                     {

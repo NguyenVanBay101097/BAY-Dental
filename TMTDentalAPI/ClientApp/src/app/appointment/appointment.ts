@@ -65,7 +65,7 @@ export class AppointmentPaged {
     state: string;
     partnerId: string;
     companyId: string;
-    cancel: boolean;
+    isLate: boolean;
     doctorId: string;
 }
 

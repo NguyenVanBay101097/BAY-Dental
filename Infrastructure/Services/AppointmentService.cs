@@ -82,58 +82,12 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<AppointmentBasic>> GetPagedResultAsync(AppointmentPaged val)
         {
-            var query = SearchQuery();
-            var today = DateTime.Today;
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
-                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
-                || x.Partner.Ref.Contains(val.Search));
-
-            if (val.DateTimeFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateTimeFrom);
-
-            if (val.DateTimeTo.HasValue && !val.Cancel)
-            {
-                var dateTo = val.DateTimeTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Date <= dateTo);
-            }
-
-            if (val.Cancel)
-                query = query.Where(x => x.Date < today);
-
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
-
-            if (val.DotKhamId.HasValue)
-                query = query.Where(x => x.DotKhamId == val.DotKhamId);
-
-            if (!string.IsNullOrEmpty(val.UserId))
-                query = query.Where(x => x.UserId == val.UserId);
-
-            string[] stateList = null;
-            if (!string.IsNullOrEmpty(val.State))
-            {
-                stateList = (val.State).Split(",");
-                query = query.Where(x => stateList.Contains(x.State));
-            }
-
-            if (val.PartnerId.HasValue)
-            {
-                query = query.Where(x => x.PartnerId == val.PartnerId);
-            }
-
-            if (val.SaleOrderId.HasValue)
-            {
-                query = query.Where(x => x.SaleOrderId == val.SaleOrderId);
-            }
-
-            if (val.DoctorId.HasValue)
-                query = query.Where(x => x.DoctorId == val.DoctorId);
+            var query = GetSearchQuery(search: val.Search, state: val.State, isLate: val.IsLate,
+                partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
+                dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, dotKhamId: val.DotKhamId);
 
             query = query.OrderByDescending(x => x.DateCreated);
-
             var totalItems = await query.CountAsync();
-
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
 
             var items = await query
@@ -150,7 +104,6 @@ namespace Infrastructure.Services
                 Items = _mapper.Map<IEnumerable<AppointmentBasic>>(items)
             };
         }
-
 
         public async Task<AppointmentDisplay> DefaultGet(AppointmentDefaultGet val)
         {
@@ -213,37 +166,61 @@ namespace Infrastructure.Services
 
         public async Task<long> GetCount(AppointmentGetCountVM val)
         {
+            var query = GetSearchQuery(state: val.State, dateFrom: val.DateFrom, dateTo: val.DateTo, isLate: val.IsLate, doctorId: val.DoctorId, search: val.Search);
+            return await query.LongCountAsync();
+        }
+
+        public IQueryable<Appointment> GetSearchQuery(string search = "", Guid? partnerId = null,
+            string state = "", DateTime? dateTo = null, DateTime? dateFrom = null, Guid? dotKhamId = null,
+            Guid? doctorId = null, bool? isLate = null, string userId = "", Guid? companyId = null)
+        {
             var query = SearchQuery();
             var today = DateTime.Today;
-            if (!string.IsNullOrEmpty(val.State))
-                query = query.Where(x => x.State == val.State);
-
-            if (val.DateFrom.HasValue)
+            if (isLate.HasValue)
             {
-                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.Date >= val.DateFrom);
+                if (isLate.Value)
+                    query = query.Where(x => x.Date < today);
+                else
+                    query = query.Where(x => x.Date >= today);
             }
 
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
-                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
-                || x.Partner.Ref.Contains(val.Search));
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(x => x.Name.Contains(search) || x.Doctor.Name.Contains(search)
+                || x.Partner.Name.Contains(search) || x.Partner.Phone.Contains(search)
+                || x.Partner.Ref.Contains(search));
 
-            if (val.DoctorId.HasValue)
-                query = query.Where(x => x.DoctorId == val.DoctorId);
+            if (dateFrom.HasValue)
+                query = query.Where(x => x.Date >= dateFrom.Value);
 
-            if (val.DateTo.HasValue && !val.Cancel)
+            if (dateTo.HasValue)
             {
-                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
                 query = query.Where(x => x.Date <= dateTo);
             }
 
-            if (val.Cancel)
+            if (companyId.HasValue)
+                query = query.Where(x => x.CompanyId == companyId.Value);
+
+            if (dotKhamId.HasValue)
+                query = query.Where(x => x.DotKhamId == dotKhamId.Value);
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(x => x.UserId == userId);
+
+            string[] stateList = null;
+            if (!string.IsNullOrEmpty(state))
             {
-                query = query.Where(x => x.Date < today);
+                stateList = state.Split(",");
+                query = query.Where(x => stateList.Contains(x.State));
             }
 
-            return await query.LongCountAsync();
+            if (partnerId.HasValue)
+                query = query.Where(x => x.PartnerId == partnerId.Value);
+
+            if (doctorId.HasValue)
+                query = query.Where(x => x.DoctorId == doctorId.Value);
+
+            return query;
         }
 
         private async Task InsertAppointmentSequence()
@@ -374,67 +351,18 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<AppointmentBasic>> GetExcelData(AppointmentPaged val)
         {
-            var query = SearchQuery();
-            var today = DateTime.Today;
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
-                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
-                || x.Partner.Ref.Contains(val.Search));
-
-            if (val.DateTimeFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateTimeFrom);
-
-            if (val.DateTimeTo.HasValue && !val.Cancel)
-            {
-                var dateTo = val.DateTimeTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Date <= dateTo);
-            }
-
-            if (val.Cancel)
-                query = query.Where(x => x.Date < today);
-
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
-
-            if (val.DotKhamId.HasValue)
-                query = query.Where(x => x.DotKhamId == val.DotKhamId);
-
-            if (!string.IsNullOrEmpty(val.UserId))
-                query = query.Where(x => x.UserId == val.UserId);
-
-            string[] stateList = null;
-            if (!string.IsNullOrEmpty(val.State))
-            {
-                stateList = (val.State).Split(",");
-                query = query.Where(x => stateList.Contains(x.State));
-            }
-
-            if (val.PartnerId.HasValue)
-            {
-                query = query.Where(x => x.PartnerId == val.PartnerId);
-            }
-
-            if (val.SaleOrderId.HasValue)
-            {
-                query = query.Where(x => x.SaleOrderId == val.SaleOrderId);
-            }
-
-            if (val.DoctorId.HasValue)
-                query = query.Where(x => x.DoctorId == val.DoctorId);
+            var query = GetSearchQuery(search: val.Search, state: val.State, isLate: val.IsLate,
+              partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
+              dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, dotKhamId: val.DotKhamId);
 
             query = query.OrderByDescending(x => x.DateCreated);
 
             var totalItems = await query.CountAsync();
-
-            var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
-
             var items = await query
                 .Include(x => x.Partner).Include("Partner.PartnerPartnerCategoryRels.Category")
                 .Include(x => x.Doctor)
                 .Include(x => x.AppointmentServices).ThenInclude(x => x.Product)
                 .OrderBy(x => x.Date).ThenBy(x => x.Time)
-                .Skip(val.Offset)
-                .Take(limit)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<AppointmentBasic>>(items);
@@ -457,7 +385,6 @@ namespace Infrastructure.Services
             appointment = await CreateAsync(appointment);
             return appointment;
         }
-
 
         public async Task UpdateAsync(Guid id, AppointmentDisplay val)
         {

@@ -141,7 +141,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTimeTo { get; set; }
 
         public string State { get; set; }
-        public bool Cancel { get; set; }
+
+        public bool? IsLate { get; set; }
+
         public Guid? DotKhamId { get; set; }
 
         public string UserId { get; set; }
@@ -218,10 +220,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class AppointmentGetCountVM
     {
-        public AppointmentGetCountVM()
-        {
-            Cancel = false;
-        }
         public string Search { get; set; }
         public Guid? DoctorId { get; set; }
         public string State { get; set; }
@@ -230,7 +228,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? DateTo { get; set; }
 
-        public bool Cancel { get; set; }
+        public bool IsLate { get; set; }
     }
 
 }
