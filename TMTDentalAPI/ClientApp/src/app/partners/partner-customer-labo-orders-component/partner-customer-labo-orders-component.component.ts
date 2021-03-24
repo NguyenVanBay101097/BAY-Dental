@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { SaleOrderLinesLaboPaged } from 'src/app/core/services/sale-order-line.service';
 import { LaboOrderPaged, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 
@@ -20,7 +21,6 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
   limit = 20;
   skip = 0;
   loading = false;
-  opened = false;
   search: string;
   searchUpdate = new Subject<string>();
   state: string;
@@ -31,7 +31,8 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
   customerId: string;
 
   constructor(private laboOrderService: LaboOrderService, 
-    private route: ActivatedRoute, private modalService: NgbModal) { }
+    private route: ActivatedRoute, private modalService: NgbModal, 
+    private printService: PrintService) { }
 
   ngOnInit() {
     this.customerId = this.route.parent.snapshot.paramMap.get('id');
@@ -86,11 +87,7 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
   }
 
   GetTeeth(val) {
-    var list = [];
-    if (val.teeth.length) {
-      list.push(val.teeth.map(x => x.name).join(','));
-    }
-    return list;
+    return val.teeth.map(x => x.name).join(',');
   }
 
   stateGet(state) {
@@ -100,6 +97,12 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
       default:
         return 'Nháp';
     }
+  }
+
+  printLabo(item: any) {
+    this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
+      this.printService.printHtml(result.html);
+    });
   }
 
   editItem(item) {

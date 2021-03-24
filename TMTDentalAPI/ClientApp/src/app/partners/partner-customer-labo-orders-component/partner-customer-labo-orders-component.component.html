@@ -29,22 +29,22 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="partnerDisplayName" title="NCC Labo" width="170">
                 </kendo-grid-column>
-                <kendo-grid-column field="quantity" title="Số lượng" width="100">
+                <kendo-grid-column field="quantity" title="Số lượng" class="text-right" width="80">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.quantity | number}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="teeth" title="Răng" width="120">
+                <kendo-grid-column field="teeth" title="Răng" class="text-right" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{GetTeeth(dataItem)}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="amountTotal" title="Thành tiền" class="text-right" width="120">
+                <kendo-grid-column field="amountTotal" title="Thành tiền" class="text-right" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.amountTotal | number}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="dateExport" title="Ngày xuất" width="120">
+                <kendo-grid-column field="dateExport" title="Ngày xuất" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.dateExport | date: 'shortDate'}}
                     </ng-template>

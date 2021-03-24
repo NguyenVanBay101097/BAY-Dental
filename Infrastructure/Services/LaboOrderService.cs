@@ -28,15 +28,6 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<LaboOrderBasic>> GetPagedResultAsync(LaboOrderPaged val)
         {
-            //ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
-            //if (!string.IsNullOrEmpty(val.Search))
-            //    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
-            //    x.Partner.Name.Contains(val.Search) ||
-            //    x.Partner.NameNoSign.Contains(val.Search) ||
-            //    x.Partner.Phone.Contains(val.Search)));
-            //if (val.PartnerId.HasValue)
-            //    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.PartnerId == val.PartnerId));
-
             var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.Search))
