@@ -1,32 +1,50 @@
-import { LaboOrderBasic, LaboOrderPaged, LaboOrderService } from './../labo-order.service';
-import { Component, Input, OnInit, Output } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { map } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { PrintService } from 'src/app/shared/services/print.service';
-import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { SaleOrderLinesLaboPaged } from 'src/app/core/services/sale-order-line.service';
+import { LaboOrderPaged, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 
 @Component({
-  selector: 'app-labo-order-detail-list',
-  templateUrl: './labo-order-detail-list.component.html',
-  styleUrls: ['./labo-order-detail-list.component.css']
+  selector: 'app-partner-customer-labo-orders-component',
+  templateUrl: './partner-customer-labo-orders-component.component.html',
+  styleUrls: ['./partner-customer-labo-orders-component.component.css']
 })
-export class LaboOrderDetailListComponent implements OnInit {
-  @Input() public item: any;
-  @Input() public state: string;
-  @Output() reload : Subject<boolean> = new Subject<boolean>();
-  skip = 0;
-  limit = 10;
+export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
+
   gridData: GridDataResult;
-  details: LaboOrderBasic[];
+  limit = 20;
+  skip = 0;
   loading = false;
-  constructor(private laboOrderService: LaboOrderService, private modalService: NgbModal,
-    private printService: PrintService) { }
+  opened = false;
+  search: string;
+  searchUpdate = new Subject<string>();
+  state: string;
+  filterStatus = [
+    { name: 'Nháp', value: 'draft' },
+    { name: 'Đơn hàng', value: 'confirmed' },
+  ];
+  customerId: string;
+
+  constructor(private laboOrderService: LaboOrderService, 
+    private route: ActivatedRoute, private modalService: NgbModal) { }
 
   ngOnInit() {
+    this.customerId = this.route.parent.snapshot.paramMap.get('id');
+
     this.loadDataFromApi();
+
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe((value) => {
+        this.skip = 0;
+        this.loadDataFromApi();
+      });
   }
 
   loadDataFromApi() {
@@ -34,8 +52,10 @@ export class LaboOrderDetailListComponent implements OnInit {
     var val = new LaboOrderPaged();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.saleOrderLineId = this.item.id;
     val.state = this.state == undefined ? '' : this.state;
+    val.customerId = this.customerId || '';
+    val.search = this.search || '';
+    console.log(val);
     this.laboOrderService.getLaboForSaleOrderLine(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -51,8 +71,19 @@ export class LaboOrderDetailListComponent implements OnInit {
     })
   }
 
-  public pageChange(event: PageChangeEvent): void {
+  pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onStateChange(e) {
+    var value = e ? e.value : null;
+    if (value) {
+      this.state = value;
+    } else {
+      this.state = null;
+    }
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
@@ -73,17 +104,6 @@ export class LaboOrderDetailListComponent implements OnInit {
     }
   }
 
-  createItem() {
-    const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Tạo phiếu labo';
-    modalRef.componentInstance.saleOrderLineId = this.item.id;
-    modalRef.result.then(res => {
-      this.loadDataFromApi();
-      this.reload.next(true);
-    }, () => {
-    });
-  }
-
   editItem(item) {
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Cập nhật phiếu labo';
@@ -92,7 +112,6 @@ export class LaboOrderDetailListComponent implements OnInit {
 
     modalRef.result.then(res => {
       this.loadDataFromApi();
-      this.reload.next(true);
     }, () => {
     });
   }
@@ -104,15 +123,7 @@ export class LaboOrderDetailListComponent implements OnInit {
     modalRef.result.then(() => {
       this.laboOrderService.unlink([item.id]).subscribe(() => {
         this.loadDataFromApi();
-        this.reload.next(true);
       });
     });
   }
-
-  printLabo(item: any) {
-    this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.printHtml(result.html);
-    });
-  }
-
 }

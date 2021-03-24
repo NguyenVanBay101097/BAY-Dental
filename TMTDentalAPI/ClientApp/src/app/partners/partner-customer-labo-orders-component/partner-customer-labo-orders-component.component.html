@@ -1,0 +1,73 @@
+<div class="px-3 py-3 bg-white">
+    <div class="mb-2 d-flex justify-content-between">
+        <kendo-combobox (selectionChange)="onStateChange($event)" 
+            placeholder="Trạng thái phiếu Labo" class="kendo-combobox-sm" style="width: auto;" 
+            [data]="filterStatus" [textField]="'name'" [valueField]="'value'">
+        </kendo-combobox>
+        <div class="o_cp_t_right">
+            <input class="o_searchview_input o_searchview" 
+                placeholder="Tìm kiếm theo phiếu Labo, phiếu điều trị, nhà cung cấp" 
+                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        </div>
+    </div>
+    <div>
+        <div class="o_content">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+                <kendo-grid-column field="name" title="Phiếu Labo" width="100">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <a class="text-primary" (click)="editItem(dataItem)"> {{dataItem.name}}</a>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="100">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.saleOrderId}">
+                            {{dataItem.saleOrderName}}
+                        </a>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="saleOrderLineName" title="Dịch vụ" width="170">
+                </kendo-grid-column>
+                <kendo-grid-column field="partnerDisplayName" title="NCC Labo" width="170">
+                </kendo-grid-column>
+                <kendo-grid-column field="quantity" title="Số lượng" width="100">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.quantity | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="teeth" title="Răng" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{GetTeeth(dataItem)}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="amountTotal" title="Thành tiền" class="text-right" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.amountTotal | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="dateExport" title="Ngày xuất" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.dateExport | date: 'shortDate'}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="state" title="Trạng thái" width="100">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{stateGet(dataItem.state)}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="id" width="120">
+                    <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                        Thao tác
+                    </ng-template>
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <button class="btn btn-sm mr-1" title="In" (click)="printLabo(dataItem)">
+                            <i class="fas fa-print"></i></button>
+                        <button class="btn btn-sm mr-1" title="Sửa" (click)="editItem(dataItem)">
+                            <span class="fas fa-edit"></span></button>
+                        <button class="btn btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                            <span class="fas fa-trash-alt"></span></button>
+                    </ng-template>
+                </kendo-grid-column>
+            </kendo-grid>
+        </div>
+    </div>
+</div>

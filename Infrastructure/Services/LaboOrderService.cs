@@ -43,7 +43,13 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) || 
-                x.Partner.Ref.Contains(val.Search));
+                x.Partner.Ref.Contains(val.Search) ||
+                x.SaleOrderLine.Order.Name.Contains(val.Search));
+
+            if (val.CustomerId.HasValue)
+            {
+                query = query.Where(x => x.CustomerId == val.CustomerId);
+            }
 
             if (val.SaleOrderLineId.HasValue)
             {
