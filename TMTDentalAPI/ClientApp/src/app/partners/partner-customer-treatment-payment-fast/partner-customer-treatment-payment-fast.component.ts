@@ -810,7 +810,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         modalRef.componentInstance.id = item.id;
       }
       else {
-        modalRef.componentInstance.title = 'Tạo phiếu labo';
+        modalRef.componentInstance.title = 'Tạo phiếu Labo';
       }
 
       modalRef.componentInstance.saleOrderId = this.saleOrderId;

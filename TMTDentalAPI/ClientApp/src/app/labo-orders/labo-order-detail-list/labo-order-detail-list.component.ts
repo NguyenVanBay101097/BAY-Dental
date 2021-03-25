@@ -74,7 +74,7 @@ export class LaboOrderDetailListComponent implements OnInit {
 
   createItem() {
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Tạo phiếu labo';
+    modalRef.componentInstance.title = 'Tạo phiếu Labo';
     modalRef.componentInstance.saleOrderLineId = this.item.id;
     modalRef.result.then(res => {
       this.loadDataFromApi();
