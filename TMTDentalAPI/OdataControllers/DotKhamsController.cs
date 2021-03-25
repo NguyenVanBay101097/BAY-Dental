@@ -82,7 +82,8 @@ namespace TMTDentalAPI.OdataControllers
                 } : null,
                 Id = x.Id,
                 Sequence = x.Sequence,
-                Reason = x.Reason               
+                Reason = x.Reason,
+                Name = x.Name
             }).FirstOrDefaultAsync();
 
             if (dotkham == null)

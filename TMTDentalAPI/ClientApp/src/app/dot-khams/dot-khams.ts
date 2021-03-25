@@ -4,6 +4,7 @@ import { PartnerSimple } from '../partners/partner-simple';
 
 import { UserSimple } from '../users/user-simple';
 import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
+import { PartnerImageBasic } from '../partners/partner.service';
 
 export class DotKhamDefaultGet {
     invoiceId: string;
@@ -31,6 +32,7 @@ export class DotKhamPaged {
     limit: number;
     search: string;
     appointmentId: string;
+    partnerId: string;
 }
 
 export class DotKhamDisplay {
@@ -47,7 +49,7 @@ export class DotKhamDisplay {
     assistant: PartnerSimple;
     userId: string;
     user: UserSimple;
-    note: string;
+    reason: string;
     state: string;
     companyId: string;
     lines: [];
@@ -55,6 +57,7 @@ export class DotKhamDisplay {
     saleOrder: SaleOrderBasic;
     appointmentId: string;
     appointment: AppointmentBasic;
+    dotKhamImages: any[];
 }
 
 export class DotKhamPaging {
