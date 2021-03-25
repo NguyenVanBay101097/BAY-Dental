@@ -76,6 +76,8 @@ import { PartnerSupplierFormPaymentComponent } from './partner-supplier-form-pay
 import { PartnerSupplierFormDebitPaymentDialogComponent } from './partner-supplier-form-debit-payment-dialog/partner-supplier-form-debit-payment-dialog.component';
 import { PartnerDotkhamListComponent } from './partner-overview/partner-dotkham-list/partner-dotkham-list.component';
 import { PartnerDotkhamDetailComponent } from './partner-overview/partner-dotkham-detail/partner-dotkham-detail.component';
+import { PartnerCustomerTreatmentListComponent } from './partner-customer-treatment/partner-customer-treatment-list/partner-customer-treatment-list.component';
+import { PartnerCustomerTreatmentSaleOrderLineComponent } from './partner-customer-treatment/partner-customer-treatment-sale-order-line/partner-customer-treatment-sale-order-line.component';
 
 
 @NgModule({
@@ -139,7 +141,10 @@ import { PartnerDotkhamDetailComponent } from './partner-overview/partner-dotkha
     PartnerSupplierFormPaymentComponent,
     PartnerSupplierFormDebitPaymentDialogComponent,
     PartnerDotkhamListComponent,
-    PartnerDotkhamDetailComponent
+    PartnerDotkhamDetailComponent,
+    PartnerSupplierFormDebitPaymentDialogComponent,
+    PartnerCustomerTreatmentListComponent,
+    PartnerCustomerTreatmentSaleOrderLineComponent
   ],
   imports: [
     CommonModule,
