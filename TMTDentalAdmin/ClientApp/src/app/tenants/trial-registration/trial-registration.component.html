@@ -61,10 +61,10 @@
                                     placeholder="Dùng để reset mật khẩu" />
                                 <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger">
                                     <div *ngIf="email.errors.required">
-                                        Email is required.
+                                        Nhập email
                                     </div>
                                     <div *ngIf="email.errors.email">
-                                        Email is not valid.
+                                        Email không hợp lệ
                                     </div>
                                 </div>
                             </div>
@@ -75,10 +75,10 @@
                                 <input type="tel" class="form-control" id="phone" formControlName="phone" required />
                                 <div *ngIf="phone.invalid && (phone.dirty || phone.touched)" class="alert alert-danger">
                                     <div *ngIf="phone.errors.required">
-                                        Phone is required.
+                                        Nhập điện thoại
                                     </div>
                                     <div *ngIf="phone.errors.pattern">
-                                        Phone is not valid.
+                                        Điện thoại không hợp lệ
                                     </div>
                                 </div>
                             </div>
@@ -116,11 +116,10 @@
                                 <span>{{getHostName(hostName.value)}}</span>
                                 <div *ngIf="hostName.invalid && (hostName.dirty || hostName.touched)" class="alert alert-danger">
                                     <div *ngIf="hostName.errors.required">
-                                        Tên miền sử dụng is required.
+                                        Nhập tên miền sử dụng
                                     </div>
                                     <div *ngIf="hostName.errors.minlength">
-                                        Tên miền sử dụng tối thiểu {{hostName.errors.minlength.requiredLength}} kí
-                                        tự
+                                        Tên miền sử dụng tối thiểu {{hostName.errors.minlength.requiredLength}} kí tự
                                     </div>
                                     <div *ngIf="hostName.errors.pattern">
                                         Tên miền sử dụng chỉ được chứa kí tự từ a -> z, 0 -> 9.
@@ -141,7 +140,7 @@
                                 <div *ngIf="password.invalid && (password.dirty || password.touched)"
                                     class="alert alert-danger">
                                     <div *ngIf="password.errors.required">
-                                        Mật khẩu is required.
+                                        Nhập mật khẩu
                                     </div>
                                     <div *ngIf="password.errors.minlength">
                                         Mật khẩu tối thiểu {{password.errors.minlength.requiredLength}} kí tự
@@ -155,6 +154,9 @@
                                 <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword" required />
                                 <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)"
                                     class="alert alert-danger">
+                                    <div *ngIf="confirmPassword.errors.required">
+                                        Nhập xác nhận mật khẩu
+                                    </div>
                                     <div *ngIf="confirmPassword.errors.mustMatch">
                                         Nhập lại mật khẩu không khớp
                                     </div>
