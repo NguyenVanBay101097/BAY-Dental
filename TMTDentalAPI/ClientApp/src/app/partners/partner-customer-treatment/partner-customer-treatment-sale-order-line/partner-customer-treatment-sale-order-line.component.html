@@ -1,17 +1,11 @@
-<kendo-grid [data]="gridData" [loading]="loading">
+<kendo-grid [data]="gridData" [loading]="loading" >
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="Name"
         title="Dịch vụ" width="150">
     </kendo-grid-column>
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="teeth"
         title="Thông tin bổ sung" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
-            <div *ngIf="dataItem.Teeth">
-                <span *ngFor="let rang of dataItem.Teeth; let i = index">
-                    {{rang.Name}}
-                    <span *ngIf="i != dataItem.Teeth.length - 1">,</span>
-                </span>
-                <span *ngIf="dataItem.Diagnostic && dataItem.Diagnostic != ''">; {{dataItem.Diagnostic}}</span>
-            </div>
+            <span>{{getInfor(dataItem)}}</span>
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"

@@ -17,13 +17,13 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 })
 export class PartnerCustomerTreatmentListComponent implements OnInit {
 
-  partnerId : string;
-  dateFrom : Date;
-  dateTo : Date;
-  skip : number = 0;
-  limit : number = 10;
-  search : string;
-  saleOrdersData : GridDataResult;
+  partnerId: string;
+  dateFrom: Date;
+  dateTo: Date;
+  skip: number = 0;
+  limit: number = 10;
+  search: string;
+  saleOrdersData: GridDataResult;
   searchUpdate = new Subject<string>();
   loading = false;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());

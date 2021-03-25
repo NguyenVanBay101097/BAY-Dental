@@ -49,4 +49,11 @@ export class PartnerCustomerTreatmentSaleOrderLineComponent implements OnInit {
         this.loading = false;
       });
   }
+  getInfor(item:any){
+    var infor = item.Teeth.map(x => x.Name).join();
+    if(item.Diagnostic){
+      infor += "; " + item.Diagnostic;
+    }
+    return infor;
+  }
 }
