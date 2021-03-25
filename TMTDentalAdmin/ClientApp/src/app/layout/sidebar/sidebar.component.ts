@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { NavSidebarService } from '@shared/services/nav-sidebar.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -6,10 +7,24 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
+  
+  @HostListener('window:resize', ['$event'])
+  onResize(event?) {
+    if (window.innerWidth <= 768) {
+      this.sidebarService.set(true);
+    }
+    else {
+      this.sidebarService.set(false);
+    }
   }
 
+  constructor(public sidebarService: NavSidebarService) { }
+
+  ngOnInit() {
+    this.onResize();
+  }
+
+  clickNavLink() {
+    this.onResize();
+  }
 }

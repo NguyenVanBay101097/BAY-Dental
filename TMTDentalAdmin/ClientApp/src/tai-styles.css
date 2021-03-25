@@ -65,6 +65,7 @@ html .o_web_client .o_action_manager {
     flex: 1 1 100%;
     min-height: 1px;
     display: flex;
+    position: relative;
 }
 
 @media (min-width: 768px) {
@@ -108,6 +109,7 @@ html .o_web_client .o_action_manager .o_action .o_content {
     flex: 1 1 100%;
     position: relative;
     -webkit-box-flex: 1;
+    overflow: auto;
 }
 
 html .o_web_client>.o_action_manager .o_action .o_cp_controller {

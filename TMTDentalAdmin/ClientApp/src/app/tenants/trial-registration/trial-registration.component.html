@@ -47,159 +47,129 @@
                     <button type="button" class="btn btn-primary" (click)="createNew()">Đăng ký mới</button>
                 </div>
                 <div [ngClass]="{'d-none': registerSuccess}">
-                    <table class="o_group o_inner_group">
-                        <tbody>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label">Họ tên</label>
-                                </td>
-                                <td style="width: 100%">
-                                    <input type="text" class="form-control" formControlName="name" required />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label">Email</label>
-                                </td>
-                                <td style="width: 100%">
-                                    <input type="email" class="form-control" placeholder="Dùng để reset mật khẩu"
-                                        formControlName="email" required />
-                                    <div *ngIf="email.invalid && (email.dirty || email.touched)"
-                                        class="alert alert-danger">
-                                        <div *ngIf="email.errors.required">
-                                            Email is required.
-                                        </div>
-                                        <div *ngIf="email.errors.email">
-                                            Email is not valid.
-                                        </div>
+                    <div class="container-fluid">
+                        <div class="form-row">
+                            <label class="col-sm-2 col-form-label" for="name">Họ tên</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="name" formControlName="name" required />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="col-sm-2 col-form-label" for="email">Email</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" id="email" formControlName="email" required 
+                                    placeholder="Dùng để reset mật khẩu" />
+                                <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger">
+                                    <div *ngIf="email.errors.required">
+                                        Email is required.
                                     </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label">Điện thoại</label>
-                                </td>
-                                <td style="width: 100%">
-                                    <input type="tel" class="form-control" formControlName="phone" required />
-                                    <div *ngIf="phone.invalid && (phone.dirty || phone.touched)"
-                                        class="alert alert-danger">
-                                        <div *ngIf="phone.errors.required">
-                                            Phone is required.
-                                        </div>
-                                        <div *ngIf="phone.errors.pattern">
-                                            Phone is not valid.
-                                        </div>
+                                    <div *ngIf="email.errors.email">
+                                        Email is not valid.
                                     </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label">Tên phòng khám</label>
-                                </td>
-                                <td style="width: 100%">
-                                    <input type="text" class="form-control" formControlName="companyName" required />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label">Địa chỉ</label>
-                                </td>
-                                <td style="width: 100%">
-                                    <input type="text" class="form-control" formControlName="address" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label">Nguồn khách hàng</label>
-                                </td>
-                                <td style="width: 100%">
-                                    <input type="text" class="form-control" formControlName="customerSource" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label">Người triển khai</label>
-                                </td>
-                                <td style="width: 100%">
-                                    <kendo-combobox class="form-control" [data]="filterdEmployees" [textField]="'name'"
-                                        [filterable]="true" #empCbx formControlName="employeeAdmin" [valueField]="'id'">
-                                    </kendo-combobox>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label">Tên miền sử dụng</label>
-                                </td>
-                                <td style="width: 100%">
-                                    <input type="text" class="form-control" formControlName="hostName" required />
-                                    <span>{{getHostName(hostName.value)}}</span>
-                                    <div *ngIf="hostName.invalid && (hostName.dirty || hostName.touched)"
-                                        class="alert alert-danger">
-                                        <div *ngIf="hostName.errors.required">
-                                            Tên miền sử dụng is required.
-                                        </div>
-                                        <div *ngIf="hostName.errors.minlength">
-                                            Tên miền sử dụng tối thiểu {{hostName.errors.minlength.requiredLength}} kí
-                                            tự
-                                        </div>
-                                        <div *ngIf="hostName.errors.pattern">
-                                            Tên miền sử dụng chỉ được chứa kí tự từ a -> z, 0 -> 9.
-                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="col-sm-2 col-form-label" for="phone">Điện thoại</label>
+                            <div class="col-sm-10">
+                                <input type="tel" class="form-control" id="phone" formControlName="phone" required />
+                                <div *ngIf="phone.invalid && (phone.dirty || phone.touched)" class="alert alert-danger">
+                                    <div *ngIf="phone.errors.required">
+                                        Phone is required.
                                     </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label">Tên đăng nhập</label>
-                                </td>
-                                <td style="width: 100%">
-                                    <input type="text" class="form-control" formControlName="userName" required />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label">Mật khẩu</label>
-                                </td>
-                                <td style="width: 100%">
-                                    <input type="password" class="form-control" minlength="6" formControlName="password"
-                                        required />
-                                    <div *ngIf="password.invalid && (password.dirty || password.touched)"
-                                        class="alert alert-danger">
-                                        <div *ngIf="password.errors.required">
-                                            Mật khẩu is required.
-                                        </div>
-                                        <div *ngIf="password.errors.minlength">
-                                            Mật khẩu tối thiểu {{password.errors.minlength.requiredLength}} kí tự
-                                        </div>
+                                    <div *ngIf="phone.errors.pattern">
+                                        Phone is not valid.
                                     </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label">Xác nhận mật khẩu</label>
-                                </td>
-                                <td style="width: 100%">
-                                    <input type="password" class="form-control" formControlName="confirmPassword" />
-                                    <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)"
-                                        class="alert alert-danger">
-                                        <div *ngIf="confirmPassword.errors.mustMatch">
-                                            Nhập lại mật khẩu không khớp
-                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="col-sm-2 col-form-label" for="companyName">Tên phòng khám</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="companyName" formControlName="companyName" required />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="col-sm-2 col-form-label" for="address">Địa chỉ</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="address" formControlName="address" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="col-sm-2 col-form-label" for="customerSource">Nguồn khách hàng</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="customerSource" formControlName="customerSource" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="col-sm-2 col-form-label">Người triển khai</label>
+                            <div class="col-sm-10">
+                                <kendo-combobox class="form-control" [data]="filterdEmployees" [textField]="'name'"
+                                    [filterable]="true" #empCbx formControlName="employeeAdmin" [valueField]="'id'">
+                                </kendo-combobox>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="col-sm-2 col-form-label" for="hostName">Tên miền sử dụng</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="hostName" formControlName="hostName" required />
+                                <span>{{getHostName(hostName.value)}}</span>
+                                <div *ngIf="hostName.invalid && (hostName.dirty || hostName.touched)" class="alert alert-danger">
+                                    <div *ngIf="hostName.errors.required">
+                                        Tên miền sử dụng is required.
                                     </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label">&nbsp;</label>
-                                </td>
-                                <td style="width: 100%">
-                                    <button type="button" class="btn btn-primary" accesskey="s" (click)="onSubmit()">
-                                        Đăng ký
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    <div *ngIf="hostName.errors.minlength">
+                                        Tên miền sử dụng tối thiểu {{hostName.errors.minlength.requiredLength}} kí
+                                        tự
+                                    </div>
+                                    <div *ngIf="hostName.errors.pattern">
+                                        Tên miền sử dụng chỉ được chứa kí tự từ a -> z, 0 -> 9.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="col-sm-2 col-form-label" for="userName">Tên đăng nhập</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="userName" formControlName="userName" required />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="col-sm-2 col-form-label" for="password">Mật khẩu</label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" id="password" minlength="6" formControlName="password" required />
+                                <div *ngIf="password.invalid && (password.dirty || password.touched)"
+                                    class="alert alert-danger">
+                                    <div *ngIf="password.errors.required">
+                                        Mật khẩu is required.
+                                    </div>
+                                    <div *ngIf="password.errors.minlength">
+                                        Mật khẩu tối thiểu {{password.errors.minlength.requiredLength}} kí tự
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="col-sm-2 col-form-label" for="confirmPassword">Xác nhận mật khẩu</label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword" required />
+                                <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)"
+                                    class="alert alert-danger">
+                                    <div *ngIf="confirmPassword.errors.mustMatch">
+                                        Nhập lại mật khẩu không khớp
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="col-sm-2 col-form-label"></label>
+                            <div class="col-sm-10">
+                                <button type="button" class="btn btn-primary" accesskey="s" (click)="onSubmit()">
+                                    Đăng ký
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
