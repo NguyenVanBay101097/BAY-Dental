@@ -83,8 +83,8 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
-                worksheet.Cells[1, 1].Value = "Khách hàng";
-                worksheet.Cells[1, 2].Value = "Mã KH";
+                worksheet.Cells[1, 1].Value = val.ResultSelection == "customer" ? "Khách hàng" : "Nhà cung cấp";
+                worksheet.Cells[1, 2].Value = val.ResultSelection == "customer" ? "Mã KH" : "Mã NCC";
                 worksheet.Cells[1, 3].Value = "Số điện thoại";
                 worksheet.Cells[1, 4].Value = "Nợ đầu kỳ";
                 worksheet.Cells[1, 5].Value = "Phát sinh";
