@@ -29,12 +29,12 @@ namespace Infrastructure.Services
         public async Task<DotKhamDisplay> GetDotKhamDisplayAsync(Guid id)
         {
 
-            var dkLineObj= GetService<IDotKhamLineService>();
+            var dkLineObj = GetService<IDotKhamLineService>();
 
-            var res = _mapper.Map<DotKhamDisplay>( await SearchQuery(x => x.Id == id).Include(x=> x.Doctor).Include(x=> x.DotKhamImages).FirstOrDefaultAsync());
+            var res = _mapper.Map<DotKhamDisplay>(await SearchQuery(x => x.Id == id).Include(x => x.Doctor).Include(x => x.DotKhamImages).FirstOrDefaultAsync());
             if (res == null) return null;
 
-            res.Lines = await dkLineObj.SearchQuery(x => x.DotKhamId == id).OrderBy(x=> x.Sequence).Select(x => new DotKhamLineDisplay
+            res.Lines = await dkLineObj.SearchQuery(x => x.DotKhamId == id).OrderBy(x => x.Sequence).Select(x => new DotKhamLineDisplay
             {
                 Teeth = x.ToothRels.Select(x => new ToothDisplay
                 {
@@ -87,7 +87,7 @@ namespace Infrastructure.Services
             dotKham.Sequence = val.Sequence;
             dotKham.CompanyId = CompanyId;
             dotKham.SaleOrderId = saleOrderId;
-            dotKham.PartnerId = await orderobj.SearchQuery(x=>x.Id == saleOrderId).Select(x=>x.PartnerId).FirstOrDefaultAsync();
+            dotKham.PartnerId = await orderobj.SearchQuery(x => x.Id == saleOrderId).Select(x => x.PartnerId).FirstOrDefaultAsync();
 
             ///tạo lines
             var sequence = 0;
@@ -116,14 +116,14 @@ namespace Infrastructure.Services
 
             await CreateAsync(dotKham);
             return dotKham;
-            
+
         }
 
         public async Task UpdateDotKham(Guid id, DotKhamSaveVm val)
         {
-            var dotKham =  await SearchQuery(x => x.Id == id)
-                .Include(x=>x.DotKhamImages)
-                .Include(x=>x.Lines)
+            var dotKham = await SearchQuery(x => x.Id == id)
+                .Include(x => x.DotKhamImages)
+                .Include(x => x.Lines)
                 .Include("Lines.ToothRels")
                 .Include("Lines.Product")
                 .FirstOrDefaultAsync();
@@ -153,13 +153,13 @@ namespace Infrastructure.Services
                 dotkham.Lines.Remove(line);
             }
 
-            int sequence = 1;        
+            int sequence = 1;
 
             foreach (var line in val.Lines)
             {
                 if (line.Id == Guid.Empty)
                 {
-                    var item = _mapper.Map<DotKhamLine>(line);       
+                    var item = _mapper.Map<DotKhamLine>(line);
                     item.Sequence = sequence++;
                     foreach (var toothId in line.ToothIds)
                     {
@@ -172,8 +172,8 @@ namespace Infrastructure.Services
                 }
                 else
                 {
-                   var res = _mapper.Map(line, dotkham.Lines.SingleOrDefault(c => c.Id == line.Id));
-                    if(res != null)
+                    var res = _mapper.Map(line, dotkham.Lines.SingleOrDefault(c => c.Id == line.Id));
+                    if (res != null)
                     {
                         res.Sequence = sequence++;
                         res.ToothRels.Clear();
@@ -185,7 +185,7 @@ namespace Infrastructure.Services
                             });
                         }
                     }
-                  
+
                 }
             }
 
@@ -274,10 +274,10 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            if (val.Limit > 0)  
+            if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await _mapper.ProjectTo<DotKhamBasic>(query.Include(x => x.Doctor).Include(z => z.SaleOrder).OrderByDescending(x => x.DateCreated).ThenByDescending(x => x.Sequence)).ToListAsync();
+            var items = await _mapper.ProjectTo<DotKhamBasic>(query.OrderByDescending(x => x.DateCreated).ThenByDescending(x => x.Sequence)).ToListAsync();
 
             return new PagedResult2<DotKhamBasic>(totalItems, val.Offset, val.Limit)
             {
