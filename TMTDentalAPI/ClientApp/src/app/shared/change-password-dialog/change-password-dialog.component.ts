@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/fo
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/auth/auth.service';
-import { ChangePasswordViewModel } from 'src/app/auth/auth.resource';
+import { MustMatch } from '../must-match-validator';
 
 @Component({
   selector: 'app-change-password-dialog',
@@ -21,11 +21,11 @@ export class ChangePasswordDialogComponent implements OnInit {
   ngOnInit() {
     this.resetPwdForm = this.fb.group({
       oldPassword: ['', Validators.required],
-      passwords: this.fb.group({
-        newPassword: ['', Validators.required],
-        confirmPassword: ['', Validators.required],
-      },{validators: this.passwordConfirming})
-    });
+      newPassword: ['', Validators.required],
+      confirmPassword: ['', Validators.required]
+    },
+    {validators: MustMatch('newPassword','confirmPassword')}
+    );
   }
 
   get f(){
@@ -38,11 +38,7 @@ export class ChangePasswordDialogComponent implements OnInit {
       return;
     }
 
-    var val = new ChangePasswordViewModel();
-    val.oldPassword = this.f.oldPassword.value;
-    val.newPassword = this.f.passwords.get('newPassword').value;
-    val.confirmPassword = this.f.passwords.get('confirmPassword').value;
-
+    var val = this.resetPwdForm.value;
     this.authService.changePassword(val).subscribe((result: any) => {
       if (result.success) {
         this.activeModal.close(true);
@@ -59,12 +55,6 @@ export class ChangePasswordDialogComponent implements OnInit {
     }, error => {
       this.error = error.error.error;
     });
-  }
-
-  passwordConfirming(c: AbstractControl): {invalid: boolean}{
-    if (c.get('confirmPassword').value && c.get('newPassword').value !== c.get('confirmPassword').value) {
-      return {invalid: true};
-    }
   }
 }
 
