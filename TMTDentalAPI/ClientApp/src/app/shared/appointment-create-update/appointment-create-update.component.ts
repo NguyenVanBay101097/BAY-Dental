@@ -39,25 +39,25 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   appointId: string;
   timeExpecteds: any[] = [
     {
-      name: '30 phút', value: '30'
+      name: '30 phút', value: 30
     },
     {
-      name: '45 phút', value: '45'
+      name: '45 phút', value: 45
     },
     {
-      name: '60 phút', value: '60'
+      name: '60 phút', value: 60
     },
     {
-      name: '75 phút', value: '75'
+      name: '75 phút', value: 75
     },
     {
-      name: '90 phút', value: '90'
+      name: '90 phút', value: 90
     },
     {
-      name: '105 phút', value: '105'
+      name: '105 phút', value: 105
     },
     {
-      name: '120 phút', value: '120'
+      name: '120 phút', value: 120
     },
   ]
   defaultVal: any;
@@ -190,7 +190,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-    
+
     if (!this.formGroup.valid) {
       return false;
     }
@@ -202,6 +202,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     var appTime = appoint.appTime;
     appoint.date = `${apptDate}T00:00:00`;
     appoint.time = appTime;
+    appoint.timeExpected = Number.parseInt(appoint.timeExpected);
     if (this.state != 'cancel') {
       appoint.reason = null;
     }

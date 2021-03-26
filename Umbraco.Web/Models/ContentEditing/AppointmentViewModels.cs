@@ -84,7 +84,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Thời gian dự kiến
         /// </summary>
-        public string TimeExpected { get; set; }
+        public int TimeExpected { get; set; }
 
         /// <summary>
         /// Danh sách dịch vụ
