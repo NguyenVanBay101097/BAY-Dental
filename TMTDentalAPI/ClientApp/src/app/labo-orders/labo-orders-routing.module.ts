@@ -13,7 +13,7 @@ import { OrderLaboListComponent } from './order-labo-list/order-labo-list.compon
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'service',
     component: LaboOrderListComponent
   },
   {

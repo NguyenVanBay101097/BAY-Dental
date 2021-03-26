@@ -402,7 +402,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   onCancel() {
     this.laboOrderService.buttonCancel([this.id]).subscribe(() => {
       this.notify('success', 'Hủy phiếu thành công');
-      this.activeModal.close();
+      this.activeModal.close(true);
     });
   }
 

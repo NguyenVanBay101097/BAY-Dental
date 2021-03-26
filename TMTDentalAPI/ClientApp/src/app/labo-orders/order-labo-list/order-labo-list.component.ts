@@ -6,6 +6,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
+import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { LaboOrderReceiptDialogComponent } from '../labo-order-receipt-dialog/labo-order-receipt-dialog.component';
 import { LaboOrderBasic, LaboOrderService, OrderLaboPaged } from '../labo-order.service';
 
@@ -128,6 +129,22 @@ export class OrderLaboListComponent implements OnInit {
       });
       this.loadDataFromApi();
     }, er => { });
+  }
+
+  cellClick(item) {
+    console.log(item);
+    
+    const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thông tin phiếu Labo';
+    modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.saleOrderLineId = item.saleOrderLineId;
+
+    modalRef.result.then(res => {
+      if(res) {
+        this.loadDataFromApi();
+      }
+    }, () => {
+    });
   }
 
 }

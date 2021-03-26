@@ -101,6 +101,7 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
     this.reportService.getSummary(val).subscribe(res => {
       this.items = res;
       this.total = aggregateBy(this.items, this.aggregates);
+      
       this.loadItems();
       this.loading = false;
     }, err => {

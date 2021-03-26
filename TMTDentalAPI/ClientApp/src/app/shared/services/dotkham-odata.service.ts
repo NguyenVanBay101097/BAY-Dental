@@ -4,7 +4,7 @@ import { ODataService } from './odata.service';
 
 export class DotKhamVm {
   Id: string;
-  // Name: string;
+  Name: string;
   Sequence: number;
   SaleOrderId: string;
   SaleOrder: any;

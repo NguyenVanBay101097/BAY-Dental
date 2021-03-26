@@ -141,7 +141,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       dateObj: null,
       addressCheckDetail: 0, 
       title: null, 
-      consultant: null
+      consultant: null,
+      avatar: null
     });
 
     setTimeout(() => {
@@ -263,6 +264,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   get sourceValue() {
     return this.formGroup.get('source').value;
   }
+
+  get f() { return this.formGroup.controls; }
 
   loadHistoriesList() {
     this.partnerService.getHistories().subscribe((result) => {
@@ -558,5 +561,9 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   onCancel() {
     this.activeModal.dismiss();
+  }
+
+  onAvatarUploaded(data){
+    this.f.avatar.setValue( data ? data.fileUrl : null);
   }
 }

@@ -23,6 +23,7 @@
 
 .active{
     background-color: #16232d;
+    color: white !important;
 }
 
 .main-nav .nav-link {
