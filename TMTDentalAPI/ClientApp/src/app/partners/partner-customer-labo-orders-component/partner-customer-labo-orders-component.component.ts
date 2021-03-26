@@ -86,7 +86,7 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  GetTeeth(val) {
+  getTeeth(val) {
     return val.teeth.map(x => x.name).join(',');
   }
 
