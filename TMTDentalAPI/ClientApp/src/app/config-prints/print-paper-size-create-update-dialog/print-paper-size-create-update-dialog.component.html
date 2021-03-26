@@ -1,0 +1,108 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên khổ giấy in</label>
+                    <h1>
+                        <input type="text" class="form-control" formControlName="name" #nameInput>
+                    </h1>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                        class="text-danger mb-1">
+                        <div *ngIf="f.name.errors.required">Nhập tên khổ giấy in</div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="o_notebook">
+                    <div class="o_group">
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Định dạng khổ giấy
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <select class="form-select form-control" formControlName="paperFormat">
+                                            <option value="A4">A4</option>
+                                            <option value="A5">A5</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="o_group">
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Canh lề trên
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <input class="form-control" type="number" formControlName="topMargin" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Canh lề dưới
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <input class="form-control" type="number" formControlName="bottomMargin" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Canh lề trái
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <input class="form-control" type="number" formControlName="leftMargin" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Canh lề phải
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <input class="form-control" type="number" formControlName="rightMargin" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ResConfigSettingsService } from '../res-config-settings.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { PrintPaperSizeBasic, PrintPaperSizePaged, PrintPaperSizeService } from 'src/app/config-prints/print-paper-size.service';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-res-config-settings-form',
@@ -15,7 +18,10 @@ import { IntlService } from '@progress/kendo-angular-intl';
 })
 export class ResConfigSettingsFormComponent implements OnInit {
   formGroup: FormGroup;
-  constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService,
+  filterdPaperSizes: PrintPaperSizeBasic[] = [];
+  
+  @ViewChild('papersizeCbx', { static: true }) papersizeCbx: ComboBoxComponent;
+  constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService, private printPaperSizeService: PrintPaperSizeService,
     private authService: AuthService, private notificationService: NotificationService, private intlService: IntlService) {
   }
 
@@ -35,7 +41,9 @@ export class ResConfigSettingsFormComponent implements OnInit {
       tCareRunAtObj: new Date(2000, 2, 10, 0, 0, 0),
       groupMedicine: false,
       groupSurvey: false,
+      printPaperSize: null,
     });
+
 
     this.configSettingsService.defaultGet().subscribe((result: any) => {
       this.formGroup.patchValue(result);
@@ -43,7 +51,14 @@ export class ResConfigSettingsFormComponent implements OnInit {
         var tCareRunAt = new Date(result.tCareRunAt);
         this.formGroup.get('tCareRunAtObj').patchValue(tCareRunAt);
       }
+      debugger
+      if(result.printPaperSize)
+      {
+        this.filterdPaperSizes = _.unionBy(this.filterdPaperSizes, result.printPaperSize, "id");
+      }
+      
     });
+    this.loadPaperSizes();
   }
 
   onChangeCompanyShareProduct() {
@@ -53,9 +68,22 @@ export class ResConfigSettingsFormComponent implements OnInit {
     }
   }
 
+  loadPaperSizes() {
+    this.searchPaperSizes().subscribe((result) => {
+      this.filterdPaperSizes = _.unionBy(this.filterdPaperSizes, result.items, "id");
+    });
+  }
+
+  searchPaperSizes(q?: string) {
+    var val = new PrintPaperSizePaged();
+    val.search = q || '';  
+    return this.printPaperSizeService.getPaged(val);
+  }
+
   onSave() {
     var val = this.formGroup.value;
     val.tCareRunAt = val.tCareRunAtObj ? this.intlService.formatDate(val.tCareRunAtObj, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.paperSizeId = val.printPaperSize ? val.printPaperSize.id : null;
     if (val.groupServiceCard) {
       this.configSettingsService.insertServiceCardData().subscribe(() => {
         this.configSettingsService.create(val).subscribe(result => {

@@ -1750,6 +1750,49 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Companies");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ConfigPrint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsInfoCompany")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PaperSizeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("PaperSizeId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("ConfigPrints");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.DotKham", b =>
                 {
                     b.Property<Guid>("Id")
@@ -5135,6 +5178,56 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("PhieuThuChis");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.PrintPaperSize", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BottomMargin")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LeftMargin")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaperFormat")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RightMargin")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TopMargin")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("PrintPaperSizes");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
@@ -6200,6 +6293,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("LoyaltyPointExchangeRate")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid?>("PaperSizeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool?>("ProductListpriceRestrictCompany")
                         .HasColumnType("bit");
 
@@ -6214,6 +6310,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("PaperSizeId");
 
                     b.HasIndex("WriteById");
 
@@ -10539,6 +10637,27 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ConfigPrint", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.PrintPaperSize", "PrintPaperSize")
+                        .WithMany()
+                        .HasForeignKey("PaperSizeId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.DotKham", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.AccountInvoice", null)
@@ -11859,6 +11978,23 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.PrintPaperSize", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Product", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ProductCategory", "Categ")
@@ -12329,6 +12465,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.PrintPaperSize", "PrintPaperSize")
+                        .WithMany()
+                        .HasForeignKey("PaperSizeId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

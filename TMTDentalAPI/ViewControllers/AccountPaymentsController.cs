@@ -4,25 +4,35 @@ using System.Linq;
 using System.Threading.Tasks;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.ViewControllers
 {
     public class AccountPaymentsController : Controller
     {
         private readonly IAccountPaymentService _accountPaymentService;
+        private readonly IViewToStringRenderService _viewToStringRenderService;
 
-        public AccountPaymentsController(IAccountPaymentService accountPaymentService)
+        public AccountPaymentsController(IAccountPaymentService accountPaymentService, IViewToStringRenderService viewToStringRenderService)
         {
             _accountPaymentService = accountPaymentService;
+            _viewToStringRenderService = viewToStringRenderService;
         }
 
+        [CheckAccess(Actions = "Basic.AccountPayment.Read")]
+        [PrinterNameFilterAttribute(Name = "PaymentPaperFormat")]
         public async Task<IActionResult> Print(Guid id)
         {
-            var accountPayment = await _accountPaymentService.GetPrint(id);
-            if (accountPayment == null)
-                return NotFound();
+            var res = await _accountPaymentService.GetPrint(id);
+            string html;
+            var viewdata = ViewData["ConfigPrint"] as ConfigPrintDisplay;
+            if (res.PartnerType == "customer")
+                html =  await _viewToStringRenderService.RenderViewAsync("AccountPayments/Print", res, viewdata);
+            else
+                html = await _viewToStringRenderService.RenderViewAsync("PaymentSupplier/Print", res, viewdata);
 
-            return View(accountPayment);
+            return Ok(new PrintData() { html = html });
         }
     }
 }

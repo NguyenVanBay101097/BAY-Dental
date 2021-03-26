@@ -1,45 +1,19 @@
-﻿@model Umbraco.Web.Models.ContentEditing.HrPayslipRunDisplay
+﻿@model Umbraco.Web.Models.ContentEditing.HrPayslipRunPrintVm
+@using Umbraco.Web.Models.ContentEditing;
 
 @{
+    var configPrint = ViewData["ConfigPrint"] as ConfigPrintDisplay;
     Layout = "~/Views/Shared/_PrintLayout.cshtml";
     var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
 }
 
 <style>
 
-    /*  .sheet {
-        margin: 0;
-        overflow: unset;
-        position: relative;
-        box-sizing: border-box;
-    }*/
-
-    body.A4 .sheet {
-        width: 210mm;
-        height: auto;
-    }
 
     .active {
         background-color: #adb5bd;
     }
 
-
-
-    .logo {
-        text-align: center;
-        vertical-align: middle;
-        height: 100%;
-        display: flex;
-        flex-flow: column;
-        justify-content: center;
-    }
-
-    .logo-image {
-        max-width: 150px;
-        height: auto;
-        margin: auto;
-        vertical-align: middle;
-    }
 </style>
 
 
@@ -49,21 +23,35 @@
     foreach (var slip in Model.Slips)
     {
         <div class="page-break overflow-auto">
-            <div class="mb-2">
-                <div class="d-flex border border-secondary">
-                    <div class="col-4 border-right border-secondary">
-                        <div class="logo">
-                            <img class="logo-image" src="@Model.Company.Logo" alt="">
-                        </div>
-
-                    </div>
-                    <div class="col-8">
-                        <div class="title" style="text-align: center; padding: 15px;">
-                            <div class="text-2xl font-semibold">PHIẾU THANH TOÁN LƯƠNG NHÂN VIÊN</div>
-                            <div class="text-lg font-semibold">@(Model.Date.HasValue ? Model.Date.Value.ToString("MM/yyyy") : "")</div>
-                        </div>
+            @if (!configPrint.IsInfoCompany)
+            {
+                <div class="d-flex mb-2">
+                    @if (!string.IsNullOrEmpty(Model.Company.Logo))
+                    {
+                        <img class="img-fluid me-3" style="width: 150px;" src="@Model.Company.Logo" alt="@Model.Company.Name">
+                    }
+                    <div>
+                        <div class="text-xl font-semibold">@Model.Company.Name</div>
+                        @if (!string.IsNullOrEmpty(Model.Company.Address))
+                        {
+                            <div>Địa chỉ: @Model.Company.Address</div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Company.Phone))
+                        {
+                            <div>ĐT: @Model.Company.Phone</div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Company.Email))
+                        {
+                            <div>Email: @Model.Company.Email</div>
+                        }
                     </div>
                 </div>
+            }
+
+            <div class="text-center mb-3">
+                <div class="text-3xl font-semibold">PHIẾU THANH TOÁN LƯƠNG NHÂN VIÊN</div>
+                <div>Ngày @Model.Date.Value.Day tháng @Model.Date.Value.Month năm @Model.Date.Value.Year </div>
+                @*<div class="font-semibold">Số: @Model.Name</div>*@
             </div>
 
             <div class="o_form_view mb-2">
@@ -227,7 +215,7 @@
                         <span></span> <br />
                         <span></span> <br />
                         <span></span> <br />
-                        <span class="font-semibold">@(Model.User != null ? Model.User.Name.ToUpper() : "")</span>
+                        <span class="font-semibold">@(Model.UserName != null ? Model.UserName.ToUpper() : "")</span>
                     </div>
                 </div>
                 <div class="col">

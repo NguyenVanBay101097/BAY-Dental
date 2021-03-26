@@ -1,31 +1,39 @@
 ﻿@model Umbraco.Web.Models.ContentEditing.SaleOrderPrintVM
+@using Umbraco.Web.Models.ContentEditing;
 @{
-    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+    var configPrint = ViewData["ConfigPrint"] as ConfigPrintDisplay;
     var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+
+
 }
 
 <div class="">
-    <div class="d-flex mb-2">
-        @if (!string.IsNullOrEmpty(Model.Company.Logo))
-        {
-            <img class="img-fluid me-3" style="width: 150px;" src="@Model.Company.Logo" alt="@Model.Company.Name">
-        }
-        <div>
-            <div class="text-xl font-semibold">@Model.Company.Name</div>
-            @if (!string.IsNullOrEmpty(Model.Company.Address))
+    @if (!configPrint.IsInfoCompany)
+    {
+        <div class="d-flex mb-2">
+            @if (!string.IsNullOrEmpty(Model.Company.Logo))
             {
-                <div>Địa chỉ: @Model.Company.Address</div>
+                <img class="img-fluid me-3" style="width: 150px;" src="@Model.Company.Logo" alt="@Model.Company.Name">
             }
-            @if (!string.IsNullOrEmpty(Model.Company.Phone))
-            {
-                <div>ĐT: @Model.Company.Phone</div>
-            }
-            @if (!string.IsNullOrEmpty(Model.Company.Email))
-            {
-                <div>Email: @Model.Company.Email</div>
-            }
+            <div>
+                <div class="text-xl font-semibold">@Model.Company.Name</div>
+                @if (!string.IsNullOrEmpty(Model.Company.Address))
+                {
+                    <div>Địa chỉ: @Model.Company.Address</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Company.Phone))
+                {
+                    <div>ĐT: @Model.Company.Phone</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Company.Email))
+                {
+                    <div>Email: @Model.Company.Email</div>
+                }
+            </div>
         </div>
-    </div>
+    }
+
     <div class="text-center">
         <div class="text-3xl font-semibold">HỒ SƠ ĐIỀU TRỊ</div>
         <div>Ngày @Model.DateOrder.Day tháng @Model.DateOrder.Month năm @Model.DateOrder.Year </div>
@@ -214,8 +222,8 @@
                                     <td class="align-middle" style="vertical-align: top" rowspan="@dotkham.Lines.Count()">@dotkham.Reason</td>
                                 }
 
-                                <td  style="vertical-align: top">@line.Product.Name</td>
-                                <td  style="vertical-align: top">@line.NameStep</td>
+                                <td style="vertical-align: top">@line.Product.Name</td>
+                                <td style="vertical-align: top">@line.NameStep</td>
                                 <td class="text-left" style="vertical-align: top">
                                     <span>@String.Join(", ", line.Teeth.Select(x => x.Name).ToArray())</span>
                                     <p>@line.Note</p>

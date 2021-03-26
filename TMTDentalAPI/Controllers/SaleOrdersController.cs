@@ -29,11 +29,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IProductPricelistService _pricelistService;
         private readonly ISaleOrderLineService _saleLineService;
         private readonly IViewRenderService _viewRenderService;
+        private readonly IViewToStringRenderService _viewToStringRenderService;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService,
             ICardCardService cardService, IProductPricelistService pricelistService,
-            ISaleOrderLineService saleLineService, IViewRenderService viewRenderService)
+            ISaleOrderLineService saleLineService, IViewRenderService viewRenderService,
+            IViewToStringRenderService viewToStringRenderService)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
@@ -43,6 +45,7 @@ namespace TMTDentalAPI.Controllers
             _pricelistService = pricelistService;
             _saleLineService = saleLineService;
             _viewRenderService = viewRenderService;
+            _viewToStringRenderService = viewToStringRenderService;
         }
 
         [HttpGet]
@@ -420,6 +423,7 @@ namespace TMTDentalAPI.Controllers
             if (phieu == null)
                 return NotFound();
 
+            //var html = await _viewToStringRenderService.RenderViewAsync("SaleOrder/Print", phieu);
             var html = _viewRenderService.Render("SaleOrder/Print", phieu);
 
             return Ok(new PrintData() { html = html });

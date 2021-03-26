@@ -64,6 +64,7 @@ export class AccountPaymentSupplierDefaultGetRequest {
 @Injectable({ providedIn: 'root' })
 export class AccountPaymentService {
     apiUrl = 'api/AccountPayments';
+    apiPrintUrl = 'AccountPayments';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<PagedResult2<AccountPaymentBasic>> {
@@ -122,8 +123,12 @@ export class AccountPaymentService {
         return this.http.post(this.baseApi + this.apiUrl + '/Post', ids);
     }
 
+    // getPrint(id: string) {
+    //     return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint');
+    // }
+
     getPrint(id: string) {
-        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint');
+        return this.http.get(this.baseApi + this.apiPrintUrl +  '/Print' + '/' + id);
     }
 
     supplierDefaultGet(val: AccountPaymentSupplierDefaultGetRequest) {

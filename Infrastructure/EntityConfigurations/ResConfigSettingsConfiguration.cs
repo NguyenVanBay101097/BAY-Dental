@@ -11,6 +11,10 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<ResConfigSettings> builder)
         {
+            builder.HasOne(x => x.PrintPaperSize)
+                .WithMany()
+                .HasForeignKey(x => x.PaperSizeId);
+
             builder.HasOne(x => x.Company)
                 .WithMany()
                 .HasForeignKey(x => x.CompanyId)

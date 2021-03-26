@@ -16,6 +16,7 @@ namespace TMTDentalAPI.ViewControllers
             _toaThuocService = toaThuocService;
         }
 
+
         public async Task<IActionResult> Print(Guid id)
         {
             var res = await _toaThuocService.GetToaThuocPrint(id);

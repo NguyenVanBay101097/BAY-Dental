@@ -62,6 +62,7 @@ export class HrPaysliprunService {
 
   constructor(private http: HttpClient, @Inject("BASE_API") private base_api: string) { }
   apiUrl = "api/HrPayslipRuns";
+  apiPrintUrl = "SalaryEmployee";
 
   getPaged(val): Observable<HrPayslipRunPaging> {
     return this.http.get<HrPayslipRunPaging>(this.base_api + this.apiUrl, { params: val });
@@ -111,8 +112,13 @@ export class HrPaysliprunService {
     return this.http.post(this.base_api + this.apiUrl + '/CheckExist?date=' + d.toISOString(), null);
   }
 
-  printAllEmpSalary(id: string, val: any) {
-    return this.http.put(this.base_api + this.apiUrl + `/${id}/Print`, val);
+  // printAllEmpSalary(id: string, val: any) {
+  //   return this.http.put(this.base_api + this.apiUrl + `/${id}/Print`, val);
+  // }
+
+  printAllEmpSalary(id: string, val : any ) {
+    debugger
+    return this.http.put(this.base_api + this.apiPrintUrl + '/Print' + '/' + id, val);
   }
 
   ExportExcelFile(payslipIds: string[]) {

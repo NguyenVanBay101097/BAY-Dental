@@ -54,6 +54,7 @@ export class SaleOrderToSurveyFilter {
 @Injectable({ providedIn: 'root' })
 export class SaleOrderService {
     apiUrl = 'api/SaleOrders';
+    apiUrlPrint = "SaleOrder";
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<PagedResult2<SaleOrderBasic>> {
@@ -161,7 +162,7 @@ export class SaleOrderService {
     }
 
     printSaleOrder(id: string){
-        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrintSaleOrder');
+        return this.http.get(this.baseApi + this.apiUrlPrint + '/Print' + '/' + id );
     }
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {
