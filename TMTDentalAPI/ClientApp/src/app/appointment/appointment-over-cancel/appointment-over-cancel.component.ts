@@ -115,6 +115,7 @@ export class AppointmentOverCancelComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
+      console.log(res);
       this.loading = false;
       console.log(res);
 
