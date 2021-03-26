@@ -21,7 +21,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
         public Guid? SaleOrderId { get; set; }
         public Guid? SaleOrderLineId { get; set; }
-
+        public Guid? CustomerId { get; set; }
     }
 
     public class OrderLaboPaged

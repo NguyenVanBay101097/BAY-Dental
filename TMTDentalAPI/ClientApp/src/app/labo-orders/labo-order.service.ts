@@ -23,6 +23,7 @@ export class LaboOrderPaged {
     state: string;
     saleOrderId: string;
     saleOrderLineId: string;
+    customerId: string;
 }
 
 export class LaboOrderBasic {
