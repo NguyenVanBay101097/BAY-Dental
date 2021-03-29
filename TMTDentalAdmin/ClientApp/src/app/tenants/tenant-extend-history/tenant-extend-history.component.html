@@ -16,6 +16,11 @@
     </kendo-grid-column>
     <kendo-grid-column field="activeCompaniesNbr" class="text-right" title="Số chi nhánh" width="120">
     </kendo-grid-column>
+    <kendo-grid-column field="applyDate" title="Ngày áp dụng thực" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.applyDate | date : 'short'}}
+        </ng-template>
+    </kendo-grid-column>
     <!-- <kendo-grid-column field="id" width="140">
         <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
             Thao tác

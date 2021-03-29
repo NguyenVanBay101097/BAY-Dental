@@ -25,6 +25,7 @@ import { FacebookModule } from 'ngx-facebook';
 import { NoCacheInterceptor } from './http-interceptors/no-cache.interceptor';
 // import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { PartnerGeneralSettingsComponent } from './partner-general-settings/partner-general-settings.component';
 
 
 export function tokenGetter() {
@@ -36,7 +37,8 @@ registerLocaleData(localeVi, "vi");
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    PartnerGeneralSettingsComponent
   ],
   imports: [
     CommonModule,

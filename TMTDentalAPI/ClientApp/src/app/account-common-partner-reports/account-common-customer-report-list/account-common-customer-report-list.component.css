@@ -1,0 +1,8 @@
+.mw-200 {
+    min-width: 200px;
+}
+
+.summary label,
+h5 {
+    margin: 0 !important;
+}

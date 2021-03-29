@@ -26,7 +26,6 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Consultant, x => x.Ignore())
                 .ForMember(x => x.ReferralUser, x => x.Ignore())
                 .ForMember(x => x.Title, x => x.Ignore())
-                .ForMember(x => x.Avatar, x => x.Ignore())
                 .ForMember(x => x.DateCreated, x => x.Ignore())
                 .ForMember(x => x.ZaloId, x => x.Ignore());
 

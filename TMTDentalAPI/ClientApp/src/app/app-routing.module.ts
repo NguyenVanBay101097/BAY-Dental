@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { AuthGuard } from './auth/auth.guard';
+import { PartnerGeneralSettingsComponent } from './partner-general-settings/partner-general-settings.component';
 
 const routes: Routes = [
   {
@@ -54,13 +55,36 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'time-keepings',
-    loadChildren: () => import('./time-keeping/time-keeping.module').then(m => m.TimeKeepingModule),
-    canActivate: [AuthGuard]
+    path: 'partner-settings',
+    component: PartnerGeneralSettingsComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'partner-categories',
+        pathMatch: 'full',
+      },
+      {
+        path: 'partner-categories',
+        loadChildren: () => import('./partner-categories/partner-categories.module').then(m => m.PartnerCategoriesModule)
+      },
+      {
+        path: 'partner-sources',
+        loadChildren: () => import('./partner-sources/partner-sources.module').then(m => m.PartnerSourcesModule)
+      },
+      {
+        path: 'partner-titles',
+        loadChildren: () => import('./partner-titles/partner-titles.module').then(m => m.PartnerTitlesModule)
+      },
+      {
+        path: 'histories',
+        loadChildren: () => import('./history/history.module').then(m => m.HistoryModule)
+      },
+    ]
   },
   {
-    path: 'histories',
-    loadChildren: () => import('./history/history.module').then(m => m.HistoryModule),
+    path: 'time-keepings',
+    loadChildren: () => import('./time-keeping/time-keeping.module').then(m => m.TimeKeepingModule),
     canActivate: [AuthGuard]
   },
   {
@@ -99,23 +123,8 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'partner-categories',
-    loadChildren: () => import('./partner-categories/partner-categories.module').then(m => m.PartnerCategoriesModule),
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'partner-sources',
-    loadChildren: () => import('./partner-sources/partner-sources.module').then(m => m.PartnerSourcesModule),
-    canActivate: [AuthGuard]
-  },
-  {
     path: 'products',
     loadChildren: () => import('./products/products.module').then(m => m.ProductsModule),
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'product-categories',
-    loadChildren: () => import('./product-categories/product-categories.module').then(m => m.ProductCategoriesModule),
     canActivate: [AuthGuard]
   },
   {
@@ -276,10 +285,6 @@ const routes: Routes = [
     path: 'commission-settlements',
     loadChildren: () => import('./commission-settlements/commission-settlements.module').then(m => m.CommissionSettlementsModule),
     canActivate: [AuthGuard]
-  },
-  {
-    path: 'partner-titles',
-    loadChildren: () => import('./partner-titles/partner-titles.module').then(m => m.PartnerTitlesModule)
   },
   {
     path: 'tcare',
