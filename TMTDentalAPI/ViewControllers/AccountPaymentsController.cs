@@ -26,7 +26,8 @@ namespace TMTDentalAPI.ViewControllers
         {
             var res = await _accountPaymentService.GetPrint(id);
             string html;
-            var viewdata = ViewData["ConfigPrint"] as ConfigPrintDisplay;
+            var viewdata = ViewData.ToDictionary(x => x.Key, x => x.Value);
+
             if (res.PartnerType == "customer")
                 html =  await _viewToStringRenderService.RenderViewAsync("AccountPayments/Print", res, viewdata);
             else

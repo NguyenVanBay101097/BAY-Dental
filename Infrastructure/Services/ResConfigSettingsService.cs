@@ -15,7 +15,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class ResConfigSettingsService: BaseService<ResConfigSettings>, IResConfigSettingsService
+    public class ResConfigSettingsService : BaseService<ResConfigSettings>, IResConfigSettingsService
     {
         private readonly ITCareJobService _tcareJobService;
         private readonly IMapper _mapper;
@@ -90,19 +90,20 @@ namespace Infrastructure.Services
                         res.GetType().GetProperty(name).SetValue(res, Guid.Parse(value));
                         if (item.ConfigParameter == "print.paper_size_default")
                         {
-                            var paperSize = await paperSizeObj.SearchQuery(x => x.Id == Guid.Parse(value)).FirstOrDefaultAsync();                        
+                            var paperSize = await paperSizeObj.SearchQuery(x => x.Id == Guid.Parse(value)).FirstOrDefaultAsync();
                             res.GetType().GetProperty("PrintPaperSize").SetValue(res, _mapper.Map<PrintPaperSizeBasic>(paperSize));
                         }
                     }
-                        
+
                 }
             }
 
-         
+
 
             await GetDefaultOtherFields(res, classified.Others);
             return res;
         }
+
 
         private async Task GetDefaultOtherFields<T>(T self, IList<string> fields)
         {
@@ -202,7 +203,7 @@ namespace Infrastructure.Services
             }
 
             var irConfigParameter = GetService<IIrConfigParameterService>();
-            foreach(var item in classified.Configs)
+            foreach (var item in classified.Configs)
             {
                 var field_type = item.FieldType;
                 var value = self.GetType().GetProperty(item.Name).GetValue(self, null);
@@ -213,7 +214,7 @@ namespace Infrastructure.Services
                     valueStr = Convert.ToBoolean(value).ToString();
                 else if (field_type == "datetime")
                     valueStr = Convert.ToDateTime(value).ToString();
-                else if(field_type == "reference")
+                else if (field_type == "reference")
                     valueStr = Convert.ToString(value);
                 await irConfigParameter.SetParam(item.ConfigParameter, valueStr);
             }

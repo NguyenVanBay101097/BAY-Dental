@@ -83,6 +83,7 @@ export class PhieuThuChiDisplay {
 })
 export class PhieuThuChiService {
   apiUrl = 'api/PhieuThuChis';
+  apiPrint = 'PhieuThuChi';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
   getPaged(val: any) {
@@ -121,8 +122,12 @@ export class PhieuThuChiService {
     return this.http.get<PhieuThuChiReport[]>(this.baseApi + this.apiUrl + '/ReportPhieuThuChi', { params: val });
   }
 
+  // getPrint(id: string) {
+  //   return this.http.get(this.baseApi + this.apiUrl+ '/' + id + '/GetPrint');
+  // }
+
   getPrint(id: string) {
-    return this.http.get(this.baseApi + this.apiUrl+ '/' + id + '/GetPrint');
+    return this.http.get(this.baseApi + this.apiPrint+ '/Print' + '/' + id );
   }
 
   exportExcelFile(val: any) {

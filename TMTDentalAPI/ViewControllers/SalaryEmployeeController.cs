@@ -28,7 +28,8 @@ namespace TMTDentalAPI.ViewControllers
             var ids = val.Slips.Where(x => x.IsCheck == true).Select(x => x.Id);
             await _hrPayslipRunService.UpdatePayslipRun(id, val);
             var res = await _hrPayslipRunService.GetHrPayslipRunForPrint(id);
-            var viewdata = ViewData["ConfigPrint"] as ConfigPrintDisplay;
+            var viewdata = ViewData.ToDictionary(x => x.Key, x => x.Value);
+
             if (ids != null && ids.Any())
             {
                 res.Slips = res.Slips.Where(x => ids.Contains(x.Id));

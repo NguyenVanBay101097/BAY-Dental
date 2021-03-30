@@ -110,6 +110,7 @@ export class StockInventoryService {
 
   constructor(private http: HttpClient, @Inject("BASE_API") private base_api: string) { }
   apiUrl = "api/StockInventories";
+  apiPrintUrl = "StockInventory";
 
   getPaged(val): Observable<PrescriptionPaymentPagging> {
     return this.http.get<PrescriptionPaymentPagging>(this.base_api + this.apiUrl, { params: val });
@@ -155,7 +156,11 @@ export class StockInventoryService {
     return this.http.delete(this.base_api + this.apiUrl + "/" + id);
   }
 
+  // getPrint(id: string) {
+  //   return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
+  // }
+
   getPrint(id: string) {
-    return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
+    return this.http.get(this.base_api + this.apiPrintUrl + "/Print" + "/" + id);
   }
 }

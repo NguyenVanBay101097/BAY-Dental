@@ -42,7 +42,7 @@ namespace TMTDentalAPI.ViewControllers
             if (res == null)
                 return NotFound();
 
-            var viewdata = ViewData["ConfigPrint"] as ConfigPrintDisplay;
+            var viewdata = ViewData.ToDictionary(x => x.Key, x => x.Value);
 
             var html = await _viewToStringRenderService.RenderViewAsync("LaboOrder/Print", res, viewdata);
 

@@ -5,18 +5,23 @@ using System.Threading.Tasks;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.ViewControllers
 {
     public class StockPickingController : Controller
     {
         private readonly IStockPickingService _stockPickingService;
+        private readonly IViewToStringRenderService _viewToStringRenderService;
 
-        public StockPickingController(IStockPickingService stockPickingService)
+        public StockPickingController(IStockPickingService stockPickingService, IViewToStringRenderService viewToStringRenderService)
         {
             _stockPickingService = stockPickingService;
+            _viewToStringRenderService = viewToStringRenderService;
         }
 
+        [PrinterNameFilterAttribute(Name = "StockPickingPaperFormat")]
         public async Task<IActionResult> Print(Guid id)
         {
             var res = await _stockPickingService.SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x => x.PickingType)
@@ -31,8 +36,12 @@ namespace TMTDentalAPI.ViewControllers
                 return NotFound();
 
             res.MoveLines = res.MoveLines.OrderBy(x => x.Sequence).ToList();
+            var viewdata = ViewData.ToDictionary(x => x.Key, x => x.Value);
 
-            return View(res);
+            var html = await _viewToStringRenderService.RenderViewAsync("StockPicking/Print", res, viewdata);
+
+            return Ok(new PrintData() { html = html });
+
         }
     }
 }

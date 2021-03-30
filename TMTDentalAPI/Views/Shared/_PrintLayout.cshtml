@@ -2,6 +2,7 @@
 
 @{
     var config = ViewData["ConfigPrint"] as ConfigPrintDisplay;
+    var paperDefault = ViewData["PrintPaperSizeDefault"] as PrintPaperSizeDisplay;
 }
 
 <!DOCTYPE html>
@@ -18,8 +19,11 @@
     <link rel="stylesheet" type="text/css" href="/css/print.css" />
     <style>
         @@page {
-            size: @config.PrintPaperSize.PaperFormat !important;
-            margin: @(config.PrintPaperSize.TopMargin + "mm")  @(config.PrintPaperSize.RightMargin + "mm")  @(config.PrintPaperSize.BottomMargin + "mm") @(config.PrintPaperSize.LeftMargin + "mm") ;
+            size: @(config.PrintPaperSize != null ? config.PrintPaperSize.PaperFormat : paperDefault.PaperFormat) !important;
+            margin-top: @((config.PrintPaperSize != null ? config.PrintPaperSize.TopMargin : paperDefault.TopMargin) + "mm") ;
+            margin-right: @((config.PrintPaperSize != null ? config.PrintPaperSize.RightMargin : paperDefault.RightMargin) + "mm");
+            margin-bottom: @((config.PrintPaperSize != null ? config.PrintPaperSize.BottomMargin : paperDefault.BottomMargin)  + "mm");
+            margin-left:@((config.PrintPaperSize != null ? config.PrintPaperSize.LeftMargin : paperDefault.LeftMargin) + "mm") ;
         }
 
     </style>

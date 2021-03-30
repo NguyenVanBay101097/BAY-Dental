@@ -42,7 +42,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<string> RenderViewAsync<TModel>(string viewName, TModel model , ConfigPrintDisplay viewdata)
+        public async Task<string> RenderViewAsync<TModel>(string viewName, TModel model, IDictionary<string, object> viewdata)
         {
             //If you wish to use the route data in the generated view (e.g. use 
             //the Url helper to construct dynamic links)
@@ -54,23 +54,23 @@ namespace Infrastructure.Services
 
             using (var output = new StringWriter())
             {
+                
+                var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                {
+                    Model = model
+                };
+
+                foreach (var data in viewdata)
+                    viewDictionary.Add(data.Key, data.Value);
+
                 var viewContext = new ViewContext(
                     actionContext,
                     view,
-                    new ViewDataDictionary<TModel>(
-                        metadataProvider: new EmptyModelMetadataProvider() ,
-                        modelState: new ModelStateDictionary())
-                    {
-                        Model = model,
-                        
-                    },
-                    new TempDataDictionary(
-                        actionContext.HttpContext,
-                        _tempDataProvider),
+                    viewDictionary,
+                    new TempDataDictionary(actionContext.HttpContext, _tempDataProvider),
                     output,
-                    new HtmlHelperOptions());
-
-                viewContext.ViewData["ConfigPrint"] = viewdata;
+                    new HtmlHelperOptions()
+                );
 
                 await view.RenderAsync(viewContext);
 

@@ -139,6 +139,7 @@ export class ToaThuocPaging {
 @Injectable({ providedIn: 'root' })
 export class ToaThuocService {
     apiUrl = 'api/toathuocs';
+    apiPrintUrl = 'ToaThuoc';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     defaultGet(val: ToaThuocDefaultGet): Observable<ToaThuocDisplay> {
@@ -173,8 +174,12 @@ export class ToaThuocService {
         return this.http.post(this.baseApi + this.apiUrl + `/${id}/ActionConfirm`, null);
     }
 
+    // getPrint(id: string) {
+    //     return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
+    // }
+
     getPrint(id: string) {
-        return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
+        return this.http.get(this.baseApi + this.apiPrintUrl + '/Print' + `/${id}`);
     }
 
     getFromUI(id): Observable<ToaThuocDisplay> {
