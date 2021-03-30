@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20210330094019_AddQuotationModule")]
+    [Migration("20210330105502_AddQuotationModule")]
     partial class AddQuotationModule
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -6234,6 +6234,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("Qty")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("QuotationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("ToothCategoryId")
                         .HasColumnType("uniqueidentifier");
 
@@ -6249,6 +6252,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("DoctorId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("QuotationId");
 
                     b.HasIndex("ToothCategoryId");
 
@@ -12525,6 +12530,12 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.Quotation", "Quotation")
+                        .WithMany("Lines")
+                        .HasForeignKey("QuotationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
