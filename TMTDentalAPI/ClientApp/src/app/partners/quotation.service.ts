@@ -16,6 +16,6 @@ export class QuotationService {
   apiUrl = 'api/';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
   getPaged(val: any): Observable<PagedResult2<QuotationBasic>> {
-    return this.http.get<PagedResult2<QuotationBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
+    return this.http.get<PagedResult2<QuotationBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams(val) });
   }
 }
