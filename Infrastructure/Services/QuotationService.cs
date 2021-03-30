@@ -25,9 +25,9 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public Task<IEnumerable<QuotationDisplay>> GetDisplay(Guid id)
+        public async Task<IEnumerable<QuotationDisplay>> GetDisplay(Guid id)
         {
-            var model = SearchQuery(x => x.Id == id)
+            var model = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
                 .Include(x => x.User)
                 .Include(x => x.Lines).ToListAsync();
