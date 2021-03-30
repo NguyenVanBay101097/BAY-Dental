@@ -48,5 +48,6 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? TotalAmount { get; set; }
 
+        public ICollection<QuotationLine> Lines { get; set; } = new List<QuotationLine>();
     }
 }
