@@ -25,5 +25,7 @@ namespace ApplicationCore.Entities
         public string Position { get; set; }
 
         public ICollection<SaleOrderLineToothRel> SaleLineToothRels { get; set; } = new List<SaleOrderLineToothRel>();
+
+        public ICollection<AdvisoryToothRel> AdvisoryToothRels { get; set; } = new List<AdvisoryToothRel>();
     }
 }
