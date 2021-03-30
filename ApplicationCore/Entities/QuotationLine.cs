@@ -54,7 +54,7 @@ namespace ApplicationCore.Entities
 
         public ICollection<QuotationLineToothRel> QuotationLineToothRels { get; set; } = new List<QuotationLineToothRel>();
 
-        public Quotation Quotation { get; set; }
         public Guid QuotationId { get; set; }
+        public Quotation Quotation { get; set; }
     }
 }

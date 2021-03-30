@@ -36,7 +36,7 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.ToothCategoryId);
 
             builder.HasOne(x => x.Quotation)
-                .WithMany(x => x.Lines)
+                .WithMany(x=>x.Lines)
                 .HasForeignKey(x => x.QuotationId);
         }
     }

@@ -70,6 +70,10 @@
     <Compile Remove="Data\Migrations\20210330091421_AddQuotationModule.Designer.cs" />
     <Compile Remove="Data\Migrations\20210330091922_AddQuotationModule.cs" />
     <Compile Remove="Data\Migrations\20210330091922_AddQuotationModule.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210330094019_AddQuotationModule.cs" />
+    <Compile Remove="Data\Migrations\20210330094019_AddQuotationModule.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210330105312_AddQuotationModule.cs" />
+    <Compile Remove="Data\Migrations\20210330105312_AddQuotationModule.Designer.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.Designer.cs" />
     <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.cs" />

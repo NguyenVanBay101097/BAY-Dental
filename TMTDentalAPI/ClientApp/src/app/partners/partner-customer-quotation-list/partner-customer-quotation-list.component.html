@@ -1,0 +1,82 @@
+<div class="px-3 py-3 bg-white">
+    <div class="mb-2">
+        <div class="o_cp_controller">
+            <div class="o_control_panel">
+                <div class="breadcrumb">
+                    <div class="d-flex">
+                        <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                        </app-tai-date-range-filter-dropdown>
+                        <button type="button" (click)="createItem()" class="ml-2 btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Thêm báo giá</button>
+                    </div>
+                </div>
+                <div class="o_cp_searchview">
+                    <div class="o_searchview">
+                        <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu điều trị" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    </div>
+                </div>
+                <div class="o_cp_left">
+                    <div class="o_cp_buttons">
+        
+                    </div>
+                    <div class="o_cp_sidebar">
+                    </div>
+                </div>
+                <div class="o_cp_right">
+        
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="o_content">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+                <!-- <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column> -->
+                <kendo-grid-column field="name" title="Số báo giá" width="100">
+                    <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <a class="text-primary" [routerLink]="['/sale-quotations/form']" [queryParams]="{ id: dataItem.id}">
+                            {{dataItem.name}}
+                        </a>
+                    </ng-template> -->
+                </kendo-grid-column>
+                <kendo-grid-column field="dateOrder" title="Ngày báo giá" width="120">
+                    <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.dateOrder | date : 'short'}}
+                    </ng-template> -->
+                </kendo-grid-column>
+                <kendo-grid-column field="dateOrder" title="Ngày hết hạn" width="120">
+                    <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.dateOrder | date : 'short'}}
+                    </ng-template> -->
+                </kendo-grid-column>
+                <kendo-grid-column field="userName" title="Người báo giá" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right" width="120">
+                    <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.amountTotal | number}}
+                    </ng-template> -->
+                </kendo-grid-column>
+                <kendo-grid-column field="" title="Phiếu điều trị" class="text-right" width="120">
+                    <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.amountTotal | number}}
+                    </ng-template> -->
+                </kendo-grid-column>
+                <kendo-grid-column field="state" title="Tình trạng" width="100">
+                    <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    </ng-template> -->
+                </kendo-grid-column>
+                <kendo-grid-column field="id" width="100">
+                    <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                        Thao tác
+                    </ng-template>
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                            <span class="far fa-edit"></span></button>
+                        <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                            <span class="far fa-trash-alt"></span></button>
+                    </ng-template>
+                </kendo-grid-column>
+            </kendo-grid>
+        </div>
+    </div>
+</div>
