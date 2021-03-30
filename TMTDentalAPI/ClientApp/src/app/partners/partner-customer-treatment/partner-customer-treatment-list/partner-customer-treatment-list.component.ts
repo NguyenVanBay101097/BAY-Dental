@@ -89,6 +89,10 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
     )
   }
 
+  viewSaleOrder(id){
+    this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
+  }
+
   pageChange(event){
     this.skip = event.skip;
     this.getSaleOrders();
