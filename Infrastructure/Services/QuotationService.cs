@@ -25,12 +25,13 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public Task<QuotationDisplay> GetDisplay(Guid id)
+        public Task<IEnumerable<QuotationDisplay>> GetDisplay(Guid id)
         {
-            //var model = SearchQuery(x=>x.Id == id)
-            //    .Include(x=>x.Partner)
-            //    .Include(x=>x.User)
-            return null;
+            var model = SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .Include(x => x.User)
+                .Include(x => x.Lines).ToListAsync();
+            return _mapper.Map<IEnumerable<QuotationDisplay>>(model);
         }
 
         public async Task<PagedResult2<QuotationBasic>> GetPagedResultAsync(QuotationPaged val)
