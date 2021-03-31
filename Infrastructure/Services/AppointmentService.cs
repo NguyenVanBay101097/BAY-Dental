@@ -447,7 +447,7 @@ namespace Infrastructure.Services
             foreach (var item in data)
             {
                 worksheet.Cells[row, 1].Value = item.PartnerDisplayName;
-                worksheet.Cells[row, 2].Value = (item.Date.HasValue ? item.Date.Value.ToShortDateString() + ", " : "") + item.Time;
+                worksheet.Cells[row, 2].Value = (item.Date.HasValue ? item.Date.Value.ToString("dd/MM/yyyy") + ", " : "") + item.Time;
                 worksheet.Cells[row, 3].Value = string.Join(", ", item.Services.Select(x => x.Name));
                 worksheet.Cells[row, 4].Value = item.DoctorName;
                 worksheet.Cells[row, 5].Value = !string.IsNullOrEmpty(item.State) && stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";

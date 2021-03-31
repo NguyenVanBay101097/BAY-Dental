@@ -44,18 +44,35 @@
             <div class="o_cp_left o_cp_left_custom">
                 <div class="o_cp_buttons">
                     <div class="o_form_buttons_view">
-                        <div class="state-filter-wrapper">
-                            <button type="button" class="btn btn-sm btn-primary mr-2"
+                        <div class="state-filter-wrapper d-flex">
+                            <div class="btn-group-sm btn-group-toggle" data-toggle="buttons">
+                                <label class="btn-sm btn btn-outline-primary active mr-2" (click)="setStateFilter('all')">
+                                    <input type="radio" checked autocomplete="off">Tất
+                                    cả<span class="badge badge-light ml-2 bg-white">{{stateCount['all'] || 0}}</span>
+                                </label>
+                                <label class="btn-sm btn btn-outline-primary mr-2"
+                                    (click)="setStateFilter('confirmed')">
+                                    <input type="radio" checked autocomplete="off">Quá hạn<span
+                                        class="badge badge-light ml-2 bg-white">{{stateCount['confirmed'] || 0}}</span>
+                                </label>
+                                <label class="btn-sm btn btn-outline-danger" (click)="setStateFilter('cancel')">
+                                    <input type="radio" checked autocomplete="off">Hủy
+                                    hẹn<span class="badge badge-light  ml-2 bg-white">{{stateCount['cancel'] ||
+                                        0}}</span>
+                                </label>
+                            </div>
+                            <!-- <button type="button" class="btn btn-sm btn-outline-primary mr-2"
                                 (click)="setStateFilter('all')">Tất
                                 cả<span class="badge badge-light ml-2 bg-white">{{stateCount['all'] || 0}}</span>
                             </button>
-                            <button type="button" class="btn btn-sm btn-primary mr-2"
+                                <button type="button" class="btn btn-sm btn-outline-primary mr-2"
                                 (click)="setStateFilter('confirmed')">Quá hạn<span
                                     class="badge badge-light ml-2 bg-white">{{stateCount['confirmed'] || 0}}</span>
                             </button>
-                            <button type="button" class="btn btn-sm btn-danger" (click)="setStateFilter('cancel')">Hủy
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                (click)="setStateFilter('cancel')">Hủy
                                 hẹn<span class="badge badge-light  ml-2 bg-white">{{stateCount['cancel'] || 0}}</span>
-                            </button>
+                            </button> -->
                         </div>
                     </div>
                 </div>
@@ -84,7 +101,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Thời gian hẹn" width="170">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <label *ngIf="dataItem.time!=''">{{dataItem.time}}, <label *ngIf="dataItem.date"> {{dataItem.date |
+                <label class="mb-0" *ngIf="dataItem.time!=''">{{dataItem.time}}, <label class="mb-0" *ngIf="dataItem.date"> {{dataItem.date |
                         date:'shortDate'}}</label></label>
 
             </ng-template>
