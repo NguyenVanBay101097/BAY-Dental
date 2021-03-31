@@ -25,15 +25,14 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-
-
-        public async Task<IEnumerable<QuotationDisplay>> GetDisplay(Guid id)
+        public async Task<QuotationDisplay> GetDisplay(Guid id)
         {
             var model = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
                 .Include(x => x.User)
-                .Include(x => x.Lines).ToListAsync();
-            return _mapper.Map<IEnumerable<QuotationDisplay>>(model);
+                .Include(x => x.Payments)
+                .Include(x => x.Lines).FirstOrDefaultAsync();
+            return _mapper.Map<QuotationDisplay>(model);
         }
 
         public async Task<QuotationDisplay> GetDefault(Guid partnerId)
@@ -78,11 +77,46 @@ namespace Infrastructure.Services
 
         public async Task UpdateAsync(Guid id, QuotationSave val)
         {
-            var quotation = await SearchQuery(x => x.Id == id).Include(x => x.Lines).FirstOrDefaultAsync();
+            var quotation = await SearchQuery(x => x.Id == id).Include(x => x.Lines).Include(x => x.Payments).FirstOrDefaultAsync();
             _mapper.Map(val, quotation);
             await ComputeQuotationLine(val, quotation);
+            await ComputePaymentQuotation(val, quotation);
             await ComputeAmountAll(quotation);
             await UpdateAsync(quotation);
+        }
+
+        public async Task ComputePaymentQuotation(QuotationSave val, Quotation quotation)
+        {
+            var listAdd = new List<PaymentQuotation>();
+            var listRemove = new List<PaymentQuotation>();
+            var listUpdate = new List<PaymentQuotation>();
+            var paymentQuotationObj = GetService<IPaymentQuotationService>();
+            foreach (var line in quotation.Payments)
+            {
+                if (!val.PaymentQuotations.Any(x => x.Id == line.Id))
+                {
+                    listRemove.Add(line);
+                }
+            }
+
+            foreach (var payment in val.PaymentQuotations)
+            {
+                if (payment.Id == Guid.Empty)
+                {
+                    var payQuot = _mapper.Map<PaymentQuotation>(payment);
+                    listAdd.Add(payQuot);
+                }
+                else
+                {
+                    var payQuot = await paymentQuotationObj.SearchQuery(x => x.Id == payment.Id).FirstOrDefaultAsync();
+                    _mapper.Map(payment, payQuot);
+                    listUpdate.Add(payQuot);
+                }
+            }
+            await paymentQuotationObj.CreateAsync(listAdd);
+            await paymentQuotationObj.UpdateAsync(listUpdate);
+            await paymentQuotationObj.DeleteAsync(listRemove);
+
         }
 
         public async Task ComputeQuotationLine(QuotationSave val, Quotation quotation)
@@ -177,9 +211,22 @@ namespace Infrastructure.Services
                 }
                 lines.Add(quoLine);
             }
+
+            if (val.PaymentQuotations.Any())
+            {
+                var paymentQuotationObj = GetService<IPaymentQuotationService>();
+                var payments = _mapper.Map<IEnumerable<PaymentQuotation>>(val.PaymentQuotations);
+                foreach (var item in payments)
+                {
+                    item.QuotationId = quotation.Id;
+                }
+                payments = await paymentQuotationObj.CreateAsync(payments);
+                quotation.Payments = (ICollection<PaymentQuotation>)payments;
+            }
+
             var quotationLineService = GetService<IQuotationLineService>();
             await quotationLineService.CreateAsync(lines);
-            ComputeAmountAll(quotation);
+            await ComputeAmountAll(quotation);
             await UpdateAsync(quotation);
             return _mapper.Map<QuotationBasic>(quotation);
         }

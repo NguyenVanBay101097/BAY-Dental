@@ -53,6 +53,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// trạng thái
         /// </summary>
         public string State { get; set; }
+
+        /// <summary>
+        /// Danh sách thanh toán
+        /// </summary>
+        public IEnumerable<PaymentQuotationBasic> Payments { get; set; } = new List<PaymentQuotationBasic>();
     }
 
     public class QuotationDisplay
@@ -100,7 +105,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? TotalAmount { get; set; }
 
-        //public IEnumerable<QuotationLine> MyProperty { get; set; }
+        public IEnumerable<QuotationLineDisplay> Lines { get; set; } = new List<QuotationLineDisplay>();
+        public IEnumerable<PaymentQuotationBasic> Payments { get; set; } = new List<PaymentQuotationBasic>();
     }
 
     public class QuotationSave
@@ -137,6 +143,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
 
         public IEnumerable<QuotationLineSave> QuotationLines { get; set; } = new List<QuotationLineSave>();
+
+        public IEnumerable<PaymentQuotationSave> PaymentQuotations { get; set; } = new List<PaymentQuotationSave>();
+
     }
 
     public class QuotationPaged
