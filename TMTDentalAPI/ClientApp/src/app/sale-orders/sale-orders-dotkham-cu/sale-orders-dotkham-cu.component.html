@@ -49,6 +49,18 @@
                                 </div>
                             </td>
                         </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label b_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Phụ tá
+                                </label>
+                            </td>
+                            <td colspan="1" class="b-td-value" style="width: 100%;">
+                                <kendo-combobox [hidden]="!editModeActive" formControlName="Assistant" [data]="assList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #assCbx placeholder="Chọn phụ tá...">
+                                </kendo-combobox>
+                                <span *ngIf="!editModeActive">{{assistant?.Name}}</span>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

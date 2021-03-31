@@ -587,7 +587,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
         modalRef.componentInstance.id = item.id;
       }
       else {
-        modalRef.componentInstance.title = 'Tạo phiếu labo';
+        modalRef.componentInstance.title = 'Tạo phiếu Labo';
       }
 
       modalRef.componentInstance.saleOrderId = this.id;

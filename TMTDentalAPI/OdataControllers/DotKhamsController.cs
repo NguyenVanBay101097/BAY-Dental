@@ -80,6 +80,11 @@ namespace TMTDentalAPI.OdataControllers
                     Id = x.Doctor.Id,
                     Name = x.Doctor.Name
                 } : null,
+                Assistant = x.Assistant != null ? new EmployeeSimple
+                {
+                    Id = x.Assistant.Id,
+                    Name = x.Assistant.Name
+                } : null,
                 Id = x.Id,
                 Sequence = x.Sequence,
                 Reason = x.Reason,
