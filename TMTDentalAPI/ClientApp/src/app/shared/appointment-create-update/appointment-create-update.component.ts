@@ -39,6 +39,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   appointId: string;
   timeExpecteds: any[] = [
     {
+      name: '0 phút', value: 0
+    },
+    {
       name: '30 phút', value: 30
     },
     {
