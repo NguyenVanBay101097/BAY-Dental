@@ -22,14 +22,41 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPaged(QuotationPaged val)
         {
-            var res = _quotationService.GetPagedResultAsync(val);
+            var res = await _quotationService.GetPagedResultAsync(val);
             return Ok(res);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
+            var model = await _quotationService.GetByIdAsync(id);
+            if (model == null || !ModelState.IsValid)
+                return BadRequest();
+
+            var res = await _quotationService.GetDisplay(id);
+            return Ok(res);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(QuotationSave val)
+        {
             return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Guid id, QuotationSave val)
+        {
+            return Ok();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var model = await _quotationService.GetByIdAsync(id);
+            if (model == null)
+                return NotFound();
+            await _quotationService.DeleteAsync(model);
+            return NoContent();
         }
     }
 }

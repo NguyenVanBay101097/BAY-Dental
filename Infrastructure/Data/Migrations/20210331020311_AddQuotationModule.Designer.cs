@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20210330105502_AddQuotationModule")]
+    [Migration("20210331020311_AddQuotationModule")]
     partial class AddQuotationModule
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -6172,6 +6172,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid>("PartnerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
