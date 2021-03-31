@@ -63,9 +63,77 @@ namespace Infrastructure.Services
             };
         }
 
-        public Task<Quotation> UpdateAsync(QuotationSave val)
+        public async Task UpdateAsync(Guid id, QuotationSave val)
         {
-            throw new NotImplementedException();
+            var quotation = await SearchQuery(x => x.Id == id).Include(x => x.Lines).FirstOrDefaultAsync();
+            _mapper.Map(val, quotation);
+            await ComputeQuotationLine(val, quotation);
+            await ComputeAmountAll(quotation);
+            await UpdateAsync(quotation);
+        }
+
+        public async Task ComputeQuotationLine(QuotationSave val, Quotation quotation)
+        {
+            var listAdd = new List<QuotationLine>();
+            var listRemove = new List<QuotationLine>();
+            var listUpdate = new List<QuotationLine>();
+            var quotationLineObj = GetService<IQuotationLineService>();
+            foreach (var line in quotation.Lines)
+            {
+                if (!val.QuotationLines.Any(x => x.Id == line.Id))
+                {
+                    listRemove.Add(line);
+                }
+            }
+
+            foreach (var line in val.QuotationLines)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var quoLine = _mapper.Map<QuotationLine>(line);
+                    quoLine.QuotationId = quotation.Id;
+                    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.PercentDiscount.HasValue ? line.PercentDiscount.Value : 0) / 100);
+                    foreach (var toothId in line.ToothIds)
+                    {
+                        quoLine.QuotationLineToothRels.Add(new QuotationLineToothRel
+                        {
+                            ToothId = toothId
+                        });
+                    }
+                    listAdd.Add(quoLine);
+                }
+                else
+                {
+                    var quoLine = await quotationLineObj.SearchQuery(x => x.Id == line.Id).Include(x => x.QuotationLineToothRels).FirstOrDefaultAsync();
+                    _mapper.Map(line, quoLine);
+                    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.PercentDiscount.HasValue ? line.PercentDiscount.Value : 0) / 100);
+
+                    foreach (var item in quoLine.QuotationLineToothRels.ToList())
+                    {
+                        if (!line.ToothIds.Any(x => x == item.ToothId))
+                        {
+                            quoLine.QuotationLineToothRels.Remove(item);
+                        }
+                    }
+                    foreach (var toothId in line.ToothIds)
+                    {
+                        if (!quoLine.QuotationLineToothRels.Any(x => x.ToothId == toothId))
+                        {
+                            quoLine.QuotationLineToothRels.Add(new QuotationLineToothRel
+                            {
+                                QuotationLineId = quoLine.Id,
+                                ToothId = toothId
+                            });
+                        }
+                    }
+
+                    listUpdate.Add(quoLine);
+                }
+            }
+
+            await quotationLineObj.CreateAsync(listAdd);
+            await quotationLineObj.UpdateAsync(listUpdate);
+            await quotationLineObj.DeleteAsync(listRemove);
         }
 
         public async Task<QuotationBasic> CreateAsync(QuotationSave val)
@@ -103,7 +171,7 @@ namespace Infrastructure.Services
             return _mapper.Map<QuotationBasic>(quotation);
         }
 
-        public void ComputeAmountAll(Quotation quotation)
+        public async Task ComputeAmountAll(Quotation quotation)
         {
             var totalAmount = 0M;
             foreach (var line in quotation.Lines)

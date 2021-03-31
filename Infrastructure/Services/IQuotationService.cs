@@ -13,6 +13,6 @@ namespace Infrastructure.Services
         Task<PagedResult2<QuotationBasic>> GetPagedResultAsync(QuotationPaged val);
         Task<IEnumerable<QuotationDisplay>> GetDisplay(Guid id);
         Task<QuotationBasic> CreateAsync(QuotationSave val);
-        Task<Quotation> UpdateAsync(QuotationSave val);
+        Task UpdateAsync(Guid id, QuotationSave val);
     }
 }

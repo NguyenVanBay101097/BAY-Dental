@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Web.Models.ContentEditing;
@@ -14,9 +15,11 @@ namespace TMTDentalAPI.Controllers
     public class QuotationsController : BaseApiController
     {
         private readonly IQuotationService _quotationService;
-        public QuotationsController(IQuotationService quotationService)
+        private readonly IUnitOfWorkAsync _unitOfWork;
+        public QuotationsController(IUnitOfWorkAsync unitOfWork, IQuotationService quotationService)
         {
             _quotationService = quotationService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -42,7 +45,9 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid || val == null)
                 return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
             var res = await _quotationService.CreateAsync(val);
+            _unitOfWork.Commit();
             return Ok(res);
         }
 
@@ -52,7 +57,9 @@ namespace TMTDentalAPI.Controllers
             var model = await _quotationService.GetByIdAsync(id);
             if (model == null || !ModelState.IsValid)
                 return NotFound();
-            await _quotationService.UpdateAsync(val);
+            await _unitOfWork.BeginTransactionAsync();
+            await _quotationService.UpdateAsync(id, val);
+            _unitOfWork.Commit();
             return NoContent();
         }
 

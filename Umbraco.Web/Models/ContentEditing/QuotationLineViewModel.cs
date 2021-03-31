@@ -96,6 +96,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class QuotationLineSave
     {
+        public Guid Id { get; set; }
         /// <summary>
         /// Dịch vụ
         /// </summary>
