@@ -21,17 +21,15 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
 
-        public DateTime Date { get; set; }
-        public DateTime LastUpdated { get; set; }
+        public DateTime DotKhamDate { get; set; }
 
         public string DotKhamName { get; set; }
         public SaleOrderSimple DotKhamSaleOrder { get; set; }
         public PartnerSimple DotKhamPartner { get; set; }
 
-        public Guid? ProductId { get; set; }
-        public ProductDotKhamLineSimple Product { get; set; }
+        public string ProductName { get; set; }
 
-        public EmployeeSimple DotKhamDoctor { get; set; }
+        public string DotKhamDoctorName { get; set; }
 
         public string NameStep { get; set; }
         public string Note { get; set; }

@@ -317,6 +317,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path:'treatment-lines',
+    loadChildren:() => import('./dot-kham-lines/dot-kham-lines.module').then(m => m.DotKhamLinesModule),
+    canActivate:[AuthGuard]
+  },
+  {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',
