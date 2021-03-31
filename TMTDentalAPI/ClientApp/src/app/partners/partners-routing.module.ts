@@ -27,7 +27,8 @@ import { PartnerSupplierFormDebitComponent } from './partner-supplier-form-debit
 import { PartnerSupplierFormPaymentComponent } from './partner-supplier-form-payment/partner-supplier-form-payment.component';
 import { PartnerCustomerLaboOrdersComponentComponent } from './partner-customer-labo-orders-component/partner-customer-labo-orders-component.component';
 import { PartnerCustomerTreatmentListComponent } from './partner-customer-treatment/partner-customer-treatment-list/partner-customer-treatment-list.component';
-import { PartnerCustomerQuotationListComponent } from './partner-customer-quotation-list/partner-customer-quotation-list.component';
+import { PartnerCustomerQuotationListComponent } from './partner-customer-quotation/partner-customer-quotation-list/partner-customer-quotation-list.component';
+import { PartnerCustomerQuotationCuComponent } from './partner-customer-quotation/partner-customer-quotation-cu/partner-customer-quotation-cu.component';
 
 const routes: Routes = [
   {
@@ -72,7 +73,7 @@ const routes: Routes = [
   {
     path: 'suppliers', component: PartnerSupplierListComponent
   },
-  
+
   {
     path: 'supplier/:id',
     component: PartnerSupplierFormComponent,
