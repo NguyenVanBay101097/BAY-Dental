@@ -1,0 +1,91 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group mb-2 row">
+                    <table class="o_group o_inner_group o_group_col_6" style="width:100%">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_left">
+                                    <label class="o_form_label">
+                                        Khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;" class=".o_td_control_left">
+                                    Vinh Huỳnh
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_left">
+                                    <label class="o_form_label">
+                                        Người tư vấn
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;" class=".o_td_control_left">
+                                    Lê Trí Khương
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6" style="width:100%">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Ngày tư vấn
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="advisoryDate">
+                                    </kendo-datepicker>
+                                    <!-- <div *ngIf="f.advisoryDate.errors && (f.advisoryDate.touched || f.advisoryDate.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.advisoryDate.errors.required">Chọn ngày tư vấn</div>
+                                    </div> -->
+                                    <!-- <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
+                                        {{precscriptPayment ? precscriptPayment.orderDate : 'dd/MM/yyyy'}}
+                                    </span> -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="mb-2">
+                        <p>BẢN ĐỒ RĂNG NHA</p>
+                        <div class="mb-2">
+                            <button type="button" class="btn btn-primary btn-sm mr-2">Răng vĩnh viễn</button>
+                            <button type="button" class="btn btn-primary btn-sm mr-2">Răng sữa</button>
+                        </div>
+                        <div class="mb-2">
+                            <div class="teeth-map mb-2">
+                                <table class="table table-sm">
+                                    <tr *ngFor="let ham of hamList | keyvalue">
+                                        <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
+                                            <div class="tooth-wrapper">
+                                                <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                                                    {{rang.Name}}
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Thêm</button>
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Nhập lại</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>
