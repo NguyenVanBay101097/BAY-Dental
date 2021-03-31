@@ -1,6 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -14,7 +15,9 @@
                         </label>
                     </td>
                     <td colspan="1" style="width: 100%;">
-                        <app-binary-file-input [accept]="'.xlsm,.xls,.xlsx,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'" [(value)]="fileBase64" (valueChange)="onFileChange($event)" (error)="notifyError($event)">
+                        <app-binary-file-input
+                            [accept]="'.xlsm,.xls,.xlsx,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'"
+                            [(value)]="fileBase64" (valueChange)="onFileChange($event)" (error)="notifyError($event)">
                         </app-binary-file-input>
                     </td>
                 </tr>
@@ -28,22 +31,27 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
-        <span *ngIf="!isUpdate">Import</span> 
-        <span *ngIf="isUpdate">Cập nhật</span> 
+        <span *ngIf="!isUpdate">Import</span>
+        <span *ngIf="isUpdate">Cập nhật</span>
     </button>
-    <a *ngIf="type == 'service' && !isUpdate" download href="/assets/files/MauFileDichVu.xlsx" class="btn btn-sm btn-light">
+    <a *ngIf="type == 'service' && !isUpdate" download href="/assets/files/MauFileDichVu.xlsx"
+        class="btn btn-sm btn-light">
         Tải file mẫu
     </a>
-    <a *ngIf="type == 'medicine' && !isUpdate" download href="/assets/files/MauFileThuoc.xlsx" class="btn btn-sm btn-light">
+    <a *ngIf="type == 'medicine' && !isUpdate" download href="/assets/files/MauFileThuoc.xlsx"
+        class="btn btn-sm btn-light">
         Tải file mẫu
     </a>
-    <a *ngIf="type == 'product' && !isUpdate" download href="/assets/files/MauFileVatTu.xlsx" class="btn btn-sm btn-light">
+    <a *ngIf="type == 'product' && !isUpdate" download href="/assets/files/MauFileVatTu.xlsx"
+        class="btn btn-sm btn-light">
         Tải file mẫu
     </a>
-    <a *ngIf="type == 'labo' && !isUpdate" download href="/assets/files/MauFileVatlieuLabo.xlsx" class="btn btn-sm btn-light">
+    <a *ngIf="type == 'labo' && !isUpdate" download href="/assets/files/MauFileVatlieuLabo.xlsx"
+        class="btn btn-sm btn-light">
         Tải file mẫu
     </a>
-    <a *ngIf="type == 'labo_attach' && !isUpdate" download href="/assets/files/MauFileGuiKemLabo.xlsx" class="btn btn-sm btn-light">
+    <a *ngIf="type == 'labo_attach' && !isUpdate" download href="/assets/files/MauFileGuiKemLabo.xlsx"
+        class="btn btn-sm btn-light">
         Tải file mẫu
     </a>
     <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>

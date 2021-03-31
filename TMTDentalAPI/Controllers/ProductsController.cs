@@ -930,7 +930,6 @@ namespace TMTDentalAPI.Controllers
             var data = new List<ProductProductImportExcelRow>();
             var categDict = new Dictionary<string, ProductCategory>();
             var errors = new List<string>();
-
             var typeDict = new Dictionary<string, string>()
             {
                 { "Có quản lý tồn kho", "product" },
@@ -948,8 +947,8 @@ namespace TMTDentalAPI.Controllers
                         {
                             var errs = new List<string>();
                             var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
                             var type = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
                             var productCode = Convert.ToString(worksheet.Cells[row, 4].Value);
 
                             if (string.IsNullOrEmpty(productCode))
