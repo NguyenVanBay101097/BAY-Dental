@@ -48,6 +48,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Tổng tiền báo giá
         /// </summary>
         public decimal? TotalAmount { get; set; }
+
+        /// <summary>
+        /// trạng thái
+        /// </summary>
+        public string State { get; set; }
     }
 
     public class QuotationDisplay
@@ -131,11 +136,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string Note { get; set; }
 
-        /// <summary>
-        /// Tổng tiền báo giá
-        /// </summary>
-        public decimal? TotalAmount { get; set; }
-
         public IEnumerable<QuotationLineSave> QuotationLines { get; set; } = new List<QuotationLineSave>();
     }
 
@@ -151,6 +151,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
         public int Limit { get; set; }
         public int Offset { get; set; }
+        public Guid? PartnerId { get; set; }
 
     }
 

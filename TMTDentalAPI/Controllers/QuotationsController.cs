@@ -56,7 +56,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var model = await _quotationService.GetByIdAsync(id);

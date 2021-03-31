@@ -39,6 +39,8 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<QuotationBasic>> GetPagedResultAsync(QuotationPaged val)
         {
             var query = SearchQuery();
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId.Value);
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateQuotation >= val.DateFrom.Value);
             if (val.DateTo.HasValue)
@@ -49,7 +51,12 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
             var totalItem = await query.CountAsync();
-            var items = await query.Include(x => x.Partner).Take(val.Limit).Skip(val.Offset).ToListAsync();
+            var items = await query
+                .Include(x => x.Partner)
+                .Include(x => x.User)
+                .Take(val.Limit)
+                .Skip(val.Offset)
+                .ToListAsync();
             return new PagedResult2<QuotationBasic>(totalItem, val.Offset, val.Limit)
             {
                 Items = _mapper.Map<IEnumerable<QuotationBasic>>(items)
@@ -64,7 +71,7 @@ namespace Infrastructure.Services
         public async Task<QuotationBasic> CreateAsync(QuotationSave val)
         {
             var quotation = _mapper.Map<Quotation>(val);
-            quotation.State = "draft";
+            quotation.State = "confirm";
             if (string.IsNullOrEmpty(quotation.Name) || quotation.Name == "/")
             {
                 var sequenceService = GetService<IIRSequenceService>();

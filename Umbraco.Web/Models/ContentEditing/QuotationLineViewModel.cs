@@ -112,11 +112,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? PercentDiscount { get; set; }
 
         /// <summary>
-        /// Tổng tiền trên 1 dịch vụ
-        /// </summary>
-        public decimal? Amount { get; set; }
-
-        /// <summary>
         /// Đơn giá
         /// </summary>
         public decimal? SubPrice { get; set; }

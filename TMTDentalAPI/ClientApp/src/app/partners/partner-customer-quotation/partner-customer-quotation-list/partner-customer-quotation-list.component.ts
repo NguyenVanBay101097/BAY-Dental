@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
@@ -30,14 +30,20 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
     private intlService: IntlService,
     private quotationService: QuotationService,
     private router: Router,
+    private activeRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.loading = true;
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
-
-    this.getPaged();
+    this.activeRoute.parent.params.subscribe(
+      params => {
+        this.partnerId = params.id;
+        this.loadDataFromApi();
+      }
+    )
+    // this.getPaged();
 
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -45,18 +51,19 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
       .subscribe((value) => {
         this.search = value || '';
         this.skip = 0;
-        this.getPaged();
+        this.loadDataFromApi();
       });
   }
 
-  getPaged() {
+  loadDataFromApi() {
     this.loading = true;
     var val = new QuotationsPaged();
-    val.limt = this.limit;
+    val.limit = this.limit;
     val.offset = this.skip;
+    val.partnerId = this.partnerId ? this.partnerId : '';
     val.search = this.search ? this.search : '';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
-    val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
+    val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
     this.quotationService.getPaged(val).pipe(
       map(res => (<GridDataResult>{
         data: res.items,
@@ -65,7 +72,8 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
     ).subscribe(
       result => {
         this.gridData = result;
-        console.log(this.gridData);
+        console.log(result);
+        
         this.loading = false
       }
     )
@@ -75,22 +83,27 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
   }
 
   editQuotation() {
-
+    this.router.navigateByUrl('link ???');
   }
 
-  deleteQuotation() {
-
+  deleteQuotation(item) {
+    this.quotationService.delete(item.id).subscribe(
+      ()=>{
+        alert("Xóa thành công");
+        this.loadDataFromApi();
+      }
+    )
   }
 
   pageChange(event) {
     this.skip = event.skip;
-    this.getPaged();
+    this.loadDataFromApi();
   }
 
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.skip = 0;
-    this.getPaged();
+    this.loadDataFromApi();
   }
 }

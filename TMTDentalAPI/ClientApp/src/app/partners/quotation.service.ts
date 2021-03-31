@@ -19,11 +19,12 @@ export class QuotationsBasic {
   totalAmount: number;
   state: string;
 }
-export class QuotationsPaged{
+export class QuotationsPaged {
   dateFrom: string;
   dateTo: string;
   search: string;
-  limt: number;
+  limit: number;
+  partnerId: string;
   offset: number;
 }
 @Injectable({
@@ -32,7 +33,16 @@ export class QuotationsPaged{
 export class QuotationService {
   apiUrl = 'api/Quotations';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
+
   getPaged(val: any): Observable<PagedResult2<QuotationsBasic>> {
-    return this.http.get<PagedResult2<QuotationsBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams(val) });
+    return this.http.get<PagedResult2<QuotationsBasic>>(this.baseApi + this.apiUrl, { params: val });
+  }
+
+  create(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl, val);
+  }
+
+  delete(id: string) {
+    return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
   }
 }

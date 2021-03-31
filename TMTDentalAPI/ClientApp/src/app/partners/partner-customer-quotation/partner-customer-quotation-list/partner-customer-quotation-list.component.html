@@ -4,7 +4,8 @@
             <div class="o_control_panel">
                 <div class="breadcrumb">
                     <div class="d-flex">
-                        <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                        <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                            (searchChange)="onSearchDateChange($event)">
                         </app-tai-date-range-filter-dropdown>
                         <button type="button" (click)="createQuotation()" class="ml-2 btn btn-primary btn-sm">
                             <i class="fas fa-plus"></i> Thêm báo giá</button>
@@ -12,40 +13,42 @@
                 </div>
                 <div class="o_cp_searchview">
                     <div class="o_searchview">
-                        <input class="o_searchview_input" placeholder="Tìm kiếm theo số báo giá" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                        <input class="o_searchview_input" placeholder="Tìm kiếm theo số báo giá" type="text"
+                            [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                     </div>
                 </div>
                 <div class="o_cp_left">
                     <div class="o_cp_buttons">
-        
+
                     </div>
                     <div class="o_cp_sidebar">
                     </div>
                 </div>
                 <div class="o_cp_right">
-        
+
                 </div>
             </div>
         </div>
     </div>
     <div>
         <div class="o_content">
-            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+                (pageChange)="pageChange($event)">
                 <kendo-grid-column field="name" title="Số báo giá" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <a class="text-primary" [routerLink]="['/quotation/form']" [queryParams]="{ id: dataItem.id}">
+                        <a class="text-primary" (click)="editQuotation(dataItem)">
                             {{dataItem.name}}
                         </a>
                     </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column field="dateQuotation" title="Ngày báo giá" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.dateQuotation | date : 'short'}}
+                        {{dataItem.dateQuotation | date : 'shortDate'}}
                     </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column field="dateEndQuotation" title="Ngày hết hạn" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.dateEndQuotation | date : 'short'}}
+                        {{dataItem.dateEndQuotation | date : 'shortDate'}}
                     </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column field="user" title="Người báo giá" width="150">
@@ -66,7 +69,8 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="state" title="Tình trạng" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.state}}
+                        <span *ngIf="dataItem.state == 'confirm'">Còn hạn</span>
+                        <span *ngIf="dataItem.state == 'cancel'">Hết hạn</span>
                     </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column field="id" width="100">
@@ -74,8 +78,7 @@
                         Thao tác
                     </ng-template>
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editQuotation(dataItem)">
-                            <span class="far fa-edit"></span></button>
+
                         <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteQuotation(dataItem)">
                             <span class="far fa-trash-alt"></span></button>
                     </ng-template>
