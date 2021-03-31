@@ -80,7 +80,7 @@ import { PartnerDotkhamDetailComponent } from './partner-overview/partner-dotkha
 import { PartnerCustomerTreatmentListComponent } from './partner-customer-treatment/partner-customer-treatment-list/partner-customer-treatment-list.component';
 import { PartnerCustomerTreatmentSaleOrderLineComponent } from './partner-customer-treatment/partner-customer-treatment-sale-order-line/partner-customer-treatment-sale-order-line.component';
 import { PartnerCustomerQuotationListComponent } from './partner-customer-quotation/partner-customer-quotation-list/partner-customer-quotation-list.component';
-import { PartnerCustomerQuotationCuComponent } from './partner-customer-quotation/partner-customer-quotation-cu/partner-customer-quotation-cu.component';
+import { PartnerCustomerQuotationFormComponent } from './partner-customer-quotation/partner-customer-quotation-form/partner-customer-quotation-form.component';
 
 
 @NgModule({
@@ -151,7 +151,7 @@ import { PartnerCustomerQuotationCuComponent } from './partner-customer-quotatio
     PartnerCustomerTreatmentListComponent,
     PartnerCustomerTreatmentSaleOrderLineComponent,
     PartnerCustomerQuotationListComponent,
-    PartnerCustomerQuotationCuComponent
+    PartnerCustomerQuotationFormComponent
   ],
   imports: [
     CommonModule,

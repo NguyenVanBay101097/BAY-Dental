@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { QuotationService, QuotationsPaged } from '../../quotation.service';
+import { QuotationService, QuotationsPaged } from 'src/app/quotations/quotation.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 // import { QuotationService, QuotationsPaged } from './quotation.service';
 
 @Component({
@@ -17,7 +20,7 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
   gridData: GridDataResult;
   dateFrom: Date;
   dateTo: Date;
-  limit: number = 20;
+  limit: number = 10;
   skip: number = 0;
   loading = false;
   search: string;
@@ -30,7 +33,10 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
     private intlService: IntlService,
     private quotationService: QuotationService,
     private router: Router,
-    private activeRoute: ActivatedRoute
+    private activeRoute: ActivatedRoute,
+    private modalService: NgbModal,
+    private notificationService: NotificationService,
+
   ) { }
 
   ngOnInit() {
@@ -73,30 +79,45 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
       result => {
         this.gridData = result;
         console.log(result);
-        
         this.loading = false
       }
     )
   }
 
   createQuotation() {
+    this.router.navigate(['quotations/form'], { queryParams: { partner_id: this.partnerId } });
   }
 
   editQuotation() {
-    this.router.navigateByUrl('link ???');
   }
 
   deleteQuotation(item) {
-    this.quotationService.delete(item.id).subscribe(
-      ()=>{
-        alert("Xóa thành công");
-        this.loadDataFromApi();
-      }
-    )
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa báo giá';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa báo giá?';
+    modalRef.result.then(() => {
+      this.quotationService.delete(item.id).subscribe(
+        () => {
+          this.notify("success", "Xóa thành công");
+          this.loadDataFromApi();
+        }
+      )
+    });
+  }
+
+  notify(Style, Content) {
+    this.notificationService.show({
+      content: Content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: Style, icon: true }
+    });
   }
 
   pageChange(event) {
     this.skip = event.skip;
+    console.log(this.skip);
     this.loadDataFromApi();
   }
 

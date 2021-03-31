@@ -5,6 +5,11 @@ import { PartnerGeneralSettingsComponent } from './partner-general-settings/part
 
 const routes: Routes = [
   {
+    path: 'quotations',
+    loadChildren: () => import('./quotations/quotations.module').then(m => m.QuotationsModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'stock-inventories',
     loadChildren: () => import('./stock-inventories/stock-inventories.module').then(m => m.StockInventoriesModule),
     canActivate: [AuthGuard]

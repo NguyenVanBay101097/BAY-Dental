@@ -2,8 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../core/paged-result-2';
+import { PartnerSimple } from '../partners/partner-simple';
 import { UserSimple } from '../users/user-simple';
-import { PartnerSimple } from './partner-simple';
 
 // import { PagedResult2 } from '../paged-result-2';
 
@@ -19,6 +19,20 @@ export class QuotationsBasic {
   totalAmount: number;
   state: string;
 }
+
+export class QuotationsDisplay {
+  id: string;
+  name: string;
+  partner: PartnerSimple;
+  user: UserSimple;
+  dateQuotation: string;
+  dateApplies: number;
+  dateEndQuotation: string;
+  note: string;
+  totalAmount: number;
+  state: string;
+}
+
 export class QuotationsPaged {
   dateFrom: string;
   dateTo: string;
@@ -40,6 +54,14 @@ export class QuotationService {
 
   create(val: any) {
     return this.http.post(this.baseApi + this.apiUrl, val);
+  }
+
+  get(id: string): Observable<QuotationsDisplay> {
+    return this.http.get<QuotationsDisplay>(this.baseApi + this.apiUrl + '/' + id);
+  }
+
+  defaultGet(partnerId: string): Observable<QuotationsDisplay> {
+    return this.http.get<QuotationsDisplay>(this.baseApi + this.apiUrl + '/GetDefault/' + partnerId);
   }
 
   delete(id: string) {
