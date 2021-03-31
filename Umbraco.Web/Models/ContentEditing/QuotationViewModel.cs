@@ -94,11 +94,49 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Tổng tiền báo giá
         /// </summary>
         public decimal? TotalAmount { get; set; }
+
+        //public IEnumerable<QuotationLine> MyProperty { get; set; }
     }
 
     public class QuotationSave
     {
 
+        /// <summary>
+        /// Khách hàng
+        /// </summary>
+        public Guid PartnerId { get; set; }
+
+        /// <summary>
+        /// Người báo giá
+        /// </summary>
+        public string UserId { get; set; }
+
+        /// <summary>
+        /// Ngày báo giá
+        /// </summary>
+        public DateTime DateQuotation { get; set; }
+
+        /// <summary>
+        /// Ngày áp dụng
+        /// </summary>
+        public int DateApplies { get; set; }
+
+        /// <summary>
+        /// Ngày kết thúc báo giá
+        /// </summary>
+        public DateTime? DateEndQuotation { get; set; }
+
+        /// <summary>
+        /// Ghi chú
+        /// </summary>
+        public string Note { get; set; }
+
+        /// <summary>
+        /// Tổng tiền báo giá
+        /// </summary>
+        public decimal? TotalAmount { get; set; }
+
+        public IEnumerable<QuotationLineSave> QuotationLines { get; set; } = new List<QuotationLineSave>();
     }
 
     public class QuotationPaged
