@@ -36,6 +36,19 @@ namespace Infrastructure.Services
             return _mapper.Map<IEnumerable<QuotationDisplay>>(model);
         }
 
+        public async Task<QuotationDisplay> GetDefault(Guid partnerId)
+        {
+            var partnerObj = GetService<IPartnerService>();
+            var partner = _mapper.Map<PartnerSimple>(await partnerObj.SearchQuery(x => x.Id == partnerId).FirstOrDefaultAsync());
+            var quotation = new QuotationDisplay();
+            quotation.Partner = partner;
+            quotation.PartnerId = partner.Id;
+            quotation.DateQuotation = DateTime.Today;
+            quotation.DateApplies = 30;
+            quotation.DateEndQuotation = DateTime.Today.AddDays(30);
+            return quotation;
+        }
+
         public async Task<PagedResult2<QuotationBasic>> GetPagedResultAsync(QuotationPaged val)
         {
             var query = SearchQuery();

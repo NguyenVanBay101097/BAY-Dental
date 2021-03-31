@@ -12,7 +12,7 @@ namespace Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<PaymentQuotation> builder)
         {
             builder.HasOne(x => x.Quotation)
-                .WithMany()
+                .WithMany(x => x.Payments)
                 .HasForeignKey(x => x.QuotationId);
 
             builder.HasOne(x => x.WriteBy)

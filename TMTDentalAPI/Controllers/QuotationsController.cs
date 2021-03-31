@@ -40,6 +40,15 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("[action]/{partnerId}")]
+        public async Task<IActionResult> GetDefault(Guid partnerId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            var res = await _quotationService.GetDefault(partnerId);
+            return Ok(res);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(QuotationSave val)
         {

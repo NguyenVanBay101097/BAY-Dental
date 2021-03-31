@@ -14,5 +14,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<QuotationDisplay>> GetDisplay(Guid id);
         Task<QuotationBasic> CreateAsync(QuotationSave val);
         Task UpdateAsync(Guid id, QuotationSave val);
+        Task<QuotationDisplay> GetDefault(Guid partnerId);
     }
 }
