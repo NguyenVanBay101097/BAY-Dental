@@ -20,7 +20,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPaged(QuotationPaged val)
+        public async Task<IActionResult> GetPaged([FromQuery] QuotationPaged val)
         {
             var res = await _quotationService.GetPagedResultAsync(val);
             return Ok(res);

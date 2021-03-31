@@ -144,6 +144,7 @@ namespace TMTDentalAPI
             services.AddScoped<IDistrictService, DistrictService>();
             services.AddScoped<IWardService, WardService>();
             services.AddScoped<IIRSequenceService, IRSequenceService>();
+            services.AddScoped<IQuotationService, QuotationService>();
 
             services.AddScoped<IResourceCalendarService, ResourceCalendarService>();
             services.AddScoped<IResourceCalendarAttendanceService, ResourceCalendarAttendanceService>();
