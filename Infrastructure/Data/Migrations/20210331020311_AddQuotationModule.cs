@@ -23,7 +23,8 @@ namespace Infrastructure.Data.Migrations
                     DateApplies = table.Column<int>(nullable: false),
                     DateEndQuotation = table.Column<DateTime>(nullable: true),
                     Note = table.Column<string>(nullable: true),
-                    TotalAmount = table.Column<decimal>(nullable: true)
+                    TotalAmount = table.Column<decimal>(nullable: true),
+                    State = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

@@ -6171,6 +6171,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("PartnerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
