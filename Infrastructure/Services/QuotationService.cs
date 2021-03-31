@@ -64,6 +64,7 @@ namespace Infrastructure.Services
         public async Task<QuotationBasic> CreateAsync(QuotationSave val)
         {
             var quotation = _mapper.Map<Quotation>(val);
+            quotation.State = "draft";
             if (string.IsNullOrEmpty(quotation.Name) || quotation.Name == "/")
             {
                 var sequenceService = GetService<IIRSequenceService>();
