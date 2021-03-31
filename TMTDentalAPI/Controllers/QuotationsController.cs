@@ -40,13 +40,20 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(QuotationSave val)
         {
-            return Ok();
+            if (!ModelState.IsValid || val == null)
+                return BadRequest();
+            var res = await _quotationService.CreateAsync(val);
+            return Ok(res);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, QuotationSave val)
         {
-            return Ok();
+            var model = await _quotationService.GetByIdAsync(id);
+            if (model == null || !ModelState.IsValid)
+                return NotFound();
+            await _quotationService.UpdateAsync(val);
+            return NoContent();
         }
 
         [HttpDelete]

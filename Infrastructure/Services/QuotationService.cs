@@ -25,6 +25,8 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+
+
         public async Task<IEnumerable<QuotationDisplay>> GetDisplay(Guid id)
         {
             var model = await SearchQuery(x => x.Id == id)
@@ -53,5 +55,56 @@ namespace Infrastructure.Services
                 Items = _mapper.Map<IEnumerable<QuotationBasic>>(items)
             };
         }
+
+        public Task<Quotation> UpdateAsync(QuotationSave val)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<QuotationBasic> CreateAsync(QuotationSave val)
+        {
+            var quotation = _mapper.Map<Quotation>(val);
+            quotation.State = "draft";
+            if (string.IsNullOrEmpty(quotation.Name) || quotation.Name == "/")
+            {
+                var sequenceService = GetService<IIRSequenceService>();
+                quotation.Name = await sequenceService.NextByCode("quotation");
+            }
+
+            quotation = await CreateAsync(quotation);
+
+            var lines = new List<QuotationLine>();
+
+            foreach (var line in val.QuotationLines)
+            {
+                var quoLine = _mapper.Map<QuotationLine>(line);
+                quoLine.QuotationId = quotation.Id;
+                quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.PercentDiscount.HasValue ? line.PercentDiscount.Value : 0) / 100);
+                foreach (var toothId in line.ToothIds)
+                {
+                    quoLine.QuotationLineToothRels.Add(new QuotationLineToothRel
+                    {
+                        ToothId = toothId
+                    });
+                }
+                lines.Add(quoLine);
+            }
+            var quotationLineService = GetService<IQuotationLineService>();
+            await quotationLineService.CreateAsync(lines);
+            ComputeAmountAll(quotation);
+            await UpdateAsync(quotation);
+            return _mapper.Map<QuotationBasic>(quotation);
+        }
+
+        public void ComputeAmountAll(Quotation quotation)
+        {
+            var totalAmount = 0M;
+            foreach (var line in quotation.Lines)
+            {
+                totalAmount += Math.Round(line.Amount.HasValue ? line.Amount.Value : 0);
+            }
+            quotation.TotalAmount = totalAmount;
+        }
+
     }
 }
