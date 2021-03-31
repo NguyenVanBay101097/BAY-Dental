@@ -45,4 +45,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> Ids { get; set; }
     }
 
+    public class SaleOrderSimple
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
+
 }

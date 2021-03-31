@@ -1,5 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -117,6 +119,37 @@ namespace Infrastructure.Services
 
             var opObj = GetService<IDotKhamLineOperationService>();
             await opObj.CreateAsync(ops);
+        }
+        public async Task<PagedResult2<DotKhamLineBasic>> GetPagedResultAsync(DotKhamLinePaged val)
+        {
+            var dotKhamObj = GetService<IDotKhamService>();
+
+            ISpecification<DotKhamLine> ex = new InitialSpecification<DotKhamLine>(x => true);
+            if (!string.IsNullOrEmpty(val.Search))
+                ex = ex.And(new InitialSpecification<DotKhamLine>(x => x.DotKham.Partner.Name.Contains(val.Search) || x.DotKham.Partner.NameNoSign.Contains(val.Search) ||
+               x.DotKham.Partner.Ref.Contains(val.Search)));
+
+            var query = SearchQuery();
+
+            if (val.DateFrom.HasValue)
+            {
+                query = query.Where(x => x.DotKham.Date.Date >= val.DateFrom.Value.Date);
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                query = query.Where(x => x.DotKham.Date.Date <= val.DateTo.Value.Date);
+            }
+
+            var total = await query.Where(ex.AsExpression()).CountAsync();
+
+            if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
+            var items = await _mapper.ProjectTo<DotKhamLineBasic>(query.Where(ex.AsExpression())).ToListAsync();
+
+            return new PagedResult2<DotKhamLineBasic>(total, val.Offset, val.Limit)
+            {
+                Items = _mapper.Map<IEnumerable<DotKhamLineBasic>>(items)
+            };
         }
     }
 }
