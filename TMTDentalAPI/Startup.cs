@@ -146,6 +146,7 @@ namespace TMTDentalAPI
             services.AddScoped<IIRSequenceService, IRSequenceService>();
             services.AddScoped<IQuotationService, QuotationService>();
             services.AddScoped<IQuotationLineService, QuotationLineService>();
+            services.AddScoped<IPaymentQuotationService, PaymentQuotationService>();
 
             services.AddScoped<IResourceCalendarService, ResourceCalendarService>();
             services.AddScoped<IResourceCalendarAttendanceService, ResourceCalendarAttendanceService>();
@@ -475,6 +476,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ProductStockInventoryCriteriaRelProfile());
                 mc.AddProfile(new QuotationProfile());
                 mc.AddProfile(new QuotationLineProfile());
+                mc.AddProfile(new PaymentQuotationProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

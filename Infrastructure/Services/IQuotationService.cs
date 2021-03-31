@@ -11,8 +11,9 @@ namespace Infrastructure.Services
     public interface IQuotationService : IBaseService<Quotation>
     {
         Task<PagedResult2<QuotationBasic>> GetPagedResultAsync(QuotationPaged val);
-        Task<IEnumerable<QuotationDisplay>> GetDisplay(Guid id);
+        Task<QuotationDisplay> GetDisplay(Guid id);
         Task<QuotationBasic> CreateAsync(QuotationSave val);
         Task UpdateAsync(Guid id, QuotationSave val);
+        Task<QuotationDisplay> GetDefault(Guid partnerId);
     }
 }

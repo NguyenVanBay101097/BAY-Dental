@@ -51,5 +51,7 @@ namespace ApplicationCore.Entities
         public ICollection<QuotationLine> Lines { get; set; } = new List<QuotationLine>();
         public string State { get; set; }
 
+        public ICollection<PaymentQuotation> Payments { get; set; } = new List<PaymentQuotation>();
+
     }
 }
