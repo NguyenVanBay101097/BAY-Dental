@@ -47,6 +47,8 @@ import { SaleOrderPaymentListComponent } from '../sale-order-payment-list/sale-o
 import { AccountPaymentsOdataService } from 'src/app/shared/services/account-payments-odata.service';
 import { ToaThuocCuDialogComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog/toa-thuoc-cu-dialog.component';
 import { ToaThuocLinesSaveCuFormComponent } from 'src/app/toa-thuocs/toa-thuoc-lines-save-cu-form/toa-thuoc-lines-save-cu-form.component';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { ToothDisplay, ToothFilter } from 'src/app/teeth/tooth.service';
 
 declare var $: any;
 
@@ -54,12 +56,24 @@ declare var $: any;
   selector: 'app-sale-order-create-update',
   templateUrl: './sale-order-create-update.component.html',
   styleUrls: ['./sale-order-create-update.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('300ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
   host: {
     class: 'o_action o_view_controller'
   }
 })
+
+
+
 export class SaleOrderCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
+  formGroupInfo: FormGroup;
+  loading = false;
   saleOrderId: string;
   partnerId: string;
   filteredPartners: PartnerSimple[];
@@ -73,6 +87,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
   @ViewChild('employeeCbx', { static: false }) employeeCbx: ComboBoxComponent;
+  @ViewChild('assistantCbx', { static: false }) assistantCbx: ComboBoxComponent;
   @ViewChild('toathuocComp', { static: false }) toathuocComp: PartnerCustomerToathuocListComponent;
   @ViewChild('paymentComp', { static: false }) paymentComp: SaleOrderPaymentListComponent;
 
@@ -84,10 +99,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   paymentsInfo: PaymentInfoContent[] = [];
   filteredEmployees: any[] = [];
   initialListEmployees: any = [];
-
   searchCardBarcode: string;
+  hamList: { [key: string]: {} };
+  teethSelected: any[] = [];
+  listTeeths: any[] = [];
   type: string;
   submitted = false;
+  public selectedLine: any;
 
   constructor(
     private fb: FormBuilder,
@@ -164,6 +182,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   onEmployeeFilter(value) {
     this.filteredEmployees = this.initialListEmployees.filter((s) => s.Name.toLowerCase().indexOf(value.toLowerCase()) !== -1).slice(0, 20);
   }
+
+
 
   routeActive() {
     this.route.params.subscribe(
@@ -260,21 +280,136 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   //   }
   // }
 
+
+  createFormInfo(data: any) {
+    this.formGroupInfo = this.fb.group({
+      ToothCategory: null,
+      ToothCategoryId: null,
+      Diagnostic: null,
+      Employee: null,
+      EmployeeId: null,
+      Assistant: null,
+      AssistantId: null,
+    });
+    this.reLoadLineInfo(data);
+  }
+
+  reLoadLineInfo(info) {
+    this.loadToothCategoriesInfo(info);
+    if (info.ToothCategory) {
+      this.loadTeethMap(info.ToothCategory);
+      this.formGroupInfo.get('ToothCategory').patchValue(info.ToothCategory);
+    }
+    if (info.Diagnostic) {
+      this.formGroupInfo.get('Diagnostic').patchValue(info.Diagnostic);
+    }
+
+    if (info.Employee) {
+      this.formGroupInfo.get('Employee').patchValue(info.Employee);
+    }
+
+    if (info.Assistant) {
+      this.formGroupInfo.get('Assistant').patchValue(info.Assistant);
+    }
+
+
+
+    if (info.Teeth) {
+      this.teethSelected = Object.assign([], info.Teeth);
+    }
+  }
+
+  updateLineInfo(lineControl) {
+    var line = this.formGroupInfo.value;
+    line.Teeth = this.teethSelected;
+    line.Assistant = line.Assistant;
+    line.AssistantId = line.Assistant ? line.Assistant.Id : null;
+    line.Employee = line.Employee;
+    line.EmployeeId = line.Employee ? line.Employee.Id : null;
+    line.ProductUOMQty = (line.Teeth && line.Teeth.length > 0) ? line.Teeth.length : 1;
+    lineControl.patchValue(line);
+    lineControl.get('Teeth').clear();
+    line.Teeth.forEach(teeth => {
+      let g = this.fb.group(teeth);
+      lineControl.get('Teeth').push(g);
+    });
+    this.onChangeQuantity(lineControl);
+  }
+
+  loadTeethMap(categ: any) {
+    const val = new ToothFilter();
+    val.categoryId = categ.Id;
+    const result = this.initialListTeeths.filter(x => x.CategoryId === categ.Id);
+    this.processTeeth(result);
+  }
+
+  processTeeth(teeth: any[]) {
+    this.hamList = {
+      '0_up': { '0_right': [], '1_left': [] },
+      '1_down': { '0_right': [], '1_left': [] }
+    };
+
+    for (var i = 0; i < teeth.length; i++) {
+      var tooth = teeth[i];
+      if (tooth.Position === '1_left') {
+        this.hamList[tooth.ViTriHam][tooth.Position].push(tooth);
+      } else {
+        this.hamList[tooth.ViTriHam][tooth.Position].unshift(tooth);
+      }
+    }
+  }
+
+  onSelected(tooth: ToothDisplay) {
+    if (this.stateControl.value !== 'draft') {
+      return;
+    }
+    if (this.isSelected(tooth)) {
+      var index = this.getSelectedIndex(tooth);
+      this.teethSelected.splice(index, 1);
+    } else {
+      this.teethSelected.push(tooth);
+    }
+  }
+
+  isSelected(tooth: any) {
+    for (var i = 0; i < this.teethSelected.length; i++) {
+      if (this.teethSelected[i].Id === tooth.Id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getSelectedIndex(tooth: any) {
+    for (var i = 0; i < this.teethSelected.length; i++) {
+      if (this.teethSelected[i].Id === tooth.Id) {
+        return i;
+      }
+    }
+
+    return null;
+  }
+
+  get ToothCategoryControl() {
+    return this.formGroupInfo.get('ToothCategory');
+  }
+
+  get DiagnosticControl() {
+    return this.formGroupInfo.get('Diagnostic');
+  }
+
   get cardValue() {
     return this.formGroup.get('card').value;
   }
 
-  // loadPartners() {
-  //   this.searchPartners().subscribe(result => {
-  //     this.filteredPartners = _.unionBy(this.filteredPartners, result, 'id');
-  //   });
-  // }
+  onChangeToothCategory(value: any) {
+    if (value.Id) {
+      this.teethSelected = [];
+      this.loadTeethMap(value);
+      this.formGroupInfo.get('ToothCategory').setValue(value);
+    }
+  }
 
-  // loadPricelists() {
-  //   this.searchPricelists().subscribe(result => {
-  //     this.filteredPricelists = _.unionBy(this.filteredPricelists, result.items, 'id');
-  //   });
-  // }
 
   searchCard() {
     var barcode = this.searchCardBarcode;
@@ -932,15 +1067,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     // this.saleOrderLine = event;
     var res = this.fb.group(val);
     // line.teeth = this.fb.array(line.teeth);
-    if (!this.orderLines.controls.some(x => x.value.ProductId === res.value.ProductId)) {
-      this.orderLines.push(res);
-    } else {
-      var line = this.orderLines.controls.find(x => x.value.ProductId === res.value.ProductId);
-      if (line) {
-        line.value.ProductUOMQty += 1;
-        line.patchValue(line.value);
-      }
-    }
+    // if (!this.orderLines.controls.some(x => x.value.ProductId === res.value.ProductId)) {
+    //   this.orderLines.push(res);
+    // } else {
+    //   var line = this.orderLines.controls.find(x => x.value.ProductId === res.value.ProductId);
+    //   if (line) {
+    //     line.value.ProductUOMQty += 1;
+    //     line.patchValue(line.value);
+    //   }
+    // }
+    this.orderLines.push(res);
     this.getPriceSubTotal();
     this.orderLines.markAsDirty();
     this.computeAmountTotal();
@@ -981,7 +1117,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         Math.max(0, price - discountFixedValue);
       line.get('PriceSubTotal').setValue(subtotal);
       var getResidual = subtotal - getamountPaid;
-      line.get('AmountResidual').setValue(getResidual);
+      if(line.get('State').value != "draft"){
+        line.get('AmountResidual').setValue(getResidual);
+      }
+  
     });
 
   }
@@ -1021,6 +1160,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }, () => {
     });
   }
+
 
   lineTeeth(line: FormGroup) {
     var teeth = line.get('teeth').value as any[];
@@ -1170,36 +1310,28 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }, er => { });
   }
 
-  onChangeQuantity(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.ProductId === line.value.ProductId);
-    if (res) {
-      res.patchValue(line.value);
-    }
+  onChangeQuantity(line: FormGroup) {   
     this.getPriceSubTotal();
     this.computeAmountTotal();
 
   }
 
   onChangeDiscountFixed(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.ProductId === line.value.ProductId);
-    if (res) {
-      res.patchValue(line.value);
-    }
+
     this.getPriceSubTotal();
     this.computeAmountTotal();
   }
 
   onChangeDiscount(event, line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.ProductId === line.value.ProductId);
-    if (res) {
-      line.value.DiscountType = event.DiscountType;
-      if (event.DiscountType == "fixed") {
-        line.value.DiscountFixed = event.DiscountFixed;
-      } else {
-        line.value.Discount = event.DiscountPercent;
-      }
-      res.patchValue(line.value);
+    line.value.DiscountType = event.DiscountType;
+    if (event.DiscountType == "fixed") {
+      line.value.DiscountFixed = event.DiscountFixed;
+    } else {
+      line.value.Discount = event.DiscountPercent;
     }
+
+    line.patchValue(line.value);
+
     this.getPriceSubTotal();
     this.computeAmountTotal();
   }
@@ -1225,6 +1357,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       }
     );
   }
+
+  loadToothCategoriesInfo(info) {
+    if (info.ToothCategory == null && this.filteredToothCategories.length > 0) {
+      const cate = this.filteredToothCategories.find(x => x.Sequence === 1);
+      this.formGroupInfo.get('ToothCategory').patchValue(cate);
+      this.onChangeToothCategory(cate);
+
+    }
+  }
+
   loadTeethList() {
     const options = {
       select: 'Id,Name,CategoryId,ViTriHam,Position'
@@ -1282,3 +1424,4 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return line.get('ProductIsLabo') && line.get('ProductIsLabo').value;
   }
 }
+
