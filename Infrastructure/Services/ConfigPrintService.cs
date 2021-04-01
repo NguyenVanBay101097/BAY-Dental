@@ -31,17 +31,22 @@ namespace Infrastructure.Services
             var listPaperFormat = GetListPaperFormat();
             var configPrint_dict = await SearchQuery(x => x.CompanyId == CompanyId).Include(x => x.PrintPaperSize).ToDictionaryAsync(x => x.Name, x => x);
 
+            var modelDataObj = GetService<IIRModelDataService>();
+            var defaultPaperSize = await modelDataObj.GetRef<PrintPaperSize>("base.paperformat_a4");
+
             foreach (var item in listPaperFormat)
             {
                 if (configPrint_dict.ContainsKey(item))
                 {
                     configPrints.Add(_mapper.Map<ConfigPrintBasic>(configPrint_dict[item]));
-                    continue;
-                }                   
-
-                var configPrint = new ConfigPrintBasic();
-                configPrint.Name = item;
-                configPrints.Add(configPrint);
+                }      
+                else
+                {
+                    var configPrint = new ConfigPrintBasic();
+                    configPrint.Name = item;
+                    configPrint.PrintPaperSize = _mapper.Map<PrintPaperSizeBasic>(defaultPaperSize);
+                    configPrints.Add(configPrint);
+                }
             }
 
             return configPrints;
