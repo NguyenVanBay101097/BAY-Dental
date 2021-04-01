@@ -84,20 +84,21 @@ namespace Infrastructure.Services
 
         public async Task<AdvisoryDisplay> GetAdvisoryDisplay(Guid id)
         {
-            var display = await _mapper.ProjectTo<AdvisoryDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             var advisory = await SearchQuery(x => x.Id == id)
                 .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
                 .FirstOrDefaultAsync();
+
             var res = _mapper.Map<AdvisoryDisplay>(advisory);
+
             return res;
         }
 
         public async Task<AdvisorySave> CreateAdvisory(AdvisorySave val)
         {
             var advisory = _mapper.Map<Advisory>(val);
-            advisory.CompanyId = CompanyId;
+
             // Thêm răng
             if (val.ToothIds.Any())
             {
@@ -135,7 +136,7 @@ namespace Infrastructure.Services
                 .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
                 .FirstOrDefaultAsync();
-
+            advisory = _mapper.Map(val, advisory);
             // Xóa chuẩn đoán răng
             advisory.AdvisoryToothRels.Clear();
             // Thêm răng
@@ -172,10 +173,13 @@ namespace Infrastructure.Services
             await UpdateAsync(advisory);
         }
 
-        public async Task Unlink(IEnumerable<Guid> ids)
+        public async Task Unlink(Guid id)
         {
-            var advisory = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-
+            var advisory = await SearchQuery(x => x.Id == id)
+                .Include(x => x.AdvisoryToothRels)
+                .Include(x => x.AdvisoryToothDiagnosisRels)
+                .Include(x => x.AdvisoryProductRels)
+                .FirstOrDefaultAsync();
             await DeleteAsync(advisory);
         }
 
@@ -184,8 +188,9 @@ namespace Infrastructure.Services
             var user = await _userService.GetCurrentUser();
             var res = new AdvisoryDisplay();
             res.User = _mapper.Map<ApplicationUserSimple>(user);
-            res.UserId = new Guid(res.User.Id);
+            res.UserId = res.User.Id;
             res.CompanyId = CompanyId;
+            res.Date = DateTime.Now;
             if (val.CustomerId.HasValue)
             {
                 // Lấy thông tin khách hàng
@@ -193,11 +198,7 @@ namespace Infrastructure.Services
                 var partner = await partnerObj.GetByIdAsync(val.CustomerId);
                 res.CustomerId = partner.Id;
                 res.Customer = _mapper.Map<PartnerSimple>(partner);
-            } else
-            {
-                throw new Exception("Thiếu CustomerId");
             }
-
 
             return res;
         }
@@ -209,9 +210,6 @@ namespace Infrastructure.Services
             if (val.CustomerId.HasValue)
             {
                 query = query.Where(x => x.CustomerId == val.CustomerId);
-            } else
-            {
-                throw new Exception("Thiếu CustomerId");
             }
 
             if (val.CompanyId.HasValue)
@@ -219,13 +217,12 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.CompanyId == val.CompanyId);
             }
 
-            query = query.Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth);
-
-            var teeth = await query.SelectMany(x => x.AdvisoryToothRels).Select(x => x.Tooth).ToListAsync();
+            var toothIds = await query.Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
+                .SelectMany(x => x.AdvisoryToothRels).Select(x => x.ToothId).Distinct().ToListAsync();
 
             var res = new ToothAdvised();
 
-            res.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+            res.ToothIds = toothIds;
 
             return res;
         }

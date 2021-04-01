@@ -7,6 +7,7 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class AdvisoryBasic
     {
+        public Guid Id { get; set; }
         public DateTime Date { get; set; }
         public string UserName { get; set; }
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
@@ -53,7 +54,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Người tư vấn
         /// </summary>
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public ApplicationUserSimple User { get; set; }
         public DateTime Date { get; set; }
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
@@ -76,6 +77,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ToothAdvised
     {
-        public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
+        public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
     }
 }

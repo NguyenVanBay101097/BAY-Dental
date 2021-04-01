@@ -15,7 +15,7 @@ namespace Infrastructure.Services
         Task<AdvisoryDisplay> GetAdvisoryDisplay(Guid id);
         Task<AdvisorySave> CreateAdvisory(AdvisorySave val);
         Task UpdateAdvisory(Guid id, AdvisorySave val);
-        Task Unlink(IEnumerable<Guid> ids);
+        Task Unlink(Guid id);
         Task<AdvisoryDisplay> DefaultGet(AdvisoryDefaultGet val);
         Task<ToothAdvised> GetToothAdvise(AdvisoryToothAdvise val);
     }

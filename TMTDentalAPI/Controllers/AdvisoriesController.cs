@@ -74,7 +74,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Remove(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _advisoryService.Unlink(new List<Guid>() { id });
+            await _advisoryService.Unlink(id);
             _unitOfWork.Commit();
             return NoContent();
         }
