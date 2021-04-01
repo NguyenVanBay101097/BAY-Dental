@@ -85,16 +85,6 @@ namespace Infrastructure.Services
                         res.GetType().GetProperty(name).SetValue(res, Convert.ToBoolean(value));
                     else if (field_type == "datetime")
                         res.GetType().GetProperty(name).SetValue(res, Convert.ToDateTime(value));
-                    else if (field_type == "reference")
-                    {
-                        res.GetType().GetProperty(name).SetValue(res, Guid.Parse(value));
-                        if (item.ConfigParameter == "print.paper_size_default")
-                        {
-                            var paperSize = await paperSizeObj.SearchQuery(x => x.Id == Guid.Parse(value)).FirstOrDefaultAsync();
-                            res.GetType().GetProperty("PrintPaperSize").SetValue(res, _mapper.Map<PrintPaperSizeBasic>(paperSize));
-                        }
-                    }
-
                 }
             }
 
@@ -213,9 +203,7 @@ namespace Infrastructure.Services
                 else if (field_type == "boolean")
                     valueStr = Convert.ToBoolean(value).ToString();
                 else if (field_type == "datetime")
-                    valueStr = Convert.ToDateTime(value).ToString();
-                else if (field_type == "reference")
-                    valueStr = Convert.ToString(value);
+                    valueStr = Convert.ToDateTime(value).ToString();           
                 await irConfigParameter.SetParam(item.ConfigParameter, valueStr);
             }
 

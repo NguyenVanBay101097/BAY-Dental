@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using TMTDentalAPI.JobFilters;
@@ -21,7 +22,7 @@ namespace TMTDentalAPI.ViewControllers
         }
 
         //[CheckAccess(Actions = "Medicine.MedicineOrder.Read")]
-        [PrinterNameFilterAttribute(Name = "MedicineOrderPaperFormat")]
+        [PrinterNameFilterAttribute(Name = AppConstants.MedicineOrderPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
 

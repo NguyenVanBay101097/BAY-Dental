@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20210326040106_thuong_AddConfigPrintAndPrintPaperSize_Tables")]
-    partial class thuong_AddConfigPrintAndPrintPaperSize_Tables
+    [Migration("20210401111339_thuong_CreateConfigPrint_PrintPaperSize")]
+    partial class thuong_CreateConfigPrint_PrintPaperSize
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -5189,9 +5189,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("BottomMargin")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -5220,8 +5217,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
 
@@ -6295,9 +6290,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("LoyaltyPointExchangeRate")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("PaperSizeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool?>("ProductListpriceRestrictCompany")
                         .HasColumnType("bit");
 
@@ -6312,8 +6304,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("PaperSizeId");
 
                     b.HasIndex("WriteById");
 
@@ -11982,12 +11972,6 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.PrintPaperSize", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -12467,10 +12451,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.PrintPaperSize", "PrintPaperSize")
-                        .WithMany()
-                        .HasForeignKey("PaperSizeId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

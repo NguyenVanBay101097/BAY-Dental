@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ namespace TMTDentalAPI.ViewControllers
             _viewToStringRenderService = viewToStringRenderService;
         }
 
-        [PrinterNameFilterAttribute(Name = "StockPickingPaperFormat")]
+        [PrinterNameFilterAttribute(Name = AppConstants.StockPickingPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
             var res = await _stockPickingService.SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x => x.PickingType)

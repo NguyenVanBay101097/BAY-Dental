@@ -5,6 +5,7 @@ import { PrintPaperSizeBasic } from './print-paper-size.service';
 export class ConfigPrintBasic {
   id:string;
   name:string;
+  code:string;
   paperSizeId:string;
   printPaperSize: PrintPaperSizeBasic;
   isInfoCompany: boolean;

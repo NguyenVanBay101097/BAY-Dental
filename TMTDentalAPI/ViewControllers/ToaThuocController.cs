@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using TMTDentalAPI.JobFilters;
@@ -20,7 +21,7 @@ namespace TMTDentalAPI.ViewControllers
             _viewToStringRenderService = viewToStringRenderService;
         }
 
-        [PrinterNameFilterAttribute(Name = "ToaThuocPaperFormat")]
+        [PrinterNameFilterAttribute(Name = AppConstants.ToaThuocPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
             var res = await _toaThuocService.GetToaThuocPrint(id);

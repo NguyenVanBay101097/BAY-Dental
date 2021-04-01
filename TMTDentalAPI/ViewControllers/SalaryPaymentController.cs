@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
@@ -28,7 +29,7 @@ namespace TMTDentalAPI.ViewControllers
         }
 
         [HttpPost]
-        [PrinterNameFilterAttribute(Name = "SalaryPaymentPaperFormat")]
+        [PrinterNameFilterAttribute(Name = AppConstants.SalaryPaymentPaperCode)]
         public async Task<IActionResult> Print([FromBody] IEnumerable<Guid> ids)
         {
             var salaries = await _salaryPaymentService.SearchQuery(x => ids.Contains(x.Id)).ToListAsync();

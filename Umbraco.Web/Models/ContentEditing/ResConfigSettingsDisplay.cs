@@ -73,13 +73,5 @@ namespace Umbraco.Web.Models.ContentEditing
         [DbColumn("field_type", "boolean")]
         public bool? GroupSurvey { get; set; }
 
-        /// <summary>
-        /// khổ giấy in mặc định
-        /// </summary>
-        [DbColumn("config_parameter", "print.paper_size_default")]
-        [DbColumn("field_type", "reference")]
-        public Guid? PaperSizeId { get; set; }
-
-        public PrintPaperSizeBasic PrintPaperSize { get; set; }
     }
 }

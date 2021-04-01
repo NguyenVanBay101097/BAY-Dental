@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace TMTDentalAPI.ViewControllers
         }
 
         [CheckAccess(Actions = "Labo.LaboOrder.Read")]
-        [PrinterNameFilterAttribute(Name = "LaboOrderPaperFormat")]
+        [PrinterNameFilterAttribute(Name = AppConstants.LaboOrderPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
             var res = await _laboOrderService.SearchQuery(x => x.Id == id)

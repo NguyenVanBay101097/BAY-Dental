@@ -1,5 +1,7 @@
-﻿using ApplicationCore.Entities;
+﻿using ApplicationCore.Constants;
+using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,26 +29,39 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ConfigPrintBasic>> LoadConfigPrint()
         {
-            var configPrints = new List<ConfigPrintBasic>();
-            var listPaperFormat = GetListPaperFormat();
-            var configPrint_dict = await SearchQuery(x => x.CompanyId == CompanyId).Include(x => x.PrintPaperSize).ToDictionaryAsync(x => x.Name, x => x);
+            var configPrints = new List<ConfigPrintBasic>()
+            {
+                new ConfigPrintBasic { Name = "Hồ sơ điều trị", Code = AppConstants.SaleOrderPaperCode },
+                new ConfigPrintBasic { Name = "Biên lai thanh toán", Code = AppConstants.PaymentPaperCode },
+                new ConfigPrintBasic { Name = "Phiếu thanh toán lương nhân viên", Code = AppConstants.SalaryEmployeePaperCode },
+                new ConfigPrintBasic { Name = "Phiếu tạm ứng - chi lương", Code = AppConstants.SalaryPaymentPaperCode },
+                new ConfigPrintBasic { Name = "Đặt hàng Labo", Code =  AppConstants.LaboOrderPaperCode },
+                new ConfigPrintBasic { Name = "Đơn thuốc", Code = AppConstants.ToaThuocPaperCode },
+                new ConfigPrintBasic { Name = "Hóa đơn thuốc", Code = AppConstants.MedicineOrderPaperCode },
+                new ConfigPrintBasic { Name = "Phiếu thu - chi", Code = AppConstants.PhieuThuChiPaperCode },
+                new ConfigPrintBasic { Name = "Phiếu xuất - nhập kho", Code = AppConstants.StockPickingPaperCode },
+                new ConfigPrintBasic { Name = "Phiếu kiểm kho", Code = AppConstants.StockInventoryPaperCode },
 
+            };
+
+
+            var allConfigs = await SearchQuery(x => x.CompanyId == CompanyId).Include(x => x.PrintPaperSize).ToListAsync();
+            var configPrint_dict = allConfigs.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.First());
             var modelDataObj = GetService<IIRModelDataService>();
             var defaultPaperSize = await modelDataObj.GetRef<PrintPaperSize>("base.paperformat_a4");
 
-            foreach (var item in listPaperFormat)
+            foreach (var item in configPrints)
             {
-                if (configPrint_dict.ContainsKey(item))
+                if (configPrint_dict.ContainsKey(item.Code))
                 {
-                    configPrints.Add(_mapper.Map<ConfigPrintBasic>(configPrint_dict[item]));
-                }      
+                    var config = configPrint_dict[item.Code];
+                    item.IsInfoCompany = config.IsInfoCompany;
+                    item.PrintPaperSize = config.PrintPaperSize != null ? _mapper.Map<PrintPaperSizeBasic>(config.PrintPaperSize) : _mapper.Map<PrintPaperSizeBasic>(defaultPaperSize);
+                }
                 else
                 {
-                    var configPrint = new ConfigPrintBasic();
-                    configPrint.Name = item;
-                    configPrint.PrintPaperSize = _mapper.Map<PrintPaperSizeBasic>(defaultPaperSize);
-                    configPrints.Add(configPrint);
-                }
+                    item.PrintPaperSize = _mapper.Map<PrintPaperSizeBasic>(defaultPaperSize);
+                }     
             }
 
             return configPrints;
@@ -79,25 +94,18 @@ namespace Infrastructure.Services
             if (listUpdate.Any())
                 await UpdateAsync(listUpdate);
         }
+  
 
-        private IEnumerable<string> GetListPaperFormat()
+        public override ISpecification<ConfigPrint> RuleDomainGet(IRRule rule)
         {
-            string[] papers = new string[]
+            var companyId = CompanyId;
+            switch (rule.Code)
             {
-                "SaleOrderPaperFormat",
-                "PaymentPaperFormat",
-                "SalaryEmployeePaperFormat",
-                "SalaryPaymentPaperFormat",
-                "LaboOrderPaperFormat",
-                "ToaThuocPaperFormat",
-                "MedicineOrderPaperFormat",
-                "PhieuThuChiPaperFormat",
-                "StockPickingPaperFormat",
-                "StockInventoryPaperFormat"
-            };
-
-            return papers;
+                case "config.config_print_comp_rule":
+                    return new InitialSpecification<ConfigPrint>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
-
     }
 }

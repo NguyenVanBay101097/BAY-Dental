@@ -35,7 +35,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? GroupMedicine { get; set; }
         public bool? GroupSurvey { get; set; }
 
-        public Guid? PaperSizeId { get; set; }
 
     }
 }

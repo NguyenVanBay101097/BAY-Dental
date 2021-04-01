@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
@@ -27,7 +28,7 @@ namespace TMTDentalAPI.ViewControllers
             _userService = userService;
         }
 
-        [PrinterNameFilterAttribute(Name = "PhieuThuChiPaperFormat")]
+        [PrinterNameFilterAttribute(Name = AppConstants.PhieuThuChiPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
             var phieu = await _mapper.ProjectTo<PhieuThuChiPrintVM>(_phieuThuChiService.SearchQuery(x => x.Id == id)

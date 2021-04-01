@@ -803,6 +803,7 @@ namespace Infrastructure.Services
             var tooth_dict = new Dictionary<string, Tooth>();
             var sequence_dict = new Dictionary<string, IRSequence>();
             var partner_title_dict = new Dictionary<string, PartnerTitle>();
+            var paper_size_dict = new Dictionary<string, PrintPaperSize>();
 
             var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\dental_data.xml");
             XmlDocument doc = new XmlDocument();
@@ -911,6 +912,25 @@ namespace Infrastructure.Services
                     }
                     sequence_dict.Add(id, seq);
                 }
+                else if (model == "config.print_size")
+                {
+                    var printPaperSize = new PrintPaperSize();
+                    var fields = record.GetElementsByTagName("field");
+                    for (var j = 0; j < fields.Count; j++)
+                    {
+                        XmlElement field = (XmlElement)fields[j];
+                        var field_name = field.GetAttribute("name");
+                        if (field_name == "name")
+                        {
+                            printPaperSize.Name = field.InnerText;
+                        }
+                        else if (field_name == "paperFormat")
+                        {
+                            printPaperSize.PaperFormat = field.InnerText;
+                        }
+                    }
+                    paper_size_dict.Add(id, printPaperSize);
+                }
             }
 
             var toothCategoryObj = GetService<IToothCategoryService>();
@@ -927,6 +947,11 @@ namespace Infrastructure.Services
 
             var modelDataObj = GetService<IIRModelDataService>();
             await modelDataObj.CreateAsync(PrepareModelData(partner_title_dict, "res.partner.title"));
+
+            var paperSizeObj = GetService<IPrintPaperSizeService>();
+            await paperSizeObj.CreateAsync(paper_size_dict.Values);
+
+            await modelDataObj.CreateAsync(PrepareModelData(paper_size_dict, "res.paper.size"));
 
         }
 

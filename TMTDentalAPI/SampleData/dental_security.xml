@@ -332,6 +332,12 @@
       <field name="global" eval="False"/>
       <field name="group_ids" ref="survey.group_user"/>
     </record>
+
+    <record model="ir.rule" id="config.config_print_comp_rule">
+      <field name="name">Config Print multi-company</field>
+      <field name="model_id" ref="config.model_config_print"/>
+      <field name="global" eval="True"/>
+    </record>
   </data>
 </odoo>
 

@@ -21,6 +21,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public bool IsInfoCompany { get; set; }
 
+        public string Code { get; set; }
+
 
     }
 

@@ -52,8 +52,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public int RightMargin { get; set; }
 
-
-        public Guid CompanyId { get; set; }
     }
 
     public class PrintPaperSizeDisplay
@@ -84,5 +82,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public int RightMargin { get; set; }
 
+    }
+
+    public class PrintPapers
+    {
+        public string Name { get; set; }
+        public string Code { get; set; }
     }
 }

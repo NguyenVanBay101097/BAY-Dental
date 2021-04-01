@@ -41,7 +41,6 @@ export class ResConfigSettingsFormComponent implements OnInit {
       tCareRunAtObj: new Date(2000, 2, 10, 0, 0, 0),
       groupMedicine: false,
       groupSurvey: false,
-      printPaperSize: null,
     });
 
 
@@ -51,14 +50,9 @@ export class ResConfigSettingsFormComponent implements OnInit {
         var tCareRunAt = new Date(result.tCareRunAt);
         this.formGroup.get('tCareRunAtObj').patchValue(tCareRunAt);
       }
-      debugger
-      if(result.printPaperSize)
-      {
-        this.filterdPaperSizes = _.unionBy(this.filterdPaperSizes, result.printPaperSize, "id");
-      }
+     
       
     });
-    this.loadPaperSizes();
   }
 
   onChangeCompanyShareProduct() {
@@ -83,7 +77,6 @@ export class ResConfigSettingsFormComponent implements OnInit {
   onSave() {
     var val = this.formGroup.value;
     val.tCareRunAt = val.tCareRunAtObj ? this.intlService.formatDate(val.tCareRunAtObj, 'yyyy-MM-ddTHH:mm:ss') : null;
-    val.paperSizeId = val.printPaperSize ? val.printPaperSize.id : null;
     if (val.groupServiceCard) {
       this.configSettingsService.insertServiceCardData().subscribe(() => {
         this.configSettingsService.create(val).subscribe(result => {

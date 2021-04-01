@@ -76,13 +76,5 @@ namespace ApplicationCore.Entities
         public bool? GroupSurvey { get; set; }
 
 
-        /// <summary>
-        /// khổ giấy in
-        /// </summary>
-        [DbColumn("config_parameter", "print.paper_size_default")]
-        [DbColumn("field_type", "reference")]
-        public Guid? PaperSizeId { get; set; }
-
-        public PrintPaperSize PrintPaperSize { get; set; }
     }
 }

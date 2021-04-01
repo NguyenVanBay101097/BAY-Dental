@@ -33,8 +33,5 @@ namespace ApplicationCore.Entities
         /// canh lề phải
         /// </summary>
         public int RightMargin { get; set; }
-
-        public Guid CompanyId { get; set; }
-        public Company Company { get; set; }
     }
 }

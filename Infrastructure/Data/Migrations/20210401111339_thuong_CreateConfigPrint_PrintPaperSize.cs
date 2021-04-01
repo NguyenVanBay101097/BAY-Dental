@@ -3,15 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
-    public partial class thuong_AddConfigPrintAndPrintPaperSize_Tables : Migration
+    public partial class thuong_CreateConfigPrint_PrintPaperSize : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<Guid>(
-                name: "PaperSizeId",
-                table: "ResConfigSettings",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "PrintPaperSizes",
                 columns: table => new
@@ -26,18 +21,11 @@ namespace Infrastructure.Data.Migrations
                     TopMargin = table.Column<int>(nullable: false),
                     BottomMargin = table.Column<int>(nullable: false),
                     LeftMargin = table.Column<int>(nullable: false),
-                    RightMargin = table.Column<int>(nullable: false),
-                    CompanyId = table.Column<Guid>(nullable: false)
+                    RightMargin = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PrintPaperSizes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PrintPaperSizes_Companies_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PrintPaperSizes_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
@@ -96,11 +84,6 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ResConfigSettings_PaperSizeId",
-                table: "ResConfigSettings",
-                column: "PaperSizeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ConfigPrints_CompanyId",
                 table: "ConfigPrints",
                 column: "CompanyId");
@@ -121,11 +104,6 @@ namespace Infrastructure.Data.Migrations
                 column: "WriteById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PrintPaperSizes_CompanyId",
-                table: "PrintPaperSizes",
-                column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PrintPaperSizes_CreatedById",
                 table: "PrintPaperSizes",
                 column: "CreatedById");
@@ -134,35 +112,15 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_PrintPaperSizes_WriteById",
                 table: "PrintPaperSizes",
                 column: "WriteById");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ResConfigSettings_PrintPaperSizes_PaperSizeId",
-                table: "ResConfigSettings",
-                column: "PaperSizeId",
-                principalTable: "PrintPaperSizes",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_ResConfigSettings_PrintPaperSizes_PaperSizeId",
-                table: "ResConfigSettings");
-
             migrationBuilder.DropTable(
                 name: "ConfigPrints");
 
             migrationBuilder.DropTable(
                 name: "PrintPaperSizes");
-
-            migrationBuilder.DropIndex(
-                name: "IX_ResConfigSettings_PaperSizeId",
-                table: "ResConfigSettings");
-
-            migrationBuilder.DropColumn(
-                name: "PaperSizeId",
-                table: "ResConfigSettings");
         }
     }
 }

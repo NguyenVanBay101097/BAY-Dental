@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using TMTDentalAPI.JobFilters;
@@ -21,8 +22,7 @@ namespace TMTDentalAPI.ViewControllers
         }
 
         [HttpPut]
-        [CheckAccess(Actions = "Salary.HrPayslipRun.Read")]
-        [PrinterNameFilterAttribute(Name = "SalaryEmployeePaperFormat")]
+        [PrinterNameFilterAttribute(Name = AppConstants.SalaryPaymentPaperCode)]
         public async Task<IActionResult> Print(Guid id, [FromBody] HrPayslipRunSave val)
         {
             var ids = val.Slips.Where(x => x.IsCheck == true).Select(x => x.Id);

@@ -83,37 +83,12 @@ export class ConfigPrintFormComponent implements OnInit {
 
   repareConfigs(val){
     val.forEach(config => {
+      config.name = config.code;
       config.paperSizeId = config.printPaperSize ? config.printPaperSize.id : null;
       config.companyId = this.authService.userInfo.companyId;
     });
     return val;
   }
 
-  getName(value) {
-    switch (value) {
-      case 'SaleOrderPaperFormat':
-        return 'Hồ sơ điều trị';
-      case 'PaymentPaperFormat':
-        return 'Biên lai thanh toán';
-      case 'PaymentSupplierPaperFormat':
-        return 'Biên lai thanh toán nhà cung cấp';
-      case 'SalaryEmployeePaperFormat':
-        return 'Phiếu thanh toán lương nhân viên';
-      case 'SalaryPaymentPaperFormat':
-        return 'Phiếu tạm ứng - chi lương';
-      case 'LaboOrderPaperFormat':
-        return 'Đặt hàng Labo';
-      case 'ToaThuocPaperFormat':
-        return 'Đơn thuốc';
-      case 'MedicineOrderPaperFormat':
-        return 'Hóa đơn thuốc';
-      case 'PhieuThuChiPaperFormat':
-        return 'Phiếu thu - chi';
-      case 'StockPickingPaperFormat':
-        return 'phiếu xuất - nhập kho';
-      case 'StockInventoryPaperFormat':
-        return 'Phiếu kiểm kho';
-    }
-  }
 
 }

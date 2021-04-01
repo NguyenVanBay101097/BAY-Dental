@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ namespace TMTDentalAPI.ViewControllers
         }
 
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
-        [PrinterNameFilterAttribute(Name = "SaleOrderPaperFormat")]
+        [PrinterNameFilterAttribute(Name = AppConstants.SaleOrderPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
             var saleOrder = await _saleOrderService.GetPrint(id);

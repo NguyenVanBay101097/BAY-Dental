@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,7 @@ namespace TMTDentalAPI.ViewControllers
             _userService = userService;
         }
 
-        [PrinterNameFilterAttribute(Name = "StockInventoryPaperFormat")]
+        [PrinterNameFilterAttribute(Name = AppConstants.StockInventoryPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
             var res = await _stockInventoryService.GetStockInventoryPrint(id);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using TMTDentalAPI.JobFilters;
@@ -21,7 +22,7 @@ namespace TMTDentalAPI.ViewControllers
         }
 
         [CheckAccess(Actions = "Basic.AccountPayment.Read")]
-        [PrinterNameFilterAttribute(Name = "PaymentPaperFormat")]
+        [PrinterNameFilterAttribute(Name = AppConstants.PaymentPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
             var res = await _accountPaymentService.GetPrint(id);
