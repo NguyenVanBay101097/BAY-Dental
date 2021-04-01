@@ -88,7 +88,8 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
     this.router.navigate(['quotations/form'], { queryParams: { partner_id: this.partnerId } });
   }
 
-  editQuotation() {
+  editQuotation(item) {
+    this.router.navigate(['quotations/form'], { queryParams: { id: item.id } });
   }
 
   deleteQuotation(item) {

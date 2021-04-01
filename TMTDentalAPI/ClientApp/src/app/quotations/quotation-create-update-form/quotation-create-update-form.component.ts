@@ -78,6 +78,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         }
       })).subscribe(
         result => {
+          debugger
           this.partner = result.partner;
           this.user = result.user;
           this.formGroup.get('note').setValue(result.note);
@@ -90,9 +91,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           control.clear();
 
           result.lines.forEach(line => {
-            var g = this.fb.group(line);
-            g.setControl('teeth', this.fb.array(line.teeth));
-            control.push(g);
+            this.addLine(line);
           });
 
           const paymentcontrol = this.formGroup.get('payments') as FormArray;
@@ -119,7 +118,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.qty = 1;
     line.subPrice = val.PriceUnit;
     line.productName = val.Name;
-    line.totalPrice = line.qty * line.subPrice;
     line.teeth = this.fb.array([]);
     line.toothCategory = this.filteredToothCategories ? this.filteredToothCategories[0] : null;
     line.toothCategoryId = this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null;
@@ -319,13 +317,57 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   //Payment 
   onAddPayment() {
-
+    var payment = {
+      discountPercent: 0,
+      amount: 0,
+      sequence: 1,
+      date: new Date()
+    }
+    var paymentGroup = this.fb.group(payment);
+    this.paymentsArray.push(paymentGroup);
   }
 
-  deletePayment() {
-
+  deletePayment(index) {
+    this.paymentsArray.removeAt(index);
+    this.paymentsArray.markAsDirty();
   }
   //end payment
+
+  // Luu
+  getDataFormGroup() {
+    var value = this.formGroup.value;
+    value.dateQuotation = this.intlService.formatDate(value.dateQuotation, "yyyy-MM-dd");
+    if (value.lines) {
+      value.lines.forEach(line => {
+        if (line.teeth) {
+          line.toothIds = line.teeth.map(x => x.id)
+        }
+      });
+    }
+    if (value.payments) {
+      value.payments.forEach(pm => {
+        pm.date = this.intlService.formatDate(pm.date, "yyyy-MM-dd");
+      });
+    }
+    return value;
+  }
+
+  onSave() {
+    var val = this.getDataFormGroup();
+    if (this.quotationId) {
+      this.quotationService.update(this.quotationId, val).subscribe(
+        () => {
+          alert("Thành công rồi em ơi")
+        }
+      );
+    } else {
+      this.quotationService.create(val).subscribe(
+        () => {
+          alert("Thành công rồi em ơi")
+        }
+      );
+    }
+  }
 }
 
 

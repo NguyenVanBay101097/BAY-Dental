@@ -142,9 +142,9 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string Note { get; set; }
 
-        public IEnumerable<QuotationLineSave> QuotationLines { get; set; } = new List<QuotationLineSave>();
+        public IEnumerable<QuotationLineSave> Lines { get; set; } = new List<QuotationLineSave>();
 
-        public IEnumerable<PaymentQuotationSave> PaymentQuotations { get; set; } = new List<PaymentQuotationSave>();
+        public IEnumerable<PaymentQuotationSave> Payments { get; set; } = new List<PaymentQuotationSave>();
 
     }
 

@@ -13,7 +13,9 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<Quotation, QuotationBasic>();
             CreateMap<Quotation, QuotationDisplay>();
-            CreateMap<QuotationSave, Quotation>();
+            CreateMap<QuotationSave, Quotation>()
+                .ForMember(x => x.Lines, x => x.Ignore())
+                .ForMember(x => x.Payments, x => x.Ignore());
         }
     }
 }

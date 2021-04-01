@@ -83,9 +83,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid ToothCategoryId { get; set; }
 
         public IEnumerable<ToothBasic> QuotationLineToothRels { get; set; } = new List<ToothBasic>();
-
-        public Guid QuotationId { get; set; }
-        public QuotationSimple Quotation { get; set; }
     }
 
     public class QuotationLineSimple

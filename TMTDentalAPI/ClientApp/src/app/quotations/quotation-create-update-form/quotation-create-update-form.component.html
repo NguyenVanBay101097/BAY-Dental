@@ -32,9 +32,9 @@
                             class="btn btn-secondary btn-sm">
                             Trở lại
                         </a> -->
-                        <!-- <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+                        <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
                             Lưu
-                        </button> -->
+                        </button>
                         <!-- <button type="button" accesskey="1" *ngIf="saleOrder.State == 'draft'"
                             class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
                             Lưu và xác nhận
@@ -284,13 +284,15 @@
                                     {{i + 1}}
                                 </td>
                                 <td>
-                                    <input type="text" formControlName="">
+                                    <kendo-numerictextbox [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="discountPercent">
+                                    </kendo-numerictextbox>
                                 </td>
                                 <td>
-                                    <input type="text" formControlName="">
+                                    <kendo-datepicker formControlName='date'>
+                                    </kendo-datepicker>
                                 </td>
                                 <td>
-                                    <span>{{payment.get('')}}</span>
+                                    <span>{{payment.get('amount') ? payment.get('amount').value : 0}}</span>
                                 </td>
                                 <td>
                                     <i class="fas fa-trash" (click)="deletePayment(i)"></i>

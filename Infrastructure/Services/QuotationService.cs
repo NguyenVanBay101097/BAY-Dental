@@ -31,7 +31,10 @@ namespace Infrastructure.Services
                 .Include(x => x.Partner)
                 .Include(x => x.User)
                 .Include(x => x.Payments)
-                .Include(x => x.Lines).FirstOrDefaultAsync();
+                .Include(x => x.Lines)
+                .Include("Lines.Product")
+                .Include("Lines.ToothCategory")
+                .FirstOrDefaultAsync();
             return _mapper.Map<QuotationDisplay>(model);
         }
 
@@ -97,13 +100,13 @@ namespace Infrastructure.Services
             var paymentQuotationObj = GetService<IPaymentQuotationService>();
             foreach (var line in quotation.Payments)
             {
-                if (!val.PaymentQuotations.Any(x => x.Id == line.Id))
+                if (!val.Payments.Any(x => x.Id == line.Id))
                 {
                     listRemove.Add(line);
                 }
             }
 
-            foreach (var payment in val.PaymentQuotations)
+            foreach (var payment in val.Payments)
             {
                 if (payment.Id == Guid.Empty)
                 {
@@ -131,13 +134,13 @@ namespace Infrastructure.Services
             var quotationLineObj = GetService<IQuotationLineService>();
             foreach (var line in quotation.Lines)
             {
-                if (!val.QuotationLines.Any(x => x.Id == line.Id))
+                if (!val.Lines.Any(x => x.Id == line.Id))
                 {
                     listRemove.Add(line);
                 }
             }
 
-            foreach (var line in val.QuotationLines)
+            foreach (var line in val.Lines)
             {
                 if (line.Id == Guid.Empty)
                 {
@@ -201,7 +204,7 @@ namespace Infrastructure.Services
 
             var lines = new List<QuotationLine>();
 
-            foreach (var line in val.QuotationLines)
+            foreach (var line in val.Lines)
             {
                 var quoLine = _mapper.Map<QuotationLine>(line);
                 quoLine.QuotationId = quotation.Id;
@@ -216,10 +219,10 @@ namespace Infrastructure.Services
                 lines.Add(quoLine);
             }
 
-            if (val.PaymentQuotations.Any())
+            if (val.Payments.Any())
             {
                 var paymentQuotationObj = GetService<IPaymentQuotationService>();
-                var payments = _mapper.Map<IEnumerable<PaymentQuotation>>(val.PaymentQuotations);
+                var payments = _mapper.Map<IEnumerable<PaymentQuotation>>(val.Payments);
                 foreach (var item in payments)
                 {
                     item.QuotationId = quotation.Id;

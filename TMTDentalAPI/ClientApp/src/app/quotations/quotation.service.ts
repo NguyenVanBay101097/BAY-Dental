@@ -83,6 +83,10 @@ export class QuotationService {
     return this.http.post(this.baseApi + this.apiUrl, val);
   }
 
+  update(id: string, val: any) {
+    return this.http.put(this.baseApi + this.apiUrl + '/' + id, val);
+  }
+
   get(id: string): Observable<QuotationsDisplay> {
     return this.http.get<QuotationsDisplay>(this.baseApi + this.apiUrl + '/' + id);
   }
