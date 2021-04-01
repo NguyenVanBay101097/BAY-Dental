@@ -69,8 +69,8 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="state" title="Tình trạng" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <span *ngIf="dataItem.state == 'confirm'">Còn hạn</span>
-                        <span *ngIf="dataItem.state == 'cancel'">Hết hạn</span>
+                        <span *ngIf="dataItem.state == 'expired'">Còn hạn</span>
+                        <span *ngIf="dataItem.state == 'unexpired'">Hết hạn</span>
                     </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column field="id" width="100">
