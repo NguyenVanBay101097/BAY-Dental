@@ -37,10 +37,14 @@ namespace Infrastructure.Services
 
         public async Task<QuotationDisplay> GetDefault(Guid partnerId)
         {
+            var userObj = GetService<IUserService>();
             var partnerObj = GetService<IPartnerService>();
+            var user = await userObj.GetCurrentUser();
             var partner = _mapper.Map<PartnerSimple>(await partnerObj.SearchQuery(x => x.Id == partnerId).FirstOrDefaultAsync());
             var quotation = new QuotationDisplay();
             quotation.Partner = partner;
+            quotation.User = _mapper.Map<ApplicationUserSimple>(user);
+            quotation.UserId = user.Id;
             quotation.PartnerId = partner.Id;
             quotation.DateQuotation = DateTime.Today;
             quotation.DateApplies = 30;

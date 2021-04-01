@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import { QuotationService } from './quotation.service';
+import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 
 @NgModule({
   declarations: [QuotationCreateUpdateFormComponent],
@@ -17,6 +18,7 @@ import { QuotationService } from './quotation.service';
     SaleOrdersModule,
     FormsModule,
     ReactiveFormsModule,
+    MyCustomKendoModule,
     SharedModule,
     DateInputsModule
   ],

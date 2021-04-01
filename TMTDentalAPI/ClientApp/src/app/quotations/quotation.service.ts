@@ -7,6 +7,29 @@ import { UserSimple } from '../users/user-simple';
 
 // import { PagedResult2 } from '../paged-result-2';
 
+export class QuotationLineDisplay {
+  productId: string;
+  product: any;
+  qty: number;
+  percentDiscount: number;
+  subPrice: number;
+  diagnostic: number;
+  toothCategoryId: number;
+  toothCategory: any;
+  toothIds: any[];
+  productName: string;
+  totalPrice: number;
+  teeth: any;
+}
+export class QuotationLineSave {
+  productId: string;
+  qty: number;
+  percentDiscount: number;
+  subPrice: number;
+  diagnostic: number;
+  toothCategoryId: number;
+  toothIds: any[];
+}
 export class QuotationsBasic {
   id: string;
   name: string;
@@ -24,13 +47,17 @@ export class QuotationsDisplay {
   id: string;
   name: string;
   partner: PartnerSimple;
+  partnerId: string;
   user: UserSimple;
+  userId: string;
   dateQuotation: string;
   dateApplies: number;
   dateEndQuotation: string;
   note: string;
   totalAmount: number;
   state: string;
+  lines: any[];
+  payments: any[];
 }
 
 export class QuotationsPaged {
