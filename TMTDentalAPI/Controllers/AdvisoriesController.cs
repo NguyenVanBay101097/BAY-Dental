@@ -15,13 +15,13 @@ namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdvisoryController : BaseApiController
+    public class AdvisoriesController : BaseApiController
     {
         private readonly IAdvisoryService _advisoryService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public AdvisoryController(IAdvisoryService advisoryService,
+        public AdvisoriesController(IAdvisoryService advisoryService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _advisoryService = advisoryService;
