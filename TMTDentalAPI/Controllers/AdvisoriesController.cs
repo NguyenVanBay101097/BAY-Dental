@@ -52,9 +52,9 @@ namespace TMTDentalAPI.Controllers
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            var labo = await _advisoryService.CreateAdvisory(val);
+            var advisory = await _advisoryService.CreateAdvisory(val);
             _unitOfWork.Commit();
-            return Ok(_mapper.Map<AdvisoryDisplay>(labo));
+            return Ok(_mapper.Map<AdvisorySave>(advisory));
         }
 
         [HttpPut("{id}")]
@@ -86,5 +86,11 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetToothAdvise(AdvisoryToothAdvise val)
+        {
+            var res = await _advisoryService.GetToothAdvise(val);
+            return Ok(res);
+        }
     }
 }

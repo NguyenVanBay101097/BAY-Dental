@@ -15,6 +15,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<Advisory, AdvisorySave>();
             CreateMap<AdvisorySave, Advisory>()
                 .ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<Advisory, AdvisoryDisplay>();
         }
     }
 }

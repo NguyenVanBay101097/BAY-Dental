@@ -66,6 +66,7 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
 
             var result = _mapper.Map<ToothDiagnosis>(val);
+            result.CompanyId = CompanyId;
             await _unitOfWork.BeginTransactionAsync();
             var title = await _toothDiagnosisService.CreateAsync(result);
             _unitOfWork.Commit();

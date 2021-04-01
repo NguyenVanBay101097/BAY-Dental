@@ -59,6 +59,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.CustomerId == val.CustomerId);
             }
 
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+            }
+
             var totalItems = await query.CountAsync();
 
             query = query.Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
@@ -89,38 +94,38 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<Advisory> CreateAdvisory(AdvisorySave val)
+        public async Task<AdvisorySave> CreateAdvisory(AdvisorySave val)
         {
             var advisory = _mapper.Map<Advisory>(val);
             advisory.CompanyId = CompanyId;
             // Thêm răng
-            if (val.Teeth.Any())
+            if (val.ToothIds.Any())
             {
-                foreach (var tooth in val.Teeth)
+                foreach (var toothId in val.ToothIds)
                 {
-                    advisory.AdvisoryToothRels.Add(new AdvisoryToothRel() { ToothId = tooth.Id });
+                    advisory.AdvisoryToothRels.Add(new AdvisoryToothRel() { ToothId = toothId });
                 }
             }
             // Thêm chuẩn đoán răng
-            if (val.ToothDiagnosis.Any())
+            if (val.ToothDiagnosisIds.Any())
             {
-                foreach (var toothDiagnosis in val.ToothDiagnosis)
+                foreach (var toothDiagnosisId in val.ToothDiagnosisIds)
                 {
-                    advisory.AdvisoryToothDiagnosisRels.Add(new AdvisoryToothDiagnosisRel() { ToothDiagnosisId = toothDiagnosis.Id });
+                    advisory.AdvisoryToothDiagnosisRels.Add(new AdvisoryToothDiagnosisRel() { ToothDiagnosisId = toothDiagnosisId });
                 }
             }
             // Thêm dịch vụ tư vấn
-            if (val.Product.Any())
+            if (val.ProductIds.Any())
             {
-                foreach (var product in val.Product)
+                foreach (var productId in val.ProductIds)
                 {
-                    advisory.AdvisoryProductRels.Add(new AdvisoryProductRel() { ProductId = product.Id });
+                    advisory.AdvisoryProductRels.Add(new AdvisoryProductRel() { ProductId = productId });
                 }
             }
 
             await CreateAsync(advisory);
 
-            return advisory;
+            return val;
         }
 
         public async Task UpdateAdvisory(Guid id, AdvisorySave val)
@@ -134,33 +139,33 @@ namespace Infrastructure.Services
             // Xóa chuẩn đoán răng
             advisory.AdvisoryToothRels.Clear();
             // Thêm răng
-            if (val.Teeth.Any())
+            if (val.ToothIds.Any())
             {
-                foreach (var tooth in val.Teeth)
+                foreach (var toothId in val.ToothIds)
                 {
-                    advisory.AdvisoryToothRels.Add(new AdvisoryToothRel() { ToothId = tooth.Id });
+                    advisory.AdvisoryToothRels.Add(new AdvisoryToothRel() { ToothId = toothId });
                 }
             }
 
             // Xóa chuẩn đoán răng
             advisory.AdvisoryToothDiagnosisRels.Clear();
             // Thêm chuẩn đoán răng
-            if (val.ToothDiagnosis.Any())
+            if (val.ToothDiagnosisIds.Any())
             {
-                foreach (var toothDiagnosis in val.ToothDiagnosis)
+                foreach (var toothDiagnosisId in val.ToothDiagnosisIds)
                 {
-                    advisory.AdvisoryToothDiagnosisRels.Add(new AdvisoryToothDiagnosisRel() { ToothDiagnosisId = toothDiagnosis.Id });
+                    advisory.AdvisoryToothDiagnosisRels.Add(new AdvisoryToothDiagnosisRel() { ToothDiagnosisId = toothDiagnosisId });
                 }
             }
 
             // Xóa dịch vụ tư vấn
             advisory.AdvisoryProductRels.Clear();
             // Thêm dịch vụ tư vấn
-            if (val.Product.Any())
+            if (val.ProductIds.Any())
             {
-                foreach (var product in val.Product)
+                foreach (var productId in val.ProductIds)
                 {
-                    advisory.AdvisoryProductRels.Add(new AdvisoryProductRel() { ProductId = product.Id });
+                    advisory.AdvisoryProductRels.Add(new AdvisoryProductRel() { ProductId = productId });
                 }
             }
 
@@ -181,11 +186,46 @@ namespace Infrastructure.Services
             res.User = _mapper.Map<ApplicationUserSimple>(user);
             res.UserId = new Guid(res.User.Id);
             res.CompanyId = CompanyId;
-            // Lấy thông tin khách hàng
-            var partnerObj = GetService<IPartnerService>();
-            var partner = await partnerObj.GetByIdAsync(val.CustomerId);
-            res.CustomerId = partner.Id;
-            res.Customer = _mapper.Map<PartnerSimple>(partner);
+            if (val.CustomerId.HasValue)
+            {
+                // Lấy thông tin khách hàng
+                var partnerObj = GetService<IPartnerService>();
+                var partner = await partnerObj.GetByIdAsync(val.CustomerId);
+                res.CustomerId = partner.Id;
+                res.Customer = _mapper.Map<PartnerSimple>(partner);
+            } else
+            {
+                throw new Exception("Thiếu CustomerId");
+            }
+
+
+            return res;
+        }
+
+        public async Task<ToothAdvised> GetToothAdvise(AdvisoryToothAdvise val)
+        {
+            var query = SearchQuery();
+
+            if (val.CustomerId.HasValue)
+            {
+                query = query.Where(x => x.CustomerId == val.CustomerId);
+            } else
+            {
+                throw new Exception("Thiếu CustomerId");
+            }
+
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+            }
+
+            query = query.Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth);
+
+            var teeth = await query.SelectMany(x => x.AdvisoryToothRels).Select(x => x.Tooth).ToListAsync();
+
+            var res = new ToothAdvised();
+
+            res.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
 
             return res;
         }

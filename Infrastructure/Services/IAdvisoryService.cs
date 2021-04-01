@@ -13,9 +13,10 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<AdvisoryBasic>> GetPagedResultAsync(AdvisoryPaged val);
         Task<AdvisoryDisplay> GetAdvisoryDisplay(Guid id);
-        Task<Advisory> CreateAdvisory(AdvisorySave val);
+        Task<AdvisorySave> CreateAdvisory(AdvisorySave val);
         Task UpdateAdvisory(Guid id, AdvisorySave val);
         Task Unlink(IEnumerable<Guid> ids);
         Task<AdvisoryDisplay> DefaultGet(AdvisoryDefaultGet val);
+        Task<ToothAdvised> GetToothAdvise(AdvisoryToothAdvise val);
     }
 }
