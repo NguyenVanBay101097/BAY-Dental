@@ -78,7 +78,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         }
       })).subscribe(
         result => {
-          debugger
           this.partner = result.partner;
           this.user = result.user;
           this.formGroup.get('note').setValue(result.note);
