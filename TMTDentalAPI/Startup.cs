@@ -332,6 +332,7 @@ namespace TMTDentalAPI
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
 
             services.AddScoped<IToothDiagnosisService, ToothDiagnosisService>();
+            services.AddScoped<IAdvisoryService, AdvisoryService>();
 
             Action<IMapperConfigurationExpression> mapperConfigExp = mc =>
             {
@@ -474,6 +475,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new StockInventoryCriteriaProfile());
                 mc.AddProfile(new ProductStockInventoryCriteriaRelProfile());
                 mc.AddProfile(new ToothDiagnosisProfile());
+                mc.AddProfile(new AdvisoryProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

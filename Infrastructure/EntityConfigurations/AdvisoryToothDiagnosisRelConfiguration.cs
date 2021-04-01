@@ -15,7 +15,8 @@ namespace Infrastructure.EntityConfigurations
 
             builder.HasOne(x => x.Advisory)
                 .WithMany(x => x.AdvisoryToothDiagnosisRels)
-                .HasForeignKey(x => x.AdvisoryId);
+                .HasForeignKey(x => x.AdvisoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.ToothDiagnosis)
                 .WithMany(x => x.AdvisoryToothDiagnosisRels)

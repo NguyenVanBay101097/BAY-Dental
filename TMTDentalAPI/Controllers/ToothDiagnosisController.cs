@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -41,13 +42,12 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Catalog.ToothDiagnosis.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var result = await _toothDiagnosisService.GetByIdAsync(id);
-            if (result == null)
+            var toothDiagnosis = await _toothDiagnosisService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            if (toothDiagnosis == null)
             {
                 return NotFound();
             }
-
-            return Ok(result);
+            return Ok(_mapper.Map<ToothDiagnosisBasic>(toothDiagnosis));
         }
 
         [HttpPost("[action]")]

@@ -17,15 +17,30 @@ namespace Infrastructure.Data.Migrations
                     DateCreated = table.Column<DateTime>(nullable: true),
                     LastUpdated = table.Column<DateTime>(nullable: true),
                     Date = table.Column<DateTime>(nullable: false),
-                    UserId = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(nullable: true),
+                    CustomerId = table.Column<Guid>(nullable: true),
+                    Note = table.Column<string>(nullable: true),
+                    CompanyId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Advisory", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Advisory_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Advisory_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Advisory_Partners_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Partners",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -51,11 +66,18 @@ namespace Infrastructure.Data.Migrations
                     WriteById = table.Column<string>(nullable: true),
                     DateCreated = table.Column<DateTime>(nullable: true),
                     LastUpdated = table.Column<DateTime>(nullable: true),
-                    Name = table.Column<string>(nullable: false)
+                    Name = table.Column<string>(nullable: false),
+                    CompanyId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ToothDiagnosis", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ToothDiagnosis_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ToothDiagnosis_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
@@ -133,7 +155,7 @@ namespace Infrastructure.Data.Migrations
                         column: x => x.AdvisoryId,
                         principalTable: "Advisory",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AdvisoryToothDiagnosisRels_ToothDiagnosis_ToothDiagnosisId",
                         column: x => x.ToothDiagnosisId,
@@ -143,9 +165,19 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Advisory_CompanyId",
+                table: "Advisory",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Advisory_CreatedById",
                 table: "Advisory",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Advisory_CustomerId",
+                table: "Advisory",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Advisory_UserId",
@@ -171,6 +203,11 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_AdvisoryToothRels_ToothId",
                 table: "AdvisoryToothRels",
                 column: "ToothId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ToothDiagnosis_CompanyId",
+                table: "ToothDiagnosis",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ToothDiagnosis_CreatedById",
