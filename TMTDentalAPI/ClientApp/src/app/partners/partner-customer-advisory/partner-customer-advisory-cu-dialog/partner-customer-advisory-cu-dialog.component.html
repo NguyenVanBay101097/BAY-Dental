@@ -18,7 +18,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;" class=".o_td_control_left">
-                                    Vinh Huỳnh
+                                    <a [routerLink]="['/partners/customer/' + f.customerId.value]">{{f.customer?.value?.name}}</a>
                                 </td>
                             </tr>
                             <tr>
@@ -28,7 +28,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;" class=".o_td_control_left">
-                                    Lê Trí Khương
+                                    <label>{{f.user.value?.name}}</label>
                                 </td>
                             </tr>
                         </tbody>
@@ -42,14 +42,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="advisoryDate">
+                                    <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="date">
                                     </kendo-datepicker>
-                                    <!-- <div *ngIf="f.advisoryDate.errors && (f.advisoryDate.touched || f.advisoryDate.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.advisoryDate.errors.required">Chọn ngày tư vấn</div>
-                                    </div> -->
-                                    <!-- <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
-                                        {{precscriptPayment ? precscriptPayment.orderDate : 'dd/MM/yyyy'}}
-                                    </span> -->
+                                     <div *ngIf="f.date.errors && (f.date.touched || f.date.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.date.errors.required">Chọn ngày tư vấn</div>
+                                    </div> 
                                 </td>
                             </tr>
                         </tbody>
@@ -57,17 +54,23 @@
                     <div class="mb-2">
                         <p>BẢN ĐỒ RĂNG NHA</p>
                         <div class="mb-2">
-                            <button type="button" class="btn btn-primary btn-sm mr-2">Răng vĩnh viễn</button>
-                            <button type="button" class="btn btn-primary btn-sm mr-2">Răng sữa</button>
+                            <span *ngFor="let item of filteredToothCategories">
+                                <button type="button" class="btn btn-sm mr-2" 
+                                    [ngClass]="cateId == item.id ? 'btn-primary' : 'btn-outline-primary'"
+                                    (click)="onChangeToothCategory(item)" accesskey="s">{{item.name}}</button>
+                            </span>
                         </div>
                         <div class="mb-2">
                             <div class="teeth-map mb-2">
                                 <table class="table table-sm">
                                     <tr *ngFor="let ham of hamList | keyvalue">
-                                        <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
+                                        <td [ngClass]="{'text-right': vitri.key === '0_right'}"
+                                            *ngFor="let vitri of ham.value | keyvalue">
                                             <div class="tooth-wrapper">
-                                                <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
-                                                    {{rang.Name}}
+                                                <div (click)="onSelected(rang)" class="tooth-item"
+                                                    [ngClass]="{'selected': isSelected(rang)}"
+                                                    *ngFor="let rang of vitri.value">
+                                                    {{rang.name}}
                                                 </div>
                                             </div>
                                         </td>
@@ -75,6 +78,25 @@
                                 </table>
                             </div>
                         </div>
+                    </div>
+                    <div class="mb-2">
+                        <h5>Chẩn đoán răng</h5>
+                        <div>
+                         <app-tooth-diagnosis-popover [title]="'Chẩn đoán răng'" [type]="'diagnosis'" [tags]="f.toothDiagnosis.value" (onSave)="updateDiagnosis($event)">
+                        </app-tooth-diagnosis-popover>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <h5>Dịch vụ tư vấn</h5>
+                        <div>
+                            <app-tooth-diagnosis-popover [title]="'Chọn dịch vụ'" [type]="'service'" [tags]="f.product.value" (onSave)="updateProduct($event)">
+                            </app-tooth-diagnosis-popover>
+                        </div>
+                        
+                    </div>
+                    <div class="mb-2">
+                        <p>Ghi chú tư vấn</p>
+                        <textarea formControlName="note" class="form-control"></textarea>
                     </div>
                 </div>
             </div>
@@ -85,7 +107,7 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Thêm</button>
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Nhập lại</button>
+    <button type="button" class="btn btn-primary" (click)="resetForm()" accesskey="s">Nhập lại</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

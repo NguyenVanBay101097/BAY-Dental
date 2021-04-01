@@ -1,26 +1,34 @@
 <div class="px-3 py-3 bg-white">
     <p>DANH SÁCH KẾT QUẢ TƯ VẤN</p>
     <div class="mb-2">
-        <div class="my-3 d-flex justify-content-between">
-            <div class="d-flex">
-                <button type="button" class="btn btn-primary btn-sm mr-2">Răng vĩnh viễn</button>
-                <button type="button" class="btn btn-primary btn-sm mr-2">Răng sữa</button>
+        <div class="mb-2">
+            <div class="mb-2 d-flex">
+                <span *ngFor="let item of filteredToothCategories">
+                    <button type="button" class="btn btn-sm mr-2" 
+                        [ngClass]="cateId == item.id ? 'btn-primary' : 'btn-outline-primary'"
+                        (click)="onChangeToothCategory(item)" accesskey="s">{{item.name}}</button>
+                </span>
+                <button type="button" class="btn btn-primary btn-sm mr-2 ml-auto">Chọn lại</button>
             </div>
-            <button type="button" class="btn btn-primary btn-sm mr-2">Chọn lại</button>
+            <div class="mb-2">
+                <div class="teeth-map mb-2">
+                    <table class="table table-sm">
+                        <tr *ngFor="let ham of hamList | keyvalue">
+                            <td [ngClass]="{'text-right': vitri.key === '0_right'}"
+                                *ngFor="let vitri of ham.value | keyvalue">
+                                <div class="tooth-wrapper">
+                                    <div (click)="onSelected(rang)" class="tooth-item"
+                                        [ngClass]="{'selected': isSelected(rang)}"
+                                        *ngFor="let rang of vitri.value">
+                                        {{rang.name}}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
-        <!-- <div class="teeth-map mb-2">
-            <table class="table table-sm">
-                <tr *ngFor="let ham of hamList | keyvalue">
-                    <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
-                        <div class="tooth-wrapper">
-                            <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
-                                {{rang.Name}}
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div> -->
     </div>
     <div class="mb-2">
         <div class="my-3 d-flex justify-content-between">
@@ -56,18 +64,27 @@
                 <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
                 <kendo-grid-column field="dateOrder" title="Ngày tư vấn" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.dateOrder | date : 'short'}}
+                        {{dataItem.date | date : 'short'}}
                     </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column field="userName" title="Người tư vấn" width="150">
                 </kendo-grid-column>
-                <kendo-grid-column field="userName" title="Răng" width="150">
+                <kendo-grid-column field="teeth" title="Răng" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{getTeeth(dataItem.teeth)}}
+                    </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="userName" title="Chẩn đoán" width="150">
+                <kendo-grid-column  title="Chẩn đoán" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{getTeeth(dataItem.toothDiagnosis)}}
+                    </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="userName" title="Dịch vụ" width="150">
+                <kendo-grid-column  title="Dịch vụ" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{getTeeth(dataItem.product)}}
+                    </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="id" width="100">
+                <kendo-grid-column  width="100">
                     <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                         Thao tác
                     </ng-template>
