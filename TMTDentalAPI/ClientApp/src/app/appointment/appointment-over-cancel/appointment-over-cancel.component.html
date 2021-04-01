@@ -30,9 +30,9 @@
                     [valueField]="'id'" [textField]="'name'" style="min-width: 200px;"
                     [popupSettings]="{width: 'auto'}">
                 </kendo-combobox>
-                <app-appointment-date-filter [dateFrom]="dateFrom" [dateTo]="dateTo"
+                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" [title]="'Thời gian'"
                     (searchChange)="onDateSearchChange($event)">
-                </app-appointment-date-filter>
+                </app-tai-date-range-filter-dropdown>
             </div>
         </div>
     </div>
@@ -46,7 +46,8 @@
                     <div class="o_form_buttons_view">
                         <div class="state-filter-wrapper d-flex">
                             <div class="btn-group-sm btn-group-toggle" data-toggle="buttons">
-                                <label class="btn-sm btn btn-outline-primary active mr-2" (click)="setStateFilter('all')">
+                                <label class="btn-sm btn btn-outline-primary active mr-2"
+                                    (click)="setStateFilter('all')">
                                     <input type="radio" checked autocomplete="off">Tất
                                     cả<span class="badge badge-light ml-2 bg-white">{{stateCount['all'] || 0}}</span>
                                 </label>
@@ -89,7 +90,8 @@
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Thời gian hẹn" width="170">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <label class="mb-0" *ngIf="dataItem.time!=''">{{dataItem.time}}, <label class="mb-0" *ngIf="dataItem.date"> {{dataItem.date |
+                <label class="mb-0" *ngIf="dataItem.time!=''">{{dataItem.time}}, <label class="mb-0"
+                        *ngIf="dataItem.date"> {{dataItem.date |
                         date:'shortDate'}}</label></label>
 
             </ng-template>
