@@ -104,7 +104,7 @@ export class ConfigPrintFormComponent implements OnInit {
       case 'LaboOrderPaperFormat':
         return 'Đặt hàng Labo';
       case 'ToaThuocPaperFormat':
-        return 'Toa thuốc';
+        return 'Đơn thuốc';
       case 'MedicineOrderPaperFormat':
         return 'Hóa đơn thuốc';
       case 'PhieuThuChiPaperFormat':
