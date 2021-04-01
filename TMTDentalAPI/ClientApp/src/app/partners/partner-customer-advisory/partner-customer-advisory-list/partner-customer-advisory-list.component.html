@@ -1,0 +1,84 @@
+<div class="px-3 py-3 bg-white">
+    <p>DANH SÁCH KẾT QUẢ TƯ VẤN</p>
+    <div class="mb-2">
+        <div class="my-3 d-flex justify-content-between">
+            <div class="d-flex">
+                <button type="button" class="btn btn-primary btn-sm mr-2">Răng vĩnh viễn</button>
+                <button type="button" class="btn btn-primary btn-sm mr-2">Răng sữa</button>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm mr-2">Chọn lại</button>
+        </div>
+        <!-- <div class="teeth-map mb-2">
+            <table class="table table-sm">
+                <tr *ngFor="let ham of hamList | keyvalue">
+                    <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
+                        <div class="tooth-wrapper">
+                            <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                                {{rang.Name}}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div> -->
+    </div>
+    <div class="mb-2">
+        <div class="my-3 d-flex justify-content-between">
+            <div class="d-flex">
+                <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                    (searchChange)="searchChangeDate($event)">
+                </app-tai-date-range-filter-dropdown>
+            </div>
+            <div class="t-search t-search-right">
+                <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo số phiếu"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                <span class="fas fa-search form-control-icon form-control-sm"></span>
+            </div>
+        </div>
+    </div>
+    <div class="mb-2">
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createAdvisory()" accesskey="c">
+            Tạo tư vấn
+        </button>
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createItem()" accesskey="c">
+            Tạo báo giá
+        </button>
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createItem()" accesskey="c">
+            Tạo phiếu điều trị
+        </button>
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createItem()" accesskey="c">
+            In phiếu
+        </button>
+    </div>
+    <div>
+        <div class="o_content">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" [selectable]="true" (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+                <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
+                <kendo-grid-column field="dateOrder" title="Ngày tư vấn" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.dateOrder | date : 'short'}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="userName" title="Người tư vấn" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="userName" title="Răng" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="userName" title="Chẩn đoán" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="userName" title="Dịch vụ" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="id" width="100">
+                    <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                        Thao tác
+                    </ng-template>
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                            <span class="far fa-edit"></span></button>
+                        <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                            <span class="far fa-trash-alt"></span></button>
+                    </ng-template>
+                </kendo-grid-column>
+            </kendo-grid>
+        </div>
+    </div>
+</div>
