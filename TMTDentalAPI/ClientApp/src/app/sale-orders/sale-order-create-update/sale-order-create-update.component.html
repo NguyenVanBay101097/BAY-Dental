@@ -179,24 +179,27 @@
                                     <table class="table b-table-border table-sm mb-0">
                                         <thead>
                                             <tr>
-                                                <th></th>
-                                                <th class="b-sticky-left" style="min-width: 250px;">Dịch vụ</th>
-                                                <th style="min-width: 50px;" class="text-right">SL</th>
-                                                <th style="min-width: 120px;" class="text-right">Đơn giá</th>
-                                                <th style="min-width: 60px;" class="text-right">Giảm</th>
-                                                <th style="min-width: 100px;" class="text-right">Thành tiền</th>
-                                                <th style="min-width: 100px;" class="text-right">Thanh toán</th>
-                                                <th style="min-width: 100px;" class="text-right">Còn lại</th>
-                                                <th style="min-width: 50px;" class="text-center b-sticky-right">#</th>
+                                                <th style="width: 3%;"></th>
+                                                <th style="width: 40%;" class="b-sticky-left">Dịch vụ</th>
+                                                <th style="width: 7%;" class="text-right">SL</th>
+                                                <th style="width: 10%;" class="text-right">Đơn giá</th>
+                                                <th style="width: 5%;" class="text-right">Giảm</th>
+                                                <th style="width: 10%;" class="text-right">Thành tiền</th>
+                                                <th style="width: 10%;" class="text-right">Thanh toán</th>
+                                                <th style="width: 10%;" class="text-right">Còn lại</th>
+                                                <th style="width: 5%;" class="text-center b-sticky-right">#</th>
                                             </tr>
                                         </thead>
                                         <tbody formArrayName="OrderLines">
                                             <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                                 <tr class="tr-line-info" [formGroupName]="i">
-                                                    <td>                                             
-                                                        <a (click)="selectedLine = selectedLine === line ? null : line; createFormInfo(line.value)"> <i class="fas text-primary" [ngClass]="selectedLine !== line ? 'fa-plus': 'fa-minus'"  ></i></a>   
+                                                    <td>
+                                                        <a
+                                                            (click)="selectedLine = selectedLine === line ? null : line; createFormInfo(line.value)">
+                                                            <i class="fas text-primary"
+                                                                [ngClass]="selectedLine !== line ? 'fa-plus': 'fa-minus'"></i></a>
                                                     </td>
-                                                    <td>{{line.get('Name').value }}</td>                                      
+                                                    <td>{{line.get('Name').value }}</td>
                                                     <td class="text-right">
                                                         <span
                                                             *ngIf="stateControl.value !== 'draft'">{{line.get('ProductUOMQty').value
@@ -253,7 +256,9 @@
                                                     </td>
                                                 </tr>
                                                 <ng-container *ngIf="selectedLine === line">
-                                                    <tr [@detailExpand]="line == selectedLine ? 'expanded' : 'collapsed'"></tr>
+                                                    <tr
+                                                        [@detailExpand]="line == selectedLine ? 'expanded' : 'collapsed'">
+                                                    </tr>
                                                     <td></td>
                                                     <td colspan="7">
                                                         <div class="card">
@@ -261,67 +266,97 @@
                                                                 <span>Thông tin bổ sung</span>
                                                             </div>
                                                             <div class="card-body">
-                                                                
+
                                                                 <div>
                                                                     <form [formGroup]="formGroupInfo">
                                                                         <div class="form-group row">
                                                                             <div class="col-sm-6">
                                                                                 <div class="row">
-                                                                                    <label class="col-sm-3 col-form-label">
+                                                                                    <label
+                                                                                        class="col-sm-3 col-form-label">
                                                                                         Bác sĩ
                                                                                     </label>
                                                                                     <div class="col-sm-9">
-                                                                                        <span class="form-control-plaintext"
-                                                                                            *ngIf="getState != 'draft'">{{line.value.Assistant?.name}}</span>                                                            
-                                                                                        <kendo-combobox [filterable]="true"
-                                                                                        (filterChange)="onEmployeeFilter($event)"
-                                                                                        *ngIf="stateControl.value === 'draft'" style="width:100%;"
-                                                                                        [data]="initialListEmployees" [textField]="'Name'" #employeeCbx
-                                                                                        formControlName="Employee" [valueField]="'Id'">
-                                                                                    </kendo-combobox>
+                                                                                        <span
+                                                                                            class="form-control-plaintext"
+                                                                                            *ngIf="getState != 'draft'">{{line.value.Assistant?.name}}</span>
+                                                                                        <kendo-combobox
+                                                                                            [filterable]="true"
+                                                                                            (filterChange)="onEmployeeFilter($event)"
+                                                                                            *ngIf="stateControl.value === 'draft'"
+                                                                                            style="width:100%;"
+                                                                                            [data]="initialListEmployees"
+                                                                                            [textField]="'Name'"
+                                                                                            #employeeCbx
+                                                                                            formControlName="Employee"
+                                                                                            [valueField]="'Id'">
+                                                                                        </kendo-combobox>
                                                                                     </div>
-                                                                                </div>                                                                              
+                                                                                </div>
                                                                             </div>
                                                                             <div class="col-sm-6">
                                                                                 <div class="row">
-                                                                                    <label class="col-sm-3 col-form-label">
+                                                                                    <label
+                                                                                        class="col-sm-3 col-form-label">
                                                                                         Phụ tá
                                                                                     </label>
                                                                                     <div class="col-sm-9">
-                                                                                        <span class="form-control-plaintext"
-                                                                                            *ngIf="getState != 'draft'">{{line.value.Assistant?.name}}</span>                                                            
-                                                                                        <kendo-combobox [filterable]="true"
-                                                                                        (filterChange)="onEmployeeFilter($event)"
-                                                                                        *ngIf="stateControl.value === 'draft'" style="width:100%;"
-                                                                                        [data]="initialListEmployees" [textField]="'Name'" #assistantCbx
-                                                                                        formControlName="Assistant" [valueField]="'Id'">
-                                                                                    </kendo-combobox>
+                                                                                        <span
+                                                                                            class="form-control-plaintext"
+                                                                                            *ngIf="getState != 'draft'">{{line.value.Assistant?.name}}</span>
+                                                                                        <kendo-combobox
+                                                                                            [filterable]="true"
+                                                                                            (filterChange)="onEmployeeFilter($event)"
+                                                                                            *ngIf="stateControl.value === 'draft'"
+                                                                                            style="width:100%;"
+                                                                                            [data]="initialListEmployees"
+                                                                                            [textField]="'Name'"
+                                                                                            #assistantCbx
+                                                                                            formControlName="Assistant"
+                                                                                            [valueField]="'Id'">
+                                                                                        </kendo-combobox>
                                                                                     </div>
                                                                                 </div>
-                                                                               
-                                                                            </div>                                                                        
-                                                                        </div> 
+
+                                                                            </div>
+                                                                        </div>
                                                                         <div class="form-group row">
                                                                             <label class="col-sm-2 col-form-label">
                                                                                 Chuẩn đoán
                                                                             </label>
                                                                             <div class="col-sm-10">
                                                                                 <!-- <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic"> -->
-                                                                                <textarea formControlName="Diagnostic"  class="form-control"></textarea>
+                                                                                <textarea formControlName="Diagnostic"
+                                                                                    class="form-control"></textarea>
                                                                             </div>
-                                                                        </div>                                                              
+                                                                        </div>
                                                                         <div class="d-inline-flex w-100">
-                                                                            <div *ngFor="let item of filteredToothCategories; let i = index" class="form-check form-check-inline" style="vertical-align: -webkit-baseline-middle;">
-                                                                                <input [attr.disabled]="getState !== 'draft' ? true : null" [checked]="item.Id === ToothCategoryControl.value.Id" (change)="onChangeToothCategory(item)" class="form-check-input" type="radio" name="ToothCategory" formControlName="ToothCategory" [id]="'toothCategory' + i">
-                                                                                <label class="form-check-label" [for]="'toothCategory' + i">{{item.Name}}</label>
+                                                                            <div *ngFor="let item of filteredToothCategories; let i = index"
+                                                                                class="form-check form-check-inline"
+                                                                                style="vertical-align: -webkit-baseline-middle;">
+                                                                                <input
+                                                                                    [attr.disabled]="getState !== 'draft' ? true : null"
+                                                                                    [checked]="item.Id === ToothCategoryControl.value.Id"
+                                                                                    (change)="onChangeToothCategory(item)"
+                                                                                    class="form-check-input"
+                                                                                    type="radio" name="ToothCategory"
+                                                                                    formControlName="ToothCategory"
+                                                                                    [id]="'toothCategory' + i">
+                                                                                <label class="form-check-label"
+                                                                                    [for]="'toothCategory' + i">{{item.Name}}</label>
                                                                             </div>
                                                                         </div>
                                                                         <div class="teeth-map mb-2">
                                                                             <table class="table table-sm">
-                                                                                <tr *ngFor="let ham of hamList | keyvalue">
-                                                                                    <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
+                                                                                <tr
+                                                                                    *ngFor="let ham of hamList | keyvalue">
+                                                                                    <td [ngClass]="{'text-right': vitri.key === '0_right'}"
+                                                                                        *ngFor="let vitri of ham.value | keyvalue">
                                                                                         <div class="tooth-wrapper">
-                                                                                            <div (click)="onSelected(rang)" class="tooth-item-collapsed" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                                                                                            <div (click)="onSelected(rang)"
+                                                                                                class="tooth-item-collapsed"
+                                                                                                [ngClass]="{'selected': isSelected(rang)}"
+                                                                                                *ngFor="let rang of vitri.value">
                                                                                                 {{rang.Name}}
                                                                                             </div>
                                                                                         </div>
@@ -330,17 +365,21 @@
                                                                             </table>
                                                                         </div>
                                                                         <div class="popover-footer">
-                                                                            <button (click)="selectedLine = null;updateLineInfo(line)" class="btn btn-sm btn-primary ml-auto">Cập nhật</button>
-                                                                            <button (click)="selectedLine = null" class="btn btn-sm btn-danger ml-2">Hủy</button>
+                                                                            <button
+                                                                                (click)="selectedLine = null;updateLineInfo(line)"
+                                                                                class="btn btn-sm btn-primary ml-auto">Cập
+                                                                                nhật</button>
+                                                                            <button (click)="selectedLine = null"
+                                                                                class="btn btn-sm btn-danger ml-2">Hủy</button>
                                                                         </div>
                                                                     </form>
 
                                                                 </div>
                                                             </div>
-                                                          </div>
-                                                      
+                                                        </div>
+
                                                     </td>
-                                                  
+
                                                 </ng-container>
                                             </ng-container>
 
