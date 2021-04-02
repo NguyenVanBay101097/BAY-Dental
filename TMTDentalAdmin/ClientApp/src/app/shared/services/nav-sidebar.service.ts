@@ -7,4 +7,8 @@ export class NavSidebarService {
     toggle() {
         this.collapsed = !this.collapsed;
     }
+
+    set(collapsed) {
+        this.collapsed = collapsed;
+    }
 }
