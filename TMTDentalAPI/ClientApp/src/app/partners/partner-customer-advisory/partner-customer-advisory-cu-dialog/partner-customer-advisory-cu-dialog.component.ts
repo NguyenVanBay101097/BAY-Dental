@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { result } from 'lodash';
+import { AdvisoryDefaultGet, AdvisoryService } from 'src/app/advisories/advisory.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
-import { ToothCategoryBasic } from 'src/app/tooth-categories/tooth-category.service';
+import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import {ToothDiagnosisPopoverComponent} from '../partner-customer-advisory-list/tooth-diagnosis-popover/tooth-diagnosis-popover.component'
 
 @Component({
   selector: 'app-partner-customer-advisory-cu-dialog',
@@ -14,16 +19,47 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   myForm: FormGroup;
   hamList: { [key: string]: {} };
   teethSelected: ToothDisplay[] = [];
+  filteredToothCategories: any[] = [];
+  cateId: string;
+  submitted = false;
+  customerId: string;
+
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
-    private toothService: ToothService
+    private toothService: ToothService,
+    private toothCategoryService: ToothCategoryService,
+    private advisoryService: AdvisoryService,
+    private intlService: IntlService,
+    private notificationService: NotificationService,
   ) { }
 
   ngOnInit() {
     this.myForm = this.fb.group({
-      advisoryDate: [null, Validators.required]
+      date: [null, Validators.required],
+      customerId: [null, Validators.required],
+      customer: [null],
+      userId: [null, Validators.required],
+      user:[null],
+      teeth: [[], Validators.required],
+      toothDiagnosis: [[], Validators.required],
+      product: [[], Validators.required],
+      note: [],
+      companyId: [null,Validators.required]
     })
+    setTimeout(() => {
+      this.loadToothCategories();
+      this.loadDefaultToothCategory().subscribe(result => {
+        this.cateId = result.id;
+        this.loadTeethMap(result);
+      })
+      this.getDefault();
+    }, 200);
+    
+  }
+
+  get f(){
+    return this.myForm.controls;
   }
 
   loadTeethMap(categ: ToothCategoryBasic) {
@@ -33,7 +69,6 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   }
 
   processTeeth(teeth: ToothDisplay[]) {
-    console.log(teeth);
     this.hamList = {
       '0_up': { '0_right': [], '1_left': [] },
       '1_down': { '0_right': [], '1_left': [] }
@@ -76,5 +111,66 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     }
 
     return null;
+  }
+
+  loadDefaultToothCategory() {
+    return this.toothCategoryService.getDefaultCategory();
+  }
+
+  loadToothCategories() {
+    return this.toothCategoryService.getAll().subscribe(result => this.filteredToothCategories = result);
+  }
+
+  onChangeToothCategory(value: any) {
+    if (value.id) {
+      this.teethSelected = [];
+      this.loadTeethMap(value);
+      this.cateId = value.id;
+    }
+  }
+
+  onSave(){
+    this.submitted = true;
+    var valueForm = this.myForm.value;
+    valueForm.date = this.intlService.formatDate(valueForm.date,"yyyy-MM-dd");
+    valueForm.toothIds = this.teethSelected.map(x => x.id);
+    valueForm.toothDiagnosisIds = valueForm.toothDiagnosis.map(x => x.id);
+    valueForm.productIds = valueForm.product.map(x => x.id);
+    this.advisoryService.create(valueForm).subscribe(() => {
+      this.notify("success","Lưu thành công");
+      this.activeModal.close(true);
+      this.resetForm();
+    })
+  }
+
+  notify(style, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: style, icon: true }
+    });
+  }
+
+  getDefault(){
+    var val = new AdvisoryDefaultGet();
+    val.customerId = this.customerId
+    this.advisoryService.getDefault(val).subscribe(result => {
+      result.date = new Date(result.date);
+      this.myForm.patchValue(result);
+    })
+  }
+
+  updateDiagnosis(data){ 
+    this.f.toothDiagnosis.setValue(data);
+  }
+
+  updateProduct(data){
+    this.f.product.setValue(data);
+  }
+
+  resetForm(){
+    this.myForm.reset();
   }
 }
