@@ -141,7 +141,7 @@ import { PartnerCustomerTreatmentSaleOrderLineComponent } from './partner-custom
     PartnerSupplierFormDebitComponent,
     PartnerSupplierFormPaymentComponent,
     PartnerSupplierFormDebitPaymentDialogComponent,
-    PartnerCustomerLaboOrdersComponentComponent
+    PartnerCustomerLaboOrdersComponentComponent,
     PartnerSupplierFormDebitPaymentDialogComponent,
     PartnerDotkhamListComponent,
     PartnerDotkhamDetailComponent,

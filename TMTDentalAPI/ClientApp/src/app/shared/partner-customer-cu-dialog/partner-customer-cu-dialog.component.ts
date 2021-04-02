@@ -265,8 +265,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     return this.formGroup.get('source').value;
   }
 
-  get f() { return this.formGroup.controls; }
-
   loadHistoriesList() {
     this.partnerService.getHistories().subscribe((result) => {
       this.historiesList = result;
