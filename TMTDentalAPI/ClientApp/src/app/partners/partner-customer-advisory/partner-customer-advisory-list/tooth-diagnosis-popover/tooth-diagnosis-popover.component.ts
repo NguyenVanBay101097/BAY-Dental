@@ -47,7 +47,7 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
         debounceTime(400),
         distinctUntilChanged())
         .subscribe(value => {
-          this.loadPartnerCategoryPopOver(value);
+          this.loadPopOver(value);
         });
     }, 200);
   }
@@ -56,7 +56,7 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
     if (popover.isOpen()) {
       popover.close();
     } else {
-      this.loadPartnerCategoryPopOver();
+      this.loadPopOver();
       popover.open({ mytags });
     }
   }
@@ -82,7 +82,7 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
     })
   }
 
-  loadPartnerCategoryPopOver(q?: string) {
+  loadPopOver(q?: string) {
     if(this.type == this.allType.diagnosis) {
       this.getPageDiagnosis();
     }
@@ -107,7 +107,6 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
   // // }
 
   update(tags) {
-    tags = tags || [];
     this.popover.close();
     this.onSave.emit(tags);
   }

@@ -9,48 +9,50 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group mb-2 row">
-                    <table class="o_group o_inner_group o_group_col_6" style="width:100%">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label o_td_label_left">
-                                    <label class="o_form_label">
-                                        Khách hàng
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;" class=".o_td_control_left">
-                                    <a [routerLink]="['/partners/customer/' + f.customerId.value]">{{f.customer?.value?.name}}</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label o_td_label_left">
-                                    <label class="o_form_label">
-                                        Người tư vấn
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;" class=".o_td_control_left">
-                                    <label>{{f.user.value?.name}}</label>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_6" style="width:100%">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ngày tư vấn
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="date">
-                                    </kendo-datepicker>
-                                     <div *ngIf="f.date.errors && (f.date.touched || f.date.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.date.errors.required">Chọn ngày tư vấn</div>
-                                    </div> 
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="d-flex">
+                        <table class="o_group o_inner_group o_group_col_6" style="width:100%">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label o_td_label_left">
+                                        <label class="o_form_label">
+                                            Khách hàng
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;" class=".o_td_control_left">
+                                        <a [routerLink]="['/partners/customer/' + f.customerId.value]">{{f.customer?.value?.name}}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label o_td_label_left">
+                                        <label class="o_form_label">
+                                            Người tư vấn
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;" class=".o_td_control_left">
+                                        <label>{{f.user.value?.name}}</label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group o_group_col_6 ml-auto" style="width:100%">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ngày tư vấn
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj">
+                                        </kendo-datepicker>
+                                         <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.dateObj.errors.required">Chọn ngày tư vấn</div>
+                                        </div> 
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="mb-2">
                         <p>BẢN ĐỒ RĂNG NHA</p>
                         <div class="mb-2">
@@ -59,6 +61,8 @@
                                     [ngClass]="cateId == item.id ? 'btn-primary' : 'btn-outline-primary'"
                                     (click)="onChangeToothCategory(item)" accesskey="s">{{item.name}}</button>
                             </span>
+                            <div  class="text-danger">
+                            </div> 
                         </div>
                         <div class="mb-2">
                             <div class="teeth-map mb-2">
@@ -76,14 +80,20 @@
                                         </td>
                                     </tr>
                                 </table>
+                                <div *ngIf = "teethSelected.length == 0 && submitted" class="text-danger">
+                                    Chọn răng
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="mb-2">
                         <h5>Chẩn đoán răng</h5>
                         <div>
-                         <app-tooth-diagnosis-popover [title]="'Chẩn đoán răng'" [type]="'diagnosis'" [tags]="f.toothDiagnosis.value" (onSave)="updateDiagnosis($event)">
-                        </app-tooth-diagnosis-popover>
+                            <app-tooth-diagnosis-popover [title]="'Chẩn đoán răng'" [type]="'diagnosis'" [tags]="f.toothDiagnosis.value" (onSave)="updateDiagnosis($event)">
+                            </app-tooth-diagnosis-popover>
+                            <div *ngIf = "f.toothDiagnosis.value.length == 0 && submitted" class="text-danger">
+                                Chọn chẩn đoán răng
+                            </div>
                         </div>
                     </div>
                     <div class="mb-2">
@@ -91,6 +101,9 @@
                         <div>
                             <app-tooth-diagnosis-popover [title]="'Chọn dịch vụ'" [type]="'service'" [tags]="f.product.value" (onSave)="updateProduct($event)">
                             </app-tooth-diagnosis-popover>
+                            <div *ngIf = "f.product.value.length == 0 && submitted" class="text-danger">
+                                Chọn dịch vụ
+                            </div>
                         </div>
                         
                     </div>

@@ -23,6 +23,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   cateId: string;
   submitted = false;
   customerId: string;
+  id: string;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -36,11 +37,12 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
 
   ngOnInit() {
     this.myForm = this.fb.group({
-      date: [null, Validators.required],
+      dateObj: [null, Validators.required],
       customerId: [null, Validators.required],
       customer: [null],
       userId: [null, Validators.required],
       user:[null],
+      toothCategoryId:[null],
       teeth: [[], Validators.required],
       toothDiagnosis: [[], Validators.required],
       product: [[], Validators.required],
@@ -53,7 +55,12 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
         this.cateId = result.id;
         this.loadTeethMap(result);
       })
-      this.getDefault();
+      if(this.id){
+        this.getById();
+      }else{
+        this.getDefault();
+      }
+     
     }, 200);
     
   }
@@ -131,15 +138,20 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
 
   onSave(){
     this.submitted = true;
+    if (!this.myForm.valid) {
+      return false;
+    }
+
+    console.log(this.myForm);
     var valueForm = this.myForm.value;
-    valueForm.date = this.intlService.formatDate(valueForm.date,"yyyy-MM-dd");
+    valueForm.date = this.intlService.formatDate(valueForm.dateObj, 'yyyy-MM-ddTHH:mm:ss');
+    valueForm.toothCategoryId = this.cateId ;
     valueForm.toothIds = this.teethSelected.map(x => x.id);
     valueForm.toothDiagnosisIds = valueForm.toothDiagnosis.map(x => x.id);
     valueForm.productIds = valueForm.product.map(x => x.id);
     this.advisoryService.create(valueForm).subscribe(() => {
       this.notify("success","Lưu thành công");
       this.activeModal.close(true);
-      this.resetForm();
     })
   }
 
@@ -157,9 +169,22 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     var val = new AdvisoryDefaultGet();
     val.customerId = this.customerId
     this.advisoryService.getDefault(val).subscribe(result => {
-      result.date = new Date(result.date);
       this.myForm.patchValue(result);
+      let date = new Date(result.date);
+      this.myForm.get('dateObj').patchValue(date);
     })
+  }
+
+  getById(){
+    this.advisoryService.get(this.id).subscribe(result => {
+      this.myForm.patchValue(result);
+      let date = new Date(result.date);
+      this.myForm.get('dateObj').patchValue(date);
+   
+      console.log(result);
+      
+      
+    });
   }
 
   updateDiagnosis(data){ 
@@ -171,6 +196,11 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   }
 
   resetForm(){
-    this.myForm.reset();
+    this.f.toothDiagnosis.setValue([]);
+    this.f.product.setValue([]);
+    this.f.teeth.setValue([]);
+    this.teethSelected = [];
+    this.f.note.reset();
+    
   }
 }

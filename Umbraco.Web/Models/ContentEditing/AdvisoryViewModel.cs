@@ -82,4 +82,12 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
     }
+
+    public class AdvisoryPrintVM
+    {
+        public CompanyPrintVM Company { get; set; }
+        public PartnerDisplay Partner { get; set; }
+        public IEnumerable<AdvisoryDisplay> Advisories { get; set; }
+        public ApplicationUserDisplay User { get; set; }
+    }
 }
