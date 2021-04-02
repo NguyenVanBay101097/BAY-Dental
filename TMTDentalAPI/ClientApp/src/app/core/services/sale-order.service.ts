@@ -162,7 +162,7 @@ export class SaleOrderService {
     }
 
     printSaleOrder(id: string){
-        return this.http.get(this.baseApi + this.apiUrlPrint + '/Print' + '/' + id );
+        return this.http.get(this.baseApi + this.apiUrlPrint + '/Print' + '/' + id , {responseType:'text'} );
     }
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {

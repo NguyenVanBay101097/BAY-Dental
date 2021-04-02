@@ -30,11 +30,7 @@ namespace TMTDentalAPI.ViewControllers
             if (saleOrder == null)
                 return NotFound();
 
-            var viewdata = ViewData.ToDictionary(x => x.Key, x => x.Value);
-
-            var html = await _viewToStringRenderService.RenderViewAsync("SaleOrder/Print", saleOrder, viewdata);
-
-            return Ok(new PrintData() { html = html });
+            return View(saleOrder);
 
         }
     }

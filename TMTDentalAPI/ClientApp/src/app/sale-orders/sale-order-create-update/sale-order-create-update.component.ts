@@ -685,8 +685,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   printSaleOrder() {
     if (this.saleOrderId) {
-      this.saleOrderService.printSaleOrder(this.saleOrderId).subscribe((result: any) => {
-        this.printService.printHtml(result.html);
+      this.saleOrderService.printSaleOrder(this.saleOrderId).subscribe((result: any) => {       
+        this.printService.printHtml(result);
       });
     }
   }
