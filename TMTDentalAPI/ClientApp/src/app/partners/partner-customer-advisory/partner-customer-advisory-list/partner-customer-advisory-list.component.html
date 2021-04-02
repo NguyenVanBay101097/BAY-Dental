@@ -55,7 +55,7 @@
     </div>
     <div>
         <div class="o_content">
-            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [selectedKeys]="mySelection" [kendoGridSelectBy]="'id'">
                 <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
                 <kendo-grid-column title="Ngày tư vấn" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem>

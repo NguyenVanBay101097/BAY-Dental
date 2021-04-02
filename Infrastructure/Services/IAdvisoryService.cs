@@ -19,6 +19,6 @@ namespace Infrastructure.Services
         Task<AdvisoryDisplay> DefaultGet(AdvisoryDefaultGet val);
         Task<ToothAdvised> GetToothAdvise(AdvisoryToothAdvise val);
 
-        Task<AdvisoryPrintVM> Print(Guid customerId);
+        Task<AdvisoryPrintVM> Print(Guid customerId, IEnumerable<Guid> ids);
     }
 }
