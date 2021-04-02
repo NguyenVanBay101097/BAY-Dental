@@ -261,6 +261,7 @@
                                                                 <span>Thông tin bổ sung</span>
                                                             </div>
                                                             <div class="card-body">
+                                                                
                                                                 <div>
                                                                     <form [formGroup]="formGroupInfo">
                                                                         <div class="form-group row">
@@ -298,8 +299,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                                
-                                                                            </div>
-                                                                          
+                                                                            </div>                                                                        
                                                                         </div> 
                                                                         <div class="form-group row">
                                                                             <label class="col-sm-2 col-form-label">
@@ -309,7 +309,7 @@
                                                                                 <!-- <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic"> -->
                                                                                 <textarea formControlName="Diagnostic"  class="form-control"></textarea>
                                                                             </div>
-                                                                        </div>                                                                    
+                                                                        </div>                                                              
                                                                         <div class="d-inline-flex w-100">
                                                                             <div *ngFor="let item of filteredToothCategories; let i = index" class="form-check form-check-inline" style="vertical-align: -webkit-baseline-middle;">
                                                                                 <input [attr.disabled]="getState !== 'draft' ? true : null" [checked]="item.Id === ToothCategoryControl.value.Id" (change)="onChangeToothCategory(item)" class="form-check-input" type="radio" name="ToothCategory" formControlName="ToothCategory" [id]="'toothCategory' + i">
@@ -340,18 +340,7 @@
                                                           </div>
                                                       
                                                     </td>
-
-
-                                                    <!--                                             
-                                                    <tr [@detailExpand]="line == selectedMachine ? 'expanded' : 'collapsed'">
-                                                        <td (click)="selectedMachine = null" class="text-center"><i
-                                                                class="fa fa-angle-up"></i></td>
-                                                        <td>hello</td>
-                                                        <td>{{selectedMachine?.get('Name').value}}</td>
-                                                        <td>{{selectedMachine?.flavor?.id}}</td>
-                                                        <td>2</td>
-                                                        <td>2</td>
-                                                    </tr> -->
+                                                  
                                                 </ng-container>
                                             </ng-container>
 
