@@ -2,10 +2,10 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a [routerLink]="['/partners/customer/' + partnerId + '/quotations']">Báo giá</a>
+                <a [routerLink]="['/partners/customer/' + (partner?partner.id:null) + '/quotations']">Báo giá</a>
             </li>
             <li class="active">
-                <span *ngIf="quotationId">{{partner.name}}</span>
+                <span *ngIf="quotationId">{{quotation?quotation.name:''}}</span>
                 <span *ngIf="!quotationId">Mới</span>
             </li>
         </ol>
@@ -28,44 +28,18 @@
             <div class="flex-0-0-auto">
                 <div class="d-flex">
                     <div class="btns">
-                        <!-- <a [routerLink]="['/partners/customer/' + customerId + '/overview']"
-                            class="btn btn-secondary btn-sm">
-                            Trở lại
-                        </a> -->
                         <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
                             Lưu
                         </button>
-                        <!-- <button type="button" accesskey="1" *ngIf="saleOrder.State == 'draft'"
-                            class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
-                            Lưu và xác nhận
+                        <button type="button" accesskey="1" class="btn btn-primary btn-sm" (click)="onCreateSaleOrder()">
+                            Tạo phiếu điều trị
                         </button>
-                        <button *ngIf="['sale', 'done'].indexOf(saleOrder.State) !== -1" type="button"
-                            class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
-                            Thanh toán
-                        </button>
-                        <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm"
-                            (click)="printSaleOrder()">
+                        <button type="button" class="btn btn-secondary btn-sm" (click)="printQuotation()">
                             In phiếu
                         </button>
-                        <button type="button" class="btn btn-primary btn-sm"
-                            *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
-                            Cập nhật công nợ
+                        <button type="button" class="btn btn-secondary btn-sm" (click)="onCreateNewQuotation()">
+                            Thêm mới
                         </button>
-                        <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button"
-                            class="btn btn-danger btn-sm" (click)="actionCancel()">
-                            Hủy phiếu
-                        </button>
-                        <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button"
-                            class="btn btn-success btn-sm" (click)="actionDone()">
-                            Hoàn thành
-                        </button>
-                        <button *ngIf="['done'].indexOf(saleOrder.State) !== -1" type="button"
-                            class="btn btn-success btn-sm" (click)="actionUnlock()">
-                            Chưa hoàn thành
-                        </button>
-                        <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
-                            In phiếu
-                        </button> -->
                     </div>
                 </div>
                 <div class="o_group">
@@ -123,7 +97,6 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <!-- <input type="number" min="1" class="form-control" formControlName="dateApplies"> -->
                                     <kendo-numerictextbox [min]="1" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="dateApplies" (valueChange)="onDateAppliesChange($event)">
                                     </kendo-numerictextbox>
                                 </td>
@@ -146,17 +119,17 @@
             </div>
             <div class="w-100 h-100 d-flex">
                 <div class="w-25 h-100 mr-2">
-                    <app-sale-order-list-service (newEventEmiter)="addLine($event)">
+                    <app-sale-order-list-service (newEventEmiter)="addLineFromOdata($event)">
                     </app-sale-order-list-service>
                 </div>
                 <div class="w-75 d-flex flex-column">
                     <!-- Component Form Service Payment -->
 
                     <div class="overflow-auto">
-                        <table class="table table-border table-sm mb-0">
+                        <table class="table table-bordered table-striped  table-tbody-ver-align-middle table-sm mb-0">
                             <thead>
                                 <tr>
-                                    <th></th>
+                                    <th class="text-center"><b>*</b></th>
                                     <th style="min-width: 200px;">Dịch vụ</th>
                                     <!-- <th style="min-width: 200px;">Thông tin bổ sung</th>
                                     <th style="min-width: 200px;">Bác sĩ</th> -->
@@ -170,30 +143,33 @@
                             <tbody formArrayName="lines">
                                 <ng-container *ngFor="let line of linesArray.controls; let i=index">
                                     <tr [formGroupName]="i">
-                                        <td>
+                                        <td class="text-center">
                                             <a (click)="selectedLine = selectedLine === line ? null : line; createFormInfo(line.value)">
                                                 <i class="fas text-primary" [ngClass]="selectedLine !== line ? 'fa-plus': 'fa-minus'"></i></a>
                                         </td>
-                                        <td><span class="mb-0">
-                                            {{line.get('productName').value }}</span>
+                                        <td>
+                                            <span class="mb-0">
+                                            {{line.get('name').value }}</span>
                                         </td>
-                                        <td class="text-right">
-                                            <kendo-numerictextbox [min]="1" [format]="'n0'" formControlName="qty">
+                                        <td class="text-right" style="width:100px">
+                                            <kendo-numerictextbox style="width:100px" [min]="1" [format]="'n0'" [autoCorrect]="true" formControlName="qty">
                                             </kendo-numerictextbox>
                                         </td>
-                                        <td class="text-right">
-                                            <kendo-numerictextbox [min]="0" [spinners]="false" [format]="'n0'" formControlName="subPrice">
+                                        <td class="text-right" style="width:100px">
+                                            <kendo-numerictextbox style="width:120px" [min]="0" [spinners]="false" [autoCorrect]="true" [format]="'n0'" formControlName="subPrice">
                                             </kendo-numerictextbox>
                                         </td>
-                                        <td class="text-right">
-                                            <kendo-numerictextbox [min]="0" [spinners]="false" [format]="'n0'" formControlName="percentDiscount">
+                                        <td class="text-right" style="width:60px">
+                                            <kendo-numerictextbox [min]="0" style="width:50px" [max]="100" [spinners]="false" [autoCorrect]="true" [format]="'n0'" formControlName="percentDiscount">
                                             </kendo-numerictextbox>
                                         </td>
-                                        <td class="text-right">
-                                            <span class="mb-0">{{computeTotalPrice(line) | number}}</span>
+                                        <td class="text-right" style="width:100px;">
+                                            <span class="mb-0 mt-2">{{computeTotalPrice(line) | number}}</span>
                                         </td>
                                         <td class="text-center">
-                                            <i class="fas fa-trash" (click)="deleteLine(i)"></i>
+                                            <span class="mt-2">
+                                                <i class="fas fa-trash" (click)="deleteLine(i)"></i>
+                                            </span>
                                         </td>
                                     </tr>
                                     <ng-container *ngIf="selectedLine === line">
@@ -253,7 +229,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="d-flex justify-content-between mt-3">
+                    <div class="justify-content-between mt-3">
                         <div class="float-right">
                             <table class="table-border table-text-right mr-4 table-payment-result">
                                 <tr>
@@ -265,13 +241,14 @@
                     </div>
                 </div>
             </div>
-            <div class="w-100 mt-3">
-                <h4>TIẾN ĐỘ THANH TOÁN</h4>
-                <table class="table table-sm mt-2 table-tbody-ver-align-middle border-bottom">
+            <div class="w-100 mt-2">
+                <h5>TIẾN ĐỘ THANH TOÁN</h5>
+                <table class="table table-sm mt-2 table-bordered table-striped  table-tbody-ver-align-middle border-bottom">
                     <thead>
                         <tr>
                             <th>Tiến độ</th>
                             <th>Thanh toán</th>
+                            <th>Hình thức thanh toán</th>
                             <th>Ngày thanh toán</th>
                             <th>Số tiền thanh toán</th>
                             <th>#</th>
@@ -284,15 +261,22 @@
                                     {{i + 1}}
                                 </td>
                                 <td>
-                                    <kendo-numerictextbox [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="discountPercent">
+                                    <kendo-numerictextbox [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="payment">
                                     </kendo-numerictextbox>
+                                </td>
+                                <td>
+                                    <select formControlName="discountPercentType" class="form-control">
+                                        <option value="cash">Tiền mặt</option>
+                                        <option value="percent">Phần trăm</option>
+                                    </select>
                                 </td>
                                 <td>
                                     <kendo-datepicker formControlName='date'>
                                     </kendo-datepicker>
                                 </td>
                                 <td>
-                                    <span>{{payment.get('amount') ? payment.get('amount').value : 0}}</span>
+                                    <!-- <span>{{payment.get('amount') ? payment.get('amount').value : 0}}</span> -->
+                                    <span>{{computeAmount(payment)|number}}</span>
                                 </td>
                                 <td>
                                     <i class="fas fa-trash" (click)="deletePayment(i)"></i>

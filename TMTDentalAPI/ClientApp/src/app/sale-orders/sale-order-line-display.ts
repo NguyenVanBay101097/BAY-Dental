@@ -8,15 +8,22 @@ export class SaleOrderLineDisplay {
     priceUnit: number;
     product: ProductSimple;
     productId: string;
+    productUOMQty: number;
     teeth: ToothDisplay[];
+    name: string;
     toothCategory: ToothCategoryBasic;
+    toothCategoryId: string;
+    toothIds: string[];
     employee: EmployeeSimple;
     employeeId: string;
     state: string;
+    diagnostic: string;
     qtyInvoiced: number;
     orderId: string;
+    discount: number;
+    discountType: string;
     Order: SaleOrderBasic;
-    amountPaid:number;
-    amountResidual:number;
+    amountPaid: number;
+    amountResidual: number;
     id?: string;
 }

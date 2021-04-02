@@ -14,7 +14,7 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<QuotationLine, QuotationLineBasic>();
             CreateMap<QuotationLine, QuotationLineDisplay>()
-                .ForMember(x => x.QuotationLineToothRels, x => x.MapFrom(s => s.QuotationLineToothRels.Select(m => m.Tooth)));
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.QuotationLineToothRels.Select(m => m.Tooth)));
             CreateMap<QuotationLineSave, QuotationLine>();
         }
     }

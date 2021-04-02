@@ -30,6 +30,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? Amount { get; set; }
 
         /// <summary>
+        /// Tổng tiền trên 1 dịch vụ
+        /// </summary>
+        public decimal? SubPrice { get; set; }
+
+        /// <summary>
         /// Chuẩn đoán
         /// </summary>
         public string Diagnostic { get; set; }
@@ -72,6 +77,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? Amount { get; set; }
 
         /// <summary>
+        /// Tien cua 1 dich vu
+        /// </summary>
+        public decimal? SubPrice { get; set; }
+
+        /// <summary>
         /// Chuẩn đoán
         /// </summary>
         public string Diagnostic { get; set; }
@@ -82,7 +92,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public ToothCategoryBasic ToothCategory { get; set; }
         public Guid ToothCategoryId { get; set; }
 
-        public IEnumerable<ToothBasic> QuotationLineToothRels { get; set; } = new List<ToothBasic>();
+        public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
     }
 
     public class QuotationLineSimple
@@ -97,6 +107,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Dịch vụ
         /// </summary>
+
+        /// Ten dich vu
+        public string Name { get; set; }
+
         public Guid ProductId { get; set; }
 
         /// <summary>

@@ -29,6 +29,8 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? Amount { get; set; }
 
+        public decimal? SubPrice { get; set; }
+
         /// <summary>
         /// Bác sĩ
         /// </summary>

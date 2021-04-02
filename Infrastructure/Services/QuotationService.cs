@@ -34,6 +34,8 @@ namespace Infrastructure.Services
                 .Include(x => x.Lines)
                 .Include("Lines.Product")
                 .Include("Lines.ToothCategory")
+                .Include("Lines.QuotationLineToothRels")
+                .Include("Lines.QuotationLineToothRels.Tooth")
                 .FirstOrDefaultAsync();
             return _mapper.Map<QuotationDisplay>(model);
         }
@@ -111,6 +113,7 @@ namespace Infrastructure.Services
                 if (payment.Id == Guid.Empty)
                 {
                     var payQuot = _mapper.Map<PaymentQuotation>(payment);
+                    payQuot.QuotationId = quotation.Id;
                     listAdd.Add(payQuot);
                 }
                 else

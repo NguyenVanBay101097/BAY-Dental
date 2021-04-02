@@ -11,7 +11,7 @@ namespace Umbraco.Web.Mapping
     {
         public PaymentQuotationProfile()
         {
-            CreateMap<PaymentQuotation, PaymentQuotationBasic>();
+            CreateMap<PaymentQuotation, PaymentQuotationDisplay>();
             CreateMap<PaymentQuotationSave, PaymentQuotation>();
         }
     }

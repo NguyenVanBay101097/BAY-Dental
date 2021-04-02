@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../core/paged-result-2';
 import { PartnerSimple } from '../partners/partner-simple';
+import { ToothBasic } from '../teeth/tooth.service';
 import { UserSimple } from '../users/user-simple';
 
 // import { PagedResult2 } from '../paged-result-2';
@@ -13,12 +14,12 @@ export class QuotationLineDisplay {
   qty: number;
   percentDiscount: number;
   subPrice: number;
-  diagnostic: number;
-  toothCategoryId: number;
+  diagnostic: string;
+  toothCategoryId: string;
   toothCategory: any;
   toothIds: any[];
-  productName: string;
-  totalPrice: number;
+  name: string;
+  amount: number;
   teeth: any;
 }
 export class QuotationLineSave {
