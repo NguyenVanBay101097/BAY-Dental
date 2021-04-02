@@ -4,9 +4,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { result } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { AdvisoryPaged, AdvisoryService } from 'src/app/advisories/advisory.service';
+import { AdvisoryPaged, AdvisoryService, AdvisoryToothAdvise } from 'src/app/advisories/advisory.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
@@ -29,6 +30,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   dateTo: Date;
   hamList: { [key: string]: {} };
   teethSelected: any[] = [];
+  teethConsulted: string[] = [];
   filteredToothCategories: any[] = [];
   cateId: string;
   gridData: GridDataResult;
@@ -57,6 +59,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
         this.cateId = result.id;
         this.loadTeethMap(result);
       })
+      this.loadTeethConsulted();
     }, 200);
 
     this.activeRoute.parent.params.subscribe(
@@ -116,6 +119,18 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     return false;
   }
 
+  isConsulted(tooth: ToothDisplay) {
+    for (var i = 0; i < this.teethConsulted.length; i++) {
+      if (this.teethConsulted[i] === tooth.id) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+
+
   onSelected(tooth: ToothDisplay) {
     if (this.isSelected(tooth)) {
       var index = this.getSelectedIndex(tooth);
@@ -128,6 +143,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
 
   reSelected(){
     this.teethSelected = [];
+    this.loadDataFromApi();
   }
 
   getSelectedIndex(tooth: ToothDisplay) {
@@ -154,6 +170,17 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
       this.loadTeethMap(value);
       this.cateId = value.id;
     }
+  }
+
+  loadTeethConsulted() {
+    var val = new AdvisoryToothAdvise();
+    val.customerId = this.customerId;
+    this.advisoryService.getToothAdvise(val).subscribe((result:any) => {
+      this.teethConsulted = result.toothIds;
+    })
+
+    console.log(this.teethConsulted);
+    
   }
 
   loadDataFromApi(){

@@ -1,5 +1,5 @@
 <div class="px-3 py-3 bg-white">
-    <p>DANH SÁCH KẾT QUẢ TƯ VẤN</p>
+    <h5>DANH SÁCH KẾT QUẢ TƯ VẤN</h5>
     <div class="mb-2">
         <div class="mb-2">
             <div class="mb-2 d-flex">
@@ -16,7 +16,7 @@
                         <tr *ngFor="let ham of hamList | keyvalue">
                             <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
                                 <div class="tooth-wrapper">
-                                    <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                                    <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="[isSelected(rang) ? 'selected' : '', isConsulted(rang) ? 'consulted' : '']" *ngFor="let rang of vitri.value">
                                         {{rang.name}}
                                     </div>
                                 </div>

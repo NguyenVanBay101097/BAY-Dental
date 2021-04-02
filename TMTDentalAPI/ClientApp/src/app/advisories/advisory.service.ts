@@ -56,6 +56,14 @@ export class AdvisoryDefaultGet {
   customerId: string;
 }
 
+export class AdvisoryToothAdvise {
+  customerId?: string;
+  companyId?: string;
+}
+
+export class AdvisoryToothAdviseDisplay {
+  toothIds: any[];
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -90,5 +98,9 @@ export class AdvisoryService {
   getPrint(customerId) 
   {
     return this.http.get(this.baseApi + this.apiUrl+ "/" +customerId+ "/GetPrint");
+  }
+
+  getToothAdvise(val?: AdvisoryToothAdvise){
+    return this.http.post(this.baseApi + this.apiUrl + "/" + "getToothAdvise",val);
   }
 }

@@ -19,7 +19,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;" class=".o_td_control_left">
-                                        <a [routerLink]="['/partners/customer/' + f.customerId.value]">{{f.customer?.value?.name}}</a>
+                                        <a routerLinkActive="active-link" (click)="viewPartner()">{{f.customer?.value?.name}}</a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -54,7 +54,7 @@
                         </table>
                     </div>
                     <div class="mb-2">
-                        <p>BẢN ĐỒ RĂNG NHA</p>
+                        <h5>BẢN ĐỒ RĂNG NHA</h5>
                         <div class="mb-2">
                             <span *ngFor="let item of filteredToothCategories">
                                 <button type="button" class="btn btn-sm mr-2" 
@@ -80,7 +80,7 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <div *ngIf = "teethSelected.length == 0 && submitted" class="text-danger">
+                                <div *ngIf = "f.teeth.value.length == 0 && submitted" class="text-danger">
                                     Chọn răng
                                 </div>
                             </div>
@@ -108,7 +108,7 @@
                         
                     </div>
                     <div class="mb-2">
-                        <p>Ghi chú tư vấn</p>
+                        <h5>Ghi chú tư vấn</h5>
                         <textarea formControlName="note" class="form-control"></textarea>
                     </div>
                 </div>
@@ -119,7 +119,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Thêm</button>
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
     <button type="button" class="btn btn-primary" (click)="resetForm()" accesskey="s">Nhập lại</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>

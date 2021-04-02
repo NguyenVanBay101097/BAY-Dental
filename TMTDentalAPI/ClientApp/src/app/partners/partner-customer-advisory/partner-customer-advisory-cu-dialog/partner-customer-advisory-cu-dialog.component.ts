@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -33,6 +34,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     private advisoryService: AdvisoryService,
     private intlService: IntlService,
     private notificationService: NotificationService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -108,6 +110,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     } else {
       this.teethSelected.push(tooth);
     }
+    this.f.teeth.setValue(this.teethSelected);
   }
 
   getSelectedIndex(tooth: ToothDisplay) {
@@ -119,6 +122,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
 
     return null;
   }
+
+  
 
   loadDefaultToothCategory() {
     return this.toothCategoryService.getDefaultCategory();
@@ -149,10 +154,17 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     valueForm.toothIds = this.teethSelected.map(x => x.id);
     valueForm.toothDiagnosisIds = valueForm.toothDiagnosis.map(x => x.id);
     valueForm.productIds = valueForm.product.map(x => x.id);
-    this.advisoryService.create(valueForm).subscribe(() => {
-      this.notify("success","Lưu thành công");
-      this.activeModal.close(true);
-    })
+    if(this.id){
+      this.advisoryService.update(valueForm,this.id).subscribe(() => {
+        this.notify("success","Lưu thành công");
+        this.activeModal.close(true);
+      })
+    }else{
+      this.advisoryService.create(valueForm).subscribe(() => {
+        this.notify("success","Lưu thành công");
+        this.activeModal.close(true);
+      })
+    }
   }
 
   notify(style, content) {
@@ -177,11 +189,14 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
 
   getById(){
     this.advisoryService.get(this.id).subscribe(result => {
+      this.cateId = result.toothCategoryId;
+      this.loadTeethMap(result.toothCategory);
+      this.teethSelected = result.teeth;
       this.myForm.patchValue(result);
       let date = new Date(result.date);
       this.myForm.get('dateObj').patchValue(date);
    
-      console.log(result);
+      console.log(this.myForm);
       
       
     });
@@ -202,5 +217,10 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     this.teethSelected = [];
     this.f.note.reset();
     
+  }
+
+  viewPartner(){
+    this.router.navigate(['/partners/customer/'+this.customerId+'/overview']);
+    this.activeModal.dismiss();
   }
 }
