@@ -122,8 +122,6 @@ export class AppointmentService {
     return this.http.get(this.baseApi + 'api/Appointments/ExportExcel', { params: val, responseType: 'blob' });
   }
 
-
-
   //cập nhật các cuộc hẹn quá hạn
   // patchMulti(val) {
   //   return this.http.patch(this.baseApi + "api/Appointments/patchMulti", val);

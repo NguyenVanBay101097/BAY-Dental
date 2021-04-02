@@ -40,6 +40,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string State { get; set; }
         public string Reason { get; set; }
+        //danh sach dv
+        public IEnumerable<ProductSimple> Services { get; set; } = new List<ProductSimple>();
 
         //Hẹn khách hàng nào?
         public Guid PartnerId { get; set; }
@@ -79,6 +81,15 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string Time { get; set; }
 
+        /// <summary>
+        /// Thời gian dự kiến
+        /// </summary>
+        public int TimeExpected { get; set; }
+
+        /// <summary>
+        /// Danh sách dịch vụ
+        /// </summary>
+        public IEnumerable<ProductSimple> Services { get; set; } = new List<ProductSimple>();
 
         /// <summary>
         /// Trạng thái cuộc hẹn: xác nhận, khách đã tới hoặc đã hủy bỏ
@@ -109,6 +120,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool HasDotKhamRef { get; set; }
         public Guid? SaleOrderId { get; set; }
     }
+
     public class AppointmentPaged
     {
         public AppointmentPaged()
@@ -129,6 +141,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTimeTo { get; set; }
 
         public string State { get; set; }
+
+        public bool? IsLate { get; set; }
 
         public Guid? DotKhamId { get; set; }
 
@@ -174,7 +188,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? DotKhamId { get; set; }
 
         public Guid? PartnerId { get; set; }
-        public Guid? SaleOrderId{ get; set; }
+        public Guid? SaleOrderId { get; set; }
     }
 
     public class AppointmentStateCount
@@ -206,10 +220,15 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class AppointmentGetCountVM
     {
+        public string Search { get; set; }
+        public Guid? DoctorId { get; set; }
         public string State { get; set; }
 
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
+
+        public bool IsLate { get; set; }
     }
+
 }

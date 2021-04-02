@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210326043423_EditColumnTimeExpectedInTableAppointment")]
+    partial class EditColumnTimeExpectedInTableAppointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1765,9 +1767,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AssistantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1812,8 +1811,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("AccountInvoiceId");
 
                     b.HasIndex("AppointmentId");
-
-                    b.HasIndex("AssistantId");
 
                     b.HasIndex("CompanyId");
 
@@ -10571,10 +10568,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Appointment", "Appointment")
                         .WithMany()
                         .HasForeignKey("AppointmentId");
-
-                    b.HasOne("ApplicationCore.Entities.Employee", "Assistant")
-                        .WithMany()
-                        .HasForeignKey("AssistantId");
 
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()

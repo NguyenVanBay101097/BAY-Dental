@@ -213,6 +213,7 @@ namespace TMTDentalAPI
             services.AddScoped<IAppointmentHubService, AppointmentHubService>();
             services.AddScoped<IResBankService, ResBankService>();
             services.AddScoped<IResPartnerBankService, ResPartnerBankService>();
+            services.AddScoped<IProductAppointmentRelService, ProductAppointmentRelService>();
             services.AddScoped<IJournalReportService, JournalReportService>();
             services.AddScoped<IServiceCardTypeService, ServiceCardTypeService>();
             services.AddScoped<IServiceCardOrderService, ServiceCardOrderService>();

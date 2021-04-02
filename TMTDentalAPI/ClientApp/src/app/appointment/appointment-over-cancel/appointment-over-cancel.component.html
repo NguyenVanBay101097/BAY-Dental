@@ -1,0 +1,125 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">{{title}}</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_cp_searchview_group">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã lịch hẹn, khách hàng, SĐT..."
+                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <div class="state-filter-wrapper">
+                        <button class="btn btn-secondary btn-sm float-right" (click)="onExportExcelFile()">Xuất
+                            Excel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <div class="btn-group o_search_options">
+                <kendo-combobox [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)"
+                    class="kendo-combobox-sm mr-2" [filterable]="true" [data]="listEmployees" #employeeCbx
+                    [valueField]="'id'" [textField]="'name'" style="min-width: 200px;"
+                    [popupSettings]="{width: 'auto'}">
+                </kendo-combobox>
+                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" [title]="'Thời gian'"
+                    (searchChange)="onDateSearchChange($event)">
+                </app-tai-date-range-filter-dropdown>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="o_cp_controller">
+        <div class="o_control_panel">
+            <div class="o_cp_left o_cp_left_custom">
+                <div class="o_cp_buttons">
+                    <div class="o_form_buttons_view">
+                        <div class="state-filter-wrapper d-flex">
+                            <div class="btn-group-sm btn-group-toggle " data-toggle="buttons">
+                                <label class="btn-sm btn btn-outline-primary active mr-2" (click)="setStateFilter('all')">
+                                    <input type="radio" checked autocomplete="off">Tất
+                                    cả<span class="badge badge-light ml-2 bg-white">{{stateCount['all'] || 0}}</span>
+                                </label>
+                                <label class="btn-sm btn btn-outline-primary mr-2"
+                                    (click)="setStateFilter('confirmed')">
+                                    <input type="radio" checked autocomplete="off">Quá hạn<span
+                                        class="badge badge-light ml-2 bg-white">{{stateCount['confirmed'] || 0}}</span>
+                                </label>
+                                <label class="btn-sm btn btn-outline-primary" (click)="setStateFilter('cancel')">
+                                    <input type="radio" checked autocomplete="off">Hủy
+                                    hẹn<span class="badge badge-light  ml-2 bg-white">{{stateCount['cancel'] ||
+                                        0}}</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="o_cp_sidebar">
+
+                </div>
+            </div>
+            <div class="o_cp_right">
+
+            </div>
+        </div>
+    </div>
+    <kendo-grid [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset" [pageable]="true"
+        [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="250">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <div>
+                    <a class="text-primary" title="Xem hồ sơ khách hàng"
+                        [routerLink]="['/partners/customer/' + dataItem.partner?.id]">
+                        {{dataItem.partnerDisplayName}}
+                    </a>
+                </div>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerPhone" title="SĐT" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Thời gian hẹn" width="170">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <label class="mb-0" *ngIf="dataItem.time!=''">{{dataItem.time}}, <label class="mb-0"
+                        *ngIf="dataItem.date"> {{dataItem.date |
+                        date:'shortDate'}}</label></label>
+
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Dịch vụ" width="250">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <span class="service">{{computeNameSerivc(dataItem.services)}}</span>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="doctorName" title="Bác sĩ" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="note" title="Nội dung" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column title="Trạng thái" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <label *ngIf="dataItem.state=='cancel'">Hủy hẹn</label>
+                <label *ngIf="dataItem.state=='confirmed'">Đang hẹn</label>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="reason" title="Lý do" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="id" width="100">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success btn-sm mr-2" (click)="editAppointment(dataItem)">
+                    <i class="far fa-edit"></i></button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

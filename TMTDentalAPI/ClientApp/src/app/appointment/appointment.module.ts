@@ -13,9 +13,19 @@ import { AppointmentStateFilterComponent } from './appointment-state-filter/appo
 import { AppointmentKanbanComponent } from './appointment-kanban/appointment-kanban.component';
 import { AppointmentDetailDialogComponent } from './appointment-detail-dialog/appointment-detail-dialog.component';
 import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';
+import { AppointmentOverCancelComponent } from './appointment-over-cancel/appointment-over-cancel.component';
 
 @NgModule({
-  declarations: [AppointmentListComponent, AppointmentCuDialogComponent, AppointmentAdvanceSearchComponent, AppointmentDateFilterComponent, AppointmentStateFilterComponent, AppointmentKanbanComponent, AppointmentDetailDialogComponent],
+  declarations: [
+    AppointmentListComponent,
+    AppointmentCuDialogComponent,
+    AppointmentAdvanceSearchComponent,
+    AppointmentDateFilterComponent,
+    AppointmentStateFilterComponent,
+    AppointmentKanbanComponent,
+    AppointmentDetailDialogComponent,
+    AppointmentOverCancelComponent
+  ],
   imports: [
     CommonModule,
     AppointmentRoutingModule,

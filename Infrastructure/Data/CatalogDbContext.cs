@@ -242,6 +242,7 @@ namespace Infrastructure.Data
         //public DbSet<StockInventoryLine> StockInventoryLines { get; set; }
         public DbSet<StockInventoryCriteria> StockInventoryCriterias { get; set; }
         public DbSet<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; }
+        public DbSet<ProductAppointmentRel> ProductAppointmentRels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -257,6 +258,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new UoMConfiguration());
             builder.ApplyConfiguration(new UoMCategoryConfiguration());
             builder.ApplyConfiguration(new SaleOrderConfiguration());
+            builder.ApplyConfiguration(new ProductAppointmentRelConfiguration());
             builder.ApplyConfiguration(new SaleOrderLineConfiguration());
             builder.ApplyConfiguration(new IRSequenceConfiguration());
             builder.ApplyConfiguration(new AccountInvoiceConfiguration());
