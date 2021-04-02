@@ -335,6 +335,9 @@ namespace TMTDentalAPI
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
 
+            services.AddScoped<IToothDiagnosisService, ToothDiagnosisService>();
+            services.AddScoped<IAdvisoryService, AdvisoryService>();
+
             Action<IMapperConfigurationExpression> mapperConfigExp = mc =>
             {
                 mc.AddProfile(new ProductCategoryProfile());
@@ -478,6 +481,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new QuotationProfile());
                 mc.AddProfile(new QuotationLineProfile());
                 mc.AddProfile(new PaymentQuotationProfile());
+                mc.AddProfile(new ToothDiagnosisProfile());
+                mc.AddProfile(new AdvisoryProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

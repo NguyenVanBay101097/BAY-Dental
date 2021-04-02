@@ -82,6 +82,10 @@ import { PartnerCustomerTreatmentSaleOrderLineComponent } from './partner-custom
 import { PartnerCustomerQuotationListComponent } from './partner-customer-quotation/partner-customer-quotation-list/partner-customer-quotation-list.component';
 import { PartnerCustomerQuotationFormComponent } from './partner-customer-quotation/partner-customer-quotation-form/partner-customer-quotation-form.component';
 
+import { PartnerCustomerAdvisoryListComponent } from './partner-customer-advisory/partner-customer-advisory-list/partner-customer-advisory-list.component';
+import { PartnerCustomerAdvisoryCuDialogComponent } from './partner-customer-advisory/partner-customer-advisory-cu-dialog/partner-customer-advisory-cu-dialog.component';
+import { ToothDiagnosisPopoverComponent } from './partner-customer-advisory/partner-customer-advisory-list/tooth-diagnosis-popover/tooth-diagnosis-popover.component';
+
 
 @NgModule({
   declarations: [
@@ -152,6 +156,10 @@ import { PartnerCustomerQuotationFormComponent } from './partner-customer-quotat
     PartnerCustomerTreatmentSaleOrderLineComponent,
     PartnerCustomerQuotationListComponent,
     PartnerCustomerQuotationFormComponent
+    PartnerCustomerTreatmentSaleOrderLineComponent,
+    PartnerCustomerAdvisoryListComponent,
+    PartnerCustomerAdvisoryCuDialogComponent,
+    ToothDiagnosisPopoverComponent
   ],
   imports: [
     CommonModule,
@@ -180,7 +188,8 @@ import { PartnerCustomerQuotationFormComponent } from './partner-customer-quotat
     PartnerSupplierFormDebitPaymentDialogComponent,
     SaleOrderApplyDiscountDefaultDialogComponent,
     PartnerCustomerAutoGenerateCodeDialogComponent,
-    PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent
+    PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent,
+    PartnerCustomerAdvisoryCuDialogComponent
   ],
   providers: [SaleCouponProgramService],
   exports: [
