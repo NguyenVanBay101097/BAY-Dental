@@ -912,7 +912,7 @@ namespace Infrastructure.Services
                     }
                     sequence_dict.Add(id, seq);
                 }
-                else if (model == "config.print_size")
+                else if (model == "print.paper.size")
                 {
                     var printPaperSize = new PrintPaperSize();
                     var fields = record.GetElementsByTagName("field");
@@ -927,6 +927,21 @@ namespace Infrastructure.Services
                         else if (field_name == "paperFormat")
                         {
                             printPaperSize.PaperFormat = field.InnerText;
+                        }else if (field_name == "topMargin")
+                        {
+                            printPaperSize.TopMargin = int.Parse(field.InnerText);
+                        }
+                        else if (field_name == "bottomMargin")
+                        {
+                            printPaperSize.BottomMargin = int.Parse(field.InnerText);
+                        }
+                        else if (field_name == "leftMargin")
+                        {
+                            printPaperSize.LeftMargin = int.Parse(field.InnerText);
+                        }
+                        else if (field_name == "rightMargin")
+                        {
+                            printPaperSize.RightMargin = int.Parse(field.InnerText);
                         }
                     }
                     paper_size_dict.Add(id, printPaperSize);

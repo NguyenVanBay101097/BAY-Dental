@@ -60,7 +60,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 var irmodelData = context.IRModelDatas.Where(x => x.Model == "print.paper.size").ToList();
                 if (!irmodelData.Any())
                 {
-                    var papersize_A4 = new PrintPaperSize { Name = "A4", PaperFormat = "A4" };
+                    var papersize_A4 = new PrintPaperSize { Name = "A4", PaperFormat = "A4", TopMargin = 10, BottomMargin = 10, LeftMargin = 10, RightMargin = 10 };
                     context.PrintPaperSizes.Add(papersize_A4);
 
                     var iRmodelData_A4 = context.IRModelDatas.Where(x => x.Name == "paperformat_a4" && x.Module == "base").FirstOrDefault();
@@ -71,7 +71,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         context.SaveChanges();
                     }
 
-                    var papersize_A5 = new PrintPaperSize { Name = "A5", PaperFormat = "A5" };
+                    var papersize_A5 = new PrintPaperSize { Name = "A5", PaperFormat = "A5" , TopMargin = 5 , BottomMargin = 5, LeftMargin = 5, RightMargin = 5 };
                     context.PrintPaperSizes.Add(papersize_A5);
 
                     var iRmodelData_A5 = context.IRModelDatas.Where(x => x.Name == "paperformat_a5" && x.Module == "base").FirstOrDefault();

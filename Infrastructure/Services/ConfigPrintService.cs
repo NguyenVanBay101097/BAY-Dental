@@ -55,6 +55,7 @@ namespace Infrastructure.Services
                 if (configPrint_dict.ContainsKey(item.Code))
                 {
                     var config = configPrint_dict[item.Code];
+                    item.Id = config.Id;
                     item.IsInfoCompany = config.IsInfoCompany;
                     item.PrintPaperSize = config.PrintPaperSize != null ? _mapper.Map<PrintPaperSizeBasic>(config.PrintPaperSize) : _mapper.Map<PrintPaperSizeBasic>(defaultPaperSize);
                 }

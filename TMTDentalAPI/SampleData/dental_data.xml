@@ -447,10 +447,18 @@
     <record id="base.paperformat_a4" model="print.paper.size">
       <field name="name">A4</field>
       <field name="paperFormat">A4</field>
+      <field name="topMargin">10</field>
+      <field name="bottomMargin">10</field>
+      <field name="leftMargin">10</field>
+      <field name="rightMargin">10</field>
     </record>
     <record id="base.paperformat_a5" model="print.paper.size">
       <field name="name">A5</field>
       <field name="paperFormat">A5</field>
+      <field name="topMargin">5</field>
+      <field name="bottomMargin">5</field>
+      <field name="leftMargin">5</field>
+      <field name="rightMargin">5</field>
     </record> 
   </data>
 </odoo>
