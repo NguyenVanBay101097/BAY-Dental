@@ -142,5 +142,8 @@ namespace ApplicationCore.Entities
         /// list phân việc khảo sát
         /// </summary>
         public ICollection<SurveyAssignment> Assignments { get; set; } = new List<SurveyAssignment>();
+
+        public Guid? QuotationId { get; set; }
+        public Quotation Quotation { get; set; }
     }
 }

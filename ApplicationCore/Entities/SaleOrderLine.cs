@@ -184,5 +184,8 @@ namespace ApplicationCore.Entities
         public Guid? AssistantId { get; set; }
         public Employee Assistant { get; set; }
 
+        public Guid? AdvisoryId { get; set; }
+        public Advisory Advisory { get; set; }
+
     }
 }

@@ -64,6 +64,9 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.WriteBy)
                 .WithMany()
                 .HasForeignKey(x => x.WriteById);
+            builder.HasOne(x => x.Advisory)
+                .WithMany(x => x.OrderLines)
+                .HasForeignKey(x => x.AdvisoryId);
         }
     }
 }
