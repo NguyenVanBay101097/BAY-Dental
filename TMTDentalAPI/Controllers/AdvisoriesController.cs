@@ -57,7 +57,7 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
             var advisory = await _advisoryService.CreateAdvisory(val);
             _unitOfWork.Commit();
-            return Ok(_mapper.Map<AdvisoryDisplay>(advisory));
+            return Ok(_mapper.Map<AdvisoryBasic>(advisory));
         }
 
         [HttpPut("{id}")]

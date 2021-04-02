@@ -57,6 +57,17 @@ namespace Infrastructure.Services
             return paged;
         }
 
+        public async Task<ToothDiagnosisDisplay> GetToothDiagnosisDisplay(Guid id)
+        {
+            var advisory = await SearchQuery(x => x.Id == id)
+                .Include(x => x.ToothDiagnosisProductRels).ThenInclude(x => x.Product)
+                .FirstOrDefaultAsync();
+
+            var res = _mapper.Map<ToothDiagnosisDisplay>(advisory);
+
+            return res;
+        }
+
         public async Task<IEnumerable<ToothDiagnosisBasic>> GetAutocompleteAsync(ToothDiagnosisPaged val)
         {
             ISpecification<ToothDiagnosis> spec = new InitialSpecification<ToothDiagnosis>(x => true);
@@ -72,6 +83,7 @@ namespace Infrastructure.Services
         public async Task<ToothDiagnosis> CreateToothDiagnosis(ToothDiagnosisSave val)
         {
             var toothDiagnosis = _mapper.Map<ToothDiagnosis>(val);
+            toothDiagnosis.CompanyId = CompanyId;
 
             // Thêm dịch vụ tư vấn
             if (val.ProductIds.Any())

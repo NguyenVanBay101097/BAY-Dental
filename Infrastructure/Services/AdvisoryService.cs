@@ -38,9 +38,13 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.Search))
             {
-                query = query.Where(x => x.User.Name.Contains(val.Search) ||
-                    x.AdvisoryProductRels.Any(s => s.Product.Name.Contains(val.Search)) ||
-                    x.AdvisoryToothRels.Any(s => val.ToothIds.Contains(s.ToothId)));
+                query = query.Where(x => x.User.Name.Contains(val.Search) || 
+                    x.AdvisoryProductRels.Any(s => s.Product.Name.Contains(val.Search)));
+            }
+
+            if (val.ToothIds.Any())
+            {
+                query = query.Where(x => x.AdvisoryToothRels.Any(s => val.ToothIds.Contains(s.ToothId)));
             }
 
             if (val.DateFrom.HasValue)
@@ -141,6 +145,7 @@ namespace Infrastructure.Services
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
                 .FirstOrDefaultAsync();
             advisory = _mapper.Map(val, advisory);
+
             // Xóa chuẩn đoán răng
             advisory.AdvisoryToothRels.Clear();
             // Thêm răng

@@ -27,7 +27,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? CustomerId { get; set; }
-        public IEnumerable<Guid> ToothIds { get; set; }
+        public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
         public Guid? CompanyId { get; set; }
     }
 
