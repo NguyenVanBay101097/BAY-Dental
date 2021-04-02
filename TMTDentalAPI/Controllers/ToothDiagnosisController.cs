@@ -62,7 +62,7 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
             var toothDiagnosis = await _toothDiagnosisService.CreateToothDiagnosis(val);
             _unitOfWork.Commit();
-            var basic = _mapper.Map<ToothDiagnosisDisplay>(toothDiagnosis);
+            var basic = _mapper.Map<ToothDiagnosisBasic>(toothDiagnosis);
             return Ok(basic);
         }
 
