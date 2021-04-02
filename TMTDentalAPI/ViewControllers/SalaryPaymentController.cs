@@ -28,7 +28,6 @@ namespace TMTDentalAPI.ViewControllers
             _userService = userService;
         }
 
-        [HttpPost]
         [PrinterNameFilterAttribute(Name = AppConstants.SalaryPaymentPaperCode)]
         public async Task<IActionResult> Print([FromBody] IEnumerable<Guid> ids)
         {
@@ -36,13 +35,9 @@ namespace TMTDentalAPI.ViewControllers
 
             var salaryPayments = await _mapper.ProjectTo<SalaryPaymentPrintVm>(_salaryPaymentService.SearchQuery(x => ids.Contains(x.Id))).ToListAsync();
             foreach (var print in salaryPayments)
-                print.AmountString = AmountToText.amount_to_text(print.Amount);
+                print.AmountString = AmountToText.amount_to_text(print.Amount);      
 
-            var viewdata = ViewData.ToDictionary(x => x.Key, x => x.Value);
-
-            var html = await _viewToStringRenderService.RenderViewAsync("SalaryPayment/Print", salaryPayments, viewdata);
-
-            return Ok(new PrintData() { html = html });
+            return View(salaryPayments);
         }
     }
 }

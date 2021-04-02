@@ -31,13 +31,9 @@ namespace TMTDentalAPI.ViewControllers
         {
             var res = await _stockInventoryService.GetStockInventoryPrint(id);
             if (res == null)
-                return NotFound();
+                return NotFound();      
 
-            var viewdata = ViewData.ToDictionary(x => x.Key, x => x.Value);
-
-            var html = await _viewToStringRenderService.RenderViewAsync("StockInventory/Print", res, viewdata);
-
-            return Ok(new PrintData() { html = html });
+            return View(res);
         }
     }
 }

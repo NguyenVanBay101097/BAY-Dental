@@ -41,11 +41,8 @@ namespace TMTDentalAPI.ViewControllers
 
             phieu.AmountText = AmountToText.amount_to_text(phieu.Amount);
 
-            var viewdata = ViewData.ToDictionary(x => x.Key, x => x.Value);
 
-            var html = await _viewToStringRenderService.RenderViewAsync("PhieuThuChi/Print", phieu, viewdata);
-
-            return Ok(new PrintData() { html = html });
+            return View(phieu);
 
         }
     }

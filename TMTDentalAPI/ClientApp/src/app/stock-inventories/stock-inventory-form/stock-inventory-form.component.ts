@@ -396,7 +396,7 @@ export class StockInventoryFormComponent implements OnInit {
       return;
     }
     this.stockInventorySevice.getPrint(this.id).subscribe((result: any) => {
-      this.printService.printHtml(result.html);
+      this.printService.printHtml(result);
     });
   }
 

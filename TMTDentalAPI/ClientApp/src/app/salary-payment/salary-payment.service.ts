@@ -86,7 +86,7 @@ export class SalaryPaymentService {
     // }
 
     getPrint(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiPrintUrl + "/Print", ids);
+        return this.http.post(this.baseApi + this.apiPrintUrl + "/Print", ids , { responseType: 'text' });
     }
 
     public actionMultiSalaryPayment(val:any){

@@ -109,6 +109,6 @@ export class StockPickingService {
     // }
 
     Print(id: string) {
-        return this.http.get(this.baseApi + this.apiPrintUrl + "/Print/" + id);
+        return this.http.get(this.baseApi + this.apiPrintUrl + "/Print/" + `?id=${id}`, { responseType: 'text' });
     }
 }

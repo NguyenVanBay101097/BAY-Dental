@@ -377,7 +377,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
   onPrint() {
     this.stockPickingService.Print(this.id).subscribe((res:any) => {
-      this.printServie.printHtml(res.html);
+      this.printServie.printHtml(res);
     });
   }
 }

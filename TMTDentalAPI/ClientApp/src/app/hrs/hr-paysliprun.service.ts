@@ -117,8 +117,7 @@ export class HrPaysliprunService {
   // }
 
   printAllEmpSalary(id: string, val : any ) {
-    debugger
-    return this.http.put(this.base_api + this.apiPrintUrl + '/Print' + '/' + id, val);
+    return this.http.put(this.base_api + this.apiPrintUrl + '/Print' + `?id=${id}`, val, { responseType: 'text' } );
   }
 
   ExportExcelFile(payslipIds: string[]) {

@@ -144,6 +144,6 @@ export class MedicineOrderService {
   // }
 
   getPrint(id: string) {
-    return this.http.get(this.base_api + this.apiPrintUrl + "/Print" + "/" + id);
+    return this.http.get(this.base_api + this.apiPrintUrl + "/Print" + `?id=${id}`, { responseType: 'text' });
   }
 }

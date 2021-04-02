@@ -27,18 +27,16 @@ namespace TMTDentalAPI.ViewControllers
         {
             var ids = val.Slips.Where(x => x.IsCheck == true).Select(x => x.Id);
             await _hrPayslipRunService.UpdatePayslipRun(id, val);
-            var res = await _hrPayslipRunService.GetHrPayslipRunForPrint(id);
-            var viewdata = ViewData.ToDictionary(x => x.Key, x => x.Value);
+            var res = await _hrPayslipRunService.GetHrPayslipRunForPrint(id);          
 
             if (ids != null && ids.Any())
             {
-                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));
-                var html = await _viewToStringRenderService.RenderViewAsync("SalaryEmployee/Print", res, viewdata);
-                return Ok(new PrintData() { html = html });
+                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));            
+                return View(res);
             }
             else
             {
-                return Ok(new PrintData() { html = null });
+                return View(null);
             }
         }
     }

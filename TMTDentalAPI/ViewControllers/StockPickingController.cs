@@ -37,11 +37,8 @@ namespace TMTDentalAPI.ViewControllers
                 return NotFound();
 
             res.MoveLines = res.MoveLines.OrderBy(x => x.Sequence).ToList();
-            var viewdata = ViewData.ToDictionary(x => x.Key, x => x.Value);
 
-            var html = await _viewToStringRenderService.RenderViewAsync("StockPicking/Print", res, viewdata);
-
-            return Ok(new PrintData() { html = html });
+            return View(res);
 
         }
     }

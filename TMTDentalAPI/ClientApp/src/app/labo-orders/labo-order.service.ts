@@ -150,7 +150,7 @@ export class LaboOrderService {
     // }
 
     getPrint(id) {
-        return this.http.get(this.baseApi + this.apiPrintUrl  + '/Print' + "/" + id);
+        return this.http.get(this.baseApi + this.apiPrintUrl  + '/Print' + `?id=${id}`, { responseType: 'text' });
     }
 
     buttonConfirm(ids: string[]) {

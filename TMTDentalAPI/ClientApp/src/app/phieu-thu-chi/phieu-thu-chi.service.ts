@@ -127,7 +127,7 @@ export class PhieuThuChiService {
   // }
 
   getPrint(id: string) {
-    return this.http.get(this.baseApi + this.apiPrint+ '/Print' + '/' + id );
+    return this.http.get(this.baseApi + this.apiPrint+ '/Print' + `?id=${id}`, { responseType: 'text' });
   }
 
   exportExcelFile(val: any) {
