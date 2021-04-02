@@ -72,6 +72,12 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> CreateSaleOrderByQuotation()
+        {
+
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

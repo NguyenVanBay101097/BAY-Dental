@@ -181,6 +181,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           companyId: result.companyId,
           dateOrder: result.dateOrder,
           partnerId: result.partnerId,
+          quotationId: this.quotationId,
           orderLines: []
         };
         if (this.quotation && this.quotation.lines) {
