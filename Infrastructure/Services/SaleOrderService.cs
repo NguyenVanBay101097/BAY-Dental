@@ -2090,6 +2090,8 @@ namespace Infrastructure.Services
                 JournalId = journal.Id,
                 Journal = journal,
                 CompanyId = journal.CompanyId,
+                InvoiceDate = self.DateOrder.Date,
+                Date = self.DateOrder.Date
             };
 
             return invoice_vals;
