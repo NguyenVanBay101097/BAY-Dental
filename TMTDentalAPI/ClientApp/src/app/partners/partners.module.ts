@@ -155,7 +155,7 @@ import { ToothDiagnosisPopoverComponent } from './partner-customer-advisory/part
     PartnerCustomerTreatmentListComponent,
     PartnerCustomerTreatmentSaleOrderLineComponent,
     PartnerCustomerQuotationListComponent,
-    PartnerCustomerQuotationFormComponent
+    PartnerCustomerQuotationFormComponent,
     PartnerCustomerTreatmentSaleOrderLineComponent,
     PartnerCustomerAdvisoryListComponent,
     PartnerCustomerAdvisoryCuDialogComponent,

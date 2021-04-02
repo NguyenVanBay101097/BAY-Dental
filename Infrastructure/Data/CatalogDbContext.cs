@@ -237,7 +237,7 @@ namespace Infrastructure.Data
         public DbSet<ProductRequest> ProductRequests { get; set; }
         public DbSet<ProductRequestLine> ProductRequestLines { get; set; }
         public DbSet<SaleOrderLineProductRequested> SaleOrderLineProductRequesteds { get; set; }
-
+        public DbSet<ProductAppointmentRel> ProductAppointmentRels { get; set; }
         //public DbSet<StockInventory> StockInventories { get; set; }
         //public DbSet<StockInventoryLine> StockInventoryLines { get; set; }
         public DbSet<StockInventoryCriteria> StockInventoryCriterias { get; set; }
