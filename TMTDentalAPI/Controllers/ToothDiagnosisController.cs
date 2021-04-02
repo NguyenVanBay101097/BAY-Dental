@@ -55,17 +55,17 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create(ToothDiagnosisSave val)
-        //{
-        //    if (null == val || !ModelState.IsValid)
-        //        return BadRequest();
-        //    await _unitOfWork.BeginTransactionAsync();
-        //    //var toothDiagnosis = await _toothDiagnosisService.CreateToothDiagnosis(val);
-        //    _unitOfWork.Commit();
-        //    var basic = _mapper.Map<ToothDiagnosisDisplay>(toothDiagnosis);
-        //    return Ok(basic);
-        //}
+        [HttpPost]
+        public async Task<IActionResult> Create(ToothDiagnosisSave val)
+        {
+            if (null == val || !ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            var toothDiagnosis = await _toothDiagnosisService.CreateToothDiagnosis(val);
+            _unitOfWork.Commit();
+            var basic = _mapper.Map<ToothDiagnosisDisplay>(toothDiagnosis);
+            return Ok(basic);
+        }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, ToothDiagnosisSave val)
@@ -86,13 +86,13 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Remove(Guid id)
-        //{
-        //    await _unitOfWork.BeginTransactionAsync();
-        //    await _toothDiagnosisService.RemoveToothDiagnosis(id);
-        //    _unitOfWork.Commit();
-        //    return NoContent();
-        //}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _toothDiagnosisService.RemoveToothDiagnosis(id);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
     }
 }

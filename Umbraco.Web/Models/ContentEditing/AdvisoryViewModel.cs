@@ -36,6 +36,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CustomerId { get; set; }
         public string UserId { get; set; }
         public DateTime Date { get; set; }
+        public Guid? ToothCategoryId { get; set; }
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
         public IEnumerable<Guid> ToothDiagnosisIds { get; set; } = new List<Guid>();
         public IEnumerable<Guid> ProductIds { get; set; } = new List<Guid>();
@@ -57,6 +58,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string UserId { get; set; }
         public ApplicationUserSimple User { get; set; }
         public DateTime Date { get; set; }
+        public Guid? ToothCategoryId { get; set; }
+        public ToothCategoryBasic ToothCategory { get; set; }
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
         public IEnumerable<ToothDiagnosisBasic> ToothDiagnosis { get; set; } = new List<ToothDiagnosisBasic>();
         public IEnumerable<ProductSimple> Product { get; set; } = new List<ProductSimple>();

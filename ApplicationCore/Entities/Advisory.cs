@@ -24,6 +24,8 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? CustomerId { get; set; }
         public Partner Customer { get; set; }
+        public Guid? ToothCategoryId { get; set; }
+        public ToothCategory ToothCategory { get; set; }
         public ICollection<AdvisoryToothRel> AdvisoryToothRels { get; set; } = new List<AdvisoryToothRel>();
         public ICollection<AdvisoryToothDiagnosisRel> AdvisoryToothDiagnosisRels { get; set; } = new List<AdvisoryToothDiagnosisRel>();
         public ICollection<AdvisoryProductRel> AdvisoryProductRels { get; set; } = new List<AdvisoryProductRel>();

@@ -20,6 +20,10 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.WriteBy)
                 .WithMany()
                 .HasForeignKey(x => x.WriteById);
+
+            builder.HasOne(x => x.Company)
+                .WithMany()
+                .HasForeignKey(x => x.CompanyId);
         }
     }
 }

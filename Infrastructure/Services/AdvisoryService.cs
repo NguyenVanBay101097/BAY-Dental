@@ -86,7 +86,9 @@ namespace Infrastructure.Services
 
         public async Task<AdvisoryDisplay> GetAdvisoryDisplay(Guid id)
         {
-            var advisory = await SearchQuery(x => x.Id == id).Include(x => x.User)
+            var advisory = await SearchQuery(x => x.Id == id)
+                .Include(x => x.User)
+                .Include(x => x.ToothCategory)
                 .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)

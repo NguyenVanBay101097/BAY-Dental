@@ -12,5 +12,8 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<ToothDiagnosisBasic>> GetPagedResultAsync(ToothDiagnosisPaged val);
         Task<IEnumerable<ToothDiagnosisBasic>> GetAutocompleteAsync(ToothDiagnosisPaged val);
+        Task<ToothDiagnosis> CreateToothDiagnosis(ToothDiagnosisSave val);
+        Task UpdateToothDiagnosis(Guid id, ToothDiagnosisSave val);
+        Task RemoveToothDiagnosis(Guid id);
     }
 }

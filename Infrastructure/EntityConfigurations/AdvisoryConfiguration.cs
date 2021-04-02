@@ -18,6 +18,22 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.WriteBy)
                 .WithMany()
                 .HasForeignKey(x => x.WriteById);
+
+            builder.HasOne(x => x.ToothCategory)
+                .WithMany()
+                .HasForeignKey(x => x.ToothCategoryId);
+
+            builder.HasOne(x => x.Customer)
+                .WithMany()
+                .HasForeignKey(x => x.CustomerId);
+
+            builder.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId);
+
+            builder.HasOne(x => x.Company)
+                .WithMany()
+                .HasForeignKey(x => x.CompanyId);
         }
     }
 }
