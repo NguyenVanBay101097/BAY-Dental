@@ -29,6 +29,8 @@ namespace ApplicationCore.Entities
         public ICollection<AdvisoryToothRel> AdvisoryToothRels { get; set; } = new List<AdvisoryToothRel>();
         public ICollection<AdvisoryToothDiagnosisRel> AdvisoryToothDiagnosisRels { get; set; } = new List<AdvisoryToothDiagnosisRel>();
         public ICollection<AdvisoryProductRel> AdvisoryProductRels { get; set; } = new List<AdvisoryProductRel>();
+        public ICollection<QuotationLine> QuotationLines { get; set; } = new List<QuotationLine>();
+        public ICollection<SaleOrderLine> OrderLines { get; set; } = new List<SaleOrderLine>();
         /// <summary>
         /// Ghi chú
         /// </summary>

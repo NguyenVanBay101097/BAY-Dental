@@ -26,6 +26,7 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.User)
                 .WithMany()
                 .HasForeignKey(x => x.UserId);
+
         }
     }
 }

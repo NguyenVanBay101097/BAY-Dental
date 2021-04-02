@@ -58,5 +58,8 @@ namespace ApplicationCore.Entities
 
         public Guid QuotationId { get; set; }
         public Quotation Quotation { get; set; }
+
+        public Guid? AdvisoryId { get; set; }
+        public Advisory Advisory { get; set; }
     }
 }
