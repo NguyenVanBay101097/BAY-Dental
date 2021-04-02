@@ -3,9 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AdvisoryPaged, AdvisoryService } from 'src/app/advisories/advisory.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { ToothDiagnosisService } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
@@ -40,7 +42,8 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     private toothCategoryService: ToothCategoryService,
     private advisoryService: AdvisoryService,
     private activeRoute: ActivatedRoute,
-    private intlService: IntlService
+    private intlService: IntlService,
+    private notificationService: NotificationService,
   ) { }
 
   ngOnInit() {
@@ -48,7 +51,6 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     this.dateTo = this.monthEnd;
     this.loadToothCategories();
     setTimeout(() => {
-      console.log(this.teethSelected);
       this.loadDefaultToothCategory().subscribe(result => {
         this.cateId = result.id;
         this.loadTeethMap(result);
@@ -76,6 +78,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm thông tin tư vấn';
     modalRef.componentInstance.customerId = this.customerId;
     modalRef.result.then(() => {
+      this.loadDataFromApi();
     }, er => { })
   }
 
@@ -118,6 +121,11 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     } else {
       this.teethSelected.push(tooth);
     }
+    this.loadDataFromApi();
+  }
+
+  reSelected(){
+    this.teethSelected = [];
   }
 
   getSelectedIndex(tooth: ToothDisplay) {
@@ -158,9 +166,10 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     val.toothIds = this.teethSelected.map(x => x.id);
     this.advisoryService.getPaged(val).subscribe(res => {
       this.gridData =  <GridDataResult> {
-        data: res.items,
+        data: res.items,       
         total: res.totalItems
       };
+      console.log(this.gridData.data);
       this.loading = false;
     })
   }
@@ -178,15 +187,54 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   }
 
   getTeeth(teeth){
-    return teeth.map(x => x.name).join(',');
+    if(teeth)
+      return teeth.map(x => x.name).join(',');
+    return null;
   }
 
   getToothDiagnosis(toothDiagnosis){
-    return toothDiagnosis.map(x => x.name).join(',');
+    if(toothDiagnosis)
+      return toothDiagnosis.map(x => x.name).join(',');
+    return null;
   }
 
   getProducts(products){
-    return products.map(x => x.name).join(',');
+    if(products)
+      return products.map(x => x.name).join(',');
+    return null;
+  }
+
+  editItem(data){
+    const modalRef = this.modalService.open(PartnerCustomerAdvisoryCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa thông tin tư vấn';
+    modalRef.componentInstance.customerId = this.customerId;
+    modalRef.componentInstance.id = data.id;
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, er => { })
+  }
+
+  deleteItem(data){
+    let modalRef = this.modalService.open(ConfirmDialogComponent, {
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+    modalRef.componentInstance.body = "Bạn có chắc chắn xóa tư vấn?";
+    modalRef.result.then(() => {
+      this.advisoryService.remove(data.id).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xóa thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadDataFromApi();
+      }, (err) => {
+        console.log(err);
+      });
+    }, () => { });
   }
 
 }

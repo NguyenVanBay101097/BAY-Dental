@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProductBasic2 } from '../products/product.service';
 import { ToothDisplay } from '../teeth/tooth.service';
+import { ToothCategoryBasic } from '../tooth-categories/tooth-category.service';
 
 export class AdvisorySave {
   customerId: string;
@@ -10,6 +11,7 @@ export class AdvisorySave {
   userId: string;
   user: any;
   date: Date;
+  toothCategoryId: string;
   teeth: ToothDisplay[];
   toothDiagnosis: any;
   product: any;
@@ -41,6 +43,8 @@ export class AdvisoryDisplay {
   userId: string;
   user: any;
   date: Date;
+  toothCategoryId: string;
+  toothCategory: ToothCategoryBasic;
   teeth: ToothDisplay[];
   toothDiagnosis: any;
   product: any;
