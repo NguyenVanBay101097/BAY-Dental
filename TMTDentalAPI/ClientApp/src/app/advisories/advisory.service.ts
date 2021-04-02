@@ -86,4 +86,9 @@ export class AdvisoryService {
   remove(id){
     return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
   }
+
+  getPrint(customerId) 
+  {
+    return this.http.get(this.baseApi + this.apiUrl+ "/" +customerId+ "/GetPrint");
+  }
 }

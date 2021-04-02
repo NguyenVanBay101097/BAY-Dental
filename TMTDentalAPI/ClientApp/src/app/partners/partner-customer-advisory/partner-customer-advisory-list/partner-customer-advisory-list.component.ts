@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AdvisoryPaged, AdvisoryService } from 'src/app/advisories/advisory.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { ToothDiagnosisService } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
@@ -44,6 +45,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     private activeRoute: ActivatedRoute,
     private intlService: IntlService,
     private notificationService: NotificationService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -235,6 +237,13 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
         console.log(err);
       });
     }, () => { });
+  }
+
+    onPrint() {
+    if (!this.customerId) return;
+    this.advisoryService.getPrint(this.customerId).subscribe((res: any) => {
+      this.printService.printHtml(res.html);
+    });
   }
 
 }

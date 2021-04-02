@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
@@ -20,12 +21,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IAdvisoryService _advisoryService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IViewRenderService _viewRenderService;
 
-        public AdvisoriesController(IAdvisoryService advisoryService,
+        public AdvisoriesController(IAdvisoryService advisoryService, IViewRenderService viewRenderService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _advisoryService = advisoryService;
             _mapper = mapper;
+            _viewRenderService = viewRenderService;
             _unitOfWork = unitOfWork;
         }
 
@@ -91,6 +94,19 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _advisoryService.GetToothAdvise(val);
             return Ok(res);
+        }
+
+        [HttpGet("{customerId}/[action]")]
+        public async Task<IActionResult> GetPrint(Guid customerId)
+        {
+
+            var res = await _advisoryService.Print(customerId);
+
+            if (res == null)
+                return NotFound();
+            var html = _viewRenderService.Render("Advisory/Print", res);
+
+            return Ok(new PrintData() { html = html });
         }
     }
 }
