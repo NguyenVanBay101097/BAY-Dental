@@ -179,7 +179,7 @@ export class ToaThuocService {
     // }
 
     getPrint(id: string) {
-        return this.http.get(this.baseApi + this.apiPrintUrl + '/Print' + `/${id}`);
+        return this.http.get(this.baseApi + this.apiPrintUrl + '/Print' + `?id=${id}`, { responseType: 'text' });
     }
 
     getFromUI(id): Observable<ToaThuocDisplay> {
