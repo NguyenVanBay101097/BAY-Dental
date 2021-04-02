@@ -18,8 +18,8 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.AdvisoryId);
 
             builder.HasOne(x => x.ToothDiagnosis)
-                .WithMany(x => x.AdvisoryToothDiagnosisRels)
-                .HasForeignKey(x => x.ToothDiagnosisId);
+                .WithMany()
+                .HasForeignKey(x => x.ToothDiagnosisId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

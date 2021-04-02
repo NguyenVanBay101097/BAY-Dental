@@ -18,7 +18,7 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.AdvisoryId);
 
             builder.HasOne(x => x.Product)
-                .WithMany(x => x.AdvisoryProductRels)
+                .WithMany()
                 .HasForeignKey(x => x.ProductId);
         }
     }

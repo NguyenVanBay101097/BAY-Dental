@@ -31,7 +31,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        [CheckAccess(Actions = "Catalog.ToothDiagnosis.Read")]
         public async Task<IActionResult> Get([FromQuery] ToothDiagnosisPaged val)
         {
             var result = await _toothDiagnosisService.GetPagedResultAsync(val);
@@ -39,7 +38,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [CheckAccess(Actions = "Catalog.ToothDiagnosis.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var toothDiagnosis = await _toothDiagnosisService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
@@ -47,36 +45,29 @@ namespace TMTDentalAPI.Controllers
             {
                 return NotFound();
             }
-            return Ok(_mapper.Map<ToothDiagnosisBasic>(toothDiagnosis));
+            return Ok(_mapper.Map<ToothDiagnosisDisplay>(toothDiagnosis));
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Catalog.ToothDiagnosis.Read")]
         public async Task<IActionResult> Autocomplete(ToothDiagnosisPaged val)
         {
             var res = await _toothDiagnosisService.GetAutocompleteAsync(val);
             return Ok(res);
         }
 
-        [HttpPost]
-        [CheckAccess(Actions = "Catalog.ToothDiagnosis.Create")]
-        public async Task<IActionResult> Create(ToothDiagnosisSave val)
-        {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-
-            var result = _mapper.Map<ToothDiagnosis>(val);
-            result.CompanyId = CompanyId;
-            await _unitOfWork.BeginTransactionAsync();
-            var title = await _toothDiagnosisService.CreateAsync(result);
-            _unitOfWork.Commit();
-
-            var basic = _mapper.Map<ToothDiagnosisBasic>(title);
-            return Ok(basic);
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> Create(ToothDiagnosisSave val)
+        //{
+        //    if (null == val || !ModelState.IsValid)
+        //        return BadRequest();
+        //    await _unitOfWork.BeginTransactionAsync();
+        //    //var toothDiagnosis = await _toothDiagnosisService.CreateToothDiagnosis(val);
+        //    _unitOfWork.Commit();
+        //    var basic = _mapper.Map<ToothDiagnosisDisplay>(toothDiagnosis);
+        //    return Ok(basic);
+        //}
 
         [HttpPut("{id}")]
-        [CheckAccess(Actions = "Catalog.ToothDiagnosis.Update")]
         public async Task<IActionResult> Update(Guid id, ToothDiagnosisSave val)
         {
             if (!ModelState.IsValid)
@@ -95,16 +86,13 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        [CheckAccess(Actions = "Catalog.ToothDiagnosis.Delete")]
-        public async Task<IActionResult> Remove(Guid id)
-        {
-            var result = await _toothDiagnosisService.GetByIdAsync(id);
-            if (result == null)
-                return NotFound();
-            await _toothDiagnosisService.DeleteAsync(result);
-
-            return NoContent();
-        }
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> Remove(Guid id)
+        //{
+        //    await _unitOfWork.BeginTransactionAsync();
+        //    await _toothDiagnosisService.RemoveToothDiagnosis(id);
+        //    _unitOfWork.Commit();
+        //    return NoContent();
+        //}
     }
 }

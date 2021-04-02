@@ -39,7 +39,8 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
             {
                 query = query.Where(x => x.User.Name.Contains(val.Search) || 
-                    x.AdvisoryProductRels.Any(s => s.Product.Name.Contains(val.Search)));
+                    x.AdvisoryProductRels.Any(s => s.Product.Name.Contains(val.Search)) || 
+                    x.AdvisoryToothRels.Any(s => val.ToothIds.Contains(s.ToothId)));
             }
 
             if (val.DateFrom.HasValue)
@@ -95,7 +96,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<AdvisorySave> CreateAdvisory(AdvisorySave val)
+        public async Task<Advisory> CreateAdvisory(AdvisorySave val)
         {
             var advisory = _mapper.Map<Advisory>(val);
 
@@ -126,7 +127,7 @@ namespace Infrastructure.Services
 
             await CreateAsync(advisory);
 
-            return val;
+            return advisory;
         }
 
         public async Task UpdateAdvisory(Guid id, AdvisorySave val)
@@ -173,7 +174,7 @@ namespace Infrastructure.Services
             await UpdateAsync(advisory);
         }
 
-        public async Task Unlink(Guid id)
+        public async Task RemoveAdvisory(Guid id)
         {
             var advisory = await SearchQuery(x => x.Id == id)
                 .Include(x => x.AdvisoryToothRels)

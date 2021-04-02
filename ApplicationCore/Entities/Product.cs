@@ -136,6 +136,7 @@ namespace ApplicationCore.Entities
 
         public ICollection<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; } = new List<ProductStockInventoryCriteriaRel>();
 
-        public ICollection<AdvisoryProductRel> AdvisoryProductRels { get; set; } = new List<AdvisoryProductRel>();
+        public ICollection<ToothDiagnosisProductRel> ToothDiagnosisProductRels { get; set; } = new List<ToothDiagnosisProductRel>();
+
     }
 }

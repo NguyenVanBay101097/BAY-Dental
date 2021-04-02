@@ -248,6 +248,7 @@ namespace Infrastructure.Data
         public DbSet<AdvisoryToothDiagnosisRel> AdvisoryToothDiagnosisRels { get; set; }
         public DbSet<AdvisoryProductRel> AdvisoryProductRels { get; set; }
         public DbSet<ToothDiagnosis> ToothDiagnosis { get; set; }
+        public DbSet<ToothDiagnosisProductRel> ToothDiagnosisProductRels { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -449,6 +450,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new AdvisoryToothDiagnosisRelConfiguration());
             builder.ApplyConfiguration(new AdvisoryProductRelConfiguration());
             builder.ApplyConfiguration(new ToothDiagnosisConfiguration());
+            builder.ApplyConfiguration(new ToothDiagnosisProductRelConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

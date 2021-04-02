@@ -54,7 +54,7 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
             var advisory = await _advisoryService.CreateAdvisory(val);
             _unitOfWork.Commit();
-            return Ok(_mapper.Map<AdvisorySave>(advisory));
+            return Ok(_mapper.Map<AdvisoryDisplay>(advisory));
         }
 
         [HttpPut("{id}")]
@@ -74,7 +74,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Remove(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _advisoryService.Unlink(id);
+            await _advisoryService.RemoveAdvisory(id);
             _unitOfWork.Commit();
             return NoContent();
         }

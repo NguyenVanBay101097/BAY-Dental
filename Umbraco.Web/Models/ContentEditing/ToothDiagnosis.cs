@@ -24,5 +24,12 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ToothDiagnosisSave
     {
         public string Name { get; set; }
+        public IEnumerable<Guid> ProductIds { get; set; } = new List<Guid>();
+    }
+
+    public class ToothDiagnosisDisplay
+    {
+        public string Name { get; set; }
+        public IEnumerable<ProductSimple> Product { get; set; } = new List<ProductSimple>();
     }
 }

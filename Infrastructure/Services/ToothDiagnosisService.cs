@@ -57,15 +57,23 @@ namespace Infrastructure.Services
             return items;
         }
 
-        public override async Task<IEnumerable<ToothDiagnosis>> CreateAsync(IEnumerable<ToothDiagnosis> entities)
-        {
-            await base.CreateAsync(entities);
-            return entities;
-        }
+        //public override async Task<IEnumerable<ToothDiagnosis>> CreateToothDiagnosis(IEnumerable<ToothDiagnosis> entities)
+        //{
+        //    await base.CreateAsync(entities);
+        //    return entities;
+        //}
 
         public override async Task UpdateAsync(IEnumerable<ToothDiagnosis> entities)
         {
             await base.UpdateAsync(entities);
+        }
+
+        public async Task RemoveToothDiagnosis(Guid id)
+        {
+            var advisory = await SearchQuery(x => x.Id == id)
+                .Include(x => x.ToothDiagnosisProductRels)
+                .FirstOrDefaultAsync();
+            await DeleteAsync(advisory);
         }
     }
 }
