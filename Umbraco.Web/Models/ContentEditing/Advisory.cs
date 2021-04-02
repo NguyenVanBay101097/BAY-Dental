@@ -9,7 +9,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public DateTime Date { get; set; }
-        public string UserName { get; set; }
+        public ApplicationUserSimple User { get; set; }
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
         public IEnumerable<ToothDiagnosisBasic> ToothDiagnosis { get; set; } = new List<ToothDiagnosisBasic>();
         public IEnumerable<ProductSimple> Product { get; set; } = new List<ProductSimple>();

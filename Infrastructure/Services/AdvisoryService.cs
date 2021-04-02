@@ -67,7 +67,8 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
+            query = query.Include(x => x.User)
+                .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product);
 
@@ -85,7 +86,7 @@ namespace Infrastructure.Services
 
         public async Task<AdvisoryDisplay> GetAdvisoryDisplay(Guid id)
         {
-            var advisory = await SearchQuery(x => x.Id == id)
+            var advisory = await SearchQuery(x => x.Id == id).Include(x => x.User)
                 .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
