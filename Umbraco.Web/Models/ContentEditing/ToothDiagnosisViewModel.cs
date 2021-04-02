@@ -30,6 +30,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ToothDiagnosisDisplay
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public IEnumerable<ProductSimple> Product { get; set; } = new List<ProductSimple>();
     }

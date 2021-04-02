@@ -40,12 +40,11 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var toothDiagnosis = await _toothDiagnosisService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            if (toothDiagnosis == null)
-            {
+            var res = await _toothDiagnosisService.GetToothDiagnosisDisplay(id);
+            if (res == null)
                 return NotFound();
-            }
-            return Ok(_mapper.Map<ToothDiagnosisDisplay>(toothDiagnosis));
+
+            return Ok(res);
         }
 
         [HttpPost("[action]")]
@@ -73,14 +72,8 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-
-            var result = await _toothDiagnosisService.GetByIdAsync(id);
-            if (result == null)
-                return NotFound();
-
-            result = _mapper.Map(val, result);
             await _unitOfWork.BeginTransactionAsync();
-            await _toothDiagnosisService.UpdateAsync(result);
+            await _toothDiagnosisService.UpdateToothDiagnosis(id, val);
             _unitOfWork.Commit();
 
             return NoContent();
