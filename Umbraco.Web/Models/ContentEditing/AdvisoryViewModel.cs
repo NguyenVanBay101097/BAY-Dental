@@ -88,6 +88,5 @@ namespace Umbraco.Web.Models.ContentEditing
         public CompanyPrintVM Company { get; set; }
         public PartnerDisplay Partner { get; set; }
         public IEnumerable<AdvisoryDisplay> Advisories { get; set; }
-        public ApplicationUserDisplay User { get; set; }
     }
 }

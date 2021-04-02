@@ -231,26 +231,31 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<AdvisoryPrintVM> Print(Guid customerId)
+        public async Task<AdvisoryPrintVM> Print(Guid customerId, IEnumerable<Guid> ids)
         {
             var _partnerService = GetService<IPartnerService>();
-
             var res = new AdvisoryPrintVM();
+
             var partner = await _partnerService.SearchQuery(x => x.Id == customerId).Include(x => x.Company.Partner).FirstOrDefaultAsync();
             if (partner == null) return null;
 
             res.Partner = _mapper.Map<PartnerDisplay>(partner);
             res.Company = _mapper.Map<CompanyPrintVM>(partner.Company);
 
-            var advisories = await SearchQuery(x => x.CustomerId == customerId)
+            var query = SearchQuery();
+
+            if (ids != null && ids.Count() > 0)
+            {
+                query = query.Where(x => ids.Contains(x.Id));
+            }
+
+            var advisories = await query
                 .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
                 .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.User).ToListAsync();
 
             res.Advisories = _mapper.Map<IEnumerable<AdvisoryDisplay>>(advisories);
-
-            res.User = _mapper.Map<ApplicationUserDisplay>(await _userService.GetCurrentUser());
 
             return res;
         }

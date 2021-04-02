@@ -22,22 +22,11 @@ namespace TMTDentalAPI.ViewControllers
             _advisoryService = advisoryService;
             _mapper = mapper;
         }
-        public async Task<IActionResult> Print(Guid customerId)
+        public async Task<IActionResult> Print(Guid customerId, IEnumerable<Guid> ids)
         {
-            var res = new AdvisoryPrintVM();
-            var partner = await _partnerService.SearchQuery(x => x.Id == customerId).Include(x => x.Company.Partner).FirstOrDefaultAsync();
+            var res = await _advisoryService.Print(customerId, ids);
+            if (res == null) return NotFound();
 
-            res.Partner = _mapper.Map<PartnerDisplay>(partner);
-            res.Company = _mapper.Map<CompanyPrintVM>(partner.Company.Partner);
-
-            var advisories = await _advisoryService.SearchQuery(x => x.CustomerId == customerId)
-                .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
-                .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
-                .Include(x => x.User).ToListAsync();
-
-            res.Advisories = _mapper.Map<IEnumerable<AdvisoryDisplay>>(advisories);
-
-            res.User = _mapper.Map<ApplicationUserDisplay>(_userService.GetCurrentUser());
             return View(res);
         }
     }

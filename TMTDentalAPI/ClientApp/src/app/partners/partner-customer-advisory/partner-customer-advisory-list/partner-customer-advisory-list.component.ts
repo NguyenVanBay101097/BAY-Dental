@@ -36,6 +36,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   skip: number = 0;
   loading = false;
   customerId: string;
+  mySelection = [];
   
   constructor(
     private modalService: NgbModal,
@@ -239,9 +240,24 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     }, () => { });
   }
 
+  notify(style, text) {
+    this.notificationService.show({
+      content: text,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: style, icon: true }
+    });
+  }
+
     onPrint() {
-    if (!this.customerId) return;
-    this.advisoryService.getPrint(this.customerId).subscribe((res: any) => {
+    if(!this.customerId) return;
+    if (!this.mySelection || this.mySelection.length == 0) 
+    {
+      this.notify('error', 'Bạn chưa chọn thông tin tư vấn');
+      return;
+    }
+    this.advisoryService.getPrint(this.customerId,this.mySelection).subscribe((res: any) => {
       this.printService.printHtml(res.html);
     });
   }
