@@ -85,6 +85,7 @@ import { PartnerCustomerQuotationFormComponent } from './partner-customer-quotat
 import { PartnerCustomerAdvisoryListComponent } from './partner-customer-advisory/partner-customer-advisory-list/partner-customer-advisory-list.component';
 import { PartnerCustomerAdvisoryCuDialogComponent } from './partner-customer-advisory/partner-customer-advisory-cu-dialog/partner-customer-advisory-cu-dialog.component';
 import { ToothDiagnosisPopoverComponent } from './partner-customer-advisory/partner-customer-advisory-list/tooth-diagnosis-popover/tooth-diagnosis-popover.component';
+import { PartnerCustomerSaleOrderQuotationsLinesComponent } from './partner-customer-sale-order-quotations-lines/partner-customer-sale-order-quotations-lines.component';
 
 
 @NgModule({
@@ -159,7 +160,8 @@ import { ToothDiagnosisPopoverComponent } from './partner-customer-advisory/part
     PartnerCustomerTreatmentSaleOrderLineComponent,
     PartnerCustomerAdvisoryListComponent,
     PartnerCustomerAdvisoryCuDialogComponent,
-    ToothDiagnosisPopoverComponent
+    ToothDiagnosisPopoverComponent,
+    PartnerCustomerSaleOrderQuotationsLinesComponent
   ],
   imports: [
     CommonModule,

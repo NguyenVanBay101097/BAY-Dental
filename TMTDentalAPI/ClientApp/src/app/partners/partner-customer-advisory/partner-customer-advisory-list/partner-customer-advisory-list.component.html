@@ -16,7 +16,7 @@
                         <tr *ngFor="let ham of hamList | keyvalue">
                             <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
                                 <div class="tooth-wrapper">
-                                    <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="[isSelected(rang) ? 'selected' : '', isConsulted(rang) ? 'consulted' : '']" *ngFor="let rang of vitri.value">
+                                    <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="[isSelected(rang) ? 'teethSelected' : '', isConsulted(rang) ? 'consulted' : '']" *ngFor="let rang of vitri.value">
                                         {{rang.name}}
                                     </div>
                                 </div>
@@ -43,10 +43,10 @@
         <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createAdvisory()" accesskey="c">
             Tạo tư vấn
         </button>
-        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createItem()" accesskey="c">
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createQuotations()" accesskey="c">
             Tạo báo giá
         </button>
-        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createItem()" accesskey="c">
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createSaleOrder()" accesskey="c">
             Tạo phiếu điều trị
         </button>
         <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onPrint()" accesskey="c">
@@ -93,6 +93,10 @@
                             <span class="far fa-trash-alt"></span></button>
                     </ng-template>
                 </kendo-grid-column>
+                <div *kendoGridDetailTemplate="let dataItem">
+                    <app-partner-customer-sale-order-quotations-lines [advisoryId]="dataItem.id">
+                    </app-partner-customer-sale-order-quotations-lines>
+                </div>
             </kendo-grid>
         </div>
     </div>

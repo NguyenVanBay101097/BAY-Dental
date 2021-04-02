@@ -19,7 +19,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;" class=".o_td_control_left">
-                                        <a routerLinkActive="active-link" (click)="viewPartner()">{{f.customer?.value?.name}}</a>
+                                        <a class="text-primary" (click)="viewPartner()">{{f.customer?.value?.name}}</a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -72,7 +72,7 @@
                                             *ngFor="let vitri of ham.value | keyvalue">
                                             <div class="tooth-wrapper">
                                                 <div (click)="onSelected(rang)" class="tooth-item"
-                                                    [ngClass]="{'selected': isSelected(rang)}"
+                                                    [ngClass]="{'teethSelected': isSelected(rang)}"
                                                     *ngFor="let rang of vitri.value">
                                                     {{rang.name}}
                                                 </div>

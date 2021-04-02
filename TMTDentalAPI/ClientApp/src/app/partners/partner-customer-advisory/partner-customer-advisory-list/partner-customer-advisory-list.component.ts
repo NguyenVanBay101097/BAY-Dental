@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -48,7 +48,8 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     private activeRoute: ActivatedRoute,
     private intlService: IntlService,
     private notificationService: NotificationService,
-    private printService: PrintService
+    private printService: PrintService,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -86,6 +87,14 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, er => { })
+  }
+
+  createQuotations(){
+    this.router.navigate(['/partners/customer/'+this.customerId+'/quotations']);
+  }
+
+  createSaleOrder(){
+    this.router.navigate(['/partners/customer/'+this.customerId+'/treatment']);
   }
 
   loadTeethMap(categ: ToothCategoryBasic) {
@@ -179,9 +188,6 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     this.advisoryService.getToothAdvise(val).subscribe((result:any) => {
       this.teethConsulted = result.toothIds;
     })
-
-    console.log(this.teethConsulted);
-    
   }
 
   loadDataFromApi(){
@@ -199,7 +205,6 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
         data: res.items,       
         total: res.totalItems
       };
-      console.log(this.gridData.data);
       this.loading = false;
     })
   }

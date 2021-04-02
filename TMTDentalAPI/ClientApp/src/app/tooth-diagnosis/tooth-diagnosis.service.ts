@@ -29,7 +29,6 @@ export class ToothDiagnosisService {
   ) { }
 
   getPaged(val: any): Observable<PagedResult2<ToothDiagnosis>> {
-    console.log(val);
     return this.http.get<PagedResult2<ToothDiagnosis>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
 
