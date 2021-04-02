@@ -22,6 +22,7 @@ export class SaleOrderDisplay {
     orderLines: SaleOrderLineDisplay[];
     name: string;
     paid: number;
+    note: string;
     pricelist: ProductPriceListBasic;
     journalId: string;
     journal: AccountJournalSimple;

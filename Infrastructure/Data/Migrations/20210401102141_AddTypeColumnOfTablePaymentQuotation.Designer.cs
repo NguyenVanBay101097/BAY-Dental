@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210401102141_AddTypeColumnOfTablePaymentQuotation")]
+    partial class AddTypeColumnOfTablePaymentQuotation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1266,9 +1268,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Time")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TimeExpected")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
@@ -1765,9 +1764,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AssistantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1812,8 +1808,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("AccountInvoiceId");
 
                     b.HasIndex("AppointmentId");
-
-                    b.HasIndex("AssistantId");
 
                     b.HasIndex("CompanyId");
 
@@ -5289,21 +5283,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.ProductAppointmentRel", b =>
-                {
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AppoinmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ProductId", "AppoinmentId");
-
-                    b.HasIndex("AppoinmentId");
-
-                    b.ToTable("ProductAppointmentRels");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.ProductBom", b =>
                 {
                     b.Property<Guid>("Id")
@@ -6263,9 +6242,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid>("QuotationId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("SubPrice")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("ToothCategoryId")
                         .HasColumnType("uniqueidentifier");
@@ -10762,10 +10738,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("AppointmentId");
 
-                    b.HasOne("ApplicationCore.Entities.Employee", "Assistant")
-                        .WithMany()
-                        .HasForeignKey("AssistantId");
-
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
@@ -12123,21 +12095,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.ProductAppointmentRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Appointment", "Appointment")
-                        .WithMany("AppointmentServices")
-                        .HasForeignKey("AppoinmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ProductBom", b =>

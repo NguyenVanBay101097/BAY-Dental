@@ -28,7 +28,7 @@ namespace Infrastructure.Data
         private readonly AppTenant _tenant;
         private readonly IConfiguration _configuration;
         public CatalogDbContext(DbContextOptions<CatalogDbContext> options, AppTenant tenant, IConfiguration configuration)
-            :base(options)
+            : base(options)
         {
             _tenant = tenant;
             _configuration = configuration;
@@ -242,7 +242,11 @@ namespace Infrastructure.Data
         //public DbSet<StockInventoryLine> StockInventoryLines { get; set; }
         public DbSet<StockInventoryCriteria> StockInventoryCriterias { get; set; }
         public DbSet<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; }
-        public DbSet<ProductAppointmentRel> ProductAppointmentRels { get; set; }
+        public DbSet<Quotation> Quotations { get; set; }
+        public DbSet<QuotationLine> QuotationLines { get; set; }
+        public DbSet<QuotationLineToothRel> QuotationLineToothRels { get; set; }
+        public DbSet<PaymentQuotation> PaymentQuotations { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -439,6 +443,11 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ProductBomConfiguration());
             builder.ApplyConfiguration(new ProductRequestConfiguration());
             builder.ApplyConfiguration(new ProductRequestLineConfiguration());
+            builder.ApplyConfiguration(new QuotationConfiguration());
+            builder.ApplyConfiguration(new QuotationLineConfiguration());
+            builder.ApplyConfiguration(new QuotationLineToothRelConfiguration());
+            builder.ApplyConfiguration(new PaymentQuotationConfiguration());
+
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

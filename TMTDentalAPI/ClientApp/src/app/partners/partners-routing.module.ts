@@ -27,6 +27,7 @@ import { PartnerSupplierFormDebitComponent } from './partner-supplier-form-debit
 import { PartnerSupplierFormPaymentComponent } from './partner-supplier-form-payment/partner-supplier-form-payment.component';
 import { PartnerCustomerLaboOrdersComponentComponent } from './partner-customer-labo-orders-component/partner-customer-labo-orders-component.component';
 import { PartnerCustomerTreatmentListComponent } from './partner-customer-treatment/partner-customer-treatment-list/partner-customer-treatment-list.component';
+import { PartnerCustomerQuotationListComponent } from './partner-customer-quotation/partner-customer-quotation-list/partner-customer-quotation-list.component';
 
 const routes: Routes = [
   {
@@ -48,7 +49,7 @@ const routes: Routes = [
       { path: 'prescription', component: PartnerCustomerProductToaThuocListComponent },
       { path: 'categories', component: PartnerCustomerCategoriesComponent },
       { path: 'partner-images', component: PartnerCustomerUploadImageComponent },
-      { path: 'quotations', component: PartnerCustomerQuotationsComponent },
+      { path: 'quotations', component: PartnerCustomerQuotationListComponent },
       { path: 'treatment-histories', component: PartnerCustomerTreatmentHistoryComponent },
       { path: 'treatment-histories/form', component: PartnerCustomerTreatmentHistoryFormComponent },
       { path: 'overview', component: PartnerOverviewComponent },
@@ -71,7 +72,7 @@ const routes: Routes = [
   {
     path: 'suppliers', component: PartnerSupplierListComponent
   },
-  
+
   {
     path: 'supplier/:id',
     component: PartnerSupplierFormComponent,
@@ -82,7 +83,6 @@ const routes: Routes = [
       { path: 'payment', component: PartnerSupplierFormPaymentComponent },
     ]
   }
-
 ];
 
 @NgModule({
