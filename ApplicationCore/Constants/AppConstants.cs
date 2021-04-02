@@ -15,7 +15,7 @@ namespace ApplicationCore.Constants
         }
 
         /// <summary>
-        /// code cuar maau in phieu dieu tri
+        /// code của mẫu in
         /// </summary>
         public const string SaleOrderPaperCode = "SaleOrder";
         public const string PaymentPaperCode = "Payment";
