@@ -52,6 +52,9 @@ namespace ApplicationCore.Entities
         public string State { get; set; }
 
         public ICollection<PaymentQuotation> Payments { get; set; } = new List<PaymentQuotation>();
+        public ICollection<SaleOrder> Orders { get; set; } = new List<SaleOrder>();
 
+        public Guid CompanyId { get; set; }
+        public Company Company { get; set; }
     }
 }

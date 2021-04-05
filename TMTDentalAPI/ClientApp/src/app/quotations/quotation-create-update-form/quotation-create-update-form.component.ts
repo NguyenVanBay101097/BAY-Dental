@@ -160,10 +160,62 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   }
 
+  // onCreateSaleOrder() {
+  //   var val = {
+  //     partnerId: this.partnerId,
+  //   }
+  //   if (!this.quotationId) {
+  //     this.notificationService.show({
+  //       content: 'Bạn phải lưu báo giá trước khi tạo phiếu điều trị !',
+  //       hideAfter: 3000,
+  //       position: { horizontal: 'center', vertical: 'top' },
+  //       animation: { type: 'fade', duration: 400 },
+  //       type: { style: 'error', icon: true }
+  //     });
+  //     return;
+  //   }
+  //   this.saleOrderService.defaultGet(val).subscribe(
+  //     result => {
+  //       var saleOrder = {
+  //         note: this.quotation ? this.quotation.note : '',
+  //         companyId: result.companyId,
+  //         dateOrder: result.dateOrder,
+  //         partnerId: result.partnerId,
+  //         quotationId: this.quotationId,
+  //         orderLines: []
+  //       };
+  //       if (this.quotation && this.quotation.lines) {
+  //         this.quotation.lines.forEach((item: QuotationLineDisplay) => {
+  //           var orderLine = {
+  //             amountResidual: item.amount,
+  //             amountPaid: 0,
+  //             diagnostic: item.diagnostic,
+  //             discount: item.percentDiscount,
+  //             discountType: "percentage",
+  //             name: item.name,
+  //             priceUnit: item.subPrice,
+  //             productId: item.productId,
+  //             state: 'draft',
+  //             productUOMQty: item.qty,
+  //             toothCategoryId: item.toothCategoryId,
+  //             toothIds: []
+  //           };
+  //           if (item.teeth) {
+  //             orderLine.toothIds = item.teeth.map(x => x.id);
+  //           }
+  //           saleOrder.orderLines.push(orderLine);
+  //         })
+  //         this.saleOrderOdataService.create(saleOrder).subscribe(
+  //           (result: any) => {
+  //             this.router.navigate(['sale-orders/form'], { queryParams: { id: result.Id } });
+  //           }
+  //         )
+  //       }
+  //     }
+  //   )
+  // }
+
   onCreateSaleOrder() {
-    var val = {
-      partnerId: this.partnerId,
-    }
     if (!this.quotationId) {
       this.notificationService.show({
         content: 'Bạn phải lưu báo giá trước khi tạo phiếu điều trị !',
@@ -174,42 +226,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       });
       return;
     }
-    this.saleOrderService.defaultGet(val).subscribe(
-      result => {
-        var saleOrder = {
-          note: this.quotation ? this.quotation.note : '',
-          companyId: result.companyId,
-          dateOrder: result.dateOrder,
-          partnerId: result.partnerId,
-          orderLines: []
-        };
-        if (this.quotation && this.quotation.lines) {
-          this.quotation.lines.forEach((item: QuotationLineDisplay) => {
-            var orderLine = {
-              amountResidual: item.amount,
-              amountPaid: 0,
-              diagnostic: item.diagnostic,
-              discount: item.percentDiscount,
-              discountType: "percentage",
-              name: item.name,
-              priceUnit: item.subPrice,
-              productId: item.productId,
-              state: 'draft',
-              productUOMQty: item.qty,
-              toothCategoryId: item.toothCategoryId,
-              toothIds: []
-            };
-            if (item.teeth) {
-              orderLine.toothIds = item.teeth.map(x => x.id);
-            }
-            saleOrder.orderLines.push(orderLine);
-          })
-          this.saleOrderOdataService.create(saleOrder).subscribe(
-            (result: any) => {
-              this.router.navigate(['sale-orders/form'], { queryParams: { id: result.Id } });
-            }
-          )
-        }
+    this.quotationService.createSaleOrderByQuotation(this.quotationId).subscribe(
+      (result: any) => {
+        this.router.navigate(['sale-orders/form'], { queryParams: { id: result.Id } });
       }
     )
   }
@@ -442,6 +461,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   getDataFormGroup() {
     var value = this.formGroup.value;
     value.dateQuotation = this.intlService.formatDate(value.dateQuotation, "yyyy-MM-dd");
+    value.companyId = this.quotation.companyId;
     if (value.lines) {
       value.lines.forEach(line => {
         if (line.teeth) {

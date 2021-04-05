@@ -41,6 +41,7 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrder, SaleOrderPrintVM>();
             CreateMap<SaleOrder, SaleOrderSurveyBasic>();
+            CreateMap<SaleOrder, SaleOrderSimple>();
         }
     }
 }

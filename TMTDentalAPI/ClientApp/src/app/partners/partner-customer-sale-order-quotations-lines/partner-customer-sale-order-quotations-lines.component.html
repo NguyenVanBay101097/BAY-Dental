@@ -1,0 +1,23 @@
+<kendo-grid >
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        title="Ngày tạo" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        title="Số phiếu" width="200">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <span>{{getInfor(dataItem)}}</span>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        title="Dịch vụ" width="120">
+    </kendo-grid-column>
+    <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        title="Bác sĩ" width="100">
+    </kendo-grid-column>
+    <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        title="Số lượng" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

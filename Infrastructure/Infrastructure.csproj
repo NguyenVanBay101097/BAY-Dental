@@ -78,6 +78,14 @@
     <Compile Remove="Data\Migrations\20210330105502_AddQuotationModule.Designer.cs" />
     <Compile Remove="Data\Migrations\20210330101214_CreateAdvisory.cs" />
     <Compile Remove="Data\Migrations\20210330101214_CreateAdvisory.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210402094709_AddRelationshipForTableQuotationAdvisorySaleOrder.cs" />
+    <Compile Remove="Data\Migrations\20210402094709_AddRelationshipForTableQuotationAdvisorySaleOrder.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210402095412_AddRelationshipForTableQuotationAdvisorySaleOrder.cs" />
+    <Compile Remove="Data\Migrations\20210402095412_AddRelationshipForTableQuotationAdvisorySaleOrder.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210405025546_AddCompanyToQuotation.cs" />
+    <Compile Remove="Data\Migrations\20210405025546_AddCompanyToQuotation.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210405025953_AddCompanyToQuotation.cs" />
+    <Compile Remove="Data\Migrations\20210405025953_AddCompanyToQuotation.Designer.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.Designer.cs" />
     <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.cs" />

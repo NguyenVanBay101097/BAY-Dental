@@ -73,6 +73,7 @@ stock.model_product_request,ProductRequest,Product Request,0
 stock.model_stock_inventory,StockInventory,Stock Inventory,0
 stock.model_stock_inventory_line,StockInventoryLine,Stock Inventory Line,0,
 survey.model_survey_assignment,SurveyAssignment,Survey Assignment,0
+partner.model_partner_advance,PartnerAdvance,Partner Advance,0
 
 
 

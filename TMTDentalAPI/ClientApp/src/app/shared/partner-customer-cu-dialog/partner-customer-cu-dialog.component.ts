@@ -97,7 +97,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   submitted = false;
 
-  get f() { return this.formGroup.controls; }
 
   constructor(
     private fb: FormBuilder,
@@ -264,6 +263,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   get sourceValue() {
     return this.formGroup.get('source').value;
   }
+
+  get f() { return this.formGroup.controls; }
 
   loadHistoriesList() {
     this.partnerService.getHistories().subscribe((result) => {

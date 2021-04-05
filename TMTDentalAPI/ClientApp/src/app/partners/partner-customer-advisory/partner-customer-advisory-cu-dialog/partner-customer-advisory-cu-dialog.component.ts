@@ -51,8 +51,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       note: [],
       companyId: [null,Validators.required]
     })
-    setTimeout(() => {
-      this.loadToothCategories();
+
+    this.loadToothCategories();
       this.loadDefaultToothCategory().subscribe(result => {
         this.cateId = result.id;
         this.loadTeethMap(result);
@@ -62,8 +62,6 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       }else{
         this.getDefault();
       }
-     
-    }, 200);
     
   }
 
@@ -136,6 +134,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   onChangeToothCategory(value: any) {
     if (value.id) {
       this.teethSelected = [];
+      this.f.teeth.setValue(this.teethSelected);
       this.loadTeethMap(value);
       this.cateId = value.id;
     }
@@ -146,8 +145,6 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     if (!this.myForm.valid) {
       return false;
     }
-
-    console.log(this.myForm);
     var valueForm = this.myForm.value;
     valueForm.date = this.intlService.formatDate(valueForm.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     valueForm.toothCategoryId = this.cateId ;
@@ -193,12 +190,9 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       this.loadTeethMap(result.toothCategory);
       this.teethSelected = result.teeth;
       this.myForm.patchValue(result);
+
       let date = new Date(result.date);
       this.myForm.get('dateObj').patchValue(date);
-   
-      console.log(this.myForm);
-      
-      
     });
   }
 
@@ -213,8 +207,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   resetForm(){
     this.f.toothDiagnosis.setValue([]);
     this.f.product.setValue([]);
-    this.f.teeth.setValue([]);
     this.teethSelected = [];
+    this.f.teeth.setValue(this.teethSelected);
     this.f.note.reset();
     
   }

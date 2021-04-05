@@ -20,9 +20,14 @@ namespace ApplicationCore.Entities
         public int Qty { get; set; }
 
         /// <summary>
-        /// Giảm giá theo %
+        /// Số tiền Giảm giá , số % giảm giá
         /// </summary>
-        public int PercentDiscount { get; set; }
+        public decimal? Discount { get; set; }
+
+        /// <summary>
+        /// Loại giảm giá : percent / cash 
+        /// </summary>
+        public string DiscountType { get; set; }
 
         /// <summary>
         /// Tổng tiền trên 1 dịch vụ
@@ -58,5 +63,8 @@ namespace ApplicationCore.Entities
 
         public Guid QuotationId { get; set; }
         public Quotation Quotation { get; set; }
+
+        public Guid? AdvisoryId { get; set; }
+        public Advisory Advisory { get; set; }
     }
 }

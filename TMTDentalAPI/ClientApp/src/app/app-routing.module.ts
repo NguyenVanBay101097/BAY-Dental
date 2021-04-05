@@ -10,6 +10,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'partner-advances',
+    loadChildren: () => import('./partner-advances/partner-advances.module').then(m => m.PartnerAdvancesModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'stock-inventories',
     loadChildren: () => import('./stock-inventories/stock-inventories.module').then(m => m.StockInventoriesModule),
     canActivate: [AuthGuard]

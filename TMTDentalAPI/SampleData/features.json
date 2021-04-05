@@ -142,6 +142,28 @@
             "Permission": "Basic.ProductRequest.Done"
           }
         ]
+      },
+      {
+        "Name": "Khách hàng tạm ứng",
+        "Permission": "Basic.PartnerAdvance",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.PartnerAdvance.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.PartnerAdvance.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.PartnerAdvance.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.PartnerAdvance.Delete"
+          }
+        ]
       }
     ]
   },
@@ -1267,5 +1289,6 @@
         ]
       }
     ]
-  }
+  },
+  
 ]
