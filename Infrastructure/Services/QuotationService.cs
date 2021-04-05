@@ -251,5 +251,62 @@ namespace Infrastructure.Services
             quotation.TotalAmount = totalAmount;
         }
 
+        public async Task<SaleOrderSimple> CreateSaleOrderByQuotation(Guid id)
+        {
+            var quotation = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Lines)
+                .FirstOrDefaultAsync();
+            var saleOrderDefaultGet = new SaleOrderDefaultGet()
+            {
+                PartnerId = quotation.PartnerId
+            };
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var saleOrderDisplay = await saleOrderObj.DefaultGet(saleOrderDefaultGet);
+            var saleOrder = _mapper.Map<SaleOrder>(saleOrderDisplay);
+            saleOrder.State = "draft";
+
+            saleOrder = await saleOrderObj.CreateAsync(saleOrder);
+            if (quotation.Lines.Any())
+            {
+                var lines = quotation.Lines.ToList();
+                var sequence = 0;
+                var SaleOrderLines = new List<SaleOrderLine>();
+                foreach (var line in lines)
+                {
+                    var saleLine = new SaleOrderLine();
+                    saleLine.State = "draft";
+                    saleLine.ProductUOMQty = line.Qty;
+                    saleLine.AmountPaid = 0;
+                    saleLine.Diagnostic = line.Diagnostic;
+                    saleLine.DiscountType = line.PercentDiscount;
+                    saleLine.DiscountFixed = 
+                    saleLine.Order = saleOrder;
+                    saleLine.Sequence = sequence++;
+                    saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
+                    if (line.QuotationLineToothRels.Any())
+                    {
+                        var toothIds = line.QuotationLineToothRels.Select(x => x.ToothId);
+                        foreach (var toothId in toothIds)
+                        {
+                            saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                            {
+                                ToothId = toothId
+                            });
+                        }
+                    }
+
+                    SaleOrderLines.Add(saleLine);
+                    var saleLineService = GetService<ISaleOrderLineService>();
+                    await saleLineService.CreateAsync(SaleOrderLines);
+
+                    saleOrderObj._AmountAll(saleOrder);
+                    await saleOrderObj.UpdateAsync(saleOrder);
+                }
+
+            }
+
+            return _mapper.Map<SaleOrderSimple>(saleOrder);
+        }
+
     }
 }
