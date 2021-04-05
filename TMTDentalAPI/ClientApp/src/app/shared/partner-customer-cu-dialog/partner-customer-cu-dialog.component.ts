@@ -97,7 +97,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   submitted = false;
 
-  get f() { return this.formGroup.controls; }
 
   constructor(
     private fb: FormBuilder,
