@@ -13,6 +13,7 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<AdvisoryBasic>> GetPagedResultAsync(AdvisoryPaged val);
         Task<AdvisoryDisplay> GetAdvisoryDisplay(Guid id);
+        Task<PagedResult2<AdvisoryLine>> GetAdvisoryLines(AdvisoryLinePaged val);
         Task<Advisory> CreateAdvisory(AdvisorySave val);
         Task UpdateAdvisory(Guid id, AdvisorySave val);
         Task RemoveAdvisory(Guid id);

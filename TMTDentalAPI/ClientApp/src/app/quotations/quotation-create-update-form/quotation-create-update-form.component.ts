@@ -8,6 +8,7 @@ import { switchMap } from 'rxjs/operators';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
@@ -54,7 +55,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     private intlService: IntlService,
     private router: Router,
     private saleOrderService: SaleOrderService,
-    private saleOrderOdataService: SaleOrdersOdataService
+    private saleOrderOdataService: SaleOrdersOdataService,
+    private printService: PrintService,
+
   ) { }
 
   ngOnInit() {
@@ -66,6 +69,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       dateQuotation: [null, Validators.required],
       dateApplies: [0, Validators.required],
       dateEndQuotation: '',
+      companyId: '',
       lines: this.fb.array([
       ]),
       payments: this.fb.array([]),
@@ -100,7 +104,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           control.clear();
 
           result.lines.forEach(line => {
-            this.addLineFromApi(line);
+            // this.addLineFromApi(line);
+            this.addLineFromProduct(line);
           });
 
           const paymentcontrol = this.formGroup.get('payments') as FormArray;
@@ -117,103 +122,55 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       )
   }
 
-  addLineFromApi(val) {
-    var line = new QuotationLineDisplay();
-    line.diagnostic = val.diagnostic;
-    line.percentDiscount = val.percentDiscount ? val.percentDiscount : 0;
-    line.product = val.product;
-    line.productId = val.productId;
-    line.qty = val.qty ? val.qty : 0;
-    line.subPrice = val.subPrice ? val.subPrice : (val.product ? val.product.listPrice : 0);
-    line.teeth = this.fb.array([]);
-    line.name = val.name;
-    line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
-    line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
-    if (val.teeth) {
-      val.teeth.forEach(item => {
-        line.teeth.push(this.fb.group(item))
-      });
-    }
-    var res = this.fb.group(line);
-    this.linesArray.push(res);
-    this.linesArray.markAsDirty();
-  }
+  // addLineFromApi(val) {
+  //   var line = new QuotationLineDisplay();
+  //   line.diagnostic = val.diagnostic;
+  //   // line.p = val.percentDiscount ? val.percentDiscount : 0;
+  //   line.product = val.product;
+  //   line.productId = val.productId;
+  //   line.qty = val.qty ? val.qty : 0;
+  //   line.subPrice = val.subPrice ? val.subPrice : (val.product ? val.product.listPrice : 0);
+  //   line.teeth = this.fb.array([]);
+  //   line.name = val.name;
+  //   line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
+  //   line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
+  //   if (val.teeth) {
+  //     val.teeth.forEach(item => {
+  //       line.teeth.push(this.fb.group(item))
+  //     });
+  //   }
+  //   var res = this.fb.group(line);
+  //   this.linesArray.push(res);
+  //   this.linesArray.markAsDirty();
+  // }
 
-  addLineFromOdata(val) {
+  addLineFromProduct(val) {
     var line = new QuotationLineDisplay();
-    line.diagnostic = val.Diagnostic;
-    line.percentDiscount = 0;
-    line.product = val.Product;
-    line.productId = val.ProductId;
+    line.diagnostic = '';
+    line.discount = 0;
+    line.discountType = 'percentage';
+    line.product = val;
+    line.productId = val.id;
     line.qty = 1;
-    line.subPrice = val.PriceUnit;
-    line.name = val.Name;
+    line.subPrice = val.listPrice;
+    line.name = val.name;
     line.teeth = this.fb.array([])
-    line.toothCategory = val.ToothCategory ? val.ToothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
-    line.toothCategoryId = val.ToothCategoryId ? val.ToothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
+    line.toothCategory = (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
+    line.toothCategoryId = (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
     var res = this.fb.group(line);
     this.linesArray.push(res);
     this.linesArray.markAsDirty();
   }
 
   printQuotation() {
-
+    if (this.quotationId) {
+      this.quotationService.printQuotation(this.quotationId).subscribe((result: any) => {
+        this.printService.printHtml(result.html);
+      })
+    }
   }
 
-  // onCreateSaleOrder() {
-  //   var val = {
-  //     partnerId: this.partnerId,
-  //   }
-  //   if (!this.quotationId) {
-  //     this.notificationService.show({
-  //       content: 'Bạn phải lưu báo giá trước khi tạo phiếu điều trị !',
-  //       hideAfter: 3000,
-  //       position: { horizontal: 'center', vertical: 'top' },
-  //       animation: { type: 'fade', duration: 400 },
-  //       type: { style: 'error', icon: true }
-  //     });
-  //     return;
-  //   }
-  //   this.saleOrderService.defaultGet(val).subscribe(
-  //     result => {
-  //       var saleOrder = {
-  //         note: this.quotation ? this.quotation.note : '',
-  //         companyId: result.companyId,
-  //         dateOrder: result.dateOrder,
-  //         partnerId: result.partnerId,
-  //         quotationId: this.quotationId,
-  //         orderLines: []
-  //       };
-  //       if (this.quotation && this.quotation.lines) {
-  //         this.quotation.lines.forEach((item: QuotationLineDisplay) => {
-  //           var orderLine = {
-  //             amountResidual: item.amount,
-  //             amountPaid: 0,
-  //             diagnostic: item.diagnostic,
-  //             discount: item.percentDiscount,
-  //             discountType: "percentage",
-  //             name: item.name,
-  //             priceUnit: item.subPrice,
-  //             productId: item.productId,
-  //             state: 'draft',
-  //             productUOMQty: item.qty,
-  //             toothCategoryId: item.toothCategoryId,
-  //             toothIds: []
-  //           };
-  //           if (item.teeth) {
-  //             orderLine.toothIds = item.teeth.map(x => x.id);
-  //           }
-  //           saleOrder.orderLines.push(orderLine);
-  //         })
-  //         this.saleOrderOdataService.create(saleOrder).subscribe(
-  //           (result: any) => {
-  //             this.router.navigate(['sale-orders/form'], { queryParams: { id: result.Id } });
-  //           }
-  //         )
-  //       }
-  //     }
-  //   )
-  // }
+
 
   onCreateSaleOrder() {
     if (!this.quotationId) {
@@ -279,8 +236,16 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   computeTotalPrice(line: FormGroup) {
     let price = line.get('subPrice') ? line.get('subPrice').value : 0;
     let qty = line.get('qty') ? line.get('qty').value : 1;
-    let discount = line.get('percentDiscount') ? line.get('percentDiscount').value : 0;
-    let totalPrice = price * qty * (1 - discount / 100);
+
+    let discount = 0;
+    let discountType = line.get('discountType') ? line.get('discountType').value : '';
+    discount = line.get('discount') ? line.get('discount').value : 0;
+    let totalPrice = 0;
+    if (discountType == "percentage" && discountType != '') {
+      totalPrice = price * qty * (1 - discount / 100);
+    } else if (discountType == "fixed" && discountType != '') {
+      totalPrice = price * qty - discount;
+    }
     return totalPrice;
   }
 
@@ -507,6 +472,17 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       );
     }
   }
+
+  onChangeDiscount(event, line: FormGroup) {
+    line.value.discountType = event.discountType;
+    if (event.discountType == "fixed") {
+      line.value.discount = event.discount;
+    } else {
+      line.value.discount = event.discount;
+    }
+    line.patchValue(line.value);
+  }
+
 }
 
 

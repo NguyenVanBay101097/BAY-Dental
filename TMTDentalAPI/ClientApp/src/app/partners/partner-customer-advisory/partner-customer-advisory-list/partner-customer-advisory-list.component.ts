@@ -179,6 +179,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
       this.teethSelected = [];
       this.loadTeethMap(value);
       this.cateId = value.id;
+      this.loadDataFromApi();
     }
   }
 

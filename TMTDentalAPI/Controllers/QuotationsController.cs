@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Utilities;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
@@ -15,11 +16,13 @@ namespace TMTDentalAPI.Controllers
     public class QuotationsController : BaseApiController
     {
         private readonly IQuotationService _quotationService;
+        private readonly IViewRenderService _viewRenderService;
         private readonly IUnitOfWorkAsync _unitOfWork;
-        public QuotationsController(IUnitOfWorkAsync unitOfWork, IQuotationService quotationService)
+        public QuotationsController(IViewRenderService viewRenderService, IUnitOfWorkAsync unitOfWork, IQuotationService quotationService)
         {
             _quotationService = quotationService;
             _unitOfWork = unitOfWork;
+            _viewRenderService = viewRenderService;
         }
 
         [HttpGet]
@@ -90,6 +93,18 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
             await _quotationService.DeleteAsync(model);
             return NoContent();
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> Print(Guid id)
+        {
+            var quotation = await _quotationService.Print(id);
+            if (quotation == null)
+            {
+                return NotFound();
+            }
+            var html = _viewRenderService.Render<QuotationPrintVM>("Quotation/Print", quotation);
+            return Ok(new PrintData() { html = html });
         }
     }
 }

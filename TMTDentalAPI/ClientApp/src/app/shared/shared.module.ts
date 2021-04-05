@@ -80,6 +80,8 @@ import { ProductsModule } from '../products/products.module';
 import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SearchAllComponent } from './search-all/search-all.component';
+import { ProductListShareComponent } from './product-list-share/product-list-share.component';
+import { DiscountPopoverShareComponent } from './discount-popover-share/discount-popover-share.component';
 
 @NgModule({
   declarations: [
@@ -152,7 +154,9 @@ import { SearchAllComponent } from './search-all/search-all.component';
     PartnerWebcamComponent,
     LaboFinnishLineImportComponent,
     CashBookCuDialogComponent,
-    SearchAllComponent
+    SearchAllComponent,
+    ProductListShareComponent,
+    DiscountPopoverShareComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -215,7 +219,9 @@ import { SearchAllComponent } from './search-all/search-all.component';
     PartnerWebcamComponent,
     LaboFinnishLineImportComponent,
     CashBookCuDialogComponent,
-    SearchAllComponent
+    SearchAllComponent,
+    ProductListShareComponent,
+    DiscountPopoverShareComponent
   ],
   imports: [
     CommonModule,

@@ -67,6 +67,30 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
     }
 
+    public class AdvisoryLine
+    {
+        public DateTime? Date { get; set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string ProductName { get; set; }
+        public string DoctorName { get; set; }
+        public decimal Qty { get; set; }
+        public string Type { get; set; }
+    }
+
+    public class AdvisoryLinePaged
+    {
+        public AdvisoryLinePaged()
+        {
+            Limit = 10;
+        }
+
+        public int Offset { get; set; }
+        public int Limit { get; set; }
+        public Guid AdvisoryId { get; set; }
+    }
+
+
     public class AdvisoryDefaultGet
     {
         public Guid? CustomerId { get; set; }

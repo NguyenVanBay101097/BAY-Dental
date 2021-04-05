@@ -105,10 +105,14 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? TotalAmount { get; set; }
 
+        public Guid CompanyId { get; set; }
+
+        public Guid? AdvisoryId { get; set; }
+        public AdvisorySimple Advisory { get; set; }
+
         public IEnumerable<QuotationLineDisplay> Lines { get; set; } = new List<QuotationLineDisplay>();
         public IEnumerable<PaymentQuotationDisplay> Payments { get; set; } = new List<PaymentQuotationDisplay>();
 
-        public Guid CompanyId { get; set; }
     }
 
     public class QuotationSave
@@ -144,11 +148,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string Note { get; set; }
 
+        public Guid CompanyId { get; set; }
+
         public IEnumerable<QuotationLineSave> Lines { get; set; } = new List<QuotationLineSave>();
 
         public IEnumerable<PaymentQuotationSave> Payments { get; set; } = new List<PaymentQuotationSave>();
 
-        public Guid CompanyId { get; set; }
 
     }
 
@@ -172,6 +177,21 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Guid { get; set; }
         public string Name { get; set; }
+    }
+
+    public class QuotationPrintVM
+    {
+        public CompanyPrintVM Company { get; set; }
+        public PartnerDisplay Partner { get; set; }
+        public string Note { get; set; }
+        public DateTime DateQuotation { get; set; }
+        public ApplicationUserSimple User { get; set; }
+        public int DateApplies { get; set; }
+        public string Name { get; set; }
+        public DateTime? DateEndQuotation { get; set; }
+        public IEnumerable<QuotationLineDisplay> Lines { get; set; } = new List<QuotationLineDisplay>();
+        public decimal? TotalAmount { get; set; }
+        public IEnumerable<PaymentQuotationDisplay> Payments { get; set; } = new List<PaymentQuotationDisplay>();
     }
 }
 

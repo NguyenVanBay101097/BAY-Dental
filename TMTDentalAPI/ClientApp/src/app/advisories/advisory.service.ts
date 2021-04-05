@@ -64,6 +64,30 @@ export class AdvisoryToothAdvise {
 export class AdvisoryToothAdviseDisplay {
   toothIds: any[];
 }
+
+export class AdvisoryLine {
+  date: Date;
+  id: string;
+  name: string;
+  productName: string;
+  doctorName: string;
+  type: string;
+}
+
+export class AdvisoryLinePaged {
+  offset: number;
+  limit: number;
+  advisoryId: string;
+}
+
+export class AdvisoryLinePagedResult {
+  offset: number;
+  limit: number;
+  totalItems: number;
+  items: AdvisoryLine[];
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -71,8 +95,8 @@ export class AdvisoryService {
   apiUrl = 'api/advisories';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-  getPaged(val:any): Observable<AdvisoryPagedResult> {
-    return this.http.get<AdvisoryPagedResult>(this.baseApi + this.apiUrl, {params: new HttpParams({fromObject: val})});
+  getPaged(val: any): Observable<AdvisoryPagedResult> {
+    return this.http.get<AdvisoryPagedResult>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
 
   get(id): Observable<AdvisoryDisplay> {
@@ -88,19 +112,26 @@ export class AdvisoryService {
   }
 
   update(val: AdvisorySave, id): Observable<AdvisorySave> {
-    return this.http.put<AdvisorySave>(this.baseApi + this.apiUrl + "/" +id, val);
+    return this.http.put<AdvisorySave>(this.baseApi + this.apiUrl + "/" + id, val);
   }
 
-  remove(id){
+  remove(id) {
     return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
   }
 
-  getPrint(customerId,ids) 
-  {
-    return this.http.get(this.baseApi + this.apiUrl + "/GetPrint", {params: new HttpParams({fromObject: {customerId: customerId,ids: ids}})});
+  getPrint(customerId, ids) {
+    return this.http.get(this.baseApi + this.apiUrl + "/GetPrint", { params: new HttpParams({ fromObject: { customerId: customerId, ids: ids } }) });
   }
 
-  getToothAdvise(val?: AdvisoryToothAdvise){
-    return this.http.post(this.baseApi + this.apiUrl + "/" + "getToothAdvise",val);
+  getToothAdvise(val?: AdvisoryToothAdvise) {
+    return this.http.post(this.baseApi + this.apiUrl + "/" + "getToothAdvise", val);
+  }
+
+  getAdvisoryLinePaged(val: any): Observable<AdvisoryLinePagedResult> {
+    return this.http.get<AdvisoryLinePagedResult>(this.baseApi + this.apiUrl + "/GetAdvisoryLines", { params: new HttpParams({ fromObject: val }) });
+  }
+
+  createQuotations(val){
+    
   }
 }
