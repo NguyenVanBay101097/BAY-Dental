@@ -74,5 +74,7 @@ namespace ApplicationCore.Entities
         [DbColumn("implied_group", "survey.group_survey")]
         [DbColumn("field_type", "boolean")]
         public bool? GroupSurvey { get; set; }
+
+
     }
 }

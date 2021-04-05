@@ -5,6 +5,11 @@ import { PartnerGeneralSettingsComponent } from './partner-general-settings/part
 
 const routes: Routes = [
   {
+    path: 'config-prints',
+    loadChildren: () => import('./config-prints/config-prints.module').then(m => m.ConfigPrintsModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'stock-inventories',
     loadChildren: () => import('./stock-inventories/stock-inventories.module').then(m => m.StockInventoriesModule),
     canActivate: [AuthGuard]

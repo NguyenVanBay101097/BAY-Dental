@@ -44,6 +44,7 @@ export class SalaryPaymentSaveDefault {
 @Injectable({ providedIn: 'root' })
 export class SalaryPaymentService {
     apiUrl = "api/SalaryPayments";
+    apiPrintUrl = "SalaryPayment";
     constructor(
         private http: HttpClient,
         @Inject("BASE_API") private baseApi: string
@@ -80,8 +81,12 @@ export class SalaryPaymentService {
         return this.http.post(this.baseApi + this.apiUrl + "/ActionConfirm", ids);
     }
 
+    // getPrint(ids: string[]) {
+    //     return this.http.post(this.baseApi + this.apiUrl + "/GetPrint", ids);
+    // }
+
     getPrint(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiUrl + "/GetPrint", ids);
+        return this.http.post(this.baseApi + this.apiPrintUrl + "/Print", ids , { responseType: 'text' });
     }
 
     public actionMultiSalaryPayment(val:any){

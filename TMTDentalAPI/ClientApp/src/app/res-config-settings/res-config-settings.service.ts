@@ -1,9 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { PrintPaperSizeBasic } from '../config-prints/print-paper-size.service';
 
 export class ResConfigSettingsDisplay {
     groupDiscountPerSOLine: boolean;
+    paperSizeId:string;
+    printPaperSize: PrintPaperSizeBasic;
 }
 
 export class ResConfigSettingsBasic {
@@ -12,6 +15,7 @@ export class ResConfigSettingsBasic {
 
 export class ResConfigSettingsSave {
     groupDiscountPerSOLine: boolean;
+    paperSizeId:string;
 }
 
 @Injectable()

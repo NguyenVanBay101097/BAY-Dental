@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.ViewControllers
@@ -14,16 +16,19 @@ namespace TMTDentalAPI.ViewControllers
     public class PhieuThuChiController : Controller
     {
         private readonly IPhieuThuChiService _phieuThuChiService;
+        private readonly IViewToStringRenderService _viewToStringRenderService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        public PhieuThuChiController(IPhieuThuChiService phieuThuChiService, IMapper mapper, IUserService userService)
+        public PhieuThuChiController(IPhieuThuChiService phieuThuChiService, IViewToStringRenderService viewToStringRenderService, IMapper mapper, IUserService userService)
         {
             _phieuThuChiService = phieuThuChiService;
+            _viewToStringRenderService = viewToStringRenderService;
             _mapper = mapper;
             _userService = userService;
         }
 
+        [PrinterNameFilterAttribute(Name = AppConstants.PhieuThuChiPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
             var phieu = await _mapper.ProjectTo<PhieuThuChiPrintVM>(_phieuThuChiService.SearchQuery(x => x.Id == id)
@@ -36,7 +41,9 @@ namespace TMTDentalAPI.ViewControllers
 
             phieu.AmountText = AmountToText.amount_to_text(phieu.Amount);
 
+
             return View(phieu);
+
         }
     }
 }

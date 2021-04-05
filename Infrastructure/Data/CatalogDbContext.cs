@@ -244,6 +244,9 @@ namespace Infrastructure.Data
         public DbSet<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; }
         public DbSet<ProductAppointmentRel> ProductAppointmentRels { get; set; }
 
+        public DbSet<ConfigPrint> ConfigPrints { get; set; }
+        public DbSet<PrintPaperSize> PrintPaperSizes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -439,6 +442,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ProductBomConfiguration());
             builder.ApplyConfiguration(new ProductRequestConfiguration());
             builder.ApplyConfiguration(new ProductRequestLineConfiguration());
+            builder.ApplyConfiguration(new ConfigPrintConfiguration());
+            builder.ApplyConfiguration(new PrintPaperSizeConfigution());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

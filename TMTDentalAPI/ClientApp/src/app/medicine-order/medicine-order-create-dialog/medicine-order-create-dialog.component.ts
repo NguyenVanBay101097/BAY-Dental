@@ -258,7 +258,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
         });
         this.activeModal.close();
         this.medicineOrderService.getPrint(res.id).subscribe((result: any) => {
-          this.printService.printHtml(result.html);
+          this.printService.printHtml(result);
         });
       }
     )
@@ -295,8 +295,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       return;
     }
     this.medicineOrderService.getPrint(this.id).subscribe((result: any) => {
-      console.log(result.html);
-      this.printService.printHtml(result.html);
+      this.printService.printHtml(result);
     });
   }
 

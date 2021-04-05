@@ -401,7 +401,7 @@
       <field name="number_next">1</field>
       <field name="number_increment">1</field>
     </record>
-   <record id="seq_salary_slip" model="ir.sequence">
+    <record id="seq_salary_slip" model="ir.sequence">
       <field name="name">Salary Slip</field>
       <field name="code">salary.slip</field>
       <field name="prefix">SLIP/</field>
@@ -409,7 +409,7 @@
       <field name="number_next">1</field>
       <field name="number_increment">1</field>
     </record>
-   <record id="seq_customer" model="ir.sequence">
+    <record id="seq_customer" model="ir.sequence">
       <field name="name">Customer Sequence</field>
       <field name="code">customer</field>
       <field name="prefix">KH</field>
@@ -418,13 +418,13 @@
       <field name="number_increment">1</field>
     </record>
     <record id="seq_supplier" model="ir.sequence">
-        <field name="name">Supplier Sequence</field>
-        <field name="code">supplier</field>
-        <field name="prefix">NCC</field>
-        <field name="padding">4</field>
-        <field name="number_next">1</field>
-        <field name="number_increment">1</field>
-      </record>
+      <field name="name">Supplier Sequence</field>
+      <field name="code">supplier</field>
+      <field name="prefix">NCC</field>
+      <field name="padding">4</field>
+      <field name="number_next">1</field>
+      <field name="number_increment">1</field>
+    </record>
     <!--
     partner title
     -->
@@ -440,5 +440,25 @@
     <record id="base.partner_title_mrs" model="partner.title">
       <field name="name">Bà</field>
     </record>
+    
+    <!--
+    print paper size
+    -->
+    <record id="base.paperformat_a4" model="print.paper.size">
+      <field name="name">A4</field>
+      <field name="paperFormat">A4</field>
+      <field name="topMargin">10</field>
+      <field name="bottomMargin">10</field>
+      <field name="leftMargin">10</field>
+      <field name="rightMargin">10</field>
+    </record>
+    <record id="base.paperformat_a5" model="print.paper.size">
+      <field name="name">A5</field>
+      <field name="paperFormat">A5</field>
+      <field name="topMargin">5</field>
+      <field name="bottomMargin">5</field>
+      <field name="leftMargin">5</field>
+      <field name="rightMargin">5</field>
+    </record> 
   </data>
 </odoo>

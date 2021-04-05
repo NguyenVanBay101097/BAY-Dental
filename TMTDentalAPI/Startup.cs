@@ -323,6 +323,9 @@ namespace TMTDentalAPI
 
             services.AddScoped<ISurveyUserInputLineService, SurveyUserInputLineService>();
             services.AddScoped<IStockInventoryCriteriaService, StockInventoryCriteriaService>();
+            services.AddScoped<IPrintPaperSizeService, PrintPaperSizeService>();
+            services.AddScoped<IConfigPrintService, ConfigPrintService>();
+            services.AddScoped<IViewToStringRenderService, ViewToStringRenderService>();
 
             services.AddMemoryCache();
 
@@ -472,6 +475,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new StockLocationProfile());
                 mc.AddProfile(new StockInventoryCriteriaProfile());
                 mc.AddProfile(new ProductStockInventoryCriteriaRelProfile());
+                mc.AddProfile(new ConfigPrintProfile());
+                mc.AddProfile(new PrintPaperSizeProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

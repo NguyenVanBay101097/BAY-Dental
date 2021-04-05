@@ -685,8 +685,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   printSaleOrder() {
     if (this.saleOrderId) {
-      this.saleOrderService.printSaleOrder(this.saleOrderId).subscribe((result: any) => {
-        this.printService.printHtml(result.html);
+      this.saleOrderService.printSaleOrder(this.saleOrderId).subscribe((result: any) => {       
+        this.printService.printHtml(result);
       });
     }
   }
@@ -1114,12 +1114,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   printPayment(paymentId) {
-    this.accountPaymentOdataService.getPrint(paymentId).subscribe(result => {
-      if (result) {
-        var html = result['html']
-        this.printService.printHtml(html);
-      }
-    });
+    this.paymentService.getPrint(paymentId).subscribe(result => {
+        if (result) {         
+          this.printService.printHtml(result);
+        }
+      });
   }
 
   // hủy dịch vụ

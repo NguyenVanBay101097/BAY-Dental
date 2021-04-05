@@ -1,32 +1,37 @@
 ﻿@model ApplicationCore.Entities.LaboOrder
+@using Umbraco.Web.Models.ContentEditing;
 @{
-    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+    var configPrint = ViewData["ConfigPrint"] as ConfigPrintDisplay;
     var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
     var now = DateTime.Now;
 }
 
 <div>
-    <div class="d-flex mb-2">
-        @if (!string.IsNullOrEmpty(Model.Company.Logo))
-        {
-            <img class="img-fluid me-3 w-20" src="@Model.Company.Logo" alt="@Model.Company.Name">
-        }
-        <div>
-            <div class="text-xl font-semibold">@Model.Company.Name</div>
-            @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
+    @if (!configPrint.IsInfoCompany)
+    {
+        <div class="d-flex mb-2">
+            @if (!string.IsNullOrEmpty(Model.Company.Logo))
             {
-                <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
+                <img class="img-fluid me-3 w-20" src="@Model.Company.Logo" alt="@Model.Company.Name">
             }
-            @if (!string.IsNullOrEmpty(Model.Company.Phone))
-            {
-                <div>ĐT: @Model.Company.Phone</div>
-            }
-            @if (!string.IsNullOrEmpty(Model.Company.Email))
-            {
-                <div>Email: @Model.Company.Email</div>
-            }
+            <div>
+                <div class="text-xl font-semibold">@Model.Company.Name</div>
+                @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
+                {
+                    <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Company.Phone))
+                {
+                    <div>ĐT: @Model.Company.Phone</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Company.Email))
+                {
+                    <div>Email: @Model.Company.Email</div>
+                }
+            </div>
         </div>
-    </div>
+    }
     <div class="text-center mb-2">
         <div class="text-3xl font-semibold">ĐẶT HÀNG LABO</div>
         <div>Ngày @now.Day tháng @now.Month năm @now.Year </div>

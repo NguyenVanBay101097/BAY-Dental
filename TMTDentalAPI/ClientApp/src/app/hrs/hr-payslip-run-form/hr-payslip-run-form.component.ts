@@ -15,7 +15,7 @@ import { error } from 'protractor';
 import { SalaryPaymentModule } from 'src/app/salary-payment/salary-payment.module';
 import { HrSalaryPaymentComponent } from '../hr-salary-payment/hr-salary-payment.component';
 import { SalaryPaymentSave } from 'src/app/shared/services/salary-payment.service';
-import { PrintService } from 'src/app/shared/services/print.service';
+import { PrintService } from "src/app/shared/services/print.service";
 import { SalaryPaymentService } from 'src/app/salary-payment/salary-payment.service';
 
 @Component({
@@ -274,9 +274,9 @@ export class HrPayslipRunFormComponent implements OnInit {
 
     var value = this.getFormData();
     this.hrPaysliprunService.printAllEmpSalary(this.id, value).subscribe(
-      result => {
-        if (result && result['html']) {
-          this.printService.printHtml(result['html']);
+      (result:any) => {
+        if (result) {
+          this.printService.printHtml(result);
         } else {
           alert('Bạn chưa chọn nhân viên nào để in, vui lòng chọn nhân viên để tiếp tục.');
         }

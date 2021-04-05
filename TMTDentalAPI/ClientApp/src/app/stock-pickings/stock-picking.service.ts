@@ -65,6 +65,7 @@ export class StockPickingDefaultGet {
 @Injectable()
 export class StockPickingService {
     apiUrl = 'api/stockpickings';
+    apiPrintUrl = 'StockPicking';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<StockPickingPaging> {
@@ -103,7 +104,11 @@ export class StockPickingService {
         return this.http.post(this.baseApi + this.apiUrl + "/actiondone", ids);
     }
 
+    // Print(id: string) {
+    //     return this.http.post(this.baseApi + this.apiUrl + "/Print/" + id, null);
+    // }
+
     Print(id: string) {
-        return this.http.post(this.baseApi + this.apiUrl + "/Print/" + id, null);
+        return this.http.get(this.baseApi + this.apiPrintUrl + "/Print/" + `?id=${id}`, { responseType: 'text' });
     }
 }

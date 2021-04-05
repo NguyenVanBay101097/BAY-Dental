@@ -241,9 +241,9 @@ export class SalaryPaymentFormComponent implements OnInit {
 
   printItem(id) {
     this.salaryPaymentService.getPrint([id]).subscribe(
-      result => {
-        if (result && result['html']) {
-          this.printService.printHtml(result['html']);
+      (result:any) => {
+        if (result) {
+          this.printService.printHtml(result);
         } else {
           alert('Có lỗi xảy ra, thử lại sau');
         }

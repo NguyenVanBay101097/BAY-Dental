@@ -126,7 +126,12 @@ namespace Infrastructure.Services
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
-                   
+                    case "print.paper.size":
+                        {
+                            var service = GetService<IPrintPaperSizeService>();
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
+                            return (T)(object)group;
+                        }
                     default:
                         {
                             return null;

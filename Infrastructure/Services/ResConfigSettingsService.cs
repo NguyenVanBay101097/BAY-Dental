@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using AutoMapper;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -10,20 +11,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class ResConfigSettingsService: BaseService<ResConfigSettings>, IResConfigSettingsService
+    public class ResConfigSettingsService : BaseService<ResConfigSettings>, IResConfigSettingsService
     {
         private readonly ITCareJobService _tcareJobService;
+        private readonly IMapper _mapper;
         private readonly AppTenant _tenant;
         private readonly IMyCache _cache;
 
         public ResConfigSettingsService(IAsyncRepository<ResConfigSettings> repository, IHttpContextAccessor httpContextAccessor,
-            ITCareJobService tcareJobService, ITenant<AppTenant> tenant, IMyCache cache)
+            ITCareJobService tcareJobService, IMapper mapper, ITenant<AppTenant> tenant, IMyCache cache)
             : base(repository, httpContextAccessor)
         {
             _tcareJobService = tcareJobService;
+            _mapper = mapper;
             _tenant = tenant?.Value;
             _cache = cache;
         }
@@ -67,6 +71,7 @@ namespace Infrastructure.Services
             }
 
             var irConfigParameter = GetService<IIrConfigParameterService>();
+            var paperSizeObj = GetService<IPrintPaperSizeService>();
             foreach (var item in classified.Configs)
             {
                 var name = item.Name;
@@ -83,9 +88,12 @@ namespace Infrastructure.Services
                 }
             }
 
+
+
             await GetDefaultOtherFields(res, classified.Others);
             return res;
         }
+
 
         private async Task GetDefaultOtherFields<T>(T self, IList<string> fields)
         {
@@ -185,7 +193,7 @@ namespace Infrastructure.Services
             }
 
             var irConfigParameter = GetService<IIrConfigParameterService>();
-            foreach(var item in classified.Configs)
+            foreach (var item in classified.Configs)
             {
                 var field_type = item.FieldType;
                 var value = self.GetType().GetProperty(item.Name).GetValue(self, null);
@@ -195,7 +203,7 @@ namespace Infrastructure.Services
                 else if (field_type == "boolean")
                     valueStr = Convert.ToBoolean(value).ToString();
                 else if (field_type == "datetime")
-                    valueStr = Convert.ToDateTime(value).ToString();
+                    valueStr = Convert.ToDateTime(value).ToString();           
                 await irConfigParameter.SetParam(item.ConfigParameter, valueStr);
             }
 
@@ -314,6 +322,36 @@ namespace Infrastructure.Services
                 await fieldObj.CreateAsync(fieldStd);
             }
         }
+
+        //public async Task InsertFieldForPrintPaperSizeDefault()
+        //{
+        //    var fieldObj = GetService<IIRModelFieldService>();
+        //    var field = await fieldObj.SearchQuery(x => x.Name == "paper_size_default" && x.Model == "print.paper_size_default").FirstOrDefaultAsync();
+        //    if (field == null)
+        //    {
+        //        var modelObj = GetService<IIRModelService>();
+        //        var model = await modelObj.SearchQuery(x => x.Model == "PrintPaperSize").FirstOrDefaultAsync();
+        //        if(model == null)
+        //        {
+        //            model = new IRModel
+        //            {
+        //                Name = "Khổ giấy in",
+        //                Model = "PrintPaperSize"
+        //            };
+        //        }
+
+        //        field = new IRModelField
+        //        {
+        //            IRModelId = model.Id,
+        //            Model = "print.paper_size_default",
+        //            Name = "paper_size_default",
+        //        };
+
+        //        await fieldObj.CreateAsync(field);
+        //    }
+
+        //}
+
 
         public async Task SetDefaultOtherFields<T>(T self, IList<string> fields)
         {
