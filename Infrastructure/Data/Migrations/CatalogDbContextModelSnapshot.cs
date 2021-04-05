@@ -6409,8 +6409,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Diagnostic")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Discount")
-                        .HasColumnType("int");
+                    b.Property<decimal?>("Discount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("DiscountType")
                         .HasColumnType("nvarchar(max)");

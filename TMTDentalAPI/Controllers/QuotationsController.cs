@@ -73,9 +73,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> CreateSaleOrderByQuotation()
+        public async Task<IActionResult> CreateSaleOrderByQuotation(Guid id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
 
+            var res = await _quotationService.CreateSaleOrderByQuotation(id);
+            return Ok(res);
         }
 
         [HttpDelete("{id}")]

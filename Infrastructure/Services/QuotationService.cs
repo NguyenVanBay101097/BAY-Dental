@@ -54,6 +54,7 @@ namespace Infrastructure.Services
             quotation.DateQuotation = DateTime.Today;
             quotation.DateApplies = 30;
             quotation.DateEndQuotation = DateTime.Today.AddDays(30);
+            quotation.CompanyId = CompanyId;
             return quotation;
         }
 
@@ -249,6 +250,74 @@ namespace Infrastructure.Services
                 totalAmount += Math.Round(line.Amount.HasValue ? line.Amount.Value : 0);
             }
             quotation.TotalAmount = totalAmount;
+        }
+
+        public async Task<SaleOrderSimple> CreateSaleOrderByQuotation(Guid id)
+        {
+            var quotation = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Lines)
+                .Include("Lines.QuotationLineToothRels")
+                .FirstOrDefaultAsync();
+            var saleOrderDefaultGet = new SaleOrderDefaultGet()
+            {
+                PartnerId = quotation.PartnerId
+            };
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var saleOrderDisplay = await saleOrderObj.DefaultGet(saleOrderDefaultGet);
+            var saleOrder = new SaleOrder();
+
+            saleOrder.CompanyId = saleOrderDisplay.CompanyId;
+            saleOrder.DateOrder = saleOrderDisplay.DateOrder;
+            saleOrder.State = saleOrderDisplay.State;
+            saleOrder.PartnerId = saleOrderDisplay.PartnerId;
+            saleOrder.QuotationId = quotation.Id;
+
+            saleOrder = await saleOrderObj.CreateAsync(saleOrder);
+            if (quotation.Lines.Any())
+            {
+                var lines = quotation.Lines.ToList();
+                var sequence = 0;
+                var SaleOrderLines = new List<SaleOrderLine>();
+                foreach (var line in lines)
+                {
+                    var saleLine = new SaleOrderLine();
+                    saleLine.State = "draft";
+                    saleLine.AmountPaid = 0;
+                    saleLine.Diagnostic = line.Diagnostic;
+                    saleLine.DiscountType = line.DiscountType;
+                    saleLine.DiscountFixed = line.DiscountType == "fixed" ? line.Discount : null;
+                    saleLine.Discount = line.DiscountType == "percentage" && line.Discount.HasValue ? line.Discount.Value : 0;
+                    saleLine.Name = line.Name;
+                    saleLine.PriceUnit = line.SubPrice.HasValue ? line.SubPrice.Value : 0;
+                    saleLine.ProductId = line.ProductId;
+                    saleLine.ProductUOMQty = line.Qty;
+                    saleLine.Order = saleOrder;
+                    saleLine.Sequence = sequence++;
+                    saleLine.ToothCategoryId = line.ToothCategoryId;
+                    saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
+                    if (line.QuotationLineToothRels.Any())
+                    {
+                        var toothIds = line.QuotationLineToothRels.Select(x => x.ToothId);
+                        foreach (var toothId in toothIds)
+                        {
+                            saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                            {
+                                ToothId = toothId
+                            });
+                        }
+                    }
+
+                    SaleOrderLines.Add(saleLine);
+                    var saleLineService = GetService<ISaleOrderLineService>();
+                    await saleLineService.CreateAsync(SaleOrderLines);
+
+                    saleOrderObj._AmountAll(saleOrder);
+                    await saleOrderObj.UpdateAsync(saleOrder);
+                }
+
+            }
+
+            return _mapper.Map<SaleOrderSimple>(saleOrder);
         }
 
     }

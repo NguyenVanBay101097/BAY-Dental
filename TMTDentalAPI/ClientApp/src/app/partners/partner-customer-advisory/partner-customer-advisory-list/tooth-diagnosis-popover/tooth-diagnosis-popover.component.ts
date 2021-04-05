@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { result } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -19,23 +20,13 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
 
   @Input() type = this.allType.diagnosis; // 'diagnosis': chẩn đoán ,'service': dịch vụ
   @Input() tags = [];
-  // @Input() dataPopOver = []; //dataasource
   dataSource = [];
   @Input() title = '';
-  // search_partnerCategory: string;
   searchUpdatePopOver = new Subject<string>();
   @Input() popOverPlace = 'right';
-
-  // @Input() rowPartnerId: string;
   @Output() onSave = new EventEmitter();
-
-  // @Output() otherOutput = new EventEmitter();
-  // @Input() otherInput: any;
-
   @ViewChild('popOver', { static: true }) public popover: any;
-  // @ViewChild("list", { static: true }) public list: MultiSelectComponent;
-
-
+  @ViewChild('multiSelect', { static: true }) multiSelect: MultiSelectComponent;
   constructor(
     private toothDiagnosisService: ToothDiagnosisService,
     private productService: ProductService
@@ -63,7 +54,7 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
 
   getPageDiagnosis(){
     var val = new ToothDiagnosisPaged();
-    val.limit = 10;
+    val.limit = 1000;
     val.offset = 0;
     val.search = '';
     this.toothDiagnosisService.getPaged(val).subscribe(result => {
@@ -73,7 +64,7 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
 
   getPageProduct(){
     var val = new ProductPaged();
-    val.limit = 10;
+    val.limit = 0;
     val.offset = 0;
     val.search = '';
     val.type2 = 'service';
@@ -89,70 +80,9 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
     if(this.type == this.allType.service){
       this.getPageProduct();
     }
-    // this.partnerCategoriesService.searchCombobox(q).subscribe((res: any) => {
-    //   this.dataPopOver = res;
-    // }, err => {
-    //   console.log(err);
-    // });
   }
-
-  // // getValueDefault() {
-  // //   const val = new PartnerCategoryPaged();
-  // //   val.limit = 20;
-  // //   val.offset = 0;
-  // //   val.partnerId = this.rowPartnerId;
-  // //   this.partnerCategoryService.getPaged(val).subscribe((res) => {
-  // //     this.value_partnerCategoryPopOver = res.items;
-  // //   });
-  // // }
-
   update(tags) {
     this.popover.close();
     this.onSave.emit(tags);
   }
-
-  // handleFilterCategoryPopOver(value) {
-  //   this.search_partnerCategory = value;
-  // }
-
-  // public valueNormalizer = (text$: Observable<string>): any => text$.pipe(
-  //   switchMap((text: string) => {
-  //     // Search in values
-  //     const matchingValue: any = this.tags.find((item: any) => {
-  //       // Search for matching item to avoid duplicates
-  //       return item['Name'].toLowerCase() === text.toLowerCase();
-  //     });
-
-  //     if (matchingValue) {
-  //       // Return the already selected matching value and the component will remove it
-  //       return of(matchingValue);
-  //     }
-
-  //     // Search in data
-  //     const matchingItem: any = this.dataPopOver.find((item: any) => {
-  //       return item['Name'].toLowerCase() === text.toLowerCase();
-  //     });
-
-  //     if (matchingItem) {
-  //       return of(matchingItem);
-  //     } else {
-  //       return of(text).pipe(switchMap(this.service$));
-  //     }
-  //   })
-  // )
-
-  // public service$ = (text: string): any => {
-  //   const val = new PartnerCategoryDisplay();
-  //   val.name = text;
-  //   return this.partnerCategoryService.create(val)
-  //     .pipe(
-  //       map((result: any) => {
-  //         return {
-  //           Id: result.id,
-  //           Name: result.name
-  //         }
-  //       })
-  //     );
-  // }
-
 }

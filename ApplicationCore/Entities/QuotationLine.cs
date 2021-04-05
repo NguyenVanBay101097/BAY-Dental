@@ -22,7 +22,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Số tiền Giảm giá , số % giảm giá
         /// </summary>
-        public int Discount { get; set; }
+        public decimal? Discount { get; set; }
 
         /// <summary>
         /// Loại giảm giá : percent / cash 
