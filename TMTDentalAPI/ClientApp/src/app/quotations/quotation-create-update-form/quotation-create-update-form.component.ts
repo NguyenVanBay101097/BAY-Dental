@@ -8,6 +8,7 @@ import { switchMap } from 'rxjs/operators';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
@@ -54,7 +55,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     private intlService: IntlService,
     private router: Router,
     private saleOrderService: SaleOrderService,
-    private saleOrderOdataService: SaleOrdersOdataService
+    private saleOrderOdataService: SaleOrdersOdataService,
+    private printService: PrintService,
+
   ) { }
 
   ngOnInit() {
@@ -66,6 +69,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       dateQuotation: [null, Validators.required],
       dateApplies: [0, Validators.required],
       dateEndQuotation: '',
+      companyId: '',
       lines: this.fb.array([
       ]),
       payments: this.fb.array([]),
@@ -157,7 +161,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   printQuotation() {
-
+    if (this.quotationId) {
+      this.quotationService.printQuotation(this.quotationId).subscribe((result: any) => {
+        this.printService.printHtml(result.html);
+      })
+    }
   }
 
   onCreateSaleOrder() {
