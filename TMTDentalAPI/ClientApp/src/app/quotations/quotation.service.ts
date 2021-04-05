@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../core/paged-result-2';
 import { PartnerSimple } from '../partners/partner-simple';
+import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
 import { ToothBasic } from '../teeth/tooth.service';
 import { UserSimple } from '../users/user-simple';
 
@@ -30,6 +31,7 @@ export class QuotationLineSave {
   diagnostic: number;
   toothCategoryId: number;
   toothIds: any[];
+  companyId: string;
 }
 export class QuotationsBasic {
   id: string;
@@ -59,6 +61,7 @@ export class QuotationsDisplay {
   state: string;
   lines: any[];
   payments: any[];
+  companyId: string;
 }
 
 export class QuotationsPaged {
@@ -98,5 +101,9 @@ export class QuotationService {
 
   delete(id: string) {
     return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
+  }
+
+  createSaleOrderByQuotation(id: string) {
+    return this.http.get(`${this.baseApi + this.apiUrl}/${id}/CreateSaleOrderByQuotation`);
   }
 }
