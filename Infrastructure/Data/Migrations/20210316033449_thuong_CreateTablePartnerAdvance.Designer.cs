@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210316033449_thuong_CreateTablePartnerAdvance")]
+    partial class thuong_CreateTablePartnerAdvance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1064,104 +1066,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("AccountRegisterPaymentInvoiceRel");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.Advisory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("ToothCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("ToothCategoryId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("Advisory");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AdvisoryProductRel", b =>
-                {
-                    b.Property<Guid>("AdvisoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AdvisoryId", "ProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("AdvisoryProductRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AdvisoryToothDiagnosisRel", b =>
-                {
-                    b.Property<Guid>("AdvisoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ToothDiagnosisId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AdvisoryId", "ToothDiagnosisId");
-
-                    b.HasIndex("ToothDiagnosisId");
-
-                    b.ToTable("AdvisoryToothDiagnosisRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AdvisoryToothRel", b =>
-                {
-                    b.Property<Guid>("AdvisoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ToothId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AdvisoryId", "ToothId");
-
-                    b.HasIndex("ToothId");
-
-                    b.ToTable("AdvisoryToothRels");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
@@ -1363,9 +1267,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("Time")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TimeExpected")
-                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -1863,9 +1764,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AssistantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1910,8 +1808,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("AccountInvoiceId");
 
                     b.HasIndex("AppointmentId");
-
-                    b.HasIndex("AssistantId");
 
                     b.HasIndex("CompanyId");
 
@@ -5224,53 +5120,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("PartnerTitles");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.PaymentQuotation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DiscountPercentType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("Payment")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("QuotationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Sequence")
-                        .HasColumnType("int");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("QuotationId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("PaymentQuotations");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.PhieuThuChi", b =>
                 {
                     b.Property<Guid>("Id")
@@ -5445,21 +5294,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.ProductAppointmentRel", b =>
-                {
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AppoinmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ProductId", "AppoinmentId");
-
-                    b.HasIndex("AppoinmentId");
-
-                    b.ToTable("ProductAppointmentRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ProductBom", b =>
@@ -6322,162 +6156,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("PurchaseOrderLines");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.Quotation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("DateApplies")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateEndQuotation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateQuotation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("PartnerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("PartnerId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("Quotations");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.QuotationLine", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AdvisoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid?>("AssistantId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Diagnostic")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Discount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DiscountType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("DoctorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Qty")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("QuotationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("SubPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("ToothCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AdvisoryId");
-
-                    b.HasIndex("AssistantId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("QuotationId");
-
-                    b.HasIndex("ToothCategoryId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("QuotationLines");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.QuotationLineToothRel", b =>
-                {
-                    b.Property<Guid>("QuotationLineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ToothId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("QuotationLineId", "ToothId");
-
-                    b.HasIndex("ToothId");
-
-                    b.ToTable("QuotationLineToothRels");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.ResBank", b =>
                 {
                     b.Property<Guid>("Id")
@@ -7269,9 +6947,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("PricelistId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("QuotationId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("QuoteId")
                         .HasColumnType("uniqueidentifier");
 
@@ -7308,8 +6983,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("PricelistId");
 
-                    b.HasIndex("QuotationId");
-
                     b.HasIndex("QuoteId");
 
                     b.HasIndex("UserId");
@@ -7323,9 +6996,6 @@ namespace Infrastructure.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AdvisoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("AmountInvoiced")
@@ -7447,8 +7117,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AdvisoryId");
 
                     b.HasIndex("AssistantId");
 
@@ -9844,57 +9512,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("ToothCategories");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.ToothDiagnosis", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("ToothDiagnosis");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.ToothDiagnosisProductRel", b =>
-                {
-                    b.Property<Guid>("ToothDiagnosisId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ToothDiagnosisId", "ProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ToothDiagnosisProductRels");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.UoM", b =>
                 {
                     b.Property<Guid>("Id")
@@ -10705,80 +10322,6 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.Advisory", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.Partner", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId");
-
-                    b.HasOne("ApplicationCore.Entities.ToothCategory", "ToothCategory")
-                        .WithMany()
-                        .HasForeignKey("ToothCategoryId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AdvisoryProductRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Advisory", "Advisory")
-                        .WithMany("AdvisoryProductRels")
-                        .HasForeignKey("AdvisoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AdvisoryToothDiagnosisRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Advisory", "Advisory")
-                        .WithMany("AdvisoryToothDiagnosisRels")
-                        .HasForeignKey("AdvisoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ToothDiagnosis", "ToothDiagnosis")
-                        .WithMany()
-                        .HasForeignKey("ToothDiagnosisId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AdvisoryToothRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Advisory", "Advisory")
-                        .WithMany("AdvisoryToothRels")
-                        .HasForeignKey("AdvisoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.Tooth", "Tooth")
-                        .WithMany("AdvisoryToothRels")
-                        .HasForeignKey("ToothId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.ApplicationRoleFunction", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
@@ -11067,10 +10610,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Appointment", "Appointment")
                         .WithMany()
                         .HasForeignKey("AppointmentId");
-
-                    b.HasOne("ApplicationCore.Entities.Employee", "Assistant")
-                        .WithMany()
-                        .HasForeignKey("AssistantId");
 
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
@@ -12375,23 +11914,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.PaymentQuotation", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.Quotation", "Quotation")
-                        .WithMany("Payments")
-                        .HasForeignKey("QuotationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.PhieuThuChi", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
@@ -12454,21 +11976,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.ProductAppointmentRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Appointment", "Appointment")
-                        .WithMany("AppointmentServices")
-                        .HasForeignKey("AppoinmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ProductBom", b =>
@@ -12872,89 +12379,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.Quotation", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
-                        .HasForeignKey("PartnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.QuotationLine", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Advisory", "Advisory")
-                        .WithMany("QuotationLines")
-                        .HasForeignKey("AdvisoryId");
-
-                    b.HasOne("ApplicationCore.Entities.Employee", "Assistant")
-                        .WithMany()
-                        .HasForeignKey("AssistantId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.Employee", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId");
-
-                    b.HasOne("ApplicationCore.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.Quotation", "Quotation")
-                        .WithMany("Lines")
-                        .HasForeignKey("QuotationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ToothCategory", "ToothCategory")
-                        .WithMany()
-                        .HasForeignKey("ToothCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.QuotationLineToothRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.QuotationLine", "QuotationLine")
-                        .WithMany("QuotationLineToothRels")
-                        .HasForeignKey("QuotationLineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.Tooth", "Tooth")
-                        .WithMany("QuotationLineToothRels")
-                        .HasForeignKey("ToothId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.ResBank", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
@@ -13310,10 +12734,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("PricelistId");
 
-                    b.HasOne("ApplicationCore.Entities.Quotation", "Quotation")
-                        .WithMany("Orders")
-                        .HasForeignKey("QuotationId");
-
                     b.HasOne("ApplicationCore.Entities.SaleOrder", "Quote")
                         .WithMany()
                         .HasForeignKey("QuoteId");
@@ -13329,10 +12749,6 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLine", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.Advisory", "Advisory")
-                        .WithMany("OrderLines")
-                        .HasForeignKey("AdvisoryId");
-
                     b.HasOne("ApplicationCore.Entities.Employee", "Assistant")
                         .WithMany()
                         .HasForeignKey("AssistantId");
@@ -14533,38 +13949,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.ToothDiagnosis", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.ToothDiagnosisProductRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Product", "Product")
-                        .WithMany("ToothDiagnosisProductRels")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ToothDiagnosis", "ToothDiagnosis")
-                        .WithMany("ToothDiagnosisProductRels")
-                        .HasForeignKey("ToothDiagnosisId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.UoM", b =>

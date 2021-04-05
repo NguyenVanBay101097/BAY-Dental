@@ -81,6 +81,7 @@ import { PartnerCustomerTreatmentListComponent } from './partner-customer-treatm
 import { PartnerCustomerTreatmentSaleOrderLineComponent } from './partner-customer-treatment/partner-customer-treatment-sale-order-line/partner-customer-treatment-sale-order-line.component';
 import { PartnerCustomerQuotationListComponent } from './partner-customer-quotation/partner-customer-quotation-list/partner-customer-quotation-list.component';
 import { PartnerCustomerQuotationFormComponent } from './partner-customer-quotation/partner-customer-quotation-form/partner-customer-quotation-form.component';
+import { PartnerAdvancesModule } from '../partner-advances/partner-advances.module';
 
 import { PartnerCustomerAdvisoryListComponent } from './partner-customer-advisory/partner-customer-advisory-list/partner-customer-advisory-list.component';
 import { PartnerCustomerAdvisoryCuDialogComponent } from './partner-customer-advisory/partner-customer-advisory-cu-dialog/partner-customer-advisory-cu-dialog.component';
@@ -177,6 +178,7 @@ import { PartnerCustomerSaleOrderQuotationsLinesComponent } from './partner-cust
     PartnerTitlesModule,
     PartnerSourcesModule,
     PartnerCategoriesModule,
+    PartnerAdvancesModule,
     HistoryModule
   ],
   entryComponents: [
