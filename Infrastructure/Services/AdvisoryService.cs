@@ -38,7 +38,7 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.Search))
             {
-                query = query.Where(x => x.User.Name.Contains(val.Search) || 
+                query = query.Where(x => x.User.Name.Contains(val.Search) ||
                     x.AdvisoryProductRels.Any(s => s.Product.Name.Contains(val.Search)));
             }
 
@@ -324,5 +324,62 @@ namespace Infrastructure.Services
         //{
 
         //}
+
+        public async Task<PagedResult2<AdvisoryLine>> GetAdvisoryLines(AdvisoryLinePaged val)
+        {
+            var advisoryService = GetService<IAdvisoryService>();
+            var saleOrderLineService = GetService<ISaleOrderLineService>();
+            var quotationLineService = GetService<IQuotationLineService>();
+            var res = new List<AdvisoryLine>();
+            var saleOrderLines = await saleOrderLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId).Include(x => x.Order).ToListAsync();
+            if (saleOrderLines.Any())
+            {
+                foreach (var line in saleOrderLines)
+                {
+                    res.Add(new AdvisoryLine
+                    {
+                        Id = line.Id,
+                        Name = line.Order.Name,
+                        ProductName = line.Name,
+                        Date = line.Order.DateOrder,
+                        DoctorName = line.Employee != null ? line.Employee.Name : null,
+                        Qty = line.ProductUOMQty,
+                        Type = "saleOrder"
+                    });
+                }
+            }
+
+            var quotationLines = await quotationLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId).Include(x => x.Quotation).ToListAsync();
+            if (quotationLines.Any())
+            {
+                foreach (var line in quotationLines)
+                {
+                    res.Add(new AdvisoryLine
+                    {
+                        Id = line.Id,
+                        Name = line.Quotation.Name,
+                        ProductName = line.Name,
+                        Date = line.Quotation.DateQuotation,
+                        Qty = line.Qty,
+                        Type = "quotation"
+                    });
+                }
+            }
+
+            var totalItems = res.Count();
+
+
+
+            res = res.OrderByDescending(x => x.Date).ToList();
+
+            var items = res.Skip(val.Offset).Take(val.Limit).ToList();
+
+            var paged = new PagedResult2<AdvisoryLine>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+
+            return paged;
+        }
     }
 }
