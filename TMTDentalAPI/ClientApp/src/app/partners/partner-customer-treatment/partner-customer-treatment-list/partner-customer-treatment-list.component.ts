@@ -66,6 +66,10 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
     this.getSaleOrders();
   }
 
+  getFormSaleOrder(id){
+    this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
+  }
+
   getSaleOrders() {
     this.loading = true;
     var val = new SaleOrderPaged();
