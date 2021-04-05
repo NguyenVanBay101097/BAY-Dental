@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20210405025953_AddCompanyToQuotation")]
-    partial class AddCompanyToQuotation
+    [Migration("20210405031652_EditTableQuotation")]
+    partial class EditTableQuotation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -6351,8 +6351,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Diagnostic")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Discount")
-                        .HasColumnType("int");
+                    b.Property<decimal?>("Discount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("DiscountType")
                         .HasColumnType("nvarchar(max)");
