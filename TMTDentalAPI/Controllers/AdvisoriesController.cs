@@ -116,11 +116,11 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        //[HttpPost("[action]")]
-        //public async Task<IActionResult> CreateQuotation(CreateFromAdvisoryInput val)
-        //{
-        //    var res = await _advisoryService.CreateQuotation(val);
-        //    return Ok(res);
-        //}
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CreateQuotation(CreateFromAdvisoryInput val)
+        {
+            var res = await _advisoryService.CreateQuotation(val);
+            return Ok(res);
+        }
     }
 }

@@ -20,6 +20,6 @@ namespace Infrastructure.Services
         Task<ToothAdvised> GetToothAdvise(AdvisoryToothAdvise val);
         Task<AdvisoryPrintVM> Print(Guid customerId, IEnumerable<Guid> ids);
         Task<SaleOrderSimple> CreateSaleOrder(CreateFromAdvisoryInput val);
-        //Task<QuotationSimple> CreateQuotation(CreateFromAdvisoryInput val);
+        Task<QuotationSimple> CreateQuotation(CreateFromAdvisoryInput val);
     }
 }
