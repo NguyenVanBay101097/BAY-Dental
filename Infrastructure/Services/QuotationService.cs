@@ -92,7 +92,6 @@ namespace Infrastructure.Services
             _mapper.Map(val, quotation);
             await ComputeQuotationLine(val, quotation);
             await ComputePaymentQuotation(val, quotation);
-            await ComputeAmountAll(quotation);
             await UpdateAsync(quotation);
         }
 
@@ -195,16 +194,43 @@ namespace Infrastructure.Services
             await quotationLineObj.DeleteAsync(listRemove);
         }
 
+        public async override Task<Quotation> CreateAsync(Quotation entity)
+        {
+            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+            {
+                var sequenceService = GetService<IIRSequenceService>();
+                entity.Name = await sequenceService.NextByCode("quotation");
+            }
+            if (entity.Lines.Any())
+            {
+                var totalAmount = 0M;
+                foreach (var line in entity.Lines)
+                {
+                    totalAmount += Math.Round(line.Amount.HasValue ? line.Amount.Value : 0);
+                }
+                entity.TotalAmount = totalAmount;
+            }
+            return entity;
+        }
+
+        public override Task UpdateAsync(Quotation entity)
+        {
+            if (entity.Lines.Any())
+            {
+                var totalAmount = 0M;
+                foreach (var line in entity.Lines)
+                {
+                    totalAmount += Math.Round(line.Amount.HasValue ? line.Amount.Value : 0);
+                }
+                entity.TotalAmount = totalAmount;
+            }
+
+            return base.UpdateAsync(entity);
+        }
+
         public async Task<QuotationBasic> CreateAsync(QuotationSave val)
         {
             var quotation = _mapper.Map<Quotation>(val);
-            quotation.State = "expired";
-            if (string.IsNullOrEmpty(quotation.Name) || quotation.Name == "/")
-            {
-                var sequenceService = GetService<IIRSequenceService>();
-                quotation.Name = await sequenceService.NextByCode("quotation");
-            }
-
             quotation = await CreateAsync(quotation);
 
             var lines = new List<QuotationLine>();
@@ -238,37 +264,8 @@ namespace Infrastructure.Services
 
             var quotationLineService = GetService<IQuotationLineService>();
             await quotationLineService.CreateAsync(lines);
-            await ComputeAmountAll(quotation);
             await UpdateAsync(quotation);
             return _mapper.Map<QuotationBasic>(quotation);
-        }
-
-        public async Task ComputeAmountAll(Quotation quotation)
-        {
-            var totalAmount = 0M;
-            foreach (var line in quotation.Lines)
-            {
-                totalAmount += Math.Round(line.Amount.HasValue ? line.Amount.Value : 0);
-            }
-            quotation.TotalAmount = totalAmount;
-        }
-
-        public async Task<QuotationPrintVM> Print(Guid id)
-        {
-            var quotation = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Partner)
-                .Include(x => x.User)
-                .Include(x => x.Lines)
-                .Include(x => x.Company.Partner)
-                .Include(x => x.Payments).FirstOrDefaultAsync();
-
-            if (quotation == null)
-            {
-                return null;
-            }
-            var result = _mapper.Map<QuotationPrintVM>(quotation);
-
-            return result;
         }
 
         public async Task<SaleOrderSimple> CreateSaleOrderByQuotation(Guid id)

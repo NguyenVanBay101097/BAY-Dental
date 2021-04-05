@@ -116,7 +116,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class CreateFromAdvisoryInput
     {
-        public Guid? CustomerId { get; set; }
+        public Guid CustomerId { get; set; }
         public IEnumerable<Guid> Ids { get; set; } = new List<Guid>();
     }
 }
