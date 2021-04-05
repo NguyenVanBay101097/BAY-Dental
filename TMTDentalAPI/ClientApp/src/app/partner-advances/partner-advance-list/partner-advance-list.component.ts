@@ -142,6 +142,7 @@ export class PartnerAdvanceListComponent implements OnInit {
       modalRef.result.then(res => {
         this.loadDataFromApi();
         this.loadTypeAmountTotal();
+        this.loadAmounBalance();
       }, () => {
       });
   }
@@ -154,6 +155,7 @@ export class PartnerAdvanceListComponent implements OnInit {
       modalRef.result.then(res => {
         this.loadDataFromApi();
         this.loadTypeAmountTotal();
+        this.loadAmounBalance();
       }, () => {
       });
   }
@@ -167,6 +169,7 @@ export class PartnerAdvanceListComponent implements OnInit {
     modalRef.result.then((res) => {
       this.loadDataFromApi();
       this.loadTypeAmountTotal();
+      this.loadAmounBalance();
       // if (res && res.print) {
       //   this.printPhieu(item.id);
       // }
@@ -189,6 +192,7 @@ export class PartnerAdvanceListComponent implements OnInit {
         });
         this.loadDataFromApi();
         this.loadTypeAmountTotal();
+        this.loadAmounBalance();
       }, () => {
       });
     }, () => {
