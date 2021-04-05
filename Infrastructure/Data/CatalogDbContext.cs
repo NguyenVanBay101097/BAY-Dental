@@ -256,6 +256,8 @@ namespace Infrastructure.Data
         public DbSet<ToothDiagnosisProductRel> ToothDiagnosisProductRels { get; set; }
 
 
+        public DbSet<PartnerAdvance> PartnerAdvances { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -462,6 +464,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new AdvisoryProductRelConfiguration());
             builder.ApplyConfiguration(new ToothDiagnosisConfiguration());
             builder.ApplyConfiguration(new ToothDiagnosisProductRelConfiguration());
+            builder.ApplyConfiguration(new PartnerAdvanceConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

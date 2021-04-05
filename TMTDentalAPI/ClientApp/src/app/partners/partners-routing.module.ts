@@ -29,6 +29,7 @@ import { PartnerCustomerLaboOrdersComponentComponent } from './partner-customer-
 import { PartnerCustomerTreatmentListComponent } from './partner-customer-treatment/partner-customer-treatment-list/partner-customer-treatment-list.component';
 import { PartnerCustomerQuotationListComponent } from './partner-customer-quotation/partner-customer-quotation-list/partner-customer-quotation-list.component';
 import { PartnerCustomerAdvisoryListComponent } from './partner-customer-advisory/partner-customer-advisory-list/partner-customer-advisory-list.component';
+import { PartnerAdvanceListComponent } from '../partner-advances/partner-advance-list/partner-advance-list.component';
 
 const routes: Routes = [
   {
@@ -49,6 +50,7 @@ const routes: Routes = [
       { path: 'appointment', component: PartnerCustomerAppointmentComponent },
       { path: 'prescription', component: PartnerCustomerProductToaThuocListComponent },
       { path: 'categories', component: PartnerCustomerCategoriesComponent },
+      { path: 'advances', component: PartnerAdvanceListComponent },
       { path: 'partner-images', component: PartnerCustomerUploadImageComponent },
       { path: 'quotations', component: PartnerCustomerQuotationListComponent },
       //{ path: 'quotations', component: PartnerCustomerQuotationsComponent },
