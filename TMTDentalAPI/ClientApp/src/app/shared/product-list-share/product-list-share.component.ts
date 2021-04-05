@@ -5,7 +5,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { fromEvent, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { ProductServiceCuDialogComponent } from 'src/app/products/product-service-cu-dialog/product-service-cu-dialog.component';
-import { ProductService } from 'src/app/products/product.service';
+import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ToothDisplay } from 'src/app/teeth/tooth.service';
 import { ProductsOdataService } from '../services/ProductsOdata.service';
 
@@ -43,7 +43,7 @@ export class ProductListShareComponent implements OnInit {
   ngOnInit() {
 
     this.searchInit();
-    this.loadDataDefault('');
+    this.loadDataDefault();
   }
 
   searchInit() {
@@ -68,14 +68,19 @@ export class ProductListShareComponent implements OnInit {
     }
   }
 
-  loadDataDefault(val: string) {
-    this.productService.autocomplete(val).subscribe(res => {
-      this.listProducts = res;
-    });
+  loadDataDefault() {
+    var val = new ProductPaged();
+    val.limit = 0;
+    val.offset = 0;
+    val.search = this.search ? this.search : '';
+    val.type2 = 'service';
+    this.productService.getPaged(val).subscribe(res => {
+      this.listProducts = res.items;
+    })
   }
 
   onSearch(val) {
-    this.loadDataDefault(val);
+    this.loadDataDefault();
   }
 
   addServiceToSaleOrder(item) {
@@ -108,7 +113,7 @@ export class ProductListShareComponent implements OnInit {
     modalRef.result.then(
       () => {
         this.notify('success', 'tạo dịch vụ thành công');
-        this.loadDataDefault('');
+        this.loadDataDefault();
       },
       () => { }
     );
