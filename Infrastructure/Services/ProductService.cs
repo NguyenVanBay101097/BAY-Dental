@@ -192,7 +192,7 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val)
         {
             var query = GetQueryPaged(val);
-            query = query.OrderBy(x=> x.Name);
+            query = query.OrderBy(x => x.Name);
 
             var totalItems = await query.CountAsync();
             if (val.Limit > 0)
@@ -403,11 +403,14 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ProductSimple>> GetProductsAutocomplete(string filter = "")
         {
-            return await SearchQuery(domain: x => x.Active && (string.IsNullOrEmpty(filter) || x.Name.Contains(filter)), orderBy: x => x.OrderBy(s => s.Name), limit: 10).Select(x => new ProductSimple
-            {
-                Id = x.Id,
-                Name = x.Name
-            }).ToListAsync();
+            return await SearchQuery(domain: x => x.Active && (string.IsNullOrEmpty(filter) || x.Name.Contains(filter) ||
+            x.NameNoSign.Contains(filter) || x.DefaultCode.Contains(filter)), orderBy: x => x.OrderBy(s => s.Name), limit: 10)
+                .Select(x => new ProductSimple
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    ListPrice = x.ListPrice
+                }).ToListAsync();
         }
 
         public async Task<IEnumerable<ProductSimple>> GetProductsAutocomplete2(ProductPaged val)

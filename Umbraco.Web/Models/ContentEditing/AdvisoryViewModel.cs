@@ -113,4 +113,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public PartnerDisplay Partner { get; set; }
         public IEnumerable<AdvisoryDisplay> Advisories { get; set; }
     }
+
+    public class CreateFromAdvisoryInput
+    {
+        public Guid? CustomerId { get; set; }
+        public IEnumerable<Guid> Ids { get; set; } = new List<Guid>();
+    }
 }

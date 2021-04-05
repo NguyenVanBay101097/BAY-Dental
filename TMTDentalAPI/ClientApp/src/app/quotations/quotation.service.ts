@@ -13,7 +13,8 @@ export class QuotationLineDisplay {
   productId: string;
   product: any;
   qty: number;
-  percentDiscount: number;
+  discount: number;
+  discountType: string;
   subPrice: number;
   diagnostic: string;
   toothCategoryId: string;
@@ -26,7 +27,8 @@ export class QuotationLineDisplay {
 export class QuotationLineSave {
   productId: string;
   qty: number;
-  percentDiscount: number;
+  discount: number;
+  discountType: string;
   subPrice: number;
   diagnostic: number;
   toothCategoryId: number;
@@ -93,6 +95,10 @@ export class QuotationService {
 
   get(id: string): Observable<QuotationsDisplay> {
     return this.http.get<QuotationsDisplay>(this.baseApi + this.apiUrl + '/' + id);
+  }
+
+  printQuotation(id: string) {
+    return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/Print');
   }
 
   defaultGet(partnerId: string): Observable<QuotationsDisplay> {

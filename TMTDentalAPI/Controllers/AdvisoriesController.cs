@@ -118,5 +118,19 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(new PrintData() { html = html });
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CreateSaleOrder(CreateFromAdvisoryInput val)
+        {
+            var res = await _advisoryService.CreateSaleOrder(val);
+            return Ok(res);
+        }
+
+        //[HttpPost("[action]")]
+        //public async Task<IActionResult> CreateQuotation(CreateFromAdvisoryInput val)
+        //{
+        //    var res = await _advisoryService.CreateQuotation(val);
+        //    return Ok(res);
+        //}
     }
 }

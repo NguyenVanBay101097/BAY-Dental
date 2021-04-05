@@ -35,7 +35,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
   @ViewChild("titleCbx", { static: true }) titleCbx: ComboBoxComponent;
   @ViewChild("consultantCbx", { static: true }) consultantCbx: ComboBoxComponent;
-  
+
   id: string;
   formGroup: FormGroup;
   isDisabledDistricts: boolean = true;
@@ -97,6 +97,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   submitted = false;
 
+  get f() { return this.formGroup.controls; }
 
   constructor(
     private fb: FormBuilder,
@@ -108,10 +109,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     private modalService: NgbModal,
     private showErrorService: AppSharedShowErrorService,
     private intlService: IntlService,
-    private userService: UserService, 
-    private partnerTitleService: PartnerTitleService, 
+    private userService: UserService,
+    private partnerTitleService: PartnerTitleService,
     private employeeService: EmployeeService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -138,8 +139,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       histories: this.fb.array([]),
       companyId: null,
       dateObj: null,
-      addressCheckDetail: 0, 
-      title: null, 
+      addressCheckDetail: 0,
+      title: null,
       consultant: null,
       avatar: null
     });
@@ -256,15 +257,13 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       )
       .subscribe((result) => {
         this.filteredConsultants = result;
-        this.consultantCbx.loading = false;       
+        this.consultantCbx.loading = false;
       });
   }
 
   get sourceValue() {
     return this.formGroup.get('source').value;
   }
-
-  get f() { return this.formGroup.controls; }
 
   loadHistoriesList() {
     this.partnerService.getHistories().subscribe((result) => {
@@ -521,7 +520,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-    
+
     if (!this.formGroup.valid) {
       return false;
     }
@@ -562,7 +561,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     this.activeModal.dismiss();
   }
 
-  onAvatarUploaded(data){
-    this.f.avatar.setValue( data ? data.fileUrl : null);
+  onAvatarUploaded(data) {
+    this.f.avatar.setValue(data ? data.fileUrl : null);
   }
 }

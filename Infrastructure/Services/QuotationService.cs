@@ -33,6 +33,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Payments)
                 .Include(x => x.Lines)
                 .Include("Lines.Product")
+                .Include("Lines.Advisory")
                 .Include("Lines.ToothCategory")
                 .Include("Lines.QuotationLineToothRels")
                 .Include("Lines.QuotationLineToothRels.Tooth")
@@ -250,6 +251,24 @@ namespace Infrastructure.Services
                 totalAmount += Math.Round(line.Amount.HasValue ? line.Amount.Value : 0);
             }
             quotation.TotalAmount = totalAmount;
+        }
+
+        public async Task<QuotationPrintVM> Print(Guid id)
+        {
+            var quotation = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .Include(x => x.User)
+                .Include(x => x.Lines)
+                .Include(x => x.Company.Partner)
+                .Include(x => x.Payments).FirstOrDefaultAsync();
+
+            if (quotation == null)
+            {
+                return null;
+            }
+            var result = _mapper.Map<QuotationPrintVM>(quotation);
+
+            return result;
         }
 
         public async Task<SaleOrderSimple> CreateSaleOrderByQuotation(Guid id)
