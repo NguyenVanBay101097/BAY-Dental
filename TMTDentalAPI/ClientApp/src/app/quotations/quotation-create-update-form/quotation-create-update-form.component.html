@@ -31,13 +31,13 @@
                         <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
                             Lưu
                         </button>
-                        <button type="button" accesskey="1" class="btn btn-primary btn-sm" (click)="onCreateSaleOrder()">
+                        <button *ngIf="quotationId" type="button" accesskey="1" class="btn btn-primary btn-sm" (click)="onCreateSaleOrder()">
                             Tạo phiếu điều trị
                         </button>
-                        <button type="button" class="btn btn-secondary btn-sm" (click)="printQuotation()">
+                        <button *ngIf="quotationId" type="button" class="btn btn-secondary btn-sm" (click)="printQuotation()">
                             In phiếu
                         </button>
-                        <button type="button" class="btn btn-secondary btn-sm" (click)="onCreateNewQuotation()">
+                        <button *ngIf="quotationId" type="button" class="btn btn-secondary btn-sm" (click)="onCreateNewQuotation()">
                             Thêm mới
                         </button>
                     </div>
