@@ -119,14 +119,13 @@
             </div>
             <div class="w-100 h-100 d-flex">
                 <div class="w-25 h-100 mr-2">
-                    <app-sale-order-list-service (newEventEmiter)="addLineFromOdata($event)">
-                    </app-sale-order-list-service>
+                    <app-product-list-share (newEventEmiter)="addLineFromProduct($event)"></app-product-list-share>
                 </div>
                 <div class="w-75 d-flex flex-column">
                     <!-- Component Form Service Payment -->
 
                     <div class="overflow-auto">
-                        <table class="table table-bordered table-striped  table-tbody-ver-align-middle table-sm mb-0">
+                        <table class="table table-bordered table-tbody-ver-align-middle table-sm mb-0">
                             <thead>
                                 <tr>
                                     <th class="text-center"><b>*</b></th>
@@ -160,8 +159,11 @@
                                             </kendo-numerictextbox>
                                         </td>
                                         <td class="text-right" style="width:60px">
-                                            <kendo-numerictextbox [min]="0" style="width:50px" [max]="100" [spinners]="false" [autoCorrect]="true" [format]="'n0'" formControlName="percentDiscount">
-                                            </kendo-numerictextbox>
+                                            <!-- <kendo-numerictextbox [min]="0" style="width:50px" [max]="100" [spinners]="false" [autoCorrect]="true" [format]="'n0'" formControlName="percentDiscount">
+                                            </kendo-numerictextbox> -->
+                                            <!-- <app-sale-order-line-discount-odata-popover [line]="line.value" (lineDiscountEvent)="onChangeDiscount($event,line)">
+                                            </app-sale-order-line-discount-odata-popover> -->
+                                            <app-discount-popover-share [line]="line.value" (lineDiscountEvent)="onChangeDiscount($event,line)"></app-discount-popover-share>
                                         </td>
                                         <td class="text-right" style="width:100px;">
                                             <span class="mb-0 mt-2">{{computeTotalPrice(line) | number}}</span>

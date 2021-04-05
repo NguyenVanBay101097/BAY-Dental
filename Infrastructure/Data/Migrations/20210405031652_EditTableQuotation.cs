@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
-    public partial class AddCompanyToQuotation : Migration
+    public partial class EditTableQuotation : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,11 +17,10 @@ namespace Infrastructure.Data.Migrations
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
-            migrationBuilder.AddColumn<int>(
+            migrationBuilder.AddColumn<decimal>(
                 name: "Discount",
                 table: "QuotationLines",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "DiscountType",
@@ -31,7 +30,7 @@ namespace Infrastructure.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Quotations_CompanyId",
                 table: "Quotations",
-                column: "CompanyId"); 
+                column: "CompanyId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Quotations_Companies_CompanyId",

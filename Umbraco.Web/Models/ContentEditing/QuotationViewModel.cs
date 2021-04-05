@@ -109,6 +109,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<QuotationLineDisplay> Lines { get; set; } = new List<QuotationLineDisplay>();
         public IEnumerable<PaymentQuotationDisplay> Payments { get; set; } = new List<PaymentQuotationDisplay>();
+
     }
 
     public class QuotationSave
@@ -149,6 +150,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<QuotationLineSave> Lines { get; set; } = new List<QuotationLineSave>();
 
         public IEnumerable<PaymentQuotationSave> Payments { get; set; } = new List<PaymentQuotationSave>();
+
 
     }
 

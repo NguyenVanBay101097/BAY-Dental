@@ -64,25 +64,29 @@ namespace Infrastructure.Services
             return await CreateAsync(order);
         }
 
-        public async Task<SaleOrder> CreateOrderAsync(SaleOrderSave val)
+        public async override Task<SaleOrder> CreateAsync(SaleOrder entity)
         {
-            var order = _mapper.Map<SaleOrder>(val);
-            if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
+            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
             {
                 var sequenceService = GetService<IIRSequenceService>();
-                if (order.IsQuotation == true)
+                if (entity.IsQuotation == true)
                 {
-                    order.Name = await sequenceService.NextByCode("sale.quotation");
-                    if (string.IsNullOrEmpty(order.Name))
+                    entity.Name = await sequenceService.NextByCode("sale.quotation");
+                    if (string.IsNullOrEmpty(entity.Name))
                     {
                         await InsertSaleQuotationSequence();
-                        order.Name = await sequenceService.NextByCode("sale.quotation");
+                        entity.Name = await sequenceService.NextByCode("sale.quotation");
                     }
                 }
                 else
-                    order.Name = await sequenceService.NextByCode("sale.order");
+                    entity.Name = await sequenceService.NextByCode("sale.order");
             }
+            return entity;
+        }
 
+        public async Task<SaleOrder> CreateOrderAsync(SaleOrderSave val)
+        {
+            var order = _mapper.Map<SaleOrder>(val);
             await CreateAsync(order);
 
             var lines = new List<SaleOrderLine>();
