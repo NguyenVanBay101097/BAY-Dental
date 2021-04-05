@@ -106,8 +106,9 @@ namespace Infrastructure.Services
             }
             else
             {
-                var amountBalance = await ComputeAmountBalance();
-                return amountBalance;
+                var advanceAmount = await query.Where(x => x.Type == "advance").SumAsync(x => x.Amount);
+                var refundAmount = await query.Where(x => x.Type == "refund").SumAsync(x => x.Amount);
+                return advanceAmount - refundAmount;
             }
 
 

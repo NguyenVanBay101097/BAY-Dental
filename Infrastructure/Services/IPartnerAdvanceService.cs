@@ -15,6 +15,8 @@ namespace Infrastructure.Services
 
         Task<PartnerAdvancDefaultViewModel> DefaultGet(PartnerAdvanceDefaultFilter val);
         Task<decimal> GetSummary(PartnerAdvanceSummaryFilter val);
+        Task<decimal> ComputeAmountBalance();
+
         Task<PartnerAdvance> CreatePartnerAdvance(PartnerAdvanceSave val);
         Task UpdatePartnerAdvance(Guid id, PartnerAdvanceSave val);
 

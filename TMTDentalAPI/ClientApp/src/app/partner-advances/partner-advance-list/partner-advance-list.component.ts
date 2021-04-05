@@ -29,7 +29,8 @@ export class PartnerAdvanceListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   loading = false;
-  amountBalance: number;
+  amountBalanceFilter: number;
+  AmountBalance: number;
 
   typeAmount: any = {};
   types: any[] = [
@@ -69,6 +70,7 @@ export class PartnerAdvanceListComponent implements OnInit {
 
     this.loadDataFromApi();
     this.loadTypeAmountTotal();
+    this.loadAmounBalance();
   }
 
   loadDataFromApi() {
@@ -111,8 +113,7 @@ export class PartnerAdvanceListComponent implements OnInit {
     })).subscribe((result) => {
       result.forEach(item => {
         if(item.type == ''){
-          debugger
-          this.amountBalance = item.amount as number;
+          this.amountBalanceFilter = item.amount as number;
         }       
         this.typeAmount[item.type] = item.amount;
       });
@@ -125,6 +126,12 @@ export class PartnerAdvanceListComponent implements OnInit {
     this.offset = 0;
     this.loadDataFromApi();
     this.loadTypeAmountTotal();
+  }
+
+   loadAmounBalance(){
+    this.partnerAdvanceService.getAmountBalance().subscribe(res => {
+     this.AmountBalance = res as number;
+    });
   }
 
   createAdvanceModal() {

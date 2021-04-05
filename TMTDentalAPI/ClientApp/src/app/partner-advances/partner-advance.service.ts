@@ -95,6 +95,10 @@ export class PartnerAdvanceService {
     return this.http.post(this.base_api + this.apiUrl + '/GetSummary', val);
   }
 
+  getAmountBalance(){
+    return this.http.get(this.base_api + this.apiUrl + "/ComputeAmountBalance");
+  }
+
   create(val) {
     return this.http.post(this.base_api + this.apiUrl, val);
   }
