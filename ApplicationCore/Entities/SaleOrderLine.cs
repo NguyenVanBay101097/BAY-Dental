@@ -9,7 +9,7 @@ namespace ApplicationCore.Entities
     /// </summary>
     public class SaleOrderLine : BaseEntity
     {
-        public QuotationLine()
+        public SaleOrderLine()
         {
             State = "draft";
             InvoiceStatus = "no";

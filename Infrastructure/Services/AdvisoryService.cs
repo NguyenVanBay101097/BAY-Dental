@@ -267,6 +267,7 @@ namespace Infrastructure.Services
         public async Task<SaleOrderSimple> CreateSaleOrder(CreateFromAdvisoryInput val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();
 
             var saleOrderDefaultGet = new SaleOrderDefaultGet();
             saleOrderDefaultGet.PartnerId = val.CustomerId;
@@ -294,12 +295,12 @@ namespace Infrastructure.Services
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
                 .ToListAsync();
 
+            var saleOrderLines = new List<SaleOrderLine>();
             foreach (var advisory in advisories)
             {
                 var products = advisory.AdvisoryProductRels.Select(x => x.Product).ToList();
                 var toothDiagnosisName = advisory.AdvisoryToothDiagnosisRels.Select(x => x.ToothDiagnosis.Name).ToList();
                 var toothIds = advisory.AdvisoryToothRels.Select(x => x.ToothId).ToList();
-                var saleOrderLines = new List<SaleOrderLine>();
                 var sequence = 0;
                 foreach (var product in products)
                 {
@@ -324,13 +325,10 @@ namespace Infrastructure.Services
                     saleOrderLine.AdvisoryId = advisory.Id;
                     saleOrderLines.Add(saleOrderLine);
                 }
-
-                var saleOrderLineObj = GetService<ISaleOrderLineService>();
-                await saleOrderLineObj.CreateAsync(saleOrderLines);
-
-                saleOrderObj._AmountAll(saleOrder);
-                await saleOrderObj.UpdateAsync(saleOrder);
             }
+            await saleOrderLineObj.CreateAsync(saleOrderLines);
+            saleOrderObj._AmountAll(saleOrder);
+            await saleOrderObj.UpdateAsync(saleOrder);
 
             return _mapper.Map<SaleOrderSimple>(saleOrder);
         }
@@ -338,18 +336,17 @@ namespace Infrastructure.Services
         public async Task<QuotationSimple> CreateQuotation(CreateFromAdvisoryInput val)
         {
             var quotationObj = GetService<IQuotationService>();
+            var quotationLineObj = GetService<IQuotationLineService>();
             var userObj = GetService<IUserService>();
+
             var user = await userObj.GetCurrentUser();
-
             var quotation = new Quotation();
-
             quotation.UserId = user.Id;
             quotation.PartnerId = val.CustomerId;
             quotation.DateQuotation = DateTime.Today;
             quotation.DateApplies = 30;
             quotation.DateEndQuotation = DateTime.Today.AddDays(30);
             quotation.CompanyId = CompanyId;
-
             quotation = await quotationObj.CreateAsync(quotation);
 
             var query = SearchQuery();
@@ -365,38 +362,38 @@ namespace Infrastructure.Services
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
                 .ToListAsync();
 
+            var quotationLines = new List<QuotationLine>();
             foreach (var advisory in advisories)
             {
                 var products = advisory.AdvisoryProductRels.Select(x => x.Product).ToList();
                 var toothDiagnosisName = advisory.AdvisoryToothDiagnosisRels.Select(x => x.ToothDiagnosis.Name).ToList();
                 var toothIds = advisory.AdvisoryToothRels.Select(x => x.ToothId).ToList();
-                var quotationLines = new List<QuotationLine>();
                 foreach (var product in products)
                 {
                     var quotationLine = new QuotationLine();
-                    saleOrderLine.State = "draft";
-                    saleOrderLine.Name = product.Name;
-                    saleOrderLine.PriceUnit = product.ListPrice;
-                    saleOrderLine.ProductId = product.Id;
-                    saleOrderLine.ProductUOMQty = toothIds.Count() > 0 ? toothIds.Count() : 1;
-                    saleOrderLine.Order = saleOrder;
-                    saleOrderLine.Sequence = sequence++;
-                    saleOrderLine.AmountResidual = saleOrderLine.PriceSubTotal - saleOrderLine.AmountPaid;
-                    saleOrderLine.ToothCategoryId = advisory.ToothCategoryId;
+                    quotationLine.ProductId = product.Id;
+                    quotationLine.QuotationId = quotation.Id;
+                    quotationLine.Qty = toothIds.Count() > 0 ? toothIds.Count() : 1;
+                    quotationLine.SubPrice = product.ListPrice;
+                    quotationLine.Discount = 0;
+                    quotationLine.DiscountType = "percentage";
+                    quotationLine.Amount = quotationLine.Qty * quotationLine.SubPrice;
                     foreach (var toothId in toothIds)
                     {
-                        saleOrderLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                        quotationLine.QuotationLineToothRels.Add(new QuotationLineToothRel
                         {
                             ToothId = toothId
                         });
                     }
-                    saleOrderLine.Diagnostic = string.Join(", ", toothDiagnosisName);
-                    saleOrderLine.AdvisoryId = advisory.Id;
-                    saleOrderLines.Add(saleOrderLine);
+                    quotationLine.Diagnostic = string.Join(", ", toothDiagnosisName);
+                    quotationLine.AdvisoryId = advisory.Id;
+                    quotationLines.Add(quotationLine);
                 }
             }
-
-            return null;
+            await quotationLineObj.CreateAsync(quotationLines);
+            await quotationObj.UpdateAsync(quotation);
+            return _mapper.Map<QuotationSimple>(quotation);
         }
+
     }
 }
