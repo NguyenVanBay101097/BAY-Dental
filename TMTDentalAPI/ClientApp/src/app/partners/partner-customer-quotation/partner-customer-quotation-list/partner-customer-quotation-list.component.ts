@@ -78,7 +78,6 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
     ).subscribe(
       result => {
         this.gridData = result;
-        console.log(result);
         this.loading = false
       }
     )

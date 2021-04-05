@@ -254,7 +254,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     var lines = this.formGroup.get('lines').value;
     if (lines && lines.length > 0) {
       lines.forEach(line => {
-        totalAmount += line.subPrice * line.qty * (1 - line.percentDiscount / 100);
+        totalAmount += line.subPrice;
       });
     }
     return totalAmount;
