@@ -7,7 +7,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { result } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { AdvisoryPaged, AdvisoryService, AdvisoryToothAdvise } from 'src/app/advisories/advisory.service';
+import { AdvisoryPaged, AdvisoryService, AdvisoryToothAdvise, CreateFromAdvisoryInput } from 'src/app/advisories/advisory.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
@@ -90,11 +90,35 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   }
 
   createQuotations(){
-    this.router.navigate(['/partners/customer/'+this.customerId+'/quotations']);
+    if (!this.mySelection || this.mySelection.length == 0) 
+    {
+      this.notify('error', 'Bạn chưa chọn thông tin tư vấn');
+      return;
+    }
+    var val = new CreateFromAdvisoryInput();
+    val.customerId = this.customerId;
+    val.ids = this.mySelection;
+    this.advisoryService.createQuotations(val).subscribe(
+      result => {
+        
+      }
+    )
   }
 
   createSaleOrder(){
-    this.router.navigate(['/partners/customer/'+this.customerId+'/treatment']);
+    if (!this.mySelection || this.mySelection.length == 0) 
+    {
+      this.notify('error', 'Bạn chưa chọn thông tin tư vấn');
+      return;
+    }
+    var val = new CreateFromAdvisoryInput();
+    val.customerId = this.customerId;
+    val.ids = this.mySelection;
+    this.advisoryService.createSaleOrder(val).subscribe(
+      result => {
+        
+      }
+    )
   }
 
   loadTeethMap(categ: ToothCategoryBasic) {
