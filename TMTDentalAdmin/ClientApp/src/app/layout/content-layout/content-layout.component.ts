@@ -7,6 +7,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContentLayoutComponent implements OnInit {
 
+  public navItems: any[] = [
+    { name: 'Danh sach dang ky', url: '/tenants'},
+    { name: 'Nhan vien', url: '/tenants'}
+  ]
+  
   constructor() { }
 
   ngOnInit() {
