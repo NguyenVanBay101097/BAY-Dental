@@ -33,6 +33,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Payments)
                 .Include(x => x.Lines)
                 .Include("Lines.Product")
+                .Include("Lines.AdvisoryUser")
                 .Include("Lines.Advisory")
                 .Include("Lines.ToothCategory")
                 .Include("Lines.QuotationLineToothRels")

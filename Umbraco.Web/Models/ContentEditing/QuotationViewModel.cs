@@ -108,8 +108,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid CompanyId { get; set; }
 
-        public Guid? AdvisoryId { get; set; }
-        public AdvisorySimple Advisory { get; set; }
+        
 
         public IEnumerable<QuotationLineDisplay> Lines { get; set; } = new List<QuotationLineDisplay>();
         public IEnumerable<PaymentQuotationDisplay> Payments { get; set; } = new List<PaymentQuotationDisplay>();
