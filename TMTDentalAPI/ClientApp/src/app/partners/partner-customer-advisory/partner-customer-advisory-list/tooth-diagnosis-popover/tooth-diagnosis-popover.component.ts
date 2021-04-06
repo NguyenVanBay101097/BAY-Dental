@@ -52,6 +52,7 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
     }
   }
 
+  
   getPageDiagnosis(){
     var val = new ToothDiagnosisPaged();
     val.limit = 1000;

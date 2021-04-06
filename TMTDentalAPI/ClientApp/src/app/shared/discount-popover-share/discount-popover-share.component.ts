@@ -43,7 +43,7 @@ export class DiscountPopoverShareComponent implements OnInit {
     if (this.formGroup.get('discountType').value === 'fixed') {
       return this.formGroup.get('discountFixed').value;
     }
-    else {
+    else if (this.formGroup.get('discountType').value === "percentage") {
       return this.formGroup.get('discountPercent').value;
     }
   }

@@ -72,7 +72,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Giảm giá theo %
         /// </summary>
-        public int PercentDiscount { get; set; }
+        public int Discount { get; set; }
+
+        /// <summary>
+        /// Giảm giá theo %
+        /// </summary>
+        public string DiscountType { get; set; }
 
         /// <summary>
         /// Tổng tiền trên 1 dịch vụ

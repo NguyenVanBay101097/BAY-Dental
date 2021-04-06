@@ -6,7 +6,6 @@ import { QuotationCreateUpdateFormComponent } from './quotation-create-update-fo
 import { SaleOrdersModule } from '../sale-orders/sale-orders.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
-import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import { QuotationService } from './quotation.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 
@@ -20,7 +19,6 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
     ReactiveFormsModule,
     MyCustomKendoModule,
     SharedModule,
-    DateInputsModule
   ],
   providers: [QuotationService]
 })
