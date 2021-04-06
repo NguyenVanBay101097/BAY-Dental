@@ -92,6 +92,7 @@ namespace Infrastructure.Services
             _mapper.Map(val, quotation);
             await ComputeQuotationLine(val, quotation);
             await ComputePaymentQuotation(val, quotation);
+            await ComputeAmountAll(quotation);
             await UpdateAsync(quotation);
         }
 
@@ -150,7 +151,12 @@ namespace Infrastructure.Services
                 {
                     var quoLine = _mapper.Map<QuotationLine>(line);
                     quoLine.QuotationId = quotation.Id;
-                    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.PercentDiscount.HasValue ? line.PercentDiscount.Value : 0) / 100);
+                    if (line.DiscountType == "fixed")
+                        quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0);
+
+                    else if (line.DiscountType == "percentage")
+                        quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.Discount.HasValue ? line.Discount.Value : 0) / 100);
+                    
                     foreach (var toothId in line.ToothIds)
                     {
                         quoLine.QuotationLineToothRels.Add(new QuotationLineToothRel
@@ -164,7 +170,11 @@ namespace Infrastructure.Services
                 {
                     var quoLine = await quotationLineObj.SearchQuery(x => x.Id == line.Id).Include(x => x.QuotationLineToothRels).FirstOrDefaultAsync();
                     _mapper.Map(line, quoLine);
-                    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.PercentDiscount.HasValue ? line.PercentDiscount.Value : 0) / 100);
+
+                    if (line.DiscountType == "fixed")
+                        quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0);
+                    else if (line.DiscountType == "percentage")
+                        quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.Discount.HasValue ? line.Discount.Value : 0) / 100);
 
                     foreach (var item in quoLine.QuotationLineToothRels.ToList())
                     {
@@ -201,31 +211,7 @@ namespace Infrastructure.Services
                 var sequenceService = GetService<IIRSequenceService>();
                 entity.Name = await sequenceService.NextByCode("quotation");
             }
-            if (entity.Lines.Any())
-            {
-                var totalAmount = 0M;
-                foreach (var line in entity.Lines)
-                {
-                    totalAmount += Math.Round(line.Amount.HasValue ? line.Amount.Value : 0);
-                }
-                entity.TotalAmount = totalAmount;
-            }
-            return entity;
-        }
-
-        public override Task UpdateAsync(Quotation entity)
-        {
-            if (entity.Lines.Any())
-            {
-                var totalAmount = 0M;
-                foreach (var line in entity.Lines)
-                {
-                    totalAmount += Math.Round(line.Amount.HasValue ? line.Amount.Value : 0);
-                }
-                entity.TotalAmount = totalAmount;
-            }
-
-            return base.UpdateAsync(entity);
+            return await base.CreateAsync(entity);
         }
 
         public async Task<QuotationBasic> CreateAsync(QuotationSave val)
@@ -239,7 +225,11 @@ namespace Infrastructure.Services
             {
                 var quoLine = _mapper.Map<QuotationLine>(line);
                 quoLine.QuotationId = quotation.Id;
-                quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.PercentDiscount.HasValue ? line.PercentDiscount.Value : 0) / 100);
+                if (line.DiscountType == "fixed")
+                    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0);
+                else if (line.DiscountType == "percentage")
+                    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.Discount.HasValue ? line.Discount.Value : 0) / 100);
+
                 foreach (var toothId in line.ToothIds)
                 {
                     quoLine.QuotationLineToothRels.Add(new QuotationLineToothRel
@@ -264,9 +254,21 @@ namespace Infrastructure.Services
 
             var quotationLineService = GetService<IQuotationLineService>();
             await quotationLineService.CreateAsync(lines);
+            await ComputeAmountAll(quotation);
             await UpdateAsync(quotation);
             return _mapper.Map<QuotationBasic>(quotation);
         }
+
+        public async Task ComputeAmountAll(Quotation quotation)
+        {
+            var totalAmount = 0M;
+            foreach (var line in quotation.Lines)
+            {
+                totalAmount += Math.Round(line.Amount.HasValue ? line.Amount.Value : 0);
+            }
+            quotation.TotalAmount = totalAmount;
+        }
+
 
         public async Task<SaleOrderSimple> CreateSaleOrderByQuotation(Guid id)
         {
