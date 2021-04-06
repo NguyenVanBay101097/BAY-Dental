@@ -202,14 +202,20 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
 
   updateDiagnosis(data){ 
     this.f.toothDiagnosis.setValue(data);
-    this.toothDiagnosisService.get(data[0].id).subscribe(result => {
-      this.f.product.setValue(result.product);
+    var ids = data.map(x => x.id);
+    var products = this.f.product.value;
+    this.toothDiagnosisService.getProducts(ids).subscribe(result => {
+      products = products.concat(result);
+      var unique = products.filter(function(elem, index, self){
+        return index === self.findIndex(x => x.id == elem.id);
+      })
+      this.f.product.setValue(unique);
+      
     })
   }
 
   updateProduct(data){
    this.f.product.setValue(data);
-   
   }
 
   resetForm(){
