@@ -164,6 +164,7 @@
                                         </td>
                                         <td class="text-right" style="width:100px;">
                                             <span class="mb-0 mt-2">{{computeTotalPrice(line) | number}}</span>
+                                            <!-- <span>{{line.get('amount') ? line.get('amount').value : 0}}</span> -->
                                         </td>
                                         <td class="text-center">
                                             <span class="mt-2">
@@ -189,9 +190,10 @@
                                                                 </label>
                                                                 <div class="col-sm-10">
                                                                     <kendo-combobox formControlName="advisoryUser"
-                                                                        [filterable]="true" [data]="advisotyData"
-                                                                        #advisoryCbx [valueField]="'id'"
-                                                                        [textField]="'name'">
+                                                                        [filterable]="true"
+                                                                        [data]="filteredAdvisoryUsers"
+                                                                        (filterChange)="loadUser($event)"
+                                                                        [valueField]="'id'" [textField]="'name'">
                                                                     </kendo-combobox>
                                                                 </div>
                                                             </div>

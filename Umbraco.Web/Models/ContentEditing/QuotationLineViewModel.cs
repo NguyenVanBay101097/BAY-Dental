@@ -94,6 +94,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string Diagnostic { get; set; }
 
+        public Guid? AdvisoryId { get; set; }
+        public AdvisorySimple Advisory { get; set; }
+
+        public string AdvisoryUserId { get; set; }
+        public ApplicationUserBasic AdvisoryUser { get; set; }
+
         /// <summary>
         /// Loại răng: răng sữa, răng vĩnh viễn !!!
         /// </summary>

@@ -18,6 +18,8 @@ export class QuotationLineDisplay {
   subPrice: number;
   diagnostic: string;
   toothCategoryId: string;
+  advisoryUserId: string;
+  advisoryUser: any;
   toothCategory: any;
   toothIds: any[];
   name: string;
