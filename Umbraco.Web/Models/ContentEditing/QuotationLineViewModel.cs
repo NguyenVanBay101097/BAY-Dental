@@ -161,11 +161,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid ToothCategoryId { get; set; }
 
-        /// <summary>
-        /// Người tư vấn
-        /// </summary>
-        public Guid AdvisoryId { get; set; }
-
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
     }
 }

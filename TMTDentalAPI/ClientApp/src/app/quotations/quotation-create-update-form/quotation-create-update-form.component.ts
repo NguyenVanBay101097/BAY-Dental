@@ -86,7 +86,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
     this.loadUser();
 
-    this.advisoryCbx.filterChange.asObservable().pipe(
+    this.advisoryCbx.filterChange.pipe(
       debounceTime(300),
       tap(() => this.advisoryCbx.loading = true),
       switchMap(val => this.searchUsers(val.toString().toLowerCase()))
