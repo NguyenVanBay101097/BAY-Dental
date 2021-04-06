@@ -378,6 +378,7 @@ namespace Infrastructure.Services
                     quotationLine.Discount = 0;
                     quotationLine.DiscountType = "percentage";
                     quotationLine.Amount = quotationLine.Qty * quotationLine.SubPrice;
+                    quotationLine.ToothCategoryId = advisory.ToothCategoryId;
                     foreach (var toothId in toothIds)
                     {
                         quotationLine.QuotationLineToothRels.Add(new QuotationLineToothRel
