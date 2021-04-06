@@ -42,11 +42,11 @@ export class PartnerCustomerSaleOrderQuotationsLinesComponent implements OnInit 
   }
 
   getFormReference(id , type){
-    if(type="saleOrder") {
+    if(type == "saleOrder") {
       this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
     }
     else {
-      this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
+      this.router.navigate(['/quotations/form'], { queryParams: { id: id } });
     }
   }
 

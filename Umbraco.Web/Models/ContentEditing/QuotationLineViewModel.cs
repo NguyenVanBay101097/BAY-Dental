@@ -49,6 +49,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid QuotationId { get; set; }
         public QuotationSimple Quotation { get; set; }
+
+        public string AdvisoryUserId { get; set; }
+        public ApplicationUserBasic AdvisoryUser { get; set; }
     }
 
     public class QuotationLineDisplay
@@ -137,6 +140,16 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Đơn giá
         /// </summary>
         public decimal? SubPrice { get; set; }
+
+        /// <summary>
+        /// Tư vấn
+        /// </summary>
+        public string AdvisoryId { get; set; }
+
+        /// <summary>
+        /// Người tư vấn
+        /// </summary>
+        public string AdvisoryUserId { get; set; }
 
         /// <summary>
         /// Chuẩn đoán

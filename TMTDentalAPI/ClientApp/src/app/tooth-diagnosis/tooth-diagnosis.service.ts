@@ -10,7 +10,9 @@ export class ToothDiagnosis {
 }
 
 export class ToothDiagnosisSave {
+  id: string;
   name: string;
+  product: any[];
 }
 
 export class ToothDiagnosisPaged {

@@ -87,6 +87,10 @@ export class AdvisoryLinePagedResult {
   items: AdvisoryLine[];
 }
 
+export class CreateFromAdvisoryInput {
+  customerId: string;
+  ids: string[];
+}
 
 @Injectable({
   providedIn: 'root'
@@ -128,10 +132,15 @@ export class AdvisoryService {
   }
 
   getAdvisoryLinePaged(val: any): Observable<AdvisoryLinePagedResult> {
-    return this.http.get<AdvisoryLinePagedResult>(this.baseApi + this.apiUrl + "/GetAdvisoryLines", { params: new HttpParams({ fromObject: val }) });
+    return this.http.get<AdvisoryLinePagedResult>(this.baseApi + this.apiUrl + "/GetAdvisoryLinesPaged", { params: new HttpParams({ fromObject: val }) });
   }
 
-  createQuotations(val){
-    
+  createQuotations(val:CreateFromAdvisoryInput){
+    return this.http.post<any>(this.baseApi + this.apiUrl + "/" + "CreateQuotation", val);
   }
+
+  createSaleOrder(val:CreateFromAdvisoryInput){
+    return this.http.post<any>(this.baseApi + this.apiUrl + "/" + "CreateSaleOrder", val);
+  }
+  
 }
