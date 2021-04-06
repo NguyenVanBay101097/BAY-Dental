@@ -409,7 +409,7 @@ namespace Infrastructure.Services
                 {
                     res.Add(new AdvisoryLine
                     {
-                        Id = line.Id,
+                        Id = line.Order.Id,
                         Name = line.Order.Name,
                         ProductName = line.Name,
                         Date = line.Order.DateOrder,
@@ -427,7 +427,7 @@ namespace Infrastructure.Services
                 {
                     res.Add(new AdvisoryLine
                     {
-                        Id = line.Id,
+                        Id = line.Quotation.Id,
                         Name = line.Quotation.Name,
                         ProductName = line.Name,
                         Date = line.Quotation.DateQuotation,
