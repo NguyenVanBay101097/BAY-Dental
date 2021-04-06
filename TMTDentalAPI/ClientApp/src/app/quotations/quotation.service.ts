@@ -74,6 +74,7 @@ export class QuotationsDisplay {
   lines: any[];
   payments: any[];
   companyId: string;
+  orders: any[];
 }
 
 export class QuotationsPaged {

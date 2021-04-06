@@ -35,6 +35,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   formGroupInfo: FormGroup;
   partner: any;
   user: any;
+  saleOrders: any;
   dateFrom: Date;
   dateTo: Date;
   toothCategoryId: string;
@@ -101,6 +102,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.partner = result.partner;
           this.partnerId = result.partnerId;
           this.user = result.user;
+          this.saleOrders = result.orders;          
           this.formGroup.get('note').patchValue(result.note);
           this.formGroup.get('partnerId').patchValue(result.partnerId);
           this.formGroup.get('userId').patchValue(result.userId);
