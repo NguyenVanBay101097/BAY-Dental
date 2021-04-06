@@ -378,7 +378,7 @@ namespace Infrastructure.Services
                     quotationLine.Discount = 0;
                     quotationLine.DiscountType = "percentage";
                     quotationLine.Amount = quotationLine.Qty * quotationLine.SubPrice;
-                    quotationLine.ToothCategoryId = advisory.ToothCategoryId;
+                    quotationLine.ToothCategoryId = advisory.ToothCategoryId.GetValueOrDefault();
                     foreach (var toothId in toothIds)
                     {
                         quotationLine.QuotationLineToothRels.Add(new QuotationLineToothRel
@@ -395,8 +395,6 @@ namespace Infrastructure.Services
             await quotationObj.UpdateAsync(quotation);
             return _mapper.Map<QuotationSimple>(quotation);
         }
-
-        //}
 
         public async Task<PagedResult2<AdvisoryLine>> GetAdvisoryLines(AdvisoryLinePaged val)
         {
