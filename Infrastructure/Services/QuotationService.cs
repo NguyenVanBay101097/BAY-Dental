@@ -336,5 +336,22 @@ namespace Infrastructure.Services
             return _mapper.Map<SaleOrderSimple>(saleOrder);
         }
 
+        public async Task<QuotationPrintVM> Print(Guid id)
+        {
+            var quotation = await SearchQuery(x => x.Id == id)
+               .Include(x => x.Partner)
+               .Include(x => x.User)
+               .Include(x => x.Lines)
+               .Include(x => x.Company.Partner)
+               .Include(x => x.Payments).FirstOrDefaultAsync();
+
+            if (quotation == null)
+            {
+                return null;
+            }
+            var result = _mapper.Map<QuotationPrintVM>(quotation);
+
+            return result;
+        }
     }
 }
