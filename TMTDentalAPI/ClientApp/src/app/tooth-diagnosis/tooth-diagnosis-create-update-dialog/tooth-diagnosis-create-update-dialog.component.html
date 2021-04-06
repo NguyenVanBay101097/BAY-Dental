@@ -20,7 +20,23 @@
                                 <td colspan="1" style="width: 100%;" class=".o_td_control_left">
                                     <input class="form-control" formControlName="name" name="name" required #nameInput>
                                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.name.errors.required">Nhập tên chuẩn đoán răng</div>
+                                        <div *ngIf="f.name.errors.required">Nhập tên chẩn đoán răng</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_left">
+                                    <label class="o_form_label">
+                                        Dịch vụ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;" class=".o_td_control_left">
+                                    <kendo-multiselect [filterable]="true" class="mr-3" [data]="dataSource" formControlName = "product"
+                                    (filterChange)="this.searchUpdate.next($event)"
+                                    [textField]="'name'" [valueField]="'id'">
+                                    </kendo-multiselect>
+                                    <div *ngIf="f.product.errors && (f.product.touched || f.product.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.product.errors.required">Chọn dịch vụ</div>
                                     </div>
                                 </td>
                             </tr>

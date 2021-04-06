@@ -4,10 +4,11 @@ import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { result } from 'lodash';
+import { result, values } from 'lodash';
 import { AdvisoryDefaultGet, AdvisoryService } from 'src/app/advisories/advisory.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { ToothDiagnosisService } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 import {ToothDiagnosisPopoverComponent} from '../partner-customer-advisory-list/tooth-diagnosis-popover/tooth-diagnosis-popover.component'
 
 @Component({
@@ -34,6 +35,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     private advisoryService: AdvisoryService,
     private intlService: IntlService,
     private notificationService: NotificationService,
+    private toothDiagnosisService: ToothDiagnosisService,
     private router: Router
   ) { }
 
@@ -52,7 +54,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       companyId: [null,Validators.required]
     })
 
-    this.loadToothCategories();
+    setTimeout(() => {
+      this.loadToothCategories();
       this.loadDefaultToothCategory().subscribe(result => {
         this.cateId = result.id;
         this.loadTeethMap(result);
@@ -62,7 +65,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       }else{
         this.getDefault();
       }
-    
+    })
+
   }
 
   get f(){
@@ -198,10 +202,14 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
 
   updateDiagnosis(data){ 
     this.f.toothDiagnosis.setValue(data);
+    this.toothDiagnosisService.get(data[0].id).subscribe(result => {
+      this.f.product.setValue(result.product);
+    })
   }
 
   updateProduct(data){
-    this.f.product.setValue(data);
+   this.f.product.setValue(data);
+   
   }
 
   resetForm(){
