@@ -16,5 +16,6 @@ namespace Infrastructure.Services
         Task<ToothDiagnosis> CreateToothDiagnosis(ToothDiagnosisSave val);
         Task UpdateToothDiagnosis(Guid id, ToothDiagnosisSave val);
         Task RemoveToothDiagnosis(Guid id);
+        Task<IEnumerable<ProductSimple>> GetProducts(IEnumerable<Guid> ids);
     }
 }

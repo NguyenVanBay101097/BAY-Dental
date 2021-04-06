@@ -36,17 +36,7 @@ namespace ApplicationCore.Entities
 
         public decimal? SubPrice { get; set; }
 
-        /// <summary>
-        /// Bác sĩ
-        /// </summary>
-        public Employee Doctor { get; set; }
-        public Guid? DoctorId { get; set; }
 
-        /// <summary>
-        /// Phụ tá
-        /// </summary>
-        public Employee Assistant { get; set; }
-        public Guid? AssistantId { get; set; }
 
         /// <summary>
         /// Chuẩn đoán
@@ -61,9 +51,21 @@ namespace ApplicationCore.Entities
 
         public ICollection<QuotationLineToothRel> QuotationLineToothRels { get; set; } = new List<QuotationLineToothRel>();
 
+        /// <summary>
+        /// Phiếu báo giá
+        /// </summary>
         public Guid QuotationId { get; set; }
         public Quotation Quotation { get; set; }
 
+        /// <summary>
+        /// Nhân viên tư vấn
+        /// </summary>
+        public string AdvisoryUserId { get; set; }
+        public ApplicationUser AdvisoryUser { get; set; }
+
+        /// <summary>
+        /// Tư vấn
+        /// </summary>
         public Guid? AdvisoryId { get; set; }
         public Advisory Advisory { get; set; }
     }
