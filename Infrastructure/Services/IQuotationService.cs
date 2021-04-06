@@ -16,6 +16,6 @@ namespace Infrastructure.Services
         Task UpdateAsync(Guid id, QuotationSave val);
         Task<QuotationDisplay> GetDefault(Guid partnerId);
         Task<SaleOrderSimple> CreateSaleOrderByQuotation(Guid id);
-        //Task<QuotationPrintVM> Print(Guid id);
+        Task<QuotationPrintVM> Print(Guid id);
     }
 }

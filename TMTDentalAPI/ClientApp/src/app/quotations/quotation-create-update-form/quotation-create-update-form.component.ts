@@ -122,41 +122,19 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       )
   }
 
-  // addLineFromApi(val) {
-  //   var line = new QuotationLineDisplay();
-  //   line.diagnostic = val.diagnostic;
-  //   // line.p = val.percentDiscount ? val.percentDiscount : 0;
-  //   line.product = val.product;
-  //   line.productId = val.productId;
-  //   line.qty = val.qty ? val.qty : 0;
-  //   line.subPrice = val.subPrice ? val.subPrice : (val.product ? val.product.listPrice : 0);
-  //   line.teeth = this.fb.array([]);
-  //   line.name = val.name;
-  //   line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
-  //   line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
-  //   if (val.teeth) {
-  //     val.teeth.forEach(item => {
-  //       line.teeth.push(this.fb.group(item))
-  //     });
-  //   }
-  //   var res = this.fb.group(line);
-  //   this.linesArray.push(res);
-  //   this.linesArray.markAsDirty();
-  // }
-
   addLineFromProduct(val) {
     var line = new QuotationLineDisplay();
-    line.diagnostic = '';
-    line.discount = 0;
-    line.discountType = 'percentage';
-    line.product = val;
-    line.productId = val.id;
-    line.qty = 1;
-    line.subPrice = val.listPrice;
+    line.diagnostic = val.diagnostic;
+    line.discount = val.discount ? val.discount : 0;
+    line.discountType = val.discountType ? val.discountType : 'percentage';
+    line.product = val.product;
+    line.productId = val.productId;
+    line.qty = val.qty;
+    line.subPrice = val.subPrice;
     line.name = val.name;
-    line.teeth = this.fb.array([])
-    line.toothCategory = (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
-    line.toothCategoryId = (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
+    line.teeth = val.teeth ? val.teeth : this.fb.array([])
+    line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
+    line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
     var res = this.fb.group(line);
     this.linesArray.push(res);
     this.linesArray.markAsDirty();
@@ -449,7 +427,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         () => {
           this.routeActive();
           this.notificationService.show({
-            content: 'Lưu thành công',
+            content: 'Cập nhật thành công',
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },

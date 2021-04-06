@@ -95,16 +95,16 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        //[HttpGet("{id}/[action]")]
-        //public async Task<IActionResult> Print(Guid id)
-        //{
-        //    var quotation = await _quotationService.Print(id);
-        //    if (quotation == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var html = _viewRenderService.Render<QuotationPrintVM>("Quotation/Print", quotation);
-        //    return Ok(new PrintData() { html = html });
-        //}
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> Print(Guid id)
+        {
+            var quotation = await _quotationService.Print(id);
+            if (quotation == null)
+            {
+                return NotFound();
+            }
+            var html = _viewRenderService.Render<QuotationPrintVM>("Quotation/Print", quotation);
+            return Ok(new PrintData() { html = html });
+        }
     }
 }
