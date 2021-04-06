@@ -371,6 +371,7 @@ namespace Infrastructure.Services
                 foreach (var product in products)
                 {
                     var quotationLine = new QuotationLine();
+                    quotationLine.Name = product.Name;
                     quotationLine.ProductId = product.Id;
                     quotationLine.QuotationId = quotation.Id;
                     quotationLine.Qty = toothIds.Count() > 0 ? toothIds.Count() : 1;
