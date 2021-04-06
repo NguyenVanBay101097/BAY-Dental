@@ -49,6 +49,12 @@ export class QuotationsBasic {
 }
 
 export class QuotationsDisplay {
+  /**
+   *
+   */
+  constructor() {
+    this.subPrice = this.listPrice;
+  }
   id: string;
   name: string;
   partner: PartnerSimple;
@@ -57,6 +63,8 @@ export class QuotationsDisplay {
   userId: string;
   dateQuotation: string;
   dateApplies: number;
+  subPrice: number;
+  listPrice: number;
   dateEndQuotation: string;
   note: string;
   totalAmount: number;

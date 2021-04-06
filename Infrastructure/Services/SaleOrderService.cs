@@ -81,7 +81,7 @@ namespace Infrastructure.Services
                 else
                     entity.Name = await sequenceService.NextByCode("sale.order");
             }
-            return entity;
+            return await base.CreateAsync(entity);
         }
 
         public async Task<SaleOrder> CreateOrderAsync(SaleOrderSave val)

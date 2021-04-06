@@ -58,18 +58,19 @@
                         {{dataItem.totalAmount | number}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="treatment" title="Phiếu điều trị" class="text-right" width="120">
+                <kendo-grid-column title="Phiếu điều trị" class="text-right" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <a class="text-primary" [routerLink]="['/']">
+                        <a *ngFor="let order of dataItem.orders; let i = index" class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: order.id}">
+                            {{order.name}}<span *ngIf="i < dataItem.orders.length -1">, </span>
                         </a>
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="state" title="Tình trạng" width="100">
+                <!-- <kendo-grid-column field="state" title="Tình trạng" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         <span *ngIf="dataItem.state == 'expired'">Còn hạn</span>
                         <span *ngIf="dataItem.state == 'unexpired'">Hết hạn</span>
                     </ng-template>
-                </kendo-grid-column>
+                </kendo-grid-column> -->
                 <kendo-grid-column field="id" width="100">
                     <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                         Thao tác

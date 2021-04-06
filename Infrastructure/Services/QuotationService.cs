@@ -77,6 +77,7 @@ namespace Infrastructure.Services
             var items = await query
                 .Include(x => x.Partner)
                 .Include(x => x.User)
+                .Include(x => x.Orders)
                 .Take(val.Limit)
                 .Skip(val.Offset)
                 .ToListAsync();
@@ -156,7 +157,7 @@ namespace Infrastructure.Services
 
                     else if (line.DiscountType == "percentage")
                         quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.Discount.HasValue ? line.Discount.Value : 0) / 100);
-                    
+
                     foreach (var toothId in line.ToothIds)
                     {
                         quoLine.QuotationLineToothRels.Add(new QuotationLineToothRel
@@ -324,14 +325,15 @@ namespace Infrastructure.Services
                             });
                         }
                     }
-
                     SaleOrderLines.Add(saleLine);
-                    var saleLineService = GetService<ISaleOrderLineService>();
-                    await saleLineService.CreateAsync(SaleOrderLines);
-
-                    saleOrderObj._AmountAll(saleOrder);
-                    await saleOrderObj.UpdateAsync(saleOrder);
                 }
+
+
+                var saleLineService = GetService<ISaleOrderLineService>();
+                await saleLineService.CreateAsync(SaleOrderLines);
+
+                saleOrderObj._AmountAll(saleOrder);
+                await saleOrderObj.UpdateAsync(saleOrder);
 
             }
 
@@ -344,7 +346,7 @@ namespace Infrastructure.Services
                .Include(x => x.Partner)
                .Include(x => x.User)
                .Include(x => x.Lines)
-               .Include(x => x.Company.Partner)
+               .Include(x => x.Company).ThenInclude(x => x.Partner)
                .Include(x => x.Payments).FirstOrDefaultAsync();
 
             if (quotation == null)

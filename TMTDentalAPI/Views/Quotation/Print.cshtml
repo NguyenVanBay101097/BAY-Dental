@@ -7,10 +7,9 @@
     <div class="d-flex mb-2">
         @if (Model.Company != null)
         {
-            @if (!string.IsNullOrEmpty(Model.Company.Logo))
-             {
-                <img class="img-fluid me-3" style="width: 150px;" src="@Model.Company.Logo" alt="@Model.Company.Name">
-             }
+@if (!string.IsNullOrEmpty(Model.Company.Logo))
+{
+<img class="img-fluid me-3" style="width: 150px;" src="@Model.Company.Logo" alt="@Model.Company.Name">}
                 <div>
                     <div class="text-xl font-semibold">@Model.Company.Name</div>
                     @*@if (!string.IsNullOrEmpty(Model.Company.Address))
@@ -19,14 +18,11 @@
                         }*@
                     @if (!string.IsNullOrEmpty(Model.Company.Phone))
                     {
-                        <div>ĐT: @Model.Company.Phone</div>
-                    }
+    <div>ĐT: @Model.Company.Phone</div>}
                     @if (!string.IsNullOrEmpty(Model.Company.Email))
                     {
-                        <div>Email: @Model.Company.Email</div>
-                    }
-                </div>
-             }
+    <div>Email: @Model.Company.Email</div>}
+                </div>}
 
     </div>
     <div class="text-center">
@@ -60,7 +56,8 @@
                 <td colspan="1" style="width: 100%;">
                     @Model.Partner.Phone
                 </td>
-            </tr>}
+            </tr>
+}
 
                         @if (!string.IsNullOrEmpty(Model.Partner.Address))
                         {
@@ -73,7 +70,8 @@
                 <td colspan="1" style="width: 100%;">
                     @Model.Partner.Address
                 </td>
-            </tr>}
+            </tr>
+}
                         @if (!string.IsNullOrEmpty(Model.Note))
                         {
             <tr>
@@ -85,7 +83,8 @@
                 <td colspan="1" style="width: 100%;">
                     @Model.Note
                 </td>
-            </tr>}
+            </tr>
+}
                     </tbody>
                 </table>
                 <table class="o_group o_inner_group o_group_col_6">
@@ -111,7 +110,8 @@
                 <td colspan="1" style="width: 100%;">
                     @Model.User.Name
                 </td>
-            </tr>}
+            </tr>
+}
 
 
                         <tr>
@@ -136,7 +136,8 @@
                 <td colspan="1" style="width: 100%;">
                     @Model.DateEndQuotation.Value.ToString("dd/MM/yyyy")
                 </td>
-            </tr>}
+            </tr>
+}
                     </tbody>
                 </table>
             </div>
@@ -158,13 +159,21 @@
             <tbody>
                 @foreach (var line in Model.Lines)
                 {
-    <tr *ngFor="let line of Lines; let i=index">
-        <td>@line.Name</td>
-        <td class="text-right">@string.Format(culture, "{0:0}", @line.Qty)</td>
-        <td class="text-right">@string.Format(culture, "{0:0}", @line.SubPrice)</td>
-        <td class="text-right">@string.Format(culture, "{0:0}", line.PercentDiscount)%</td>
-        <td class="text-right">@string.Format(culture, "{0:0,0}", line.Amount)</td>
-    </tr>}
+                <tr *ngFor="let line of Lines; let i=index">
+                    <td>@line.Name</td>
+                    <td class="text-right">@string.Format(culture, "{0:0}", @line.Qty)</td>
+                    <td class="text-right">@string.Format(culture, "{0:0}", @line.SubPrice)</td>
+
+                    @if (line.DiscountType == "percentage")
+                    {
+                <td class="text-right">@string.Format(culture, "{0:0}", line.Discount)%</td> }
+                                else if (line.DiscountType == "fixed")
+                                {
+                                    <td class="text-right">@string.Format(culture, "{0:0}", line.Discount)</td>
+                                }
+                    <td class="text-right">@string.Format(culture, "{0:0,0}", line.Amount)</td>
+                </tr>
+}
 
             </tbody>
         </table>
@@ -207,10 +216,12 @@
     <td>@payment.Payment</td>
     @if (payment.Date.HasValue)
     {
-<td class="text-right">@payment.Date.Value.ToString("dd/MM/yyyy")</td>}
+<td class="text-right">@payment.Date.Value.ToString("dd/MM/yyyy")</td>
+}
 
     <td class="text-right">@string.Format(culture, "{0:0,0}", payment.Amount)</td>
-</tr>}
+</tr>
+}
 
         </tbody>
     </table>
