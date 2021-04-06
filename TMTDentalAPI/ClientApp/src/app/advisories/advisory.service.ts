@@ -132,7 +132,7 @@ export class AdvisoryService {
   }
 
   getAdvisoryLinePaged(val: any): Observable<AdvisoryLinePagedResult> {
-    return this.http.get<AdvisoryLinePagedResult>(this.baseApi + this.apiUrl + "/GetAdvisoryLines", { params: new HttpParams({ fromObject: val }) });
+    return this.http.get<AdvisoryLinePagedResult>(this.baseApi + this.apiUrl + "/GetAdvisoryLinesPaged", { params: new HttpParams({ fromObject: val }) });
   }
 
   createQuotations(val:CreateFromAdvisoryInput){

@@ -50,7 +50,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAdvisoryLines([FromQuery] AdvisoryLinePaged val)
+        public async Task<IActionResult> GetAdvisoryLinesPaged([FromQuery] AdvisoryLinePaged val)
         {
             var res = await _advisoryService.GetAdvisoryLines(val);
             if (res == null)
