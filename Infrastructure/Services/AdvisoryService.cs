@@ -182,6 +182,14 @@ namespace Infrastructure.Services
 
         public async Task RemoveAdvisory(Guid id)
         {
+            var saleOrderLineService = GetService<ISaleOrderLineService>();
+            var quotationLineService = GetService<IQuotationLineService>();
+            var saleOrderLines = await saleOrderLineService.SearchQuery(x => x.AdvisoryId == id).ToListAsync();
+            var quotationLines = await quotationLineService.SearchQuery(x => x.AdvisoryId == id).ToListAsync();
+            if (saleOrderLines.Count() > 0 || quotationLines.Count() > 0)
+            {
+                throw new Exception("Bạn không thể xóa tư vấn đã tạo phiếu điều trị hoặc báo giá");
+            }
             var advisory = await SearchQuery(x => x.Id == id)
                 .Include(x => x.AdvisoryToothRels)
                 .Include(x => x.AdvisoryToothDiagnosisRels)
@@ -371,6 +379,7 @@ namespace Infrastructure.Services
                 foreach (var product in products)
                 {
                     var quotationLine = new QuotationLine();
+                    quotationLine.Name = product.Name;
                     quotationLine.ProductId = product.Id;
                     quotationLine.QuotationId = quotation.Id;
                     quotationLine.Qty = toothIds.Count() > 0 ? toothIds.Count() : 1;

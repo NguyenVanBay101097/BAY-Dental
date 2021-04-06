@@ -176,7 +176,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class QuotationSimple
     {
-        public Guid Guid { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
     }
 
