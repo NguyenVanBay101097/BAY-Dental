@@ -87,5 +87,16 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
             return NoContent();
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetProducts([FromQuery] IEnumerable<Guid> ids)
+        {
+            var result = await _toothDiagnosisService.GetProducts(ids);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
     }
 }

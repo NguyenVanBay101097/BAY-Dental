@@ -127,5 +127,25 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
             await DeleteAsync(advisory);
         }
+
+        public async Task<IEnumerable<ProductSimple>> GetProducts(IEnumerable<Guid> ids)
+        {
+            var query = SearchQuery();
+
+            if (ids != null && ids.Any())
+            {
+                query = query.Where(x => ids.Contains(x.Id));
+            }
+
+            var products = await query.Include(x => x.ToothDiagnosisProductRels).ThenInclude(x => x.Product)
+                .SelectMany(x => x.ToothDiagnosisProductRels).Select(x => x.Product).Distinct()
+                .Select(x => new ProductSimple
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                }).ToListAsync();
+
+            return products;
+        }
     }
 }
