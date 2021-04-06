@@ -1,10 +1,11 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { switchMap } from 'rxjs/operators';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
@@ -12,6 +13,8 @@ import { PrintService } from 'src/app/shared/services/print.service';
 import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { UserSimple } from 'src/app/users/user-simple';
+import { UserBasic, UserPaged, UserService } from 'src/app/users/user.service';
 import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../quotation.service';
 
 @Component({
@@ -27,6 +30,7 @@ import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../qu
   styleUrls: ['./quotation-create-update-form.component.css']
 })
 export class QuotationCreateUpdateFormComponent implements OnInit {
+  @ViewChild('advisoryCbx', { static: true }) advisoryCbx: ComboBoxComponent;
   formGroup: FormGroup;
   formGroupInfo: FormGroup;
   partner: any;
@@ -42,6 +46,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   teethSelected: any[] = [];
   filteredToothCategories: any[] = [];
   quotation: QuotationsDisplay;
+  advisotyData: UserSimple[] = [];
+  search: '';
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
 
 
@@ -57,11 +63,10 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     private saleOrderService: SaleOrderService,
     private saleOrderOdataService: SaleOrdersOdataService,
     private printService: PrintService,
-
+    private userService: UserService
   ) { }
 
   ngOnInit() {
-    // debugger;
     this.formGroup = this.fb.group({
       partnerId: ['', Validators.required],
       userId: ['', Validators.required],
@@ -70,12 +75,26 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       dateApplies: [0, Validators.required],
       dateEndQuotation: '',
       companyId: '',
+      advisoryUserId: null,
+      advisoryUser: null,
       lines: this.fb.array([
       ]),
       payments: this.fb.array([]),
     })
     this.routeActive();
     this.loadToothCategories();
+
+    this.loadUser();
+
+    this.advisoryCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => this.advisoryCbx.loading = true),
+      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
+    ).subscribe(
+      rs => {
+        this.advisotyData = rs;
+        this.advisoryCbx.loading = false;
+      });
   }
 
   routeActive() {
@@ -127,12 +146,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.diagnostic = val.diagnostic;
     line.discount = val.discount ? val.discount : 0;
     line.discountType = val.discountType ? val.discountType : 'percentage';
-    line.product = val.product;
     line.productId = val.productId;
-    line.qty = val.qty;
-    line.subPrice = val.subPrice;
+    line.qty = val.qty ? val.qty : 1;
+    line.subPrice = val.subPrice ? val.subPrice : 0;
     line.name = val.name;
-    line.teeth = val.teeth ? val.teeth : this.fb.array([])
+    line.teeth = val.teeth ? val.teeth : this.fb.array([]);
     line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
     line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
     var res = this.fb.group(line);
@@ -163,7 +181,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     }
     this.quotationService.createSaleOrderByQuotation(this.quotationId).subscribe(
       (result: any) => {
-        this.router.navigate(['sale-orders/form'], { queryParams: { id: result.Id } });
+        this.router.navigate(['sale-orders/form'], { queryParams: { id: result.id } });
       }
     )
   }
@@ -407,6 +425,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     value.companyId = this.quotation.companyId;
     if (value.lines) {
       value.lines.forEach(line => {
+        line.toothIds = [];
         if (line.teeth) {
           line.toothIds = line.teeth.map(x => x.id)
         }
@@ -461,6 +480,20 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.patchValue(line.value);
   }
 
+  loadUser() {
+    this.searchUsers().subscribe(
+      result => {
+        this.advisotyData = result;
+      }
+    )
+  }
+
+  searchUsers(search?: string) {
+    debugger
+    var val = new UserPaged();
+    val.search = search;
+    return this.userService.autocompleteSimple(val)
+  }
 }
 
 

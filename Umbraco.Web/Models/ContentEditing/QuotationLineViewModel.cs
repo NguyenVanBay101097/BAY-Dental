@@ -69,7 +69,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Giảm giá theo %
         /// </summary>
-        public int PercentDiscount { get; set; }
+        public int Discount { get; set; }
+
+        /// <summary>
+        /// Giảm giá theo %
+        /// </summary>
+        public string DiscountType { get; set; }
 
         /// <summary>
         /// Tổng tiền trên 1 dịch vụ
@@ -142,6 +147,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Loại răng: răng sữa, răng vĩnh viễn !!!
         /// </summary>
         public Guid ToothCategoryId { get; set; }
+
+        /// <summary>
+        /// Người tư vấn
+        /// </summary>
+        public Guid AdvisoryId { get; set; }
 
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
     }

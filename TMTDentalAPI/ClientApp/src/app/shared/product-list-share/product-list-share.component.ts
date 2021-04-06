@@ -86,9 +86,8 @@ export class ProductListShareComponent implements OnInit {
   addServiceToSaleOrder(item) {
     var value = {
       name: item.name,
-      subPrice: item.subPrice,
+      subPrice: item.listPrice,
       productId: item.id,
-      product: item,
       qty: 1,
     };
     this.newEventEmiter.emit(value);

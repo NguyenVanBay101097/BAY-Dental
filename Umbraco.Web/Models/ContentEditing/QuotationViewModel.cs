@@ -58,6 +58,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Danh sách thanh toán
         /// </summary>
         public IEnumerable<PaymentQuotationDisplay> Payments { get; set; } = new List<PaymentQuotationDisplay>();
+        public IEnumerable<SaleOrderSimple> Orders { get; set; } = new List<SaleOrderSimple>();
     }
 
     public class QuotationDisplay
@@ -149,6 +150,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
 
         public Guid CompanyId { get; set; }
+
 
         public IEnumerable<QuotationLineSave> Lines { get; set; } = new List<QuotationLineSave>();
 

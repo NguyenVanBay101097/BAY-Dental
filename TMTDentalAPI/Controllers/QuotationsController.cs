@@ -80,8 +80,9 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-
+            await _unitOfWork.BeginTransactionAsync();
             var res = await _quotationService.CreateSaleOrderByQuotation(id);
+            _unitOfWork.Commit();
             return Ok(res);
         }
 
