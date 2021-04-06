@@ -100,7 +100,11 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     val.ids = this.mySelection;
     this.advisoryService.createQuotations(val).subscribe(
       result => {
-        
+        this.router.navigate(['/quotations/form'], {
+          queryParams: {
+            id: result.id
+          },
+        });
       }
     )
   }
@@ -116,7 +120,11 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     val.ids = this.mySelection;
     this.advisoryService.createSaleOrder(val).subscribe(
       result => {
-        
+        this.router.navigate(['/sale-orders/form'], {
+          queryParams: {
+            id: result.id
+          },
+        });
       }
     )
   }

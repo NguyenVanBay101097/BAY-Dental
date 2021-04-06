@@ -1,30 +1,30 @@
 <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        title="Ngày tạo" width="150">
+        title="Ngày tạo" width="120">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{dataItem.date | date:'shortDate'}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        title="Số phiếu" width="200">
+        title="Số phiếu" width="100">
         <ng-template kendoGridCellTemplate let-dataItem>
             <a class="text-primary" (click)="getFormReference(dataItem.id,dataItem.type)">{{dataItem.name}}</a>
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        title="Dịch vụ" width="120">
+        title="Dịch vụ" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{dataItem.productName}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        title="Bác sĩ" width="100">
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        title="Bác sĩ" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{dataItem.doctorName}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        title="Số lượng" width="150">
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        title="Số lượng" width="100">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{dataItem.qty}}
         </ng-template>

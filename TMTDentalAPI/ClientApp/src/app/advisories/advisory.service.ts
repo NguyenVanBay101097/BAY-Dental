@@ -136,11 +136,11 @@ export class AdvisoryService {
   }
 
   createQuotations(val:CreateFromAdvisoryInput){
-    return this.http.post(this.baseApi + this.apiUrl + "/" + "CreateQuotation", val);
+    return this.http.post<any>(this.baseApi + this.apiUrl + "/" + "CreateQuotation", val);
   }
 
   createSaleOrder(val:CreateFromAdvisoryInput){
-    return this.http.post(this.baseApi + this.apiUrl + "/" + "CreateSaleOrder", val);
+    return this.http.post<any>(this.baseApi + this.apiUrl + "/" + "CreateSaleOrder", val);
   }
   
 }
