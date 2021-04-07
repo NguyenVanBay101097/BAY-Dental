@@ -210,10 +210,9 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
 
   onChangeToothCategory(value: any) {
     if (value.id) {
-      this.teethSelected = [];
+     // this.teethSelected = [];
       this.loadTeethMap(value);
       this.cateId = value.id;
-      this.loadDataFromApi();
     }
   }
 

@@ -382,7 +382,7 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon)
                 .Include(x => x.Order).ToListAsync();
 
-            if (self.Any(x => x.State != "draft" && x.State != "cancel"))
+            if (self.Any(x => x.State != "draft" && x.State != "sale" && x.State != "cancel"))
                 throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
 
             foreach (var line in self.Where(x => x.IsRewardLine))

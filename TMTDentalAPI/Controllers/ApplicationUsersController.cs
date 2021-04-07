@@ -335,8 +335,8 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> AutocompleteSimple(ApplicationUserPaged val)
         {
             var companyId = CompanyId;
-            var query = _userManager.Users.Where(x => (val.HasRoot.HasValue && x.IsUserRoot == val.HasRoot.Value));
-            var res = await query.Where(x => (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
+            //var query = _userManager.Users.Where(x => (val.HasRoot.HasValue && x.IsUserRoot == val.HasRoot.Value));
+            var res = await _userManager.Users.Where(x => (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
            x.UserName.Contains(val.Search) || x.NormalizedUserName.Contains(val.Search)) && (x.ResCompanyUsersRels.Any(x => x.CompanyId == companyId) || x.CompanyId == companyId))
                 .OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
                 .Select(x => new ApplicationUserSimple
