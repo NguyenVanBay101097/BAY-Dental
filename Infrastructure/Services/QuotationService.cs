@@ -32,7 +32,9 @@ namespace Infrastructure.Services
                 .Include(x => x.User)
                 .Include(x => x.Payments)
                 .Include(x => x.Lines)
+                .Include(x => x.Orders)
                 .Include("Lines.Product")
+                .Include("Lines.AdvisoryUser")
                 .Include("Lines.Advisory")
                 .Include("Lines.ToothCategory")
                 .Include("Lines.QuotationLineToothRels")
@@ -72,14 +74,15 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateQuotation <= val.DateTo.Value);
             }
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search));
+                query = query.Where(x => x.Name.Contains(val.Search) || x.User.Name.Contains(val.Search));
             var totalItem = await query.CountAsync();
             var items = await query
                 .Include(x => x.Partner)
                 .Include(x => x.User)
                 .Include(x => x.Orders)
-                .Take(val.Limit)
                 .Skip(val.Offset)
+                .Take(val.Limit)
+                .OrderByDescending(x => x.DateCreated)
                 .ToListAsync();
             return new PagedResult2<QuotationBasic>(totalItem, val.Offset, val.Limit)
             {

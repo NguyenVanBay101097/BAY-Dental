@@ -38,7 +38,10 @@ export class PartnerCustomerSaleOrderQuotationsLinesComponent implements OnInit 
         total: res.totalItems
       };
       this.loading = false;
+      console.log(this.gridData);
     })
+    
+    
   }
 
   getFormReference(id , type){

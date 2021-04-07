@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../core/paged-result-2';
+import { ProductSimple } from '../products/product-simple';
 
 
 export class ToothDiagnosis {
@@ -52,6 +53,10 @@ export class ToothDiagnosisService {
 
   delete(id: string) {
     return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+  }
+
+  getProducts(ids) {
+    return this.http.get<ProductSimple[]>(this.baseApi + this.apiUrl + "/getProducts", { params: new HttpParams({ fromObject: { ids : ids } }) });
   }
 
 }
