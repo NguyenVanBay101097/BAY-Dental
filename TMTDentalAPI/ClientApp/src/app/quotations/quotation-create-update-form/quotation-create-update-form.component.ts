@@ -463,6 +463,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   searchUsers(search: string) {
     var val = new UserPaged();
     val.search = search;
+    val.hasRoot = false;
     return this.userService.autocompleteSimple(val)
   }
 }

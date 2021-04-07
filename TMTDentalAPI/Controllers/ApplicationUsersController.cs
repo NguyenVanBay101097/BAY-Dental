@@ -62,7 +62,7 @@ namespace TMTDentalAPI.Controllers
             var query = _userManager.Users;
             if (!string.IsNullOrEmpty(val.SearchNameUserName))
                 query = query.Where(x => x.Name.Contains(val.SearchNameUserName) || x.UserName.Contains(val.SearchNameUserName));
-            if (!val.hasRoot.HasValue || val.hasRoot == false)
+            if (!val.HasRoot.HasValue || val.HasRoot == false)
                 query = query.Where(x=> x.IsUserRoot != true);
             // không lấy những user mà employee bị ẩn
             var exIds = await _employeeService.SearchQuery(x => x.Active == false && x.UserId != null).Select(x=> x.UserId).ToListAsync();
