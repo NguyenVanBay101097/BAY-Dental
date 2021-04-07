@@ -360,7 +360,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSelected(tooth: ToothDisplay) {
-    if (this.stateControl.value !== 'draft') {
+    if (!this.isEditSate()) {
       return;
     }
     if (this.isSelected(tooth)) {
@@ -1080,15 +1080,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.getPriceSubTotal();
     this.orderLines.markAsDirty();
     this.computeAmountTotal();
-    if (this.formGroup.get('State').value == "sale") {
-      var val = this.getFormDataSave();
-      this.saleOrderOdataService.update(this.saleOrderId, val).subscribe(() => {
-        this.notify('success', 'Lưu thành công');
-        this.loadRecord();
-      }, () => {
-        this.loadRecord();
-      });
-    }
+    // if (this.formGroup.get('State').value == "sale") {
+    //   var val = this.getFormDataSave();
+    //   this.saleOrderOdataService.update(this.saleOrderId, val).subscribe(() => {
+    //     this.notify('success', 'Lưu thành công');
+    //     this.loadRecord();
+    //   }, () => {
+    //     this.loadRecord();
+    //   });
+    // }
     this.saleOrderLine = null;
   }
 
@@ -1168,7 +1168,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   deleteLine(index: number) {
-    if (this.formGroup.get('State').value == "draft" || this.formGroup.get('State').value == "cancel") {
+    if (this.isEditSate() || this.formGroup.get('State').value == "cancel") {
       this.orderLines.removeAt(index);
       this.computeAmountTotal();
       this.orderLines.markAsDirty();
@@ -1422,6 +1422,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   isLaboLine(line: FormGroup) {
     return line.get('ProductIsLabo') && line.get('ProductIsLabo').value;
+  }
+
+  isEditSate() {
+    return ['draft', 'sale'].indexOf(this.getState) !== -1
   }
 }
 

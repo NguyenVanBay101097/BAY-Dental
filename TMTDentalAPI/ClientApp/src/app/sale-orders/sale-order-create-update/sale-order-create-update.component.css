@@ -29,14 +29,15 @@
 }
 
 .b-table-border thead tr th {
-    border-right: 1px solid #dee2e6 ;
-    border-top: 1px solid #dee2e6 ;
-    border-bottom: 1px solid #dee2e6 ;
+    border-right: 1px solid #dee2e6;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
 }
 
 .b-table-border thead tr th:first-child {
-    border-left: 1px solid #dee2e6 ;
+    border-left: 1px solid #dee2e6;
 }
+
 
 /* .b-table-border td {
     border-right: 1px solid #dee2e6;
@@ -51,7 +52,7 @@
 }
 
 .b-table-border td:first-child {
-    border-left: 1px solid #dee2e6 ;
+    border-left: 1px solid #dee2e6;
 }
 
 .b-sticky-left {
@@ -78,7 +79,6 @@
     cursor: pointer;
 }
 
-
 .tr-line-info td {
     border-right: 1px solid #dee2e6;
     border-top: none;
@@ -91,8 +91,10 @@
 }
 
 .teeth-map td {
-  border: none !important;
-  border-left: none !important;
+    border: none !important;
+    border-left: none !important;
 }
 
-
+.p-3px {
+    padding: 3px !important;
+}
