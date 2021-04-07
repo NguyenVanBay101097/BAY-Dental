@@ -90,6 +90,11 @@
     color: #fff;
 }
 
+.tooth-item.selected {
+    background-color: rgb(68, 209, 209);
+    color: white;
+}
+
 .teeth-map td {
     border: none !important;
     border-left: none !important;

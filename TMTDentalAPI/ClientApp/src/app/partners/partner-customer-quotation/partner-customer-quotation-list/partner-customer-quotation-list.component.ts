@@ -20,7 +20,7 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
   gridData: GridDataResult;
   dateFrom: Date;
   dateTo: Date;
-  limit: number = 10;
+  limit: number = 20;
   skip: number = 0;
   loading = false;
   search: string;
@@ -117,7 +117,6 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
 
   pageChange(event) {
     this.skip = event.skip;
-    console.log(this.skip);
     this.loadDataFromApi();
   }
 

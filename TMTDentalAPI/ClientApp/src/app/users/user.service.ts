@@ -36,6 +36,7 @@ export class UserPaged {
     limit: number;
     searchNameUserName: string;
     search: string;
+    hasRoot: boolean;
 }
 
 export class UserChangeCurrentCompanyVM {

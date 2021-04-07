@@ -107,7 +107,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.formGroup.get('partnerId').patchValue(result.partnerId);
           this.formGroup.get('userId').patchValue(result.userId);
           this.formGroup.get('dateQuotation').patchValue(new Date(result.dateQuotation));
-          this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "dd/MM/yyyy"));
+          this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "MM/dd/yyyy"));
           this.formGroup.get('dateApplies').patchValue(result.dateApplies)
           const control = this.formGroup.get('lines') as FormArray;
           control.clear();
@@ -463,6 +463,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   searchUsers(search: string) {
     var val = new UserPaged();
     val.search = search;
+    val.hasRoot = false;
     return this.userService.autocompleteSimple(val)
   }
 }

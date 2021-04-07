@@ -12,7 +12,7 @@
                 </div>
                 <div class="o_cp_searchview">
                     <div class="o_searchview">
-                        <input class="o_searchview_input" placeholder="Tìm kiếm theo số báo giá" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                        <input class="o_searchview_input" placeholder="Tìm kiếm theo số báo giá, và người báo giá" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                     </div>
                 </div>
                 <div class="o_cp_left">
@@ -71,7 +71,7 @@
                         <span *ngIf="dataItem.state == 'unexpired'">Hết hạn</span>
                     </ng-template>
                 </kendo-grid-column> -->
-                <kendo-grid-column field="id" width="100">
+                <kendo-grid-column field="id" width="50" class="text-center">
                     <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                         Thao tác
                     </ng-template>

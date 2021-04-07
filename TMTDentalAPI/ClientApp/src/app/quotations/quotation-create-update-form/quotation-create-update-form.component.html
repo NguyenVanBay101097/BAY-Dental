@@ -24,7 +24,7 @@
                         <button *ngIf="quotationId" type="button" accesskey="1" class="btn btn-primary btn-sm" (click)="onCreateSaleOrder()">
                             Tạo phiếu điều trị
                         </button>
-                        <button *ngIf="quotationId" type="button" class="btn btn-secondary btn-sm" (click)="printQuotation()">
+                        <button *ngIf="quotationId" type="button" class="btn btn-primary btn-sm" (click)="printQuotation()">
                             In phiếu
                         </button>
                         <button *ngIf="quotationId" type="button" class="btn btn-secondary btn-sm" (click)="onCreateNewQuotation()">
@@ -55,16 +55,6 @@
                                     <span *ngIf="user">{{user.name}}</span>
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ghi chú
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
-                                </td>
-                            </tr>
                             <tr *ngIf="saleOrders.length != 0">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -73,6 +63,16 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <a *ngFor="let order of saleOrders; let i = index" [routerLink]="['/sale-orders/form']" [queryParams]="{id: order.id}">{{order.name}}<span *ngIf="i < saleOrders.length -1">, </span></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Ghi chú
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -130,10 +130,10 @@
                                 <tr>
                                     <th class="text-center"><b>*</b></th>
                                     <th style="min-width: 200px;">Dịch vụ</th>
-                                    <th style="min-width: 80px;" class="text-right">SL</th>
-                                    <th style="min-width: 120px;" class="text-right">Đơn giá</th>
-                                    <th style="min-width: 100px;" class="text-right">Giảm</th>
-                                    <th style="min-width: 100px;" class="text-right">Thành tiền</th>
+                                    <th style="min-width: 80px;" class="text-left">SL</th>
+                                    <th style="min-width: 120px;" class="text-left">Đơn giá</th>
+                                    <th style="min-width: 100px;" class="text-left">Giảm</th>
+                                    <th style="min-width: 100px;" class="text-left">Thành tiền</th>
                                     <th style="min-width: 50px;" class="text-center">#</th>
                                 </tr>
                             </thead>
@@ -152,11 +152,11 @@
                                             <kendo-numerictextbox style="width:100px" [min]="1" [format]="'n0'" [autoCorrect]="true" formControlName="qty">
                                             </kendo-numerictextbox>
                                         </td>
-                                        <td class="text-right" style="width:100px">
+                                        <td class="text-right" style="width:120px">
                                             <kendo-numerictextbox style="width:120px" [min]="0" [spinners]="false" [autoCorrect]="true" [format]="'n0'" formControlName="subPrice">
                                             </kendo-numerictextbox>
                                         </td>
-                                        <td class="text-right" style="width:100px">
+                                        <td class="text-center" style="width:120px">
                                             <app-discount-popover-share [line]="line.value" (lineDiscountEvent)="onChangeDiscount($event,line)">
                                             </app-discount-popover-share>
                                         </td>
@@ -257,17 +257,17 @@
                             <th>Hình thức thanh toán</th>
                             <th>Ngày thanh toán</th>
                             <th>Số tiền thanh toán</th>
-                            <th>#</th>
+                            <th class="text-center">#</th>
                         </tr>
                     </thead>
                     <tbody formArrayName="payments" *ngIf="paymentsArray">
                         <ng-container *ngFor="let payment of paymentsArray.controls; let i = index;">
                             <tr [formGroupName]="i">
-                                <td>
+                                <td class="text-right">
                                     {{i + 1}}
                                 </td>
                                 <td>
-                                    <kendo-numerictextbox [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="payment">
+                                    <kendo-numerictextbox class="form-control" [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="payment">
                                     </kendo-numerictextbox>
                                 </td>
                                 <td>
@@ -277,13 +277,13 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <kendo-datepicker formControlName='date'>
+                                    <kendo-datepicker class="form-control" formControlName='date'>
                                     </kendo-datepicker>
                                 </td>
                                 <td>
                                     <span class="float-right">{{computeAmount(payment)|number}}</span>
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <i class="fas fa-trash" (click)="deletePayment(i)"></i>
                                 </td>
                             </tr>
