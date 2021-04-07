@@ -55,7 +55,7 @@
                                     <span *ngIf="user">{{user.name}}</span>
                                 </td>
                             </tr>
-                            <tr *ngIf="saleOrders.length != 0">
+                            <tr *ngIf="saleOrders && saleOrders.length > 0">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Phiếu điều trị
