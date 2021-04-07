@@ -2,7 +2,7 @@
     #popOver="ngbPopover" [placement]="popOverPlace" data-container="body" triggers="manual"
     (click)="toggleWithTags(popOver, tags)">
     <span class="badge badge-info">
-        <i class="fa fa-tags"></i>
+        <i class="fa fa-tags"> </i>
     </span>
     <span *ngFor="let tag of tags" class="badge badge-secondary mr-1" [ngClass]="'o_tag_color_' + tag.Color">
         {{tag.name}}
