@@ -63,11 +63,11 @@ namespace TMTDentalAPI.Controllers
             if (!string.IsNullOrEmpty(val.SearchNameUserName))
                 query = query.Where(x => x.Name.Contains(val.SearchNameUserName) || x.UserName.Contains(val.SearchNameUserName));
             if (!val.HasRoot.HasValue || val.HasRoot == false)
-                query = query.Where(x=> x.IsUserRoot != true);
+                query = query.Where(x => x.IsUserRoot != true);
             // không lấy những user mà employee bị ẩn
-            var exIds = await _employeeService.SearchQuery(x => x.Active == false && x.UserId != null).Select(x=> x.UserId).ToListAsync();
+            var exIds = await _employeeService.SearchQuery(x => x.Active == false && x.UserId != null).Select(x => x.UserId).ToListAsync();
             if (exIds.Any())
-                query = query.Where(x=> !exIds.Contains(x.Id)) ;
+                query = query.Where(x => !exIds.Contains(x.Id));
 
             var companyId = CompanyId;
             query = query.Where(x => x.CompanyId == companyId);
@@ -335,8 +335,9 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> AutocompleteSimple(ApplicationUserPaged val)
         {
             var companyId = CompanyId;
-            var res = await _userManager.Users.Where(x => (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
-            x.UserName.Contains(val.Search) || x.NormalizedUserName.Contains(val.Search)) && (x.ResCompanyUsersRels.Any(x => x.CompanyId == companyId) || x.CompanyId == companyId))
+            var query = _userManager.Users.Where(x => (val.HasRoot.HasValue && x.IsUserRoot == val.HasRoot.Value));
+            var res = await query.Where(x => (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
+           x.UserName.Contains(val.Search) || x.NormalizedUserName.Contains(val.Search)) && (x.ResCompanyUsersRels.Any(x => x.CompanyId == companyId) || x.CompanyId == companyId))
                 .OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
                 .Select(x => new ApplicationUserSimple
                 {
@@ -521,7 +522,7 @@ namespace TMTDentalAPI.Controllers
                     row_tmp++;
 
                 // add userRole
-                if(!string.IsNullOrEmpty(existRoleName))
+                if (!string.IsNullOrEmpty(existRoleName))
                 {
                     var result2 = await _userManager.AddToRoleAsync(user, existRoleName);
                     if (!result2.Succeeded)
