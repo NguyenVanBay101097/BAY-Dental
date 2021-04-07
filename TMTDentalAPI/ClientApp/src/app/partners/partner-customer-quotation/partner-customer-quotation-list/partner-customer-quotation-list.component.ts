@@ -117,7 +117,6 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
 
   pageChange(event) {
     this.skip = event.skip;
-    console.log(this.skip);
     this.loadDataFromApi();
   }
 
