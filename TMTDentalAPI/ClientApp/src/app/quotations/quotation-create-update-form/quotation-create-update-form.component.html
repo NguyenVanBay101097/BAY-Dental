@@ -21,16 +21,13 @@
                         <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
                             Lưu
                         </button>
-                        <button *ngIf="quotationId" type="button" accesskey="1" class="btn btn-primary btn-sm"
-                            (click)="onCreateSaleOrder()">
+                        <button *ngIf="quotationId" type="button" accesskey="1" class="btn btn-primary btn-sm" (click)="onCreateSaleOrder()">
                             Tạo phiếu điều trị
                         </button>
-                        <button *ngIf="quotationId" type="button" class="btn btn-secondary btn-sm"
-                            (click)="printQuotation()">
+                        <button *ngIf="quotationId" type="button" class="btn btn-primary btn-sm" (click)="printQuotation()">
                             In phiếu
                         </button>
-                        <button *ngIf="quotationId" type="button" class="btn btn-secondary btn-sm"
-                            (click)="onCreateNewQuotation()">
+                        <button *ngIf="quotationId" type="button" class="btn btn-secondary btn-sm" (click)="onCreateNewQuotation()">
                             Thêm mới
                         </button>
                     </div>
@@ -45,8 +42,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="partner"
-                                        [routerLink]="['/partners/customer/' + partner.id]">{{partner.displayName}}</a>
+                                    <a *ngIf="partner" [routerLink]="['/partners/customer/' + partner.id]">{{partner.displayName}}</a>
                                 </td>
                             </tr>
                             <tr>
@@ -57,6 +53,16 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="user">{{user.name}}</span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="saleOrders.length != 0">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Phiếu điều trị
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <a *ngFor="let order of saleOrders; let i = index" [routerLink]="['/sale-orders/form']" [queryParams]="{id: order.id}">{{order.name}}<span *ngIf="i < saleOrders.length -1">, </span></a>
                                 </td>
                             </tr>
                             <tr>
@@ -80,8 +86,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName='dateQuotation'
-                                        (valueChange)="onDateChange($event)">
+                                    <kendo-datepicker formControlName='dateQuotation' (valueChange)="onDateChange($event)">
                                     </kendo-datepicker>
                                 </td>
                             </tr>
@@ -92,9 +97,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="1" [autoCorrect]="true" [format]="'n0'"
-                                        [spinners]="false" formControlName="dateApplies"
-                                        (valueChange)="onDateAppliesChange($event)">
+                                    <kendo-numerictextbox [min]="1" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="dateApplies" (valueChange)="onDateAppliesChange($event)">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -127,10 +130,10 @@
                                 <tr>
                                     <th class="text-center"><b>*</b></th>
                                     <th style="min-width: 200px;">Dịch vụ</th>
-                                    <th style="min-width: 80px;" class="text-right">SL</th>
-                                    <th style="min-width: 120px;" class="text-right">Đơn giá</th>
-                                    <th style="min-width: 100px;" class="text-right">Giảm</th>
-                                    <th style="min-width: 100px;" class="text-right">Thành tiền</th>
+                                    <th style="min-width: 80px;" class="text-left">SL</th>
+                                    <th style="min-width: 120px;" class="text-left">Đơn giá</th>
+                                    <th style="min-width: 100px;" class="text-left">Giảm</th>
+                                    <th style="min-width: 100px;" class="text-left">Thành tiền</th>
                                     <th style="min-width: 50px;" class="text-center">#</th>
                                 </tr>
                             </thead>
@@ -138,32 +141,28 @@
                                 <ng-container *ngFor="let line of linesArray.controls; let i=index">
                                     <tr [formGroupName]="i">
                                         <td class="text-center">
-                                            <a
-                                                (click)="selectedLine = selectedLine === line ? null : line; createFormInfo(line.value)">
-                                                <i class="fas text-primary"
-                                                    [ngClass]="selectedLine !== line ? 'fa-plus': 'fa-minus'"></i></a>
+                                            <a (click)="selectedLine = selectedLine === line ? null : line; createFormInfo(line.value)">
+                                                <i class="fas text-primary" [ngClass]="selectedLine !== line ? 'fa-plus': 'fa-minus'"></i></a>
                                         </td>
                                         <td>
                                             <span class="mb-0">
                                                 {{line.get('name').value }}</span>
                                         </td>
                                         <td class="text-right" style="width:100px">
-                                            <kendo-numerictextbox style="width:100px" [min]="1" [format]="'n0'"
-                                                [autoCorrect]="true" formControlName="qty">
+                                            <kendo-numerictextbox style="width:100px" [min]="1" [format]="'n0'" [autoCorrect]="true" formControlName="qty">
                                             </kendo-numerictextbox>
                                         </td>
-                                        <td class="text-right" style="width:100px">
-                                            <kendo-numerictextbox style="width:120px" [min]="0" [spinners]="false"
-                                                [autoCorrect]="true" [format]="'n0'" formControlName="subPrice">
+                                        <td class="text-right" style="width:120px">
+                                            <kendo-numerictextbox style="width:120px" [min]="0" [spinners]="false" [autoCorrect]="true" [format]="'n0'" formControlName="subPrice">
                                             </kendo-numerictextbox>
                                         </td>
-                                        <td class="text-right" style="width:100px">
-                                            <app-discount-popover-share [line]="line.value"
-                                                (lineDiscountEvent)="onChangeDiscount($event,line)">
+                                        <td class="text-center" style="width:120px">
+                                            <app-discount-popover-share [line]="line.value" (lineDiscountEvent)="onChangeDiscount($event,line)">
                                             </app-discount-popover-share>
                                         </td>
                                         <td class="text-right" style="width:100px;">
                                             <span class="mb-0 mt-2">{{computeTotalPrice(line) | number}}</span>
+                                            <!-- <span>{{line.get('amount') ? line.get('amount').value : 0}}</span> -->
                                         </td>
                                         <td class="text-center">
                                             <span class="mt-2">
@@ -188,10 +187,7 @@
                                                                     Người tư vấn
                                                                 </label>
                                                                 <div class="col-sm-10">
-                                                                    <kendo-combobox formControlName="advisoryUser"
-                                                                        [filterable]="true" [data]="advisotyData"
-                                                                        #advisoryCbx [valueField]="'id'"
-                                                                        [textField]="'name'">
+                                                                    <kendo-combobox formControlName="advisoryUser" [filterable]="true" [data]="filteredAdvisoryUsers" (filterChange)="loadUser($event)" [valueField]="'id'" [textField]="'name'">
                                                                     </kendo-combobox>
                                                                 </div>
                                                             </div>
@@ -200,33 +196,20 @@
                                                                     Chuẩn đoán
                                                                 </label>
                                                                 <div class="col-sm-10">
-                                                                    <textarea formControlName="diagnostic"
-                                                                        class="form-control"></textarea>
+                                                                    <textarea formControlName="diagnostic" class="form-control"></textarea>
                                                                 </div>
                                                             </div>
                                                             <div class="d-inline-flex w-100">
-                                                                <div *ngFor="let item of filteredToothCategories; let i = index"
-                                                                    class="form-check form-check-inline"
-                                                                    style="vertical-align: -webkit-baseline-middle;">
-                                                                    <input class="form-check-input" type="radio"
-                                                                        formControlName="toothCategory"
-                                                                        [checked]="item.id == line.get('toothCategoryId').value"
-                                                                        (change)="onChangeToothCategory(item)"
-                                                                        [id]="'toothCategory' + i" name="toothCategory"
-                                                                        [value]="item">
-                                                                    <label class="form-check-label"
-                                                                        [for]="'toothCategory' + i">{{item.name}}</label>
+                                                                <div *ngFor="let item of filteredToothCategories; let i = index" class="form-check form-check-inline" style="vertical-align: -webkit-baseline-middle;">
+                                                                    <input class="form-check-input" type="radio" formControlName="toothCategory" [checked]="item.id == line.get('toothCategoryId').value" (change)="onChangeToothCategory(item)" [id]="'toothCategory' + i" name="toothCategory" [value]="item">
+                                                                    <label class="form-check-label" [for]="'toothCategory' + i">{{item.name}}</label>
                                                                 </div>
                                                             </div>
                                                             <div class="teeth-map">
                                                                 <table class="table">
                                                                     <tr *ngFor="let ham of hamList | keyvalue">
-                                                                        <td [ngClass]="{'text-right': vitri.key === '0_right'}"
-                                                                            *ngFor="let vitri of ham.value | keyvalue">
-                                                                            <div (click)="onSelected(rang)"
-                                                                                class="tooth-item"
-                                                                                [ngClass]="{'selected': isSelected(rang)}"
-                                                                                *ngFor="let rang of vitri.value">
+                                                                        <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
+                                                                            <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
                                                                                 {{rang.name}}
                                                                             </div>
                                                                         </td>
@@ -234,12 +217,9 @@
                                                                 </table>
                                                             </div>
                                                             <div class="popover-footer">
-                                                                <button
-                                                                    (click)="selectedLine = null;updateLineInfo(line)"
-                                                                    class="btn btn-sm btn-primary ml-auto">Cập
+                                                                <button (click)="selectedLine = null;updateLineInfo(line)" class="btn btn-sm btn-primary ml-auto">Cập
                                                                     nhật</button>
-                                                                <button (click)="selectedLine = null"
-                                                                    class="btn btn-sm btn-danger ml-2">Hủy</button>
+                                                                <button (click)="selectedLine = null" class="btn btn-sm btn-danger ml-2">Hủy</button>
                                                             </div>
                                                         </form>
 
@@ -269,8 +249,7 @@
             </div>
             <div class="w-100 mt-2">
                 <h5>TIẾN ĐỘ THANH TOÁN</h5>
-                <table
-                    class="table table-sm mt-2 table-bordered table-striped  table-tbody-ver-align-middle border-bottom">
+                <table class="table table-sm mt-2 table-bordered table-striped  table-tbody-ver-align-middle border-bottom">
                     <thead>
                         <tr>
                             <th>Tiến độ</th>
@@ -278,18 +257,17 @@
                             <th>Hình thức thanh toán</th>
                             <th>Ngày thanh toán</th>
                             <th>Số tiền thanh toán</th>
-                            <th>#</th>
+                            <th class="text-center">#</th>
                         </tr>
                     </thead>
                     <tbody formArrayName="payments" *ngIf="paymentsArray">
                         <ng-container *ngFor="let payment of paymentsArray.controls; let i = index;">
                             <tr [formGroupName]="i">
-                                <td>
+                                <td class="text-right">
                                     {{i + 1}}
                                 </td>
                                 <td>
-                                    <kendo-numerictextbox [min]="0" [autoCorrect]="true" [format]="'n0'"
-                                        [spinners]="false" formControlName="payment">
+                                    <kendo-numerictextbox class="form-control" [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="payment">
                                     </kendo-numerictextbox>
                                 </td>
                                 <td>
@@ -299,13 +277,13 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <kendo-datepicker formControlName='date'>
+                                    <kendo-datepicker class="form-control" formControlName='date'>
                                     </kendo-datepicker>
                                 </td>
                                 <td>
                                     <span class="float-right">{{computeAmount(payment)|number}}</span>
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <i class="fas fa-trash" (click)="deletePayment(i)"></i>
                                 </td>
                             </tr>
@@ -314,8 +292,7 @@
                     <tfoot>
                         <tr>
                             <td colspan="7">
-                                <button type="button" title="Thêm thuốc" class="btn btn-primary btn-sm"
-                                    (click)="onAddPayment()">
+                                <button type="button" title="Thêm thuốc" class="btn btn-primary btn-sm" (click)="onAddPayment()">
                                     <i class="fas fa-plus"></i> Thêm tiến độ thanh toán
                                 </button>
                             </td>

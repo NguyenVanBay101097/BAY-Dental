@@ -5,7 +5,8 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { from } from 'rxjs';
+import { debounceTime, delay, map, switchMap, tap } from 'rxjs/operators';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
@@ -30,11 +31,11 @@ import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../qu
   styleUrls: ['./quotation-create-update-form.component.css']
 })
 export class QuotationCreateUpdateFormComponent implements OnInit {
-  @ViewChild('advisoryCbx', { static: true }) advisoryCbx: ComboBoxComponent;
   formGroup: FormGroup;
   formGroupInfo: FormGroup;
   partner: any;
   user: any;
+  saleOrders: any;
   dateFrom: Date;
   dateTo: Date;
   toothCategoryId: string;
@@ -46,8 +47,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   teethSelected: any[] = [];
   filteredToothCategories: any[] = [];
   quotation: QuotationsDisplay;
-  advisotyData: UserSimple[] = [];
-  search: '';
+  filteredAdvisoryUsers: UserSimple[] = [];
+  search: string = '';
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
 
 
@@ -75,8 +76,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       dateApplies: [0, Validators.required],
       dateEndQuotation: '',
       companyId: '',
-      advisoryUserId: null,
-      advisoryUser: null,
       lines: this.fb.array([
       ]),
       payments: this.fb.array([]),
@@ -85,16 +84,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.loadToothCategories();
 
     this.loadUser();
-
-    this.advisoryCbx.filterChange.pipe(
-      debounceTime(300),
-      tap(() => this.advisoryCbx.loading = true),
-      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
-    ).subscribe(
-      rs => {
-        this.advisotyData = rs;
-        this.advisoryCbx.loading = false;
-      });
   }
 
   routeActive() {
@@ -113,11 +102,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.partner = result.partner;
           this.partnerId = result.partnerId;
           this.user = result.user;
+          this.saleOrders = result.orders;          
           this.formGroup.get('note').patchValue(result.note);
           this.formGroup.get('partnerId').patchValue(result.partnerId);
           this.formGroup.get('userId').patchValue(result.userId);
           this.formGroup.get('dateQuotation').patchValue(new Date(result.dateQuotation));
-          this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "dd/MM/yyyy"));
+          this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "MM/dd/yyyy"));
           this.formGroup.get('dateApplies').patchValue(result.dateApplies)
           const control = this.formGroup.get('lines') as FormArray;
           control.clear();
@@ -148,9 +138,17 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.discountType = val.discountType ? val.discountType : 'percentage';
     line.productId = val.productId;
     line.qty = val.qty ? val.qty : 1;
+    line.advisoryUserId = val.advisoryUserId;
+    line.advisoryUser = val.advisoryUser;
     line.subPrice = val.subPrice ? val.subPrice : 0;
     line.name = val.name;
-    line.teeth = val.teeth ? val.teeth : this.fb.array([]);
+    line.amount = val.amount;
+    line.teeth = this.fb.array([]);
+    if (val.teeth) {
+      val.teeth.forEach(item => {
+        line.teeth.push(this.fb.group(item))
+      })
+    }
     line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
     line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
     var res = this.fb.group(line);
@@ -195,44 +193,10 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     if (res) {
       res.patchValue(line.value);
     }
-    // this.getPriceSubTotal();
-    // this.computeAmountTotal();
-
   }
-
-  getPriceSubTotal() {
-    this.linesArray.controls.forEach(line => {
-      var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
-      var discountFixedValue = line.get('discountFixed') ? line.get('discountFixed').value : 0;
-      var discountNumber = line.get('discount') ? line.get('discount').value : 0;
-      var getquanTity = line.get('productUOMQty') ? line.get('productUOMQty').value : 1;
-      var getamountPaid = line.get('amountPaid') ? line.get('amountPaid').value : 0;
-      var priceUnit = line.get('priceUnit') ? line.get('priceUnit').value : 0;
-      var price = priceUnit * getquanTity;
-
-      var subtotal = discountType == 'percentage' ? price * (1 - discountNumber / 100) :
-        Math.max(0, price - discountFixedValue);
-      // line.get('priceSubTotal').setValue(subtotal);
-      var getResidual = subtotal - getamountPaid;
-      // line.get('amountResidual').setValue(getResidual);
-    });
-
-  }
-
-  computeAmountTotal() {
-    let total = 0;
-    // this.linesArray.controls.forEach(line => {
-    //   console.log(total);
-    //   total += line.get('priceSubTotal').value;
-    // });
-    // // this.computeResidual(total);
-    // this.formGroup.get('amountTotal').patchValue(total);
-  }
-
   computeTotalPrice(line: FormGroup) {
     let price = line.get('subPrice') ? line.get('subPrice').value : 0;
     let qty = line.get('qty') ? line.get('qty').value : 1;
-
     let discount = 0;
     let discountType = line.get('discountType') ? line.get('discountType').value : '';
     discount = line.get('discount') ? line.get('discount').value : 0;
@@ -242,6 +206,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     } else if (discountType == "fixed" && discountType != '') {
       totalPrice = price * qty - discount;
     }
+    if (line.get('amount')) {
+      line.get('amount').patchValue(totalPrice);
+    };
     return totalPrice;
   }
 
@@ -250,7 +217,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     var lines = this.formGroup.get('lines').value;
     if (lines && lines.length > 0) {
       lines.forEach(line => {
-        totalAmount += line.subPrice;
+        totalAmount += line.amount;
       });
     }
     return totalAmount;
@@ -293,7 +260,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.formGroupInfo = this.fb.group({
       toothCategory: data ? data.toothCategory : null,
       toothCategoryId: data ? data.toothCategoryId : '',
-      diagnostic: data ? data.diagnostic : ''
+      diagnostic: data ? data.diagnostic : '',
+      advisoryUserId: data.advisoryUserId ? data.advisoryUserId : '',
+      advisoryUser: data.advisoryUser ? data.advisoryUser : null
     })
     this.loadTeethMap(data.toothCategory);
     if (data.teeth) {
@@ -304,6 +273,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   updateLineInfo(lineControl) {
     var line = this.formGroupInfo.value;
     line.teeth = this.teethSelected;
+    line.advisoryUserId = line.advisoryUser ? line.advisoryUser.id : null;
     line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
     lineControl.patchValue(line);
     lineControl.get('teeth').clear();
@@ -480,18 +450,20 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.patchValue(line.value);
   }
 
-  loadUser() {
-    this.searchUsers().subscribe(
+  loadUser(search?: string) {
+    this.search = search || '';
+    this.searchUsers(this.search).subscribe(
       result => {
-        this.advisotyData = result;
+        this.filteredAdvisoryUsers = result;
       }
     )
   }
 
-  searchUsers(search?: string) {
-    debugger
+
+  searchUsers(search: string) {
     var val = new UserPaged();
     val.search = search;
+    val.hasRoot = false;
     return this.userService.autocompleteSimple(val)
   }
 }
