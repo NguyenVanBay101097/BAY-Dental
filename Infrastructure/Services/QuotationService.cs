@@ -82,6 +82,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Orders)
                 .Skip(val.Offset)
                 .Take(val.Limit)
+                .OrderByDescending(x => x.DateCreated)
                 .ToListAsync();
             return new PagedResult2<QuotationBasic>(totalItem, val.Offset, val.Limit)
             {
