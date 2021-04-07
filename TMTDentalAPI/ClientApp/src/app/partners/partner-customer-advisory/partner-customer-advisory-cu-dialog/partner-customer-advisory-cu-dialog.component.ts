@@ -23,7 +23,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   teethSelected: ToothDisplay[] = [];
   teethSelectedById: ToothDisplay[] = [];
   filteredToothCategories: any[] = [];
-  productSelected: any[] = [];
+  productSelectedFromApi: any[] = [];
   cateId: string;
   submitted = false;
   customerId: string;
@@ -197,30 +197,32 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       this.teethSelected = result.teeth;
       this.teethSelectedById = result.teeth;
       this.myForm.patchValue(result);
-
       let date = new Date(result.date);
       this.myForm.get('dateObj').patchValue(date);
+      var ids = this.f.toothDiagnosis.value.map(x => x.id);
+      this.toothDiagnosisService.getProducts(ids).subscribe(result => {
+        this.productSelectedFromApi = result;
+      })
     });
   }
+
 
   updateDiagnosis(data){
     this.f.toothDiagnosis.setValue(data);
     var ids = data.map(x => x.id);
     this.toothDiagnosisService.getProducts(ids).subscribe(result => {
-      this.f.product.setValue(this.productSelected);
       var products = this.f.product.value;
+      products = products.filter(elem => this.productSelectedFromApi.findIndex(x => x.id == elem.id) == -1);
       products = products.concat(result);
       var unique = products.filter(function(elem, index, self){
         return index === self.findIndex(x => x.id == elem.id);
       })
       this.f.product.setValue(unique);
-      
+      this.productSelectedFromApi = result;
     })
   }
-
   updateProduct(data){
-    this.productSelected = data;
-    this.f.product.setValue(this.productSelected);
+    this.f.product.setValue(data);
   }
 
   resetForm(){
