@@ -12,10 +12,10 @@
                 <img class="img-fluid me-3" style="width: 150px;" src="@Model.Company.Logo" alt="@Model.Company.Name">}
             <div>
                 <div class="text-xl font-semibold">@Model.Company.Name</div>
-                @*@if (!string.IsNullOrEmpty(Model.Company.Address))
+                @if (!string.IsNullOrEmpty(Model.Company.Address))
                     {
                         <div>Địa chỉ: @Model.Company.Address</div>
-                    }*@
+                    }
                 @if (!string.IsNullOrEmpty(Model.Company.Phone))
                 {
                     <div>ĐT: @Model.Company.Phone</div>}
@@ -26,7 +26,7 @@
 
     </div>
     <div class="text-center">
-        <div class="text-3xl font-semibold mt-4 mb-2">BÁO GIÁ DỊCH VỤ</div>
+        <div class="text-3xl font-semibold mt-4">BÁO GIÁ DỊCH VỤ</div>
         <div>Ngày @today.Day tháng @today.Month năm @today.Year </div>
         <div class="font-semibold mb-2">Số: @Model.Name</div>
     </div>
@@ -35,7 +35,7 @@
             <div class="d-flex">
                 <table class="o_group o_inner_group o_group_col_6">
                     <tbody>
-                        <tr>
+                        <tr class="mb-2">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Khách hàng
@@ -47,7 +47,7 @@
                         </tr>
                         @if (!string.IsNullOrEmpty(Model.Partner.Phone))
                         {
-                            <tr>
+                            <tr class="mb-2">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Điện thoại
@@ -61,7 +61,7 @@
 
                         @if (!string.IsNullOrEmpty(Model.Partner.Address))
                         {
-                            <tr>
+                            <tr class="mb-2">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Địa chỉ
@@ -74,7 +74,7 @@
                         }
                         @if (!string.IsNullOrEmpty(Model.Note))
                         {
-                            <tr>
+                            <tr class="mb-2">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Ghi chú
@@ -89,7 +89,7 @@
                 </table>
                 <table class="o_group o_inner_group o_group_col_6">
                     <tbody>
-                        <tr>
+                        <tr class="mb-2">
                             <td colspan="2" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Ngày báo giá
@@ -101,7 +101,7 @@
                         </tr>
                         @if (!string.IsNullOrEmpty(Model.User.Name))
                         {
-                            <tr>
+                            <tr class="mb-2">
                                 <td colspan="2" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Người báo giá
@@ -114,7 +114,7 @@
                         }
 
 
-                        <tr>
+                        <tr class="mb-2">
                             <td colspan="2" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Số ngày áp dụng
@@ -127,7 +127,7 @@
 
                         @if (Model.DateEndQuotation.HasValue)
                         {
-                            <tr>
+                            <tr class="mb-2">
                                 <td colspan="2" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Ngày hết hạn
@@ -183,12 +183,12 @@
                 <tbody>
                     <tr>
                         <td colspan="1" class="o_td_label pr-3">
-                            <label class="o_form_label">
+                            <label class="o_form_label mb-2">
                                 Tổng tiền
                             </label>
                         </td>
                         <td colspan="1" class="text-right pe-0">
-                            <span class="o_form_field o_form_field_number">@string.Format(culture, "{0:0,0}", Model.TotalAmount)</span>
+                            <h5 class="o_form_field o_form_field_number">@string.Format(culture, "{0:0,0}", Model.TotalAmount)</h5>
                         </td>
                     </tr>
                 </tbody>

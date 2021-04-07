@@ -24,7 +24,7 @@
                         <button *ngIf="quotationId" type="button" accesskey="1" class="btn btn-primary btn-sm" (click)="onCreateSaleOrder()">
                             Tạo phiếu điều trị
                         </button>
-                        <button *ngIf="quotationId" type="button" class="btn btn-secondary btn-sm" (click)="printQuotation()">
+                        <button *ngIf="quotationId" type="button" class="btn btn-primary btn-sm" (click)="printQuotation()">
                             In phiếu
                         </button>
                         <button *ngIf="quotationId" type="button" class="btn btn-secondary btn-sm" (click)="onCreateNewQuotation()">
@@ -55,16 +55,6 @@
                                     <span *ngIf="user">{{user.name}}</span>
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ghi chú
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
-                                </td>
-                            </tr>
                             <tr *ngIf="saleOrders.length != 0">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -73,6 +63,16 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <a *ngFor="let order of saleOrders; let i = index" [routerLink]="['/sale-orders/form']" [queryParams]="{id: order.id}">{{order.name}}<span *ngIf="i < saleOrders.length -1">, </span></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Ghi chú
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
                                 </td>
                             </tr>
                         </tbody>
