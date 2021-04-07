@@ -174,6 +174,21 @@ namespace Infrastructure.Services
             }
         }
 
+        public void _GetToInvoiceAmount(IEnumerable<SaleOrderLine> lines)
+        {
+            foreach (var line in lines)
+            {
+                if (line.Order.State == "sale" || line.Order.State == "done")
+                {
+                    line.AmountToInvoice = line.PriceSubTotal - (line.AmountInvoiced ?? 0);
+                }
+                else
+                {
+                    line.AmountToInvoice = 0;
+                }
+            }
+        }
+
         public void _GetInvoiceQty(IEnumerable<SaleOrderLine> self)
         {
             var amlObj = GetService<IAccountMoveLineService>();
@@ -198,6 +213,33 @@ namespace Infrastructure.Services
                 }
 
                 line.QtyInvoiced = qtyInvoiced;
+            }
+        }
+
+        public void _GetInvoiceAmount(IEnumerable<SaleOrderLine> self)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            foreach (var line in self)
+            {
+                decimal amountInvoiced = 0;
+                var amls = amlObj.SearchQuery(x => x.SaleLineRels.Any(x => x.OrderLineId == line.Id)).Include(x => x.Move).ToList();
+                foreach (var invoiceLine in amls)
+                {
+                    var move = invoiceLine.Move;
+                    if (move.State != "cancel")
+                    {
+                        if (move.Type == "out_invoice")
+                        {
+                            amountInvoiced += (invoiceLine.PriceSubtotal ?? 0);
+                        }
+                        else if (move.Type == "out_refund")
+                        {
+                            amountInvoiced -= (invoiceLine.PriceSubtotal ?? 0);
+                        }
+                    }
+                }
+
+                line.AmountInvoiced = amountInvoiced;
             }
         }
 
@@ -236,7 +278,7 @@ namespace Infrastructure.Services
                 foreach (var rel in line.SaleOrderLinePaymentRels)
                 {
                     var payment = rel.Payment;
-                    if (payment.State == "draft")
+                    if (payment.State == "draft" || payment.State == "cancel")
                         continue;
                     amountPaid += (rel.AmountPrepaid ?? 0);
                 }
@@ -252,12 +294,12 @@ namespace Infrastructure.Services
         public void _ComputeLinePaymentRels(IEnumerable<SaleOrderLine> self)
         {
             var self_ids = self.Select(x => x.Id).ToList();
-            self = SearchQuery(x => self_ids.Contains(x.Id)).Include(x => x.SaleOrderLinePaymentRels).ToList();
+            self = SearchQuery(x => self_ids.Contains(x.Id)).Include(x => x.SaleOrderLinePaymentRels).ThenInclude(s => s.Payment).ToList();
             foreach (var line in self)
             {
                 if (line.State != "draft")
                 {
-                    var amountPaid = line.SaleOrderLinePaymentRels.Sum(x => x.AmountPrepaid);
+                    var amountPaid = line.SaleOrderLinePaymentRels.Where(x => x.Payment.State != "cancel").Sum(x => x.AmountPrepaid);
                     line.AmountPaid = amountPaid;
                     line.AmountResidual = line.PriceSubTotal - amountPaid;
                 }
@@ -312,6 +354,8 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+
 
         public async Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val)
         {
@@ -379,11 +423,15 @@ namespace Infrastructure.Services
             var saleCardRelObj = GetService<ISaleOrderServiceCardCardRelService>();
             var serviceCardObj = GetService<IServiceCardCardService>();
 
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon)
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).Include(x => x.SaleOrderLinePaymentRels)
                 .Include(x => x.Order).ToListAsync();
 
-            if (self.Any(x => x.State != "draft" && x.State != "cancel"))
+
+            if (self.Any(x => x.State != "draft" && x.State != "cancel" && x.State != "sale"))
                 throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
+
+            if (self.Any(x => x.SaleOrderLinePaymentRels.Any()))
+                throw new Exception("không thể xóa dịch vụ đã thanh toán");
 
             foreach (var line in self.Where(x => x.IsRewardLine))
             {

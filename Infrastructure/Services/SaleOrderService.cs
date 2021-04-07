@@ -303,6 +303,8 @@ namespace Infrastructure.Services
 
                 saleLineObj._GetInvoiceQty(sale.OrderLines);
                 saleLineObj._GetToInvoiceQty(sale.OrderLines);
+                saleLineObj._GetInvoiceAmount(sale.OrderLines);
+                saleLineObj._GetToInvoiceAmount(sale.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(sale.OrderLines);
                 await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x => x.Id).ToList());
                 sale.State = "draft";
@@ -1127,6 +1129,8 @@ namespace Infrastructure.Services
             saleLineObj.ComputeAmount(order.OrderLines);
             saleLineObj._GetInvoiceQty(order.OrderLines);
             saleLineObj._GetToInvoiceQty(order.OrderLines);
+            saleLineObj._GetInvoiceAmount(order.OrderLines);
+            saleLineObj._GetToInvoiceAmount(order.OrderLines);
             saleLineObj._ComputeInvoiceStatus(order.OrderLines);
             saleLineObj._ComputeLinePaymentRels(order.OrderLines);
             await saleLineObj.RecomputeCommissions(order.OrderLines);
@@ -1215,7 +1219,16 @@ namespace Infrastructure.Services
             }
 
             if (lineToRemoves.Any())
+            {
+                var dkStepObj = GetService<IDotKhamStepService>();
+                var saleLineIds = lineToRemoves.Select(x => x.Id).ToList();
+                var removeDkSteps = await dkStepObj.SearchQuery(x => saleLineIds.Contains(x.SaleLineId.Value)).ToListAsync();
+                if (removeDkSteps.Any(x => x.IsDone))
+                    throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
+                await dkStepObj.DeleteAsync(removeDkSteps);
                 await saleLineObj.Unlink(lineToRemoves.Select(x => x.Id).ToList());
+            }
+                
 
             //Cập nhật sequence cho tất cả các line của val
             int sequence = 0;
@@ -1413,6 +1426,7 @@ namespace Infrastructure.Services
                 }
 
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
+                saleLineObj._GetToInvoiceAmount(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
                 saleLineObj.ComputeResidual(order.OrderLines);
 
@@ -1427,6 +1441,8 @@ namespace Infrastructure.Services
             {
                 saleLineObj._GetInvoiceQty(order.OrderLines);
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
+                saleLineObj._GetInvoiceAmount(order.OrderLines);
+                saleLineObj._GetToInvoiceAmount(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
                 saleLineObj._ComputeLinePaymentRels(order.OrderLines);
             }
@@ -2031,9 +2047,10 @@ namespace Infrastructure.Services
                 //Invoice line values (keep only necessary sections)
                 foreach (var line in order.OrderLines)
                 {
-                    if (line.QtyToInvoice == 0)
+
+                    if (line.QtyToInvoice == 0 && line.AmountToInvoice == 0)
                         continue;
-                    if (line.QtyToInvoice > 0 || (line.QtyToInvoice < 0 && final))
+                    if ((line.QtyToInvoice > 0 && line.AmountToInvoice > 0 ) || (line.QtyToInvoice < 0 && final))
                     {
                         invoice_vals.InvoiceLines.Add(saleLineObj._PrepareInvoiceLine(line));
                     }
@@ -2100,6 +2117,7 @@ namespace Infrastructure.Services
 
             return invoice_vals;
         }
+
 
         public async Task<IEnumerable<SaleOrderLineDisplay>> GetServiceBySaleOrderId(Guid id)
         {
