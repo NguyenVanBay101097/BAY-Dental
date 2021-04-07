@@ -156,7 +156,7 @@ namespace Infrastructure.Services
                     var quoLine = _mapper.Map<QuotationLine>(line);
                     quoLine.QuotationId = quotation.Id;
                     if (line.DiscountType == "fixed")
-                        quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0);
+                        quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) - line.Discount;
 
                     else if (line.DiscountType == "percentage")
                         quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.Discount.HasValue ? line.Discount.Value : 0) / 100);
@@ -176,7 +176,7 @@ namespace Infrastructure.Services
                     _mapper.Map(line, quoLine);
 
                     if (line.DiscountType == "fixed")
-                        quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0);
+                        quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) - line.Discount;
                     else if (line.DiscountType == "percentage")
                         quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.Discount.HasValue ? line.Discount.Value : 0) / 100);
 
@@ -230,7 +230,7 @@ namespace Infrastructure.Services
                 var quoLine = _mapper.Map<QuotationLine>(line);
                 quoLine.QuotationId = quotation.Id;
                 if (line.DiscountType == "fixed")
-                    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0);
+                    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) - line.Discount;
                 else if (line.DiscountType == "percentage")
                     quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.Discount.HasValue ? line.Discount.Value : 0) / 100);
 
