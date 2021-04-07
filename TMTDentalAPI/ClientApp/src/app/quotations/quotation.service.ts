@@ -11,6 +11,7 @@ import { UserSimple } from '../users/user-simple';
 
 export class QuotationLineDisplay {
   productId: string;
+  id:string;
   product: any;
   qty: number;
   discount: number;

@@ -118,6 +118,8 @@ namespace Umbraco.Web.Models.ContentEditing
     public class QuotationSave
     {
 
+        public Guid Id { get; set; }
+
         /// <summary>
         /// Khách hàng
         /// </summary>
