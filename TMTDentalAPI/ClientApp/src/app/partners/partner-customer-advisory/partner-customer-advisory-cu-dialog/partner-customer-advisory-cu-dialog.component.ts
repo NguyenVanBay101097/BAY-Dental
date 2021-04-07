@@ -23,6 +23,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   teethSelected: ToothDisplay[] = [];
   teethSelectedById: ToothDisplay[] = [];
   filteredToothCategories: any[] = [];
+  productSelected: any[] = [];
   cateId: string;
   submitted = false;
   customerId: string;
@@ -202,11 +203,12 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     });
   }
 
-  updateDiagnosis(data){ 
+  updateDiagnosis(data){
     this.f.toothDiagnosis.setValue(data);
     var ids = data.map(x => x.id);
-    var products = this.f.product.value;
     this.toothDiagnosisService.getProducts(ids).subscribe(result => {
+      this.f.product.setValue(this.productSelected);
+      var products = this.f.product.value;
       products = products.concat(result);
       var unique = products.filter(function(elem, index, self){
         return index === self.findIndex(x => x.id == elem.id);
@@ -217,7 +219,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   }
 
   updateProduct(data){
-   this.f.product.setValue(data);
+    this.productSelected = data;
+    this.f.product.setValue(this.productSelected);
   }
 
   resetForm(){
