@@ -260,6 +260,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   createFormInfo(data: any) {
+
+
+
     this.formGroupInfo = this.fb.group({
       toothCategory: data ? data.toothCategory : null,
       toothCategoryId: data ? data.toothCategoryId : '',

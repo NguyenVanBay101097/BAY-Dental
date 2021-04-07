@@ -13,6 +13,8 @@ namespace Umbraco.Web.Mapping
         public QuotationLineProfile()
         {
             CreateMap<QuotationLine, QuotationLineBasic>();
+            CreateMap<QuotationLine, GetQuotationLineDisplayDetail>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.QuotationLineToothRels.Select(m => m.Tooth)));
             CreateMap<QuotationLine, QuotationLineDisplay>()
                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.QuotationLineToothRels.Select(m => m.Tooth)));
             CreateMap<QuotationLineSave, QuotationLine>();
