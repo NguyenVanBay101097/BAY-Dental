@@ -29,40 +29,31 @@
             <div class="flex-0-0-auto">
                 <div class="d-flex">
                     <div class="btns">
-                        <a [routerLink]="['/partners/customer/' + customerId + '/overview']"
-                            class="btn btn-secondary btn-sm">
+                        <a [routerLink]="['/partners/customer/' + customerId + '/overview']" class="btn btn-secondary btn-sm">
                             Trở lại
                         </a>
-                        <button type="button" class="btn btn-primary btn-sm" accesskey="s"
-                            *ngIf="saleOrder.State == 'draft' || saleOrder.State == 'sale'" (click)="onSave()">
+                        <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder.State != 'done'" (click)="onSave()">
                             Lưu
                         </button>
-                        <button type="button" accesskey="1" *ngIf="saleOrder.State == 'draft'"
-                            class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
+                        <button type="button" accesskey="1" *ngIf="saleOrder.State == 'draft'" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
                             Lưu và xác nhận
                         </button>
-                        <button *ngIf="['sale', 'done'].indexOf(saleOrder.State) !== -1" type="button"
-                            class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
+                        <button *ngIf="['sale', 'done'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
                             Thanh toán
                         </button>
-                        <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm"
-                            (click)="printSaleOrder()">
+                        <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
                             In phiếu
                         </button>
-                        <button type="button" class="btn btn-primary btn-sm"
-                            *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
+                        <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
                             Cập nhật công nợ
                         </button>
-                        <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button"
-                            class="btn btn-danger btn-sm" (click)="actionCancel()">
+                        <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
                             Hủy phiếu
                         </button>
-                        <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button"
-                            class="btn btn-success btn-sm" (click)="actionDone()">
+                        <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
                             Hoàn thành
                         </button>
-                        <button *ngIf="['done'].indexOf(saleOrder.State) !== -1" type="button"
-                            class="btn btn-success btn-sm" (click)="actionUnlock()">
+                        <button *ngIf="['done'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
                             Chưa hoàn thành
                         </button>
                         <!-- <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
@@ -70,8 +61,7 @@
                         </button> -->
                     </div>
                     <div *ngIf="['sale'].indexOf(saleOrder.State) !== -1" class="ml-auto">
-                        <button (click)="createProductToaThuoc()" type="button"
-                            class="btn btn-sm btn-primary ml-auto mr-1">
+                        <button (click)="createProductToaThuoc()" type="button" class="btn btn-sm btn-primary ml-auto mr-1">
                             Tạo đơn thuốc</button>
                         <button type="button" (click)="dialogAppointment()" class="btn btn-sm btn-primary">Tạo lịch
                             hẹn</button>
@@ -87,8 +77,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="partner"
-                                        [routerLink]="['/partners/customer/' + partner.Id]">{{partner.DisplayName}}</a>
+                                    <a *ngIf="partner" [routerLink]="['/partners/customer/' + partner.Id]">{{partner.DisplayName}}</a>
                                 </td>
                             </tr>
                             <tr *ngIf="saleOrder.Quote">
@@ -98,8 +87,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="saleOrder.Quote" [routerLink]="['/sale-quotations/form']"
-                                        [queryParams]="{id: saleOrder.Quote.Id}">{{saleOrder.Quote.Name}}</a>
+                                    <a *ngIf="saleOrder.Quote" [routerLink]="['/sale-quotations/form']" [queryParams]="{id: saleOrder.Quote.Id}">{{saleOrder.Quote.Name}}</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -113,11 +101,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker [class.d-none]="saleOrder.State != 'draft'"
-                                        formControlName="dateOrderObj">
+                                    <kendo-datetimepicker [class.d-none]="saleOrder.State != 'draft'" formControlName="dateOrderObj">
                                     </kendo-datetimepicker>
-                                    <div *ngIf="f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)"
-                                        class="text-danger">
+                                    <div *ngIf="f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày lập phiếu</div>
                                     </div>
                                     <span [class.d-none]="saleOrder.State == 'draft'">{{saleOrder.DateOrder | date:
@@ -143,24 +129,19 @@
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs flex-0-0-auto" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                            aria-controls="home" aria-selected="true">Dịch vụ</a>
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Dịch vụ</a>
                     </li>
                     <li class="nav-item" *ngIf="saleOrder.State != 'draft'">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-                            aria-controls="profile" aria-selected="false">Đợt khám</a>
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Đợt khám</a>
                     </li>
                     <li class="nav-item" *ngIf="saleOrder.State != 'draft'">
-                        <a class="nav-link" id="payment-tab" data-toggle="tab" href="#toathuoc" role="tab"
-                            aria-controls="payment" aria-selected="false">Đơn thuốc</a>
+                        <a class="nav-link" id="payment-tab" data-toggle="tab" href="#toathuoc" role="tab" aria-controls="payment" aria-selected="false">Đơn thuốc</a>
                     </li>
                     <li class="nav-item" *ngIf="saleOrder.State != 'draft'">
-                        <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment" role="tab"
-                            aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
+                        <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment" role="tab" aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
                     </li>
                     <li class="nav-item" *ngIf="saleOrder.State != 'draft'">
-                        <a class="nav-link" id="product-tab" data-toggle="tab" href="#product" role="tab"
-                            aria-controls="product" aria-selected="false">Yêu cầu vật tư</a>
+                        <a class="nav-link" id="product-tab" data-toggle="tab" href="#product" role="tab" aria-controls="product" aria-selected="false">Yêu cầu vật tư</a>
                     </li>
                 </ul>
 
@@ -168,11 +149,11 @@
                 <div class="tab-content flex-1-1-100 overflow-hidden">
                     <div class="tab-pane active h-100" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <div class="w-100 h-100 d-flex">
-                            <div *ngIf="stateControl.value === 'draft'" class="w-25 h-100 mr-2">
+                            <div *ngIf="isEditSate()" class="w-25 h-100 mr-2">
                                 <app-sale-order-list-service (newEventEmiter)="addLine($event)">
                                 </app-sale-order-list-service>
                             </div>
-                            <div [ngClass]="{'w-100':stateControl.value !== 'draft'}" class="w-75 d-flex flex-column">
+                            <div [ngClass]="{'w-100':!isEditSate()}" class="w-75 d-flex flex-column">
                                 <!-- Component Form Service Payment -->
 
                                 <div class="overflow-auto">
@@ -181,51 +162,40 @@
                                             <tr>
                                                 <th style="width: 3%;"></th>
                                                 <th style="width: 40%;" class="b-sticky-left">Dịch vụ</th>
-                                                <th style="width: 7%;" class="text-right">SL</th>
-                                                <th style="width: 10%;" class="text-right">Đơn giá</th>
+                                                <th style="width: 7%; min-width: 60px;" class="text-right">SL</th>
+                                                <th style="width: 10%; min-width: 105px" class="text-right">Đơn giá</th>
                                                 <th style="width: 5%;" class="text-right">Giảm</th>
                                                 <th style="width: 10%;" class="text-right">Thành tiền</th>
                                                 <th style="width: 10%;" class="text-right">Thanh toán</th>
                                                 <th style="width: 10%;" class="text-right">Còn lại</th>
-                                                <th style="width: 5%;" class="text-center b-sticky-right">#</th>
+                                                <th [ngStyle]="{'min-width': isEditSate() ? '60px' : '0px'}" style="width: 5%;" class="text-center b-sticky-right">#</th>
                                             </tr>
                                         </thead>
                                         <tbody formArrayName="OrderLines">
                                             <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                                 <tr class="tr-line-info" [formGroupName]="i">
                                                     <td>
-                                                        <a
-                                                            (click)="selectedLine = selectedLine === line ? null : line; createFormInfo(line.value)">
-                                                            <i class="fas text-primary"
-                                                                [ngClass]="selectedLine !== line ? 'fa-plus': 'fa-minus'"></i></a>
+                                                        <a (click)="selectedLine = selectedLine === line ? null : line; createFormInfo(line.value)">
+                                                            <i class="fas text-primary" [ngClass]="selectedLine !== line ? 'fa-plus': 'fa-minus'"></i></a>
                                                     </td>
                                                     <td>{{line.get('Name').value }}</td>
                                                     <td class="text-right">
-                                                        <span
-                                                            *ngIf="stateControl.value !== 'draft'">{{line.get('ProductUOMQty').value
+                                                        <span *ngIf="!isEditSate()">{{line.get('ProductUOMQty').value
                                                             | number }}</span>
-                                                        <input type="number" min="1"
-                                                            *ngIf="stateControl.value === 'draft'" style="width:100%;"
-                                                            class="form-control" formControlName="ProductUOMQty"
-                                                            (change)="onChangeQuantity(line)"
-                                                            (keyup)="onChangeQuantity(line)">
+                                                        <input type="number" min="1" *ngIf="isEditSate()" style="width:100%;" class="form-control" formControlName="ProductUOMQty" (change)="onChangeQuantity(line)" (keyup)="onChangeQuantity(line)">
                                                     </td>
                                                     <td class="text-right">
-                                                        <span *ngIf="stateControl.value !== 'draft'">{{
+                                                        <span *ngIf="!isEditSate()">{{
                                                             line.get('PriceUnit').value | number }}</span>
-                                                        <kendo-numerictextbox *ngIf="stateControl.value === 'draft'"
-                                                            style="width:100%;" [format]="'n0'" [spinners]="false"
-                                                            formControlName="PriceUnit"
-                                                            (change)="onChangeQuantity(line)"
-                                                            (keyup)="onChangeQuantity(line)">
+                                                        <kendo-numerictextbox *ngIf="isEditSate()" style="width:100%;" [format]="'n0'" [spinners]="false" formControlName="PriceUnit" (change)="onChangeQuantity(line)" (keyup)="onChangeQuantity(line)">
                                                         </kendo-numerictextbox>
                                                     </td>
                                                     <td class="text-right">
-                                                        <span *ngIf="stateControl.value !== 'draft'">
+                                                        <span *ngIf="!isEditSate()">
                                                             {{ getDiscountNumber(line) | number
                                                             }}{{getDiscountTypeDisplay(line)}}
                                                         </span>
-                                                        <span *ngIf="stateControl.value === 'draft'">
+                                                        <span *ngIf="isEditSate()">
                                                             <app-sale-order-line-discount-odata-popover
                                                                 [line]="line.value"
                                                                 (lineDiscountEvent)="onChangeDiscount($event,line)">
@@ -242,22 +212,16 @@
                                                         {{ line.get('AmountResidual').value | number }}
                                                     </td>
                                                     <td class="text-center b-sticky-right">
-                                                        <button *ngIf="stateControl.value == 'draft'" type="button"
-                                                            class="btn btn-icon btn-sm btn-light"
-                                                            (click)="deleteLine(i)">
-                                                            <span class="k-icon k-i-delete"></span>
-                                                        </button>
-                                                        <button *ngIf="stateControl.value == 'sale' && isLaboLine(line)"
-                                                            type="button" class="btn btn-icon btn-sm btn-light"
-                                                            title="Quản lý phiếu labo"
-                                                            (click)="showLaboList(line.get('Id').value)">
+                                                        <button [ngClass]="{'p-3px': isEditSate()}" *ngIf="stateControl.value == 'sale' && isLaboLine(line)" type="button" class="btn btn-icon btn-sm btn-light" title="Quản lý phiếu labo" (click)="showLaboList(line.get('Id').value)">
                                                             <i class="fas fa-tooth"></i>
+                                                        </button>
+                                                        <button [ngClass]="{'p-3px': isEditSate()}" *ngIf="isEditSate()" type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteLine(i)">
+                                                            <span class="k-icon k-i-delete"></span>
                                                         </button>
                                                     </td>
                                                 </tr>
                                                 <ng-container *ngIf="selectedLine === line">
-                                                    <tr
-                                                        [@detailExpand]="line == selectedLine ? 'expanded' : 'collapsed'">
+                                                    <tr [@detailExpand]="line == selectedLine ? 'expanded' : 'collapsed'">
                                                     </tr>
                                                     <td></td>
                                                     <td colspan="7">
@@ -272,48 +236,24 @@
                                                                         <div class="form-group row">
                                                                             <div class="col-sm-6">
                                                                                 <div class="row">
-                                                                                    <label
-                                                                                        class="col-sm-3 col-form-label">
+                                                                                    <label class="col-sm-3 col-form-label">
                                                                                         Bác sĩ
                                                                                     </label>
                                                                                     <div class="col-sm-9">
-                                                                                        <span
-                                                                                            class="form-control-plaintext"
-                                                                                            *ngIf="getState != 'draft'">{{line.value.Assistant?.name}}</span>
-                                                                                        <kendo-combobox
-                                                                                            [filterable]="true"
-                                                                                            (filterChange)="onEmployeeFilter($event)"
-                                                                                            *ngIf="stateControl.value === 'draft'"
-                                                                                            style="width:100%;"
-                                                                                            [data]="initialListEmployees"
-                                                                                            [textField]="'Name'"
-                                                                                            #employeeCbx
-                                                                                            formControlName="Employee"
-                                                                                            [valueField]="'Id'">
+                                                                                        <span class="form-control-plaintext" *ngIf="!isEditSate()">{{line.value.Assistant?.name}}</span>
+                                                                                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="isEditSate()" style="width:100%;" [data]="initialListEmployees" [textField]="'Name'" #employeeCbx formControlName="Employee" [valueField]="'Id'">
                                                                                         </kendo-combobox>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-sm-6">
                                                                                 <div class="row">
-                                                                                    <label
-                                                                                        class="col-sm-3 col-form-label">
+                                                                                    <label class="col-sm-3 col-form-label">
                                                                                         Phụ tá
                                                                                     </label>
                                                                                     <div class="col-sm-9">
-                                                                                        <span
-                                                                                            class="form-control-plaintext"
-                                                                                            *ngIf="getState != 'draft'">{{line.value.Assistant?.name}}</span>
-                                                                                        <kendo-combobox
-                                                                                            [filterable]="true"
-                                                                                            (filterChange)="onEmployeeFilter($event)"
-                                                                                            *ngIf="stateControl.value === 'draft'"
-                                                                                            style="width:100%;"
-                                                                                            [data]="initialListEmployees"
-                                                                                            [textField]="'Name'"
-                                                                                            #assistantCbx
-                                                                                            formControlName="Assistant"
-                                                                                            [valueField]="'Id'">
+                                                                                        <span class="form-control-plaintext" *ngIf="!isEditSate()">{{line.value.Assistant?.name}}</span>
+                                                                                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="isEditSate()" style="width:100%;" [data]="initialListEmployees" [textField]="'Name'" #assistantCbx formControlName="Assistant" [valueField]="'Id'">
                                                                                         </kendo-combobox>
                                                                                     </div>
                                                                                 </div>
@@ -326,37 +266,21 @@
                                                                             </label>
                                                                             <div class="col-sm-10">
                                                                                 <!-- <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic"> -->
-                                                                                <textarea formControlName="Diagnostic"
-                                                                                    class="form-control"></textarea>
+                                                                                <textarea formControlName="Diagnostic" class="form-control"></textarea>
                                                                             </div>
                                                                         </div>
                                                                         <div class="d-inline-flex w-100">
-                                                                            <div *ngFor="let item of filteredToothCategories; let i = index"
-                                                                                class="form-check form-check-inline"
-                                                                                style="vertical-align: -webkit-baseline-middle;">
-                                                                                <input
-                                                                                    [attr.disabled]="getState !== 'draft' ? true : null"
-                                                                                    [checked]="item.Id === ToothCategoryControl.value.Id"
-                                                                                    (change)="onChangeToothCategory(item)"
-                                                                                    class="form-check-input"
-                                                                                    type="radio" name="ToothCategory"
-                                                                                    formControlName="ToothCategory"
-                                                                                    [id]="'toothCategory' + i">
-                                                                                <label class="form-check-label"
-                                                                                    [for]="'toothCategory' + i">{{item.Name}}</label>
+                                                                            <div *ngFor="let item of filteredToothCategories; let i = index" class="form-check form-check-inline" style="vertical-align: -webkit-baseline-middle;">
+                                                                                <input [attr.disabled]="!isEditSate() ? true : null" [checked]="item.Id === ToothCategoryControl.value.Id" (change)="onChangeToothCategory(item)" class="form-check-input" type="radio" name="ToothCategory" formControlName="ToothCategory" [id]="'toothCategory' + i">
+                                                                                <label class="form-check-label" [for]="'toothCategory' + i">{{item.Name}}</label>
                                                                             </div>
                                                                         </div>
                                                                         <div class="teeth-map mb-2">
                                                                             <table class="table table-sm">
-                                                                                <tr
-                                                                                    *ngFor="let ham of hamList | keyvalue">
-                                                                                    <td [ngClass]="{'text-right': vitri.key === '0_right'}"
-                                                                                        *ngFor="let vitri of ham.value | keyvalue">
+                                                                                <tr *ngFor="let ham of hamList | keyvalue">
+                                                                                    <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
                                                                                         <div class="tooth-wrapper">
-                                                                                            <div (click)="onSelected(rang)"
-                                                                                                class="tooth-item-collapsed"
-                                                                                                [ngClass]="{'selected': isSelected(rang)}"
-                                                                                                *ngFor="let rang of vitri.value">
+                                                                                            <div (click)="onSelected(rang)" class="tooth-item-collapsed" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
                                                                                                 {{rang.Name}}
                                                                                             </div>
                                                                                         </div>
@@ -365,12 +289,9 @@
                                                                             </table>
                                                                         </div>
                                                                         <div class="popover-footer">
-                                                                            <button
-                                                                                (click)="selectedLine = null;updateLineInfo(line)"
-                                                                                class="btn btn-sm btn-primary ml-auto">Cập
+                                                                            <button (click)="selectedLine = null;updateLineInfo(line)" class="btn btn-sm btn-primary ml-auto">Cập
                                                                                 nhật</button>
-                                                                            <button (click)="selectedLine = null"
-                                                                                class="btn btn-sm btn-danger ml-2">Hủy</button>
+                                                                            <button (click)="selectedLine = null" class="btn btn-sm btn-danger ml-2">Hủy</button>
                                                                         </div>
                                                                     </form>
 
@@ -390,11 +311,9 @@
                                 </div>
                                 <div class="d-flex justify-content-between mt-3">
                                     <div class="">
-                                        <app-sale-order-apply-discount-default-dialog
-                                            (discountFormGroup)="onApplyDiscount($event)"
-                                            *ngIf="['draft', 'sent'].indexOf(saleOrder.State) !== -1">
+                                        <app-sale-order-apply-discount-default-dialog (discountFormGroup)="onApplyDiscount($event)" *ngIf="isEditSate()">
                                         </app-sale-order-apply-discount-default-dialog>
-                                        <button type="button" hasGroups [groups]="'sale.group_service_card'"
+                                        <!-- <button type="button" hasGroups [groups]="'sale.group_service_card'"
                                             class="btn btn-outline-primary btn-sm mx-1" (click)="showApplyCardDialog()"
                                             *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.State) !== -1">
                                             <span>Thẻ tiền mặt</span>
@@ -413,7 +332,7 @@
                                             *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.State) !== -1"
                                             (click)="applyPromotion()">
                                             <span>Khuyến mãi</span>
-                                        </button>
+                                        </button> -->
                                     </div>
                                     <table class="table-borderless table-text-right mr-4 table-payment-result">
                                         <!-- <tr>
@@ -438,27 +357,21 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane h-100" *ngIf="saleOrder.State != 'draft'" id="profile" role="tabpanel"
-                        aria-labelledby="profile-tab">
+                    <div class="tab-pane h-100" *ngIf="saleOrder.State != 'draft'" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                         <app-treatment-process-service-list></app-treatment-process-service-list>
                     </div>
-                    <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="payment" role="tabpanel"
-                        aria-labelledby="payment-tab">
-                        <app-sale-order-payment-list *ngIf="saleOrderId" (paymentOutput)="paymentOutput($event)"
-                            #paymentComp [saleOrderId]="saleOrderId">
+                    <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="payment" role="tabpanel" aria-labelledby="payment-tab">
+                        <app-sale-order-payment-list *ngIf="saleOrderId" (paymentOutput)="paymentOutput($event)" #paymentComp [saleOrderId]="saleOrderId">
                         </app-sale-order-payment-list>
                     </div>
 
-                    <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="toathuoc" role="tabpanel"
-                        aria-labelledby="payment-tab">
+                    <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="toathuoc" role="tabpanel" aria-labelledby="payment-tab">
                         <app-partner-customer-toathuoc-list #toathuocComp [saleOrderId]="saleOrderId">
                         </app-partner-customer-toathuoc-list>
                     </div>
 
-                    <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="product" role="tabpanel"
-                        aria-labelledby="product-tab">
-                        <app-sale-order-product-request-list [saleOrderId]="saleOrderId"
-                            [saleOrderState]="saleOrder.State">
+                    <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="product" role="tabpanel" aria-labelledby="product-tab">
+                        <app-sale-order-product-request-list [saleOrderId]="saleOrderId" [saleOrderState]="saleOrder.State">
                         </app-sale-order-product-request-list>
                     </div>
                 </div>
