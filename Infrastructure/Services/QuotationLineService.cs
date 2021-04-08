@@ -20,15 +20,5 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<GetQuotationLineDisplayDetail> GetQuotationLineDisplayDetail(Guid id)
-        {
-            var line = await SearchQuery(x => x.Id == id)
-                .Include("QuotationLineToothRels.Tooth")
-                .Include(x => x.ToothCategory)
-                .Include(x => x.AdvisoryUser)
-                .FirstOrDefaultAsync();
-
-            return _mapper.Map<GetQuotationLineDisplayDetail>(line);
-        }
     }
 }

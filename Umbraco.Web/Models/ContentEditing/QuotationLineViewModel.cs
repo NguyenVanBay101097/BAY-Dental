@@ -111,30 +111,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
     }
 
-    public class GetQuotationLineDisplayDetail
-    {
-        /// <summary>
-        /// Chuẩn đoán
-        /// </summary>
-        public string Diagnostic { get; set; }
-
-        /// <summary>
-        /// Nguoi tu van
-        /// </summary>
-        public string AdvisoryUserId { get; set; }
-        public ApplicationUserBasic AdvisoryUser { get; set; }
-
-        /// <summary>
-        /// Loai rang
-        /// </summary>
-        public ToothCategoryBasic ToothCategory { get; set; }
-        public Guid ToothCategoryId { get; set; }
-
-        /// <summary>
-        /// danh sach rang
-        /// </summary>
-        public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
-    }
     public class QuotationLineSimple
     {
         public Guid Id { get; set; }

@@ -9,6 +9,5 @@ namespace Infrastructure.Services
 {
     public interface IQuotationLineService : IBaseService<QuotationLine>
     {
-        Task<GetQuotationLineDisplayDetail> GetQuotationLineDisplayDetail(Guid id);
     }
 }
