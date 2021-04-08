@@ -27,19 +27,20 @@ namespace Infrastructure.Services
 
         public async Task<QuotationDisplay> GetDisplay(Guid id)
         {
+            var quotationLineObj = GetService<IQuotationLineService>();
             var model = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
                 .Include(x => x.User)
                 .Include(x => x.Payments)
-                .Include(x => x.Lines)
                 .Include(x => x.Orders)
-                .Include("Lines.Product")
-                .Include("Lines.AdvisoryUser")
-                .Include("Lines.Advisory")
-                .Include("Lines.ToothCategory")
-                .Include("Lines.QuotationLineToothRels")
-                .Include("Lines.QuotationLineToothRels.Tooth")
                 .FirstOrDefaultAsync();
+
+            var lines = await quotationLineObj.SearchQuery(x => x.QuotationId == id)
+                .Include(x => x.QuotationLineToothRels).ThenInclude(x => x.Tooth)
+                .Include(x => x.ToothCategory)
+                .Include(x => x.AdvisoryUser).ToListAsync();
+
+            model.Lines = lines;
             return _mapper.Map<QuotationDisplay>(model);
         }
 
@@ -156,7 +157,7 @@ namespace Infrastructure.Services
                     var quoLine = _mapper.Map<QuotationLine>(line);
                     quoLine.QuotationId = quotation.Id;
                     if (line.DiscountType == "fixed")
-                        quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0);
+                        quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) - line.Discount;
 
                     else if (line.DiscountType == "percentage")
                         quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.Discount.HasValue ? line.Discount.Value : 0) / 100);
@@ -176,7 +177,7 @@ namespace Infrastructure.Services
                     _mapper.Map(line, quoLine);
 
                     if (line.DiscountType == "fixed")
-                        quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0);
+                        quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) - line.Discount;
                     else if (line.DiscountType == "percentage")
                         quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.Discount.HasValue ? line.Discount.Value : 0) / 100);
 
@@ -222,42 +223,8 @@ namespace Infrastructure.Services
         {
             var quotation = _mapper.Map<Quotation>(val);
             quotation = await CreateAsync(quotation);
-
-            var lines = new List<QuotationLine>();
-
-            foreach (var line in val.Lines)
-            {
-                var quoLine = _mapper.Map<QuotationLine>(line);
-                quoLine.QuotationId = quotation.Id;
-                if (line.DiscountType == "fixed")
-                    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0);
-                else if (line.DiscountType == "percentage")
-                    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.Discount.HasValue ? line.Discount.Value : 0) / 100);
-
-                foreach (var toothId in line.ToothIds)
-                {
-                    quoLine.QuotationLineToothRels.Add(new QuotationLineToothRel
-                    {
-                        ToothId = toothId
-                    });
-                }
-                lines.Add(quoLine);
-            }
-
-            if (val.Payments.Any())
-            {
-                var paymentQuotationObj = GetService<IPaymentQuotationService>();
-                var payments = _mapper.Map<IEnumerable<PaymentQuotation>>(val.Payments);
-                foreach (var item in payments)
-                {
-                    item.QuotationId = quotation.Id;
-                }
-                payments = await paymentQuotationObj.CreateAsync(payments);
-                quotation.Payments = (ICollection<PaymentQuotation>)payments;
-            }
-
-            var quotationLineService = GetService<IQuotationLineService>();
-            await quotationLineService.CreateAsync(lines);
+            await ComputeQuotationLine(val, quotation);
+            await ComputePaymentQuotation(val, quotation);
             await ComputeAmountAll(quotation);
             await UpdateAsync(quotation);
             return _mapper.Map<QuotationBasic>(quotation);

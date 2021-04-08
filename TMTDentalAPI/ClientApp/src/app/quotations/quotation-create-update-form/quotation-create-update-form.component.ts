@@ -102,7 +102,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.partner = result.partner;
           this.partnerId = result.partnerId;
           this.user = result.user;
-          this.saleOrders = result.orders;          
+          this.saleOrders = result.orders;
           this.formGroup.get('note').patchValue(result.note);
           this.formGroup.get('partnerId').patchValue(result.partnerId);
           this.formGroup.get('userId').patchValue(result.userId);
@@ -133,6 +133,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   addLineFromProduct(val) {
     var line = new QuotationLineDisplay();
+    if (val.id) {
+      line.id = val.id;
+    }
     line.diagnostic = val.diagnostic;
     line.discount = val.discount ? val.discount : 0;
     line.discountType = val.discountType ? val.discountType : 'percentage';
@@ -257,6 +260,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   createFormInfo(data: any) {
+
+
+
     this.formGroupInfo = this.fb.group({
       toothCategory: data ? data.toothCategory : null,
       toothCategoryId: data ? data.toothCategoryId : '',
@@ -393,6 +399,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     var value = this.formGroup.value;
     value.dateQuotation = this.intlService.formatDate(value.dateQuotation, "yyyy-MM-dd");
     value.companyId = this.quotation.companyId;
+    if (this.quotationId) {
+      value.Id = this.quotationId;
+    }
     if (value.lines) {
       value.lines.forEach(line => {
         line.toothIds = [];

@@ -96,12 +96,17 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa báo giá';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa báo giá?';
     modalRef.result.then(() => {
-      this.quotationService.delete(item.id).subscribe(
-        () => {
-          this.notify("success", "Xóa thành công");
-          this.loadDataFromApi();
-        }
-      )
+      if (item.orders.length == 0) {
+        this.quotationService.delete(item.id).subscribe(
+          () => {
+            this.notify("success", "Xóa thành công");
+            this.loadDataFromApi();
+          }
+        )
+      }
+      else {
+        this.notify("error", "Bạn không thể xóa báo giá đã tạo phiếu điều trị");
+      }
     });
   }
 

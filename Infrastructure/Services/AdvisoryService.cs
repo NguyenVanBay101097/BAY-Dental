@@ -413,7 +413,10 @@ namespace Infrastructure.Services
             var saleOrderLineService = GetService<ISaleOrderLineService>();
             var quotationLineService = GetService<IQuotationLineService>();
             var res = new List<AdvisoryLine>();
-            var saleOrderLines = await saleOrderLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId).Include(x => x.Order).ToListAsync();
+            var saleOrderLines = await saleOrderLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId)
+                .Include(x => x.Order)
+                .Include(x => x.Employee)
+                .ToListAsync();
             if (saleOrderLines.Any())
             {
                 foreach (var line in saleOrderLines)
@@ -431,7 +434,9 @@ namespace Infrastructure.Services
                 }
             }
 
-            var quotationLines = await quotationLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId).Include(x => x.Quotation).ToListAsync();
+            var quotationLines = await quotationLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId)
+                .Include(x => x.Quotation)
+                .ToListAsync();
             if (quotationLines.Any())
             {
                 foreach (var line in quotationLines)

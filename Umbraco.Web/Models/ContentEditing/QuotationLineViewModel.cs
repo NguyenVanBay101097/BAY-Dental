@@ -56,6 +56,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class QuotationLineDisplay
     {
+
+        public Guid Id { get; set; }
         public string Name { get; set; }
 
         /// <summary>
