@@ -1261,6 +1261,7 @@ namespace Infrastructure.Services
                     {
                         _mapper.Map(line, saleLine);
                         saleLine.Discount = line.Discount;
+                        saleLine.PriceUnit = line.PriceUnit;
                         saleLine.Sequence = sequence++;
                         saleLine.Order = order;
                         saleLine.SaleOrderLineToothRels.Clear();
@@ -1647,6 +1648,8 @@ namespace Infrastructure.Services
             {
                 saleLineObj._GetInvoiceQty(so.OrderLines);
                 saleLineObj._GetToInvoiceQty(so.OrderLines);
+                saleLineObj._GetInvoiceAmount(so.OrderLines);
+                saleLineObj._GetToInvoiceAmount(so.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(so.OrderLines);
             }
 
@@ -2050,7 +2053,7 @@ namespace Infrastructure.Services
 
                     if (line.QtyToInvoice == 0 && line.AmountToInvoice == 0)
                         continue;
-                    if ((line.QtyToInvoice > 0 && line.AmountToInvoice > 0 ) || (line.QtyToInvoice < 0 && final))
+                    if ((line.QtyToInvoice > 0 && line.AmountToInvoice > 0 ) || (line.QtyToInvoice < 0 && final) || (line.QtyToInvoice <= 0 && line.AmountToInvoice > 0))
                     {
                         invoice_vals.InvoiceLines.Add(saleLineObj._PrepareInvoiceLine(line));
                     }

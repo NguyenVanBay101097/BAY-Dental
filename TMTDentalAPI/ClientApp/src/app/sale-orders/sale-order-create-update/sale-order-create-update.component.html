@@ -29,7 +29,7 @@
             <div class="flex-0-0-auto">
                 <div class="d-flex">
                     <div class="btns">
-                        <a [routerLink]="['/partners/customer/' + customerId + '/overview']" class="btn btn-secondary btn-sm">
+                        <a [routerLink]="['/partners/customer/' + customerId + '/treatment']" class="btn btn-secondary btn-sm">
                             Trở lại
                         </a>
                         <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder.State != 'done'" (click)="onSave()">

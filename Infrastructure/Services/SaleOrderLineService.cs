@@ -257,9 +257,9 @@ namespace Infrastructure.Services
             {
                 if (line.State != "sale" && line.State != "done")
                     line.InvoiceStatus = "no";
-                else if (line.QtyToInvoice != 0)
+                else if (line.QtyToInvoice != 0 || line.AmountToInvoice != 0)
                     line.InvoiceStatus = "to invoice";
-                else if (line.QtyToInvoice == 0)
+                else if (line.QtyToInvoice == 0 && line.AmountToInvoice == 0)
                     line.InvoiceStatus = "invoiced";
                 else
                     line.InvoiceStatus = "no";
@@ -342,9 +342,9 @@ namespace Infrastructure.Services
                 Name = self.Name,
                 ProductId = self.ProductId,
                 ProductUoMId = self.ProductUOMId,
-                Quantity = self.QtyToInvoice,
+                Quantity = self.QtyToInvoice == 0 ? 1 : self.QtyToInvoice,
                 Discount = self.Discount,
-                PriceUnit = self.PriceUnit,
+                PriceUnit = self.AmountToInvoice,
                 DiscountType = self.DiscountType,
                 DiscountFixed = self.DiscountFixed,
                 SalesmanId = self.SalesmanId
