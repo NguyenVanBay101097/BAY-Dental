@@ -13,9 +13,8 @@ namespace Infrastructure.Services
         Task<PagedResult2<PartnerAdvanceBasic>> GetPagedResultAsync(PartnerAdvancePaged val);
         Task<PartnerAdvanceDisplay> GetDisplayById(Guid id);
 
-        Task<PartnerAdvancDefaultViewModel> DefaultGet(PartnerAdvanceDefaultFilter val);
+        Task<PartnerAdvanceDisplay> DefaultGet(PartnerAdvanceDefaultFilter val);
         Task<decimal> GetSummary(PartnerAdvanceSummaryFilter val);
-        Task<decimal> ComputeAmountBalance();
 
         Task<PartnerAdvance> CreatePartnerAdvance(PartnerAdvanceSave val);
         Task UpdatePartnerAdvance(Guid id, PartnerAdvanceSave val);

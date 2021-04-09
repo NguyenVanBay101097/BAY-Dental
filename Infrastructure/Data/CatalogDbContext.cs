@@ -258,6 +258,10 @@ namespace Infrastructure.Data
 
         public DbSet<PartnerAdvance> PartnerAdvances { get; set; }
 
+        public DbSet<SaleOrderPayment> SaleOrderPayments { get; set; }
+        public DbSet<SaleOrderPaymentHistoryLine> SaleOrderPaymentHistoryLines { get; set; }
+        public DbSet<SaleOrderPaymentJournalLine> SaleOrderPaymentJournalLines { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -465,6 +469,10 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ToothDiagnosisConfiguration());
             builder.ApplyConfiguration(new ToothDiagnosisProductRelConfiguration());
             builder.ApplyConfiguration(new PartnerAdvanceConfiguration());
+
+            builder.ApplyConfiguration(new SaleOrderPaymentConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPaymentHistoryLineConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPaymentJournalLineConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

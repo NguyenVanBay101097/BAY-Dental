@@ -10,6 +10,8 @@
                         <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'"
                             [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
                         </app-tai-date-range-filter-dropdown>
+                        <button class="btn btn-primary btn-sm mr-2 " title="Đóng tạm ứng" (click)="createAdvanceModal()">Đóng tạm ứng</button>
+                        <button class="btn btn-primary btn-sm mr-2" *ngIf="AmountBalance != 0" title="Hoàn tạm ứng" (click)="createRefundModal()">Hoàn tạm ứng</button>
                         <!-- <kendo-combobox [data]="filteredEmployees" [textField]="'name'" class="custom btn-sm" #empCbx [filterable]="true" [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)" [valueField]="'id'">
                         </kendo-combobox> -->
                     </div>
@@ -19,12 +21,12 @@
         </div>
 
         <div class="o_cp_t_right">
-            <!-- <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc"
-                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"> -->
+            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo số phiếu tạm ứng"
+            type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
         </div>
     </div>
 
-    <div class="report-prescription-payment">
+    <!-- <div class="report-prescription-payment">
         <div class="revenue" *ngFor="let type of types">
             <div class="title">
                 <h6>{{type.text}}</h6>
@@ -33,15 +35,15 @@
                 {{(typeAmount[type.value] | number) || 0}}
             </h4>
         </div>      
-    </div>
+    </div> -->
 </div>
 <div class="o_control_panel">
     <div class="o_cp_t_left">
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <div class="d-flex">
-                    <button class="btn btn-primary btn-sm mr-2 " title="Đóng tạm ứng" (click)="createAdvanceModal()">Đóng tạm ứng</button>
-                    <button class="btn btn-primary btn-sm mr-2" *ngIf="AmountBalance != 0" title="Hoàn tạm ứng" (click)="createRefundModal()">Hoàn tạm ứng</button>
+                    <!-- <button class="btn btn-primary btn-sm mr-2 " title="Đóng tạm ứng" (click)="createAdvanceModal()">Đóng tạm ứng</button>
+                    <button class="btn btn-primary btn-sm mr-2" *ngIf="AmountBalance != 0" title="Hoàn tạm ứng" (click)="createRefundModal()">Hoàn tạm ứng</button> -->
                     <!-- <kendo-combobox [data]="filteredStatus" [textField]="'name'" class="custom btn-sm"
                         [placeholder]="'Tất cả trạng thái'" (valueChange)="statusChange($event)" [valueField]="'value'">
                     </kendo-combobox> -->
@@ -52,8 +54,8 @@
         </div>
     </div>
     <div class="o_cp_t_right">
-        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo số phiếu tạm ứng"
-            type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        <!-- <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo số phiếu tạm ứng"
+            type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"> -->
     </div>
 </div>
 <div class="o_content">

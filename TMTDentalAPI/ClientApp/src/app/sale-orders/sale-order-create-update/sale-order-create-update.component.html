@@ -44,9 +44,9 @@
                         <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
                             In phiếu
                         </button>
-                        <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
+                        <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
                             Cập nhật công nợ
-                        </button>
+                        </button> -->
                         <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
                             Hủy phiếu
                         </button>

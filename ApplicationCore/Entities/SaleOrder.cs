@@ -78,6 +78,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<DotKham> DotKhams { get; set; } = new List<DotKham>();
 
+        public ICollection<SaleOrderPayment> SaleOrderPayments { get; set; } = new List<SaleOrderPayment>();
+
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
 

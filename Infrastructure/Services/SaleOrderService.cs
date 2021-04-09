@@ -1144,10 +1144,10 @@ namespace Infrastructure.Services
             var self = new List<SaleOrder>() { order };
             // await _GenerateDotKhamSteps(self);
 
-            if (order.InvoiceStatus == "to invoice")
-            {
-                await ActionInvoiceCreateV2(order.Id);
-            }
+            //if (order.InvoiceStatus == "to invoice")
+            //{
+            //    await ActionInvoiceCreateV2(order.Id);
+            //}
         }
 
         private async Task<AccountInvoice> CreateInvoice(IList<SaleOrderLine> saleLines, SaleOrder order, string type = "out_invoice")
@@ -1431,22 +1431,22 @@ namespace Infrastructure.Services
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
                 saleLineObj.ComputeResidual(order.OrderLines);
 
-                await saleLineObj.RecomputeCommissions(order.OrderLines);
+                //await saleLineObj.RecomputeCommissions(order.OrderLines);
             }
 
-            var invoices = await _CreateInvoices(self, final: true);
-            var moveObj = GetService<IAccountMoveService>();
-            await moveObj.ActionPost(invoices);
+            //var invoices = await _CreateInvoices(self, final: true);
+            //var moveObj = GetService<IAccountMoveService>();
+            //await moveObj.ActionPost(invoices);
 
-            foreach (var order in self)
-            {
-                saleLineObj._GetInvoiceQty(order.OrderLines);
-                saleLineObj._GetToInvoiceQty(order.OrderLines);
-                saleLineObj._GetInvoiceAmount(order.OrderLines);
-                saleLineObj._GetToInvoiceAmount(order.OrderLines);
-                saleLineObj._ComputeInvoiceStatus(order.OrderLines);
-                saleLineObj._ComputeLinePaymentRels(order.OrderLines);
-            }
+            //foreach (var order in self)
+            //{
+            //    saleLineObj._GetInvoiceQty(order.OrderLines);
+            //    saleLineObj._GetToInvoiceQty(order.OrderLines);
+            //    saleLineObj._GetInvoiceAmount(order.OrderLines);
+            //    saleLineObj._GetToInvoiceAmount(order.OrderLines);
+            //    saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+            //    saleLineObj._ComputeLinePaymentRels(order.OrderLines);
+            //}
 
             _GetInvoiced(self);
             _ComputeResidual(self);

@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210408114018_thuong_CreateSaleOrderPayment")]
+    partial class thuong_CreateSaleOrderPayment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1708,13 +1710,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("PercentAdvisory")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("PercentAssistant")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("PercentDoctor")
+                    b.Property<decimal?>("PercentFixed")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("ProductId")
@@ -1752,14 +1748,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("BaseAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("CommissionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
@@ -1770,9 +1760,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("MoveLineId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("PartnerId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1782,41 +1769,21 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("Percentage")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SaleOrderId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("SaleOrderLineId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CommissionId");
-
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("EmployeeId");
 
-                    b.HasIndex("MoveLineId");
-
                     b.HasIndex("PartnerId");
 
                     b.HasIndex("PaymentId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SaleOrderId");
 
                     b.HasIndex("SaleOrderLineId");
 
@@ -11177,10 +11144,6 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.CommissionSettlement", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.Commission", "Commission")
-                        .WithMany()
-                        .HasForeignKey("CommissionId");
-
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -11189,10 +11152,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("EmployeeId");
 
-                    b.HasOne("ApplicationCore.Entities.AccountMoveLine", "MoveLine")
-                        .WithMany("CommissionSettlements")
-                        .HasForeignKey("MoveLineId");
-
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
                         .WithMany()
                         .HasForeignKey("PartnerId");
@@ -11200,14 +11159,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.AccountPayment", "Payment")
                         .WithMany()
                         .HasForeignKey("PaymentId");
-
-                    b.HasOne("ApplicationCore.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
-                        .WithMany()
-                        .HasForeignKey("SaleOrderId");
 
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
                         .WithMany()

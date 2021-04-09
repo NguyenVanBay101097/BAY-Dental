@@ -1,0 +1,18 @@
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Models;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
+
+namespace Infrastructure.Services
+{
+    public interface ISaleOrderPaymentService : IBaseService<SaleOrderPayment>
+    {
+        Task<PagedResult2<SaleOrderPaymentBasic>> GetPagedResultAsync(SaleOrderPaymentPaged val);
+        Task<SaleOrderPayment> CreateSaleOrderPayment(SaleOrderPaymentSave val);
+
+        Task<SaleOrderPaymentDisplay> GetDisplay(Guid id);
+    }
+}

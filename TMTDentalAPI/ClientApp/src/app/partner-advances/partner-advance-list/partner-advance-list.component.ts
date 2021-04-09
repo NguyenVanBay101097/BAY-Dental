@@ -29,7 +29,7 @@ export class PartnerAdvanceListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   loading = false;
-  amountBalanceFilter: number;
+  amountBalanceFilter: number = 0;
   AmountBalance: number;
 
   typeAmount: any = {};
@@ -88,7 +88,6 @@ export class PartnerAdvanceListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
-      console.log(res);
 
       this.loading = false;
     }, err => {

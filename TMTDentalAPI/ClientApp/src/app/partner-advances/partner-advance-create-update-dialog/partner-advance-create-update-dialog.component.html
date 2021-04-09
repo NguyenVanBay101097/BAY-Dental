@@ -55,7 +55,7 @@
                                     <kendo-numerictextbox *ngIf="partnerAdvance?.state != 'confirmed' && type == 'advance'" [min]="0" [format]="'n0'"
                                         formControlName="amount">
                                     </kendo-numerictextbox>
-                                    <kendo-numerictextbox *ngIf="partnerAdvance?.state != 'confirmed' && type == 'refund'" [min]="0" [max]="partnerAdvance?.amountBalance" [format]="'n0'"
+                                    <kendo-numerictextbox *ngIf="partnerAdvance?.state != 'confirmed' && type == 'refund'" [min]="0" [max]="amountBalance" [format]="'n0'"
                                       [autoCorrect]="true"  formControlName="amount">
                                     </kendo-numerictextbox>
                                 </td>
@@ -100,7 +100,7 @@
                             </tr>                           
                         </tbody>
                     </table>
-                    <h6 *ngIf="partnerAdvance?.type == 'refund' && partnerAdvance?.state != 'confirmed'" class="font-weight-bold text-danger mb-2">Tối đa tiền tạm ứng được trả : {{partnerAdvance?.amountBalance | number}}</h6>
+                    <h6 *ngIf="partnerAdvance?.type == 'refund' && partnerAdvance?.state != 'confirmed'" class="font-weight-bold text-danger mb-2">Tối đa tiền tạm ứng được trả : {{amountBalance | number}}</h6>
                 </div>
             </div>
         </div>

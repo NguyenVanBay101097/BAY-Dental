@@ -364,6 +364,16 @@ namespace Infrastructure.Services
             return name;
         }
 
+        public async Task<decimal> GetAmountAdvanceBalance(Guid id)
+        {
+            ///lay tu moveline account
+            var moveLineObj = GetService<IAccountMoveLineService>();
+            var accountObj = GetService<IAccountAccountService>();
+            var accountAdvance = await accountObj.GetAccountAdvanceCurrentCompany();
+            var amounBalance = await moveLineObj.SearchQuery(x => x.PartnerId == id && x.AccountId == accountAdvance.Id).Select(x => x.Balance).SumAsync();
+            return amounBalance;
+        }
+
         public override Task UpdateAsync(Partner entity)
         {
             entity.DisplayName = _NameGet(entity);
