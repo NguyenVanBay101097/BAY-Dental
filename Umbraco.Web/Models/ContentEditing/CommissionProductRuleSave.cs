@@ -39,5 +39,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// % hoa hồng assistant
         /// </summary>
         public decimal? PercentAssistant { get; set; }
+
+        public Guid CommissionId { get; set; }
     }
 }

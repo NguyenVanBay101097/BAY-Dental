@@ -1,0 +1,58 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">Bảng hoa hồng</li>
+    </ol>
+    <div class="o_cp_searchview"></div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view"></div>
+        </div>
+        <div class="o_cp_sidebar"></div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="cont-wrapper">
+        <div class="cont-left">
+            <div class="d-flex flex-column h-100 overflow-hidden">
+                <div class="d-flex justify-content-between align-items-center flex-0-0-auto p-1">
+                    <span class="font-weight-600">Bảng hoa hồng</span>
+                    <button class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Tạo</button>
+                </div>
+                <div class="flex-0-0-auto border-top border-bottom">
+                    <div class="has-search">
+                        <span class="fa fa-search form-control-icon"></span>
+                        <input class="form-control size-text-14 border-0" placeholder="Tìm kiếm ..." type="text">
+                    </div>
+                </div>
+                <ul class="flex-1-1-100 list-group overflow-auto">
+                    <li *ngFor="let item of sourceCommissions; index as i"
+                        class="list-group-item cate-item d-flex justify-content-between align-items-center"
+                        [ngClass]="{'active': commission && item.id == commission.id}" 
+                        (click)="onSelectCommission(item)">
+                        <span class="mr-1">{{item.name}}</span>
+                        <div class="edit_remove_action d-flex">
+                            <button (click)="$event.stopPropagation();deleteCommission(item, i)">
+                                <i class="far fa-trash-alt text-danger"></i>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="cont-right">
+            <div class="flex-0-0-auto d-flex align-items-center p-1">
+                <div class="has-search has-search-sm flex-fill">
+                    <span class="fa fa-search form-control-icon"></span>
+                    <input class="form-control form-control-sm" placeholder="Tìm kiếm theo mã hoặc tên ..." type="text">
+                </div>
+                <div class="flex-fill text-right">
+                    <button class="btn btn-sm btn-primary"><i class="fas fa-save"></i> Lưu</button>
+                </div>
+            </div>
+            <div class="flex-1-1-100 h-100 overflow-hidden">
+                <div>hello</div>
+            </div>
+        </div>
+    </div>
+</div>

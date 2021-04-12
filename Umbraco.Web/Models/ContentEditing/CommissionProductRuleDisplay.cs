@@ -19,13 +19,13 @@ namespace Umbraco.Web.Models.ContentEditing
         /// dịch vụ
         /// </summary>
         public Guid? ProductId { get; set; }
-        public ProductSimple Product { get; set; }
+        public ProductBasic2 Product { get; set; }
 
         /// <summary>
         /// nhóm dịch vụ
         /// </summary>
         public Guid? CategId { get; set; }
-        public ProductCategorySimple Categ { get; set; }
+        public string CategName { get; set; }
 
         /// <summary>
         /// % hoa hồng tư vấn
@@ -44,6 +44,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CompanyId { get; set; }
 
-
+        public Guid CommissionId { get; set; }
     }
 }

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { CommissionListComponent } from './commission-list/commission-list.component';
 import { CommissionCreateUpdateComponent } from './commission-create-update/commission-create-update.component';
+import { CommissionListV2Component } from './commission-list-v2/commission-list-v2.component';
 
 const routes: Routes = [
   {
@@ -11,6 +12,10 @@ const routes: Routes = [
   {
     path: 'form',
     component: CommissionCreateUpdateComponent
+  },
+  {
+    path: 'v2',
+    component: CommissionListV2Component
   }
 ];
 
