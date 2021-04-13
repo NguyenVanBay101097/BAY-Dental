@@ -71,6 +71,18 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                        <tr *ngIf="isLabo == false">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá vốn
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                    formControlName="purchasePrice">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
                                         <!-- <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
@@ -91,6 +103,18 @@
                                                 <input type="text" class="form-control" formControlName="firm">
                                             </td>
                                         </tr>
+                                        <tr [class.d-none]="isLabo == false">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá đặt labo
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                    formControlName="laboPrice">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 <table class="o_group o_inner_group o_group_col_6">
@@ -107,15 +131,15 @@
                                                 </kendo-numerictextbox>
                                             </td>
                                         </tr>
-                                        <tr [class.d-none]="isLabo == false">
+                                        <tr *ngIf="isLabo != false">
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
-                                                    Giá đặt labo
+                                                    Giá vốn
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                    formControlName="laboPrice">
+                                                    formControlName="purchasePrice">
                                                 </kendo-numerictextbox>
                                             </td>
                                         </tr>
