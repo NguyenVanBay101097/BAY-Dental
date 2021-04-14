@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using Infrastructure.Data;
+using Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,16 +12,16 @@ using System.Threading.Tasks;
 
 namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 {
-    public class SaleOrderPaymentProcessUpdateHandler : INotificationHandler<ProcessUpdateNotification>
+    public class SaleOrderPaymentProcessUpdateHandler : INotificationHandler<ProcessUpdateNotification> 
     {
         private const string _version = "1.0.1.7";
         private IServiceScopeFactory _serviceScopeFactory;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private IAccountJournalService _accountJournalService;
 
-        public SaleOrderPaymentProcessUpdateHandler(IServiceScopeFactory serviceScopeFactory , IHttpContextAccessor httpContextAccessor)
+        public SaleOrderPaymentProcessUpdateHandler(IServiceScopeFactory serviceScopeFactory , IAccountJournalService accountJournalService)
         {
             _serviceScopeFactory = serviceScopeFactory;
-            _httpContextAccessor = httpContextAccessor;
+            _accountJournalService = accountJournalService;
         }
 
         public Task Handle(ProcessUpdateNotification notification, CancellationToken cancellationToken)
@@ -60,44 +61,50 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                     context.SaveChanges();
                 }
 
-                var claim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "company_id");
-                var companyId =  claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
-                var journalAdvance = context.AccountJournals.Where(x => x.Type == "advance" && x.CompanyId == companyId).FirstOrDefault();
-                if (journalAdvance == null)
-                {
-                    var currentLiabilities = context.AccountAccountTypes.Where(x=> x.Name == "Current Liabilities").FirstOrDefault();
-                    if (currentLiabilities == null)
-                        return Task.CompletedTask;
+                var companies = context.Companies.ToList();
+                var currentLiabilities = context.AccountAccountTypes.Where(x => x.Name == "Current Liabilities").FirstOrDefault();
+                if (currentLiabilities == null)
+                    return Task.CompletedTask;
 
-                    var accKHTU = context.AccountAccounts.Where(x => x.Code == "KHTU" && x.CompanyId == companyId).FirstOrDefault();
+                foreach (var company in companies)
+                {                                   
 
-                    if (accKHTU == null)
+                    var journalAdvance = context.AccountJournals.Where(x => x.Type == "advance" && x.CompanyId == company.Id).FirstOrDefault();
+                    if (journalAdvance == null)
                     {
-                        accKHTU = new AccountAccount
+                        var accKHTU = context.AccountAccounts.Where(x => x.Code == "KHTU" && x.CompanyId == company.Id).FirstOrDefault();
+                        if (accKHTU == null)
                         {
-                            Name = "Khách hàng tạm ứng",
-                            Code = "KHTU",
-                            InternalType = currentLiabilities.Type,
-                            UserTypeId = currentLiabilities.Id,
-                            CompanyId = companyId,
+                            accKHTU = new AccountAccount
+                            {
+                                Name = "Khách hàng tạm ứng",
+                                Code = "KHTU",
+                                InternalType = currentLiabilities.Type,
+                                UserTypeId = currentLiabilities.Id,
+                                CompanyId = company.Id,
+                            };
+
+                            context.SaveChanges();
+                        }
+
+                        journalAdvance = new AccountJournal
+                        {
+                            Name = "Nhật ký khách hàng tạm ứng",
+                            Type = "advance",
+                            UpdatePosted = true,
+                            Code = "ADVANCE",
+                            DefaultDebitAccountId = accKHTU.Id,
+                            DefaultCreditAccountId = accKHTU.Id,
+                            CompanyId = company.Id,
                         };
 
-                        context.SaveChanges();
+                        _accountJournalService.Sudo = true;
+                        _accountJournalService.CreateAsync(journalAdvance);
                     }
-
-                    journalAdvance = new AccountJournal
-                    {
-                        Name = "Nhật ký khách hàng tạm ứng",
-                        Type = "advance",
-                        UpdatePosted = true,
-                        Code = "ADVANCE",
-                        DefaultDebitAccountId = accKHTU.Id,
-                        DefaultCreditAccountId = accKHTU.Id,
-                        CompanyId = companyId,
-                    };
-
-                    context.SaveChanges();
                 }
+              
+
+             
             }
 
             return Task.CompletedTask;
