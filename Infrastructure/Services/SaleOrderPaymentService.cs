@@ -137,23 +137,13 @@ namespace Infrastructure.Services
             {
                 ///ghi sổ doang thu , công nợ lines    
                 ///tạo hoa hồng cho bác sĩ , phụ tá , tư vấn
-                var invoices = await _CreateInvoices(saleOrderPayment.Order, saleOrderPayment.Lines);
+                var invoices = await _CreateInvoices(saleOrderPayment.Order, saleOrderPayment.Lines.Where(x=>x.Amount > 0).ToList());
                 await moveObj.ActionPost(invoices);
                 ///update moveId của SaleOrderPayment
                 saleOrderPayment.MoveId = invoices.FirstOrDefault().Id;
 
-                var order = saleOrderPayment.Order;
-                saleLineObj._GetInvoiceQty(order.OrderLines);
-                saleLineObj._GetToInvoiceQty(order.OrderLines);
-                saleLineObj._GetInvoiceAmount(order.OrderLines);
-                saleLineObj._GetToInvoiceAmount(order.OrderLines);
-                saleLineObj._ComputeInvoiceStatus(order.OrderLines);
-                saleLineObj._ComputeLinePaymentRels(order.OrderLines);
-
-                saleOrderObj._GetInvoiced(new List<SaleOrder>() { order });
-                ///compute residual , paid của line trong saleOrder
-                saleOrderObj._ComputeResidual(new List<SaleOrder>() { order });
-                await saleOrderObj.UpdateAsync(new List<SaleOrder>() { order });
+                //tính lại paid , residual saleorder , lines
+                await _ComputeSaleOrder(saleOrderPayment.OrderId);
 
                 ///vòng lặp phương thức thanh toán tạo move , move line
                 var movePayments = await _PreparePaymentMoves(saleOrderPayment);
@@ -269,7 +259,9 @@ namespace Infrastructure.Services
             var all_move_vals = new List<AccountMove>();
             var account = await accountObj.GetAccountReceivableCurrentCompany();
 
-            foreach (var payment in self.JournalLines)
+            //check journal payment > 0 mới xử lý ghi sổ
+            var journalPayments = self.JournalLines.Where(x => x.Amount > 0).ToList();
+            foreach (var payment in journalPayments)
             {
                 decimal counterpart_amount = 0;
                 AccountAccount liquidity_line_account = null;
@@ -341,6 +333,9 @@ namespace Infrastructure.Services
             var moveLineObj = GetService<IAccountMoveLineService>();
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
+            var now = DateTime.Now;
+            var firstDayOfMonth = new DateTime(now.Year, now.Month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var saleOrderPayment = await SearchQuery(x => ids.Contains(x.Id) && x.State != "cancel")
                 .Include(x => x.Move).ThenInclude(s => s.Lines)
                 .Include(x => x.Order).ThenInclude(s => s.OrderLines)
@@ -351,7 +346,8 @@ namespace Infrastructure.Services
             foreach (var rec in saleOrderPayment)
             {
                 ///check thanh toán trong mới cho hủy
-
+                if (firstDayOfMonth < rec.Date && rec.Date > lastDayOfMonth)
+                    throw new Exception("Bạn chỉ được hủy thanh toán trong tháng");
 
                 ///xử lý tìm các hóa đơn thanh toán để xóa
                 foreach (var move in rec.MoveLines.Select(x => x.Move).Distinct().ToList())
@@ -372,7 +368,8 @@ namespace Infrastructure.Services
                 await moveObj.Unlink(new List<Guid>() { rec.Move.Id });
 
 
-                //tính lại paid , residual saleorder line
+                //tính lại paid , residual saleorder , lines
+                await _ComputeSaleOrder(rec.OrderId);
 
 
                 rec.State = "cancel";
@@ -381,6 +378,28 @@ namespace Infrastructure.Services
             await UpdateAsync(saleOrderPayment);
 
 
+        }
+
+        public async Task _ComputeSaleOrder(Guid saleOrderId)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var orderlineObj = GetService<ISaleOrderLineService>();
+            var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
+            var order = await orderObj.SearchQuery(x => x.Id == saleOrderId && x.Residual > 0).Include(x => x.OrderLines)              
+                .FirstOrDefaultAsync();
+
+            orderlineObj._GetInvoiceQty(order.OrderLines);
+            orderlineObj._GetToInvoiceQty(order.OrderLines);
+            orderlineObj._GetInvoiceAmount(order.OrderLines);
+            orderlineObj._GetToInvoiceAmount(order.OrderLines);
+            orderlineObj._ComputeInvoiceStatus(order.OrderLines);
+            orderlineObj._ComputeLinePaymentRels(order.OrderLines);
+
+            orderObj._GetInvoiced(new List<SaleOrder>() { order });
+            ///compute residual , paid của line trong saleOrder
+            orderObj._ComputeResidual(new List<SaleOrder>() { order });
+
+            await orderlineObj.UpdateAsync(order.OrderLines);
         }
 
         public override ISpecification<SaleOrderPayment> RuleDomainGet(IRRule rule)

@@ -2121,7 +2121,7 @@ namespace Infrastructure.Services
             return invoice_vals;
         }
 
-        public async Task<RegisterSaleOrderPayment> GetDefaultSaleOrderPayment(Guid id)
+        public async Task<RegisterSaleOrderPayment> GetSaleOrderPaymentBySaleOrderId(Guid id)
         {
             var order = await SearchQuery(x => x.Id == id && x.Residual > 0).FirstOrDefaultAsync();
 

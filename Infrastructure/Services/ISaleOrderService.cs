@@ -46,6 +46,8 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleOrderLineDisplay>> GetServiceBySaleOrderId(Guid id);
         Task<IEnumerable<DotKhamDisplay>> GetTreatmentBySaleOrderId(Guid id);
         Task<IEnumerable<LaboOrderDisplay>> GetLaboBySaleOrderId(Guid id);
+
+        Task<RegisterSaleOrderPayment> GetSaleOrderPaymentBySaleOrderId(Guid id);
         Task ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val);
         void _AmountAll(SaleOrder order);
 
