@@ -21,10 +21,10 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<CommissionProductRuleDisplay>> GetResultAsync(Guid commissionId)
+        public async Task<IEnumerable<CommissionProductRuleDisplay>> GetForCommission(Guid commissionId)
         {
             var productObj = GetService<IProductService>();
-            var commissionProductRules = await SearchQuery(x => x.CommissionId == commissionId && x.ProductId.HasValue).Include(x => x.Categ).Include(x => x.Product).ToListAsync();
+            var commissionProductRules = await SearchQuery(x => x.CommissionId == commissionId && x.ProductId.HasValue && x.CategId.HasValue).Include(x => x.Categ).Include(x => x.Product).ToListAsync();
             var commissionProductRule_dict = commissionProductRules.ToDictionary(x => x.ProductId.Value, x => x);
 
             var products = await _mapper.ProjectTo<ProductBasic2>(productObj.SearchQuery().Include(x => x.Categ)).ToListAsync();
@@ -34,7 +34,7 @@ namespace Infrastructure.Services
             {
                 if (commissionProductRule_dict.ContainsKey(product.Id))
                 {
-                    commissionProductRuleList.Add(_mapper.Map<CommissionProductRuleDisplay>(commissionProductRule_dict.ContainsKey(product.Id)));
+                    commissionProductRuleList.Add(_mapper.Map<CommissionProductRuleDisplay>(commissionProductRule_dict[product.Id]));
                 }
                 else
                 {
@@ -46,7 +46,7 @@ namespace Infrastructure.Services
                         ProductId = product.Id,
                         Product = product,
                         CategId = product.CategId,
-                        CategName = product.CategName,
+                        Categ = product.Categ,
                         CompanyId = CompanyId,
                         CommissionId = commissionId
                     });
@@ -54,6 +54,31 @@ namespace Infrastructure.Services
             }
 
             return commissionProductRuleList;
+        }
+
+        public async Task CreateUpdateCommissionProductRules(IEnumerable<CommissionProductRuleSave> vals)
+        {
+            var commissionProductRules_create = new List<CommissionProductRule>();
+            var commissionProductRules_update = new List<CommissionProductRule>();
+            foreach (var item in vals)
+            {
+                if (item.Id == Guid.Empty)
+                {
+                    commissionProductRules_create.Add(_mapper.Map<CommissionProductRule>(item));
+                } 
+                else
+                {
+                    commissionProductRules_update.Add(_mapper.Map<CommissionProductRule>(item));
+                }
+            }
+            if (commissionProductRules_create.Any())
+            {
+                await CreateAsync(commissionProductRules_create);
+            }
+            if (commissionProductRules_update.Any())
+            {
+                await UpdateAsync(commissionProductRules_update);
+            }
         }
     }
 }

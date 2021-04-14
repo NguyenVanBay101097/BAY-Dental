@@ -13,13 +13,19 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PopupModule } from '@progress/kendo-angular-popup';
 import { CommissionListV2Component } from './commission-list-v2/commission-list-v2.component';
 import { CommissionProductRuleService } from './commission-product-rule.service';
+import { CommissionProductRuleListComponent } from './commission-product-rule-list/commission-product-rule-list.component';
+import { CommissionDialogComponent } from './commission-dialog/commission-dialog.component';
+import { CommissionProductRuleDialogComponent } from './commission-product-rule-dialog/commission-product-rule-dialog.component';
 
 @NgModule({
   declarations: [
     CommissionListComponent, 
     CommissionCreateUpdateComponent, 
     CommissionCreateUpdateDialogComponent, 
-    CommissionListV2Component
+    CommissionListV2Component, 
+    CommissionProductRuleListComponent, 
+    CommissionDialogComponent, 
+    CommissionProductRuleDialogComponent
   ],
   imports: [
     CommonModule,
@@ -36,7 +42,9 @@ import { CommissionProductRuleService } from './commission-product-rule.service'
     CommissionProductRuleService
   ],
   entryComponents: [
-    CommissionCreateUpdateDialogComponent
+    CommissionCreateUpdateDialogComponent,
+    CommissionDialogComponent, 
+    CommissionProductRuleDialogComponent
   ]
 })
 export class CommissionsModule { }

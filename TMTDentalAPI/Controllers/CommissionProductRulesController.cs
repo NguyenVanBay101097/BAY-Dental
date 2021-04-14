@@ -7,6 +7,7 @@ using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -34,8 +35,15 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetForCommission(Guid commissionId)
         {
-            var result = await _commissionProductRuleService.GetResultAsync(commissionId);
+            var result = await _commissionProductRuleService.GetForCommission(commissionId);
             return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post(IEnumerable<CommissionProductRuleSave> vals)
+        {
+            await _commissionProductRuleService.CreateUpdateCommissionProductRules(vals);
+            return NoContent();
         }
     }
 }

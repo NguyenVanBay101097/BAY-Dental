@@ -6,6 +6,8 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class CommissionProductRuleSave
     {
+        public Guid Id { get; set; }
+
         /// <summary>
         /// 3_global: Áp dụng tất cả dịch vụ
         /// 2_product_category: Áp dụng trên 1 nhóm dịch vụ cụ thể
@@ -41,5 +43,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? PercentAssistant { get; set; }
 
         public Guid CommissionId { get; set; }
+
+        public Guid CompanyId { get; set; } 
     }
 }

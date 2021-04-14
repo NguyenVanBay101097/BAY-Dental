@@ -25,7 +25,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// nhóm dịch vụ
         /// </summary>
         public Guid? CategId { get; set; }
-        public string CategName { get; set; }
+        public ProductCategorySimple Categ { get; set; }
 
         /// <summary>
         /// % hoa hồng tư vấn

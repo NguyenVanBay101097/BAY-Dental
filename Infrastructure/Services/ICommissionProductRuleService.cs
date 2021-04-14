@@ -9,6 +9,7 @@ namespace Infrastructure.Services
 {
     public interface ICommissionProductRuleService : IBaseService<CommissionProductRule>
     {
-        Task<IEnumerable<CommissionProductRuleDisplay>> GetResultAsync(Guid CommissionId);
+        Task<IEnumerable<CommissionProductRuleDisplay>> GetForCommission(Guid CommissionId);
+        Task CreateUpdateCommissionProductRules(IEnumerable<CommissionProductRuleSave> vals);
     }
 }

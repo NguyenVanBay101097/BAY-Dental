@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { CommissionDialogComponent } from '../commission-dialog/commission-dialog.component';
 import { CommissionProductRuleService } from '../commission-product-rule.service';
 import { CommissionPaged, CommissionService } from '../commission.service';
 
@@ -16,11 +19,10 @@ export class CommissionListV2Component implements OnInit {
   sourceCommissions: any[];
   commissions: any[];
   commission: any;
-
-  commissionProductRules: any[];
+  checkCreate: boolean = false;
 
   constructor(private commissionService: CommissionService, 
-    private commissionProductRuleService: CommissionProductRuleService) { }
+    private modalService: NgbModal) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -37,9 +39,14 @@ export class CommissionListV2Component implements OnInit {
     val.search = '';
     this.commissionService.getPaged(val).subscribe(res => {
       this.sourceCommissions = res.items;
-      console.log(res);
       if (!this.searchCommission) {
         this.commissions = this.sourceCommissions;
+      }
+      if (this.checkCreate) {
+        if (this.commissions.length > 0) {
+          this.commission = this.commissions[0];
+        }
+        this.checkCreate = false;
       }
     }, err => {
       console.log(err);
@@ -51,22 +58,43 @@ export class CommissionListV2Component implements OnInit {
       this.commission = null;
     } else {
       this.commission = item;
-
-      this.commissionProductRuleService.getForCommission(item.id).subscribe(res => {
-        console.log(res);
-        // this.commissionProductRules = res.commissionProductRules;
-
-      }, err => {
-        console.log(err);
-      })
     }
   }
 
-  deleteCommission(item: any, i) {
-    
+  createCommission() {
+    let modalRef = this.modalService.open(CommissionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm Bảng hoa hồng';
+    modalRef.result.then(result => {
+      this.checkCreate = true;
+      this.loadDataFromApi();
+    }, () => {
+    });
   }
 
+  editCommission(item: any, i) {
+    let modalRef = this.modalService.open(CommissionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm Bảng hoa hồng';
+    modalRef.componentInstance.id = item.id;
+    modalRef.result.then(result => {
+      this.loadDataFromApi();
+    }, () => {
+    });
+  }
 
-
+  deleteCommission(item: any, i) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa Bảng hoa hồng';
+    modalRef.result.then(() => {
+      this.commissionService.delete(item.id).subscribe(() => {
+        this.loadDataFromApi();
+        if (item.id == this.commission.id) {
+          this.commission = null;
+        }
+      }, err => {
+        console.log(err);
+      });
+    }, () => {
+    });
+  }
 
 }

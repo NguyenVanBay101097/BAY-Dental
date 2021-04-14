@@ -204,6 +204,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Nhóm sản phẩm
         /// </summary>
         public Guid CategId { get; set; }
-        public string CategName { get; set; }
+        public ProductCategorySimple Categ { get; set; }
     }
 }
