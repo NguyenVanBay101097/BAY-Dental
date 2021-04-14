@@ -294,12 +294,12 @@ namespace Infrastructure.Services
         public void _ComputeLinePaymentRels(IEnumerable<SaleOrderLine> self)
         {
             var self_ids = self.Select(x => x.Id).ToList();
-            self = SearchQuery(x => self_ids.Contains(x.Id)).Include(x => x.SaleOrderLinePaymentRels).ThenInclude(s => s.Payment).ToList();
+            self = SearchQuery(x => self_ids.Contains(x.Id)).Include(x => x.SaleOrderLineInvoice2Rels).ThenInclude(s => s.InvoiceLine).ToList();
             foreach (var line in self)
             {
                 if (line.State != "draft")
                 {
-                    var amountPaid = line.SaleOrderLinePaymentRels.Where(x => x.Payment.State != "cancel").Sum(x => x.AmountPrepaid);
+                    var amountPaid = line.SaleOrderLineInvoice2Rels.Sum(x => x.InvoiceLine.PriceUnit);
                     line.AmountPaid = amountPaid;
                     line.AmountResidual = line.PriceSubTotal - amountPaid;
                 }

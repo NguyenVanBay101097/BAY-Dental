@@ -52,5 +52,14 @@ namespace TMTDentalAPI.Controllers
             var basic = _mapper.Map<SaleOrderPaymentBasic>(saleOrderPayment);
             return Ok(basic);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionPayment(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderPaymentService.ActionPayment(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
     }
 }

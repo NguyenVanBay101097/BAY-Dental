@@ -14,11 +14,13 @@ namespace ApplicationCore.Entities
         /// Ngày tư vấn
         /// </summary>
         public DateTime Date { get; set; }
+
         /// <summary>
         /// người tư vấn
         /// </summary>
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
+
         /// <summary>
         /// khách hàng
         /// </summary>

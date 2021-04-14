@@ -27,6 +27,7 @@ namespace Infrastructure.Services
         Task ActionDone(IEnumerable<Guid> ids);
         IEnumerable<Guid> DefaultGetInvoice(List<Guid> ids);
         void _ComputeResidual(IEnumerable<AccountInvoice> invoices);
+        void _ComputeResidual(IEnumerable<SaleOrder> self);
         Task ApplyCoupon(SaleOrderApplyCoupon val);
         Task ApplyPromotion(Guid id);
 
@@ -45,6 +46,8 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleOrderLineDisplay>> GetServiceBySaleOrderId(Guid id);
         Task<IEnumerable<DotKhamDisplay>> GetTreatmentBySaleOrderId(Guid id);
         Task<IEnumerable<LaboOrderDisplay>> GetLaboBySaleOrderId(Guid id);
+
+        Task<RegisterSaleOrderPayment> GetSaleOrderPaymentBySaleOrderId(Guid id);
         Task ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val);
         void _AmountAll(SaleOrder order);
 

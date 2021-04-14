@@ -45,6 +45,10 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany(x => x.MoveLines)
                 .HasForeignKey(x => x.PaymentId);
 
+            builder.HasOne(x => x.SaleOrderPayment)
+            .WithMany(x=> x.MoveLines)
+            .HasForeignKey(x => x.SaleOrderPaymentId);
+
             builder.HasOne(x => x.PurchaseLine)
                .WithMany(x => x.MoveLines)
                .HasForeignKey(x => x.PurchaseLineId)

@@ -173,16 +173,22 @@ namespace ApplicationCore.Entities
         public bool IsCancelled { get; set; }
 
         /// <summary>
-        /// Bac si
+        /// Bác sĩ
         /// </summary>
         public Guid? EmployeeId { get; set; }
         public Employee Employee { get; set; }
 
         /// <summary>
-        /// phu ta
+        /// Phụ tá
         /// </summary>
         public Guid? AssistantId { get; set; }
         public Employee Assistant { get; set; }
+
+        /// <summary>
+        /// người tư vấn
+        /// </summary>
+        public Guid? CounselorId { get; set; }
+        public Employee Counselor { get; set; }
 
         public Guid? AdvisoryId { get; set; }
         public Advisory Advisory { get; set; }

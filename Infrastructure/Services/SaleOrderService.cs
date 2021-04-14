@@ -1228,7 +1228,7 @@ namespace Infrastructure.Services
                 await dkStepObj.DeleteAsync(removeDkSteps);
                 await saleLineObj.Unlink(lineToRemoves.Select(x => x.Id).ToList());
             }
-                
+
 
             //Cập nhật sequence cho tất cả các line của val
             int sequence = 0;
@@ -1973,15 +1973,27 @@ namespace Infrastructure.Services
                 var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels)
                     .Select(x => x.InvoiceLine).Select(x => x.Move).Distinct().ToList();
                 decimal? residual = 0M;
-                foreach (var invoice in invoices)
+
+                if (invoices.Any())
                 {
-                    if (invoice.Type != "out_invoice" && invoice.Type != "out_refund")
-                        continue;
-                    if (invoice.Type == "out_invoice")
-                        residual += invoice.AmountResidual;
-                    else
-                        residual -= invoice.AmountResidual;
+                    foreach (var invoice in invoices)
+                    {
+                        if (invoice.Type != "out_invoice" && invoice.Type != "out_refund")
+                            continue;
+                        if (invoice.Type == "out_invoice")
+                            residual += invoice.AmountResidual;
+                        else
+                            residual -= invoice.AmountResidual;
+                    }
                 }
+                else
+                {
+                    foreach (var line in order.OrderLines)
+                    {
+                        residual += line.AmountToInvoice;
+                    }
+                }
+
 
                 order.Residual = residual;
             }
@@ -2053,7 +2065,7 @@ namespace Infrastructure.Services
 
                     if (line.QtyToInvoice == 0 && line.AmountToInvoice == 0)
                         continue;
-                    if ((line.QtyToInvoice > 0 && line.AmountToInvoice > 0 ) || (line.QtyToInvoice < 0 && final) || (line.QtyToInvoice <= 0 && line.AmountToInvoice > 0))
+                    if ((line.QtyToInvoice > 0 && line.AmountToInvoice > 0) || (line.QtyToInvoice < 0 && final) || (line.QtyToInvoice <= 0 && line.AmountToInvoice > 0))
                     {
                         invoice_vals.InvoiceLines.Add(saleLineObj._PrepareInvoiceLine(line));
                     }
@@ -2121,6 +2133,47 @@ namespace Infrastructure.Services
             return invoice_vals;
         }
 
+        public async Task<RegisterSaleOrderPayment> GetSaleOrderPaymentBySaleOrderId(Guid id)
+        {
+            var order = await SearchQuery(x => x.Id == id && x.Residual > 0).FirstOrDefaultAsync();
+
+            if (order == null)
+                throw new Exception("Phiếu điều trị đã thanh toán đủ");
+
+            if (order.State != "sale" && order.State != "done")
+                throw new Exception("Bạn chỉ có thể thanh toán cho phiếu điều trị đã xác nhận");
+
+            //if (order.PartnerId != orders[0].PartnerId)
+            //    throw new Exception("Để thanh toán nhiều phiếu điều trị cùng một lần, chúng phải có cùng khách hàng");
+
+            //var total_amount = order.Sum(x => x.Residual);
+
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var lines = await saleLineObj.SearchQuery(x => x.OrderId == id && x.AmountResidual != 0)
+                .Select(x => new RegisterSaleOrderPaymentHistoryLine
+                {
+                    SaleOrderLineId = x.Id,
+                    SaleOrderLine = new RegisterSaleOrderLinePayment
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        PriceTotal = x.PriceTotal,
+                        AmountPaid = x.AmountPaid,
+                        AmountResidual = x.AmountResidual,
+                    }
+                }).ToListAsync();
+
+            var rec = new RegisterSaleOrderPayment
+            {
+                Amount = Math.Abs(order.Residual ?? 0),
+                OrderId = id,
+                CompanyId = CompanyId,
+                Lines = lines,
+
+            };
+
+            return rec;
+        }
 
         public async Task<IEnumerable<SaleOrderLineDisplay>> GetServiceBySaleOrderId(Guid id)
         {

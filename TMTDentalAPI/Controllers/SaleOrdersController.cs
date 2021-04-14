@@ -411,6 +411,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetSaleOrderPaymentBySaleOrderId(Guid id)
+        {
+            var res = await _saleOrderService.GetSaleOrderPaymentBySaleOrderId(id);
+            return Ok(res);
+        }
+
         [AllowAnonymous]
         [HttpGet("{id}/[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]

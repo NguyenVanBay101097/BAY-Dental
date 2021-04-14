@@ -11,6 +11,8 @@ namespace ApplicationCore.Entities
             State = "draft";
         }
 
+        public string Name { get; set; }
+
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
 
@@ -24,11 +26,6 @@ namespace ApplicationCore.Entities
         public Guid? MoveId { get; set; }
         public AccountMove Move { get; set; }
 
-        /// <summary>
-        /// Hóa đơn thanh toán
-        /// </summary>
-        public Guid? PaymentMoveId { get; set; }
-        public AccountMove PaymentMove { get; set; }
 
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
@@ -42,9 +39,13 @@ namespace ApplicationCore.Entities
         public SaleOrder Order { get; set; }
 
         /// <summary>
-        /// state = state payment
+        /// draft : nháp
+        /// posted : đã thanh toán
+        /// cancel : hủy
         /// </summary>
         public string State { get; set; }
+
+        public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
 
     }
 }

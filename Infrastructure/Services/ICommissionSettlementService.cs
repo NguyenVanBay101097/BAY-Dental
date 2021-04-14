@@ -11,8 +11,10 @@ namespace Infrastructure.Services
 {
     public interface ICommissionSettlementService : IBaseService<CommissionSettlement>
     {
-        Task CreateSettlements(AccountPayment val);
+        //Task CreateSettlements(AccountPayment val);
         Task Unlink(IEnumerable<Guid> paymentIds);
+
+        Task<IEnumerable<CommissionSettlement>> _PrepareCommission(AccountMoveLine moveline, SaleOrderLine line);
         Task<IEnumerable<CommissionSettlementReportOutput>> GetReport(CommissionSettlementReport val);
         Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementReport val);
 

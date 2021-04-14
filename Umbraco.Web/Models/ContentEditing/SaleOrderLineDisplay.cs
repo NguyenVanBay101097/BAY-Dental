@@ -90,4 +90,17 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? OrderPartnerId { get; set; }
         public PartnerSimple OrderPartner { get; set; }
     }
+
+    public class RegisterSaleOrderLinePayment
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public decimal? PriceTotal { get; set; }
+
+        public decimal? AmountPaid { get; set; }
+
+        public decimal? AmountResidual { get; set; }
+    }
 }
