@@ -338,6 +338,12 @@
       <field name="model_id" ref="partner.model_partner_advance"/>
       <field name="global" eval="True"/>
     </record>
+
+    <record model="ir.rule" id="sale.sale_order_payment_comp_rule">
+      <field name="name">SaleOrder Payment multi-company</field>
+      <field name="model_id" ref="sale.model_sale_order_payment"/>
+      <field name="global" eval="True"/>
+    </record>
   </data>
 </odoo>
 

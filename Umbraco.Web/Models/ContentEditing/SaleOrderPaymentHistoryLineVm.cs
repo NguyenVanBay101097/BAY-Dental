@@ -17,7 +17,16 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public Guid SaleOrderLineId { get; set; }
-        public SaleOrderLineBasic SaleOrderLine { get; set; }
+        public SaleOrderLineDisplay SaleOrderLine { get; set; }
+
+        public decimal Amount { get; set; }
+    }
+
+    public class RegisterSaleOrderPaymentHistoryLine
+    {
+        public Guid Id { get; set; }
+        public Guid SaleOrderLineId { get; set; }
+        public RegisterSaleOrderLinePayment SaleOrderLine { get; set; }
 
         public decimal Amount { get; set; }
     }

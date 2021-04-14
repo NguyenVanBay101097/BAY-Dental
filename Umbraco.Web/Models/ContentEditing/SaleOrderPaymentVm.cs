@@ -68,5 +68,32 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
     }
 
+    public class RegisterSaleOrderPayment
+    {
+        public RegisterSaleOrderPayment()
+        {
+            Date = DateTime.Today;
+            State = "draft";
+        }
+
+        public decimal Amount { get; set; }
+        public DateTime Date { get; set; }
+
+        public Guid OrderId { get; set; }
+        public Guid CompanyId { get; set; }
+
+        public IEnumerable<SaleOrderPaymentJournalLineSave> JournalLines { get; set; } = new List<SaleOrderPaymentJournalLineSave>();
+        public IEnumerable<RegisterSaleOrderPaymentHistoryLine> Lines { get; set; } = new List<RegisterSaleOrderPaymentHistoryLine>();
+
+        public string Note { get; set; }
+
+        /// <summary>
+        /// state = state payment
+        /// </summary>
+        public string State { get; set; }
+    }
+
+  
+
 
 }

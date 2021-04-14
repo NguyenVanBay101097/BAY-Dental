@@ -2121,6 +2121,47 @@ namespace Infrastructure.Services
             return invoice_vals;
         }
 
+        public async Task<RegisterSaleOrderPayment> GetDefaultSaleOrderPayment(Guid id)
+        {
+            var order = await SearchQuery(x => x.Id == id && x.Residual > 0).FirstOrDefaultAsync();
+
+            if (order == null)
+                throw new Exception("Phiếu điều trị đã thanh toán đủ");
+
+            if (order.State != "sale" && order.State != "done")
+                throw new Exception("Bạn chỉ có thể thanh toán cho phiếu điều trị đã xác nhận");
+
+            //if (order.PartnerId != orders[0].PartnerId)
+            //    throw new Exception("Để thanh toán nhiều phiếu điều trị cùng một lần, chúng phải có cùng khách hàng");
+
+            //var total_amount = order.Sum(x => x.Residual);
+
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var lines = await saleLineObj.SearchQuery(x => x.OrderId == id && x.AmountResidual != 0)
+                .Select(x => new RegisterSaleOrderPaymentHistoryLine
+                {                   
+                    SaleOrderLineId = x.Id,
+                    SaleOrderLine = new RegisterSaleOrderLinePayment
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        PriceTotal = x.PriceTotal,
+                        AmountPaid = x.AmountPaid,
+                        AmountResidual = x.AmountResidual,                                           
+                    }
+                }).ToListAsync();
+
+            var rec = new RegisterSaleOrderPayment
+            {
+                Amount = Math.Abs(order.Residual ?? 0),
+                OrderId = id,
+                CompanyId = CompanyId,
+                Lines = lines,
+                
+            };
+
+            return rec;
+        }
 
         public async Task<IEnumerable<SaleOrderLineDisplay>> GetServiceBySaleOrderId(Guid id)
         {

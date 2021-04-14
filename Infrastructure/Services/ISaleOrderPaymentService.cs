@@ -14,5 +14,6 @@ namespace Infrastructure.Services
         Task<SaleOrderPayment> CreateSaleOrderPayment(SaleOrderPaymentSave val);
 
         Task<SaleOrderPaymentDisplay> GetDisplay(Guid id);
+        Task ActionPayment(IEnumerable<Guid> ids);
     }
 }
