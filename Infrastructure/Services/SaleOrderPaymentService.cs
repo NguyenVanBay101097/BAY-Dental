@@ -297,6 +297,7 @@ namespace Infrastructure.Services
                 {
                     JournalId = line.JournalId,
                     PartnerId = self.Order.PartnerId,
+                    Amount = line.Amount,
                     PartnerType = "customer",
                     PaymentDate = self.Date,
                     PaymentType = "inbound",
