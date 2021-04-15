@@ -18,4 +18,9 @@
 
 .active {
     border-color: #007BFF !important;
+    background-color: #F5FAFF;
+}
+
+.pointer:hover {
+    cursor: pointer;
 }
