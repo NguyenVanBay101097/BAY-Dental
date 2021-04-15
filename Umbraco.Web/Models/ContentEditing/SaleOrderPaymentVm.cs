@@ -26,8 +26,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Note { get; set; }
 
+        public IEnumerable<AccountPaymentBasic> Payments { get; set; } = new List<AccountPaymentBasic>();
+
         /// <summary>
-        /// state = state payment
+        /// draft : nháp
+        /// posted : đã thanh toán
+        /// cancel : hủy
         /// </summary>
         public string State { get; set; }
     }

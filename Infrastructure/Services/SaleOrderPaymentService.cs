@@ -40,7 +40,10 @@ namespace Infrastructure.Services
 
             query = query.OrderByDescending(x => x.DateCreated);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await query.ToListAsync();
 
             var paged = new PagedResult2<SaleOrderPaymentBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -124,6 +127,7 @@ namespace Infrastructure.Services
             var moveObj = GetService<IAccountMoveService>();
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
+            var paymentObj = GetService<IAccountPaymentService>();
             /// truy vấn đủ dữ liệu của saleorder payment
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move)
@@ -137,27 +141,23 @@ namespace Infrastructure.Services
             {
                 ///ghi sổ doang thu , công nợ lines    
                 ///tạo hoa hồng cho bác sĩ , phụ tá , tư vấn
-                var invoices = await _CreateInvoices(saleOrderPayment.Order, saleOrderPayment.Lines.Where(x=>x.Amount > 0).ToList());
-                await moveObj.ActionPost(invoices);
-                ///update moveId của SaleOrderPayment
-                saleOrderPayment.MoveId = invoices.FirstOrDefault().Id;
+                var invoice = await _CreateInvoices(saleOrderPayment);
+                await moveObj.ActionPost(new List<AccountMove>() { invoice });
 
                 //tính lại paid , residual saleorder , lines
                 await _ComputeSaleOrder(saleOrderPayment.OrderId);
 
                 ///vòng lặp phương thức thanh toán tạo move , move line
-                var movePayments = await _PreparePaymentMoves(saleOrderPayment);
+                var payments = _PreparePayments(saleOrderPayment, invoice.Id);
+                await paymentObj.CreateAsync(payments);
+                await paymentObj.Post(payments.Select(x => x.Id).ToList());
 
-                var amlObj = GetService<IAccountMoveLineService>();
-                foreach (var move in movePayments)
-                    amlObj.PrepareLines(move.Lines);
-
-                await moveObj.CreateMoves(movePayments);
-                await moveObj.ActionPost(movePayments);
-
+                saleOrderPayment.MoveId = invoice.Id;
+                foreach (var payment in payments)
+                    saleOrderPayment.PaymentRels.Add(new SaleOrderPaymentAccountPaymentRel { PaymentId = payment.Id });
                 /// update state = "posted"
                 saleOrderPayment.State = "posted";
-
+             
             }
 
             await UpdateAsync(saleOrderPayments);
@@ -165,29 +165,38 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<IEnumerable<AccountMove>> _CreateInvoices(SaleOrder order, IEnumerable<SaleOrderPaymentHistoryLine> self)
+        public async Task<AccountMove> _CreateInvoices(SaleOrderPayment self)
         {
             //param final: if True, refunds will be generated if necessary
             var saleLineObj = GetService<ISaleOrderLineService>();
             // Invoice values.
-            var invoice_vals = await _PrepareInvoice(order);
-            var linedict = await saleLineObj.SearchQuery(x => x.OrderId == order.Id).Include(x => x.ProductUOM).ToDictionaryAsync(x => x.Id, x => x);
-            //Invoice line values (keep only necessary sections)
-            foreach (var line in self)
+            var invoice_vals = await _PrepareInvoice(self);
+            foreach(var line in self.Lines)
             {
-
-                if (linedict[line.SaleOrderLineId].QtyToInvoice == 0 && linedict[line.SaleOrderLineId].AmountToInvoice == 0)
+                if (line.Amount == 0)
                     continue;
-                if ((linedict[line.SaleOrderLineId].QtyToInvoice > 0 && linedict[line.SaleOrderLineId].AmountToInvoice > 0) || (linedict[line.SaleOrderLineId].QtyToInvoice < 0) || (linedict[line.SaleOrderLineId].QtyToInvoice <= 0 && linedict[line.SaleOrderLineId].AmountToInvoice > 0))
-                {
-                    var moveline = await _PrepareInvoiceLineAsync(linedict[line.SaleOrderLineId], line.Amount);
-                    invoice_vals.InvoiceLines.Add(moveline);
-                }
+                var moveline = _PrepareInvoiceLineAsync(line);
+                invoice_vals.InvoiceLines.Add(moveline);
             }
-            var invoice_vals_list = new List<AccountMove>();
 
 
-            if (!invoice_vals_list.Any())
+            //var linedict = await saleLineObj.SearchQuery(x => x.OrderId == order.Id).Include(x => x.ProductUOM).ToDictionaryAsync(x => x.Id, x => x);
+            ////Invoice line values (keep only necessary sections)
+            //foreach (var line in self)
+            //{
+
+            //    if (linedict[line.SaleOrderLineId].QtyToInvoice == 0 && linedict[line.SaleOrderLineId].AmountToInvoice == 0)
+            //        continue;
+            //    if ((linedict[line.SaleOrderLineId].QtyToInvoice > 0 && linedict[line.SaleOrderLineId].AmountToInvoice > 0) || (linedict[line.SaleOrderLineId].QtyToInvoice < 0) || (linedict[line.SaleOrderLineId].QtyToInvoice <= 0 && linedict[line.SaleOrderLineId].AmountToInvoice > 0))
+            //    {
+            //        var moveline = await _PrepareInvoiceLineAsync(linedict[line.SaleOrderLineId], line.Amount);
+            //        invoice_vals.InvoiceLines.Add(moveline);
+            //    }
+            //}
+            //var invoice_vals_list = new List<AccountMove>();
+
+
+            if (!invoice_vals.InvoiceLines.Any())
                 throw new Exception("There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.");
 
 
@@ -195,13 +204,13 @@ namespace Infrastructure.Services
             var moveObj = GetService<IAccountMoveService>();
             var moves = await moveObj.CreateMoves(new List<AccountMove>() { invoice_vals }, default_type: "out_invoice");
 
-            return moves;
+            return invoice_vals;
         }
 
-        private async Task<AccountMove> _PrepareInvoice(SaleOrder self)
+        private async Task<AccountMove> _PrepareInvoice(SaleOrderPayment self)
         {
             var accountMoveObj = GetService<IAccountMoveService>();
-            var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "out_invoice");
+            var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "out_invoice", default_company_id: self.CompanyId);
             if (journal == null)
                 throw new Exception($"Please define an accounting sales journal for the company {CompanyId}.");
 
@@ -210,121 +219,130 @@ namespace Infrastructure.Services
                 Ref = "",
                 Type = "out_invoice",
                 Narration = self.Note,
-                InvoiceUserId = self.UserId,
-                PartnerId = self.PartnerId,
-                InvoiceOrigin = self.Name,
+                PartnerId = self.Order.PartnerId,
+                InvoiceOrigin = self.Order.Name,
                 JournalId = journal.Id,
                 Journal = journal,
                 CompanyId = journal.CompanyId,
-                InvoiceDate = self.DateOrder.Date,
-                Date = self.DateOrder.Date
+                Date = self.Date
             };
 
             return invoice_vals;
         }
 
-        private async Task<AccountMoveLine> _PrepareInvoiceLineAsync(SaleOrderLine self, decimal amount)
+        private AccountMoveLine _PrepareInvoiceLineAsync(SaleOrderPaymentHistoryLine self)
         {
-            var commissionSettlementObj = GetService<ICommissionSettlementService>();
+            //var commissionSettlementObj = GetService<ICommissionSettlementService>();
             var res = new AccountMoveLine
             {
-                Name = self.Name,
-                ProductId = self.ProductId,
-                ProductUoMId = self.ProductUOMId,
-                Quantity = self.QtyToInvoice == 0 ? 1 : self.QtyToInvoice,
-                Discount = self.Discount,
-                PriceUnit = amount,
-                DiscountType = self.DiscountType,
-                DiscountFixed = self.DiscountFixed,
-                SalesmanId = self.SalesmanId
+                Name = self.SaleOrderLine.Name,
+                ProductId = self.SaleOrderLine.ProductId,
+                ProductUoMId = self.SaleOrderLine.ProductUOMId,
+                Quantity = 1,
+                PriceUnit = self.Amount,
+                //SalesmanId = self.SalesmanId
             };
 
-            res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLine = self });
+            res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
-            var commissionSettlements = await commissionSettlementObj._PrepareCommission(res, self);
-            if (commissionSettlements.Any())
-            {
-                foreach (var item in commissionSettlements)
-                    res.CommissionSettlements.Add(item);
-            }
+            //var commissionSettlements = await commissionSettlementObj._PrepareCommission(res, self);
+            //if (commissionSettlements.Any())
+            //{
+            //    foreach (var item in commissionSettlements)
+            //        res.CommissionSettlements.Add(item);
+            //}
 
 
             return res;
         }
 
-        public async Task<IEnumerable<AccountMove>> _PreparePaymentMoves(SaleOrderPayment self)
+        public IEnumerable<AccountPayment> _PreparePayments(SaleOrderPayment self, Guid moveId)
         {
-            var accountObj = GetService<IAccountAccountService>();
-            var accountJournalObj = GetService<IAccountJournalService>();
-            var all_move_vals = new List<AccountMove>();
-            var account = await accountObj.GetAccountReceivableCurrentCompany();
+            //var accountObj = GetService<IAccountAccountService>();
+            //var accountJournalObj = GetService<IAccountJournalService>();
+            //var all_move_vals = new List<AccountMove>();
+            //var account = await accountObj.GetAccountReceivableCurrentCompany();
 
             //check journal payment > 0 mới xử lý ghi sổ
-            var journalPayments = self.JournalLines.Where(x => x.Amount > 0).ToList();
-            foreach (var payment in journalPayments)
+            var lines = self.JournalLines.Where(x => x.Amount > 0).ToList();
+            var results = new List<AccountPayment>();
+            foreach (var line in lines)
             {
-                decimal counterpart_amount = 0;
-                AccountAccount liquidity_line_account = null;
-
-                if (payment.Journal.Type == "advance")
-                    counterpart_amount = -payment.Amount;
-                else
-                    counterpart_amount = payment.Amount;
-
-
-                liquidity_line_account = payment.Journal.DefaultDebitAccount;
-
-
-                var balance = counterpart_amount;
-                var liquidity_amount = counterpart_amount;
-
-                var rec_pay_line_name = "Khách hàng thanh toán";
-
-                var liquidity_line_name = self.Name;
-
-                var move_vals = new AccountMove
+                var payment = new AccountPayment
                 {
-                    Date = self.Date,
+                    JournalId = line.JournalId,
                     PartnerId = self.Order.PartnerId,
-                    JournalId = payment.JournalId,
-                    Journal = payment.Journal,
-                    CompanyId = self.CompanyId,
+                    PartnerType = "customer",
+                    PaymentDate = self.Date,
+                    PaymentType = "inbound",
+                    CompanyId = line.Journal.CompanyId,
                 };
 
-                var lines = new List<AccountMoveLine>()
-                {
-                    new AccountMoveLine
-                    {
-                        Name = rec_pay_line_name,
-                        Debit = balance > 0 ? balance : 0,
-                        Credit = balance < 0 ? -balance : 0,
-                        DateMaturity = self.Date,
-                        AccountId = account.Id,
-                        Account = account,
-                        PaymentId = payment.Id,
-                        PartnerId = self.Order.PartnerId,
-                        Move = move_vals,
-                    },
-                    new AccountMoveLine
-                    {
-                        Name = liquidity_line_name,
-                        Debit = balance < 0 ? -balance : 0,
-                        Credit = balance > 0 ? balance : 0,
-                        DateMaturity = self.Date,
-                        AccountId = liquidity_line_account.Id,
-                        Account = liquidity_line_account,
-                        PaymentId = payment.Id,
-                        PartnerId = self.Order.PartnerId,
-                        Move = move_vals,
-                    },
-                };
+                payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = moveId });
+                results.Add(payment);
 
-                move_vals.Lines = lines;
+                //decimal counterpart_amount = 0;
+                //AccountAccount liquidity_line_account = null;
 
-                all_move_vals.Add(move_vals);
+                //if (line.Journal.Type == "advance")
+                //    counterpart_amount = -line.Amount;
+                //else
+                //    counterpart_amount = line.Amount;
+
+
+                //liquidity_line_account = line.Journal.DefaultDebitAccount;
+
+
+                //var balance = counterpart_amount;
+                //var liquidity_amount = counterpart_amount;
+
+                //var rec_pay_line_name = "Khách hàng thanh toán";
+
+                //var liquidity_line_name = self.Name;
+
+                //var move_vals = new AccountMove
+                //{
+                //    Date = self.Date,
+                //    PartnerId = self.Order.PartnerId,
+                //    JournalId = line.JournalId,
+                //    Journal = line.Journal,
+                //    CompanyId = self.CompanyId,
+                //};
+
+                //var lines = new List<AccountMoveLine>()
+                //{
+                //    new AccountMoveLine
+                //    {
+                //        Name = rec_pay_line_name,
+                //        Debit = balance > 0 ? balance : 0,
+                //        Credit = balance < 0 ? -balance : 0,
+                //        DateMaturity = self.Date,
+                //        AccountId = account.Id,
+                //        Account = account,
+                //        PaymentId = line.Id,
+                //        PartnerId = self.Order.PartnerId,
+                //        Move = move_vals,
+                //    },
+                //    new AccountMoveLine
+                //    {
+                //        Name = liquidity_line_name,
+                //        Debit = balance < 0 ? -balance : 0,
+                //        Credit = balance > 0 ? balance : 0,
+                //        DateMaturity = self.Date,
+                //        AccountId = liquidity_line_account.Id,
+                //        Account = liquidity_line_account,
+                //        PaymentId = line.Id,
+                //        PartnerId = self.Order.PartnerId,
+                //        Move = move_vals,
+                //    },
+                //};
+
+                //move_vals.Lines = lines;
+
+                //all_move_vals.Add(move_vals);
             }
 
-            return all_move_vals;
+            return results;
         }
 
         public async Task ActionCancel(IEnumerable<Guid> ids)
@@ -339,7 +357,7 @@ namespace Infrastructure.Services
             var saleOrderPayment = await SearchQuery(x => ids.Contains(x.Id) && x.State != "cancel")
                 .Include(x => x.Move).ThenInclude(s => s.Lines)
                 .Include(x => x.Order).ThenInclude(s => s.OrderLines)
-                .Include(x => x.MoveLines).ThenInclude(s => s.Move).ThenInclude(c => c.Lines)
+                .Include(x=> x.PaymentRels).ThenInclude(s=>s.Payment)
                 .ToListAsync();
 
 
@@ -350,14 +368,14 @@ namespace Infrastructure.Services
                     throw new Exception("Bạn chỉ được hủy thanh toán trong tháng");
 
                 ///xử lý tìm các hóa đơn thanh toán để xóa
-                foreach (var move in rec.MoveLines.Select(x => x.Move).Distinct().ToList())
-                {
-                    if (rec.MoveLines.Any())
-                        await moveLineObj.RemoveMoveReconcile(move.Lines.Select(x => x.Id).ToList());
+                //foreach (var move in rec.MoveLines.Select(x => x.Move).Distinct().ToList())
+                //{
+                //    if (rec.MoveLines.Any())
+                //        await moveLineObj.RemoveMoveReconcile(move.Lines.Select(x => x.Id).ToList());
 
-                    await moveObj.ButtonCancel(new List<Guid>() { move.Id });
-                    await moveObj.Unlink(new List<Guid>() { move.Id });
-                }
+                //    await moveObj.ButtonCancel(new List<Guid>() { move.Id });
+                //    await moveObj.Unlink(new List<Guid>() { move.Id });
+                //}
 
                 /// tìm và xóa hóa đơn ghi sổ doanh thu , công nợ
                 /// xóa các hoa hồng của bác sĩ 
@@ -385,7 +403,7 @@ namespace Infrastructure.Services
             var orderObj = GetService<ISaleOrderService>();
             var orderlineObj = GetService<ISaleOrderLineService>();
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
-            var order = await orderObj.SearchQuery(x => x.Id == saleOrderId && x.Residual > 0).Include(x => x.OrderLines)              
+            var order = await orderObj.SearchQuery(x => x.Id == saleOrderId).Include(x => x.OrderLines)              
                 .FirstOrDefaultAsync();
 
             orderlineObj._GetInvoiceQty(order.OrderLines);

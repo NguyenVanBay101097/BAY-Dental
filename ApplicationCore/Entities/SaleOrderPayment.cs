@@ -45,7 +45,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string State { get; set; }
 
-        public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
+        //public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
+
+        public ICollection<SaleOrderPaymentAccountPaymentRel> PaymentRels { get; set; } = new List<SaleOrderPaymentAccountPaymentRel>();
 
     }
 }
