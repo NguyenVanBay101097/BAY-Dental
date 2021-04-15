@@ -50,24 +50,19 @@ export class CommissionProductRuleListComponent implements OnChanges, OnInit {
   }
 
   group(commissionProductRules) {
-    var groups = new Set(commissionProductRules.map(item => item.categId)), results = [];
+    var groups = new Set(commissionProductRules.map(x => x.categId)), results = [];
     groups.forEach(g => 
       results.push({
         categId: g,
-        categName: commissionProductRules.find(i => i.categId === g).categ.name,
-        values: commissionProductRules.filter(i => i.categId === g)
+        categName: commissionProductRules.find(x => x.categId === g).categ.name,
+        values: commissionProductRules.filter(x => x.categId === g)
       }
     ))
     return results;
   }
 
   onSave() {
-    this.commissionProductRules_group = this.group(this.commissionProductRules);
-    var vals = [];
-    this.commissionProductRules_group.forEach(el => {
-      vals = vals.concat(el.values);
-    });
-    this.commissionProductRuleService.save(vals).subscribe(res => {
+    this.commissionProductRuleService.save(this.commissionProductRules).subscribe(res => {
       this.notificationService.show({
         content: 'Lưu thành công',
         hideAfter: 3000,
@@ -82,11 +77,11 @@ export class CommissionProductRuleListComponent implements OnChanges, OnInit {
   }
 
   onSearchChange(val: string) {
-    var temp = this.commissionProductRules.filter(x => 
+    var items = this.commissionProductRules.filter(x => 
       this.removeVietnamese(x.product.name).includes(this.removeVietnamese(val)) ||
       this.removeVietnamese(x.product.defaultCode).includes(this.removeVietnamese(val))
     );
-    this.commissionProductRules_group = this.group(temp);
+    this.commissionProductRules_group = this.group(items);
   }
 
   removeVietnamese(text) {
@@ -117,6 +112,13 @@ export class CommissionProductRuleListComponent implements OnChanges, OnInit {
     let modalRef = this.modalService.open(CommissionProductRuleDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Áp dụng hoa hồng cho nhóm dịch vụ';
     modalRef.result.then(res => {
+      var items = this.commissionProductRules.filter(x => x.categId === commissionProductRule.categId);
+      items.map(function(x) { 
+        x.percentAdvisory = res.percentAdvisory;
+        x.percentAssistant = res.percentAssistant;
+        x.percentDoctor = res.percentDoctor;
+        return x;
+      });
       commissionProductRule.values.forEach(el => {
         el.percentAdvisory = res.percentAdvisory;
         el.percentAssistant = res.percentAssistant;
@@ -124,5 +126,35 @@ export class CommissionProductRuleListComponent implements OnChanges, OnInit {
       });
     }, () => {
     });
+  }
+
+  setCommissionAllProductRule() {
+    let modalRef = this.modalService.open(CommissionProductRuleDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Áp dụng hoa hồng cho tất cả dịch vụ';
+    modalRef.result.then(res => {
+      this.commissionProductRules.map(function(x) { 
+        x.percentAdvisory = res.percentAdvisory;
+        x.percentAssistant = res.percentAssistant;
+        x.percentDoctor = res.percentDoctor;
+        return x;
+      });
+      this.commissionProductRules_group = this.group(this.commissionProductRules);
+    }, () => {
+    });
+  }
+
+  setNumberic(item, typePercent, percent) {
+    var items = this.commissionProductRules.find(x => 
+      x.id == item.id && 
+      x.categId == item.categId && 
+      x.productId == item.productId
+    );
+    if (typePercent == "percentAdvisory") {
+      items.percentAdvisory = percent;
+    } else if (typePercent == "percentDoctor") {
+      items.percentDoctor = percent;
+    } else if (typePercent == "percentAssistant") {
+      items.percentAssistant = percent;
+    }
   }
 }

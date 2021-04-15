@@ -24,10 +24,11 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<CommissionProductRuleDisplay>> GetForCommission(Guid commissionId)
         {
             var productObj = GetService<IProductService>();
-            var commissionProductRules = await SearchQuery(x => x.CommissionId == commissionId && x.ProductId.HasValue && x.CategId.HasValue).Include(x => x.Categ).Include(x => x.Product).ToListAsync();
+            var commissionProductRules = await SearchQuery(x => x.CommissionId == commissionId && x.ProductId.HasValue && x.CategId.HasValue)
+                    .Include(x => x.Categ).Include(x => x.Product).ToListAsync();
             var commissionProductRule_dict = commissionProductRules.ToDictionary(x => x.ProductId.Value, x => x);
 
-            var products = await _mapper.ProjectTo<ProductBasic2>(productObj.SearchQuery().Include(x => x.Categ)).ToListAsync();
+            var products = await _mapper.ProjectTo<ProductBasic2>(productObj.SearchQuery(x => x.Type == "service").Include(x => x.Categ)).ToListAsync();
             var commissionProductRuleList = new List<CommissionProductRuleDisplay>();
 
             foreach (var product in products)
@@ -48,7 +49,8 @@ namespace Infrastructure.Services
                         CategId = product.CategId,
                         Categ = product.Categ,
                         CompanyId = CompanyId,
-                        CommissionId = commissionId
+                        CommissionId = commissionId,
+                        AppliedOn = "0_product_variant"
                     });
                 }
             }
@@ -78,6 +80,7 @@ namespace Infrastructure.Services
             if (commissionProductRules_update.Any())
             {
                 await UpdateAsync(commissionProductRules_update);
+
             }
         }
     }

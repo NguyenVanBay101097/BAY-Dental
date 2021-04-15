@@ -521,7 +521,7 @@ export class PartnerService {
     }
 
     getAmountAdvanceBalance(id){
-        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceBalance');
+        return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceBalance');
     }
 }
 
