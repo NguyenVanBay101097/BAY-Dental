@@ -14,6 +14,7 @@ export class CommissionProductRule {
   product: ProductBasic3;
   productId: string;
   companyId: string;
+  appliedOn: string;
 }
 
 @Injectable({
