@@ -113,8 +113,8 @@ namespace ApplicationCore.Entities
         public string SalesmanId { get; set; }
         public ApplicationUser Salesman { get; set; }
 
-        public Guid? SaleOrderPaymentId { get; set; }
-        public SaleOrderPayment SaleOrderPayment { get; set; }
+        //public Guid? SaleOrderPaymentId { get; set; }
+        //public SaleOrderPayment SaleOrderPayment { get; set; }
 
         public ICollection<CommissionSettlement> CommissionSettlements { get; set; } = new List<CommissionSettlement>();
        

@@ -16,12 +16,12 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
     {
         private const string _version = "1.0.1.7";
         private IServiceScopeFactory _serviceScopeFactory;
-        private IAccountJournalService _accountJournalService;
 
-        public SaleOrderPaymentProcessUpdateHandler(IServiceScopeFactory serviceScopeFactory , IAccountJournalService accountJournalService)
+
+        public SaleOrderPaymentProcessUpdateHandler(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;
-            _accountJournalService = accountJournalService;
+           
         }
 
         public Task Handle(ProcessUpdateNotification notification, CancellationToken cancellationToken)
@@ -67,39 +67,57 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                     return Task.CompletedTask;
 
                 foreach (var company in companies)
-                {                                   
+                {
+                    var accKHTU = context.AccountAccounts.Where(x => x.Code == "KHTU" && x.CompanyId == company.Id).FirstOrDefault();
+                    if (accKHTU == null)
+                    {
+                        accKHTU = new AccountAccount
+                        {
+                            Name = "Khách hàng tạm ứng",
+                            Code = "KHTU",
+                            InternalType = currentLiabilities.Type,
+                            UserTypeId = currentLiabilities.Id,
+                            CompanyId = company.Id,
+                        };
+
+                        context.AccountAccounts.Add(accKHTU);
+                        context.SaveChanges();
+                    }
+
+                    var seq = context.IRSequences.Where(x => x.Prefix == "ADVANCE/{yyyy}/").FirstOrDefault();
+                    if (seq == null)
+                    {
+                        seq = new IRSequence
+                        {
+                            Name = "Nhật ký khách hàng tạm ứng",
+                            Prefix = "ADVANCE" + "/{yyyy}/",
+                            Padding = 4,
+                            NumberIncrement = 1,
+                            NumberNext = 1,
+                            CompanyId = company.Id,
+                        };
+
+                        context.IRSequences.Add(seq);
+                        context.SaveChanges();
+                    }
 
                     var journalAdvance = context.AccountJournals.Where(x => x.Type == "advance" && x.CompanyId == company.Id).FirstOrDefault();
                     if (journalAdvance == null)
-                    {
-                        var accKHTU = context.AccountAccounts.Where(x => x.Code == "KHTU" && x.CompanyId == company.Id).FirstOrDefault();
-                        if (accKHTU == null)
-                        {
-                            accKHTU = new AccountAccount
-                            {
-                                Name = "Khách hàng tạm ứng",
-                                Code = "KHTU",
-                                InternalType = currentLiabilities.Type,
-                                UserTypeId = currentLiabilities.Id,
-                                CompanyId = company.Id,
-                            };
-
-                            context.SaveChanges();
-                        }
-
+                    {                      
                         journalAdvance = new AccountJournal
                         {
-                            Name = "Nhật ký khách hàng tạm ứng",
+                            Name = "Tạm ứng",
                             Type = "advance",
                             UpdatePosted = true,
                             Code = "ADVANCE",
                             DefaultDebitAccountId = accKHTU.Id,
                             DefaultCreditAccountId = accKHTU.Id,
+                            SequenceId = seq.Id,
                             CompanyId = company.Id,
                         };
 
-                        _accountJournalService.Sudo = true;
-                        _accountJournalService.CreateAsync(journalAdvance);
+                        context.AccountJournals.Add(journalAdvance);
+                        context.SaveChanges();
                     }
                 }
               
