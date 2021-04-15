@@ -1,0 +1,4 @@
+<a class="nav-link" [routerLink]="item.url" [routerLinkActive]="item.linkProps?.routerLinkActive || 'active'">
+    <i *ngIf="helper.hasIcon(item)" [ngClass]="getLabelIconClass()"></i>
+    <ng-container>{{item.name}}</ng-container>
+</a>
