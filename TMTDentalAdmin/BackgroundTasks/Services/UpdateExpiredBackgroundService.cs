@@ -34,20 +34,20 @@ namespace TMTDentalAdmin.BackgroundTasks.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogDebug("UpdateExpiredBackgroundService is starting.");
+            _logger.LogInformation("UpdateExpiredBackgroundService is starting.");
 
-            stoppingToken.Register(() => _logger.LogDebug("#1 UpdateExpiredBackgroundService background task is stopping."));
+            stoppingToken.Register(() => _logger.LogInformation("#1 UpdateExpiredBackgroundService background task is stopping."));
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogDebug("UpdateExpiredBackgroundService background task is doing background work.");
+                _logger.LogInformation("UpdateExpiredBackgroundService background task is doing background work.");
 
                 await CheckUpdateExpiredTenants();
 
                 await Task.Delay(60000, stoppingToken);
             }
 
-            _logger.LogDebug("UpdateExpiredBackgroundService background task is stopping.");
+            _logger.LogInformation("UpdateExpiredBackgroundService background task is stopping.");
         }
 
         private async Task CheckUpdateExpiredTenants()
