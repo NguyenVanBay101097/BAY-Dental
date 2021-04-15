@@ -404,7 +404,7 @@
                                         </tr>
                                         <tr *ngIf="formGroup.get('State').value !== 'draft'">
                                             <td>Còn lại</td>
-                                            <td>{{saleOrder.Residual | number}}</td>
+                                            <td>{{getAmountTotal - getAmountPaidTotal | number}}</td>
                                         </tr>
                                     </table>
                                 </div>

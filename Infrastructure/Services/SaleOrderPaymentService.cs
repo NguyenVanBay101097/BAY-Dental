@@ -43,7 +43,7 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.ToListAsync();
+            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync();
 
             var paged = new PagedResult2<SaleOrderPaymentBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -191,7 +191,7 @@ namespace Infrastructure.Services
                     saleOrderPayment.PaymentRels.Add(new SaleOrderPaymentAccountPaymentRel { PaymentId = payment.Id });
                 /// update state = "posted"
                 saleOrderPayment.State = "posted";
-             
+
             }
 
             await UpdateAsync(saleOrderPayments);
@@ -205,7 +205,7 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             // Invoice values.
             var invoice_vals = await _PrepareInvoice(self);
-            foreach(var line in self.Lines)
+            foreach (var line in self.Lines)
             {
                 if (line.Amount == 0)
                     continue;
@@ -277,7 +277,7 @@ namespace Infrastructure.Services
 
             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
-           
+
             return res;
         }
 
@@ -384,7 +384,7 @@ namespace Infrastructure.Services
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id) && x.State != "cancel")
                 .Include(x => x.Move).ThenInclude(s => s.Lines)
                 .Include(x => x.Order).ThenInclude(s => s.OrderLines)
-                .Include(x=> x.PaymentRels).ThenInclude(s=>s.Payment)
+                .Include(x => x.PaymentRels).ThenInclude(s => s.Payment)
                 .ToListAsync();
 
 
@@ -400,7 +400,7 @@ namespace Infrastructure.Services
 
                 /// tìm và xóa hóa đơn ghi sổ doanh thu , công nợ
                 /// xóa các hoa hồng của bác sĩ 
-                if(res.Move.Lines.Any())
+                if (res.Move.Lines.Any())
                     await moveLineObj.RemoveMoveReconcile(res.Move.Lines.Select(x => x.Id).ToList());
 
                 await moveObj.ButtonCancel(new List<Guid>() { res.Move.Id });
@@ -424,7 +424,7 @@ namespace Infrastructure.Services
             var orderObj = GetService<ISaleOrderService>();
             var orderlineObj = GetService<ISaleOrderLineService>();
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
-            var order = await orderObj.SearchQuery(x => x.Id == saleOrderId).Include(x => x.OrderLines)              
+            var order = await orderObj.SearchQuery(x => x.Id == saleOrderId).Include(x => x.OrderLines)
                 .FirstOrDefaultAsync();
 
             orderlineObj._GetInvoiceQty(order.OrderLines);
