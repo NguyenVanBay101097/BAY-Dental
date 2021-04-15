@@ -1,30 +1,36 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { NavSidebarService } from '@shared/services/nav-sidebar.service';
+import { DOCUMENT } from '@angular/common';
+import { Component, HostBinding, Inject, Input, OnInit, Renderer2 } from '@angular/core';
 
 @Component({
   selector: 'app-sidebar',
-  templateUrl: './sidebar.component.html',
+  template: '<ng-content></ng-content>',
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
-  
-  @HostListener('window:resize', ['$event'])
-  onResize(event?) {
-    if (window.innerWidth <= 768) {
-      this.sidebarService.set(true);
-    }
-    else {
-      this.sidebarService.set(false);
-    }
-  }
-
-  constructor(public sidebarService: NavSidebarService) { }
+  @Input() fixed: boolean;
+  @Input() display: any;
+  @HostBinding('class.sidebar') sidebarClass = true;
+  constructor(
+    @Inject(DOCUMENT) private document: any,
+    private renderer: Renderer2
+  ) { }
 
   ngOnInit() {
-    this.onResize();
+    this.isFixed(this.fixed);
+    this.displayBreakpoint(this.display);
   }
 
-  clickNavLink() {
-    this.onResize();
+  isFixed(fixed: boolean = this.fixed) {
+    if (fixed) {
+      this.renderer.addClass(this.document.body, 'sidebar-fixed');
+    }
   }
+
+  displayBreakpoint(display: any = this.display) {
+    if (display !== false) {
+      const cssClass = display ? `sidebar-${display}-show`: 'sidebar-show';
+      this.renderer.addClass(this.document.body, cssClass);
+    }
+  }
+
 }

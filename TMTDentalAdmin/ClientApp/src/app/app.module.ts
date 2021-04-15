@@ -25,6 +25,10 @@ import { HttpErrorInterceptor } from '@app/interceptors/http-error.interceptor';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { HeaderComponent } from './layout/header/header.component';
 import { EmployeeAdminModule } from './employee-admins/employee-admins.module';
+import { SidebarNavComponent } from './layout/sidebar/sidebar-nav/sidebar-nav.component';
+import { SidebarNavItemComponent } from './layout/sidebar/sidebar-nav-item/sidebar-nav-item.component';
+import { AsideToggleDirective, HtmlAttributesDirective, SidebarToggleDirective } from './layout/shared/layout.directive';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -39,7 +43,12 @@ registerLocaleData(localeVi, 'vi');
     AppComponent,
     NavMenuComponent,
     SidebarComponent,
-    HeaderComponent
+    HeaderComponent,
+    SidebarNavComponent,
+    SidebarNavItemComponent,
+    SidebarToggleDirective,
+    HtmlAttributesDirective,
+    AsideToggleDirective
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -50,6 +59,7 @@ registerLocaleData(localeVi, 'vi');
     MyCustomKendoModule,
     AuthModule,
     CoreModule,
+    NgbModule,
     SharedModule,
     EmployeeAdminModule,
     JwtModule.forRoot({
