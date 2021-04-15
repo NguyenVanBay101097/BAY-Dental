@@ -111,7 +111,6 @@ namespace Infrastructure.Services
                 orderPayment.Lines.Remove(line);
             }
 
-            var sequence = 0;
             foreach (var line in val.Lines)
             {
                 if (line.Id == Guid.Empty)
