@@ -1,6 +1,0 @@
-<p>sidebar-nav-dropdown works!</p>
-<a class="nav-link nav-dropdown-toggle">
-    <i *ngIf="helper.hasIcon(item)" [ngClass]="item | appSidebarNavIcon"></i>
-    <ng-container>{{item.name}}</ng-container>
-    <span *ngIf="helper.hasBadge(item)" [ngClass]="item | appSidebarNavBadge">{{ item.badge.text }}</span>
-</a>
