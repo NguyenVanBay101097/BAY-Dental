@@ -105,6 +105,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   listTeeths: any[] = [];
   type: string;
   submitted = false;
+  amountAdvanceBalance: number = 0;
   public selectedLine: any;
 
   constructor(
@@ -216,6 +217,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
               if (!this.saleOrderId) {
                 this.onChangePartner(result.Partner);
               }
+              this.getAmountAdvanceBalance();
             }
 
             // if (result.pricelist) {
@@ -586,6 +588,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
 
     return total;
+  }
+
+  getAmountAdvanceBalance(){
+    this.partnerService.getAmountAdvanceBalance(this.partner.Id).subscribe(result => {
+      this.amountAdvanceBalance = result;
+    })
   }
 
   isCouponLine(line: FormControl) {
@@ -1023,6 +1031,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+
   get orderLines() {
     return this.formGroup.get('OrderLines') as FormArray;
   }
@@ -1120,7 +1129,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       if(line.get('State').value != "draft"){
         line.get('AmountResidual').setValue(getResidual);
       }
-  
+
     });
 
   }
@@ -1310,7 +1319,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }, er => { });
   }
 
-  onChangeQuantity(line: FormGroup) {   
+  onChangeQuantity(line: FormGroup) {
     this.getPriceSubTotal();
     this.computeAmountTotal();
 

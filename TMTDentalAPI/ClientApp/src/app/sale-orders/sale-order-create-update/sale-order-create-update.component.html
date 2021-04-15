@@ -32,6 +32,9 @@
                         <a [routerLink]="['/partners/customer/' + customerId + '/treatment']" class="btn btn-secondary btn-sm">
                             Trở lại
                         </a>
+                        <button type="button" *ngIf="['sale'].indexOf(saleOrder.State) !== -1" class="btn btn-secondary btn-sm" (click)="actionEdit()">
+                            Sửa dịch vụ
+                        </button>
                         <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder.State != 'done'" (click)="onSave()">
                             Lưu
                         </button>
@@ -47,9 +50,9 @@
                         <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
                             Cập nhật công nợ
                         </button> -->
-                        <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
+                        <!-- <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
                             Hủy phiếu
-                        </button>
+                        </button> -->
                         <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
                             Hoàn thành
                         </button>
@@ -78,6 +81,16 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <a *ngIf="partner" [routerLink]="['/partners/customer/' + partner.Id]">{{partner.DisplayName}}</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Báo giá
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    
                                 </td>
                             </tr>
                             <tr *ngIf="saleOrder.Quote">
@@ -122,6 +135,48 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div *ngIf="['sale'].indexOf(saleOrder.State) !== -1" class="d-flex">
+                        <div class="card-wrapper mr-2">
+                            <div class="card border-secondary">
+                                <div class="card-body">
+                                    <div class="text-center">
+                                        <span class="font-weight-bold">Tiền điều trị</span>
+                                        <h4 class="text-sale">{{getAmountTotal | number}}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-wrapper mr-2">
+                            <div class="card border-secondary">
+                                <div class="card-body">
+                                    <div class="text-center">
+                                        <span class="font-weight-bold">Tiền thanh toán</span>
+                                        <h4 class="text-primary">{{getAmountPaidTotal | number}}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-wrapper mr-2">
+                            <div class="card border-secondary">
+                                <div class="card-body">
+                                    <div class="text-center">
+                                        <span class="font-weight-bold">Còn lại</span>
+                                        <h4 class="text-success">{{getAmountTotal - getAmountPaidTotal | number}}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-wrapper mr-2">
+                            <div class="card border-secondary">
+                                <div class="card-body">
+                                    <div class="text-center">
+                                        <span class="font-weight-bold">Tiền tạm ứng </span>
+                                        <h4 class="text-advance">{{amountAdvanceBalance | number}}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
