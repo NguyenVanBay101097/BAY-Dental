@@ -89,7 +89,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                     {
                         seq = new IRSequence
                         {
-                            Name = "Nhật ký khách hàng tạm ứng",
+                            Name = "Tạm ứng",
                             Prefix = "ADVANCE" + "/{yyyy}/",
                             Padding = 4,
                             NumberIncrement = 1,
