@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AccountPaymentBasic } from 'src/app/account-payments/account-payment.service';
 import { PagedResult2 } from 'src/app/employee-categories/emp-category';
 
 export class SaleOrderPaymentPaged {
@@ -21,6 +22,7 @@ export class SaleOrderPaymentBasic {
   amount: number;
   date: Date;
   note: string;
+  payments: AccountPaymentBasic[];
   state: string;
 }
 
@@ -79,6 +81,14 @@ export class SaleOrderPaymentService {
 
   create(val): Observable<SaleOrderPaymentDisplay> {
     return this.http.post<SaleOrderPaymentDisplay>(this.baseApi + this.apiUrl, val);
+  }
+
+  delete(id){
+    return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
+  }
+
+  print(id){
+    return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/print');
   }
 
   actionPayment(val: string[]){
