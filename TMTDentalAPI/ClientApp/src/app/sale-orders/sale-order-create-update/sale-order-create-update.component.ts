@@ -1238,10 +1238,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionSaleOrderPayment() {
     if (this.saleOrderId) {
-      this.paymentService.saleDefaultGet([this.saleOrderId]).subscribe(rs2 => {
+      this.saleOrderService.getSaleOrderPaymentBySaleOrderId(this.saleOrderId).subscribe(rs2 => {
         let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
+        modalRef.componentInstance.advanceAmount = this.amountAdvanceBalance;
+
         modalRef.result.then(result => {
           this.notificationService.show({
             content: 'Thanh toán thành công',

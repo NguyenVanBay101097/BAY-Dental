@@ -47,6 +47,17 @@ export class SaleOrderPaymentSave {
   state: string;
 }
 
+export class RegisterSaleOrderPayment {
+  amount: number;
+  date: number;
+  orderId: number;
+  companyId: number;
+  journalLines: any[];
+  Lines: any[];
+  note: string;
+  state: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -68,6 +79,10 @@ export class SaleOrderPaymentService {
 
   create(val): Observable<SaleOrderPaymentDisplay> {
     return this.http.post<SaleOrderPaymentDisplay>(this.baseApi + this.apiUrl, val);
+  }
+
+  actionPayment(val: string[]){
+    return this.http.post(this.baseApi + this.apiUrl + "/ActionPayment", val);
   }
 
 }

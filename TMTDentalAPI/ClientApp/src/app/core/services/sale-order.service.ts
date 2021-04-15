@@ -12,6 +12,8 @@ import { LaboOrderBasic, LaboOrderDisplay } from '../../labo-orders/labo-order.s
 import { SaleOrderLineBasic } from '../../partners/partner.service';
 import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
 import { SaleOrderLineForProductRequest } from './sale-order-line.service';
+import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
+import { RegisterSaleOrderPayment } from './sale-order-payment.service';
 
 export class SaleOrderPaged {
     limit: number;
@@ -199,5 +201,9 @@ export class SaleOrderService {
 
     getLineForProductRequest(id): Observable<SaleOrderLineForProductRequest[]> {
         return this.http.post<SaleOrderLineForProductRequest[]>(this.baseApi + this.apiUrl + '/' + id + '/GetLineForProductRequest', {});
+    }
+
+    getSaleOrderPaymentBySaleOrderId(id: string): Observable<RegisterSaleOrderPayment>{
+        return this.http.get<RegisterSaleOrderPayment>(this.baseApi + this.apiUrl + '/' + id + '/GetSaleOrderPaymentBySaleOrderId');
     }
 }
