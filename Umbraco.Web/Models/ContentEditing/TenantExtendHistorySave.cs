@@ -23,5 +23,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public int ActiveCompaniesNbr { get; set; }
         public Guid TenantId { get; set; }
         public TenantBasic AppTenant { get; set; }
+        public DateTime? ApplyDate { get; set; }
     }
 }

@@ -28,6 +28,7 @@ import { EmployeeAdminModule } from './employee-admins/employee-admins.module';
 import { SidebarNavComponent } from './layout/sidebar/sidebar-nav/sidebar-nav.component';
 import { SidebarNavItemComponent } from './layout/sidebar/sidebar-nav-item/sidebar-nav-item.component';
 import { AsideToggleDirective, HtmlAttributesDirective, SidebarToggleDirective } from './layout/shared/layout.directive';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -58,6 +59,7 @@ registerLocaleData(localeVi, 'vi');
     MyCustomKendoModule,
     AuthModule,
     CoreModule,
+    NgbModule,
     SharedModule,
     EmployeeAdminModule,
     JwtModule.forRoot({

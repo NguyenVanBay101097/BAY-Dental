@@ -1,5 +1,4 @@
 import { Component, HostBinding, Inject, Input, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/auth/auth.service';
 import { ChangePasswordDialogComponent } from '@shared/change-password-dialog/change-password-dialog.component';
@@ -44,7 +43,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     @Inject(DOCUMENT) private document: any,
     private renderer: Renderer2,
-    private sidebarService: NavSidebarService, private modalService: NgbModal,
+    private sidebarService: NavSidebarService,
     public authService: AuthService, private router: Router
     ) { }
 
@@ -79,24 +78,6 @@ export class HeaderComponent implements OnInit {
       togglerClass = `d-${breakpoint}-none`;
     }
     return togglerClass;
-  }
-
-  toggleSidebar() {
-    this.sidebarService.toggle();
-  }
-
-  changePassword() {
-    let modalRef = this.modalService.open(ChangePasswordDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Đổi mật khẩu';
-
-    modalRef.result.then(() => {
-    }, () => {
-    });
-  }
-
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['login']);
   }
 }
 

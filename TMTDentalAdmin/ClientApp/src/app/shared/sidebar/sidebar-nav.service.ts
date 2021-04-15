@@ -9,7 +9,7 @@ export abstract class SidebarNavService {
   abstract getSidebarNavItemsConfig(): INavData[];
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class SidebarNavHelper {
 
   public itemType(item) {

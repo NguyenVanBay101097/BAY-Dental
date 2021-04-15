@@ -57,10 +57,9 @@ namespace TMTDentalAdmin.BackgroundTasks.Services
             var context = new TenantDbContext(optionsBuilder.Options);
 
             var now = DateTime.Now;
-            var histories = await context.TenantExtendHistories.Where(x => now >= x.StartDate && !x.ApplyDate.HasValue &&
-                (x.ExpirationDate != x.AppTenant.DateExpired || x.ActiveCompaniesNbr != x.AppTenant.ActiveCompaniesNbr))
-                .OrderBy(x => x.StartDate).ToListAsync();
-            var dict = histories.GroupBy(x => x.TenantId).ToDictionary(x => x.Key, x => x.OrderBy(s => s.StartDate).First());
+            var histories = await context.TenantExtendHistories.Where(x => now >= x.StartDate && !x.ApplyDate.HasValue)
+                .OrderBy(x => x.StartDate).ThenBy(x => x.DateCreated).ToListAsync();
+            var dict = histories.GroupBy(x => x.TenantId).ToDictionary(x => x.Key, x => x.OrderBy(s => s.StartDate).ThenBy(x => x.DateCreated).First());
             var throttler = new SemaphoreSlim(10);
             var allTasks = new List<Task>();
             foreach (var item in dict)
