@@ -11,7 +11,7 @@
                             [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
                         </app-tai-date-range-filter-dropdown>
                         <button class="btn btn-primary btn-sm mr-2 " title="Đóng tạm ứng" (click)="createAdvanceModal()">Đóng tạm ứng</button>
-                        <button class="btn btn-primary btn-sm mr-2" *ngIf="AmountBalance != 0" title="Hoàn tạm ứng" (click)="createRefundModal()">Hoàn tạm ứng</button>
+                        <button class="btn btn-primary btn-sm mr-2" *ngIf="amountBalance != 0" title="Hoàn tạm ứng" (click)="createRefundModal()">Hoàn tạm ứng</button>
                         <!-- <kendo-combobox [data]="filteredEmployees" [textField]="'name'" class="custom btn-sm" #empCbx [filterable]="true" [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)" [valueField]="'id'">
                         </kendo-combobox> -->
                     </div>
@@ -26,7 +26,7 @@
         </div>
     </div>
 
-    <!-- <div class="report-prescription-payment">
+    <div class="report-prescription-payment">
         <div class="revenue" *ngFor="let type of types">
             <div class="title">
                 <h6>{{type.text}}</h6>
@@ -34,8 +34,16 @@
             <h4 class="text-primary">
                 {{(typeAmount[type.value] | number) || 0}}
             </h4>
-        </div>      
-    </div> -->
+        </div> 
+        <div class="revenue">
+            <div class="title">
+                <h6>Tạm ứng còn lại</h6>
+            </div>
+            <h4 class="text-primary">
+                {{(amountBalance | number) || 0}}
+            </h4>
+        </div>          
+    </div>
 </div>
 <div class="o_control_panel">
     <div class="o_cp_t_left">

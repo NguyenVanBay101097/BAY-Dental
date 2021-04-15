@@ -90,48 +90,80 @@ namespace Infrastructure.Services
         {
             //Mapper
             var saleOrderPayment = _mapper.Map<SaleOrderPayment>(val);
+            SaveLines(val, saleOrderPayment);
             await CreateAsync(saleOrderPayment);
 
             return saleOrderPayment;
         }
 
-        public async override Task<SaleOrderPayment> CreateAsync(SaleOrderPayment entity)
+        private void SaveLines(SaleOrderPaymentSave val, SaleOrderPayment orderPayment)
         {
-            var sequenceServiceObj = GetService<IIRSequenceService>();
-            entity.Name = await sequenceServiceObj.NextByCode("account.payment.customer.invoice");
-            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+            var lineToRemoves = new List<SaleOrderPaymentHistoryLine>();
+
+            foreach (var existLine in orderPayment.Lines)
             {
-                await _InsertSaleOrderPaymentSequence();
-                entity.Name = await sequenceServiceObj.NextByCode("account.payment.customer.invoice");
+                if (!val.Lines.Any(x => x.Id == existLine.Id))
+                    lineToRemoves.Add(existLine);
             }
 
-            await base.CreateAsync(entity);
-
-            return entity;
-        }
-
-        private async Task _InsertSaleOrderPaymentSequence()
-        {
-            var seqObj = GetService<IIRSequenceService>();
-            await seqObj.CreateAsync(new IRSequence
+            foreach (var line in lineToRemoves)
             {
-                Name = "Payments customer invoices sequence",
-                Code = "account.payment.customer.invoice",
-                Prefix = "CUST.IN/{yyyy}/",
-                Padding = 4
-            });
+                orderPayment.Lines.Remove(line);
+            }
+
+            var sequence = 0;
+            foreach (var line in val.Lines)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var item = _mapper.Map<SaleOrderPaymentHistoryLine>(line);
+                    orderPayment.Lines.Add(item);
+                }
+                else
+                {
+                    var l = orderPayment.Lines.SingleOrDefault(c => c.Id == line.Id);
+                    _mapper.Map(line, l);
+                }
+            }
         }
+
+        //public async override Task<SaleOrderPayment> CreateAsync(SaleOrderPayment entity)
+        //{
+        //    var sequenceServiceObj = GetService<IIRSequenceService>();
+        //    entity.Name = await sequenceServiceObj.NextByCode("account.payment.customer.invoice");
+        //    if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+        //    {
+        //        await _InsertSaleOrderPaymentSequence();
+        //        entity.Name = await sequenceServiceObj.NextByCode("account.payment.customer.invoice");
+        //    }
+
+        //    await base.CreateAsync(entity);
+
+        //    return entity;
+        //}
+
+        //private async Task _InsertSaleOrderPaymentSequence()
+        //{
+        //    var seqObj = GetService<IIRSequenceService>();
+        //    await seqObj.CreateAsync(new IRSequence
+        //    {
+        //        Name = "Payments customer invoices sequence",
+        //        Code = "account.payment.customer.invoice",
+        //        Prefix = "CUST.IN/{yyyy}/",
+        //        Padding = 4
+        //    });
+        //}
 
         public async Task ActionPayment(IEnumerable<Guid> ids)
         {
             var moveObj = GetService<IAccountMoveService>();
+            var commissionSettlementObj = GetService<ICommissionSettlementService>();
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var paymentObj = GetService<IAccountPaymentService>();
             /// truy vấn đủ dữ liệu của saleorder payment
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move)
-                //.Include(x => x.PaymentMove)
                 .Include(x => x.Order).ThenInclude(s => s.OrderLines)
                 .Include(x => x.Lines).ThenInclude(s => s.SaleOrderLine)
                 .Include(x => x.JournalLines).ThenInclude(s => s.Journal).ThenInclude(s => s.DefaultDebitAccount)
@@ -139,10 +171,13 @@ namespace Infrastructure.Services
 
             foreach (var saleOrderPayment in saleOrderPayments)
             {
-                ///ghi sổ doang thu , công nợ lines    
-                ///tạo hoa hồng cho bác sĩ , phụ tá , tư vấn
+                ///ghi sổ doang thu , công nợ lines               
                 var invoice = await _CreateInvoices(saleOrderPayment);
                 await moveObj.ActionPost(new List<AccountMove>() { invoice });
+
+                ///tạo hoa hồng cho bác sĩ , phụ tá , tư vấn
+                var commissions = await commissionSettlementObj._PrepareCommission(invoice);
+                await commissionSettlementObj.CreateAsync(commissions);
 
                 //tính lại paid , residual saleorder , lines
                 await _ComputeSaleOrder(saleOrderPayment.OrderId);
@@ -178,7 +213,6 @@ namespace Infrastructure.Services
                 var moveline = _PrepareInvoiceLineAsync(line);
                 invoice_vals.InvoiceLines.Add(moveline);
             }
-
 
             //var linedict = await saleLineObj.SearchQuery(x => x.OrderId == order.Id).Include(x => x.ProductUOM).ToDictionaryAsync(x => x.Id, x => x);
             ////Invoice line values (keep only necessary sections)
@@ -232,7 +266,6 @@ namespace Infrastructure.Services
 
         private AccountMoveLine _PrepareInvoiceLineAsync(SaleOrderPaymentHistoryLine self)
         {
-            //var commissionSettlementObj = GetService<ICommissionSettlementService>();
             var res = new AccountMoveLine
             {
                 Name = self.SaleOrderLine.Name,
@@ -245,14 +278,7 @@ namespace Infrastructure.Services
 
             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
-            //var commissionSettlements = await commissionSettlementObj._PrepareCommission(res, self);
-            //if (commissionSettlements.Any())
-            //{
-            //    foreach (var item in commissionSettlements)
-            //        res.CommissionSettlements.Add(item);
-            //}
-
-
+           
             return res;
         }
 
@@ -351,49 +377,44 @@ namespace Infrastructure.Services
             var moveLineObj = GetService<IAccountMoveLineService>();
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
+            var paymentObj = GetService<IAccountPaymentService>();
             var now = DateTime.Now;
             var firstDayOfMonth = new DateTime(now.Year, now.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-            var saleOrderPayment = await SearchQuery(x => ids.Contains(x.Id) && x.State != "cancel")
+            var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id) && x.State != "cancel")
                 .Include(x => x.Move).ThenInclude(s => s.Lines)
                 .Include(x => x.Order).ThenInclude(s => s.OrderLines)
                 .Include(x=> x.PaymentRels).ThenInclude(s=>s.Payment)
                 .ToListAsync();
 
 
-            foreach (var rec in saleOrderPayment)
+            foreach (var res in saleOrderPayments)
             {
                 ///check thanh toán trong mới cho hủy
-                if (firstDayOfMonth < rec.Date && rec.Date > lastDayOfMonth)
+                if (firstDayOfMonth < res.Date && res.Date > lastDayOfMonth)
                     throw new Exception("Bạn chỉ được hủy thanh toán trong tháng");
 
-                ///xử lý tìm các hóa đơn thanh toán để xóa
-                //foreach (var move in rec.MoveLines.Select(x => x.Move).Distinct().ToList())
-                //{
-                //    if (rec.MoveLines.Any())
-                //        await moveLineObj.RemoveMoveReconcile(move.Lines.Select(x => x.Id).ToList());
-
-                //    await moveObj.ButtonCancel(new List<Guid>() { move.Id });
-                //    await moveObj.Unlink(new List<Guid>() { move.Id });
-                //}
+                ///xử lý tìm các payment update state = "cancel" va hóa đơn thanh toán để xóa
+                var payment_ids = res.PaymentRels.Select(x => x.PaymentId).ToList();
+                await paymentObj.CancelAsync(payment_ids);
 
                 /// tìm và xóa hóa đơn ghi sổ doanh thu , công nợ
                 /// xóa các hoa hồng của bác sĩ 
-                if(rec.Move.Lines.Any())
-                    await moveLineObj.RemoveMoveReconcile(rec.Move.Lines.Select(x => x.Id).ToList());
+                if(res.Move.Lines.Any())
+                    await moveLineObj.RemoveMoveReconcile(res.Move.Lines.Select(x => x.Id).ToList());
 
-                await moveObj.ButtonCancel(new List<Guid>() { rec.Move.Id });
-                await moveObj.Unlink(new List<Guid>() { rec.Move.Id });
+                await moveObj.ButtonCancel(new List<Guid>() { res.Move.Id });
+                await moveObj.Unlink(new List<Guid>() { res.Move.Id });
 
 
                 //tính lại paid , residual saleorder , lines
-                await _ComputeSaleOrder(rec.OrderId);
+                await _ComputeSaleOrder(res.OrderId);
 
 
-                rec.State = "cancel";
+                res.State = "cancel";
             }
 
-            await UpdateAsync(saleOrderPayment);
+            await UpdateAsync(saleOrderPayments);
 
 
         }

@@ -14,7 +14,7 @@ namespace Infrastructure.Services
         //Task CreateSettlements(AccountPayment val);
         Task Unlink(IEnumerable<Guid> paymentIds);
 
-        Task<IEnumerable<CommissionSettlement>> _PrepareCommission(AccountMoveLine moveline, SaleOrderLine line);
+        Task<IEnumerable<CommissionSettlement>> _PrepareCommission(AccountMove res);
         Task<IEnumerable<CommissionSettlementReportOutput>> GetReport(CommissionSettlementReport val);
         Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementReport val);
 

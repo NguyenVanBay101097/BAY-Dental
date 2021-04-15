@@ -371,7 +371,7 @@ namespace Infrastructure.Services
             var accountObj = GetService<IAccountAccountService>();
             var accountAdvance = await accountObj.GetAccountAdvanceCurrentCompany();
             var amounBalance = await moveLineObj.SearchQuery(x => x.PartnerId == id && x.AccountId == accountAdvance.Id).Select(x => x.Balance).SumAsync();
-            return amounBalance;
+            return Math.Abs(amounBalance);
         }
 
         public override Task UpdateAsync(Partner entity)

@@ -86,7 +86,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid OrderId { get; set; }
         public Guid CompanyId { get; set; }
 
-        public IEnumerable<SaleOrderPaymentJournalLineSave> JournalLines { get; set; } = new List<SaleOrderPaymentJournalLineSave>();
+        public IEnumerable<SaleOrderPaymentJournalLineDisplay> JournalLines { get; set; } = new List<SaleOrderPaymentJournalLineDisplay>();
         public IEnumerable<RegisterSaleOrderPaymentHistoryLine> Lines { get; set; } = new List<RegisterSaleOrderPaymentHistoryLine>();
 
         public string Note { get; set; }

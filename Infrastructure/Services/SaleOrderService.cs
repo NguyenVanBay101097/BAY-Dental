@@ -2161,7 +2161,7 @@ namespace Infrastructure.Services
                         AmountPaid = x.AmountPaid,
                         AmountResidual = x.AmountResidual,
                     }
-                }).ToListAsync();
+                }).ToListAsync();           
 
             var rec = new RegisterSaleOrderPayment
             {
