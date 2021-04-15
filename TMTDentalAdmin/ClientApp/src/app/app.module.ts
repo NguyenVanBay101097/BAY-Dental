@@ -27,7 +27,7 @@ import { HeaderComponent } from './layout/header/header.component';
 import { EmployeeAdminModule } from './employee-admins/employee-admins.module';
 import { SidebarNavComponent } from './layout/sidebar/sidebar-nav/sidebar-nav.component';
 import { SidebarNavItemComponent } from './layout/sidebar/sidebar-nav-item/sidebar-nav-item.component';
-import { AsideToggleDirective, HtmlAttributesDirective, SidebarToggleDirective } from './layout/shared/layout.directive';
+import { AsideToggleDirective, HtmlAttributesDirective, SidebarToggleDirective, SidebarMinimizeDirective, MobileSidebarToggleDirective, SidebarOffCanvasCloseDirective, BrandMinimizeDirective } from './layout/shared/layout.directive';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 export function tokenGetter() {
@@ -48,7 +48,11 @@ registerLocaleData(localeVi, 'vi');
     SidebarNavItemComponent,
     SidebarToggleDirective,
     HtmlAttributesDirective,
-    AsideToggleDirective
+    AsideToggleDirective,
+    SidebarMinimizeDirective,
+    MobileSidebarToggleDirective,
+    SidebarOffCanvasCloseDirective,
+    BrandMinimizeDirective
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

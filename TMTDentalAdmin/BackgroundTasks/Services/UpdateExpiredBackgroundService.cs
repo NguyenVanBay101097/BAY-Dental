@@ -34,20 +34,27 @@ namespace TMTDentalAdmin.BackgroundTasks.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogDebug("UpdateExpiredBackgroundService is starting.");
+            _logger.LogInformation("UpdateExpiredBackgroundService is starting.");
 
-            stoppingToken.Register(() => _logger.LogDebug("#1 UpdateExpiredBackgroundService background task is stopping."));
+            stoppingToken.Register(() => _logger.LogInformation("#1 UpdateExpiredBackgroundService background task is stopping."));
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogDebug("UpdateExpiredBackgroundService background task is doing background work.");
+                _logger.LogInformation("UpdateExpiredBackgroundService background task is doing background work.");
 
-                await CheckUpdateExpiredTenants();
+                try
+                {
+                    await CheckUpdateExpiredTenants();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.Message);
+                }
 
                 await Task.Delay(60000, stoppingToken);
             }
 
-            _logger.LogDebug("UpdateExpiredBackgroundService background task is stopping.");
+            _logger.LogInformation("UpdateExpiredBackgroundService background task is stopping.");
         }
 
         private async Task CheckUpdateExpiredTenants()
@@ -59,39 +66,33 @@ namespace TMTDentalAdmin.BackgroundTasks.Services
             var now = DateTime.Now;
             var histories = await context.TenantExtendHistories.Where(x => now >= x.StartDate && !x.ApplyDate.HasValue)
                 .OrderBy(x => x.StartDate).ThenBy(x => x.DateCreated).ToListAsync();
-            var dict = histories.GroupBy(x => x.TenantId).ToDictionary(x => x.Key, x => x.OrderBy(s => s.StartDate).ThenBy(x => x.DateCreated).First());
-            var throttler = new SemaphoreSlim(10);
-            var allTasks = new List<Task>();
-            foreach (var item in dict)
+            var tenantIds = histories.GroupBy(x => x.TenantId).Select(x => x.Key).ToList();
+            var tenants = context.Tenants.Where(x => tenantIds.Contains(x.Id)).ToList();
+            var tenantDict = tenants.ToDictionary(x => x.Id, x => x);
+            foreach(var item in histories)
             {
-                allTasks.Add(Task.Run(async () =>
-                {
-                    await throttler.WaitAsync();
-                    try
-                    {
-                        await ProcessUpdate(item.Key, item.Value, context);
-                    }
-                    finally
-                    {
-                        throttler.Release();
-                    }
-                }));
+                var tenant = tenantDict[item.TenantId];
+                tenant.ActiveCompaniesNbr = item.ActiveCompaniesNbr;
+                tenant.DateExpired = item.ExpirationDate;
+                item.ApplyDate = DateTime.Now;
             }
-        
 
-            Task.WaitAll(allTasks.ToArray()); //block main thread wail all complete
-        }
-
-        private async Task ProcessUpdate(Guid tenantId, TenantExtendHistory history, TenantDbContext context)
-        {
-            var tenant = context.Tenants.Find(tenantId);
-            var oldDateExpired = tenant.DateExpired;
-            var oldActiveCompaniesNbr = tenant.ActiveCompaniesNbr;
-            tenant.ActiveCompaniesNbr = history.ActiveCompaniesNbr;
-            tenant.DateExpired = history.ExpirationDate;
-            history.ApplyDate = DateTime.Now;
             context.SaveChanges();
 
+            var allTasks = tenants.Select(x => CallApiClearCache(x));
+
+            try
+            {
+                await Task.WhenAll(allTasks.ToArray());
+            }
+            catch
+            {
+                _logger.LogError("UpdateExpiredBackgroundService clear cache fail");
+            }
+        }
+
+        private async Task CallApiClearCache(AppTenant tenant)
+        {
             try
             {
                 HttpClientHandler clientHandler = new HttpClientHandler();
@@ -103,18 +104,12 @@ namespace TMTDentalAdmin.BackgroundTasks.Services
                     response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant");
                 }
 
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception("Có lỗi xảy ra");
 
-                _logger.LogInformation("UpdateExpiredBackgroundService success");
+                _logger.LogInformation("UpdateExpiredBackgroundService success " + response.StatusCode);
             }
             catch(Exception e)
             {
                 _logger.LogInformation("UpdateExpiredBackgroundService fail " + e.Message);
-                tenant.DateExpired = oldDateExpired;
-                tenant.ActiveCompaniesNbr = oldActiveCompaniesNbr;
-                history.ApplyDate = null;
-                context.SaveChanges();
             }
         }
     }

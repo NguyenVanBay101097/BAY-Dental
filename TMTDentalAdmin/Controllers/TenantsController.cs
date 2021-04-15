@@ -82,11 +82,11 @@ namespace TMTDentalAdmin.Controllers
             tenant.Version = _appSettings.Version;
             await _tenantService.CreateAsync(tenant);
 
-            var tenantExtendHistory = new TenantExtendHistory();
-            tenantExtendHistory.TenantId = tenant.Id;
-            tenantExtendHistory.ExpirationDate = tenant.DateExpired.Value;
-            tenantExtendHistory.ActiveCompaniesNbr = tenant.ActiveCompaniesNbr;
-            await _tenantExtendHistoryService.CreateAsync(tenantExtendHistory);
+            //var tenantExtendHistory = new TenantExtendHistory();
+            //tenantExtendHistory.TenantId = tenant.Id;
+            //tenantExtendHistory.ExpirationDate = tenant.DateExpired.Value;
+            //tenantExtendHistory.ActiveCompaniesNbr = tenant.ActiveCompaniesNbr;
+            //await _tenantExtendHistoryService.CreateAsync(tenantExtendHistory);
 
             try
             {

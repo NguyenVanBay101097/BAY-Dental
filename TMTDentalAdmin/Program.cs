@@ -72,21 +72,21 @@ namespace TMTDentalAdmin
                             Console.WriteLine("admin already exists");
                         }
 
-                        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-                        var tenants = context.Tenants.ToListAsync().Result;
-                        foreach (var tenant in tenants)
-                        {
-                            CatalogDbContext catalogContext = new CatalogDbContext(new DbContextOptions<CatalogDbContext>(), tenant, configuration);
-                            if (catalogContext.Database.CanConnect())
-                            {
-                                if (catalogContext.Database.GetPendingMigrations().Any())
-                                    catalogContext.Database.Migrate();
+                        //var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+                        //var tenants = context.Tenants.ToListAsync().Result;
+                        //foreach (var tenant in tenants)
+                        //{
+                        //    CatalogDbContext catalogContext = new CatalogDbContext(new DbContextOptions<CatalogDbContext>(), tenant, configuration);
+                        //    if (catalogContext.Database.CanConnect())
+                        //    {
+                        //        if (catalogContext.Database.GetPendingMigrations().Any())
+                        //            catalogContext.Database.Migrate();
 
-                                if (tenant.ActiveCompaniesNbr == 0)
-                                    tenant.ActiveCompaniesNbr = catalogContext.Companies.Where(x => x.Active).Count();
-                            }
-                        }
-                        context.SaveChanges();
+                        //        if (tenant.ActiveCompaniesNbr == 0)
+                        //            tenant.ActiveCompaniesNbr = catalogContext.Companies.Where(x => x.Active).Count();
+                        //    }
+                        //}
+                        //context.SaveChanges();
                     }
                     catch (Exception ex)
                     {
