@@ -121,8 +121,8 @@
         <ng-template #elseTemplate>
             <div class="o_form_sheet_bg">
                 <div class="o_form_sheet">
-                    <div class="d-flex flex-wrap">
-                        <div class="pr-5" style="flex-grow: 3;">
+                    <div class="row">
+                        <div class="pr-3 pr-md-5 col-12 col-md-8">
                             <div class="card mb-3">
                                 <div class="card-header bg-primary text-white">Số tiền khách đưa</div>
                                 <div class="card-body d-flex flex-column p-3">
@@ -158,7 +158,7 @@
                                         <div class="card-body">
                                             <kendo-numerictextbox [min]="0" [max]="getJournalLineAmountMax(journalFG.value)" (valueChange)="onJournalLineAmountChange($event, journalFG.value)" class="k-numerictextbox-text-right w-100" formControlName="amount" [spinners]="false" [format]="'n0'"></kendo-numerictextbox>
                                             <div class="d-flex">
-                                                <label *ngIf="journalFG.value.journal.type == 'advance'" class="text-muted my-1">Tạm ứng hiên có: {{advanceAmount | number}}</label>
+                                                <label *ngIf="journalFG.value.journal.type == 'advance'" class="text-muted my-1">Tạm ứng hiện có: {{advanceAmount | number}}</label>
                                                 <label *ngIf="journalFG.value.journal.type == 'advance' && advanceAmount < journalFG.value.amount" class="text-danger my-1 ml-auto">Tiền tạm ứng không đủ</label>
                                             </div>
                                         </div>
@@ -166,18 +166,20 @@
                                 </ng-container>
                             </div>
                         </div>
-                        <div class="p-3 h-100 flex-grow-1" style="background-color: #F8F9FA">
-                            <p class="d-flex">
-                                <label> Số tiền cần thanh toán</label>
-                                <label class="ml-auto">
-                                   <h5> {{amount | number}}</h5>
-                                </label>
-                            </p>
-                            <hr>
-                            <p *ngFor="let item of journalLinesFC.value" class="d-flex">
-                                <label> {{item.journal.name}}</label>
-                                <label class="ml-auto">{{item.amount | number}}</label>
-                            </p>
+                        <div class="pr-3 col-12 col-md-4 pt-2 pt-md-0">
+                            <div class="p-3" style="background-color: #F8F9FA">
+                                <p class="d-flex">
+                                    <label> Số tiền cần thanh toán</label>
+                                    <label class="ml-auto">
+                                       <h5> {{amount | number}}</h5>
+                                    </label>
+                                </p>
+                                <hr>
+                                <p *ngFor="let item of journalLinesFC.value" class="d-flex">
+                                    <label> {{item.journal.name}}</label>
+                                    <label class="ml-auto">{{item.amount | number}}</label>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

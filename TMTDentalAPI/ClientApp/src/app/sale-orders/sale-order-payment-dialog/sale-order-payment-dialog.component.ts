@@ -377,7 +377,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     var cashLineFG = this.cashLineFG;
     var otherLineAmount = this.journalLinesFC.value.reduce((total, cur)=>{ return total+ cur.amount}, 0) - cashLineFG.value.amount;
     
-    cashLineFG.get('amount').setValue(this.maxAmount - otherLineAmount);
+    cashLineFG.get('amount').setValue(this.amount - otherLineAmount);
     this.addCashSuggest();
     this.partnerCash = this.cashSuggestions[0];
   }
@@ -386,9 +386,9 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     var cash = this.cashLineFG.value.amount;
     var otherLineAmount = this.journalLinesFC.value.reduce((total, cur)=>{ return total+ cur.amount}, 0) - cash - journalLine.amount;
     if(journalLine.journal.type != 'advance') {
-      return this.maxAmount - otherLineAmount;
+      return this.amount - otherLineAmount;
     } else {
-      var advanceMax = this.maxAmount - otherLineAmount > this.advanceAmount ? this.advanceAmount : this.maxAmount - otherLineAmount;
+      var advanceMax = this.amount - otherLineAmount > this.advanceAmount ? this.advanceAmount : this.amount - otherLineAmount;
       return  advanceMax > 0 ? advanceMax : 0;
     }
   }
