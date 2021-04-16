@@ -32,6 +32,7 @@ export class PartnerAdvanceListComponent implements OnInit {
   loading = false;
   amountBalanceFilter: number = 0;
   amountBalance: number;
+  amountAdvanceUsed: number;
 
   typeAmount: any = {};
   types: any[] = [
@@ -72,6 +73,7 @@ export class PartnerAdvanceListComponent implements OnInit {
     this.loadDataFromApi();
     this.loadTypeAmountTotal();
     this.loadAmounBalance();
+    this.loadAmounAdvanceUsed();
   }
 
   loadDataFromApi() {
@@ -105,8 +107,6 @@ export class PartnerAdvanceListComponent implements OnInit {
     forkJoin(this.types.map(x => {
       var val = new PartnerAdvanceSummaryFilter();
       val.type = x.value;
-      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
-      val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
       return this.partnerAdvanceService.getSumary(val).pipe(
         switchMap(amount => of({ type: x.value, amount: amount }))
       );
@@ -132,6 +132,14 @@ export class PartnerAdvanceListComponent implements OnInit {
     if (this.partnerId) {
       this.partnerService.getAmountAdvanceBalance(this.partnerId).subscribe((res : number) => {
         this.amountBalance = Math.abs(res);
+      });
+    }
+  }
+
+  loadAmounAdvanceUsed(){
+    if (this.partnerId) {
+      this.partnerService.getAmountAdvanceUsed(this.partnerId).subscribe((res : number) => {
+        this.amountAdvanceUsed = Math.abs(res);
       });
     }
   }

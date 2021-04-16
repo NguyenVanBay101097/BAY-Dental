@@ -29,11 +29,8 @@ namespace Infrastructure.Services
         {
             var query = SearchQuery();
 
-
             if (val.SaleOrderId.HasValue)
-            {
                 query = query.Where(x => x.OrderId == val.SaleOrderId.Value);
-            }
 
 
             var totalItems = await query.CountAsync();
@@ -48,6 +45,55 @@ namespace Infrastructure.Services
             var paged = new PagedResult2<SaleOrderPaymentBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = _mapper.Map<IEnumerable<SaleOrderPaymentBasic>>(items)
+            };
+
+            return paged;
+        }
+
+        public async Task<PagedResult2<SaleOrderPaymentHistoryAdvance>> GetPagedResultHistoryAdvanceAsync(HistoryAdvancePaymentFilter val)
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            var historyAdvances = new List<SaleOrderPaymentHistoryAdvance>();
+            var journalAdvance = await journalObj.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "advance" && x.Active).FirstOrDefaultAsync();
+
+            var query = SearchQuery(x => x.PaymentRels.Any(s => s.Payment.JournalId == journalAdvance.Id));
+
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.Order.PartnerId == val.PartnerId.Value);
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+            {
+                var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateOrderTo);
+            }
+
+
+            var totalItems = await query.CountAsync();
+
+            query = query.OrderByDescending(x => x.DateCreated);
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await query.Include(x => x.Order).Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync();
+            foreach (var item in items)
+            {
+                historyAdvances.AddRange(item.PaymentRels.Select(x => new SaleOrderPaymentHistoryAdvance
+                {
+                    PaymentName = x.Payment.Name,
+                    PaymentDate = x.Payment.PaymentDate,
+                    PaymentAmount = x.Payment.Amount,
+                    OrderId = x.SaleOrderPayment.OrderId,
+                    OrderName = x.SaleOrderPayment.Order.Name
+                }).ToList());
+            }
+
+            var paged = new PagedResult2<SaleOrderPaymentHistoryAdvance>(totalItems, val.Offset, val.Limit)
+            {
+                Items = historyAdvances
             };
 
             return paged;
@@ -145,7 +191,7 @@ namespace Infrastructure.Services
             foreach (var saleOrderPayment in saleOrderPayments)
             {
                 ///ghi sổ doang thu , công nợ lines               
-                var invoice = await _CreateInvoices(saleOrderPayment, final : true);
+                var invoice = await _CreateInvoices(saleOrderPayment, final: true);
                 await moveObj.ActionPost(new List<AccountMove>() { invoice });
 
                 ///tạo hoa hồng cho bác sĩ , phụ tá , tư vấn
@@ -185,7 +231,7 @@ namespace Infrastructure.Services
                     continue;
                 var moveline = _PrepareInvoiceLineAsync(line);
                 invoice_vals.InvoiceLines.Add(moveline);
-            }         
+            }
 
             if (!invoice_vals.InvoiceLines.Any())
                 throw new Exception("There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.");
@@ -258,7 +304,7 @@ namespace Infrastructure.Services
         }
 
         public IEnumerable<AccountPayment> _PreparePayments(SaleOrderPayment self, Guid moveId)
-        {           
+        {
             //check journal payment > 0 mới xử lý ghi sổ
             var lines = self.JournalLines.Where(x => x.Amount > 0).ToList();
             var results = new List<AccountPayment>();
@@ -277,7 +323,7 @@ namespace Infrastructure.Services
 
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = moveId });
                 results.Add(payment);
-            
+
             }
 
             return results;

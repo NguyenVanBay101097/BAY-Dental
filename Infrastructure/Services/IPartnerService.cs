@@ -69,5 +69,6 @@ namespace Infrastructure.Services
         Task<List<SearchAllViewModel>> SearchAll(PartnerPaged val);
         Task<PagedResult2<PartnerGetDebtPagedItem>> GetDebtPaged(Guid id, PartnerGetDebtPagedFilter val);
         Task<decimal> GetAmountAdvanceBalance(Guid id);
+        Task<decimal> GetAmountAdvanceUsed(Guid id);
     }
 }

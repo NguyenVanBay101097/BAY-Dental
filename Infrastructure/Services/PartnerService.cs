@@ -374,6 +374,16 @@ namespace Infrastructure.Services
             return Math.Abs(amounBalance);
         }
 
+        public async Task<decimal> GetAmountAdvanceUsed(Guid id)
+        {
+            ///lay tu moveline journal amount advance used
+            var paymentObj = GetService<IAccountPaymentService>();
+            var journalObj = GetService<IAccountJournalService>();
+            var journalAdvance = await journalObj.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "advance" && x.Active).FirstOrDefaultAsync();
+            var amounAdvance = await paymentObj.SearchQuery(x => x.PartnerId == id && x.JournalId == journalAdvance.Id).Select(x => x.Amount).SumAsync();
+            return Math.Abs(amounAdvance);
+        }
+
         public override Task UpdateAsync(Partner entity)
         {
             entity.DisplayName = _NameGet(entity);

@@ -33,6 +33,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetHistoryPaymentAdvance([FromQuery] HistoryAdvancePaymentFilter val)
+        {
+            var result = await _saleOrderPaymentService.GetPagedResultHistoryAdvanceAsync(val);
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {

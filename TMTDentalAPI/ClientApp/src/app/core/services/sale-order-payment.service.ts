@@ -17,6 +17,29 @@ export class SaleOrderPaymentPagging {
   items: SaleOrderPaymentBasic[];
 }
 
+export class HistoryAdvancePaymentFilter {
+  offset: number;
+  limit: number;
+  dateFrom: string;
+  dateTo: string;
+  partnerId: string;
+}
+
+export class HistoryPaymentAdvancePagging {
+  limit: number;
+  offset: number;
+  totalItems: number;
+  items: SaleOrderPaymentHistoryAdvance[];
+}
+
+export class SaleOrderPaymentHistoryAdvance {
+  paymentName: string;
+  paymentDate: Date;
+  paymentAmount: number;
+  orderId: string;
+  orderName: string;
+}
+
 export class SaleOrderPaymentBasic {
   id: string;
   amount: number;
@@ -69,6 +92,10 @@ export class SaleOrderPaymentService {
 
   getPaged(val): Observable<SaleOrderPaymentPagging> {
     return this.http.get<SaleOrderPaymentPagging>(this.baseApi + this.apiUrl, { params: val });
+  }
+
+  getHistoryAdvancePaged(val): Observable<HistoryPaymentAdvancePagging> {
+    return this.http.get<HistoryPaymentAdvancePagging>(this.baseApi + this.apiUrl + "/GetHistoryPaymentAdvance", { params: val });
   }
 
   get(id): Observable<SaleOrderPaymentDisplay> {

@@ -16,7 +16,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
 
         public Guid? SaleOrderId { get; set; }
+
     }
+
+
+
+
 
     public class SaleOrderPaymentBasic
     {
@@ -97,7 +102,37 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
     }
 
-  
+    public class HistoryAdvancePaymentFilter
+    {
+        public HistoryAdvancePaymentFilter()
+        {
+            Limit = 20;
+        }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public int Offset { get; set; }
+
+        public int Limit { get; set; }
+
+        public Guid? PartnerId { get; set; }
+
+    }
+
+
+    public class SaleOrderPaymentHistoryAdvance
+    {
+        public string PaymentName { get; set; }
+        public DateTime PaymentDate { get; set; }
+
+        public Guid OrderId { get; set; }
+        public string OrderName { get; set; }
+
+        public decimal PaymentAmount { get; set; }
+
+    }
 
 
 }

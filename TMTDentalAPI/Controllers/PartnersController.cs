@@ -136,6 +136,16 @@ namespace TMTDentalAPI.Controllers
             return Ok(amountAdvanceBalance);
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetAmountAdvanceUsed(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var amountAdvance = await _partnerService.GetAmountAdvanceUsed(id);
+            _unitOfWork.Commit();
+
+            return Ok(amountAdvance);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "Basic.Partner.Create")]
         public async Task<IActionResult> Create(PartnerDisplay val)
