@@ -56,7 +56,7 @@ namespace Infrastructure.Services
             var historyAdvances = new List<SaleOrderPaymentHistoryAdvance>();
             var journalAdvance = await journalObj.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "advance" && x.Active).FirstOrDefaultAsync();
 
-            var query = SearchQuery(x => x.PaymentRels.Any(s => s.Payment.JournalId == journalAdvance.Id));
+            var query = SearchQuery(x => x.PaymentRels.Any(s => s.Payment.JournalId == journalAdvance.Id) && x.State != "cancel");
 
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.Order.PartnerId == val.PartnerId.Value);
@@ -183,7 +183,7 @@ namespace Infrastructure.Services
             /// truy vấn đủ dữ liệu của saleorder payment
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move)
-                .Include(x => x.Order).ThenInclude(s => s.OrderLines)
+                .Include(x => x.Order).ThenInclude(s => s.OrderLines).ThenInclude(c => c.Product)
                 .Include(x => x.Lines).ThenInclude(s => s.SaleOrderLine)
                 .Include(x => x.JournalLines).ThenInclude(s => s.Journal).ThenInclude(s => s.DefaultDebitAccount)
                 .ToListAsync();
@@ -356,8 +356,12 @@ namespace Infrastructure.Services
                 var payment_ids = res.PaymentRels.Select(x => x.PaymentId).ToList();
                 await paymentObj.CancelAsync(payment_ids);
 
+
+                /// xóa các hoa hồng của bác sĩ                 
+                var settlementObj = GetService<ICommissionSettlementService>();
+                await settlementObj.Unlink(res.Move.Lines.Select(x => x.Id).ToList());
+
                 /// tìm và xóa hóa đơn ghi sổ doanh thu , công nợ
-                /// xóa các hoa hồng của bác sĩ 
                 if (res.Move.Lines.Any())
                     await moveLineObj.RemoveMoveReconcile(res.Move.Lines.Select(x => x.Id).ToList());
 

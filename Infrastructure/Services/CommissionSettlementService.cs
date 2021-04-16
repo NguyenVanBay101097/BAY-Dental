@@ -86,9 +86,9 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task Unlink(IEnumerable<Guid> paymentIds)
+        public async Task Unlink(IEnumerable<Guid> moveLineIds)
         {
-            var res = await SearchQuery(x => paymentIds.Contains(x.PaymentId.Value)).ToListAsync();
+            var res = await SearchQuery(x => moveLineIds.Contains(x.MoveLineId.Value)).ToListAsync();
             if (res == null)
                 throw new Exception("Null CommissionSettlement");
 
@@ -113,7 +113,7 @@ namespace Infrastructure.Services
             var employeeObj = GetService<IEmployeeService>();
             var orderLineObj = GetService<ISaleOrderLineService>();
             var commisstionProductRuleObj = GetService<ICommissionProductRuleService>();
-            var lines = await orderLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s=>s.InvoiceLineId == moveLine.Id)).Distinct().ToListAsync();
+            var lines = await orderLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s=>s.InvoiceLineId == moveLine.Id)).Include(x=>x.Product).Distinct().ToListAsync();
             foreach (var line in lines)
             {
                 if (line.EmployeeId.HasValue)
@@ -131,12 +131,13 @@ namespace Infrastructure.Services
                         Employee = employee,
                         EmployeeId = employee.Id,
                         TotalAmount = line.PriceSubTotal,
-                        BaseAmount = (line.PriceSubTotal - moveLine.PriceSubtotal),
+                        BaseAmount = (line.Product.ListPrice - (moveLine.Product.PurchasePrice.HasValue ? moveLine.Product.PurchasePrice : 0)),
                         Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentDoctor,
                         MoveLineId = moveLine.Id,
                         Type = "doctor",
                         ProductId = line.ProductId,
-                        SaleOrderId = line.OrderId
+                        SaleOrderId = line.OrderId,
+                        CommissionId = employee.CommissionId
                     });
                 }
 
@@ -155,12 +156,13 @@ namespace Infrastructure.Services
                         Employee = employee,
                         EmployeeId = employee.Id,
                         TotalAmount = line.PriceSubTotal,
-                        BaseAmount = (line.PriceSubTotal - moveLine.PriceSubtotal),
+                        BaseAmount = (line.Product.ListPrice - (moveLine.Product.PurchasePrice.HasValue ? moveLine.Product.PurchasePrice : 0)),
                         Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentAssistant,
                         MoveLineId = moveLine.Id,
                         Type = "assistant",
                         ProductId = line.ProductId,
-                        SaleOrderId = line.OrderId
+                        SaleOrderId = line.OrderId,
+                        CommissionId = employee.CommissionId
                     });
                 }
 
@@ -182,12 +184,13 @@ namespace Infrastructure.Services
                         Employee = employee,
                         EmployeeId = employee.Id,
                         TotalAmount = line.PriceSubTotal,
-                        BaseAmount = (line.PriceSubTotal - moveLine.PriceUnit),
+                        BaseAmount = (line.Product.ListPrice - (moveLine.Product.PurchasePrice.HasValue ? moveLine.Product.PurchasePrice : 0)),
                         Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentAdvisory,
                         MoveLineId = moveLine.Id,
                         Type = "advisory",
                         ProductId = line.ProductId,
-                        SaleOrderId = line.OrderId
+                        SaleOrderId = line.OrderId,
+                        CommissionId = employee.CommissionId
                     });
                 }
 

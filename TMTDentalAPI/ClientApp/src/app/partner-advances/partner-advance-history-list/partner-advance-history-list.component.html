@@ -3,10 +3,9 @@
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <div class="d-flex">
-                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom"
-                        [title]="'Thời gian'" [dateTo]="dateTo"
+                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
                         (searchChange)="onSearchDateChange($event)">
-                    </app-tai-date-range-filter-dropdown>                 
+                    </app-tai-date-range-filter-dropdown>
                 </div>
             </div>
         </div>
@@ -29,10 +28,10 @@
         <ng-template kendoGridCellTemplate let-dataItem let-column="column">
             {{dataItem.paymentDate | date:'shortDate'}}
         </ng-template>
-    </kendo-grid-column>   
+    </kendo-grid-column>
     <kendo-grid-column title="Phiếu điều trị" width="100">
         <ng-template kendoGridCellTemplate let-dataItem let-column="column">
-            {{dataItem.orderName}}
+            <a class="text-primary" (click)="getFormSaleOrder(dataItem.orderId)">{{dataItem.orderName}}</a>
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column title="Số tiền" class="text-right" width="135">

@@ -91,4 +91,8 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  getFormSaleOrder(id){
+    this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
+  }
+
 }
