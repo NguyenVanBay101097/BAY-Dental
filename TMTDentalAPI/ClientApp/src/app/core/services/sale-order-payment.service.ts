@@ -110,13 +110,13 @@ export class SaleOrderPaymentService {
     return this.http.post<SaleOrderPaymentDisplay>(this.baseApi + this.apiUrl, val);
   }
 
-  delete(id){
-    return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
+  actionCancel(val: string[]){
+    return this.http.post(this.baseApi + this.apiUrl + "/ActionCancel", val);
   }
 
-  print(id){
-    return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/print');
-  }
+  // print(id){
+  //   return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/print');
+  // }
 
   actionPayment(val: string[]){
     return this.http.post(this.baseApi + this.apiUrl + "/ActionPayment", val);

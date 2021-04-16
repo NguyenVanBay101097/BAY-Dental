@@ -292,6 +292,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       EmployeeId: null,
       Assistant: null,
       AssistantId: null,
+      Counselor: null,
+      CounselorId: null
     });
     this.reLoadLineInfo(data);
   }
@@ -314,7 +316,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.formGroupInfo.get('Assistant').patchValue(info.Assistant);
     }
 
-
+    if (info.Counselor) {
+      this.formGroupInfo.get('Counselor').patchValue(info.Counselor);
+    }
 
     if (info.Teeth) {
       this.teethSelected = Object.assign([], info.Teeth);
@@ -329,6 +333,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     line.Employee = line.Employee;
     line.EmployeeId = line.Employee ? line.Employee.Id : null;
     line.ProductUOMQty = (line.Teeth && line.Teeth.length > 0) ? line.Teeth.length : 1;
+    line.Counselor = line.Counselor;
+    line.CounselorId = line.Counselor ? line.Counselor.Id : null;
     lineControl.patchValue(line);
     lineControl.get('Teeth').clear();
     line.Teeth.forEach(teeth => {
@@ -590,7 +596,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return total;
   }
 
-  getAmountAdvanceBalance(){
+  getAmountAdvanceBalance() {
     this.partnerService.getAmountAdvanceBalance(this.partner.Id).subscribe(result => {
       this.amountAdvanceBalance = result;
     })
@@ -857,6 +863,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.pricelistId = val.Pricelist ? val.Pricelist.Id : null;
     val.UserId = val.User ? val.User.Id : null;
     val.CardId = val.card ? val.card.id : null;
+
     val.OrderLines.forEach(line => {
       if (line.Employee) {
         line.EmployeeId = line.Employee.Id;
@@ -869,6 +876,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       if (line.Teeth) {
         line.ToothIds = line.Teeth.map(x => x.Id);
       }
+
+      if (line.Counselor) {
+        line.CounselorId = line.Counselor.Id;
+      }
+
     });
     return val;
   }
@@ -1013,6 +1025,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         this.formGroup.markAsPristine();
       });
+      this.getAmountAdvanceBalance();
     }
   }
 
@@ -1031,7 +1044,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  actionEdit(){
+  actionEdit() {
 
   }
 
@@ -1077,6 +1090,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   addLine(val) {
     // this.saleOrderLine = event;
+    val.Counselor = null;
+    val.CounselorId = null;
     var res = this.fb.group(val);
     // line.teeth = this.fb.array(line.teeth);
     // if (!this.orderLines.controls.some(x => x.value.ProductId === res.value.ProductId)) {
@@ -1129,7 +1144,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         Math.max(0, price - discountFixedValue);
       line.get('PriceSubTotal').setValue(subtotal);
       var getResidual = subtotal - getamountPaid;
-      if(line.get('State').value != "draft"){
+      if (line.get('State').value != "draft") {
         line.get('AmountResidual').setValue(getResidual);
       }
 
