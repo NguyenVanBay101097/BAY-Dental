@@ -61,5 +61,14 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderPaymentService.ActionCancel(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
     }
 }

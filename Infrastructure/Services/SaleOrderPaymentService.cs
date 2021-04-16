@@ -171,7 +171,7 @@ namespace Infrastructure.Services
             foreach (var saleOrderPayment in saleOrderPayments)
             {
                 ///ghi sổ doang thu , công nợ lines               
-                var invoice = await _CreateInvoices(saleOrderPayment);
+                var invoice = await _CreateInvoices(saleOrderPayment, final : true);
                 await moveObj.ActionPost(new List<AccountMove>() { invoice });
 
                 ///tạo hoa hồng cho bác sĩ , phụ tá , tư vấn
@@ -191,7 +191,7 @@ namespace Infrastructure.Services
                     saleOrderPayment.PaymentRels.Add(new SaleOrderPaymentAccountPaymentRel { PaymentId = payment.Id });
                 /// update state = "posted"
                 saleOrderPayment.State = "posted";
-             
+
             }
 
             await UpdateAsync(saleOrderPayments);
@@ -199,13 +199,13 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<AccountMove> _CreateInvoices(SaleOrderPayment self)
+        public async Task<AccountMove> _CreateInvoices(SaleOrderPayment self, bool final = false)
         {
             //param final: if True, refunds will be generated if necessary
             var saleLineObj = GetService<ISaleOrderLineService>();
             // Invoice values.
             var invoice_vals = await _PrepareInvoice(self);
-            foreach(var line in self.Lines)
+            foreach (var line in self.Lines)
             {
                 if (line.Amount == 0)
                     continue;
@@ -226,16 +226,33 @@ namespace Infrastructure.Services
             //        invoice_vals.InvoiceLines.Add(moveline);
             //    }
             //}
-            //var invoice_vals_list = new List<AccountMove>();
 
 
             if (!invoice_vals.InvoiceLines.Any())
                 throw new Exception("There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.");
 
+            var out_invoice_vals_list = new List<AccountMove>();
+            var refund_invoice_vals_list = new List<AccountMove>();
+            if (final)
+            {
 
+                if (invoice_vals.InvoiceLines.Sum(x => x.Quantity * x.PriceUnit) < 0)
+                {
+                    foreach (var l in invoice_vals.InvoiceLines)
+                        l.Quantity = -l.Quantity;
+                    invoice_vals.Type = "out_refund";
+                    refund_invoice_vals_list.Add(invoice_vals);
+                }
+                else
+                    out_invoice_vals_list.Add(invoice_vals);
+
+            }
+            else
+                out_invoice_vals_list = new List<AccountMove>() { invoice_vals };
 
             var moveObj = GetService<IAccountMoveService>();
-            var moves = await moveObj.CreateMoves(new List<AccountMove>() { invoice_vals }, default_type: "out_invoice");
+            var moves = await moveObj.CreateMoves(out_invoice_vals_list, default_type: "out_invoice");
+            moves = moves.Concat(await moveObj.CreateMoves(refund_invoice_vals_list, default_type: "out_refund"));
 
             return invoice_vals;
         }
@@ -277,7 +294,7 @@ namespace Infrastructure.Services
 
             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
-           
+
             return res;
         }
 
@@ -384,7 +401,7 @@ namespace Infrastructure.Services
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id) && x.State != "cancel")
                 .Include(x => x.Move).ThenInclude(s => s.Lines)
                 .Include(x => x.Order).ThenInclude(s => s.OrderLines)
-                .Include(x=> x.PaymentRels).ThenInclude(s=>s.Payment)
+                .Include(x => x.PaymentRels).ThenInclude(s => s.Payment)
                 .ToListAsync();
 
 
@@ -400,7 +417,7 @@ namespace Infrastructure.Services
 
                 /// tìm và xóa hóa đơn ghi sổ doanh thu , công nợ
                 /// xóa các hoa hồng của bác sĩ 
-                if(res.Move.Lines.Any())
+                if (res.Move.Lines.Any())
                     await moveLineObj.RemoveMoveReconcile(res.Move.Lines.Select(x => x.Id).ToList());
 
                 await moveObj.ButtonCancel(new List<Guid>() { res.Move.Id });
@@ -424,8 +441,10 @@ namespace Infrastructure.Services
             var orderObj = GetService<ISaleOrderService>();
             var orderlineObj = GetService<ISaleOrderLineService>();
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
-            var order = await orderObj.SearchQuery(x => x.Id == saleOrderId).Include(x => x.OrderLines)              
-                .FirstOrDefaultAsync();
+            var order = await orderObj.SearchQuery(x => x.Id == saleOrderId)
+                 .Include(x => x.OrderLines).Include("OrderLines.SaleOrderLineInvoiceRels")
+                 .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+                 .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move").FirstOrDefaultAsync();
 
             orderlineObj._GetInvoiceQty(order.OrderLines);
             orderlineObj._GetToInvoiceQty(order.OrderLines);
@@ -435,10 +454,8 @@ namespace Infrastructure.Services
             orderlineObj._ComputeLinePaymentRels(order.OrderLines);
 
             orderObj._GetInvoiced(new List<SaleOrder>() { order });
-            ///compute residual , paid của line trong saleOrder
             orderObj._ComputeResidual(new List<SaleOrder>() { order });
-
-            await orderlineObj.UpdateAsync(order.OrderLines);
+            await orderObj.UpdateAsync(order);
         }
 
         public override ISpecification<SaleOrderPayment> RuleDomainGet(IRRule rule)

@@ -15,5 +15,6 @@ namespace Infrastructure.Services
 
         Task<SaleOrderPaymentDisplay> GetDisplay(Guid id);
         Task ActionPayment(IEnumerable<Guid> ids);
+        Task ActionCancel(IEnumerable<Guid> ids);
     }
 }

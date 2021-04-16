@@ -1970,28 +1970,25 @@ namespace Infrastructure.Services
         {
             foreach (var order in self)
             {
-                var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels)
-                    .Select(x => x.InvoiceLine).Select(x => x.Move).Distinct().ToList();
+                //var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels)
+                //    .Select(x => x.InvoiceLine).Select(x => x.Move).Distinct().ToList();
                 decimal? residual = 0M;
 
-                if (invoices.Any())
+                //if (invoices.Any())
+                //{
+                //    foreach (var line in order.OrderLines)
+                //    {
+                //        residual += line.AmountToInvoice;
+                //    }
+                //}
+                //else
+                //{
+
+                //}
+
+                foreach (var line in order.OrderLines)
                 {
-                    foreach (var invoice in invoices)
-                    {
-                        if (invoice.Type != "out_invoice" && invoice.Type != "out_refund")
-                            continue;
-                        if (invoice.Type == "out_invoice")
-                            residual += invoice.AmountResidual;
-                        else
-                            residual -= invoice.AmountResidual;
-                    }
-                }
-                else
-                {
-                    foreach (var line in order.OrderLines)
-                    {
-                        residual += line.AmountToInvoice;
-                    }
+                    residual += line.AmountToInvoice;
                 }
 
 

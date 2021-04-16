@@ -299,9 +299,8 @@ namespace Infrastructure.Services
             {
                 if (line.State != "draft")
                 {
-                    var amountPaid = line.SaleOrderLinePaymentRels.Sum(x => x.AmountPrepaid);
-                    line.AmountPaid = amountPaid;
-                    line.AmountResidual = line.PriceSubTotal - amountPaid;
+                    line.AmountPaid = line.AmountInvoiced;
+                    line.AmountResidual = line.AmountToInvoice;
                 }
                 else
                 {
