@@ -1,31 +1,35 @@
-<div>
-    <table class="table table-sm">
+<div class="overflow-auto h-100">
+    <table class="table table-sm t-sticky-thead">
         <thead>
             <tr>
-                <th>Số phiếu</th>
+                <th>Mã thanh toán</th>
                 <th>Ngày thanh toán</th>
-                <th>Phương thức</th>
                 <th>Số tiền</th>
-                <!-- <th>Tham chiếu</th> -->
-                <th>#</th>
+                <th>Phương thức</th>
+                <th>Thanh toán</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let payment of paymentsInfo">
-                <td>{{ payment.accountPaymentName}}</td>
-                <td>{{ payment.date | date : 'shortDate'}}</td>
-                <td>{{ payment.journalName }}</td>
-                <td>{{ payment.amount | number}}</td>
-                <!-- <td>{{ payment.ref }}</td> -->
-                <td>
-                    <button type="button" class="btn btn-icon btn-sm btn-light mr-1" (click)="printPayment(payment)">
+            <ng-container *ngFor="let payment of paymentHistories">
+                <tr *ngFor="let item of payment.payments; let i = index">
+                    <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length">{{item.name}}</td>
+                    <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length">{{payment.date | date : 'shortDate'}}</td>
+                    <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="text-right">{{payment.amount | number}}</td>
+                    <td>{{item.journalName}}</td>
+                    <td class="text-right">{{item.amount | number}}</td>
+                    <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="text-center">{{getPaymentState(payment.state)}}</td>
+                    <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="text-center">
+                        <button type="button" class="btn btn-icon btn-sm btn-light mr-1" (click)="printPayment(payment)">
                             <span class="k-icon k-i-print"></span>
                         </button>
-                    <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deletePayment(payment)">
+                        <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deletePayment(payment)">
                             <span class="k-icon k-i-delete"></span>
                         </button>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            </ng-container>
         </tbody>
     </table>
 </div>

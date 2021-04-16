@@ -119,3 +119,8 @@
 .tbl-right {
     width: 100%;
 }
+
+.tab-pane {
+    height: 100%;
+    overflow: auto;
+}

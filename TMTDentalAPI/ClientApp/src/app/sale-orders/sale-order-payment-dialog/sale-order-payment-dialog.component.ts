@@ -21,7 +21,7 @@ import { validator } from "fast-json-patch";
 @Component({
   selector: "app-sale-order-payment-dialog",
   templateUrl: "./sale-order-payment-dialog.component.html",
-  styleUrls: ["./sale-order-payment-dialog.component.css"],
+  styleUrls: ["./sale-order-payment-dialog.component.css"]
 })
 export class SaleOrderPaymentDialogComponent implements OnInit {
   paymentForm: FormGroup;
@@ -30,7 +30,6 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
   loading = false;
   title: string;
-  maxAmount: number = 0;
   submitted: boolean = false;
   showPrint = false;
   showError_1 = false;
@@ -39,6 +38,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   advanceAmount: number = 0;
   cashSuggestions: number[] = [];
   partnerCash = 0;
+  maxAmount: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -96,6 +96,10 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       //   this.journalCbx.loading = false;
       // });
     });
+  }
+
+  get amount(){
+    return this.paymentForm.get('amount').value;
   }
 
   get f() {
@@ -362,6 +366,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   onDeleteJournalLine(index) {
     this.journalLinesFC.removeAt(index);
+    this.onJournalLineAmountChange();
   }
 
   onJournalLineAmountChange(val = null, journalLine = null){
@@ -373,6 +378,8 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     var otherLineAmount = this.journalLinesFC.value.reduce((total, cur)=>{ return total+ cur.amount}, 0) - cashLineFG.value.amount;
     
     cashLineFG.get('amount').setValue(this.maxAmount - otherLineAmount);
+    this.addCashSuggest();
+    this.partnerCash = this.cashSuggestions[0];
   }
 
   getJournalLineAmountMax(journalLine) {

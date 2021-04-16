@@ -1031,6 +1031,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  actionEdit(){
+
+  }
 
   get orderLines() {
     return this.formGroup.get('OrderLines') as FormArray;
