@@ -202,12 +202,13 @@ namespace Infrastructure.Services
         {
             var userObj = GetService<IUserService>();
             var employeeObj = GetService<IEmployeeService>();
+
             var user = await userObj.GetCurrentUser();
-            var employee = await employeeObj.SearchQuery(x => x.UserId == user.Id).FirstOrDefaultAsync();
+            var employee = _mapper.Map<EmployeeSimple>(await employeeObj.SearchQuery(x => x.UserId == user.Id).FirstOrDefaultAsync());
             var res = new AdvisoryDisplay();
             if (employee != null)
             {
-                res.Employee = _mapper.Map<EmployeeSimple>(employee);
+                res.Employee = employee;
                 res.EmployeeId = res.Employee.Id;
             }
             res.CompanyId = CompanyId;
@@ -351,10 +352,12 @@ namespace Infrastructure.Services
             var quotationObj = GetService<IQuotationService>();
             var quotationLineObj = GetService<IQuotationLineService>();
             var userObj = GetService<IUserService>();
+            var employeeObj = GetService<IEmployeeService>();
 
             var user = await userObj.GetCurrentUser();
+            var employee = _mapper.Map<EmployeeSimple>(await employeeObj.SearchQuery(x => x.UserId == user.Id).FirstOrDefaultAsync());
             var quotation = new Quotation();
-            quotation.UserId = user.Id;
+            quotation.EmployeeId = employee.Id;
             quotation.PartnerId = val.CustomerId;
             quotation.DateQuotation = DateTime.Today;
             quotation.DateApplies = 30;
