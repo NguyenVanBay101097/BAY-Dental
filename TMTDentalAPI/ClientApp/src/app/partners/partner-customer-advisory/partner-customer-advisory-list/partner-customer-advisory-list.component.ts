@@ -100,8 +100,6 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     val.ids = this.mySelection;
     this.advisoryService.createQuotations(val).subscribe(
       result => {
-        console.log(result);
-        
         this.router.navigate(['/quotations/form'], {
           queryParams: {
             id: result.id
@@ -241,6 +239,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
       };
       this.loading = false;
     })
+    this.loadTeethConsulted();
   }
 
   searchChangeDate(data){

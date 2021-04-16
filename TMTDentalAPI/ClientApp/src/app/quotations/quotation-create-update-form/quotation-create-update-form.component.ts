@@ -142,6 +142,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.productId = val.productId;
     line.qty = val.qty ? val.qty : 1;
     line.advisoryUserId = val.advisoryUserId;
+    line.advisoryId = val.advisoryId;
     line.advisoryUser = val.advisoryUser;
     line.subPrice = val.subPrice ? val.subPrice : 0;
     line.name = val.name;
