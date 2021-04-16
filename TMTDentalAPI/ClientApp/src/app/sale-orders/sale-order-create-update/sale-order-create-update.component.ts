@@ -1025,7 +1025,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         this.formGroup.markAsPristine();
       });
-
       this.getAmountAdvanceBalance();
     }
   }

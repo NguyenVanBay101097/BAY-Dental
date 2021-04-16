@@ -51,29 +51,29 @@ export class SaleOrderPaymentListComponent implements OnInit {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Hủy thanh toán';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy thanh toán?';
-    // modalRef.result.then(() => {
-    //   this.paymentService.actionCancel([payment.accountPaymentId]).subscribe(() => {
-    //     this.notificationService.show({
-    //       content: 'Hủy thanh toán thành công',
-    //       hideAfter: 3000,
-    //       position: { horizontal: 'center', vertical: 'top' },
-    //       animation: { type: 'fade', duration: 400 },
-    //       type: { style: 'success', icon: true }
-    //     });
+    modalRef.result.then(() => {
+      this.saleOrderPaymentService.actionCancel([payment.id]).subscribe(() => {
+        this.notificationService.show({
+          content: 'Hủy thanh toán thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
 
-    //     this.paymentOutput.emit('');
-    //     this.loadPayments();
-    //   });
-    // });
+        this.paymentOutput.emit('');
+        this.loadPayments();
+      });
+    });
   }
 
   printPayment(payment) {
-    // this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
-    //   if (result) {
-    //     var html = result['html']
-    //     this.printService.printHtml(html);
-    //   }
-    // });
+    this.paymentService.getPrint(payment.id).subscribe(result => {
+      if (result) {
+        var html = result['html']
+        this.printService.printHtml(html);
+      }
+    });
   }
 
   getPaymentState(state){
