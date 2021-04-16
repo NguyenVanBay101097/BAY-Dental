@@ -9,7 +9,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public DateTime Date { get; set; }
-        public ApplicationUserSimple User { get; set; }
+        public EmployeeSimple Employee { get; set; }
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
         public IEnumerable<ToothDiagnosisBasic> ToothDiagnosis { get; set; } = new List<ToothDiagnosisBasic>();
         public IEnumerable<ProductSimple> Product { get; set; } = new List<ProductSimple>();
@@ -34,7 +34,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class AdvisorySave
     {
         public Guid CustomerId { get; set; }
-        public string UserId { get; set; }
+        public Guid EmployeeId { get; set; }
         public DateTime Date { get; set; }
         public Guid? ToothCategoryId { get; set; }
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
@@ -55,8 +55,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Người tư vấn
         /// </summary>
-        public string UserId { get; set; }
-        public ApplicationUserSimple User { get; set; }
+        public Guid EmployeeId { get; set; }
+        public EmployeeSimple Employee { get; set; }
         public DateTime Date { get; set; }
         public Guid? ToothCategoryId { get; set; }
         public ToothCategoryBasic ToothCategory { get; set; }

@@ -35,7 +35,7 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.Search))
             {
-                query = query.Where(x => x.User.Name.Contains(val.Search) ||
+                query = query.Where(x => x.Employee.Name.Contains(val.Search) ||
                     x.AdvisoryProductRels.Any(s => s.Product.Name.Contains(val.Search)));
             }
 
@@ -68,7 +68,7 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.User)
+            query = query.Include(x => x.Employee)
                 .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product);
@@ -88,7 +88,7 @@ namespace Infrastructure.Services
         public async Task<AdvisoryDisplay> GetAdvisoryDisplay(Guid id)
         {
             var advisory = await SearchQuery(x => x.Id == id)
-                .Include(x => x.User)
+                .Include(x => x.Employee)
                 .Include(x => x.Customer)
                 .Include(x => x.ToothCategory)
                 .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
@@ -201,10 +201,15 @@ namespace Infrastructure.Services
         public async Task<AdvisoryDisplay> DefaultGet(AdvisoryDefaultGet val)
         {
             var userObj = GetService<IUserService>();
+            var employeeObj = GetService<IEmployeeService>();
             var user = await userObj.GetCurrentUser();
+            var employee = await employeeObj.SearchQuery(x => x.UserId == user.Id).FirstOrDefaultAsync();
             var res = new AdvisoryDisplay();
-            res.User = _mapper.Map<ApplicationUserSimple>(user);
-            res.UserId = res.User.Id;
+            if (employee != null)
+            {
+                res.Employee = _mapper.Map<EmployeeSimple>(employee);
+                res.EmployeeId = res.Employee.Id;
+            }
             res.CompanyId = CompanyId;
             res.Date = DateTime.Now;
             if (val.CustomerId.HasValue)
@@ -265,7 +270,7 @@ namespace Infrastructure.Services
                 .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
                 .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
-                .Include(x => x.User).ToListAsync();
+                .Include(x => x.Employee).ToListAsync();
 
             res.Advisories = _mapper.Map<IEnumerable<AdvisoryDisplay>>(advisories);
 
@@ -397,8 +402,8 @@ namespace Infrastructure.Services
                     }
                     quotationLine.Diagnostic = string.Join(", ", toothDiagnosisName);
                     quotationLine.AdvisoryId = advisory.Id;
-                    quotationLine.AdvisoryUser = advisory.User;
-                    quotationLine.AdvisoryUserId = advisory.UserId;
+                    quotationLine.AdvisoryEmployee = advisory.Employee;
+                    quotationLine.AdvisoryEmployeeId = advisory.EmployeeId;
                     quotationLines.Add(quotationLine);
                 }
             }

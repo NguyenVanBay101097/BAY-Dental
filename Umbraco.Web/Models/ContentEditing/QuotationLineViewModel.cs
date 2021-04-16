@@ -50,8 +50,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid QuotationId { get; set; }
         public QuotationSimple Quotation { get; set; }
 
-        public string AdvisoryUserId { get; set; }
-        public ApplicationUserBasic AdvisoryUser { get; set; }
+        public Guid AdvisoryEmployeeId { get; set; }
+        public EmployeeSimple AdvisoryEmployee { get; set; }
     }
 
     public class QuotationLineDisplay
@@ -99,8 +99,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? AdvisoryId { get; set; }
         public AdvisorySimple Advisory { get; set; }
 
-        public string AdvisoryUserId { get; set; }
-        public ApplicationUserBasic AdvisoryUser { get; set; }
+        public Guid AdvisoryEmployeeId { get; set; }
+        public EmployeeSimple AdvisoryEmployee { get; set; }
 
         /// <summary>
         /// Loại răng: răng sữa, răng vĩnh viễn !!!
@@ -157,7 +157,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Người tư vấn
         /// </summary>
-        public string AdvisoryUserId { get; set; }
+        public string AdvisoryEmployeeId { get; set; }
 
         /// <summary>
         /// Chuẩn đoán

@@ -38,7 +38,7 @@ namespace Infrastructure.Services
             var lines = await quotationLineObj.SearchQuery(x => x.QuotationId == id)
                 .Include(x => x.QuotationLineToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.ToothCategory)
-                .Include(x => x.AdvisoryUser).ToListAsync();
+                .Include(x => x.AdvisoryEmployee).ToListAsync();
 
             model.Lines = lines;
             return _mapper.Map<QuotationDisplay>(model);
