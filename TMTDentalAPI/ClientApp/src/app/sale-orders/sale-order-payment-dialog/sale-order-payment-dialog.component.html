@@ -151,7 +151,7 @@
                             <div class="journal-amount" formArrayName="journalLines">
                                 <ng-container *ngFor="let journalFG of journalLinesFC.controls; let i = index">
                                     <div [formGroupName]="i" *ngIf="journalFG.value.journal.type != 'cash'" class="card my-2">
-                                        <div class="d-flex card-header">
+                                        <div class="d-flex card-header py-1">
                                             <h5 class="m-0">{{journalFG.value.journal.name}}</h5>
                                             <a (click)="onDeleteJournalLine(i)" class="ml-auto delete-icon p-1 font-weight-normal">X</a>
                                         </div>

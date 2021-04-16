@@ -83,12 +83,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeBasic Employee { get; set; }
 
         public Guid? AssistantId { get; set; }
-        public EmployeeBasic Assistant{ get; set; }
+        public EmployeeBasic Assistant { get; set; }
 
         public Guid OrderId { get; set; }
         public SaleOrderBasic Order { get; set; }
         public Guid? OrderPartnerId { get; set; }
         public PartnerSimple OrderPartner { get; set; }
+
+        public Guid? CounselorId { get; set; }
+        public EmployeeSimple Counselor { get; set; }
     }
 
     public class RegisterSaleOrderLinePayment
