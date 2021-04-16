@@ -126,32 +126,6 @@ namespace Infrastructure.Services
             }
         }
 
-        //public async override Task<SaleOrderPayment> CreateAsync(SaleOrderPayment entity)
-        //{
-        //    var sequenceServiceObj = GetService<IIRSequenceService>();
-        //    entity.Name = await sequenceServiceObj.NextByCode("account.payment.customer.invoice");
-        //    if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
-        //    {
-        //        await _InsertSaleOrderPaymentSequence();
-        //        entity.Name = await sequenceServiceObj.NextByCode("account.payment.customer.invoice");
-        //    }
-
-        //    await base.CreateAsync(entity);
-
-        //    return entity;
-        //}
-
-        //private async Task _InsertSaleOrderPaymentSequence()
-        //{
-        //    var seqObj = GetService<IIRSequenceService>();
-        //    await seqObj.CreateAsync(new IRSequence
-        //    {
-        //        Name = "Payments customer invoices sequence",
-        //        Code = "account.payment.customer.invoice",
-        //        Prefix = "CUST.IN/{yyyy}/",
-        //        Padding = 4
-        //    });
-        //}
 
         public async Task ActionPayment(IEnumerable<Guid> ids)
         {
@@ -211,22 +185,7 @@ namespace Infrastructure.Services
                     continue;
                 var moveline = _PrepareInvoiceLineAsync(line);
                 invoice_vals.InvoiceLines.Add(moveline);
-            }
-
-            //var linedict = await saleLineObj.SearchQuery(x => x.OrderId == order.Id).Include(x => x.ProductUOM).ToDictionaryAsync(x => x.Id, x => x);
-            ////Invoice line values (keep only necessary sections)
-            //foreach (var line in self)
-            //{
-
-            //    if (linedict[line.SaleOrderLineId].QtyToInvoice == 0 && linedict[line.SaleOrderLineId].AmountToInvoice == 0)
-            //        continue;
-            //    if ((linedict[line.SaleOrderLineId].QtyToInvoice > 0 && linedict[line.SaleOrderLineId].AmountToInvoice > 0) || (linedict[line.SaleOrderLineId].QtyToInvoice < 0) || (linedict[line.SaleOrderLineId].QtyToInvoice <= 0 && linedict[line.SaleOrderLineId].AmountToInvoice > 0))
-            //    {
-            //        var moveline = await _PrepareInvoiceLineAsync(linedict[line.SaleOrderLineId], line.Amount);
-            //        invoice_vals.InvoiceLines.Add(moveline);
-            //    }
-            //}
-
+            }         
 
             if (!invoice_vals.InvoiceLines.Any())
                 throw new Exception("There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.");
@@ -299,12 +258,7 @@ namespace Infrastructure.Services
         }
 
         public IEnumerable<AccountPayment> _PreparePayments(SaleOrderPayment self, Guid moveId)
-        {
-            //var accountObj = GetService<IAccountAccountService>();
-            //var accountJournalObj = GetService<IAccountJournalService>();
-            //var all_move_vals = new List<AccountMove>();
-            //var account = await accountObj.GetAccountReceivableCurrentCompany();
-
+        {           
             //check journal payment > 0 mới xử lý ghi sổ
             var lines = self.JournalLines.Where(x => x.Amount > 0).ToList();
             var results = new List<AccountPayment>();
@@ -323,66 +277,7 @@ namespace Infrastructure.Services
 
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = moveId });
                 results.Add(payment);
-
-                //decimal counterpart_amount = 0;
-                //AccountAccount liquidity_line_account = null;
-
-                //if (line.Journal.Type == "advance")
-                //    counterpart_amount = -line.Amount;
-                //else
-                //    counterpart_amount = line.Amount;
-
-
-                //liquidity_line_account = line.Journal.DefaultDebitAccount;
-
-
-                //var balance = counterpart_amount;
-                //var liquidity_amount = counterpart_amount;
-
-                //var rec_pay_line_name = "Khách hàng thanh toán";
-
-                //var liquidity_line_name = self.Name;
-
-                //var move_vals = new AccountMove
-                //{
-                //    Date = self.Date,
-                //    PartnerId = self.Order.PartnerId,
-                //    JournalId = line.JournalId,
-                //    Journal = line.Journal,
-                //    CompanyId = self.CompanyId,
-                //};
-
-                //var lines = new List<AccountMoveLine>()
-                //{
-                //    new AccountMoveLine
-                //    {
-                //        Name = rec_pay_line_name,
-                //        Debit = balance > 0 ? balance : 0,
-                //        Credit = balance < 0 ? -balance : 0,
-                //        DateMaturity = self.Date,
-                //        AccountId = account.Id,
-                //        Account = account,
-                //        PaymentId = line.Id,
-                //        PartnerId = self.Order.PartnerId,
-                //        Move = move_vals,
-                //    },
-                //    new AccountMoveLine
-                //    {
-                //        Name = liquidity_line_name,
-                //        Debit = balance < 0 ? -balance : 0,
-                //        Credit = balance > 0 ? balance : 0,
-                //        DateMaturity = self.Date,
-                //        AccountId = liquidity_line_account.Id,
-                //        Account = liquidity_line_account,
-                //        PaymentId = line.Id,
-                //        PartnerId = self.Order.PartnerId,
-                //        Move = move_vals,
-                //    },
-                //};
-
-                //move_vals.Lines = lines;
-
-                //all_move_vals.Add(move_vals);
+            
             }
 
             return results;
