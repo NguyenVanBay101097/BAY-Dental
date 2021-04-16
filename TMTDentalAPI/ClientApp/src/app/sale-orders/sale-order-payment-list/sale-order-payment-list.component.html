@@ -14,7 +14,7 @@
         <tbody>
             <ng-container *ngFor="let payment of paymentHistories">
                 <tr *ngFor="let item of payment.payments; let i = index">
-                    <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length">{{item.name}}</td>
+                    <td>{{item.name}}</td>
                     <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length">{{payment.date | date : 'shortDate'}}</td>
                     <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="text-right">{{payment.amount | number}}</td>
                     <td>{{item.journalName}}</td>
@@ -25,7 +25,7 @@
                             <span class="k-icon k-i-print"></span>
                         </button>
                         <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deletePayment(payment)">
-                            <span class="k-icon k-i-delete"></span>
+                            <span class="fa fa-times"></span>
                         </button>
                     </td>
                 </tr>
