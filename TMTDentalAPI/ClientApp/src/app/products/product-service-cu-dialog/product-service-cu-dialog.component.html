@@ -71,18 +71,6 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        <tr *ngIf="isLabo == false">
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Giá vốn
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                    formControlName="purchasePrice">
-                                                </kendo-numerictextbox>
-                                            </td>
-                                        </tr>
                                         <!-- <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
@@ -131,7 +119,7 @@
                                                 </kendo-numerictextbox>
                                             </td>
                                         </tr>
-                                        <tr *ngIf="isLabo != false">
+                                        <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
                                                     Giá vốn
@@ -139,7 +127,7 @@
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                    formControlName="purchasePrice">
+                                                    formControlName="standardPrice">
                                                 </kendo-numerictextbox>
                                             </td>
                                         </tr>
