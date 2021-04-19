@@ -29,7 +29,8 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;" class=".o_td_control_left">
-                                        <label>{{f.user.value?.name}}</label>
+                                        <kendo-combobox formControlName="employeeAdvisory" [filterable]="true" #empCbx class="kendo-combobox-sm mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
+                                        </kendo-combobox>
                                     </td>
                                 </tr>
                             </tbody>
@@ -89,7 +90,7 @@
                     <div class="mb-2">
                         <h5>Chẩn đoán răng</h5>
                         <div>
-                            <app-tooth-diagnosis-popover [title]="'Chẩn đoán răng'" [type]="'diagnosis'" [tags]="f.toothDiagnosis.value" (onSave)="updateDiagnosis($event)">
+                            <app-tooth-diagnosis-popover [tags]="f.toothDiagnosis.value" (onSave)="updateDiagnosis($event)">
                             </app-tooth-diagnosis-popover>
                             <div *ngIf = "f.toothDiagnosis.value.length == 0 && submitted" class="text-danger">
                                 Chọn chẩn đoán răng
@@ -99,8 +100,8 @@
                     <div class="mb-2">
                         <h5>Dịch vụ tư vấn</h5>
                         <div>
-                            <app-tooth-diagnosis-popover [title]="'Chọn dịch vụ'" [type]="'service'" [tags]="f.product.value" (onSave)="updateProduct($event)">
-                            </app-tooth-diagnosis-popover>
+                            <app-consulting-service-popover [tags]="f.product.value" (onSave)="updateProduct($event)">
+                            </app-consulting-service-popover>
                             <div *ngIf = "f.product.value.length == 0 && submitted" class="text-danger">
                                 Chọn dịch vụ
                             </div>
@@ -120,7 +121,7 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-primary" (click)="resetForm()" accesskey="s">Nhập lại</button>
+    <button type="button" [class.d-none]="id" class="btn btn-primary" (click)="resetForm()" accesskey="s">Nhập lại</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

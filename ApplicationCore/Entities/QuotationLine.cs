@@ -60,8 +60,8 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Nhân viên tư vấn
         /// </summary>
-        public string AdvisoryUserId { get; set; }
-        public ApplicationUser AdvisoryUser { get; set; }
+        public Guid? AdvisoryEmployeeId { get; set; }
+        public Employee AdvisoryEmployee { get; set; }
 
         /// <summary>
         /// Tư vấn

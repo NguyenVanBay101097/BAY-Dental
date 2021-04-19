@@ -110,6 +110,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "MM/dd/yyyy"));
           this.formGroup.get('dateApplies').patchValue(result.dateApplies)
           const control = this.formGroup.get('lines') as FormArray;
+          console.log(control);
+          
           control.clear();
 
           result.lines.forEach(line => {
@@ -142,6 +144,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.productId = val.productId;
     line.qty = val.qty ? val.qty : 1;
     line.advisoryUserId = val.advisoryUserId;
+    line.advisoryId = val.advisoryId;
     line.advisoryUser = val.advisoryUser;
     line.subPrice = val.subPrice ? val.subPrice : 0;
     line.name = val.name;

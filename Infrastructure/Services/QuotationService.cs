@@ -30,7 +30,7 @@ namespace Infrastructure.Services
             var quotationLineObj = GetService<IQuotationLineService>();
             var model = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
-                .Include(x => x.User)
+                .Include(x => x.Employee)
                 .Include(x => x.Payments)
                 .Include(x => x.Orders)
                 .FirstOrDefaultAsync();
@@ -38,7 +38,7 @@ namespace Infrastructure.Services
             var lines = await quotationLineObj.SearchQuery(x => x.QuotationId == id)
                 .Include(x => x.QuotationLineToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.ToothCategory)
-                .Include(x => x.AdvisoryUser).ToListAsync();
+                .Include(x => x.AdvisoryEmployee).ToListAsync();
 
             model.Lines = lines;
             return _mapper.Map<QuotationDisplay>(model);
@@ -48,12 +48,20 @@ namespace Infrastructure.Services
         {
             var userObj = GetService<IUserService>();
             var partnerObj = GetService<IPartnerService>();
+            var employeeObj = GetService<IEmployeeService>();
+
+
+
             var user = await userObj.GetCurrentUser();
+            var employee = _mapper.Map<EmployeeSimple>(await employeeObj.SearchQuery(x => x.UserId == user.Id).FirstOrDefaultAsync());
             var partner = _mapper.Map<PartnerSimple>(await partnerObj.SearchQuery(x => x.Id == partnerId).FirstOrDefaultAsync());
             var quotation = new QuotationDisplay();
             quotation.Partner = partner;
-            quotation.User = _mapper.Map<ApplicationUserSimple>(user);
-            quotation.UserId = user.Id;
+            if (employee != null)
+            {
+                quotation.Employee = employee;
+                quotation.EmployeeId = employee.Id;
+            }
             quotation.PartnerId = partner.Id;
             quotation.DateQuotation = DateTime.Today;
             quotation.DateApplies = 30;
@@ -75,11 +83,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateQuotation <= val.DateTo.Value);
             }
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.User.Name.Contains(val.Search));
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Employee.Name.Contains(val.Search));
             var totalItem = await query.CountAsync();
             var items = await query
                 .Include(x => x.Partner)
-                .Include(x => x.User)
+                .Include(x => x.Employee)
                 .Include(x => x.Orders)
                 .Skip(val.Offset)
                 .Take(val.Limit)
@@ -303,7 +311,7 @@ namespace Infrastructure.Services
         {
             var quotation = await SearchQuery(x => x.Id == id)
                .Include(x => x.Partner)
-               .Include(x => x.User)
+               .Include(x => x.Employee)
                .Include(x => x.Lines)
                .Include(x => x.Company).ThenInclude(x => x.Partner)
                .Include(x => x.Payments).FirstOrDefaultAsync();

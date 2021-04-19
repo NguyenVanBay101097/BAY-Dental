@@ -20,8 +20,8 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Người báo giá
         /// </summary>
-        public ApplicationUser User { get; set; }
-        public string UserId { get; set; }
+        public Employee Employee { get; set; }
+        public Guid? EmployeeId { get; set; }
 
         /// <summary>
         /// Ngày báo giá

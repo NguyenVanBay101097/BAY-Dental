@@ -11,7 +11,7 @@ import { UserSimple } from '../users/user-simple';
 
 export class QuotationLineDisplay {
   productId: string;
-  id:string;
+  id: string;
   product: any;
   qty: number;
   discount: number;
@@ -21,6 +21,7 @@ export class QuotationLineDisplay {
   toothCategoryId: string;
   advisoryUserId: string;
   advisoryUser: any;
+  advisoryId: string;
   toothCategory: any;
   toothIds: any[];
   name: string;

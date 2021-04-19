@@ -55,18 +55,18 @@
     <div>
         <div class="o_content">
             <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [selectedKeys]="mySelection" [kendoGridSelectBy]="'id'">
-                <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
-                <kendo-grid-column title="Ngày tư vấn" width="120">
+                <kendo-grid-checkbox-column showSelectAll="true" width="40"></kendo-grid-checkbox-column>
+                <kendo-grid-column title="Ngày tư vấn" width="70">
                     <ng-template kendoGridCellTemplate let-dataItem>
                         {{dataItem.date | date : 'shortDate'}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column title="Người tư vấn" width="150">
+                <kendo-grid-column title="Người tư vấn" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem>
                         {{dataItem.user?.name}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="teeth" title="Răng" width="150">
+                <kendo-grid-column field="teeth" title="Răng" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem>
                         {{getTeeth(dataItem.teeth)}}
                     </ng-template>
@@ -76,12 +76,12 @@
                         {{getToothDiagnosis(dataItem.toothDiagnosis)}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column title="Dịch vụ" width="150">
+                <kendo-grid-column title="Dịch vụ" width="300">
                     <ng-template kendoGridCellTemplate let-dataItem>
                         {{getProducts(dataItem.product)}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column width="100">
+                <kendo-grid-column width="60">
                     <ng-template kendoGridHeaderTemplate>
                         Thao tác
                     </ng-template>
