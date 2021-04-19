@@ -14,7 +14,7 @@ namespace ApplicationCore.Entities
         public Employee Employee { get; set; }
 
         /// <summary>
-        /// tổng thành tiền của saleorderline
+        /// Tiền còn lai cần thanh toán trên 1 line
         /// </summary>
         public decimal? TotalAmount { get; set; }
 

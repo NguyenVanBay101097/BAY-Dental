@@ -107,7 +107,7 @@
                                         <td class="text-right align-middle">{{ line.get('saleOrderLine').value.amountResidual | number }}
                                         </td>
                                         <td class="text-right">
-                                            <kendo-numerictextbox [step]="1000" [format]="'n0'" [autoCorrect]="true" style="max-width: 200px;" formControlName="amount" (valueChange)="changeMoneyLine(line)">
+                                            <kendo-numerictextbox [step]="1000" [format]="'n0'" [max]="line.get('saleOrderLine').value.amountResidual" [autoCorrect]="true" style="max-width: 200px;" formControlName="amount" (valueChange)="changeMoneyLine(line)">
                                             </kendo-numerictextbox>
                                         </td>
                                     </tr>

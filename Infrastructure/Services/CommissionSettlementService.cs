@@ -116,6 +116,7 @@ namespace Infrastructure.Services
             var lines = await orderLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s=>s.InvoiceLineId == moveLine.Id)).Include(x=>x.Product).Distinct().ToListAsync();
             foreach (var line in lines)
             {
+                var standard_price = GetStandardPrice(line.ProductId.Value, line.CompanyId);
                 if (line.EmployeeId.HasValue)
                 {
                     var employee = await employeeObj.SearchQuery(x => x.Id == line.EmployeeId)
@@ -123,15 +124,15 @@ namespace Infrastructure.Services
                     if (employee == null || employee.Commission == null)
                         return null;
 
-                    var commisstionProductRule_dict = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == employee.CommissionId.Value).ToDictionaryAsync(x => x.ProductId, x => x);
-
+                    var commisstionProductRule_dict =  await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == employee.CommissionId.Value).ToDictionaryAsync(x => x.ProductId, x => x);
+                
                     commissionSettlements.Add(new CommissionSettlement
                     {
                         Date = moveLine.Date,
                         Employee = employee,
                         EmployeeId = employee.Id,
-                        TotalAmount = line.PriceSubTotal,
-                        BaseAmount = (line.Product.ListPrice - (moveLine.Product.PurchasePrice.HasValue ? moveLine.Product.PurchasePrice : 0)),
+                        TotalAmount = line.AmountResidual,
+                        BaseAmount = (line.Product.ListPrice - standard_price),
                         Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentDoctor,
                         MoveLineId = moveLine.Id,
                         Type = "doctor",
@@ -155,8 +156,8 @@ namespace Infrastructure.Services
                         Date = moveLine.Date,
                         Employee = employee,
                         EmployeeId = employee.Id,
-                        TotalAmount = line.PriceSubTotal,
-                        BaseAmount = (line.Product.ListPrice - (moveLine.Product.PurchasePrice.HasValue ? moveLine.Product.PurchasePrice : 0)),
+                        TotalAmount = line.AmountResidual,
+                        BaseAmount = (line.Product.ListPrice - standard_price),
                         Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentAssistant,
                         MoveLineId = moveLine.Id,
                         Type = "assistant",
@@ -183,8 +184,8 @@ namespace Infrastructure.Services
                         Date = moveLine.Date,
                         Employee = employee,
                         EmployeeId = employee.Id,
-                        TotalAmount = line.PriceSubTotal,
-                        BaseAmount = (line.Product.ListPrice - (moveLine.Product.PurchasePrice.HasValue ? moveLine.Product.PurchasePrice : 0)),
+                        TotalAmount = line.AmountResidual,
+                        BaseAmount = (line.Product.ListPrice - standard_price),
                         Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentAdvisory,
                         MoveLineId = moveLine.Id,
                         Type = "advisory",
@@ -297,6 +298,13 @@ namespace Infrastructure.Services
             {
                 Items = items
             };
+        }
+
+        public decimal GetStandardPrice(Guid id, Guid? force_company_id = null)
+        {
+            var propertyObj = GetService<IIRPropertyService>();
+            var val = propertyObj.get("standard_price", "product.product", res_id: $"product.product,{id}", force_company: force_company_id);
+            return Convert.ToDecimal(val == null ? 0 : val);
         }
     }
 }
