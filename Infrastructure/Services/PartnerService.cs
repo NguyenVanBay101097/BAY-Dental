@@ -380,7 +380,7 @@ namespace Infrastructure.Services
             var paymentObj = GetService<IAccountPaymentService>();
             var journalObj = GetService<IAccountJournalService>();
             var journalAdvance = await journalObj.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "advance" && x.Active).FirstOrDefaultAsync();
-            var amounAdvance = await paymentObj.SearchQuery(x => x.PartnerId == id && x.JournalId == journalAdvance.Id).Select(x => x.Amount).SumAsync();
+            var amounAdvance = await paymentObj.SearchQuery(x => x.PartnerId == id && x.JournalId == journalAdvance.Id && x.State != "cancel").Select(x => x.Amount).SumAsync();
             return Math.Abs(amounAdvance);
         }
 
