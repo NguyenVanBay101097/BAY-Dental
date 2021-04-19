@@ -95,7 +95,7 @@
                                 @Model.DateQuotation.ToString("dd/MM/yyyy")
                             </td>
                         </tr>
-                        @if (!string.IsNullOrEmpty(Model.User.Name))
+                        @if (!string.IsNullOrEmpty(Model.Employee.Name))
                         {
             <tr class="mb-2">
                 <td colspan="2" class="o_td_label">
@@ -104,7 +104,7 @@
                     </label>
                 </td>
                 <td colspan="1" style="width: 100%;">
-                    @Model.User.Name
+                    @Model.Employee.Name
                 </td>
             </tr>}
 
@@ -228,7 +228,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-semibold">@(Model.User != null && !string.IsNullOrEmpty(Model.User.Name)? Model.User.Name.ToUpper() : "")</span>
+                <span class="font-semibold">@(Model.Employee != null && !string.IsNullOrEmpty(Model.Employee.Name)? Model.Employee.Name.ToUpper() : "")</span>
             </div>
         </div>
         <div class="col">

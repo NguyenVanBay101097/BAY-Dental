@@ -17,8 +17,8 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// người tư vấn
         /// </summary>
-        public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public Employee Employee { get; set; }
         /// <summary>
         /// khách hàng
         /// </summary>

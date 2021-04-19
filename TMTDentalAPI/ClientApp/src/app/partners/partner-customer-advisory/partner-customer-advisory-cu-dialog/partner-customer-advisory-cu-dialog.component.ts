@@ -168,6 +168,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
         this.activeModal.close(true);
       })
     }
+    
   }
 
   notify(style, content) {
