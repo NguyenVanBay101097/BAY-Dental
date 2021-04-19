@@ -357,7 +357,10 @@ namespace Infrastructure.Services
             var user = await userObj.GetCurrentUser();
             var employee = _mapper.Map<EmployeeSimple>(await employeeObj.SearchQuery(x => x.UserId == user.Id).FirstOrDefaultAsync());
             var quotation = new Quotation();
-            quotation.EmployeeId = employee.Id;
+            if (employee != null)
+            {
+                quotation.EmployeeId = employee.Id;
+            }
             quotation.PartnerId = val.CustomerId;
             quotation.DateQuotation = DateTime.Today;
             quotation.DateApplies = 30;
@@ -376,6 +379,7 @@ namespace Infrastructure.Services
                 .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
+                .Include(x => x.Employee)
                 .ToListAsync();
 
             var quotationLines = new List<QuotationLine>();
@@ -405,7 +409,6 @@ namespace Infrastructure.Services
                     }
                     quotationLine.Diagnostic = string.Join(", ", toothDiagnosisName);
                     quotationLine.AdvisoryId = advisory.Id;
-                    quotationLine.AdvisoryEmployee = advisory.Employee;
                     quotationLine.AdvisoryEmployeeId = advisory.EmployeeId;
                     quotationLines.Add(quotationLine);
                 }

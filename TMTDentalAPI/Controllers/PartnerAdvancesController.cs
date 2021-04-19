@@ -103,19 +103,6 @@ namespace TMTDentalAPI.Controllers
         }
 
 
-        [HttpGet("[action]")]
-        [CheckAccess(Actions = "Basic.PartnerAdvance.Read")]
-        public async Task<IActionResult> ComputeAmountBalance()
-        {
-            await _unitOfWork.BeginTransactionAsync();
-
-            var balance = await _partnerAdvanceService.ComputeAmountBalance();
-
-            _unitOfWork.Commit();
-
-            return Ok(balance);
-        }
-
 
         [HttpGet("{id}/[action]")]
         [CheckAccess(Actions = "Basic.PartnerAdvance.Read")]

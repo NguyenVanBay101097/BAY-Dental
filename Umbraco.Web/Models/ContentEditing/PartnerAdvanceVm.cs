@@ -66,34 +66,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid PartnerId { get; set; }
     }
 
-    public class PartnerAdvancDefaultViewModel
-    {
-        public Guid Id { get; set; }
-        public DateTime Date { get; set; }
-
-        public Guid JournalId { get; set; }
-        public AccountJournalSimple Journal { get; set; }
-
-        public Guid PartnerId { get; set; }
-        public string PartnerName { get; set; }
-
-        public Guid CompanyId { get; set; }
-        /// <summary>
-        /// advance : đóng tạm ứng
-        /// refund : hoàn tạm ứng
-        /// </summary>
-        public string Type { get; set; }
-
-        public decimal Amount { get; set; }
-
-        public decimal AmountBalance { get; set; }
-
-        public string State { get; set; }
-
-        public string Note { get; set; }
-    }
-
-
     public class PartnerAdvanceSave
     {
         public DateTime Date { get; set; }

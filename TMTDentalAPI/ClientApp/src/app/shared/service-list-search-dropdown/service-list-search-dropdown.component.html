@@ -1,0 +1,11 @@
+<div>
+    <input #searchInput placeholder="Tìm kiếm và thêm dịch vụ [F2]" id="typeahead-template" [(ngModel)]="model" type="text" class="form-control input-search" (selectItem)="onSelectValue($event, searchInput)" [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter"
+    />
+
+    <ng-template #rt let-r="result" let-t="term">
+        <div class="d-flex px-2">
+            <ngb-highlight class="text-wrap text-break mr-2" [result]="r.name" [term]="t"></ngb-highlight>
+            <label class=" ml-auto  text-wrap">{{r.listPrice | number}}</label>
+        </div>
+    </ng-template>
+</div>

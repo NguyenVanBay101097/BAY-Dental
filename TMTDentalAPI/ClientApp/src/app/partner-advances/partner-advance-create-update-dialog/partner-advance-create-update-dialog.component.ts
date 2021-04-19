@@ -3,11 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { IntlService, load } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PartnerService } from 'src/app/partners/partner.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { PartnerAdvanceService } from '../partner-advance.service';
 
@@ -26,12 +27,14 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
   journalList: any = [];
   filteredJournals: any = [];
   partnerAdvance: any;
+  amountBalance: number;
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder,
     private partnerAdvanceService: PartnerAdvanceService,
     private route: ActivatedRoute, private modalService: NgbModal,
     public activeModal: NgbActiveModal,
+    private partnerService: PartnerService,
     private accountJournalService: AccountJournalService,
     private notificationService: NotificationService,
     private router: Router,
@@ -56,6 +59,7 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
     }
 
     this.loadFilteredJournals();
+    this.loadAmountAdvanceBalance();
 
   }
 
@@ -98,8 +102,16 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
     });
   }
 
+  loadAmountAdvanceBalance() {
+    if (this.partnerId) {
+      this.partnerService.getAmountAdvanceBalance(this.partnerId).subscribe((res : number) => {
+        this.amountBalance = Math.abs(res);
+      });
+    }
+  }
+
   onClose() {
-      this.activeModal.dismiss();
+    this.activeModal.dismiss();
   }
 
   searchJournals(q?: string) {
@@ -143,12 +155,12 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
 
           this.onPrint();
           this.activeModal.close();
-         
+
         }
       );
     } else {
       this.partnerAdvanceService.create(val).subscribe(
-        result => {      
+        result => {
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,
@@ -193,12 +205,12 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
               console.log(error);
               this.submitted = false;
             }
-          );   
+          );
         }
       );
     } else {
       this.partnerAdvanceService.create(val).subscribe(
-        (result: any) => {      
+        (result: any) => {
           this.partnerAdvanceService.actionConfirm([result.id]).subscribe(
             () => {
               this.notificationService.show({
@@ -208,17 +220,17 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
                 animation: { type: "fade", duration: 400 },
                 type: { style: "success", icon: true },
               });
-              if(print){
+              if (print) {
                 this.onPrint();
               }
-              
+
               this.activeModal.close();
             },
             (error) => {
               console.log(error);
               this.submitted = false;
             }
-          );        
+          );
         }
       );
     }
@@ -232,5 +244,5 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
       this.printService.printHtml(result.html);
     });
   }
-  
+
 }

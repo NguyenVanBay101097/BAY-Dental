@@ -82,6 +82,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { SearchAllComponent } from './search-all/search-all.component';
 import { ProductListShareComponent } from './product-list-share/product-list-share.component';
 import { DiscountPopoverShareComponent } from './discount-popover-share/discount-popover-share.component';
+import { ServiceListSearchDropdownComponent } from './service-list-search-dropdown/service-list-search-dropdown.component';
 
 @NgModule({
   declarations: [
@@ -156,7 +157,8 @@ import { DiscountPopoverShareComponent } from './discount-popover-share/discount
     CashBookCuDialogComponent,
     SearchAllComponent,
     ProductListShareComponent,
-    DiscountPopoverShareComponent
+    DiscountPopoverShareComponent,
+    ServiceListSearchDropdownComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -221,9 +223,11 @@ import { DiscountPopoverShareComponent } from './discount-popover-share/discount
     CashBookCuDialogComponent,
     SearchAllComponent,
     ProductListShareComponent,
-    DiscountPopoverShareComponent
+    DiscountPopoverShareComponent,
+    ServiceListSearchDropdownComponent
   ],
   imports: [
+    NgbModule,
     CommonModule,
     FlexLayoutModule,
     RouterModule,

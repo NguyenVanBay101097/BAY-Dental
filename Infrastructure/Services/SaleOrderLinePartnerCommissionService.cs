@@ -43,8 +43,8 @@ namespace Infrastructure.Services
             }
             else
             {
-                self.Percentage = rule.PercentFixed ?? 0;
-                self.Amount = orderLine.PriceTotal * ((rule.PercentFixed ?? 0) / 100);
+                self.Percentage = rule.PercentDoctor ?? 0;
+                self.Amount = orderLine.PriceTotal * ((rule.PercentDoctor ?? 0) / 100);
             }
             
             return self;

@@ -1,0 +1,22 @@
+
+.table-sm td, .table-sm th {
+    border: 1px solid #dee2e6
+}
+
+.table-sm td {
+    vertical-align: middle;
+}
+
+.table-sm th {
+    text-align: center;
+    vertical-align: middle;
+    position: sticky;
+}
+
+.t-sticky-thead thead tr th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: white;
+}
