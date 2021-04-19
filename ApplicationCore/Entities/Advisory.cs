@@ -14,6 +14,7 @@ namespace ApplicationCore.Entities
         /// Ngày tư vấn
         /// </summary>
         public DateTime Date { get; set; }
+
         /// <summary>
         /// người tư vấn
         /// </summary>

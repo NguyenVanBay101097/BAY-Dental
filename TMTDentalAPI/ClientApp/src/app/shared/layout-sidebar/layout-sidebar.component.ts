@@ -159,7 +159,7 @@ export class LayoutSidebarComponent implements OnInit {
         // { name: 'Danh xưng', link: '/partner-titles' },
         { name: 'Đơn vị tính', link: '/uoms', groups: 'product.group_uom', },
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
-        { name: 'Bảng hoa hồng', link: '/commissions' },
+        { name: 'Bảng hoa hồng', link: '/commissions/v2' },
         { name: 'Nhân viên', link: '/employees' },
         { name: 'Thông số Labo', link: '/labo-orders/labo-managerment' },
         { name: 'Loại thu chi', link: '/loai-thu-chi' },

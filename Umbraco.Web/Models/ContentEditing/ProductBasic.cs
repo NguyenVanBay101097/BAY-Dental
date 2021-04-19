@@ -192,4 +192,18 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Name { get; set; }
     }
+
+    public class ProductBasic2
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+        public string DefaultCode { get; set; }
+
+        /// <summary>
+        /// Nhóm sản phẩm
+        /// </summary>
+        public Guid CategId { get; set; }
+        public ProductCategorySimple Categ { get; set; }
+    }
 }

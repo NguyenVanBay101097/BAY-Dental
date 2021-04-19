@@ -62,22 +62,18 @@ namespace Infrastructure.Services
             return paged;
         }
 
-        public async Task<PartnerAdvancDefaultViewModel> DefaultGet(PartnerAdvanceDefaultFilter val)
+        public async Task<PartnerAdvanceDisplay> DefaultGet(PartnerAdvanceDefaultFilter val)
         {
             var partner = await _partnerService.GetByIdAsync(val.PartnerId);
             var journal = await _journalService.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
-            var amount = await ComputeAmountBalance();
+       
 
-            if (val.Type == "refund" && amount <= 0)
-                throw new Exception("Lỗi");
-
-            var res = new PartnerAdvancDefaultViewModel();
+            var res = new PartnerAdvanceDisplay();
             res.Type = val.Type;
             res.PartnerId = partner.Id;
             res.PartnerName = partner.Name;
             res.JournalId = journal.Id;
             res.Journal = _mapper.Map<AccountJournalSimple>(journal);
-            res.AmountBalance = amount;
             res.Date = DateTime.Now;
             res.State = "draft";
 
@@ -104,24 +100,12 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.Type == val.Type);
             }
-            else
-            {
-                var advanceAmount = await query.Where(x => x.Type == "advance").SumAsync(x => x.Amount);
-                var refundAmount = await query.Where(x => x.Type == "refund").SumAsync(x => x.Amount);
-                return advanceAmount - refundAmount;
-            }
-
-
+          
 
             return await query.SumAsync(x => x.Amount);
         }
 
-        public async Task<decimal> ComputeAmountBalance()
-        {
-            var advanceAmount = await SearchQuery(x => x.Type == "advance").SumAsync(x => x.Amount);
-            var refundAmount = await SearchQuery(x => x.Type == "refund").SumAsync(x => x.Amount);
-            return advanceAmount - refundAmount;
-        }
+       
 
         public async Task<PartnerAdvanceDisplay> GetDisplayById(Guid id)
         {
@@ -195,6 +179,7 @@ namespace Infrastructure.Services
 
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
+
             var moveObj = GetService<IAccountMoveService>();
             var res = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Journal).ThenInclude(s => s.DefaultCreditAccount)
@@ -203,6 +188,8 @@ namespace Infrastructure.Services
 
             foreach (var item in res)
             {
+
+
                 ///ghi so
                 var moves = await _PreparePartnerAdvanceMovesAsync(res);
 
@@ -224,7 +211,7 @@ namespace Infrastructure.Services
 
         private async Task<IList<AccountMove>> _PreparePartnerAdvanceMovesAsync(IList<PartnerAdvance> vals)
         {
-            var accKHTU = await getAccountKHTU();
+            var accKHTU = await GetAccountKHTU();
             var all_move_vals = new List<AccountMove>();
             foreach (var partnerAdvance in vals)
             {
@@ -253,7 +240,6 @@ namespace Infrastructure.Services
                 var move_vals = new AccountMove
                 {
                     Date = partnerAdvance.Date,
-                    Ref = partnerAdvance.Note,
                     JournalId = partnerAdvance.JournalId.Value,
                     Journal = partnerAdvance.Journal,
                     CompanyId = partnerAdvance.CompanyId,
@@ -293,7 +279,7 @@ namespace Infrastructure.Services
             return all_move_vals;
         }
 
-        public async Task<AccountAccount> getAccountKHTU()
+        public async Task<AccountAccount> GetAccountKHTU()
         {
             var irModelDataObj = GetService<IIRModelDataService>();
             var accountObj = GetService<IAccountAccountService>();
