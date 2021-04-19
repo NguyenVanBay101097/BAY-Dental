@@ -34,7 +34,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class AdvisorySave
     {
         public Guid CustomerId { get; set; }
-        public Guid EmployeeId { get; set; }
+        public Guid? EmployeeId { get; set; }
         public DateTime Date { get; set; }
         public Guid? ToothCategoryId { get; set; }
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
@@ -55,7 +55,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Người tư vấn
         /// </summary>
-        public Guid EmployeeId { get; set; }
+        public Guid? EmployeeId { get; set; }
         public EmployeeSimple Employee { get; set; }
         public DateTime Date { get; set; }
         public Guid? ToothCategoryId { get; set; }

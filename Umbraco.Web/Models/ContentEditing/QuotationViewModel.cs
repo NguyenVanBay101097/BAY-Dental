@@ -21,8 +21,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Người báo giá
         /// </summary>
-        public ApplicationUserSimple User { get; set; }
-        public string UserId { get; set; }
+        public EmployeeSimple Employee { get; set; }
+        public Guid? EmployeeId { get; set; }
 
         /// <summary>
         /// Ngày báo giá
@@ -78,8 +78,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Người báo giá
         /// </summary>
-        public ApplicationUserSimple User { get; set; }
-        public string UserId { get; set; }
+        public EmployeeSimple Employee { get; set; }
+        public Guid? EmployeeId { get; set; }
 
         /// <summary>
         /// Ngày báo giá
@@ -128,7 +128,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Người báo giá
         /// </summary>
-        public string UserId { get; set; }
+        public Guid? EmployeeId { get; set; }
 
         /// <summary>
         /// Ngày báo giá
@@ -188,7 +188,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public PartnerDisplay Partner { get; set; }
         public string Note { get; set; }
         public DateTime DateQuotation { get; set; }
-        public ApplicationUserSimple User { get; set; }
+        public EmployeeSimple Employee { get; set; }
         public int DateApplies { get; set; }
         public string Name { get; set; }
         public DateTime? DateEndQuotation { get; set; }

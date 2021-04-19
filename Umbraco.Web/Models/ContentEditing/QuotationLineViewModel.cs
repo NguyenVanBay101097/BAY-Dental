@@ -50,7 +50,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid QuotationId { get; set; }
         public QuotationSimple Quotation { get; set; }
 
-        public Guid AdvisoryEmployeeId { get; set; }
+        public Guid? AdvisoryEmployeeId { get; set; }
         public EmployeeSimple AdvisoryEmployee { get; set; }
     }
 
@@ -99,7 +99,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? AdvisoryId { get; set; }
         public AdvisorySimple Advisory { get; set; }
 
-        public Guid AdvisoryEmployeeId { get; set; }
+        public Guid? AdvisoryEmployeeId { get; set; }
         public EmployeeSimple AdvisoryEmployee { get; set; }
 
         /// <summary>
@@ -152,12 +152,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Tư vấn
         /// </summary>
-        public string AdvisoryId { get; set; }
+        public Guid AdvisoryId { get; set; }
 
         /// <summary>
         /// Người tư vấn
         /// </summary>
-        public string AdvisoryEmployeeId { get; set; }
+        public Guid AdvisoryEmployeeId { get; set; }
 
         /// <summary>
         /// Chuẩn đoán
