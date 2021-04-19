@@ -8,13 +8,15 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { from } from 'rxjs';
 import { debounceTime, delay, map, switchMap, tap } from 'rxjs/operators';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
-import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
-import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
+import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
+// import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
+// import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-import { UserSimple } from 'src/app/users/user-simple';
+// import { UserSimple } from 'src/app/users/user-simple';
 import { UserBasic, UserPaged, UserService } from 'src/app/users/user.service';
 import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../quotation.service';
 
@@ -35,6 +37,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   formGroupInfo: FormGroup;
   partner: any;
   user: any;
+  employee: any;
   saleOrders: any;
   dateFrom: Date;
   dateTo: Date;
@@ -47,7 +50,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   teethSelected: any[] = [];
   filteredToothCategories: any[] = [];
   quotation: QuotationsDisplay;
-  filteredAdvisoryUsers: UserSimple[] = [];
+  filteredAdvisoryEmployees: EmployeeSimple[] = [];
   search: string = '';
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
 
@@ -61,16 +64,14 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     private notificationService: NotificationService,
     private intlService: IntlService,
     private router: Router,
-    private saleOrderService: SaleOrderService,
-    private saleOrderOdataService: SaleOrdersOdataService,
     private printService: PrintService,
-    private userService: UserService
+    private employeeService: EmployeeService
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       partnerId: ['', Validators.required],
-      userId: ['', Validators.required],
+      employeeId: ['', Validators.required],
       note: '',
       dateQuotation: [null, Validators.required],
       dateApplies: [0, Validators.required],
@@ -83,7 +84,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.routeActive();
     this.loadToothCategories();
 
-    this.loadUser();
+    this.loadEmployee();
   }
 
   routeActive() {
@@ -101,11 +102,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.quotation = result;
           this.partner = result.partner;
           this.partnerId = result.partnerId;
-          this.user = result.user;
+          this.employee = result.employee;
           this.saleOrders = result.orders;
           this.formGroup.get('note').patchValue(result.note);
           this.formGroup.get('partnerId').patchValue(result.partnerId);
-          this.formGroup.get('userId').patchValue(result.userId);
+          this.formGroup.get('employeeId').patchValue(result.employeeId);
           this.formGroup.get('dateQuotation').patchValue(new Date(result.dateQuotation));
           this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "MM/dd/yyyy"));
           this.formGroup.get('dateApplies').patchValue(result.dateApplies)
@@ -141,9 +142,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.discountType = val.discountType ? val.discountType : 'percentage';
     line.productId = val.productId;
     line.qty = val.qty ? val.qty : 1;
-    line.advisoryUserId = val.advisoryUserId;
     line.advisoryId = val.advisoryId;
-    line.advisoryUser = val.advisoryUser;
+    line.advisoryEmployee = val.advisoryEmployee;
+    line.advisoryEmployeeId = val.advisoryEmployeeId;
     line.subPrice = val.subPrice ? val.subPrice : 0;
     line.name = val.name;
     line.amount = val.amount;
@@ -268,8 +269,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       toothCategory: data ? data.toothCategory : null,
       toothCategoryId: data ? data.toothCategoryId : '',
       diagnostic: data ? data.diagnostic : '',
-      advisoryUserId: data.advisoryUserId ? data.advisoryUserId : '',
-      advisoryUser: data.advisoryUser ? data.advisoryUser : null
+      advisoryEmployeeId: data.advisoryEmployeeId ? data.advisoryEmployeeId : '',
+      advisoryEmployee: data.advisoryEmployee ? data.advisoryEmployee : null
     })
     this.loadTeethMap(data.toothCategory);
     if (data.teeth) {
@@ -280,7 +281,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   updateLineInfo(lineControl) {
     var line = this.formGroupInfo.value;
     line.teeth = this.teethSelected;
-    line.advisoryUserId = line.advisoryUser ? line.advisoryUser.id : null;
+    // line.advisoryUserId = line.advisoryUser ? line.advisoryUser.id : null;
+    line.advisoryEmployeeId = line.advisoryEmployee ? line.advisoryEmployee.id : null;
     line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
     lineControl.patchValue(line);
     lineControl.get('teeth').clear();
@@ -420,6 +422,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   onSave() {
+    debugger
     var val = this.getDataFormGroup();
     if (this.quotationId) {
       this.quotationService.update(this.quotationId, val).subscribe(
@@ -460,21 +463,21 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.patchValue(line.value);
   }
 
-  loadUser(search?: string) {
+  loadEmployee(search?: string) {
     this.search = search || '';
-    this.searchUsers(this.search).subscribe(
+    this.searchEmployees(this.search).subscribe(
       result => {
-        this.filteredAdvisoryUsers = result;
+        this.filteredAdvisoryEmployees = result;
       }
     )
   }
 
 
-  searchUsers(search: string) {
-    var val = new UserPaged();
+  searchEmployees(search: string) {
+    var val = new EmployeePaged();
     val.search = search;
-    val.hasRoot = false;
-    return this.userService.autocompleteSimple(val)
+    // val.hasRoot = false;
+    return this.employeeService.getEmployeeSimpleList(val)
   }
 }
 

@@ -45,11 +45,11 @@
                     {{dataItem.dateEndQuotation | date : 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" field="user" title="Người báo giá" width="150">
+            <!-- <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" field="employee" title="Người báo giá" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.user.name}}
+                    {{dataItem.employee.name}}
                 </ng-template>
-            </kendo-grid-column>
+            </kendo-grid-column> -->
             <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" field="totalAmount" title="Tổng tiền" class="text-right" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.totalAmount | number}}
