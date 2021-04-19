@@ -519,6 +519,14 @@ export class PartnerService {
     getDebtPaged(id: string, val: any) {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetDebtPaged', { params: new HttpParams({ fromObject: val }) });
     }
+
+    getAmountAdvanceBalance(id){
+        return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceBalance');
+    }
+
+    getAmountAdvanceUsed(id){
+        return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceUsed');
+    }
 }
 
 

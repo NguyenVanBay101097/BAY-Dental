@@ -98,3 +98,29 @@
 .p-3px {
     padding: 3px !important;
 }
+
+.card {
+    min-width: 200px;
+    border-radius: 0;
+}
+
+.card-body {
+    padding: 2px;
+}
+
+.text-sale {
+    color: rgb(123, 191, 247);
+}
+
+.text-advance {
+    color:aqua;
+}
+
+.tbl-right {
+    width: 100%;
+}
+
+.tab-pane {
+    height: 100%;
+    overflow: auto;
+}
