@@ -110,6 +110,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "MM/dd/yyyy"));
           this.formGroup.get('dateApplies').patchValue(result.dateApplies)
           const control = this.formGroup.get('lines') as FormArray;
+          console.log(control);
+          
           control.clear();
 
           result.lines.forEach(line => {
