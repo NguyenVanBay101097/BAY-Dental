@@ -254,6 +254,12 @@
       <field name="user_type_id" ref="account.data_account_type_expenses" />
     </record>
 
+    <record model="account.account" id="data_account_KHTU">
+      <field name="name">Khách hàng tạm ứng</field>
+      <field name="code">KHTU</field>
+      <field name="user_type_id" ref="account.data_account_type_liquidity" />
+    </record>
+
     <!-- account.journal -->
     <record model="account.journal" id="data_account_journal_cash">
       <field name="name">Tiền mặt</field>
@@ -314,6 +320,15 @@
       <field name="update_posted" eval="True" />
       <field name="default_debit_account_id" ref="account.data_account_642" />
       <field name="default_credit_account_id" ref="account.data_account_642" />
+    </record>
+
+    <record model="account.journal" id="data_account_journal_advance">
+      <field name="name">Nhật ký khách hàng tạm ứng</field>
+      <field name="type">advance</field>
+      <field name="code">ADVANCE</field>
+      <field name="update_posted" eval="True" />
+      <field name="default_debit_account_id" ref="data_account_KHTU" />
+      <field name="default_credit_account_id" ref="data_account_KHTU" />
     </record>
 
 

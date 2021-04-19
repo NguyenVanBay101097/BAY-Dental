@@ -174,6 +174,21 @@ namespace Infrastructure.Services
             }
         }
 
+        public void _GetToInvoiceAmount(IEnumerable<SaleOrderLine> lines)
+        {
+            foreach (var line in lines)
+            {
+                if (line.Order.State == "sale" || line.Order.State == "done")
+                {
+                    line.AmountToInvoice = line.PriceSubTotal - (line.AmountInvoiced ?? 0);
+                }
+                else
+                {
+                    line.AmountToInvoice = 0;
+                }
+            }
+        }
+
         public void _GetInvoiceQty(IEnumerable<SaleOrderLine> self)
         {
             var amlObj = GetService<IAccountMoveLineService>();
@@ -201,6 +216,33 @@ namespace Infrastructure.Services
             }
         }
 
+        public void _GetInvoiceAmount(IEnumerable<SaleOrderLine> self)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            foreach (var line in self)
+            {
+                decimal amountInvoiced = 0;
+                var amls = amlObj.SearchQuery(x => x.SaleLineRels.Any(x => x.OrderLineId == line.Id)).Include(x => x.Move).ToList();
+                foreach (var invoiceLine in amls)
+                {
+                    var move = invoiceLine.Move;
+                    if (move.State != "cancel")
+                    {
+                        if (move.Type == "out_invoice")
+                        {
+                            amountInvoiced += (invoiceLine.PriceSubtotal ?? 0);
+                        }
+                        else if (move.Type == "out_refund")
+                        {
+                            amountInvoiced -= (invoiceLine.PriceSubtotal ?? 0);
+                        }
+                    }
+                }
+
+                line.AmountInvoiced = amountInvoiced;
+            }
+        }
+
         public async Task _UpdateInvoiceQty(IEnumerable<Guid> ids)
         {
             var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.SaleOrderLineInvoiceRels)
@@ -215,9 +257,9 @@ namespace Infrastructure.Services
             {
                 if (line.State != "sale" && line.State != "done")
                     line.InvoiceStatus = "no";
-                else if (line.QtyToInvoice != 0)
+                else if (line.QtyToInvoice != 0 || line.AmountToInvoice != 0)
                     line.InvoiceStatus = "to invoice";
-                else if (line.QtyToInvoice == 0)
+                else if (line.QtyToInvoice == 0 && line.AmountToInvoice == 0)
                     line.InvoiceStatus = "invoiced";
                 else
                     line.InvoiceStatus = "no";
@@ -236,7 +278,7 @@ namespace Infrastructure.Services
                 foreach (var rel in line.SaleOrderLinePaymentRels)
                 {
                     var payment = rel.Payment;
-                    if (payment.State == "draft")
+                    if (payment.State == "draft" || payment.State == "cancel")
                         continue;
                     amountPaid += (rel.AmountPrepaid ?? 0);
                 }
@@ -257,9 +299,8 @@ namespace Infrastructure.Services
             {
                 if (line.State != "draft")
                 {
-                    var amountPaid = line.SaleOrderLinePaymentRels.Sum(x => x.AmountPrepaid);
-                    line.AmountPaid = amountPaid;
-                    line.AmountResidual = line.PriceSubTotal - amountPaid;
+                    line.AmountPaid = line.AmountInvoiced;
+                    line.AmountResidual = line.AmountToInvoice;
                 }
                 else
                 {
@@ -300,9 +341,9 @@ namespace Infrastructure.Services
                 Name = self.Name,
                 ProductId = self.ProductId,
                 ProductUoMId = self.ProductUOMId,
-                Quantity = self.QtyToInvoice,
+                Quantity = self.QtyToInvoice == 0 ? 1 : self.QtyToInvoice,
                 Discount = self.Discount,
-                PriceUnit = self.PriceUnit,
+                PriceUnit = self.AmountToInvoice,
                 DiscountType = self.DiscountType,
                 DiscountFixed = self.DiscountFixed,
                 SalesmanId = self.SalesmanId
@@ -312,6 +353,8 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+
 
         public async Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val)
         {
@@ -379,11 +422,15 @@ namespace Infrastructure.Services
             var saleCardRelObj = GetService<ISaleOrderServiceCardCardRelService>();
             var serviceCardObj = GetService<IServiceCardCardService>();
 
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon)
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).Include(x => x.SaleOrderLinePaymentRels)
                 .Include(x => x.Order).ToListAsync();
 
-            if (self.Any(x => x.State != "draft" && x.State != "sale" && x.State != "cancel"))
+
+            if (self.Any(x => x.State != "draft" && x.State != "cancel" && x.State != "sale"))
                 throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
+
+            if (self.Any(x => x.SaleOrderLinePaymentRels.Any()))
+                throw new Exception("không thể xóa dịch vụ đã thanh toán");
 
             foreach (var line in self.Where(x => x.IsRewardLine))
             {

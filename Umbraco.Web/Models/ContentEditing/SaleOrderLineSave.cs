@@ -46,5 +46,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? EmployeeId { get; set; }
 
         public Guid? AssistantId { get; set; }
+
+        public Guid? CounselorId { get; set; }
     }
 }

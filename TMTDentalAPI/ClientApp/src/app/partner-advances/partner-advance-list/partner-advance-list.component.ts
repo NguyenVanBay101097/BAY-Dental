@@ -8,6 +8,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { forkJoin, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PartnerService } from 'src/app/partners/partner.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PartnerAdvanceCreateUpdateDialogComponent } from '../partner-advance-create-update-dialog/partner-advance-create-update-dialog.component';
 import { PartnerAdvancePaged, PartnerAdvanceService, PartnerAdvanceSummaryFilter } from '../partner-advance.service';
@@ -29,14 +30,14 @@ export class PartnerAdvanceListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   loading = false;
-  amountBalanceFilter: number;
-  AmountBalance: number;
+  amountBalanceFilter: number = 0;
+  amountBalance: number;
+  amountAdvanceUsed: number;
 
   typeAmount: any = {};
   types: any[] = [
     { value: 'advance', text: 'Tạm ứng đã đóng' },
     { value: 'refund', text: 'Tạm ứng đã hoàn' },
-    { value: '', text: 'Tạm ứng còn lại' },
   ]
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
@@ -45,6 +46,7 @@ export class PartnerAdvanceListComponent implements OnInit {
   constructor(
     private intlService: IntlService,
     private modalService: NgbModal,
+    private partnerService: PartnerService,
     private router: Router,
     private route: ActivatedRoute,
     private notificationService: NotificationService,
@@ -71,6 +73,7 @@ export class PartnerAdvanceListComponent implements OnInit {
     this.loadDataFromApi();
     this.loadTypeAmountTotal();
     this.loadAmounBalance();
+    this.loadAmounAdvanceUsed();
   }
 
   loadDataFromApi() {
@@ -88,7 +91,6 @@ export class PartnerAdvanceListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
-      console.log(res);
 
       this.loading = false;
     }, err => {
@@ -105,8 +107,6 @@ export class PartnerAdvanceListComponent implements OnInit {
     forkJoin(this.types.map(x => {
       var val = new PartnerAdvanceSummaryFilter();
       val.type = x.value;
-      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
-      val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
       return this.partnerAdvanceService.getSumary(val).pipe(
         switchMap(amount => of({ type: x.value, amount: amount }))
       );
@@ -129,9 +129,19 @@ export class PartnerAdvanceListComponent implements OnInit {
   }
 
    loadAmounBalance(){
-    this.partnerAdvanceService.getAmountBalance().subscribe(res => {
-     this.AmountBalance = res as number;
-    });
+    if (this.partnerId) {
+      this.partnerService.getAmountAdvanceBalance(this.partnerId).subscribe((res : number) => {
+        this.amountBalance = Math.abs(res);
+      });
+    }
+  }
+
+  loadAmounAdvanceUsed(){
+    if (this.partnerId) {
+      this.partnerService.getAmountAdvanceUsed(this.partnerId).subscribe((res : number) => {
+        this.amountAdvanceUsed = Math.abs(res);
+      });
+    }
   }
 
   createAdvanceModal() {
