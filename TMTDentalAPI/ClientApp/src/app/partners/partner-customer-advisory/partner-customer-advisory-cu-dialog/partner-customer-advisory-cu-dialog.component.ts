@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { result, values } from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AdvisoryDefaultGet, AdvisoryService } from 'src/app/advisories/advisory.service';
+import { EmployeeBasic, EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { ToothDiagnosisService } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
@@ -18,6 +22,7 @@ import {ToothDiagnosisPopoverComponent} from '../partner-customer-advisory-list/
 })
 export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
 
+  @ViewChild("empCbx", { static: true }) empCbx: ComboBoxComponent;
   myForm: FormGroup;
   hamList: { [key: string]: {} };
   teethSelected: ToothDisplay[] = [];
@@ -28,7 +33,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   submitted = false;
   customerId: string;
   id: string;
-
+  filterData: EmployeeBasic[] = [];
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
@@ -38,6 +43,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     private intlService: IntlService,
     private notificationService: NotificationService,
     private toothDiagnosisService: ToothDiagnosisService,
+    private employeeService: EmployeeService,
     private router: Router
   ) { }
 
@@ -46,8 +52,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       dateObj: [null, Validators.required],
       customerId: [null, Validators.required],
       customer: [null],
-      userId: [null, Validators.required],
-      user:[null],
+      employeeId: null,
+      employeeAdvisory: null,
       toothCategoryId:[null],
       teeth: [[], Validators.required],
       toothDiagnosis: [[], Validators.required],
@@ -56,18 +62,37 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       companyId: [null,Validators.required]
     })
 
+    
+
     setTimeout(() => {
       this.loadToothCategories();
       this.loadDefaultToothCategory().subscribe(result => {
         this.cateId = result.id;
         this.loadTeethMap(result);
       })
+      
+      this.loadEmployees();
       if(this.id){
         this.getById();
       }else{
         this.getDefault();
       }
-    })
+    });
+
+    this.empCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.empCbx.loading = true)),
+        switchMap((value) => this.searchEmployees(value))
+      )
+      .subscribe((result) => {
+        this.filterData = result.items;
+        this.empCbx.loading = false;
+      });
+    
+
+    
 
   }
 
@@ -117,6 +142,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     this.f.teeth.setValue(this.teethSelected);
   }
 
+
   getSelectedIndex(tooth: ToothDisplay) {
     for (var i = 0; i < this.teethSelected.length; i++) {
       if (this.teethSelected[i].id === tooth.id) {
@@ -137,6 +163,20 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     return this.toothCategoryService.getAll().subscribe(result => this.filteredToothCategories = result);
   }
 
+  searchEmployees(q?:string){
+    var val = new EmployeePaged();
+    val.limit = 10;
+    val.offset = 0;
+    val.search = q || '';
+    return this.employeeService.getEmployeePaged(val);
+  }
+
+  loadEmployees(){
+    this.searchEmployees().subscribe(result => {
+      this.filterData = result.items;
+    })
+  }
+
   onChangeToothCategory(value: any) {
     if (value.id) {
       this.teethSelected = [];
@@ -147,11 +187,15 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   }
 
   onSave(){
+    debugger
     this.submitted = true;
     if (!this.myForm.valid) {
       return false;
     }
     var valueForm = this.myForm.value;
+    if(valueForm.employeeAdvisory){
+      this.myForm.get('employeeId').patchValue(valueForm.employeeAdvisory.id);
+    }
     valueForm.date = this.intlService.formatDate(valueForm.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     valueForm.toothCategoryId = this.cateId ;
     valueForm.toothIds = this.teethSelected.map(x => x.id);

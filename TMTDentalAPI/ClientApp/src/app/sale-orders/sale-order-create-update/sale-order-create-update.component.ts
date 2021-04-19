@@ -88,6 +88,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
   @ViewChild('employeeCbx', { static: false }) employeeCbx: ComboBoxComponent;
   @ViewChild('assistantCbx', { static: false }) assistantCbx: ComboBoxComponent;
+  @ViewChild('counselorCbx', { static: false }) counselorCbx: ComboBoxComponent;
   @ViewChild('toathuocComp', { static: false }) toathuocComp: PartnerCustomerToathuocListComponent;
   @ViewChild('paymentComp', { static: false }) paymentComp: SaleOrderPaymentListComponent;
 
@@ -105,6 +106,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   listTeeths: any[] = [];
   type: string;
   submitted = false;
+  amountAdvanceBalance: number = 0;
   public selectedLine: any;
 
   constructor(
@@ -216,6 +218,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
               if (!this.saleOrderId) {
                 this.onChangePartner(result.Partner);
               }
+              this.getAmountAdvanceBalance();
             }
 
             // if (result.pricelist) {
@@ -290,6 +293,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       EmployeeId: null,
       Assistant: null,
       AssistantId: null,
+      Counselor: null,
+      CounselorId: null
     });
     this.reLoadLineInfo(data);
   }
@@ -312,7 +317,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.formGroupInfo.get('Assistant').patchValue(info.Assistant);
     }
 
-
+    if (info.Counselor) {
+      this.formGroupInfo.get('Counselor').patchValue(info.Counselor);
+    }
 
     if (info.Teeth) {
       this.teethSelected = Object.assign([], info.Teeth);
@@ -327,6 +334,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     line.Employee = line.Employee;
     line.EmployeeId = line.Employee ? line.Employee.Id : null;
     line.ProductUOMQty = (line.Teeth && line.Teeth.length > 0) ? line.Teeth.length : 1;
+    line.Counselor = line.Counselor;
+    line.CounselorId = line.Counselor ? line.Counselor.Id : null;
     lineControl.patchValue(line);
     lineControl.get('Teeth').clear();
     line.Teeth.forEach(teeth => {
@@ -586,6 +595,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
 
     return total;
+  }
+
+  getAmountAdvanceBalance() {
+    this.partnerService.getAmountAdvanceBalance(this.partner.Id).subscribe(result => {
+      this.amountAdvanceBalance = result;
+    })
   }
 
   isCouponLine(line: FormControl) {
@@ -849,6 +864,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.pricelistId = val.Pricelist ? val.Pricelist.Id : null;
     val.UserId = val.User ? val.User.Id : null;
     val.CardId = val.card ? val.card.id : null;
+
     val.OrderLines.forEach(line => {
       if (line.Employee) {
         line.EmployeeId = line.Employee.Id;
@@ -861,6 +877,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       if (line.Teeth) {
         line.ToothIds = line.Teeth.map(x => x.Id);
       }
+
+      if (line.Counselor) {
+        line.CounselorId = line.Counselor.Id;
+      }
+
     });
     return val;
   }
@@ -1005,6 +1026,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         this.formGroup.markAsPristine();
       });
+      this.getAmountAdvanceBalance();
     }
   }
 
@@ -1021,6 +1043,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       }, () => {
       });
     }
+  }
+
+  actionEdit() {
+
   }
 
   get orderLines() {
@@ -1144,10 +1170,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         Math.max(0, price - discountFixedValue);
       line.get('PriceSubTotal').setValue(subtotal);
       var getResidual = subtotal - getamountPaid;
-      if(line.get('State').value != "draft"){
+      if (line.get('State').value != "draft") {
         line.get('AmountResidual').setValue(getResidual);
       }
-  
+
     });
 
   }
@@ -1256,10 +1282,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionSaleOrderPayment() {
     if (this.saleOrderId) {
-      this.paymentService.saleDefaultGet([this.saleOrderId]).subscribe(rs2 => {
+      this.saleOrderService.getSaleOrderPaymentBySaleOrderId(this.saleOrderId).subscribe(rs2 => {
         let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
+        modalRef.componentInstance.advanceAmount = this.amountAdvanceBalance;
+
         modalRef.result.then(result => {
           this.notificationService.show({
             content: 'Thanh toán thành công',
@@ -1337,7 +1365,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }, er => { });
   }
 
-  onChangeQuantity(line: FormGroup) {   
+  onChangeQuantity(line: FormGroup) {
     this.getPriceSubTotal();
     this.computeAmountTotal();
 

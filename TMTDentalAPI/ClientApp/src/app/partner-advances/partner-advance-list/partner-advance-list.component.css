@@ -7,13 +7,14 @@
 .report-prescription-payment {
     display: flex;
     padding: 10px;
+    padding-left: 0;
     background-color: #f0eeee;
 }
 
 .revenue {
     min-width: 200px;
     text-align: center;
-    padding: 12px;
+    padding: 10px;
     margin-right: 10px;
     margin-left: 5px;
     border: 1px solid #bdc1c5;

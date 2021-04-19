@@ -5,6 +5,7 @@ import { Injectable, Inject } from '@angular/core';
 export class AccountJournalSimple {
     id: string;
     name: string;
+    type: string;
 }
 
 export class AccountJournalFilter {

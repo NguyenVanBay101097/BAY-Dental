@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { EmployeeSimple } from '../employees/employee';
 import { ProductBasic2 } from '../products/product.service';
 import { ToothDisplay } from '../teeth/tooth.service';
 import { ToothCategoryBasic } from '../tooth-categories/tooth-category.service';
@@ -40,8 +41,8 @@ export class AdvisoryDisplay {
   id: string;
   customerId: string;
   customer: any;
-  userId: string;
-  user: any;
+  employeeId: string;
+  employee: EmployeeSimple;
   date: Date;
   toothCategoryId: string;
   toothCategory: ToothCategoryBasic;

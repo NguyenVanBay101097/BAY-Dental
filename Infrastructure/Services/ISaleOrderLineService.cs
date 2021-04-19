@@ -20,8 +20,10 @@ namespace Infrastructure.Services
         void UpdateOrderInfo(ICollection<SaleOrderLine> orderLines, SaleOrder order);
         Task<SaleOrderLineOnChangeProductResult> OnChangeProduct(SaleOrderLineOnChangeProduct val);
         void _GetToInvoiceQty(IEnumerable<SaleOrderLine> lines);
+        void _GetToInvoiceAmount(IEnumerable<SaleOrderLine> lines);
         void _ComputeInvoiceStatus(IEnumerable<SaleOrderLine> lines);
         void _GetInvoiceQty(IEnumerable<SaleOrderLine> lines);
+        void _GetInvoiceAmount(IEnumerable<SaleOrderLine> self);
         AccountInvoiceLine _PrepareInvoiceLine(SaleOrderLine line, decimal qty, AccountAccount account);
         Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val);
         Task Unlink(IEnumerable<Guid> ids);

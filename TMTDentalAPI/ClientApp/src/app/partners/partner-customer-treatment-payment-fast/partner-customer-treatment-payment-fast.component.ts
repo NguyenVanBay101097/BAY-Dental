@@ -1364,7 +1364,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   actionSaleOrderPayment() {
     if (this.saleOrderId) {
       this.paymentService.saleDefaultGet([this.saleOrderId]).subscribe(rs2 => {
-        let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal component-host-scrollable', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
         modalRef.result.then(() => {
