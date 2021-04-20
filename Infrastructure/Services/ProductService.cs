@@ -502,6 +502,8 @@ namespace Infrastructure.Services
 
             product = await CreateAsync(product);
 
+            SetStandardPrice(product, val.StandardPrice, force_company: product.CompanyId);
+
             return product;
         }
 
@@ -519,7 +521,7 @@ namespace Infrastructure.Services
 
             _SaveUoMRels(product, val);
 
-            //_SetStandardPrice(product, val.StandardPrice);
+            SetStandardPrice(product, val.StandardPrice, force_company: product.CompanyId);
 
             await _SetListPrice(product, val.ListPrice);
 
@@ -680,7 +682,7 @@ namespace Infrastructure.Services
 
             res.Boms = _mapper.Map<IEnumerable<ProductBomBasic>>(boms);
 
-            //res.StandardPrice = _GetStandardPrice(product);
+            res.StandardPrice = _GetStandardPrice(product);
             res.ListPrice = await _GetListPrice(product);
 
             return res;
@@ -693,7 +695,7 @@ namespace Infrastructure.Services
                 .Include(x => x.UOM)
                 .Include(x => x.UOMPO).Include(x => x.Steps).FirstOrDefaultAsync();
             var res = _mapper.Map<ProductDisplay>(product);
-            //res.StandardPrice = _GetStandardPrice(product);
+            res.StandardPrice = _GetStandardPrice(product);
             res.ListPrice = await _GetListPrice(product);
             return res;
         }
