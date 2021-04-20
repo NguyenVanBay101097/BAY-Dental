@@ -51,9 +51,9 @@
                                         Người báo giá
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <!-- <span *ngIf="user">{{user.name}}</span> -->
-
+                                <td colspan="1" style="width: 100%;" class=".o_td_control_left">
+                                    <kendo-combobox formControlName="employeeAdvisory" [filterable]="true" #empCbx class="kendo-combobox-sm mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
+                                    </kendo-combobox>
                                 </td>
                             </tr>
                             <tr *ngIf="saleOrders && saleOrders.length > 0">

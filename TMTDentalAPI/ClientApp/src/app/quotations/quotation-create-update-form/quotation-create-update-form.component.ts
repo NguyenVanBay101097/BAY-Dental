@@ -5,10 +5,11 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { result } from 'lodash';
 import { from } from 'rxjs';
 import { debounceTime, delay, map, switchMap, tap } from 'rxjs/operators';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
-import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeBasic, EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 // import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
 // import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
@@ -33,6 +34,8 @@ import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../qu
   styleUrls: ['./quotation-create-update-form.component.css']
 })
 export class QuotationCreateUpdateFormComponent implements OnInit {
+  
+  @ViewChild("empCbx", { static: true }) empCbx: ComboBoxComponent;
   formGroup: FormGroup;
   formGroupInfo: FormGroup;
   partner: any;
@@ -52,6 +55,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   quotation: QuotationsDisplay;
   filteredAdvisoryEmployees: EmployeeSimple[] = [];
   search: string = '';
+  filterData: EmployeeBasic[] = [];
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
 
 
@@ -71,7 +75,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       partnerId: ['', Validators.required],
-      employeeId: ['', Validators.required],
+      employeeId: null,
+      employeeAdvisory: null,
       note: '',
       dateQuotation: [null, Validators.required],
       dateApplies: [0, Validators.required],
@@ -84,7 +89,19 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.routeActive();
     this.loadToothCategories();
 
-    this.loadEmployee();
+    this.loadEmployees();
+
+    this.empCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.empCbx.loading = true)),
+        switchMap((value) => this.searchEmployees(value))
+      )
+      .subscribe((result) => {
+        this.filterData = result.items;
+        this.empCbx.loading = false;
+      });
   }
 
   routeActive() {
@@ -109,7 +126,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.formGroup.get('employeeId').patchValue(result.employeeId);
           this.formGroup.get('dateQuotation').patchValue(new Date(result.dateQuotation));
           this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "MM/dd/yyyy"));
-          this.formGroup.get('dateApplies').patchValue(result.dateApplies)
+          this.formGroup.get('dateApplies').patchValue(result.dateApplies);
+           this.formGroup.get('employeeAdvisory').patchValue(result.employee);
           const control = this.formGroup.get('lines') as FormArray;
           control.clear();
 
@@ -130,6 +148,20 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.formGroup.markAsPristine();
         }
       )
+  }
+
+  searchEmployees(q?:string){
+    var val = new EmployeePaged();
+    val.limit = 10;
+    val.offset = 0;
+    val.search = q || '';
+    return this.employeeService.getEmployeePaged(val);
+  }
+
+  loadEmployees(){
+    this.searchEmployees().subscribe(result => {
+      this.filterData = result.items;
+    })
   }
 
   addLineFromProduct(val) {
@@ -396,7 +428,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   // Luu
   getDataFormGroup() {
+    debugger;
     var value = this.formGroup.value;
+    if(value.employeeAdvisory){
+      value.employeeId = value.employeeAdvisory.id;
+    }
     value.dateQuotation = this.intlService.formatDate(value.dateQuotation, "yyyy-MM-dd");
     value.companyId = this.quotation.companyId;
     if (this.quotationId) {
@@ -419,7 +455,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   onSave() {
-    debugger
     var val = this.getDataFormGroup();
     if (this.quotationId) {
       this.quotationService.update(this.quotationId, val).subscribe(
@@ -460,22 +495,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.patchValue(line.value);
   }
 
-  loadEmployee(search?: string) {
-    this.search = search || '';
-    this.searchEmployees(this.search).subscribe(
-      result => {
-        this.filteredAdvisoryEmployees = result;
-      }
-    )
-  }
 
-
-  searchEmployees(search: string) {
-    var val = new EmployeePaged();
-    val.search = search;
-    // val.hasRoot = false;
-    return this.employeeService.getEmployeeSimpleList(val)
-  }
 }
 
 
