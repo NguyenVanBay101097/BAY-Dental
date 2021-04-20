@@ -1,1 +1,12 @@
-<p>role-form-v2 works!</p>
+<div class="col-4" *ngFor="let item of arr">
+    <h5>{{item.groupName}}</h5>
+    <span class="fas cursor-pointer mr-1 expand-icon" [ngClass]="{'fa-caret-right': item.expand == false, 'fa-caret-down' : item.expand == true }" (click)="expand(item)"></span>
+    <i class="far mr-1" [ngClass]="{'fa-check-square': item.amount_checked == item.child.length, 'fa-minus-square' : item.amount_checked != item.child.length && item.amount_checked != 0 , 'fa-square' : item.amount_checked == 0 }" (click)="check(item)"></i>
+    <label class="cursor-pointer" (click)="expand(item)"> {{item.name}}</label><br>
+    <ul [class.d-none]="!item.expand">
+        <li *ngFor="let child of item.child">
+            <i class="far mr-1" [ngClass]="{'fa-check-square': child.checked == true, 'fa-square' : child.checked == false  }" (click)="checkChild(item,child)"></i>
+            <label class="cursor-pointer" (click)="checkChild(item,child)"> {{child.name}}</label><br>
+        </li>
+    </ul>
+</div>

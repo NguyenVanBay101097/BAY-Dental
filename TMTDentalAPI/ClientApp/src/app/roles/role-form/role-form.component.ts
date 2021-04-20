@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
 import { AuthResource } from 'src/app/auth/auth.resource';
 import { WebService } from 'src/app/core/services/web.service';
 import { UserPaged, UserService } from 'src/app/users/user.service';
-import { RoleService } from '../role.service';
+import { PermissionTreeViewModel, RoleService } from '../role.service';
 
 @Component({
   selector: 'app-role-form',
@@ -87,6 +87,7 @@ export class RoleFormComponent implements OnInit {
     this.webService.getFeatures().subscribe((data: any) => {
       this.featureGroups = data;
     });
+    
   }
 
   isUserSelected(user) {

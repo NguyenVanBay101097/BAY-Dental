@@ -28,6 +28,17 @@ export class ApplicationRolePaging {
     items: ApplicationRoleBasic[];
 }
 
+export class PermissionTreeViewModel {
+    name: string;
+    permisstion: string;
+    children: PermissionTreeViewModel;
+    groups: string;
+    groupName: string;
+    checked: boolean =false;
+    expand: boolean = false;
+    amount_checked: number = 0;
+}
+
 @Injectable()
 export class RoleService {
     apiUrl = 'api/ApplicationRoles';
