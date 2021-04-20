@@ -303,8 +303,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => val.Ids.Contains(x.Id));
             }
 
-            var advisories = await query.Include(x => x.ToothCategory)
-                .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
+            var advisories = await query.Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
                 .ToListAsync();
@@ -336,6 +335,7 @@ namespace Infrastructure.Services
                         });
                     }
                     saleOrderLine.Diagnostic = string.Join(", ", toothDiagnosisName);
+                    saleOrderLine.CounselorId = advisory.EmployeeId;
                     saleOrderLine.AdvisoryId = advisory.Id;
                     saleOrderLines.Add(saleOrderLine);
                 }
@@ -375,11 +375,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => val.Ids.Contains(x.Id));
             }
 
-            var advisories = await query.Include(x => x.ToothCategory)
-                .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
+            var advisories = await query.Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
-                .Include(x => x.Employee)
                 .ToListAsync();
 
             var quotationLines = new List<QuotationLine>();
