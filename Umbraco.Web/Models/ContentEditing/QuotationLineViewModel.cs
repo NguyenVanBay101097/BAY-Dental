@@ -152,12 +152,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Tư vấn
         /// </summary>
-        public Guid AdvisoryId { get; set; }
+        public Guid? AdvisoryId { get; set; }
 
         /// <summary>
         /// Người tư vấn
         /// </summary>
-        public Guid AdvisoryEmployeeId { get; set; }
+        public Guid? AdvisoryEmployeeId { get; set; }
 
         /// <summary>
         /// Chuẩn đoán
@@ -167,7 +167,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Loại răng: răng sữa, răng vĩnh viễn !!!
         /// </summary>
-        public Guid ToothCategoryId { get; set; }
+        public Guid? ToothCategoryId { get; set; }
 
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
     }
