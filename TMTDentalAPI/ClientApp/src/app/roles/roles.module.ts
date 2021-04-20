@@ -9,9 +9,10 @@ import { RoleService } from './role.service';
 import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';
 import { SharedModule } from '../shared/shared.module';
 import { RoleFormComponent } from './role-form/role-form.component';
+import { RoleFormV2Component } from './role-form-v2/role-form-v2.component';
 
 @NgModule({
-  declarations: [RoleListComponent, RoleFormComponent],
+  declarations: [RoleListComponent, RoleFormComponent, RoleFormV2Component],
   imports: [
     CommonModule,
     RolesRoutingModule,
