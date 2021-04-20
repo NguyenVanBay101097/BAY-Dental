@@ -52,7 +52,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="employee">{{employee.name}}</span>
+                                    <!-- <span *ngIf="user">{{user.name}}</span> -->
+
                                 </td>
                             </tr>
                             <tr *ngIf="saleOrders && saleOrders.length > 0">
@@ -187,7 +188,7 @@
                                                                     Người tư vấn
                                                                 </label>
                                                                 <div class="col-sm-10">
-                                                                    <kendo-combobox formControlName="advisoryUser" [filterable]="true" [data]="filteredAdvisoryEmployees" (filterChange)="loadEmployee($event)" [valueField]="'id'" [textField]="'name'">
+                                                                    <kendo-combobox formControlName="advisoryEmployee" [filterable]="true" [data]="filteredAdvisoryEmployees" (filterChange)="loadEmployee($event)" [valueField]="'id'" [textField]="'name'">
                                                                     </kendo-combobox>
                                                                 </div>
                                                             </div>

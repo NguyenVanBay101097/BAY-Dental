@@ -36,7 +36,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   formGroup: FormGroup;
   formGroupInfo: FormGroup;
   partner: any;
-  user: any;
+  // user: any;
   employee: any;
   saleOrders: any;
   dateFrom: Date;
@@ -262,9 +262,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   createFormInfo(data: any) {
-
-
-
     this.formGroupInfo = this.fb.group({
       toothCategory: data ? data.toothCategory : null,
       toothCategoryId: data ? data.toothCategoryId : '',
