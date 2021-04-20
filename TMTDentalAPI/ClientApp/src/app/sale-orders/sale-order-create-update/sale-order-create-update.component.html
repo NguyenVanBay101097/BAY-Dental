@@ -227,12 +227,11 @@
                 <!-- Tab panes -->
                 <div class="tab-content flex-1-1-100 overflow-hidden">
                     <div class="tab-pane active h-100" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <div class="w-100 h-100 d-flex">
-                            <div *ngIf="isEditSate()" class="w-25 h-100 mr-2">
-                                <app-sale-order-list-service (newEventEmiter)="addLine($event)">
-                                </app-sale-order-list-service>
+                        <div class="w-100 h-100">
+                            <div *ngIf="isEditSate()" class="w-25 mb-2">
+                                <app-service-list-search-dropdown (onSelectService)="addLine($event)"></app-service-list-search-dropdown>
                             </div>
-                            <div [ngClass]="{'w-100':!isEditSate()}" class="w-75 d-flex flex-column">
+                            <div class="w-100 d-flex flex-column">
                                 <!-- Component Form Service Payment -->
 
                                 <div class="overflow-auto">

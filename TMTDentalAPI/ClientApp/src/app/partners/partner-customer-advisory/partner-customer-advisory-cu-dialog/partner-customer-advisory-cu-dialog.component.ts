@@ -187,14 +187,13 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   }
 
   onSave(){
-    debugger
     this.submitted = true;
     if (!this.myForm.valid) {
       return false;
     }
     var valueForm = this.myForm.value;
     if(valueForm.employeeAdvisory){
-      this.myForm.get('employeeId').patchValue(valueForm.employeeAdvisory.id);
+      valueForm.employeeId = valueForm.employeeAdvisory.id;
     }
     valueForm.date = this.intlService.formatDate(valueForm.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     valueForm.toothCategoryId = this.cateId ;
@@ -232,6 +231,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       this.myForm.patchValue(result);
       let date = new Date(result.date);
       this.myForm.get('dateObj').patchValue(date);
+      this.myForm.get('employeeAdvisory').patchValue(result.employee);
     })
   }
 
@@ -244,6 +244,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       this.myForm.patchValue(result);
       let date = new Date(result.date);
       this.myForm.get('dateObj').patchValue(date);
+      this.myForm.get('employeeAdvisory').patchValue(result.employee);
       var ids = this.f.toothDiagnosis.value.map(x => x.id);
       this.toothDiagnosisService.getProducts(ids).subscribe(result => {
         this.productSelectedFromApi = result;

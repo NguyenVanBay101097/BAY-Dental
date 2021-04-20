@@ -1091,9 +1091,34 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   addLine(val) {
     // this.saleOrderLine = event;
-    val.Counselor = null;
-    val.CounselorId = null;
-    var res = this.fb.group(val);
+    var value = {
+      AmountPaid: 0,
+      AmountResidual: 0,
+      Diagnostic: '',
+      Discount: 0,
+      DiscountFixed: 0,
+      DiscountType: 'percentage',
+      Employee: null,
+      EmployeeId: '',
+      Assistant: null,
+      AssistantId: '',
+      Name: val.name,
+      PriceSubTotal: 0,
+      PriceUnit: val.listPrice,
+      ProductId: val.id,
+      Product: {
+        Id: val.id,
+        Name: val.name
+      },
+      ProductUOMQty: 1,
+      State: 'draft',
+      Teeth: this.fb.array([]),
+      ToothCategory: null,
+      ToothCategoryId: '',
+      Counselor : null,
+      CounselorId : null
+    };
+    var res = this.fb.group(value);
     // line.teeth = this.fb.array(line.teeth);
     // if (!this.orderLines.controls.some(x => x.value.ProductId === res.value.ProductId)) {
     //   this.orderLines.push(res);
