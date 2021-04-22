@@ -146,6 +146,17 @@ export class LayoutSidebarComponent implements OnInit {
       groups: 'tcare.group_tcare',
     },
     {
+      name: 'SMS',
+      icon: 'fas fa-sms',
+      children: [
+        { name: 'Chúc mừng sinh nhật', link: '/sms/birthday-partners' },
+        { name: 'Nhắc lịch hẹn tự động', link: '/sms/auto-appointments' },
+        { name: 'Tin nhắn mẫu', link: '/sms/templates' },
+        // { name: 'Quảng cáo dịch vụ', link: '/' },
+        { name: 'Thống kê tin nhắn', link: '/sms/message-statistics' },
+      ],
+    },
+    {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [
@@ -170,13 +181,6 @@ export class LayoutSidebarComponent implements OnInit {
         // { name: 'Gửi kèm Labo', link: '/products/labo-attachs' },
         // { name: 'Kiểu nhịp Labo', link: '/labo-bridges' },
         // { name: 'Khớp cắn Labo', link: '/labo-bite-joints' },
-      ]
-    },
-    {
-      name: 'Sms',
-      icon: 'fas fa-sms',
-      children: [
-        { name: 'Mẫu tin nhắn', link: '/sms/message-templates' }
       ]
     },
     {
