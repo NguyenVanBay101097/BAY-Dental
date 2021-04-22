@@ -28,4 +28,8 @@ export class SmsTemplateService {
   delete(id: string) {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
   }
+
+  getAutoComplete(val){
+    return this.http.get(this.base_api+this.apiUrl+'/Autocomplete', val);
+  }
 }

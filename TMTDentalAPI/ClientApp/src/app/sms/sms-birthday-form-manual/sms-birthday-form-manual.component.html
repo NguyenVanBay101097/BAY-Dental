@@ -26,11 +26,15 @@
                                     Tin nhắn mẫu
                                 </label>
                             </td>
-                            <td colspan="1" style="width: 100%;">
-                                <input type="text" class="form-control">
+                            <td colspan="1" class="d-flex" style="width: 100%;">
+                                <kendo-combobox class="form-control" [data]="filteredTemplate" ngbAutofocus [textField]="'name'" formControlName="content" [filterable]="true" #smsTemplateCbx [valueField]="'id'">
+                                </kendo-combobox>
+                                <a class="btn btn-sm btn-light" (click)="addTemplate()">
+                                    <span class="k-icon k-i-plus"></span>
+                                </a>
                             </td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Nội dung tin nhắn
@@ -39,7 +43,7 @@
                             <td colspan="1" style="width: 100%;">
                                 <textarea class="form-control" formControlName="content"></textarea>
                             </td>
-                        </tr>
+                        </tr> -->
                     </tbody>
                 </table>
             </div>
