@@ -12,11 +12,11 @@ namespace ApplicationCore.Entities
         public bool IsBirthdayAutomation { get; set; }
 
         public Guid? BirthdayTemplateId { get; set; }
-        public TSMSTemplate BirthdayTemplate { get; set; }
+        public SmsTemplate BirthdayTemplate { get; set; }
 
         public bool IsAppointmentAutomation { get; set; }
 
         public Guid? AppointmentTemplateId { get; set; }
-        public TSMSTemplate AppointmentTemplate { get; set; }
+        public SmsTemplate AppointmentTemplate { get; set; }
     }
 }
