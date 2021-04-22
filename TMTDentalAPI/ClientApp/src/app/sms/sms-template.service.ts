@@ -7,10 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class SmsTemplateService {
   apiUrl: string = 'api/SmsTemplates';
-  constructor(
-    @Inject('BASE_API') private base_api: string,
-    private http: HttpClient
-  ) { }
+  constructor(@Inject('BASE_API') private base_api: string, private http: HttpClient) { }
 
   get(id: string) {
     return this.http.get(this.base_api + this.apiUrl + '/' + id);

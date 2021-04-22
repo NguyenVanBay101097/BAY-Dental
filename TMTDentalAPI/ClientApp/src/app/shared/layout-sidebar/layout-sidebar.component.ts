@@ -154,6 +154,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Tin nhắn mẫu', link: '/sms/templates' },
         // { name: 'Quảng cáo dịch vụ', link: '/' },
         { name: 'Thống kê tin nhắn', link: '/sms/message-statistics' },
+        { name: 'Cấu hình đối tác gửi tin', link: '/sms/accounts' },
       ],
     },
     {

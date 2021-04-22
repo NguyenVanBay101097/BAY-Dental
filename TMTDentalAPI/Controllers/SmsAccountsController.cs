@@ -7,6 +7,7 @@ using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -34,12 +35,21 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Get(string provider)
+        {
+            var res = await _smsAccountService.SearchQuery(x => x.Provider == provider).FirstOrDefaultAsync();
+
+            return Ok(_mapper.Map<SmsAccountDisplay>(res));
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsAccountSave val)
         {
             var entity = await _smsAccountService.GetByIdAsync(id);
             if (!ModelState.IsValid || entity == null) return BadRequest();
             entity = _mapper.Map(val, entity);
+            entity.CompanyId = CompanyId;
             await _smsAccountService.UpdateAsync(entity);
             var res = _mapper.Map<SmsAccountBasic>(entity);
             return Ok(res);

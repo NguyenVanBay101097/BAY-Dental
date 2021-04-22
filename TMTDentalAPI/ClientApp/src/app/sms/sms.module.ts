@@ -9,9 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SmsTemplateContentComponent } from './sms-template-content/sms-template-content.component';
-import { SmsAccountSetitngComponent } from './sms-account-setitng/sms-account-setitng.component';
 import { SmsAccountSettingComponent } from './sms-account-setting/sms-account-setting.component';
-import { SmsBirthdayComponent } from './sms-birthday/sms-birthday.component';
 import { SmsBirthdayFormComponent } from './sms-birthday-form/sms-birthday-form.component';
 import { SmsBirthdayFormManualComponent } from './sms-birthday-form-manual/sms-birthday-form-manual.component';
 import { SmsBirthdayFormAutomaticComponent } from './sms-birthday-form-automatic/sms-birthday-form-automatic.component';
@@ -20,7 +18,7 @@ import { SmsAppointmentFormManualComponent } from './sms-appointment-form-manual
 import { SmsAppointmentFormComponent } from './sms-appointment-form/sms-appointment-form.component';
 
 @NgModule({
-  declarations: [SmsTemplateListComponent, SmsTemplateCrUpComponent, SmsTemplateContentComponent, SmsAccountSetitngComponent, SmsAccountSettingComponent, SmsBirthdayComponent, SmsBirthdayFormComponent, SmsBirthdayFormManualComponent, SmsBirthdayFormAutomaticComponent, SmsAppointmentFormAutomaticComponent, SmsAppointmentFormManualComponent, SmsAppointmentFormComponent],
+  declarations: [SmsTemplateListComponent, SmsTemplateCrUpComponent, SmsTemplateContentComponent, SmsAccountSettingComponent, SmsBirthdayFormComponent, SmsBirthdayFormManualComponent, SmsBirthdayFormAutomaticComponent, SmsAppointmentFormAutomaticComponent, SmsAppointmentFormManualComponent, SmsAppointmentFormComponent],
   imports: [
     CommonModule,
     SmsRoutingModule,

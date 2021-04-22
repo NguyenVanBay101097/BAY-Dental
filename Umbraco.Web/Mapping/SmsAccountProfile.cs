@@ -13,6 +13,7 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<SmsAccountSave, SmsAccount>();
             CreateMap<SmsAccount, SmsAccountBasic>();
+            CreateMap<SmsAccount, SmsAccountDisplay>();
         }
     }
 }
