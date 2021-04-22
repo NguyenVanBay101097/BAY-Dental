@@ -67,4 +67,12 @@ export class RoleService {
     permissionTree() {
         return this.http.get(this.baseApi + this.apiUrl + "/PermissionTree");
     }
+
+    getPermissionTree(id?: string) {
+        if (id) {
+            return this.http.get(this.baseApi + this.apiUrl + "/GetPermissionTree?id=" + id);
+        } else {
+            return this.http.get(this.baseApi + this.apiUrl + "/GetPermissionTree");
+        }
+    }
 }

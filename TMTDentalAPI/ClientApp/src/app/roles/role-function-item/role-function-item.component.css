@@ -1,0 +1,56 @@
+a._icon_expand.xyz:before {
+    /* position: absolute;
+    left: 6px;
+    top: 0;
+    color: #007eab;
+    font-family: FontAwesome!important;
+    font-size: 14px; */
+    content: "\f0da";
+}
+
+a._icon_expand.abc:before {
+    /* position: absolute;
+    left: 6px;
+    top: 0;
+    color: #007eab;
+    font-family: FontAwesome!important;
+    font-size: 14px; */
+    content: "\f0d7";
+}
+
+a.prettycheckbox:before {
+    font-family: "Font Awesome 5 Free";
+    -webkit-font-smoothing: antialiased;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+    display: inline-block;
+    content: "\f0c8";
+}
+
+a.prettycheckbox.prettyShow:before {
+    font-family: "Font Awesome 5 Free";
+    -webkit-font-smoothing: antialiased;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+    display: inline-block;
+    font-weight: 900;
+    content: "\f146";
+    color: #4bac4d;
+}
+
+a.prettycheckbox.checked:before {
+    font-family: "Font Awesome 5 Free";
+    -webkit-font-smoothing: antialiased;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+    display: inline-block;
+    font-weight: 900;
+    content: "\f14a";
+    color: #4bac4d;
+}

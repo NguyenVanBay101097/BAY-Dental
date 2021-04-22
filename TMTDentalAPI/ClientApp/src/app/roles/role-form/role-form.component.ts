@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { CheckableSettings, CheckedState } from '@progress/kendo-angular-treeview';
+import { element } from 'protractor';
 import { Observable, of } from 'rxjs';
 import { AuthResource } from 'src/app/auth/auth.resource';
 import { WebService } from 'src/app/core/services/web.service';
@@ -16,12 +17,12 @@ import { PermissionTreeViewModel, RoleService } from '../role.service';
 })
 export class RoleFormComponent implements OnInit {
   roleForm: FormGroup;
-  role: any;
+  role: any[] = [];
   id: string;
   submitted = false;
   selectedUsers: any[] = [];
   userList: any[] = [];
-  featureGroups: any;
+  featureGroups: any[] = [];
   public checkedKeys: any[] = [];
 
   constructor(
@@ -42,11 +43,10 @@ export class RoleFormComponent implements OnInit {
     });
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get('id');
+      this.loadRole();
+      this.loadFeatures();
+      this.loadUserList();
     });
-
-    this.loadRole();
-    this.loadFeatures();
-    this.loadUserList();
   }
 
   get f() {
@@ -72,6 +72,7 @@ export class RoleFormComponent implements OnInit {
       this.roleForm.patchValue(res);
       this.selectedUsers = res.users;
       this.checkedKeys = res.functions;
+      // this.loadFeatures();
     });
   }
 
@@ -84,11 +85,24 @@ export class RoleFormComponent implements OnInit {
   }
 
   loadFeatures() {
-    this.webService.getFeatures().subscribe((data: any) => {
-      this.featureGroups = data;
+    // this.webService.getFeatures().subscribe((data: any) => {
+    //   data.forEach(element => {
+    //     element.children.map(x => {
+    //       x.checked = true,
+    //       x.expand = false,
+    //       x.amount_checked = 0,
+    //       x.children.map(child => child.checked = this.checkedKeys.indexOf(child.permission) !== -1)
+    //     })
+    //   })
+    //   this.featureGroups = data;
+    //   console.log(this.featureGroups);
+      
+    // });
+    this.roleService.getPermissionTree(this.id).subscribe((result: any) => {
+      this.featureGroups = result;
     });
-    
   }
+  
 
   isUserSelected(user) {
     return this.selectedUsers.filter(x => x.id == user.id).length > 0;
@@ -121,6 +135,10 @@ export class RoleFormComponent implements OnInit {
     if (keys.length) {
       this.checkedKeys = this.checkedKeys.concat(keys);
     }
+  }
+
+  addCheckedKeys(value){
+    this.checkedKeys = value;
   }
 
   // Custom logic handling Indeterminate state when custom data item property is persisted
@@ -178,13 +196,23 @@ export class RoleFormComponent implements OnInit {
   }
 
   onSave() {
+    var functions = this.featureGroups.map(x => x.functions).reduce(function(a, b) {
+      return a.concat(b);
+    });
+
+    var ops = functions.map(x => x.ops).reduce(function(a, b) {
+      return a.concat(b);
+    });
+
+    var checkedOps = ops.filter(x => x.checked);
+    console.log(checkedOps);
     this.submitted = true;
     if (this.roleForm.invalid) {
       return;
     }
 
     const val = this.roleForm.value;
-    val.functions = this.checkedKeys;
+    val.functions = checkedOps.map(x => x.permission);
     val.userIds = this.selectedUsers.map(x => x.id);
 
     if (!this.id) {
