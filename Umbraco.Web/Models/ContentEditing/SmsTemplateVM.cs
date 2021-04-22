@@ -19,6 +19,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SmsTemplatePaged
     {
+        public SmsTemplatePaged()
+        {
+            Limit = 20;
+        }
         public int Limit { get; set; }
         public int Offset { get; set; }
         public string Search { get; set; }

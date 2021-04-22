@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
+import { SmsTemplateService } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-template-list',
@@ -22,6 +23,7 @@ export class SmsTemplateListComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private notificationService: NotificationService,
+    private smsTemplateService: SmsTemplateService
   ) { }
 
   ngOnInit() {
@@ -38,31 +40,31 @@ export class SmsTemplateListComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    // this.loading = true;
+    this.loading = true;
     var val = {
       limit: this.limit,
       offset: this.skip,
       search: this.search || ""
     }
-    // this.smsMTService.getPaged(val).pipe(
-    //   map(
-    //     (response: any) =>
-    //       <GridDataResult>{
-    //         data: response.items,
-    //         total: response.totalItems,
-    //       }
-    //   )
-    // )
-    //   .subscribe(
-    //     (res) => {
-    //       this.gridData = res;
-    //       this.loading = false;
-    //     },
-    //     (err) => {
-    //       console.log(err);
-    //       this.loading = false;
-    //     }
-    //   );
+    this.smsTemplateService.getPaged(val).pipe(
+      map(
+        (response: any) =>
+          <GridDataResult>{
+            data: response.items,
+            total: response.totalItems,
+          }
+      )
+    )
+      .subscribe(
+        (res) => {
+          this.gridData = res;
+          this.loading = false;
+        },
+        (err) => {
+          console.log(err);
+          this.loading = false;
+        }
+      );
   }
 
   pageChange(event): void {
