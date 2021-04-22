@@ -327,6 +327,12 @@ namespace TMTDentalAPI
             services.AddScoped<IConfigPrintService, ConfigPrintService>();
             services.AddScoped<IViewToStringRenderService, ViewToStringRenderService>();
 
+            services.AddScoped<ISmsAccountService, SmsAccountService>();
+            services.AddScoped<ISmsComposerService, SmsComposerService>();
+            services.AddScoped<ISmsConfigService, SmsConfigService>();
+            services.AddScoped<ISmsSmsService, SmsSmsService>();
+            services.AddScoped<ISmsTemplateService, SmsTemplateService>();
+
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -477,6 +483,11 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ProductStockInventoryCriteriaRelProfile());
                 mc.AddProfile(new ConfigPrintProfile());
                 mc.AddProfile(new PrintPaperSizeProfile());
+
+                mc.AddProfile(new SmsAccountProfile());
+                mc.AddProfile(new SmsTemplateProfile());
+
+
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

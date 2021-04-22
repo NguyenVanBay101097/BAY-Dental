@@ -28,7 +28,7 @@ namespace Infrastructure.Data
         private readonly AppTenant _tenant;
         private readonly IConfiguration _configuration;
         public CatalogDbContext(DbContextOptions<CatalogDbContext> options, AppTenant tenant, IConfiguration configuration)
-            :base(options)
+            : base(options)
         {
             _tenant = tenant;
             _configuration = configuration;
@@ -247,6 +247,15 @@ namespace Infrastructure.Data
         public DbSet<ConfigPrint> ConfigPrints { get; set; }
         public DbSet<PrintPaperSize> PrintPaperSizes { get; set; }
 
+        /// <summary>
+        /// SMS
+        /// </summary>
+        public DbSet<SmsAccount> SmsAccounts { get; set; }
+        public DbSet<SmsComposer> SmsComposers { get; set; }
+        public DbSet<SmsConfig> SmsConfigs { get; set; }
+        public DbSet<SmsSms> SmsSmss { get; set; }
+        public DbSet<SmsTemplate> SmsTemplates { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -444,6 +453,14 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ProductRequestLineConfiguration());
             builder.ApplyConfiguration(new ConfigPrintConfiguration());
             builder.ApplyConfiguration(new PrintPaperSizeConfigution());
+
+            builder.ApplyConfiguration(new SmsAccountConfiguration());
+            builder.ApplyConfiguration(new SmsConfigConfiguration());
+            builder.ApplyConfiguration(new SmsComposerConfiguration());
+            builder.ApplyConfiguration(new SmsSmsConfiguration());
+            builder.ApplyConfiguration(new SmsTemplateConfiguration());
+
+
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
