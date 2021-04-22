@@ -1,1 +1,59 @@
-<p>sms-birthday-form-manual works!</p>
+<form class="o_form_view h-100" [formGroup]="formGroup">
+    <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
+        <div class="flex-0-0-auto">
+            <div class="d-flex">
+                <div class="btns">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSend()">Gửi tin</button>
+                </div>
+            </div>
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Đối tác gửi
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox [data]="filteredConfigSMS" ngbAutofocus [textField]="'name'" formControlName="configSMS" [filterable]="true" #configSMSCbx [valueField]="'id'">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Tin nhắn mẫu
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="text" class="form-control">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Nội dung tin nhắn
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <textarea class="form-control" formControlName="content"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
+
+<kendo-grid [data]="gridData" [selectable]="true" [resizable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true" [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+    <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
+    <kendo-grid-column field="name" title="Họ tên" width="200"></kendo-grid-column>
+    <kendo-grid-column field="phone" title="Điện thoại" width="120"></kendo-grid-column>
+    <kendo-grid-column field="dateOfBirth" title="Ngày sinh" width="120"></kendo-grid-column>
+    <kendo-grid-column field="age" title="Tuổi" width="60"></kendo-grid-column>
+    <kendo-grid-column field="gender" title="Giới tính" width="120"></kendo-grid-column>
+    <kendo-grid-column field="address" title="Địa chỉ" width="300"></kendo-grid-column>
+    <kendo-grid-column field="countLine" title="Số dịch vụ" width="120"></kendo-grid-column>
+</kendo-grid>

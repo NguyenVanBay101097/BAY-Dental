@@ -150,7 +150,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-sms',
       children: [
         { name: 'Chúc mừng sinh nhật', link: '/sms/birthday-partners' },
-        { name: 'Nhắc lịch hẹn tự động', link: '/sms/auto-appointments' },
+        { name: 'Nhắc lịch hẹn', link: '/sms/appointment-reminder' },
         { name: 'Tin nhắn mẫu', link: '/sms/templates' },
         // { name: 'Quảng cáo dịch vụ', link: '/' },
         { name: 'Thống kê tin nhắn', link: '/sms/message-statistics' },
