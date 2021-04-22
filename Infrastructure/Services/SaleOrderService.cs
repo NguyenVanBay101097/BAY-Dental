@@ -97,13 +97,18 @@ namespace Infrastructure.Services
                 saleLine.Order = order;
                 saleLine.Sequence = sequence++;
                 saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
-                foreach (var toothId in item.ToothIds)
+
+                if(item.ToothType == "manual")
                 {
-                    saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                    foreach (var toothId in item.ToothIds)
                     {
-                        ToothId = toothId
-                    });
+                        saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                        {
+                            ToothId = toothId
+                        });
+                    }
                 }
+               
 
                 lines.Add(saleLine);
             }
@@ -1245,13 +1250,17 @@ namespace Infrastructure.Services
                     saleLine.AmountPaid = 0;
                     saleLine.AmountResidual = 0;
                     saleLine.PriceUnit = line.PriceUnit;
-                    foreach (var toothId in line.ToothIds)
+                    if (line.ToothType == "manual")
                     {
-                        saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                        foreach (var toothId in line.ToothIds)
                         {
-                            ToothId = toothId
-                        });
+                            saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                            {
+                                ToothId = toothId
+                            });
+                        }
                     }
+
                     to_add.Add(saleLine);
                 }
                 else
@@ -1265,12 +1274,15 @@ namespace Infrastructure.Services
                         saleLine.Sequence = sequence++;
                         saleLine.Order = order;
                         saleLine.SaleOrderLineToothRels.Clear();
-                        foreach (var toothId in line.ToothIds)
+                        if (line.ToothType == "manual")
                         {
-                            saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                            foreach (var toothId in line.ToothIds)
                             {
-                                ToothId = toothId
-                            });
+                                saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                                {
+                                    ToothId = toothId
+                                });
+                            }
                         }
                         to_update.Add(saleLine);
                     }
@@ -2556,9 +2568,10 @@ namespace Infrastructure.Services
             {
                 foreach(var line in order.OrderLines)
                 {
-                    var amount = (decimal)((((line.QtyToInvoice * line.PriceUnit)/order.AmountTotal)* val.Amount)/line.QtyToInvoice);
+                    var amount = (decimal)((((line.ProductUOMQty * line.PriceUnit)/order.AmountTotal)* val.Amount)/line.ProductUOMQty);
                     promotion.SaleOrderPromotionChilds.Add(new SaleOrderPromotion
                     {
+                        Name = promotion.Name,
                         Amount = amount,
                         SaleOrderLineId = line.Id,
                         Type = "discount"

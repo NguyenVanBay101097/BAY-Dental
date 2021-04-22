@@ -66,6 +66,19 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? QtyInvoiced { get; set; }
 
         /// <summary>
+        /// whole_jaw: nguyên hàm
+        /// upper_jaw : hàm trên
+        /// lower_jaw : hàm dưới
+        /// manual:  thủ công
+        /// </summary>
+        public string ToothType { get; set; }
+
+        /// <summary>
+        /// tổng tiền ưu đãi của dịch vụ
+        /// </summary>
+        public decimal? AmountDiscountTotal { get; set; }
+
+        /// <summary>
         /// Số tiền đã thanh toán
         /// </summary>
         public decimal? AmountPaid { get; set; }
@@ -92,8 +105,22 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CounselorId { get; set; }
         public EmployeeSimple Counselor { get; set; }
-    }
 
+        /// <summary>
+        /// ngừng dịch vụ
+        /// </summary>
+        public bool IsActive { get; set; }
+
+        /// <summary>
+        /// tiền ưu đãi line từ đơn hàng
+        /// </summary>
+        public decimal AmountPromotionToOrder { get; set; }
+
+        /// <summary>
+        /// tiền ưu đãi line
+        /// </summary>
+        public decimal AmountPromotionToOrderLine { get; set; }
+    }
     public class RegisterSaleOrderLinePayment
     {
         public Guid Id { get; set; }

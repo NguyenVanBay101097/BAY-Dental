@@ -161,6 +161,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? AmountResidual { get; set; }
 
+        /// <summary>
+        /// tổng tiền ưu đãi của dịch vụ
+        /// </summary>
         public decimal? AmountDiscountTotal { get; set; }
 
         /// <summary>

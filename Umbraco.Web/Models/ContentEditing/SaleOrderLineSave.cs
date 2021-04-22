@@ -43,10 +43,19 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? AmountResidual { get; set; }
 
+        /// <summary>
+        /// whole_jaw: nguyên hàm
+        /// upper_jaw : hàm trên
+        /// lower_jaw : hàm dưới
+        /// manually :  thủ công
+        /// </summary>
+        public string ToothType { get; set; }
+
         public Guid? EmployeeId { get; set; }
 
         public Guid? AssistantId { get; set; }
 
         public Guid? CounselorId { get; set; }
+
     }
 }
