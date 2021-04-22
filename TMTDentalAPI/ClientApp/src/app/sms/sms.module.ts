@@ -18,7 +18,6 @@ import { SmsAppointmentFormManualComponent } from './sms-appointment-form-manual
 import { SmsAppointmentFormComponent } from './sms-appointment-form/sms-appointment-form.component';
 
 @NgModule({
-  declarations: [SmsTemplateListComponent, SmsTemplateCrUpComponent, SmsTemplateContentComponent, SmsAccountSettingComponent, SmsBirthdayFormComponent, SmsBirthdayFormManualComponent, SmsBirthdayFormAutomaticComponent, SmsAppointmentFormAutomaticComponent, SmsAppointmentFormManualComponent, SmsAppointmentFormComponent],
   declarations: [SmsTemplateListComponent, SmsTemplateCrUpComponent, SmsTemplateContentComponent,
      SmsAccountSettingComponent, 
       SmsBirthdayFormComponent, SmsBirthdayFormManualComponent, SmsBirthdayFormAutomaticComponent, SmsAppointmentFormAutomaticComponent, SmsAppointmentFormManualComponent, SmsAppointmentFormComponent],
