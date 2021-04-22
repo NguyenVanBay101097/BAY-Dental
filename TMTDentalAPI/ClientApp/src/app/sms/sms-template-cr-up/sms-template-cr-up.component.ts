@@ -30,6 +30,7 @@ export class SmsTemplateCrUpComponent implements OnInit {
     private fb: FormBuilder,
     private smsTemplateService: SmsTemplateService,
     private notificationService: NotificationService,
+    
   ) { }
 
   ngOnInit() {
@@ -52,11 +53,11 @@ export class SmsTemplateCrUpComponent implements OnInit {
   get bodyControl() { return this.formGroup.get('body'); }
 
   loadDataFromApi() {
-    // this.smsMTService.get(this.id).subscribe((res: any) => {
-    //   this.formGroup.patchValue(res);
-    //   this.templates = JSON.parse(res.body);
-    //   this.bodyControl.setValue(this.templates);
-    // });
+    this.smsTemplateService.get(this.id).subscribe((res: any) => {
+      this.formGroup.patchValue(res);
+      this.templates = JSON.parse(res.body);
+      this.bodyControl.setValue(this.templates);
+    });
   }
 
   onSave() {
@@ -64,22 +65,20 @@ export class SmsTemplateCrUpComponent implements OnInit {
     var formValue = this.formGroup.value;
     formValue.body = JSON.stringify(this.templates);
     
-    console.log(formValue);
-
-    // if (this.id) {
-    //   this.smsMTService.update(this.id, val).subscribe(
-    //     (res) => {
-    //       this.notify('thành công', true);
-    //       this.activeModal.close(val);
-    //     }
-    //   );
-    // }
-    // else {
-    //   this.smsMTService.create(val).subscribe(result => {
-    //     this.notify("thành công", true)
-    //     this.activeModal.close(result);
-    //   }, err => { });
-    // }
+    if (this.id) {
+      this.smsTemplateService.update(this.id, formValue).subscribe(
+        (res) => {
+          this.notify('thành công', true);
+          this.activeModal.close(formValue);
+        }
+      );
+    }
+    else {
+      this.smsTemplateService.create(formValue).subscribe(result => {
+        this.notify("thành công", true)
+        this.activeModal.close(result);
+      }, err => { });
+    }
 
   }
 

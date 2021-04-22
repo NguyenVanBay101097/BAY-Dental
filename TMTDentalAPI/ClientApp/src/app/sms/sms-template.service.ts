@@ -12,13 +12,23 @@ export class SmsTemplateService {
     private http: HttpClient
   ) { }
 
-  getAutoComplete(val: any): Observable<any[]> {
-    return this.http.get<any[]>(this.base_api + this.apiUrl + '/AutoComplete', { params: val })
+  get(id: string) {
+    return this.http.get(this.base_api + this.apiUrl + '/' + id);
+  }
+
+  create(val) {
+    return this.http.post(this.base_api + this.apiUrl, val);
+  }
+
+  update(id: string, val) {
+    return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
   getPaged(val) {
     return this.http.get(this.base_api + this.apiUrl, { params: val });
   }
 
-  
+  delete(id: string) {
+    return this.http.delete(this.base_api + this.apiUrl + '/' + id);
+  }
 }
