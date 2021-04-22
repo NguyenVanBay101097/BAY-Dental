@@ -1091,13 +1091,13 @@ namespace Infrastructure.Services
             return display;
         }
 
-        public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
-        {
-            var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
-            var lineObj = GetService<ISaleOrderLineService>();
-            res.OrderLines = await _mapper.ProjectTo<SaleOrderLineDisplay>(lineObj.SearchQuery(x => x.OrderId == id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
-            return res;
-        }
+        //public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
+        //{
+        //    var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+        //    var lineObj = GetService<ISaleOrderLineService>();
+        //    res.OrderLines = await _mapper.ProjectTo<SaleOrderLineDisplay>(lineObj.SearchQuery(x => x.OrderId == id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+        //    return res;
+        //}
 
         public async Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid id)
         {
@@ -1970,21 +1970,7 @@ namespace Infrastructure.Services
         {
             foreach (var order in self)
             {
-                //var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels)
-                //    .Select(x => x.InvoiceLine).Select(x => x.Move).Distinct().ToList();
                 decimal? residual = 0M;
-
-                //if (invoices.Any())
-                //{
-                //    foreach (var line in order.OrderLines)
-                //    {
-                //        residual += line.AmountToInvoice;
-                //    }
-                //}
-                //else
-                //{
-
-                //}
 
                 foreach (var line in order.OrderLines)
                 {
@@ -2158,7 +2144,7 @@ namespace Infrastructure.Services
                         AmountPaid = x.AmountPaid,
                         AmountResidual = x.AmountResidual,
                     }
-                }).ToListAsync();           
+                }).ToListAsync();
 
             var rec = new RegisterSaleOrderPayment
             {
@@ -2550,5 +2536,45 @@ namespace Infrastructure.Services
                        }).ToListAsync();
             return res;
         }
+
+        public async Task ActionApplyDiscount(ApplyDiscountRequest val)
+        {
+            var orderPromotionObj = GetService<ISaleOrderPromotionService>();
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var order = await SearchQuery(x => x.Id == val.Id).Include(x => x.OrderLines).Include(x => x.Promotions).FirstOrDefaultAsync();
+            ///tạo promotion discount
+            var promotion = new SaleOrderPromotion
+            {
+                Name = "Giảm tiền",
+                Amount = val.Amount,
+                Type = "discount",
+                SaleOrderId = order.Id
+
+            };
+
+            if (order.OrderLines.Any())
+            {
+                foreach(var line in order.OrderLines)
+                {
+                    var amount = (decimal)((((line.QtyToInvoice * line.PriceUnit)/order.AmountTotal)* val.Amount)/line.QtyToInvoice);
+                    promotion.SaleOrderPromotionChilds.Add(new SaleOrderPromotion
+                    {
+                        Amount = amount,
+                        SaleOrderLineId = line.Id,
+                        Type = "discount"
+                    });
+                }
+            }
+
+            await orderPromotionObj.CreateAsync(promotion);
+
+            //tính lại tổng tiền ưu đãi saleorderlines
+            orderLineObj._ComputeAmountDiscountTotal(order.OrderLines);
+
+            await UpdateAsync(order);
+
+        }
+
+
     }
 }

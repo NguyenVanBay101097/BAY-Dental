@@ -31,6 +31,8 @@ namespace Infrastructure.Services
         Task ApplyCoupon(SaleOrderApplyCoupon val);
         Task ApplyPromotion(Guid id);
 
+        Task ActionApplyDiscount(ApplyDiscountRequest val);
+
         Task<SaleOrder> ActionConvertToOrder(Guid id);
         Task<IEnumerable<AccountMove>> ActionInvoiceCreateV2(Guid id);
         bool _IsGlobalDiscountAlreadyApplied(SaleOrder self);
@@ -53,7 +55,7 @@ namespace Infrastructure.Services
 
         //Task CancelSaleOrderLine(ActionCancelSaleOrderLineViewModel val);
 
-        Task<SaleOrderDisplay> GetDisplayAsync(Guid id);
+        //Task<SaleOrderDisplay> GetDisplayAsync(Guid id);
 
         Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid id);
 

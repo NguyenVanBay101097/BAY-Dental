@@ -332,6 +332,8 @@ namespace TMTDentalAPI
             services.AddScoped<ISaleOrderPaymentHistoryLineService, SaleOrderPaymentHistoryLineService>();
             services.AddScoped<ISaleOrderPaymentJournalLineService, SaleOrderPaymentJournalLineService>();
 
+            services.AddScoped<ISaleOrderPromotionService, SaleOrderPromotionService>();
+
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -492,6 +494,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SaleOrderPaymentProfile());
                 mc.AddProfile(new SaleOrderPaymentHistoryLineProfile());
                 mc.AddProfile(new SaleOrderPaymentJournalLineProfile());
+                mc.AddProfile(new SaleOrderPromotionProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

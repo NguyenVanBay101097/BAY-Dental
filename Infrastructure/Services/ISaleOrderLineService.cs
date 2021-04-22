@@ -49,5 +49,7 @@ namespace Infrastructure.Services
         void ComputeResidual(IEnumerable<SaleOrderLine> self);
 
         Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids);
+
+        void _ComputeAmountDiscountTotal(IEnumerable<SaleOrderLine> self);
     }
 }

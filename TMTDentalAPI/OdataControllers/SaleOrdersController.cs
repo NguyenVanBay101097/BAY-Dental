@@ -65,17 +65,17 @@ namespace TMTDentalAPI.OdataControllers
             return SingleResult.Create(results);
         }
 
-        [HttpGet("[action]")]
-        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
-        public async Task<IActionResult> GetDisplay([FromODataUri] Guid key)
-        {
-            var res = await _saleOrderService.GetDisplayAsync(key);
-            if (res == null)
-            {
-                return NotFound();
-            }
-            return Ok(res);
-        }
+        //[HttpGet("[action]")]
+        //[CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        //public async Task<IActionResult> GetDisplay([FromODataUri] Guid key)
+        //{
+        //    var res = await _saleOrderService.GetDisplayAsync(key);
+        //    if (res == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return Ok(res);
+        //}
 
 
         [EnableQuery]

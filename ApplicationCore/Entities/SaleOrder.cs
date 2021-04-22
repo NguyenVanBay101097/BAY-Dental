@@ -145,6 +145,11 @@ namespace ApplicationCore.Entities
         /// </summary>
         public ICollection<SurveyAssignment> Assignments { get; set; } = new List<SurveyAssignment>();
 
+        /// <summary>
+        /// danh sách chương trình ưu đãi
+        /// </summary>
+        public ICollection<SaleOrderPromotion> Promotions { get; set; } = new List<SaleOrderPromotion>();
+
         public Guid? QuotationId { get; set; }
         public Quotation Quotation { get; set; }
     }

@@ -19,6 +19,19 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string ProgramType { get; set; }
 
+        /// <summary>
+        /// on_order : trên phiếu điều trị
+        /// specific_products :  trên dịch vụ
+        /// </summary>
+        public string DiscountApplyOn { get; set; }
+
+        /// <summary>
+        /// code_needed : khuyen mai su dung code
+        /// no_code_needed : khuyen mai ko su dung code
+        /// </summary>
+        public string PromoCodeUsage { get; set; }
+
+
         public bool? Active { get; set; }
 
         public IEnumerable<Guid> Ids { get; set; }

@@ -187,6 +187,18 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
+        public async Task<IActionResult> ActionApplyDiscount(ApplyDiscountRequest val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ActionApplyDiscount(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         [HttpPost("{id}/[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> ApplyPromotion(Guid id)

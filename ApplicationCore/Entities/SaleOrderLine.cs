@@ -110,6 +110,14 @@ namespace ApplicationCore.Entities
         public ToothCategory ToothCategory { get; set; }
 
         /// <summary>
+        /// whole_jaw: nguyên hàm
+        /// upper_jaw : hàm trên
+        /// lower_jaw : hàm dưới
+        /// manually :  thủ công
+        /// </summary>
+        public string ToothType { get; set; }
+
+        /// <summary>
         /// Chẩn đoán
         /// </summary>
         public string Diagnostic { get; set; }
@@ -153,6 +161,8 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? AmountResidual { get; set; }
 
+        public decimal? AmountDiscountTotal { get; set; }
+
         /// <summary>
         /// bác sĩ được hưởng hoa hồng
         /// </summary>
@@ -166,6 +176,11 @@ namespace ApplicationCore.Entities
         public ICollection<SaleOrderLinePaymentRel> SaleOrderLinePaymentRels { get; set; } = new List<SaleOrderLinePaymentRel>();
 
         public ICollection<LaboOrder> Labos { get; set; } = new List<LaboOrder>();
+
+        /// <summary>
+        /// danh sách chương trình ưu đãi
+        /// </summary>
+        public ICollection<SaleOrderPromotion> Promotions { get; set; } = new List<SaleOrderPromotion>();
 
         /// <summary>
         /// Xác định line bị hủy bỏ
@@ -192,6 +207,11 @@ namespace ApplicationCore.Entities
 
         public Guid? AdvisoryId { get; set; }
         public Advisory Advisory { get; set; }
+
+        /// <summary>
+        /// ngừng hoạt động
+        /// </summary>
+        public bool IsActive { get; set; }
 
     }
 }

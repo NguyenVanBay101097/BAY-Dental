@@ -131,6 +131,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<DotKhamDisplayVm> DotKhams { get; set; } = new List<DotKhamDisplayVm>();
 
+        public IEnumerable<SaleOrderPromotionBasic> Promotions { get; set; } = new List<SaleOrderPromotionBasic>();
+
         public Guid CompanyId { get; set; }
 
         /// <summary>

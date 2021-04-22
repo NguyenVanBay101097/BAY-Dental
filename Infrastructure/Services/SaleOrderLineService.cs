@@ -354,7 +354,11 @@ namespace Infrastructure.Services
             return res;
         }
 
-
+        public void _ComputeAmountDiscountTotal(IEnumerable<SaleOrderLine> self)
+        {
+            foreach(var line in self)
+                line.AmountDiscountTotal = line.Promotions.Sum(x => x.Amount);               
+        }
 
         public async Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val)
         {
