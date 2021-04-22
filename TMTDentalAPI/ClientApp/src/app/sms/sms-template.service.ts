@@ -12,10 +12,6 @@ export class SmsTemplateService {
     private http: HttpClient
   ) { }
 
-  getPaged(val) {
-    return this.http.get(this.base_api + this.apiUrl, val);
-  }
-
   get(id: string) {
     return this.http.get(this.base_api + this.apiUrl + '/' + id);
   }
@@ -32,5 +28,7 @@ export class SmsTemplateService {
     return this.http.get(this.base_api + this.apiUrl, { params: val });
   }
 
-  
+  delete(id: string) {
+    return this.http.delete(this.base_api + this.apiUrl + '/' + id);
+  }
 }

@@ -93,12 +93,12 @@ export class SmsTemplateListComponent implements OnInit {
     const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = "Xóa mẫu tin";
     modalRef.componentInstance.body = "Bạn chắc chắn muốn xóa";
-    // modalRef.result.then(() => {
-    //   this.smsMTService.delete(dataItem.id).subscribe(res => {
-    //     this.notify("thành công", true);
-    //     this.loadDataFromApi();
-    //   });
-    // });
+    modalRef.result.then(() => {
+      this.smsTemplateService.delete(dataItem.id).subscribe(res => {
+        this.notify("thành công", true);
+        this.loadDataFromApi();
+      });
+    });
   }
 
   notify(title, isSuccess = true) {
