@@ -5,6 +5,11 @@ import { PartnerGeneralSettingsComponent } from './partner-general-settings/part
 
 const routes: Routes = [
   {
+    path: 'sms',
+    loadChildren: () => import('./sms/sms.module').then(m => m.SmsModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'config-prints',
     loadChildren: () => import('./config-prints/config-prints.module').then(m => m.ConfigPrintsModule),
     canActivate: [AuthGuard]

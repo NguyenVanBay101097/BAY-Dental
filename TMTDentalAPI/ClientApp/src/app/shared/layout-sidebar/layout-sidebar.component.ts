@@ -173,6 +173,13 @@ export class LayoutSidebarComponent implements OnInit {
       ]
     },
     {
+      name: 'Sms',
+      icon: 'fas fa-sms',
+      children: [
+        { name: 'Mẫu tin nhắn', link: '/sms/message-templates' }
+      ]
+    },
+    {
       name: 'Cấu hình',
       icon: 'fas fa-cogs',
       children: [

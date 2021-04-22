@@ -26,7 +26,7 @@ import { NoCacheInterceptor } from './http-interceptors/no-cache.interceptor';
 // import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { PartnerGeneralSettingsComponent } from './partner-general-settings/partner-general-settings.component';
-import { SmsTemplateComponent } from './sms-template/sms-template.component';
+// import { SmsTemplateComponent } from './sms-template/sms-template.component';
 
 
 export function tokenGetter() {
@@ -40,7 +40,7 @@ registerLocaleData(localeVi, "vi");
   declarations: [
     AppComponent,
     PartnerGeneralSettingsComponent,
-    SmsTemplateComponent
+    // SmsTemplateComponent
   ],
   imports: [
     CommonModule,
