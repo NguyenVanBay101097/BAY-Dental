@@ -1,1 +1,78 @@
-<p>sms-birthday-form-automatic works!</p>
+<form class="container o_form_view h-100" [formGroup]="formGroup">
+    <div class="o_form_sheet bg-white mt-0 border-top-0 d-flex flex-column p-3 h-100">
+        <div class="flex-0-0-auto">
+            <div class="d-flex">
+                <div class="btns">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">Xác nhận</button>
+                </div>
+            </div>
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_12">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Đối tác gửi
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox [data]="filteredConfigSMS" ngbAutofocus [textField]="'name'" formControlName="configSMS" [filterable]="true" #configSMSCbx [valueField]="'id'">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Thời gian chúc mừng (Thời gian chúc mừng sinh nhật trước bao nhiêu)
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-timepicker formControlName="timeReminder"></kendo-timepicker>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Thời gian bắt đầu chạy
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-timepicker formControlName="timeRunJob"></kendo-timepicker>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Mẫu tin nhắn
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" style="width: 100%;">
+                                <input class="form-control">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Nội dung nhắc lịch hẹn
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" style="width: 100%;">
+                                <textarea formControlName="content" class="form-control" cols="30" rows="3"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
