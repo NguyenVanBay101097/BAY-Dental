@@ -9,8 +9,6 @@ namespace Infrastructure.Services
 {
     public interface ISmsAccountService : IBaseService<SmsAccount>
     {
-        Task CreateAsync(SmsAccountSave val);
-        Task UpdateAsync(Guid id, SmsAccountSave val);
         Task<SmsAccountBasic> GetDefault();
     }
 }

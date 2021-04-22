@@ -27,4 +27,10 @@ export class SmsTemplateService {
   update(id: string, val) {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
+
+  getPaged(val) {
+    return this.http.get(this.base_api + this.apiUrl, { params: val });
+  }
+
+  
 }

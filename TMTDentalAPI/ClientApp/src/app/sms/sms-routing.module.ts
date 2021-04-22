@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { SmsTemplateListComponent } from './sms-template-list/sms-template-list.component';
 
 const routes: Routes = [
-  { path: 'message-templates', component: SmsTemplateListComponent },
+  { path: 'templates', component: SmsTemplateListComponent },
 
 ];
 

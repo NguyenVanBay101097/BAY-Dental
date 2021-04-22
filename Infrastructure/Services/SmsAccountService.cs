@@ -20,34 +20,10 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task CreateAsync(SmsAccountSave val)
-        {
-            var entity = new SmsAccount();
-            switch (val.Provider)
-            {
-                case "fpt":
-
-                    break;
-                case "esms":
-
-                    break;
-                case "vietguys":
-
-                    break;
-                default:
-                    break;
-            }
-        }
-
         public async Task<SmsAccountBasic> GetDefault()
         {
             var smsAccount = await SearchQuery().OrderByDescending(x => x.DateCreated).FirstOrDefaultAsync();
             return _mapper.Map<SmsAccountBasic>(smsAccount);
-        }
-
-        public Task UpdateAsync(Guid id, SmsAccountSave val)
-        {
-            throw new NotImplementedException();
         }
     }
 }

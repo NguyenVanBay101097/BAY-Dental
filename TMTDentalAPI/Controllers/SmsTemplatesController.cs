@@ -56,5 +56,14 @@ namespace TMTDentalAPI.Controllers
             var res = await _smsTemplateService.GetPaged(val);
             return Ok(res);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var res = await _smsTemplateService.GetByIdAsync(id);
+            if (res == null) return NotFound();
+            await _smsTemplateService.DeleteAsync(res);
+            return Ok(_mapper.Map<SmsTemplateBasic>(res));
+        }
     }
 }
