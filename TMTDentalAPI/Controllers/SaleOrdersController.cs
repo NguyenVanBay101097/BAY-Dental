@@ -177,7 +177,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Update")]
-        public async Task<IActionResult> ApplyCoupon(SaleOrderApplyCoupon val)
+        public async Task<IActionResult> ApplyCouponOnOrder(SaleOrderApplyCoupon val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -189,24 +189,24 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Update")]
-        public async Task<IActionResult> ActionApplyDiscount(ApplyDiscountRequest val)
+        public async Task<IActionResult> ApplyDiscountOnOrder(ApplyDiscountViewModel val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _saleOrderService.ActionApplyDiscount(val);
+            await _saleOrderService.ApplyDiscountOnOrder(val);
             _unitOfWork.Commit();
             return NoContent();
         }
 
-        [HttpPost("{id}/[action]")]
+        [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Update")]
-        public async Task<IActionResult> ApplyPromotion(Guid id)
+        public async Task<IActionResult> ApplyPromotion(SaleOrderApplyPromotion val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _saleOrderService.RecomputeCouponLines(new List<Guid> { id });
+            await _saleOrderService.ApplyPromotionOnOrder(val);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -383,7 +383,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val)
+        public async Task<IActionResult> ApplyDiscountDefault(ApplyDiscountViewModel val)
         {
             await _unitOfWork.BeginTransactionAsync();
             await _saleOrderService.ApplyDiscountDefault(val);

@@ -28,10 +28,15 @@ namespace Infrastructure.Services
         IEnumerable<Guid> DefaultGetInvoice(List<Guid> ids);
         void _ComputeResidual(IEnumerable<AccountInvoice> invoices);
         void _ComputeResidual(IEnumerable<SaleOrder> self);
+
+        Task _ComputeAmountPromotionToOrder(IEnumerable<Guid> ids);
+
         Task ApplyCoupon(SaleOrderApplyCoupon val);
         Task ApplyPromotion(Guid id);
 
-        Task ActionApplyDiscount(ApplyDiscountRequest val);
+        Task ApplyPromotionOnOrder(SaleOrderApplyPromotion val);
+
+        Task ApplyDiscountOnOrder(ApplyDiscountViewModel val);
 
         Task<SaleOrder> ActionConvertToOrder(Guid id);
         Task<IEnumerable<AccountMove>> ActionInvoiceCreateV2(Guid id);
@@ -39,7 +44,7 @@ namespace Infrastructure.Services
         bool _IsRewardInOrderLines(SaleOrder self, SaleCouponProgram program);
         IEnumerable<SaleOrderLine> _GetRewardLines(SaleOrder self);
         Task<IEnumerable<SaleCouponProgram>> _GetApplicablePrograms(SaleOrder self);
-        Task RecomputeCouponLines(IEnumerable<Guid> ids);
+        //Task RecomputeCouponLines(IEnumerable<Guid> ids);
         Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id);
         Task RecomputeResidual(IEnumerable<Guid> ids);
         Task<bool> CheckHasPromotionCanApply(Guid id);
@@ -50,7 +55,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<LaboOrderDisplay>> GetLaboBySaleOrderId(Guid id);
 
         Task<RegisterSaleOrderPayment> GetSaleOrderPaymentBySaleOrderId(Guid id);
-        Task ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val);
+        Task ApplyDiscountDefault(ApplyDiscountViewModel val);
         void _AmountAll(SaleOrder order);
 
         //Task CancelSaleOrderLine(ActionCancelSaleOrderLineViewModel val);

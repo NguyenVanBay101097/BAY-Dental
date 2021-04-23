@@ -4,9 +4,15 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
+    /// <summary>
+    /// discount: ProductId, ko ProductId
+    /// coupon: ProductId, SaleProgram
+    /// promotion: ProductId, 
+    /// </summary>
     public class SaleOrderPromotion : BaseEntity
     {
         public string Name { get; set; }
+
         public decimal Amount { get; set; }
 
         /// <summary>
@@ -25,8 +31,14 @@ namespace ApplicationCore.Entities
         public SaleOrderLine SaleOrderLine { get; set; }
 
         /// <summary>
+        /// Product discount , promotion , coupon
+        /// </summary>
+        public Guid? ProductId { get; set; }
+        public Product Product { get; set; }
+
+        /// <summary>
         /// discount: giảm tiền
-        /// coupon_program : chương trình coupon
+        /// code_usage_program : chương trình sủ dụng mã
         /// promotion_program : chương trình khuyến mãi
         /// </summary>
         public string Type { get; set; }

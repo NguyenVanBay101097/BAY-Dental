@@ -50,12 +50,13 @@ namespace Infrastructure.Services
 
             foreach (var line in self)
             {
-                var discountType = line.DiscountType ?? "percentage";
-                if (discountType == "percentage")
-                    line.PriceSubTotal = Math.Round(line.ProductUOMQty * line.PriceUnit * (1 - line.Discount / 100));
-                else
-                    line.PriceSubTotal = Math.Max(0, line.ProductUOMQty * line.PriceUnit - (line.DiscountFixed ?? 0));
+                //var discountType = line.DiscountType ?? "percentage";
+                //if (discountType == "percentage")
+                //    line.PriceSubTotal = Math.Round(line.ProductUOMQty * line.PriceUnit * (1 - line.Discount / 100));
+                //else
+                //    line.PriceSubTotal = Math.Max(0, line.ProductUOMQty * line.PriceUnit - (line.DiscountFixed ?? 0));
 
+                line.PriceSubTotal = Math.Round(line.ProductUOMQty * (line.PriceUnit - (line.AmountDiscountTotal ?? 0)));
                 line.PriceTax = 0;
                 line.PriceTotal = line.PriceSubTotal + line.PriceTax;
             }
@@ -705,6 +706,82 @@ namespace Infrastructure.Services
 
             //save changes
             await requestedObj.CreateAsync(toCreateRequested);
+        }
+
+        public async Task ApplyDiscountOnOrderLine(ApplyDiscountViewModel val)
+        {
+            var orderPromotionObj = GetService<ISaleOrderPromotionService>();
+            var orderObj = GetService<ISaleOrderService>();
+            var product = await _GetProductDiscountToOrderLine();
+
+            var orderLine = await SearchQuery(x => x.Id == val.Id).Include(x => x.Order).Include(x => x.Promotions).FirstOrDefaultAsync();
+            var total = orderLine.PriceUnit;
+            var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
+
+            var promotion = orderLine.Promotions.Where(x => x.ProductId == product.Id).FirstOrDefault();
+            if (promotion != null)
+            {
+                promotion.Amount = (discount_amount ?? 0);
+            }
+            else
+            {
+                promotion = new SaleOrderPromotion
+                {
+                    Name = product.Name,
+                    ProductId = product.Id,
+                    Amount = (discount_amount ?? 0),
+                    Type = "discount",
+                    SaleOrderLineId = orderLine.Id
+                };
+
+                await orderPromotionObj.CreateAsync(promotion);
+            }           
+
+            //tính lại tổng tiền ưu đãi saleorderlines
+            _ComputeAmountDiscountTotal(new List<SaleOrderLine>() { orderLine});
+            ComputeAmount(new List<SaleOrderLine>() { orderLine });
+
+            orderObj._AmountAll(orderLine.Order);
+            await orderObj.UpdateAsync(orderLine.Order);
+        }
+
+        private async Task<Product> _GetProductDiscountToOrderLine()
+        {
+            var productObj = GetService<IProductService>();
+            var modelDataModel = GetService<IIRModelDataService>();
+            var product = await modelDataModel.GetRef<Product>("saleline.product_discount_default");
+            if (product == null)
+            {
+                var categObj = GetService<IProductCategoryService>();
+                var categ = await categObj.DefaultCategory();
+                var uomObj = GetService<IUoMService>();
+                var uom = await uomObj.SearchQuery().FirstOrDefaultAsync();
+
+                product = new Product()
+                {
+                    PurchaseOK = false,
+                    SaleOK = false,
+                    Type = "service",
+                    Name = "Giảm tiền",
+                    UOMId = uom.Id,
+                    UOMPOId = uom.Id,
+                    CategId = categ.Id,
+                    ListPrice = 0,
+                };
+
+                await productObj.CreateAsync(product);
+
+                var modeldata = new IRModelData
+                {
+                    Model = "product.discount",
+                    Module = "saleline",
+                    Name = "product_discount_default",
+                    ResId = product.Id.ToString()
+                };
+                await modelDataModel.CreateAsync(modeldata);
+            }
+
+            return product;
         }
     }
 }

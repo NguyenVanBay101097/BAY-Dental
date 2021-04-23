@@ -51,5 +51,7 @@ namespace Infrastructure.Services
         Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids);
 
         void _ComputeAmountDiscountTotal(IEnumerable<SaleOrderLine> self);
+
+        Task ApplyDiscountOnOrderLine(ApplyDiscountViewModel val);
     }
 }

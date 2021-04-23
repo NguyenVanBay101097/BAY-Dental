@@ -64,6 +64,10 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrderLine, SaleOrderLineForProductRequest>();
             CreateMap<SaleOrderLine, SaleOrderLineSimple>();
             CreateMap<SaleOrderLineSimple, SaleOrderLine>();
+
+            CreateMap<SaleOrderLine, SaleOrderLineIsActivePatch>();
+            CreateMap<SaleOrderLineIsActivePatch, SaleOrderLine>()
+                .ForMember(x => x.Id, x => x.Ignore());
         }
     }
 }

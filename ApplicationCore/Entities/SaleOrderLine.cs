@@ -113,7 +113,7 @@ namespace ApplicationCore.Entities
         /// whole_jaw: nguyên hàm
         /// upper_jaw : hàm trên
         /// lower_jaw : hàm dưới
-        /// manually :  thủ công
+        /// manual :  thủ công
         /// </summary>
         public string ToothType { get; set; }
 
@@ -157,12 +157,12 @@ namespace ApplicationCore.Entities
         public decimal? AmountPaid { get; set; }
 
         /// <summary>
-        /// Tiền còn nợ
+        /// Không sử dụng
         /// </summary>
         public decimal? AmountResidual { get; set; }
 
         /// <summary>
-        /// tổng tiền ưu đãi của dịch vụ
+        /// Tổng đơn giá giảm của dịch vụ
         /// </summary>
         public decimal? AmountDiscountTotal { get; set; }
 

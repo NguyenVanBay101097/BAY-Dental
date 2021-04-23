@@ -70,4 +70,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string LaboState { get; set; }
     }
+
+    public class SaleOrderLineIsActivePatch
+    {
+        public bool IsActive { get; set; }
+ 
+    }
 }

@@ -27,6 +27,10 @@ namespace Infrastructure.EntityConfigurations
               .WithMany(x=> x.Promotions)
               .HasForeignKey(x => x.SaleOrderLineId);
 
+            builder.HasOne(x => x.Product)
+            .WithMany()
+            .HasForeignKey(x => x.ProductId);
+
 
             builder.HasOne(x => x.CreatedBy)
           .WithMany()
