@@ -100,9 +100,8 @@ export class CashBookService {
   }
 
   exportExcelFile(val: any) {
-    return this.http.get(this.baseApi + this.apiUrl + "/ExportExcelFile", {
+    return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFile", val, {
       responseType: "blob",
-      params: val,
     });
   }
 
