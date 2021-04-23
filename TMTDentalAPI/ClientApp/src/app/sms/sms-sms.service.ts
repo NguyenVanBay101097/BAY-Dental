@@ -14,7 +14,7 @@ export class SmsSmsPaged {
 export class SmsSmsService {
   apiUrl: string = 'api/SmsSms';
   constructor(
-    @Inject("BASE_UPI") private base_api: string,
+    @Inject("BASE_API") private base_api: string,
     private http: HttpClient
   ) { }
 

@@ -7,9 +7,9 @@ import { SmsSmsPaged, SmsSmsService } from '../sms-sms.service';
 @Component({
   selector: 'app-sms-statisticaddd',
   templateUrl: './sms-statistic.component.html',
-  styleUrls: ['./sms-statistic.component.css']
+  styleUrls: ['./sms-statistic.component.css'],
 })
-export class SmsStatisticAbcComponent implements OnInit {
+export class SmsStatisticComponent implements OnInit {
   gridData: GridDataResult;
 
   filteredState: any[] = [
@@ -29,19 +29,18 @@ export class SmsStatisticAbcComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    //this.loadDataFromApi();
+    this.loadDataFromApi();
 
-    // this.searchUpdate.pipe(
-    //   debounceTime(400),
-    //   distinctUntilChanged())
-    //   .subscribe(() => {
-    //     this.skip = 0;
-    //     this.loadDataFromApi();
-    //   });
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.skip = 0;
+        this.loadDataFromApi();
+      });
   }
 
   loadDataFromApi() {
-    debugger;
     var val = new SmsSmsPaged();
     val.limit = this.limit;
     val.offset = this.skip;

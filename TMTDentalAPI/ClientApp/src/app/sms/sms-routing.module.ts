@@ -7,7 +7,7 @@ import { SmsAppointmentFormComponent } from './sms-appointment-form/sms-appointm
 import { SmsBirthdayFormAutomaticComponent } from './sms-birthday-form-automatic/sms-birthday-form-automatic.component';
 import { SmsBirthdayFormManualComponent } from './sms-birthday-form-manual/sms-birthday-form-manual.component';
 import { SmsBirthdayFormComponent } from './sms-birthday-form/sms-birthday-form.component';
-import { SmsStatisticAbcComponent } from './sms-statistic/sms-statistic.component';
+import { SmsStatisticComponent } from './sms-statistic/sms-statistic.component';
 import { SmsTemplateListComponent } from './sms-template-list/sms-template-list.component';
 
 const routes: Routes = [
@@ -29,7 +29,7 @@ const routes: Routes = [
     ]
   },
   { path: 'templates', component: SmsTemplateListComponent },
-  { path: 'statistic', component: SmsStatisticAbcComponent },
+  { path: 'statistic', component: SmsStatisticComponent },
   { path: 'accounts', component: SmsAccountSettingComponent },
 ];
 
