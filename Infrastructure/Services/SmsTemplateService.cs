@@ -33,5 +33,21 @@ namespace Infrastructure.Services
                 Items = _mapper.Map<IEnumerable<SmsTemplateBasic>>(items)
             };
         }
+        public async Task<IEnumerable<SmsTemplateBasic>> GetTemplateAutocomplete(string filter = "")
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query = query.Where(x => x.Name.Contains(filter));
+            }
+            var res = await query.OrderBy(x => x.Name).Select(x => new SmsTemplateBasic
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Body = x.Body
+            }).ToListAsync();
+
+            return _mapper.Map<IEnumerable<SmsTemplateBasic>>(res);
+        }
     }
 }

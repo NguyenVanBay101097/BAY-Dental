@@ -65,5 +65,12 @@ namespace TMTDentalAPI.Controllers
             await _smsTemplateService.DeleteAsync(res);
             return Ok(_mapper.Map<SmsTemplateBasic>(res));
         }
+
+        [HttpGet("Autocomplete")]
+        public async Task<IActionResult> GetTemplateAutocomplete(string filter = "")
+        {
+            var res = await _smsTemplateService.GetTemplateAutocomplete(filter);
+            return Ok(res);
+        }
     }
 }
