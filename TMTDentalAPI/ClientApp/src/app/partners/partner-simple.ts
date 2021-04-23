@@ -97,6 +97,7 @@ export class PartnerPaged {
     categoryId: string;
     tagIds: string[];
     computeCreditDebit: boolean;
+    isBirthday: boolean;
 }
 
 export class PagedResult2<T>{

@@ -1,1 +1,42 @@
-<p>sms-appointment-form-automatic works!</p>
+<form class="container o_form_view h-100" [formGroup]="formGroup">
+    <div class="o_form_sheet bg-white mt-0 border-top-0 d-flex flex-column p-3 h-100">
+        <div class="flex-0-0-auto">
+            <div class="d-flex">
+                <div class="btns">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">Xác nhận</button>
+                </div>
+            </div>
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label d-flex mb-2">
+                                <div class="form-check mr-2">
+                                    <input class="form-check-input" type="checkbox" id="check" formControlName="isAuto" />
+                                    <label class="form-check-label o_form_label" for="check">
+                                        Check
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Tin nhắn mẫu
+                                </label>
+                            </td>
+                            <td colspan="1" class="d-flex" style="width: 100%;">
+                                <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'" formControlName="content" [filterable]="true" #smsTemplateCbx [valueField]="'id'">
+                                </kendo-combobox>
+                                <a class="btn btn-sm btn-light" (click)="addTemplate()">
+                                    <span class="k-icon k-i-plus"></span>
+                                </a>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>

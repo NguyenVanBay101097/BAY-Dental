@@ -1995,8 +1995,87 @@ namespace Infrastructure.Services
                 Items = items
             };
         }
-    }
 
+        public async Task<IEnumerable<PartnerBasic>> GetCustomerBirthDay(PartnerPaged val)
+        {
+            var query = SearchQuery();
+
+            if (val.Customer.HasValue && val.Customer.Value)
+                query = query.Where(x => x.Customer == val.Customer);
+
+            if (val.IsBirthday.HasValue && val.IsBirthday.Value)
+            {
+                var currentDay = DateTime.Today.Day;
+                var currentMonth = DateTime.Today.Month;
+                query = query.Where(x => x.BirthDay.HasValue && x.BirthDay.Value == currentDay && x.BirthMonth.HasValue && x.BirthMonth.Value == currentMonth);
+            }
+
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var dictPartner = await orderLineObj
+                .SearchQuery(x => x.OrderPartnerId.HasValue)
+                .GroupBy(x => x.OrderPartnerId.Value)
+                .Select(x => new { x.Key, Count = x.Count() })
+                .ToDictionaryAsync(x => x.Key, x => x.Count);
+
+            var listPartner = await query.Select(x => new PartnerBasic
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Age = x.GetAge(),
+                BirthDay = x.BirthDay,
+                BirthMonth = x.BirthMonth,
+                BirthYear = x.BirthYear,
+                Street = x.Street,
+                DistrictName = x.DistrictName,
+                WardName = x.WardName,
+                CityName = x.CityName,
+                DateOfBirth = x.GetDateOfBirth(),
+                Phone = x.Phone,
+                Address = x.GetAddress(),
+                Gender = x.GetGender(),
+                CountLine = dictPartner.ContainsKey(x.Id) ? dictPartner[x.Id] : 0
+            }).ToListAsync();
+
+            return listPartner;
+        }
+
+        public async Task<IEnumerable<PartnerBasic>> GetCustomerAppointments(PartnerPaged val)
+        {
+            DateTime currentDate = DateTime.Today;
+            var apObj = GetService<IAppointmentService>();
+            var partnerList = await apObj.SearchQuery().Include(x => x.Partner)
+                .Where(x => x.Date.Date == currentDate)
+                .Select(x => new PartnerBasic
+                {
+                    Id = x.Partner.Id,
+                    Name = x.Partner.Name,
+                    Age = x.Partner.GetAge(),
+                    BirthDay = x.Partner.BirthDay,
+                    BirthMonth = x.Partner.BirthMonth,
+                    BirthYear = x.Partner.BirthYear,
+                    Street = x.Partner.Street,
+                    DistrictName = x.Partner.DistrictName,
+                    WardName = x.Partner.WardName,
+                    CityName = x.Partner.CityName,
+                    DateOfBirth = x.Partner.GetDateOfBirth(),
+                    Phone = x.Partner.Phone,
+                    Address = x.Partner.GetAddress(),
+                    Gender = x.Partner.GetGender(),
+                    AppointmnetId = x.Id,
+                    AppointmnetName = x.Name,
+                    Time = x.Time,
+                    Date = x.Date.ToShortDateString()
+
+                })
+                .OrderBy(x => x.Name)
+                .ToListAsync();
+
+
+            return partnerList;
+            //return _mapper.Map<IEnumerable<PartnerBasic>>(apList);
+        }
+    }
+   
     public class PartnerCreditDebitItem
     {
         public decimal Credit { get; set; }

@@ -2,6 +2,24 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+export class SmsTemplateBasic {
+  id: string;
+  name: string;
+  body: string;
+}
+export class SmsTemplatePaging {
+  offset: number;
+  limit: number;
+  totalItems: number;
+  items: SmsTemplateBasic[];
+}
+
+export class SmsTemplatePaged{
+  offset: number;
+  limit: number;
+  search: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,7 +39,7 @@ export class SmsTemplateService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
-  getPaged(val) {
+  getPaged(val:any) {
     return this.http.get(this.base_api + this.apiUrl, { params: val });
   }
 
@@ -29,7 +47,7 @@ export class SmsTemplateService {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
   }
 
-  getAutoComplete(val){
-    return this.http.get(this.base_api+this.apiUrl+'/Autocomplete', val);
+  getAutoComplete(val) {
+    return this.http.get(this.base_api + this.apiUrl + '/Autocomplete', val);
   }
 }

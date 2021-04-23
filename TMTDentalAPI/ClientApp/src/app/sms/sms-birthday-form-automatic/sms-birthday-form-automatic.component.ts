@@ -1,9 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
+import { SmsTemplateService } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-birthday-form-automatic',
@@ -12,82 +15,60 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 })
 export class SmsBirthdayFormAutomaticComponent implements OnInit {
 
-  @ViewChild("configSMSCbx", { static: true }) configSMSCbx: ComboBoxComponent
+  @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
+
   formGroup: FormGroup;
   filteredConfigSMS: any[];
   skip: number = 0;
   id: string;
   limit: number = 20;
   type: string;
+  filteredTemplate: any[];
   public today: Date = new Date;
   public timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
   public timeRunJob: Date = new Date();
   constructor(
-    // private tSMSRmConfigService: TSMSReminderConfigService,
-    // private smsService: SmsBrandNameService,
     private fb: FormBuilder,
-    private intlService: IntlService,
-    private route: ActivatedRoute,
+    private modalService: NgbModal,
+    private smsTemplateService: SmsTemplateService,
   ) { }
 
   ngOnInit() {
+    this.loadSmsTemplate();
+
     this.formGroup = this.fb.group({
-      timeReminder: [this.timeReminder, Validators.required],
-      timeRunJob: [this.timeRunJob, Validators.required],
-      content: ['', Validators.required],
-      configSMS: [null, Validators.required]
+      content: [null, Validators.required],
+      isAuto:false
     })
-
-    // this.configSMSCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.configSMSCbx.loading = true)),
-    //   switchMap(value => this.searchConfigSMS(value))
-    // ).subscribe(result => {
-    //   this.filteredConfigSMS = result;
-    //   this.configSMSCbx.loading = false;
-    // });
-
-    this.loadConfigSMS();
-    this.loadDataFromApi();
+    
+    this.smsTemplateCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.smsTemplateCbx.loading = true)),
+      switchMap(value => this.searchSmsTemplate(value))
+    ).subscribe((result: any) => {
+      this.filteredTemplate = result;
+      this.smsTemplateCbx.loading = false;
+    });
   }
 
-  loadConfigSMS() {
-    // this.searchConfigSMS().subscribe(
-    //   (res: any) => {
-    //     this.filteredConfigSMS = res;
-    //     if (!this.formGroup.get('configSMS')) {
-    //       this.formGroup.get('configSMS').patchValue(res[0] ? res[0] : null);
-    //     }
-    //   }
-    // )
+  loadSmsTemplate() {
+    this.searchSmsTemplate().subscribe(
+      (res: any) => {
+        this.filteredTemplate = res;
+        this.formGroup.get('content').patchValue(res[0] ? res[0] : null)
+      }
+    )
   }
 
-  searchConfigSMS(q?: string) {
-    // var val = {
-    //   limit: this.limit,
-    //   offset: this.skip,
-    //   search: q || ''
-    // }
-    // return this.smsService.getAutoComplete(val);
-  }
-
-  loadDataFromApi() {
-    // var type = 'birthday';
-    // this.tSMSRmConfigService.get(type).subscribe(
-    //   (res: any) => {
-    //     if (res && res.id) {
-    //       this.id = res.id;
-    //       this.formGroup.patchValue(res);
-    //       this.timeReminder = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), res.hourReminder, res.minuteReminder, 0);
-    //       this.formGroup.get('timeReminder').patchValue(this.timeReminder);
-    //     }
-    //   }
-    // )
+  searchSmsTemplate(q?: string) {
+    return this.smsTemplateService.getAutoComplete(q);
   }
 
   onSave() {
-    // if (this.formGroup.invalid) return;
-    // var val = this.formGroup.value;
+    if (this.formGroup.invalid) return;
+    var val = this.formGroup.value;
+    console.log(val);
+    
     // val.configSMSId = val.configSMS ? val.configSMS.id : null;
     // val.timeReminder = this.intlService.formatDate(val.timeReminder, "yyyy-dd-MMTHH:mm")
     // if (this.id) {
@@ -105,5 +86,12 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     // }
   }
 
+  addTemplate() {
+    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Tạo mẫu tin';
+    modalRef.result.then((val) => {
+      this.loadSmsTemplate();
+    })
+  }
 
 }
