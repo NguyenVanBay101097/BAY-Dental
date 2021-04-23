@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
-import { SmsTemplateService } from '../sms-template.service';
+import { SmsTemplatePaged, SmsTemplateService } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-template-list',
@@ -33,7 +33,6 @@ export class SmsTemplateListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe((value) => {
-        this.search = value;
         this.skip = 0;
         this.loadDataFromApi();
       });
@@ -41,11 +40,10 @@ export class SmsTemplateListComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var val = {
-      limit: this.limit,
-      offset: this.skip,
-      search: this.search || ""
-    }
+    var val = new SmsTemplatePaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || "";
     this.smsTemplateService.getPaged(val).pipe(
       map(
         (response: any) =>

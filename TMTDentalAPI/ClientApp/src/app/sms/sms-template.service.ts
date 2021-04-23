@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -17,7 +17,7 @@ export class SmsTemplatePaging {
 export class SmsTemplatePaged{
   offset: number;
   limit: number;
-  search: number;
+  search: string;
 }
 
 @Injectable({
@@ -39,7 +39,7 @@ export class SmsTemplateService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
-  getPaged(val:any) {
+  getPaged(val) {
     return this.http.get(this.base_api + this.apiUrl, { params: val });
   }
 
