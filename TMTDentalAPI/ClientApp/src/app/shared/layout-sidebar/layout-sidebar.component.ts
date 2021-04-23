@@ -153,7 +153,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhắc lịch hẹn', link: '/sms/appointment-reminder' },
         { name: 'Tin nhắn mẫu', link: '/sms/templates' },
         // { name: 'Quảng cáo dịch vụ', link: '/' },
-        { name: 'Thống kê tin nhắn', link: '/sms/message-statistics' },
+        { name: 'Thống kê tin nhắn', link: '/sms/statistic' },
         { name: 'Cấu hình đối tác gửi tin', link: '/sms/accounts' },
       ],
     },

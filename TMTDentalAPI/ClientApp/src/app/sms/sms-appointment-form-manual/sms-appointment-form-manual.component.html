@@ -1,1 +1,42 @@
-<p>sms-appointment-form-manual works!</p>
+<form class="o_form_view h-100" [formGroup]="formGroup">
+    <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
+        <div class="flex-0-0-auto">
+            <div class="d-flex">
+                <div class="btns">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSend()">Gửi tin</button>
+                </div>
+            </div>
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Tin nhắn mẫu
+                                </label>
+                            </td>
+                            <td colspan="1" class="d-flex" style="width: 100%;">
+                                <kendo-combobox class="form-control" [data]="filteredTemplate" ngbAutofocus [textField]="'name'" formControlName="content" [filterable]="true" #smsTemplateCbx [valueField]="'id'">
+                                </kendo-combobox>
+                                <a class="btn btn-sm btn-light" (click)="addTemplate()">
+                                    <span class="k-icon k-i-plus"></span>
+                                </a>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
+
+<kendo-grid [data]="gridData" [selectable]="true" [resizable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true" [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+    <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
+    <kendo-grid-column field="name" title="Họ tên" width="300"></kendo-grid-column>
+    <kendo-grid-column field="phone" title="Điện thoại" width="120"></kendo-grid-column>
+    <kendo-grid-column field="appointmnetName" title="Mã lịch hẹn" width="200"></kendo-grid-column>
+    <kendo-grid-column field="time" title="Thời gian" width="120"></kendo-grid-column>
+    <kendo-grid-column field="date" title="Ngày hẹn" width="300"></kendo-grid-column>
+</kendo-grid>

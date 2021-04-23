@@ -88,6 +88,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? BirthDay { get; set; }
 
         public bool Active { get; set; }
+
+        public int CountLine { get; set; }
+        public string DateOfBirth { get; set; }
+
+        public Guid AppointmnetId { get; set; }
+        public string AppointmnetName { get; set; }
+        public string Time { get; set; }
+        public string Date { get; set; }
+
     }
 
 
@@ -106,6 +115,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
 
         public bool? Customer { get; set; }
+
+        public bool? IsBirthday { get; set; }
 
         public bool? Employee { get; set; }
 

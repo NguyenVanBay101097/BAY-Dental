@@ -16,11 +16,12 @@ import { SmsBirthdayFormAutomaticComponent } from './sms-birthday-form-automatic
 import { SmsAppointmentFormAutomaticComponent } from './sms-appointment-form-automatic/sms-appointment-form-automatic.component';
 import { SmsAppointmentFormManualComponent } from './sms-appointment-form-manual/sms-appointment-form-manual.component';
 import { SmsAppointmentFormComponent } from './sms-appointment-form/sms-appointment-form.component';
+import { SmsStatisticComponent } from './sms-statistic/sms-statistic.component';
 
 @NgModule({
   declarations: [SmsTemplateListComponent, SmsTemplateCrUpComponent, SmsTemplateContentComponent,
      SmsAccountSettingComponent, 
-      SmsBirthdayFormComponent, SmsBirthdayFormManualComponent, SmsBirthdayFormAutomaticComponent, SmsAppointmentFormAutomaticComponent, SmsAppointmentFormManualComponent, SmsAppointmentFormComponent],
+      SmsBirthdayFormComponent, SmsBirthdayFormManualComponent, SmsBirthdayFormAutomaticComponent, SmsAppointmentFormAutomaticComponent, SmsAppointmentFormManualComponent, SmsAppointmentFormComponent, SmsStatisticComponent],
   imports: [
     CommonModule,
     SmsRoutingModule,

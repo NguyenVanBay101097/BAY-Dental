@@ -448,6 +448,20 @@ namespace TMTDentalAPI.Controllers
             return Ok(rec);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCustomerBirthDay(PartnerPaged val)
+        {
+            var rec = await _partnerService.GetCustomerBirthDay(val);
+            return Ok(rec);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCustomerAppointments(PartnerPaged val)
+        {
+            var rec = await _partnerService.GetCustomerAppointments(val);
+            return Ok(rec);
+        }
+
         //xuất excel danh sách hóa đơn còn nợ của 1 partner
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> ExportUnreconcileInvoices(Guid id)

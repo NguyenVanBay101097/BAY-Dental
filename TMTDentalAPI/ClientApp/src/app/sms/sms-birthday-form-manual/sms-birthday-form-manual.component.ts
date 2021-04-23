@@ -17,7 +17,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
 
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
   gridData: any;
-  filteredConfigSMS: any[];
+  filteredSMSAccount: any[];
   filteredTemplate: any[];
   formGroup: FormGroup;
   skip: number = 0;
@@ -31,19 +31,17 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     private partnerService: PartnerService,
     private smsTemplateService: SmsTemplateService,
     private modalService: NgbModal,
-    // private composeMessageService: ComposeMessageService,
     private fb: FormBuilder
   ) { }
 
   ngOnInit() {
-    this.loadConfigSMS();
     this.loadSmsTemplate();
     this.formGroup = this.fb.group({
       date: [new Date(), Validators.required],
       content: [null, Validators.required],
-      configSMS: [null, Validators.required],
       state: 'draft',
     })
+
     this.smsTemplateCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.smsTemplateCbx.loading = true)),
@@ -52,49 +50,32 @@ export class SmsBirthdayFormManualComponent implements OnInit {
       this.filteredTemplate = result;
       this.smsTemplateCbx.loading = false;
     });
+
     this.loadDataFromApi();
   }
 
   loadDataFromApi() {
-    // var val = new PartnerPaged();
-    // val.limit = this.limit;
-    // val.offset = this.skip;
-    // val.search = this.search || '';
-    // val.customer = true;
-    // val.supplier = false;
-    // val.isBirthday = true;
-    // this.partnerService.getCustomerBirthDay(val)
-    //   .subscribe((res: any[]) => {
-    //     this.gridData = res;
-    //   }, err => {
-    //     console.log(err);
-    //   }
-    //   )
-  }
-
-  loadConfigSMS() {
-    // this.searchConfigSMS().subscribe(
-    //   (res: any) => {
-    //     this.filteredConfigSMS = res;
-    //     this.formGroup.get('configSMS').patchValue(res[0] ? res[0] : null)
-    //   }
-    // )
-  }
-
-  searchConfigSMS(q?: string) {
-    var val = {
-      limit: this.limit,
-      offset: this.skip,
-      search: q || ''
-    }
-    // return this.smsService.getAutoComplete(val);
+    var val = new PartnerPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.customer = true;
+    val.supplier = false;
+    val.isBirthday = true;
+    this.partnerService.getCustomerBirthDay(val)
+      .subscribe((res: any[]) => {
+        this.gridData = res;
+      }, err => {
+        console.log(err);
+      }
+      )
   }
 
   loadSmsTemplate() {
     this.searchSmsTemplate().subscribe(
       (res: any) => {
         this.filteredTemplate = res;
-        // this.formGroup.get('content').patchValue(res[0] ? res[0] : null)
+        this.formGroup.get('content').patchValue(res[0] ? res[0] : null)
       }
     )
   }
@@ -107,7 +88,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo mẫu tin';
     modalRef.result.then((val) => {
-      this.loadDataFromApi();
+      this.loadSmsTemplate();
     })
   }
 
@@ -120,7 +101,9 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     if (this.formGroup.invalid) { return; }
     var val = this.formGroup.value;
     val.partnerIds = this.selectedIds ? this.selectedIds : [];
-    val.configSMSId = val.configSMS.id;
+    console.log(val);
+    
+    // val.configSMSId = val.configSMS.id;
     // this.composeMessageService.create(val).subscribe(
     //   result => {
     //     console.log(result);
