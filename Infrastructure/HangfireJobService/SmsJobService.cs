@@ -31,11 +31,18 @@ namespace Infrastructure.HangfireJobService
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var smsConfig = await context.SmsConfigs.Include(x => x.BirthdayTemplate).Include(x => x.AppointmentTemplate).LastOrDefaultAsync();
+                var smsConfig = await context.SmsConfigs.Where(x => x.Id == configId).AsQueryable().FirstOrDefaultAsync();
+                if (smsConfig.AppointmentTemplateId.HasValue)
+                    smsConfig.AppointmentTemplate = await context.SmsTemplates.Where(x => x.Id == smsConfig.AppointmentTemplateId.Value).FirstOrDefaultAsync();
+
+                if (smsConfig.BirthdayTemplateId.HasValue)
+                    smsConfig.BirthdayTemplate = await context.SmsTemplates.Where(x => x.Id == smsConfig.BirthdayTemplateId.Value).FirstOrDefaultAsync();
+
                 if (smsConfig.IsAppointmentAutomation)
                     await RunAppointmentAutomatic(context, smsConfig);
                 else if (smsConfig.IsBirthdayAutomation)
                     await RunBirthdayAutomatic(context, smsConfig);
+                transaction.Commit();
             }
             catch (Exception ex)
             {
@@ -47,7 +54,6 @@ namespace Infrastructure.HangfireJobService
         public async Task RunAppointmentAutomatic(CatalogDbContext context, SmsConfig config)
         {
             var now = DateTime.Now;
-            var smsConfig = await context.SmsConfigs.LastOrDefaultAsync();
             var query = context.Appointments.AsQueryable();
             var listAppointments = await query.Where(x => !x.DateAppointmentReminder.HasValue &&
               x.DateTimeAppointment.HasValue
@@ -55,41 +61,58 @@ namespace Infrastructure.HangfireJobService
               && x.DateTimeAppointment.Value.AddHours(-1) <= now).ToListAsync();
             if (listAppointments.Any())
             {
-                await CreateSmsComposer(context, listAppointments, config);
+                //await CreateSmsComposer(context, listAppointments, config);
+                var smsComposer = new SmsComposer();
+                var partnerIds = listAppointments.Select(x => x.PartnerId);
+                smsComposer.Id = GuidComb.GenerateComb();
+                smsComposer.ResModel = "res.appointment";
+                smsComposer.ResIds = string.Join(",", listAppointments.Select(x => x.Id));
+                smsComposer.TemplateId = config.AppointmentTemplateId;
+                smsComposer.Body = config.AppointmentTemplate.Body;
+                context.SmsComposers.Add(smsComposer);
+                await context.SaveChangesAsync();
+                await CreateSmsSms(context, smsComposer, partnerIds);
                 foreach (var appointment in listAppointments)
                 {
                     appointment.DateAppointmentReminder = now;
+                    context.Entry(appointment).State = EntityState.Modified;
                 }
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 
-        public Task RunBirthdayAutomatic(CatalogDbContext context, SmsConfig config)
+        public async Task RunBirthdayAutomatic(CatalogDbContext context, SmsConfig config)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task CreateSmsComposer(CatalogDbContext context, IEnumerable<Appointment> appointments, SmsConfig config)
-        {
-            var smsComposer = new SmsComposer();
-            var partnerIds = appointments.Select(x => x.PartnerId);
-            smsComposer.Id = GuidComb.GenerateComb();
-            smsComposer.ResModel = "res.appointment";
-            smsComposer.ResIds = string.Join(",", appointments.Select(x => x.Id));
-            smsComposer.TemplateId = config.AppointmentTemplateId;
-            smsComposer.Body = config.AppointmentTemplate.Body;
-            context.SmsComposers.Add(smsComposer);
-            await context.SaveChangesAsync();
-            await CreateSmsSms(context, smsComposer, partnerIds);
+            var dayNow = DateTime.Today.Day;
+            var MonthNow = DateTime.Today.Month;
+            var query = context.Partners.AsQueryable();
+            var partners = await query.Where(x =>
+            x.BirthMonth.HasValue && x.BirthMonth.Value == MonthNow &&
+            x.BirthDay.HasValue && x.BirthDay.Value == dayNow
+            ).ToListAsync();
+            if (partners.Any())
+            {
+                var smsComposer = new SmsComposer();
+                smsComposer.Id = GuidComb.GenerateComb();
+                smsComposer.ResModel = "res.partners";
+                smsComposer.ResIds = string.Join(",", partners.Select(x => x.Id));
+                smsComposer.TemplateId = config.BirthdayTemplateId;
+                smsComposer.Body = config.BirthdayTemplate.Body;
+                context.SmsComposers.Add(smsComposer);
+                context.SaveChanges();
+                await CreateSmsSms(context, smsComposer, partners.Select(x => x.Id));
+            }
         }
 
         public async Task CreateSmsSms(CatalogDbContext context, SmsComposer composer, IEnumerable<Guid> ids)
         {
             var listSms = new List<SmsSms>();
-            var partners = await context.Partners.Where(x => ids.Contains(x.Id)).ToListAsync();
+            var partners = await context.Partners.Where(x => ids.Contains(x.Id)).Include(x => x.Title).ToListAsync();
             foreach (var partner in partners)
             {
+                //var content = await PersonalizedContent(context, composer.Body, partner);
                 var sms = new SmsSms();
+                sms.Id = GuidComb.GenerateComb();
                 sms.Body = composer.Body;
                 sms.Number = !string.IsNullOrEmpty(partner.Phone) ? partner.Phone : "";
                 sms.PartnerId = partner.Id;
@@ -104,16 +127,27 @@ namespace Infrastructure.HangfireJobService
                     item.State = dict[item.Id];
                 }
             }
-
-            await context.SmsSmss.AddRangeAsync(listSms);
+            context.SmsSmss.AddRange(listSms);
             await context.SaveChangesAsync();
 
+        }
+
+        private async Task<string> PersonalizedContent(CatalogDbContext context, string body, Partner partner)
+        {
+            var company = await context.Companies.FirstOrDefaultAsync();
+            var content = JsonConvert.DeserializeObject<Body>(body);
+
+            var messageContent = content.text.Replace("{ten_khach_hang}", partner.Name.Split(' ').Last())
+                .Replace("{ho_ten_khach_hang}", partner.DisplayName)
+                .Replace("{ten_cong_ty}", company.Name)
+                .Replace("{danh_xung_khach_hang}", partner.Title != null ? partner.Title.Name : "");
+            return messageContent;
         }
 
         public async Task<Dictionary<Guid, string>> SendSMS(IEnumerable<SmsSms> lines, CatalogDbContext context)
         {
             var dict = new Dictionary<Guid, string>();
-            var account = await context.SmsAccounts.LastOrDefaultAsync();
+            var account = await context.SmsAccounts.OrderByDescending(x => x.DateCreated).FirstOrDefaultAsync();
             if (account == null) throw new Exception("Bạn chưa cài đặt Brand Name");
             if (account.Provider == "fpt")
             {
@@ -141,13 +175,13 @@ namespace Infrastructure.HangfireJobService
                     }
                 }
             }
-            else if (account.Provider == "e-sms")
+            else if (account.Provider == "esms")
             {
                 var requestEsms = new List<ESMSSendMessageRequestModel>();
                 foreach (var line in lines)
                 {
                     var esms = new ESMSSendMessageRequestModel();
-                    esms.Phone = line.Partner.Phone;
+                    esms.Phone = line.Number;
                     esms.SmsId = line.Id;
                     esms.ApiKey = account.ApiKey;
                     esms.SecretKey = account.Secretkey;
@@ -229,6 +263,7 @@ namespace Infrastructure.HangfireJobService
                     model.Message = "fails";
                     model.SmsId = val.SmsId;
                 }
+                listReponse.Add(model);
 
             }
             return listReponse;
@@ -306,19 +341,10 @@ namespace Infrastructure.HangfireJobService
             return System.Convert.ToBase64String(plainTextBytes);
         }
 
-        public async Task<string> ChangeBody(CatalogDbContext context, SmsTemplate template, IEnumerable<Guid> partnerIds)
-        {
-            var partnerDictTitle = await context.Partners.Where(x => partnerIds.Contains(x.Id)).Include(x => x.Title).ToDictionaryAsync(x => x.Id, x => x.Title.Name);
-
-            var body = JsonConvert.DeserializeObject<Body>(template.Body);
-
-            return "";
-        }
-
         public class Body
         {
-            public string TemplateType { get; set; }
-            public string Text { get; set; }
+            public string templateType { get; set; }
+            public string text { get; set; }
         }
 
         public class ESMSSendMessageRequestModel

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,10 +19,12 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly ISmsConfigService _smsConfigService;
         private readonly IMapper _mapper;
-        public SmsConfigsController(IMapper mapper, ISmsConfigService smsConfigService)
+        private readonly IUnitOfWorkAsync _unitOfWorkAsync;
+        public SmsConfigsController(IUnitOfWorkAsync unitOfWorkAsync, IMapper mapper, ISmsConfigService smsConfigService)
         {
             _smsConfigService = smsConfigService;
             _mapper = mapper;
+            _unitOfWorkAsync = unitOfWorkAsync;
         }
 
         [HttpGet]
@@ -35,7 +38,10 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> CreateAsync(SmsConfigSave val)
         {
             var entity = _mapper.Map<SmsConfig>(val);
+            entity.CompanyId = CompanyId;
+            await _unitOfWorkAsync.BeginTransactionAsync();
             entity = await _smsConfigService.CreateAsync(entity);
+            _unitOfWorkAsync.Commit();
             return Ok(_mapper.Map<SmsConfigBasic>(entity));
         }
 
@@ -46,7 +52,9 @@ namespace TMTDentalAPI.Controllers
             if (entity == null || !ModelState.IsValid)
                 return NotFound();
             entity = _mapper.Map(val, entity);
+            await _unitOfWorkAsync.BeginTransactionAsync();
             await _smsConfigService.UpdateAsync(entity);
+            _unitOfWorkAsync.Commit();
             return Ok(_mapper.Map<SmsConfigBasic>(entity));
         }
 

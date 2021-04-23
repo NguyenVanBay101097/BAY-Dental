@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService } from '../sms-template.service';
 
@@ -25,16 +26,17 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     private fb: FormBuilder,
     private modalService: NgbModal,
     private smsTemplateService: SmsTemplateService,
+    private smsConfigService: SmsConfigService
   ) { }
 
   ngOnInit() {
     this.loadSmsTemplate();
 
     this.formGroup = this.fb.group({
-      content: [null, Validators.required],
-      isAuto:false
+      appointmentTemplate: [null, Validators.required],
+      isAppointmentAutomation: false
     })
-    
+
     this.smsTemplateCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.smsTemplateCbx.loading = true)),
@@ -49,7 +51,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     this.searchSmsTemplate().subscribe(
       (res: any) => {
         this.filteredTemplate = res;
-        this.formGroup.get('content').patchValue(res[0] ? res[0] : null)
+        this.formGroup.get('appointmentTemplate').patchValue(res[0] ? res[0] : null)
       }
     )
   }
@@ -61,8 +63,12 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
   onSave() {
     if (this.formGroup.invalid) return;
     var val = this.formGroup.value;
-    console.log(val);
-    
+    val.appointmentTemplateId = val.appointmentTemplate.id;
+    this.smsConfigService.create(val).subscribe(
+      res => {
+        console.log(res);
+      }
+    )
   }
 
   addTemplate() {

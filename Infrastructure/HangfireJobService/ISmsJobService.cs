@@ -12,6 +12,5 @@ namespace Infrastructure.HangfireJobService
         Task RunJob(string db, Guid configId);
         Task RunAppointmentAutomatic(CatalogDbContext context, SmsConfig config);
         Task RunBirthdayAutomatic(CatalogDbContext context, SmsConfig config);
-        Task CreateSmsComposer(CatalogDbContext context, IEnumerable<Appointment> appointments, SmsConfig config);
     }
 }

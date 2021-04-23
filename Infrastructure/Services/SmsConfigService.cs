@@ -20,8 +20,15 @@ namespace Infrastructure.Services
         }
         public override async Task<SmsConfig> CreateAsync(SmsConfig entity)
         {
+            entity = await base.CreateAsync(entity);
             ActionRunJob(entity);
-            return await base.CreateAsync(entity);
+            return entity;
+        }
+
+        public override Task UpdateAsync(SmsConfig entity)
+        {
+            ActionRunJob(entity);
+            return base.UpdateAsync(entity);
         }
 
         public void ActionRunJob(SmsConfig model)
@@ -30,22 +37,24 @@ namespace Infrastructure.Services
             if (model.IsAppointmentAutomation)
             {
                 var jobId = $"{hostName}_AppointmentAutomaticReminder_{model.Id}";
-                RecurringJob.AddOrUpdate<ISmsJobService>(jobId, x => x.RunJob(hostName, model.Id), $"* */1 * * * *", TimeZoneInfo.Local);
+                RecurringJob.AddOrUpdate<ISmsJobService>(jobId, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
                 model.JobId = jobId;
             }
 
-            if (model.IsBirthdayAutomation)
+            else if (model.IsBirthdayAutomation)
             {
                 var jobId = $"{hostName}_BirthdayAutomaticReminder_{model.Id}";
                 RecurringJob.AddOrUpdate<ISmsJobService>(jobId, x => x.RunJob(hostName, model.Id), $"* 8 * * *", TimeZoneInfo.Local);
                 model.JobId = jobId;
             }
 
-            if (!string.IsNullOrEmpty(model.JobId) && (!model.IsBirthdayAutomation || !model.IsAppointmentAutomation))
+            else if (!string.IsNullOrEmpty(model.JobId) && (!model.IsBirthdayAutomation || !model.IsAppointmentAutomation))
             {
                 ActionStopJob(model.JobId);
                 model.JobId = "";
             }
+
+            Update(model);
         }
 
         public void ActionStopJob(string jobId)
