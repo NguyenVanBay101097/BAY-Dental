@@ -39,7 +39,7 @@ a.prettycheckbox.prettyShow:before {
     display: inline-block;
     font-weight: 900;
     content: "\f146";
-    color: #4bac4d;
+    color: #007bff;
 }
 
 a.prettycheckbox.checked:before {
@@ -52,5 +52,13 @@ a.prettycheckbox.checked:before {
     display: inline-block;
     font-weight: 900;
     content: "\f14a";
-    color: #4bac4d;
+    color: #007bff;
+}
+
+.expand {
+    width: 20px;
+}
+
+.roleItem {
+    list-style-type: none;
 }

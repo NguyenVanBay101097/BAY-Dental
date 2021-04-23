@@ -1,23 +1,16 @@
-<!-- <span class="fas cursor-pointer mr-1 expand-icon" [ngClass]="{'fa-caret-right': childItem.expand == false, 'fa-caret-down' : childItem.expand == true }" (click)="expand(childItem)"></span>
-<i [class]="getClass(childItem)"  (click)="check(childItem)"></i>
-<span class="cursor-pointer" (click)="expand(childItem)"> {{childItem.name}}</span><br>
-<ul [class.d-none]="!childItem.expand">
-    <li *ngFor="let child of childItem.children">
-        <i class="far mr-1" [ngClass]="{'fa-check-square': child.checked == true, 'fa-square' : child.checked == false  }" (click)="checkChild(childItem,child)"></i>
-        <span class="cursor-pointer" (click)="checkChild(childItem,child)"> {{child.name}}</span><br>
-    </li>
-</ul> -->
 
 <a (click)="item.expand = !item.expand">
-    <i class="fas" [ngClass]="{'fa-caret-right': !item.expand, 'fa-caret-down': item.expand}"></i>
+    <i class="fas expand" [ngClass]="{'fa-caret-right': !item.expand, 'fa-caret-down': item.expand}"></i>
 </a>
-<a class="prettycheckbox" (click)="toggle(item)" [ngClass]="{'checked': isAllChildChecked(item), 'prettyShow': atLeastOneChecked(item)}"></a>
-<label (click)="toggle(item)">{{item.name}}</label>
-<ul *ngIf="item.expand && item.ops.length">
-    <li *ngFor="let child of item.ops">
-        <div>
-            <input type="checkbox" [(ngModel)]="child.checked"/> 
-            <label>{{child.name}}</label>
+<a class="prettycheckbox mr-1" (click)="toggle(item)" [ngClass]="{'checked': isAllChildChecked(item), 'prettyShow': atLeastOneChecked(item)}"></a>
+<span (click)="toggle(item)">{{item.name}}</span>
+<ul *ngIf="item.expand && item.ops.length > 1">
+    <li *ngFor="let child of item.ops" class="roleItem">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="child.checked" [id]="child.permission">
+            <label class="form-check-label" [for]="child.permission">
+                {{child.name}}
+            </label>
         </div>
     </li>   
 </ul>

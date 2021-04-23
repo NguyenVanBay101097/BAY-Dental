@@ -2,9 +2,11 @@
     <div class="row">
         <div class="col-4" *ngFor="let item of listFeature">
             <h5 class="mt-2 text-primary">{{item.name}}</h5>
-            <div *ngFor="let childItem of item.functions">
-                <app-role-function-item [item]="childItem"></app-role-function-item>
-            </div>
+            <ul>
+                <li *ngFor="let childItem of item.functions">
+                    <app-role-function-item [item]="childItem"></app-role-function-item>
+                </li>
+            </ul>
         </div>
     </div>
 </div>

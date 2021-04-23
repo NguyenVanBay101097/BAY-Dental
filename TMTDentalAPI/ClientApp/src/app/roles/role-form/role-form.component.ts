@@ -205,7 +205,6 @@ export class RoleFormComponent implements OnInit {
     });
 
     var checkedOps = ops.filter(x => x.checked);
-    console.log(checkedOps);
     this.submitted = true;
     if (this.roleForm.invalid) {
       return;
@@ -214,7 +213,7 @@ export class RoleFormComponent implements OnInit {
     const val = this.roleForm.value;
     val.functions = checkedOps.map(x => x.permission);
     val.userIds = this.selectedUsers.map(x => x.id);
-
+    
     if (!this.id) {
       this.roleService.create(val).subscribe((result: any) => {
         this.notify('success', 'Lưu thành công');

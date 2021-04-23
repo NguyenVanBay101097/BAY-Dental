@@ -25,7 +25,6 @@ namespace Umbraco.Web.Models.ContentEditing
     public class PermissionTreeV2FunctionViewModel
     {
         public string Name { get; set; }
-
         public List<PermissionTreeV2OpViewModel> Ops { get; set; } = new List<PermissionTreeV2OpViewModel>();
     }
 

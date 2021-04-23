@@ -19,7 +19,11 @@ export class RoleFunctionItemComponent implements OnInit {
     });
   }
 
+
   isAllChildChecked(item) {
+    if(item.ops.length == 0){
+      return false;
+    }
     for (var i = 0; i < item.ops.length; i++) {
       var op = item.ops[i];
       if (!op.checked) {
