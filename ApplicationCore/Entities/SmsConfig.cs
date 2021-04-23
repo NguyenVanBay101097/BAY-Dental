@@ -18,5 +18,7 @@ namespace ApplicationCore.Entities
 
         public Guid? AppointmentTemplateId { get; set; }
         public SmsTemplate AppointmentTemplate { get; set; }
+
+        public string JobId { get; set; }
     }
 }

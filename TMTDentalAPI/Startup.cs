@@ -51,6 +51,7 @@ using TMTDentalAPI.ActionFilters;
 using TMTDentalAPI.OdataControllers;
 using Serilog;
 using MediatR;
+using Infrastructure.HangfireJobService;
 
 namespace TMTDentalAPI
 {
@@ -332,6 +333,7 @@ namespace TMTDentalAPI
             services.AddScoped<ISmsConfigService, SmsConfigService>();
             services.AddScoped<ISmsSmsService, SmsSmsService>();
             services.AddScoped<ISmsTemplateService, SmsTemplateService>();
+            services.AddScoped<ISmsJobService, SmsJobService>();
 
             services.AddMemoryCache();
 
@@ -486,6 +488,7 @@ namespace TMTDentalAPI
 
                 mc.AddProfile(new SmsAccountProfile());
                 mc.AddProfile(new SmsTemplateProfile());
+                mc.AddProfile(new SmsConfigProfile());
                 mc.AddProfile(new SmsSmsProfile());
 
             };
