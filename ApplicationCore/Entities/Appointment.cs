@@ -24,6 +24,10 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Time { get; set; }
 
+        public DateTime? DateTimeAppointment { get; set; }
+
+        public DateTime? DateAppointmentReminder { get; set; }
+
         /// <summary>
         /// Thời gian dự kiến
         /// </summary>

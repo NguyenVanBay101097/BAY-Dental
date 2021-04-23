@@ -6,6 +6,5 @@ using System.Text;
 namespace Infrastructure.Services
 {
     public interface ISmsSmsService : IBaseService<SmsSms>
-    {
-    }
+    { }
 }
