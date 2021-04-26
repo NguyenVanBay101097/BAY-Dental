@@ -35,6 +35,10 @@ import { SaleOrderDotkhamTeethPopoverComponent } from './sale-order-dotkham-teet
 import { ToaThuocsModule } from '../toa-thuocs/toa-thuocs.module';
 import { SaleOrderProductRequestListComponent } from './sale-order-product-request-list/sale-order-product-request-list.component';
 import { SaleOrderProductRequestDialogComponent } from './sale-order-product-request-dialog/sale-order-product-request-dialog.component';
+import { SaleOrderLineCuComponent } from './sale-order-line-cu/sale-order-line-cu.component';
+import { SaleOrderPromotionDialogComponent } from './sale-order-promotion-dialog/sale-order-promotion-dialog.component';
+import { SaleOrderPromotionService } from './sale-order-promotion.service';
+import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-program.service';
 
 @NgModule({
   declarations: [
@@ -64,6 +68,8 @@ import { SaleOrderProductRequestDialogComponent } from './sale-order-product-req
     SaleOrderDotkhamTeethPopoverComponent,
     SaleOrderProductRequestListComponent,
     SaleOrderProductRequestDialogComponent,
+    SaleOrderLineCuComponent,
+    SaleOrderPromotionDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -75,7 +81,7 @@ import { SaleOrderProductRequestDialogComponent } from './sale-order-product-req
     SharedModule,
     NgbModule
   ],
-  providers: [],
+  providers: [SaleOrderPromotionService,SaleCouponProgramService],
   exports: [
     SaleOrderLineDiscountPopoverComponent,
     SaleOrderLineInfoPopoverComponent,
@@ -93,7 +99,8 @@ import { SaleOrderProductRequestDialogComponent } from './sale-order-product-req
     SaleOrderPaymentDialogComponent,
     TreatmentProcessServiceDialogComponent,
     SaleOrdersDotkhamCuComponent,
-    SaleOrderProductRequestDialogComponent
+    SaleOrderProductRequestDialogComponent,
+    SaleOrderPromotionDialogComponent
   ]
 })
 export class SaleOrdersModule { }

@@ -50,7 +50,8 @@ import { ToaThuocLinesSaveCuFormComponent } from 'src/app/toa-thuocs/toa-thuoc-l
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { EmployeePaged } from 'src/app/employees/employee';
-import { ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { SaleOrderPromotionDialogComponent } from '../sale-order-promotion-dialog/sale-order-promotion-dialog.component';
 
 declare var $: any;
 
@@ -74,7 +75,6 @@ declare var $: any;
 
 export class SaleOrderCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
-  formGroupInfo: FormGroup;
   loading = false;
   saleOrderId: string;
   partnerId: string;
@@ -82,8 +82,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   filteredUsers: UserSimple[];
   filteredPricelists: ProductPriceListBasic[];
   discountDefault: DiscountDefault;
-  filteredToothCategories: any[];
-  initialListTeeths: any[];
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -100,16 +98,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   saleOrderLine: any;
   payments: AccountPaymentBasic[] = [];
   paymentsInfo: PaymentInfoContent[] = [];
-  filteredEmployees: any[] = [];
-  initialListEmployees: any = [];
+  
   searchCardBarcode: string;
-  hamList: { [key: string]: {} };
-  teethSelected: any[] = [];
   listTeeths: any[] = [];
   type: string;
   submitted = false;
   amountAdvanceBalance: number = 0;
-  public selectedLine: any;
+  selectedIndex = -1;
+  defaultToothCate: ToothCategoryBasic;
 
   constructor(
     private fb: FormBuilder,
@@ -125,12 +121,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private cardCardService: CardCardService,
     private pricelistService: PriceListService,
     private errorService: AppSharedShowErrorService,
-    private employeeService: EmployeeService,
     private toaThuocService: ToaThuocService,
     private printService: PrintService,
     private accountPaymentOdataService: AccountPaymentsOdataService,
     private toothCategoryService: ToothCategoryService,
-    private ToothService: ToothService
+    
   ) {
   }
 
@@ -147,46 +142,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       pricelist: [null],
     });
     this.routeActive();
-    this.loadEmployees();
     this.getAccountPaymentReconcicles();
-    this.loadToothCategories();
-    this.loadTeethList();
+    this.loadToothCateDefault();
   }
 
   get f() {
     return this.formGroup.controls;
-  }
-
-  loadEmployees() {
-    const state = {
-      filter: {
-        logic: 'and',
-        filters: [
-          { field: 'IsDoctor ', operator: 'eq', value: true },
-          { field: 'Active ', operator: 'eq', value: true }
-        ]
-      }
-    };
-    const options = {
-      select: 'Id,Name'
-    };
-
-    var val = new EmployeePaged();
-    val.limit = 0;
-    val.offset = 0;
-    val.isDoctor = true;
-    val.active = true;
-
-    this.employeeService.getEmployeeSimpleList(val).subscribe(
-      (result: any[]) => {
-        this.initialListEmployees = result;
-        this.filteredEmployees = this.initialListEmployees.slice(0, 20);
-      }
-    );
-  }
-
-  onEmployeeFilter(value) {
-    this.filteredEmployees = this.initialListEmployees.filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1).slice(0, 20);
   }
 
   routeActive() {
@@ -209,10 +170,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
             if (result.User) {
               this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
-            }
-
-            if (result.Employee) {
-              this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.employee], 'id');
             }
 
             if (result.Partner) {
@@ -275,139 +232,37 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return control ? control.value : null;
   }
 
-  createFormInfo(data: any) {
-    this.formGroupInfo = this.fb.group({
-      toothCategory: null,
-      toothCategoryId: null,
-      diagnostic: null,
-      employee: null,
-      employeeId: null,
-      assistant: null,
-      assistantId: null,
-      counselor: null,
-      counselorId: null
-    });
-    this.reLoadLineInfo(data);
+  loadToothCateDefault() {
+    this.toothCategoryService.getDefaultCategory().subscribe(
+      res=> {
+        this.defaultToothCate = res;
+      }
+    );
   }
 
-  reLoadLineInfo(info) {
-    this.loadToothCategoriesInfo(info);
-    if (info.toothCategory) {
-      this.loadTeethMap(info.toothCategory);
-      this.formGroupInfo.get('toothCategory').patchValue(info.toothCategory);
-    }
-    if (info.diagnostic) {
-      this.formGroupInfo.get('diagnostic').patchValue(info.diagnostic);
-    }
-
-    if (info.employee) {
-      this.formGroupInfo.get('employee').patchValue(info.employee);
-    }
-
-    if (info.assistant) {
-      this.formGroupInfo.get('assistant').patchValue(info.assistant);
-    }
-
-    if (info.counselor) {
-      this.formGroupInfo.get('counselor').patchValue(info.counselor);
-    }
-
-    if (info.teeth) {
-      this.teethSelected = Object.assign([], info.teeth);
-    }
-  }
-
-  updateLineInfo(lineControl) {
-    var line = this.formGroupInfo.value;
-    line.teeth = this.teethSelected;
-    line.assistant = line.assistant;
+  
+  updateLineInfo(line,lineControl) {
+    line.toothCategoryId = line.toothCategory.id;
     line.assistantId = line.assistant ? line.assistant.id : null;
-    line.employee = line.employee;
     line.employeeId = line.employee ? line.employee.id : null;
-    line.productUOMQty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
-    line.counselor = line.counselor;
+    // line.productUOMQty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
     line.counselorId = line.counselor ? line.counselor.id : null;
     lineControl.patchValue(line);
+
     lineControl.get('teeth').clear();
     line.teeth.forEach(teeth => {
       let g = this.fb.group(teeth);
       lineControl.get('teeth').push(g);
     });
-    this.onChangeQuantity(lineControl);
-  }
 
-  loadTeethMap(categ: any) {
-    const result = this.initialListTeeths.filter(x => x.categoryId === categ.id);
-    this.processTeeth(result);
-  }
-
-  processTeeth(teeth: any[]) {
-    this.hamList = {
-      '0_up': { '0_right': [], '1_left': [] },
-      '1_down': { '0_right': [], '1_left': [] }
-    };
-
-    for (var i = 0; i < teeth.length; i++) {
-      var tooth = teeth[i];
-      if (tooth.position === '1_left') {
-        this.hamList[tooth.viTriHam][tooth.position].push(tooth);
-      } else {
-        this.hamList[tooth.viTriHam][tooth.position].unshift(tooth);
-      }
-    }
-  }
-
-  onSelected(tooth: ToothDisplay) {
-    if (!this.isEditSate()) {
-      return;
-    }
-    if (this.isSelected(tooth)) {
-      var index = this.getSelectedIndex(tooth);
-      this.teethSelected.splice(index, 1);
-    } else {
-      this.teethSelected.push(tooth);
-    }
-  }
-
-  isSelected(tooth: any) {
-    for (var i = 0; i < this.teethSelected.length; i++) {
-      if (this.teethSelected[i].id === tooth.id) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  getSelectedIndex(tooth: any) {
-    for (var i = 0; i < this.teethSelected.length; i++) {
-      if (this.teethSelected[i].id === tooth.id) {
-        return i;
-      }
-    }
-
-    return null;
-  }
-
-  get toothCategoryControl() {
-    return this.formGroupInfo.get('toothCategory');
-  }
-
-  get diagnosticControl() {
-    return this.formGroupInfo.get('diagnostic');
+    lineControl.updateValueAndValidity();
+    // this.onChangeQuantity(lineControl);
+    this.computeAmountTotal();
   }
 
   get cardValue() {
     return this.formGroup.get('card').value;
   }
-
-  onChangeToothCategory(value: any) {
-    if (value.id) {
-      this.teethSelected = [];
-      this.loadTeethMap(value);
-      this.formGroupInfo.get('toothCategory').setValue(value);
-    }
-  }
-
 
   searchCard() {
     var barcode = this.searchCardBarcode;
@@ -1001,10 +856,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-        if (result.employee) {
-          this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.employee], 'id');
-        }
-
         if (result.partner) {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
         }
@@ -1043,7 +894,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   get orderLines() {
-    return this.formGroup.get('orderLines') as FormArray;
+    return this.getFormControl('orderLines') as FormArray;
   }
 
   //Mở popup thêm dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
@@ -1083,6 +934,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   addLine(val) {
+    if(this.selectedIndex != -1) {
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để thêm dịch vụ khác');
+      return;
+    }
     // this.saleOrderLine = event;
     var value = {
       amountPaid: 0,
@@ -1096,7 +951,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       assistant: null,
       assistantId: '',
       name: val.name,
-      priceSubTotal: 0,
+      priceSubTotal: val.listPrice * 1,
       priceUnit: val.listPrice,
       productId: val.id,
       product: {
@@ -1106,51 +961,22 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       productUOMQty: 1,
       state: 'draft',
       teeth: this.fb.array([]),
-      toothCategory: null,
-      toothCategoryId: '',
+      toothCategory: this.defaultToothCate,
+      toothCategoryId: this.defaultToothCate.id,
       counselor : null,
-      counselorId : null
+      counselorId : null,
+      toothType: 'manual',
+      isActive: true,
+      amountPromotionToOrder: 0,
+      amountPromotionToOrderLine: 0
     };
     var res = this.fb.group(value);
    
     this.orderLines.push(res);
-    this.getPriceSubTotal();
     this.orderLines.markAsDirty();
     this.computeAmountTotal();
  
     this.saleOrderLine = null;
-  }
-
-  updateTeeth(line, lineControl) {
-    line.productUOMQty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
-    lineControl.patchValue(line);
-    lineControl.get('teeth').clear();
-    line.Teeth.forEach(teeth => {
-      let g = this.fb.group(teeth);
-      lineControl.get('teeth').push(g);
-    });
-    this.onChangeQuantity(lineControl);
-  }
-
-  getPriceSubTotal() {
-    this.orderLines.controls.forEach(line => {
-      var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
-      var discountFixedValue = line.get('discountFixed') ? line.get('discountFixed').value : 0;
-      var discountNumber = line.get('discount') ? line.get('discount').value : 0;
-      var getquanTity = line.get('productUOMQty') ? line.get('productUOMQty').value : 1;
-      var getamountPaid = line.get('amountPaid') ? line.get('amountPaid').value : 0;
-      var priceUnit = line.get('priceUnit') ? line.get('priceUnit').value : 0;
-      var price = priceUnit * getquanTity;
-
-      var subtotal = discountType == 'percentage' ? price * (1 - discountNumber / 100) :
-        Math.max(0, price - discountFixedValue);
-      line.get('priceSubTotal').setValue(subtotal);
-      var getResidual = subtotal - getamountPaid;
-      if (line.get('state').value != "draft") {
-        line.get('amountResidual').setValue(getResidual);
-      }
-
-    });
 
   }
 
@@ -1212,33 +1038,37 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  get getAmountTotal() {
-    return this.formGroup.get('amountTotal').value;
+  getFormControl(value) {
+    return this.formGroup.get(value);
   }
 
-  get getAmountTotalDiscount() {
-    if (this.saleOrder.orderLines) {
-      const val = this.saleOrder.orderLines.find(x => x.isRewardLine === true);
-      return val ? val.priceTotal : 0;
-    }
-    return 0;
+  get getAmountTotal() {
+    return this.getFormControl('amountTotal').value;
   }
+
+  // get getAmountTotalDiscount() {
+  //   if (this.saleOrder.orderLines) {
+  //     const val = this.saleOrder.orderLines.find(x => x.isRewardLine === true);
+  //     return val ? val.priceTotal : 0;
+  //   }
+  //   return 0;
+  // }
 
   get getAmountPaidTotal() {
-    return this.saleOrder.paidTotal;
+    return this.getFormControl('paidTotal').value;
   }
 
-  get getState() {
-    return this.formGroup.get('state').value;
-  }
+  // get getState() {
+  //   return this.formGroup.get('state').value;
+  // }
 
   get getResidual() {
-    return this.formGroup.get('residual').value;
+    return this.getFormControl('residual').value;
   }
 
-  get getPartner() {
-    return this.formGroup.get('partner').value;
-  }
+  // get getPartner() {
+  //   return this.formGroup.get('partner').value;
+  // }
 
   computeAmountTotal() {
     let total = 0;
@@ -1330,26 +1160,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  showLaboList(id?: string) {
-    const modalRef = this.modalService.open(
-      SaleOrderLineLaboOrdersDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' }
-    );
-
-    modalRef.componentInstance.title = 'Danh sách phiếu labo';
-    modalRef.componentInstance.saleOrderLineId = id;
-    modalRef.result.then((val) => {
-    }, er => { });
-  }
-
-  onChangeQuantity(line: FormGroup) {
-    this.getPriceSubTotal();
-    this.computeAmountTotal();
-
-  }
-
   onChangeDiscountFixed(line: FormGroup) {
 
-    this.getPriceSubTotal();
+    // this.getPriceSubTotal();
     this.computeAmountTotal();
   }
 
@@ -1363,7 +1176,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
     line.patchValue(line.value);
 
-    this.getPriceSubTotal();
+    // this.getPriceSubTotal();
     this.computeAmountTotal();
   }
 
@@ -1374,34 +1187,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       res.value.discountFixed = 0;
       res.patchValue(line.value);
     }
-    this.getPriceSubTotal();
+    // this.getPriceSubTotal();
     this.computeAmountTotal();
-  }
-
-  loadToothCategories() {
-    this.toothCategoryService.getAll().subscribe(
-      (result: any[]) => {
-        this.filteredToothCategories = result;
-      }
-    );
-  }
-
-  loadToothCategoriesInfo(info) {
-    if (info.ToothCategory == null && this.filteredToothCategories.length > 0) {
-      const cate = this.filteredToothCategories.find(x => x.sequence === 1);
-      this.formGroupInfo.get('toothCategory').patchValue(cate);
-      this.onChangeToothCategory(cate);
-
-    }
-  }
-
-  loadTeethList() {
-    var val = new ToothFilter();
-    this.ToothService.getAllBasic(val).subscribe(
-      (result: any[]) => {
-        this.initialListTeeths = result;
-      }
-    );
   }
 
   notify(type, content) {
@@ -1451,7 +1238,34 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   isEditSate() {
-    return ['draft', 'sale'].indexOf(this.getState) !== -1
+    return ['draft', 'sale'].indexOf(this.getFormControl('state').value) !== -1
   }
+
+  getAmount() {
+    return (this.orderLines.value as any[]).reduce((total, cur)=> {
+      return total + cur.priceSubTotal;
+    },0);
+  }
+
+  getTotalDiscount() {
+    return (this.orderLines.value as any[]).reduce((total, cur)=> {
+      return total + cur.amountPromotionToOrder + cur.amountPromotionToOrderLine;
+    },0);
+  }
+
+  onDeleteLine(index) {
+    this.orderLines.removeAt(index);
+    this.computeAmountTotal();
+  }
+
+  onOpenSaleOrderPromotion() {
+    let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.salerOrderId = this.saleOrderId;
+    modalRef.result.then(() => {
+      this.loadRecord();
+    }, () => {
+    });
+  }
+ 
 }
 

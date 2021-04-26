@@ -1,11 +1,16 @@
 <div>
-    <input #searchInput placeholder="Tìm kiếm và thêm dịch vụ [F2]" id="typeahead-template" [(ngModel)]="model" type="text" class="form-control input-search" (selectItem)="onSelectValue($event, searchInput)" [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter"
-    />
+    <div class="position-relative">
+        <input #searchInput placeholder="Tìm kiếm và thêm dịch vụ [F2]" id="typeahead-template" [(ngModel)]="model" type="text" class="form-control input-search" (selectItem)="onSelectValue($event, searchInput)" [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter"
+        />
+        <span class="fas fa-search search-icon"></span>
+    </div>
 
-    <ng-template #rt let-r="result" let-t="term">
-        <div class="d-flex px-2">
-            <ngb-highlight class="text-wrap text-break mr-2" [result]="r.name" [term]="t"></ngb-highlight>
-            <label class=" ml-auto  text-wrap">{{r.listPrice | number}}</label>
-        </div>
-    </ng-template>
+    <div class="position-relative">
+        <ng-template #rt let-r="result" let-t="term">
+            <div class="d-flex px-2">
+                <ngb-highlight class="text-wrap text-break mr-2" [result]="r.name" [term]="t"></ngb-highlight>
+                <label class=" ml-auto  text-wrap">{{r.listPrice | number}}</label>
+            </div>
+        </ng-template>
+    </div>
 </div>

@@ -58,7 +58,7 @@
 .b-sticky-left {
     position: sticky;
     left: 0;
-    border: 1px solid #dee2e6;
+    /* border: 1px solid #dee2e6; */
     z-index: 3;
     background-color: #f9f9f9;
 }
@@ -67,7 +67,7 @@
     position: sticky;
     right: 0;
     background-color: #f9f9f9;
-    border: 1px solid #dee2e6;
+    /* border: 1px solid #dee2e6; */
     z-index: 3;
 }
 
@@ -79,19 +79,12 @@
     cursor: pointer;
 }
 
-.tr-line-info td {
-    border-right: 1px solid #dee2e6;
-    border-top: none;
-    border-bottom: 1px solid #dee2e6;
-}
-
 .tooth-item-collapsed.selected {
     background-color: #5095f0;
     color: #fff;
 }
 
 .teeth-map td {
-    border: none !important;
     border-left: none !important;
 }
 
@@ -99,21 +92,12 @@
     padding: 3px !important;
 }
 
-.card {
-    min-width: 200px;
-    border-radius: 0;
-}
-
-.card-body {
-    padding: 2px;
-}
-
 .text-sale {
     color: rgb(123, 191, 247);
 }
 
 .text-advance {
-    color:aqua;
+    color: aqua;
 }
 
 .tbl-right {
@@ -123,4 +107,12 @@
 .tab-pane {
     height: 100%;
     overflow: auto;
+}
+
+.bg-primary th {
+    background-color: hsl(211deg 100% 50%) !important;
+}
+
+.btn:hover {
+    cursor: pointer;
 }

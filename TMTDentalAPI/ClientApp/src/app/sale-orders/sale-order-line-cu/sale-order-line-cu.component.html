@@ -1,0 +1,216 @@
+<ng-container [formGroup]="formGroupInfo">
+
+    <div class="div-table w-100" [ngClass]="{'mt-3': currentIndex > 0}">
+        <div class="div-row">
+            <!-- name -->
+            <div style="width: 200px;" class="div-cell">
+                <ng-container *ngIf="selectedIndex != currentIndex; else elseTemplateName">
+                    {{line.name}}
+                </ng-container>
+                <ng-template #elseTemplateName>
+                    {{formInfoControl('name').value}}
+                </ng-template>
+            </div>
+            <!-- giá -->
+            <div style="width: 130px;" class="div-cell text-right">
+                <div>
+                    <ng-container *ngIf="selectedIndex != currentIndex; else elseTemplatePriceUnitPro">
+                        {{getPriceUnitLinePromotion(line) | number}}
+                    </ng-container>
+                    <ng-template #elseTemplatePriceUnitPro>
+                        {{getPriceUnitLinePromotion(formGroupInfo.value) | number}}
+                    </ng-template>
+                </div>
+                <div>
+                    <ng-container *ngIf="selectedIndex != currentIndex; else elseTemplatePriceUnit">
+                        <span class="font-weight-lighter">
+                                Giá gốc: {{line.priceUnit | number}}
+                            </span>
+                    </ng-container>
+                    <ng-template #elseTemplatePriceUnit>
+                        <span class="font-weight-lighter"> 
+                                Giá gốc: {{formInfoControl('priceUnit').value | number}}
+                                <i _ngcontent-sgd-c6="" class="far fa-edit icon" (click)="editPriceUnit()"
+                                [ngbPopover]="popContent" [popoverTitle]="popTitle" [autoClose]="'outside'"
+                                ></i>
+                            </span>
+                    </ng-template>
+
+                    <ng-template #popContent let-greeting="greeting">
+                        <kendo-numerictextbox style="width:100%;" [format]="'n0'" [spinners]="false" formControlName="priceUnit" (change)="onChangeQuantity()" (keyup)="onChangeQuantity()">
+                        </kendo-numerictextbox>
+                    </ng-template>
+                    <ng-template #popTitle let-language="language">Giá gốc</ng-template>
+                </div>
+            </div>
+            <!-- số lượng -->
+            <div style="width: 100px;" class="div-cell text-right">
+                <ng-container *ngIf="selectedIndex != currentIndex; else elseTemplateQty">
+                    {{line.productUOMQty | number}}
+                </ng-container>
+                <ng-template #elseTemplateQty>
+                    <input (change)="onChangeQuantity()" (keyup)="onChangeQuantity()" type="number" *ngIf="selectedIndex == currentIndex" min="1" style="width:100%;" class="form-control" formControlName="productUOMQty">
+                </ng-template>
+            </div>
+            <!-- thành tiền -->
+            <div style="width: 100px;" class="div-cell text-right">
+                <div>
+                    <ng-container *ngIf="selectedIndex != currentIndex; else elseTemplatePriceSub">
+                        {{line.priceSubTotal | number}}
+                    </ng-container>
+                    <ng-template #elseTemplatePriceSub>
+                        {{formInfoControl('priceSubTotal').value | number}}
+                    </ng-template>
+                </div>
+                <div>
+                    <ng-container *ngIf="selectedIndex != currentIndex; else elseTemplateSubTotal">
+                        <span class="font-weight-lighter"> Giá gốc: {{getInitialSubTotalLine(line) | number}}</span>
+                    </ng-container>
+                    <ng-template #elseTemplateSubTotal>
+                        <span class="font-weight-lighter">
+                                Giá gốc: {{getInitialSubTotalLine(formGroupInfo.value) | number}}
+                            </span>
+                    </ng-template>
+                </div>
+            </div>
+            <!-- thanh toán -->
+            <div style="width: 100px;" class="div-cell text-right">
+                <ng-container *ngIf="selectedIndex != currentIndex; else elseTemplateAmountPaid">
+                    {{line.amountPaid | number}}
+                </ng-container>
+                <ng-template #elseTemplateAmountPaid>
+                    {{ formInfoControl('amountPaid').value | number }}
+                </ng-template>
+            </div>
+            <!-- còn lại -->
+            <div style="width: 100px;" class="div-cell text-right">
+                <ng-container *ngIf="selectedIndex != currentIndex; else elseTemplateAmountRes">
+                    {{line.amountResidual | number}}
+                </ng-container>
+                <ng-template #elseTemplateAmountRes>
+                    {{ formInfoControl('amountResidual').value | number }}
+                </ng-template>
+            </div>
+            <!-- thao tác -->
+            <div style="width: 100px;" class="div-cell text-center">
+                <button *ngIf="selectedIndex != currentIndex" type="button" class="btn btn-icon btn-sm btn-primary" title="Sửa dịch vụ" (click)="editLine()">
+                            <i _ngcontent-sgd-c6="" class="far fa-edit"></i>
+                        </button>
+                <button type="button" class="btn btn-icon btn-sm btn-light" title="Quản lý phiếu labo" (click)="showLaboList(line.id)">
+                            <i class="fas fa-tooth"></i>
+                        </button>
+                <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteLine()">
+                            <span class="k-icon k-i-delete"></span>
+                        </button>
+            </div>
+        </div>
+    </div>
+    <!-- thông tin bổ sung -->
+    <div class="border-right border-left border-bottom p-2">
+        <label class="font-weight-600">THÔNG TIN BỔ SUNG</label>
+        <!-- bác sĩ phụ tá -->
+        <div class="form-group row mx-0">
+            <div class="col-sm-4 mt-3">
+                <div class="row">
+                    <label class="col-sm-4 col-form-label font-weight-600">
+                                        Bác sĩ
+                                    </label>
+                    <div class="col-sm-8">
+                        <span class="form-control-plaintext" *ngIf="selectedIndex != currentIndex">{{line.employee?.name}}</span>
+                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="selectedIndex == currentIndex" style="width:100%;" [data]="initialListEmployees" [textField]="'name'" #employeeCbx formControlName="employee" [valueField]="'id'">
+                        </kendo-combobox>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 mt-3">
+                <div class="row">
+                    <label class="col-sm-4 col-form-label font-weight-600">
+                                        Phụ tá
+                                    </label>
+                    <div class="col-sm-8">
+                        <span class="form-control-plaintext" *ngIf="selectedIndex != currentIndex">{{line.assistant?.name}}</span>
+                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="selectedIndex == currentIndex" style="width:100%;" [data]="initialListEmployees" [textField]="'name'" #assistantCbx formControlName="assistant" [valueField]="'id'">
+                        </kendo-combobox>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-4 mt-3">
+                <div class="row">
+                    <label class="col-sm-4 col-form-label font-weight-600">
+                                        Người tư vấn
+                                    </label>
+                    <div class="col-sm-8">
+                        <span class="form-control-plaintext" *ngIf="selectedIndex != currentIndex">{{line.counselor?.name}}</span>
+                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="selectedIndex == currentIndex" style="width:100%;" [data]="initialListEmployees" [textField]="'name'" #counselorCbx formControlName="counselor" [valueField]="'id'">
+                        </kendo-combobox>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- loại răng -->
+        <div class="d-inline-flex w-100 mb-2">
+            <div *ngFor="let item of filteredToothCategories; let cateIndex = index" class="form-check form-check-inline" style="vertical-align: -webkit-baseline-middle;">
+                <input [attr.disabled]=" selectedIndex != currentIndex ? true : null" [checked]=" item.id === getToothCateLine().id" (change)="onChangeToothCategory(item)" class="btn-check hidden" type="radio" [name]="'toothCategory'" formControlName="toothCategory"
+                    [id]="'toothCategory' + cateIndex + currentIndex">
+                <label [ngClass]="{'disabled': selectedIndex != currentIndex}" [class]="item.id === getToothCateLine().id ? 'btn btn-primary':'btn btn-outline-primary'" class="btn" [for]="'toothCategory' + cateIndex + currentIndex">{{item.name}}</label>
+            </div>
+        </div>
+        <div class="teeth-map mb-2 row mx-0">
+            <!-- loại răng chọn -->
+            <div class="col-sm-3 row">
+                <ng-container *ngFor="let item of toothTypeDict; let toothTypeIndex = index">
+                    <div class="col-6 pl-0">
+                        <input (change)="onChangeToothTypeLine(item.value)" [attr.disabled]="selectedIndex != currentIndex ? true : null" [value]='item.value' [checked]=" item.value === getToothTypeLine()" class="btn-check hidden" type="radio" name="toothType" formControlName="toothType"
+                            [id]="'toothType' + toothTypeIndex + currentIndex">
+                        <label [ngClass]="{'disabled':  selectedIndex != currentIndex}" [class]="item.value === getToothTypeLine() ? 'btn btn-primary w-100':'btn btn-outline-primary w-100'" class="btn" [for]="'toothType' + toothTypeIndex + currentIndex">{{item.name}}</label>
+                    </div>
+                </ng-container>
+            </div>
+            <!-- răng -->
+            <div class="col-sm-9">
+                <table class="table table-sm">
+                    <tr *ngFor="let ham of hamList | keyvalue">
+                        <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
+                            <div class="tooth-wrapper">
+                                <button [attr.disabled]="selectedIndex != currentIndex || formInfoControl('toothType').value != 'manual' ? true : null" (click)="onSelected(rang)" class="btn tooth-item-collapsed" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                                            {{rang.name}}
+                                        </button>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- chuẩn đoán -->
+        <div class="form-group row mx-0">
+            <label class="col-sm-2 col-form-label font-weight-600">
+                                Chuẩn đoán
+                            </label>
+            <div class="col-sm-10">
+                <span *ngIf="selectedIndex != currentIndex">{{line.diagnostic}}</span>
+                <textarea *ngIf="selectedIndex == currentIndex" formControlName="diagnostic" class="form-control"></textarea>
+            </div>
+        </div>
+        <!-- ưu đãi -->
+        <div class="border col-4 py-2">
+            <label class="d-flex justify-content-between mb-2">
+                <label>Ưu đãi phiếu điều trị</label>
+            <label>{{formInfoControl('amountPromotionToOrder').value | number}}</label>
+            </label>
+            <label class="d-flex justify-content-between mb-0">
+                <label>Ưu đãi phiếu điều trị</label>
+            <label>{{formInfoControl('amountPromotionToOrderLine').value | number}}</label>
+            </label>
+        </div>
+        <div *ngIf="this.selectedIndex == currentIndex" class="popover-footer d-flex justify-content-end mr-3">
+            <button (click)="selectedIndex = -1;updateLineInfo()" class="btn btn-sm btn-primary">Cập nhật
+                        </button>
+            <button (click)="selectedIndex = -1" class="btn btn-sm btn-danger ml-2">Hủy</button>
+        </div>
+
+    </div>
+
+    <!-- thong tin bo sung -->
+
+</ng-container>
