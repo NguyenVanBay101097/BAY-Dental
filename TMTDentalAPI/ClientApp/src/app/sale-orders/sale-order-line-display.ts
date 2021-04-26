@@ -26,4 +26,8 @@ export class SaleOrderLineDisplay {
     amountPaid: number;
     amountResidual: number;
     id?: string;
+    priceSubTotal: number;
+    assistant: EmployeeSimple;
+    counselor: EmployeeSimple;
+    toothType: string;
 }

@@ -1,0 +1,69 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <!-- giảm tiền -->
+                    <div>
+                        <label for="">Giảm thành tiền</label>
+                        <div class="d-flex">
+                            <kendo-numerictextbox *ngIf="form.discountType == this.discountTypeDict['VNĐ']" [min]="0" [autoCorrect]="true" [(ngModel)]="form.discountFixed" style="width:50%" [format]="'n0'" [spinners]="false" (change)="onChangeDiscount($event)">
+                            </kendo-numerictextbox>
+                            <kendo-numerictextbox *ngIf="form.discountType == this.discountTypeDict['%']" [min]="0" [autoCorrect]="true" [max]="100" [(ngModel)]="form.discountPercent" style="width:50%" [spinners]="false" (change)="onChangeDiscount($event)">
+                            </kendo-numerictextbox>
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label *ngFor="let item of  discountTypeDict| keyvalue; let i = index" [ngClass]="{'active': form.discountType == item.value}" class="btn btn-outline-primary mx-2">
+                                  <input (change)="onChangeDiscountType($event)" type="radio" [(ngModel)]="form.discountType" value="{{item.value}}" name="typeDiscount" [id]="item.value" checked> {{item.key}}
+                                </label>
+                            </div>
+                            <button (click)="applyDiscount()" class="btn btn-primary ml-auto">Áp dụng</button>
+                        </div>
+                    </div>
+                    <!-- mã thủ công -->
+                    <div>
+                        <label for="">Mã khuyến mãi/coupon</label>
+                        <div class="d-flex">
+                            <input [(ngModel)]="form.code" type="text" class="form-control">
+                            <button class="btn btn-primary ml-auto">Áp dụng</button>
+                        </div>
+                        <div>
+                            <p class="d-flex justify-content-between">
+                                <label for="">Chương trình 1</label>
+                                <button type="button" class="btn btn-icon btn-sm btn-light" (click)="onDelete()">
+                                <span class="k-icon k-i-delete"></span>
+                            </button>
+                            </p>
+                            <p class="d-flex justify-content-between">
+                                <label for="">Chương trình 1</label>
+                                <button type="button" class="btn btn-icon btn-sm btn-light" (click)="onDelete()">
+                                <span class="k-icon k-i-delete"></span>
+                            </button>
+                            </p>
+                        </div>
+                    </div>
+                    <!-- mã tự động -->
+                    <div>
+                        <label for="">Danh sách khuyến mãi</label>
+                        <div>
+                            <p *ngFor="let item of autoPromotions" class="d-flex justify-content-between">
+                                <label for="">{{item.name}}</label>
+                                <button type="button" class="btn btn-primary" (click)="onDelete()">
+                                Chọn
+                            </button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="this.activeModal.dismiss()" accesskey="q">Đóng</button>
+</footer>

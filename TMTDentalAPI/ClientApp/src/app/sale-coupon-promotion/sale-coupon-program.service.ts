@@ -13,6 +13,8 @@ export class SaleCouponProgramPaged {
     programType: string;
     active: boolean;
     ids: string[];
+    discountApplyOn: string;
+    promoCodeUsage: string;
 }
 
 export class SaleCouponProgramBasic {

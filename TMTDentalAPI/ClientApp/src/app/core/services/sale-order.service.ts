@@ -206,4 +206,12 @@ export class SaleOrderService {
     getSaleOrderPaymentBySaleOrderId(id: string): Observable<RegisterSaleOrderPayment>{
         return this.http.get<RegisterSaleOrderPayment>(this.baseApi + this.apiUrl + '/' + id + '/GetSaleOrderPaymentBySaleOrderId');
     }
+
+    applyCouponOnOrder(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyCouponOnOrder', val);
+    }
+
+    applyDiscountOnOrder(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnOrder', val);
+    }
 }
