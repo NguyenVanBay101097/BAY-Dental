@@ -110,8 +110,12 @@ export class SmsManualDialogComponent implements OnInit {
 
     }
     this.smsComposerService.create(val).subscribe(
-      res => {
-        console.log(res);
+      (res: any) => {
+        this.smsComposerService.actionSendSms(res.id).subscribe(
+          () => {
+
+          }
+        )
       }
     )
     console.log(val);

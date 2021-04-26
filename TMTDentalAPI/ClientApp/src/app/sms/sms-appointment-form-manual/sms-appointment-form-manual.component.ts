@@ -54,12 +54,7 @@ export class SmsAppointmentFormManualComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  onSend() {
-    // if (this.formGroup.invalid) { return; }
-    // var val = this.formGroup.value;
-    // val.partnerIds = this.selectedIds ? this.selectedIds : [];
-    // console.log(val);
-
+  onSend() { 
     var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
     modalRef.componentInstance.title = "Tạo tin gửi";
     modalRef.componentInstance.id = this.selectedIds ? this.selectedIds : [];

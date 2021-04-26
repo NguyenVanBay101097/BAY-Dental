@@ -37,5 +37,13 @@ namespace TMTDentalAPI.Controllers
             _unitOfWorkAsync.Commit();
             return Ok(entity);
         }
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> ActionSendSms(Guid id)
+        {
+            var composer = await _smsComposerService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            await _smsComposerService.ActionSendSms(composer);
+            return NoContent();
+        }
     }
 }
