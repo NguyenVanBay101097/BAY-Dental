@@ -38,9 +38,11 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       birthdayTemplate: [null, Validators.required],
-      isBirthdayAutomation: false
+      isBirthdayAutomation: false,
+      appointmentTemplateId: null,
+      isAppointmentAutomation: false
     })
-
+    this.loadDataFormApi();
     this.loadSmsTemplate();
 
     this.smsTemplateCbx.filterChange.asObservable().pipe(
@@ -51,6 +53,19 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
       this.filteredTemplate = result;
       this.smsTemplateCbx.loading = false;
     });
+  }
+
+  loadDataFormApi() {
+    this.smsConfigService.getConfigByCompany().subscribe(
+      (res: any) => {
+        if (res) {
+          this.id = res.id;
+          this.formGroup.patchValue(res);
+        } else {
+          this.id = null;
+        }
+      }
+    )
   }
 
   loadSmsTemplate() {

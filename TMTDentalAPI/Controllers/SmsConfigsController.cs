@@ -30,7 +30,10 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetDefault()
         {
-            var res = await _smsConfigService.SearchQuery().Include(x => x.AppointmentTemplate).Include(x => x.BirthdayTemplate).FirstOrDefaultAsync();
+            var res = await _smsConfigService.SearchQuery(x => x.CompanyId == CompanyId)
+                .Include(x => x.AppointmentTemplate)
+                .Include(x => x.BirthdayTemplate)
+                .FirstOrDefaultAsync();
             return Ok(_mapper.Map<SmsConfigBasic>(res));
         }
 
@@ -52,6 +55,7 @@ namespace TMTDentalAPI.Controllers
             if (entity == null || !ModelState.IsValid)
                 return NotFound();
             entity = _mapper.Map(val, entity);
+            entity.CompanyId = CompanyId;
             await _unitOfWorkAsync.BeginTransactionAsync();
             await _smsConfigService.UpdateAsync(entity);
             _unitOfWorkAsync.Commit();

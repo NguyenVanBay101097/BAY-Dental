@@ -32,9 +32,12 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       appointmentTemplate: [null, Validators.required],
-      isAppointmentAutomation: false
+      isAppointmentAutomation: false,
+      isBirthdayAutomation: false,
+      birthdayTemplateId: null
     })
 
+    this.loadDataFormApi();
     this.loadSmsTemplate();
 
     this.smsTemplateCbx.filterChange.asObservable().pipe(
@@ -47,11 +50,23 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     });
   }
 
+  loadDataFormApi() {
+    this.smsConfigService.getConfigByCompany().subscribe(
+      (res: any) => {
+        if (res) {
+          this.id = res.id;
+          this.formGroup.patchValue(res);
+        } else {
+          this.id = null;
+        }
+      }
+    )
+  }
+
   loadSmsTemplate() {
     this.searchSmsTemplate().subscribe(
       (res: any) => {
         this.filteredTemplate = res;
-        this.formGroup.get('appointmentTemplate').patchValue(res[0] ? res[0] : null)
       }
     )
   }
@@ -64,11 +79,19 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     if (this.formGroup.invalid) return;
     var val = this.formGroup.value;
     val.appointmentTemplateId = val.appointmentTemplate.id;
-    this.smsConfigService.create(val).subscribe(
-      res => {
-        console.log(res);
-      }
-    )
+    if (this.id) {
+      this.smsConfigService.update(this.id, val).subscribe(
+        res => {
+          console.log(res);
+        }
+      )
+    } else {
+      this.smsConfigService.create(val).subscribe(
+        res => {
+          console.log(res);
+        }
+      )
+    }
   }
 
   addTemplate() {
