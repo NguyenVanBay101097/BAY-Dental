@@ -407,7 +407,7 @@ namespace Infrastructure.Services
             var couponObj = GetService<ISaleCouponService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var order = await SearchQuery(x => x.Id == val.Id)
-             .Include(x => x.OrderLines).ThenInclude(x=>x.Promotions).Include("OrderLines.Product")
+             .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).Include("OrderLines.Product")
              .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
              .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
              .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
@@ -433,7 +433,7 @@ namespace Infrastructure.Services
                     }
                     else
                     {
-                        await _CreateRewardLine(order, program);                   
+                        await _CreateRewardLine(order, program);
                         await UpdateAsync(order);
                     }
                 }
@@ -453,7 +453,7 @@ namespace Infrastructure.Services
                         await _CreateRewardLine(order, coupon.Program);
 
                         order.AppliedCoupons.Add(coupon);
-                        _ComputeResidual(new List<SaleOrder>() { order });                     
+                        _ComputeResidual(new List<SaleOrder>() { order });
 
                         await UpdateAsync(order);
 
@@ -791,7 +791,7 @@ namespace Infrastructure.Services
                 applied_programs = applied_programs.Concat(new List<SaleCouponProgram>() { self.CodePromoProgram });
             var programObj = GetService<ISaleCouponProgramService>();
             return applied_programs.Where(x => programObj._IsGlobalDiscountProgram(x)).Any();
-        }      
+        }
 
         public IList<SaleOrderPromotion> _GetRewardValuesDiscount(SaleOrder self, SaleCouponProgram program)
         {
@@ -807,14 +807,14 @@ namespace Infrastructure.Services
 
             if (program.DiscountType == "fixed_amount")
             {
-             
+
                 var discountAmount = _GetRewardValuesDiscountFixedAmount(self, program);
                 var promotionLine = promotionObj.PreparePromotionToOrder(self, program, discountAmount);
-              
+
                 return new List<SaleOrderPromotion>() { promotionLine };
             }
 
-          
+
             var rewards = new List<SaleOrderPromotion>();
             var lines = _GetPaidOrderLines(self);
             if (program.DiscountApplyOn == "specific_products" || program.DiscountApplyOn == "on_order")
@@ -834,7 +834,7 @@ namespace Infrastructure.Services
                 {
                     var discount_line_amount = saleLineObj._GetRewardValuesDiscountPercentagePerLine(program, line);
                     if (discount_line_amount > 0)
-                        total_discount_amount += discount_line_amount; 
+                        total_discount_amount += discount_line_amount;
                 }
 
                 var promotionLine = promotionObj.PreparePromotionToOrder(self, program, total_discount_amount);
@@ -856,9 +856,9 @@ namespace Infrastructure.Services
                 orderLineObj.ComputeAmount(order.OrderLines);
                 _AmountAll(order);
             }
-                           
+
             await UpdateAsync(orders);
-        }  
+        }
 
         private decimal _GetRewardValuesDiscountFixedAmount(SaleOrder self, SaleCouponProgram program)
         {
@@ -1056,7 +1056,7 @@ namespace Infrastructure.Services
                     else
                     {
                         await _CreateRewardLine(order, program);
-                      
+
                         await UpdateAsync(order);
                     }
                 }
@@ -1341,6 +1341,7 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
                 .Include(x => x.DotKhams)
+                .Include(x => x.Promotions)
                 .ToListAsync();
 
             var states = new string[] { "draft", "cancel" };
@@ -1388,6 +1389,13 @@ namespace Infrastructure.Services
             var line_ids = self.SelectMany(x => x.OrderLines).Select(x => x.Id).ToList();
             var saleLineObj = GetService<ISaleOrderLineService>();
             await saleLineObj.Unlink(line_ids);
+
+
+            var promotionObj = GetService<ISaleOrderPromotionService>();
+            var promotionIds = await promotionObj.SearchQuery(x => ids.Contains(x.SaleOrderId.Value)).Select(x => x.Id).ToListAsync();
+            if (promotionIds.Any())
+                await promotionObj.RemovePromotion(promotionIds);
+
 
 
 

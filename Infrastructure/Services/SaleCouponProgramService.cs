@@ -36,6 +36,9 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.Active == val.Active));
             if (val.Ids != null)
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => val.Ids.Contains(x.Id)));
+            if (val.ProductId.HasValue)
+                spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.DiscountSpecificProducts.Any(s=>s.ProductId == val.ProductId.Value)));
+
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Sequence).ThenBy(s => s.RewardType));
             if (val.Limit > 0)

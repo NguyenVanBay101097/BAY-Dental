@@ -56,12 +56,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
         /// <summary>
         /// discount: giảm tiền
-        /// coupon_program : chương trình coupon
+        /// code_usage_program : chương trình sủ dụng mã
         /// promotion_program : chương trình khuyến mãi
         /// </summary>
         public string Type { get; set; }
 
-        public ICollection<SaleOrderPromotionDisplay> SaleOrderPromotionChilds { get; set; } = new List<SaleOrderPromotionDisplay>();
     }
 
     public class SaleOrderPromotionSave

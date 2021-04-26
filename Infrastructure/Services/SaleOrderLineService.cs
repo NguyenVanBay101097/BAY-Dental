@@ -423,7 +423,7 @@ namespace Infrastructure.Services
             var serviceCardObj = GetService<IServiceCardCardService>();
 
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).Include(x => x.SaleOrderLinePaymentRels)
-                .Include(x => x.Order).ToListAsync();
+                .Include(x => x.Order).Include(x => x.Promotions).ToListAsync();
 
 
             if (self.Any(x => x.State != "draft" && x.State != "cancel" && x.State != "sale"))
@@ -467,6 +467,12 @@ namespace Infrastructure.Services
                 await saleCardRelObj.DeleteAsync(card_rels_to_unlink);
 
                 await serviceCardObj._ComputeResidual(card_ids);
+
+                var promotionObj = GetService<ISaleOrderPromotionService>();
+                var promotionIds = await promotionObj.SearchQuery(x => ids.Contains(x.SaleOrderLineId.Value) && !x.ParentId.HasValue).Select(x => x.Id).ToListAsync();
+                if (promotionIds.Any())
+                    await promotionObj.RemovePromotion(promotionIds);
+
             }
 
             await DeleteAsync(self);
@@ -787,7 +793,7 @@ namespace Infrastructure.Services
         {
             var discount_amount = line.ProductUOMQty * (line.PriceUnit * (1 - line.Discount / 100)) *
                 ((program.DiscountPercentage ?? 0) / 100);
-            return discount_amount ;
+            return discount_amount;
         }
 
         private decimal _GetRewardValuesDiscountFixedAmount(SaleOrderLine self, SaleCouponProgram program)

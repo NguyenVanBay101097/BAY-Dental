@@ -34,6 +34,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool? Active { get; set; }
 
+        public Guid? ProductId { get; set; }
+
         public IEnumerable<Guid> Ids { get; set; }
     }
 }
