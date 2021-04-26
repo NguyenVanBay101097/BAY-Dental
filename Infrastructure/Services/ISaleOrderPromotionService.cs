@@ -10,7 +10,7 @@ namespace Infrastructure.Services
 {
     public interface ISaleOrderPromotionService : IBaseService<SaleOrderPromotion>
     {
-        Task<PagedResult2<SaleOrderPromotionDisplay>> GetPagedResultAsync(SaleOrderPromotionPaged val);
+        Task<PagedResult2<SaleOrderPromotionBasic>> GetPagedResultAsync(SaleOrderPromotionPaged val);
         Task RemovePromotion(IEnumerable<Guid> ids);
         SaleOrderPromotion PreparePromotionToOrder(SaleOrder self, SaleCouponProgram program, decimal discountAmount);
         SaleOrderPromotion PreparePromotionToOrderLine(SaleOrderLine self, SaleCouponProgram program, decimal discountAmount);

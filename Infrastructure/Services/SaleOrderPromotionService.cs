@@ -23,7 +23,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<PagedResult2<SaleOrderPromotionDisplay>> GetPagedResultAsync(SaleOrderPromotionPaged val)
+        public async Task<PagedResult2<SaleOrderPromotionBasic>> GetPagedResultAsync(SaleOrderPromotionPaged val)
         {
             var query = SearchQuery();
 
@@ -40,11 +40,11 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.Include(x => x.SaleOrderPromotionChilds).ToListAsync();
+            var items = await query.ToListAsync();
 
-            var paged = new PagedResult2<SaleOrderPromotionDisplay>(totalItems, val.Offset, val.Limit)
+            var paged = new PagedResult2<SaleOrderPromotionBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = _mapper.Map<IEnumerable<SaleOrderPromotionDisplay>>(items)
+                Items = _mapper.Map<IEnumerable<SaleOrderPromotionBasic>>(items)
             };
 
             return paged;

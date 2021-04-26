@@ -26,7 +26,17 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string Name { get; set; }
 
+        public Guid? ProductId { get; set; }
+        public ProductSimple Product { get; set; }
+
         public decimal Amount { get; set; }
+
+        /// <summary>
+        /// discount: giảm tiền
+        /// code_usage_program : chương trình sủ dụng mã
+        /// promotion_program : chương trình khuyến mãi
+        /// </summary>
+        public string Type { get; set; }
 
 
     }
