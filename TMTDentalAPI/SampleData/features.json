@@ -164,7 +164,6 @@
     "Functions": [
       {
         "Name": "Đơn thuốc",
-        "Permission": "Medicine.ToaThuoc",
         "Ops": [
           {
             "Name": "Xem",
@@ -186,7 +185,6 @@
       },
       {
         "Name": "Hóa Đơn thuốc",
-        "Permission": "Medicine.MedicineOrder",
         "Ops": [
           {
             "Name": "Xem",
@@ -274,7 +272,6 @@
       },
       {
         "Name": "Tiêu chí kiểm kho",
-        "Permission": "Stock.Criteria",
         "Ops": [
           {
             "Name": "Xem",
@@ -296,7 +293,6 @@
       },
       {
         "Name": "Kiểm kho",
-        "Permission": "Stock.Inventory",
         "Ops": [
           {
             "Name": "Xem",
