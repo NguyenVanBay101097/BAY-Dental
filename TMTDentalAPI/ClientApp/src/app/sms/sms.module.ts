@@ -17,11 +17,12 @@ import { SmsAppointmentFormAutomaticComponent } from './sms-appointment-form-aut
 import { SmsAppointmentFormManualComponent } from './sms-appointment-form-manual/sms-appointment-form-manual.component';
 import { SmsAppointmentFormComponent } from './sms-appointment-form/sms-appointment-form.component';
 import { SmsStatisticComponent } from './sms-statistic/sms-statistic.component';
+import { SmsManualDialogComponent } from './sms-manual-dialog/sms-manual-dialog.component';
 
 @NgModule({
   declarations: [SmsTemplateListComponent, SmsTemplateCrUpComponent, SmsTemplateContentComponent,
      SmsAccountSettingComponent, 
-      SmsBirthdayFormComponent, SmsBirthdayFormManualComponent, SmsBirthdayFormAutomaticComponent, SmsAppointmentFormAutomaticComponent, SmsAppointmentFormManualComponent, SmsAppointmentFormComponent, SmsStatisticComponent],
+      SmsBirthdayFormComponent, SmsBirthdayFormManualComponent, SmsBirthdayFormAutomaticComponent, SmsAppointmentFormAutomaticComponent, SmsAppointmentFormManualComponent, SmsAppointmentFormComponent, SmsStatisticComponent, SmsManualDialogComponent],
   imports: [
     CommonModule,
     SmsRoutingModule,
@@ -33,7 +34,8 @@ import { SmsStatisticComponent } from './sms-statistic/sms-statistic.component';
     NgbModule
   ],
   entryComponents: [
-    SmsTemplateCrUpComponent
+    SmsTemplateCrUpComponent,
+    SmsManualDialogComponent
   ]
 })
 export class SmsModule { }

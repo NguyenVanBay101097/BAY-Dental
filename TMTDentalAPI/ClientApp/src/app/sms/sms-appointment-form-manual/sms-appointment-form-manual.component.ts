@@ -1,14 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
-import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
-import { SmsTemplateService } from '../sms-template.service';
+import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 
 @Component({
   selector: 'app-sms-appointment-form-manual',
@@ -16,7 +12,7 @@ import { SmsTemplateService } from '../sms-template.service';
   styleUrls: ['./sms-appointment-form-manual.component.css']
 })
 export class SmsAppointmentFormManualComponent implements OnInit {
-  @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
+  // @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
 
   formGroup: FormGroup;
   filteredTemplate: any[];
@@ -29,37 +25,12 @@ export class SmsAppointmentFormManualComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private smsTemplateService: SmsTemplateService,
     private partnerService: PartnerService,
-    private fb: FormBuilder
 
   ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
-    this.loadSmsTemplate();
-    this.formGroup = this.fb.group({
-      date: [new Date(), Validators.required],
-      content: [null, Validators.required],
-      state: 'draft',
-    })
-
-    this.smsTemplateCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.smsTemplateCbx.loading = true)),
-      switchMap(value => this.searchSmsTemplate(value))
-    ).subscribe((result: any) => {
-      this.filteredTemplate = result;
-      this.smsTemplateCbx.loading = false;
-    });
-  }
-
-  addTemplate() {
-    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Tạo mẫu tin';
-    modalRef.result.then((val) => {
-      this.loadSmsTemplate();
-    })
   }
 
   loadDataFromApi() {
@@ -78,27 +49,24 @@ export class SmsAppointmentFormManualComponent implements OnInit {
       )
   }
 
-  loadSmsTemplate() {
-    this.searchSmsTemplate().subscribe(
-      (res: any) => {
-        this.filteredTemplate = res;
-        this.formGroup.get('content').patchValue(res[0] ? res[0] : null)
-      }
-    )
-  }
-
-  searchSmsTemplate(q?: string) {
-    return this.smsTemplateService.getAutoComplete(q);
-  }
   pageChange(event) {
     this.skip = event.skip;
     this.loadDataFromApi();
   }
 
   onSend() {
-    if (this.formGroup.invalid) { return; }
-    var val = this.formGroup.value;
-    val.partnerIds = this.selectedIds ? this.selectedIds : [];
-    console.log(val);
+    // if (this.formGroup.invalid) { return; }
+    // var val = this.formGroup.value;
+    // val.partnerIds = this.selectedIds ? this.selectedIds : [];
+    // console.log(val);
+
+    var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
+    modalRef.componentInstance.title = "Tạo tin gửi";
+    modalRef.componentInstance.id = this.selectedIds ? this.selectedIds : [];
+    modalRef.result.then(
+      result => {
+
+      }
+    )
   }
 }

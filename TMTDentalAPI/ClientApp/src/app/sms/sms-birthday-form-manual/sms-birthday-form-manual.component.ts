@@ -5,6 +5,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService } from '../sms-template.service';
 
@@ -15,11 +16,10 @@ import { SmsTemplateService } from '../sms-template.service';
 })
 export class SmsBirthdayFormManualComponent implements OnInit {
 
-  @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
+  // @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
   gridData: any;
   filteredSMSAccount: any[];
   filteredTemplate: any[];
-  formGroup: FormGroup;
   skip: number = 0;
   limit: number = 20;
   isRowSelected: any[];
@@ -31,25 +31,20 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     private partnerService: PartnerService,
     private smsTemplateService: SmsTemplateService,
     private modalService: NgbModal,
-    private fb: FormBuilder
   ) { }
 
   ngOnInit() {
-    this.loadSmsTemplate();
-    this.formGroup = this.fb.group({
-      date: [new Date(), Validators.required],
-      content: [null, Validators.required],
-      state: 'draft',
-    })
 
-    this.smsTemplateCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.smsTemplateCbx.loading = true)),
-      switchMap(value => this.searchSmsTemplate(value))
-    ).subscribe((result: any) => {
-      this.filteredTemplate = result;
-      this.smsTemplateCbx.loading = false;
-    });
+    // this.loadSmsTemplate();
+
+    // this.smsTemplateCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.smsTemplateCbx.loading = true)),
+    //   switchMap(value => this.searchSmsTemplate(value))
+    // ).subscribe((result: any) => {
+    //   this.filteredTemplate = result;
+    //   this.smsTemplateCbx.loading = false;
+    // });
 
     this.loadDataFromApi();
   }
@@ -71,26 +66,25 @@ export class SmsBirthdayFormManualComponent implements OnInit {
       )
   }
 
-  loadSmsTemplate() {
-    this.searchSmsTemplate().subscribe(
-      (res: any) => {
-        this.filteredTemplate = res;
-        this.formGroup.get('content').patchValue(res[0] ? res[0] : null)
-      }
-    )
-  }
+  // loadSmsTemplate() {
+  //   this.searchSmsTemplate().subscribe(
+  //     (res: any) => {
+  //       this.filteredTemplate = res;
+  //     }
+  //   )
+  // }
 
   searchSmsTemplate(q?: string) {
     return this.smsTemplateService.getAutoComplete(q);
   }
 
-  addTemplate() {
-    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Tạo mẫu tin';
-    modalRef.result.then((val) => {
-      this.loadSmsTemplate();
-    })
-  }
+  // addTemplate() {
+  //   const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+  //   modalRef.componentInstance.title = 'Tạo mẫu tin';
+  //   modalRef.result.then((val) => {
+  //     this.loadSmsTemplate();
+  //   })
+  // }
 
   pageChange(event) {
     this.skip = event.skip;
@@ -98,11 +92,20 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   }
 
   onSend() {
-    if (this.formGroup.invalid) { return; }
-    var val = this.formGroup.value;
-    val.partnerIds = this.selectedIds ? this.selectedIds : [];
-    console.log(val);
-    
+    // if (this.formGroup.invalid) { return; }
+    // var val = this.formGroup.value;
+    // val.partnerIds = this.selectedIds ? this.selectedIds : [];
+    // console.log(val);
+
+    var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
+    modalRef.componentInstance.title = "Tạo tin gửi";
+    modalRef.componentInstance.id = this.selectedIds ? this.selectedIds : [];
+    modalRef.result.then(
+      result => {
+
+      }
+    )
+
     // val.configSMSId = val.configSMS.id;
     // this.composeMessageService.create(val).subscribe(
     //   result => {

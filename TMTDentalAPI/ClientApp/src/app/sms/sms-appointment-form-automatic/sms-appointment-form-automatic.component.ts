@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
@@ -26,7 +27,8 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     private fb: FormBuilder,
     private modalService: NgbModal,
     private smsTemplateService: SmsTemplateService,
-    private smsConfigService: SmsConfigService
+    private smsConfigService: SmsConfigService,
+    private notificationService: NotificationService,
   ) { }
 
   ngOnInit() {
@@ -82,12 +84,14 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(
         res => {
+          this.notify('cập nhật thành công', true);
           console.log(res);
         }
       )
     } else {
       this.smsConfigService.create(val).subscribe(
         res => {
+          this.notify("thêm mới thành công", true);
           console.log(res);
         }
       )
@@ -100,6 +104,16 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     modalRef.result.then((val) => {
       this.loadSmsTemplate();
     })
+  }
+
+  notify(title, isSuccess = true) {
+    this.notificationService.show({
+      content: title,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: isSuccess ? 'success' : 'error', icon: true },
+    });
   }
 
 }
