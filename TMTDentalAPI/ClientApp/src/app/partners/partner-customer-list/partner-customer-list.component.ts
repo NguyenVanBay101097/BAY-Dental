@@ -87,6 +87,10 @@ export class PartnerCustomerListComponent implements OnInit {
     this.loadFilteredCategs();
   }
 
+  get canExport() {
+    return this.checkPermissionService.check('Basic.Partner.Export');
+  }
+
   updateFilter() {
     this.gridFilter = this.generateFilter();
   }
