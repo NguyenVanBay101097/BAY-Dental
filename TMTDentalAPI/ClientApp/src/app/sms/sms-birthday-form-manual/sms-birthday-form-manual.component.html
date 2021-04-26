@@ -1,4 +1,4 @@
-<form class="o_form_view h-100" [formGroup]="formGroup">
+<form class="o_form_view h-100">
     <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
         <div class="flex-0-0-auto">
             <div class="d-flex">
@@ -6,10 +6,10 @@
                     <button type="button" class="btn btn-primary btn-sm" (click)="onSend()">Gửi tin</button>
                 </div>
             </div>
-            <div class="o_group">
+            <!-- <div class="o_group">
                 <table class="o_group o_inner_group o_group_col_6">
                     <tbody>
-                        <!-- <tr>
+                         <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Đối tác gửi
@@ -19,7 +19,7 @@
                                 <kendo-combobox [data]="filteredSMSAccount" ngbAutofocus [textField]="'name'" formControlName="configSMS" [filterable]="true" #configSMSCbx [valueField]="'id'">
                                 </kendo-combobox>
                             </td>
-                        </tr> -->
+                        </tr> 
                         <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
@@ -27,14 +27,14 @@
                                 </label>
                             </td>
                             <td colspan="1" class="d-flex" style="width: 100%;">
-                                <kendo-combobox class="form-control" [data]="filteredTemplate" ngbAutofocus [textField]="'name'" formControlName="content" [filterable]="true" #smsTemplateCbx [valueField]="'id'">
+                                <kendo-combobox class="form-control" [data]="filteredTemplate" ngbAutofocus [textField]="'name'" [filterable]="true" #smsTemplateCbx [valueField]="'id'">
                                 </kendo-combobox>
                                 <a class="btn btn-sm btn-light" (click)="addTemplate()">
                                     <span class="k-icon k-i-plus"></span>
                                 </a>
                             </td>
                         </tr>
-                        <!-- <tr>
+                        <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Nội dung tin nhắn
@@ -43,11 +43,11 @@
                             <td colspan="1" style="width: 100%;">
                                 <textarea class="form-control" formControlName="content"></textarea>
                             </td>
-                        </tr> -->
+                        </tr>
 
                     </tbody>
                 </table>
-            </div>
+            </div> -->
         </div>
     </div>
 </form>
