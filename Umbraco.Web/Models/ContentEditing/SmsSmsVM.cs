@@ -12,6 +12,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Number { get; set; }
         public Partner Partner { get; set; }
         public string State { get; set; }
+        public DateTime? DateCreated { get; set; }
         public string ErrorCode { get; set; }
 
     }

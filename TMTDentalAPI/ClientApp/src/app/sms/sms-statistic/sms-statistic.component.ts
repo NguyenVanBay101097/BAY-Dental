@@ -53,7 +53,6 @@ export class SmsStatisticComponent implements OnInit {
         total: response.totalItems
       }))).subscribe(res => {
         this.gridData = res;
-        console.log(res);
       })
   }
 

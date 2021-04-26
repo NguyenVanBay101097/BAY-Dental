@@ -1,4 +1,4 @@
-import { Input } from '@angular/core';
+import { Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   templateUrl: './sms-template-content.component.html',
   styleUrls: ['./sms-template-content.component.css']
 })
-export class SmsTemplateContentComponent implements OnInit {
+export class SmsTemplateContentComponent implements OnInit, OnChanges {
 
   formGroup: FormGroup;
   @Input() template: any;
@@ -26,13 +26,16 @@ export class SmsTemplateContentComponent implements OnInit {
   constructor(
     private fb: FormBuilder
   ) { }
+  
+  ngOnChanges(changes: SimpleChanges): void {
+    this.ngOnInit();
+  }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       templateType: this.template.templateType,
       text: [this.template.text, Validators.required]
     });
-
   }
 
   get textControl() { return this.formGroup.get('text'); }

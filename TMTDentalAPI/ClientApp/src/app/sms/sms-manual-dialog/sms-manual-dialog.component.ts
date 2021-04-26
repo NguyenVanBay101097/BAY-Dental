@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ThemeService } from '@progress/kendo-angular-charts';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsComposerService } from '../sms-composer.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
@@ -33,7 +33,8 @@ export class SmsManualDialogComponent implements OnInit {
     private smsTemplateService: SmsTemplateService,
     private smsComposerService: SmsComposerService,
     private modalService: NgbModal,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -75,17 +76,17 @@ export class SmsManualDialogComponent implements OnInit {
   }
   get f() { return this.formGroup.controls; }
 
-  get bodyControl() { return this.formGroup.get('body'); }
-
   valueChange(val) {
     if (val) {
-      this.formGroup.controls['template'].setValue(val);
-      var body = JSON.parse(val.body);
-      this.formGroup.controls['body'].setValue(body[0].text);
+      this.template = JSON.parse(val.body);
     }
     else {
-      this.formGroup.controls['body'].setValue('');
+      this.template = {
+        templateType: 'text',
+        text: ''
+      }
     }
+    this.formGroup.controls['body'].setValue(this.template);
   }
 
   getLimitText() {
@@ -107,14 +108,22 @@ export class SmsManualDialogComponent implements OnInit {
     val.resModel = this.provider;
     if (val.template) {
       val.templateId = val.template.id;
-
     }
     this.smsComposerService.create(val).subscribe(
       res => {
-        console.log(res);
+        this.notify("gửi tin thành công", true);
+        this.activeModal.close(res);
       }
     )
-    console.log(val);
+  }
 
+  notify(title, isSuccess = true) {
+    this.notificationService.show({
+      content: title,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: isSuccess ? 'success' : 'error', icon: true },
+    });
   }
 }

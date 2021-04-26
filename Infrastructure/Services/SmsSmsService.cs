@@ -32,7 +32,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State.Equals(val.State));
             var totalItems = await query.CountAsync();
-            var items = await query.Include(x => x.Partner).Take(val.Limit).Skip(val.Offset).ToListAsync();
+            var items = await query.Include(x => x.Partner).Skip(val.Offset).Take(val.Limit).ToListAsync();
             return new PagedResult2<SmsSmsBasic>(totalItems: totalItems, limit: val.Limit, offset: val.Offset)
             {
                 Items = _mapper.Map<IEnumerable<SmsSmsBasic>>(items)

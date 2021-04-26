@@ -1,12 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
-import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService } from '../sms-template.service';
 
 @Component({
@@ -24,7 +20,6 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   isRowSelected: any[];
   search: string = '';
   selectedIds: string[] = [];
-  public today: Date = new Date(new Date().toDateString());
 
   constructor(
     private partnerService: PartnerService,

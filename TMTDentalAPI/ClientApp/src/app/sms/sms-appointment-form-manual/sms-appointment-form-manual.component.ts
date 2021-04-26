@@ -1,7 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
@@ -12,8 +11,6 @@ import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog
   styleUrls: ['./sms-appointment-form-manual.component.css']
 })
 export class SmsAppointmentFormManualComponent implements OnInit {
-  // @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
-
   formGroup: FormGroup;
   filteredTemplate: any[];
   gridData: any;
@@ -26,7 +23,6 @@ export class SmsAppointmentFormManualComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private partnerService: PartnerService,
-
   ) { }
 
   ngOnInit() {
@@ -55,14 +51,10 @@ export class SmsAppointmentFormManualComponent implements OnInit {
   }
 
   onSend() {
-    // if (this.formGroup.invalid) { return; }
-    // var val = this.formGroup.value;
-    // val.partnerIds = this.selectedIds ? this.selectedIds : [];
-    // console.log(val);
-
     var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
     modalRef.componentInstance.title = "Tạo tin gửi";
-    modalRef.componentInstance.id = this.selectedIds ? this.selectedIds : [];
+    modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
+    modalRef.componentInstance.provider = "res.appointment"
     modalRef.result.then(
       result => {
 
