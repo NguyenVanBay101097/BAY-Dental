@@ -32,6 +32,8 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.Name.Contains(val.Search)));
             if (!string.IsNullOrEmpty(val.ProgramType))
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.ProgramType == val.ProgramType));
+            if (!string.IsNullOrEmpty(val.PromoCodeUsage))
+                spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.PromoCodeUsage == val.PromoCodeUsage));
             if (val.Active.HasValue)
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.Active == val.Active));
             if (val.Ids != null)
