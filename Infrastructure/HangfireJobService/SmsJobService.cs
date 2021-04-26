@@ -61,7 +61,6 @@ namespace Infrastructure.HangfireJobService
               && x.DateTimeAppointment.Value.AddHours(-1) <= now).ToListAsync();
             if (listAppointments.Any())
             {
-                //await CreateSmsComposer(context, listAppointments, config);
                 var smsComposer = new SmsComposer();
                 var partnerIds = listAppointments.Select(x => x.PartnerId);
                 smsComposer.Id = GuidComb.GenerateComb();

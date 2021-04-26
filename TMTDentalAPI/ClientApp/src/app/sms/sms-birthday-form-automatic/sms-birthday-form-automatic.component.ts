@@ -5,6 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService } from '../sms-template.service';
 
@@ -31,16 +32,17 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     private fb: FormBuilder,
     private modalService: NgbModal,
     private smsTemplateService: SmsTemplateService,
+    private smsConfigService: SmsConfigService
   ) { }
 
   ngOnInit() {
+    this.formGroup = this.fb.group({
+      birthdayTemplate: [null, Validators.required],
+      isBirthdayAutomation: false
+    })
+
     this.loadSmsTemplate();
 
-    this.formGroup = this.fb.group({
-      content: [null, Validators.required],
-      isAuto:false
-    })
-    
     this.smsTemplateCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.smsTemplateCbx.loading = true)),
@@ -55,7 +57,6 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     this.searchSmsTemplate().subscribe(
       (res: any) => {
         this.filteredTemplate = res;
-        this.formGroup.get('content').patchValue(res[0] ? res[0] : null)
       }
     )
   }
@@ -67,23 +68,21 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   onSave() {
     if (this.formGroup.invalid) return;
     var val = this.formGroup.value;
-    console.log(val);
-    
-    // val.configSMSId = val.configSMS ? val.configSMS.id : null;
-    // val.timeReminder = this.intlService.formatDate(val.timeReminder, "yyyy-dd-MMTHH:mm")
-    // if (this.id) {
-    //   this.tSMSRmConfigService.update(this.id, val).subscribe(
-    //     () => {
-    //       this.loadDataFromApi();
-    //     }
-    //   )
-    // } else {
-    //   this.tSMSRmConfigService.create(val).subscribe(
-    //     () => {
-    //       this.loadDataFromApi();
-    //     }
-    //   )
-    // }
+    val.birthdayTemplateId = val.birthdayTemplate ? val.birthdayTemplate.id : null;
+    if (this.id) {
+      this.smsConfigService.update(this.id, val).subscribe(
+        res => {
+          console.log(res);
+        }
+      )
+    } else {
+      this.smsConfigService.create(val).subscribe(
+        res => {
+          console.log(res);
+        }
+      )
+    }
+
   }
 
   addTemplate() {

@@ -30,12 +30,12 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loadSmsTemplate();
-
     this.formGroup = this.fb.group({
       appointmentTemplate: [null, Validators.required],
       isAppointmentAutomation: false
     })
+
+    this.loadSmsTemplate();
 
     this.smsTemplateCbx.filterChange.asObservable().pipe(
       debounceTime(300),
