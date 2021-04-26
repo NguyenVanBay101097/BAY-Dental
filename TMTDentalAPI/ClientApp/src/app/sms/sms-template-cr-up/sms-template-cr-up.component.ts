@@ -19,25 +19,24 @@ export class SmsTemplateCrUpComponent implements OnInit {
   skip: number = 0;
   textareaLimit: number = 500;
   id: string;
-  templates: any[] = [
+  template: any =
     {
       text: null,
       templateType: 'text'
-    }
-  ];
+    };
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private smsTemplateService: SmsTemplateService,
     private notificationService: NotificationService,
-    
+
   ) { }
 
   ngOnInit() {
 
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
-      body: [this.templates, Validators.required],
+      body: [this.template, Validators.required],
     })
 
     setTimeout(() => {
@@ -55,16 +54,16 @@ export class SmsTemplateCrUpComponent implements OnInit {
   loadDataFromApi() {
     this.smsTemplateService.get(this.id).subscribe((res: any) => {
       this.formGroup.patchValue(res);
-      this.templates = JSON.parse(res.body);
-      this.bodyControl.setValue(this.templates);
+      this.template = JSON.parse(res.body);
+      this.bodyControl.setValue(this.template);
     });
   }
 
   onSave() {
     if (this.formGroup.invalid) { return false; }
     var formValue = this.formGroup.value;
-    formValue.body = JSON.stringify(this.templates);
-    
+    formValue.body = JSON.stringify(this.template);
+
     if (this.id) {
       this.smsTemplateService.update(this.id, formValue).subscribe(
         (res) => {

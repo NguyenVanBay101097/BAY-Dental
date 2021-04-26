@@ -334,6 +334,7 @@ namespace TMTDentalAPI
             services.AddScoped<ISmsSmsService, SmsSmsService>();
             services.AddScoped<ISmsTemplateService, SmsTemplateService>();
             services.AddScoped<ISmsJobService, SmsJobService>();
+            services.AddScoped<ISmsSendMessageService, SmsSendMessageService>();
 
             services.AddMemoryCache();
 
@@ -490,7 +491,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SmsTemplateProfile());
                 mc.AddProfile(new SmsConfigProfile());
                 mc.AddProfile(new SmsSmsProfile());
-
+                mc.AddProfile(new SmsComposerProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

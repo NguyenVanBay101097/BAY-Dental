@@ -25,18 +25,11 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Nội dung tin nhắn
-                                    </label>
+                                    <label class="o_form_label">Nội dung</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea class="form-control" formControlName="body" style="min-height: 205px;"></textarea>
-                                    <div style="min-width: 50px;" class="float-right">
-                                        <span class="px-1">Kí tự - {{getLimitText()}}</span>
-                                    </div>
-                                    <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)" class="text-danger mb-1">
-                                        <div *ngIf="f.body.errors.required">Nhập nội dung tin nhắn</div>
-                                    </div>
+                                    <app-sms-template-content [textareaLength]="textareaLimit" [template]="template">
+                                    </app-sms-template-content>
                                 </td>
                             </tr>
                         </tbody>

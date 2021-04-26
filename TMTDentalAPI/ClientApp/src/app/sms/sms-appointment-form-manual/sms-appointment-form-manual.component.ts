@@ -60,7 +60,7 @@ export class SmsAppointmentFormManualComponent implements OnInit {
     // val.partnerIds = this.selectedIds ? this.selectedIds : [];
     // console.log(val);
 
-    var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
+    var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
     modalRef.componentInstance.title = "Tạo tin gửi";
     modalRef.componentInstance.id = this.selectedIds ? this.selectedIds : [];
     modalRef.result.then(

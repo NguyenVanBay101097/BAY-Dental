@@ -16,7 +16,6 @@ import { SmsTemplateService } from '../sms-template.service';
 })
 export class SmsBirthdayFormManualComponent implements OnInit {
 
-  // @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
   gridData: any;
   filteredSMSAccount: any[];
   filteredTemplate: any[];
@@ -34,18 +33,6 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
-    // this.loadSmsTemplate();
-
-    // this.smsTemplateCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.smsTemplateCbx.loading = true)),
-    //   switchMap(value => this.searchSmsTemplate(value))
-    // ).subscribe((result: any) => {
-    //   this.filteredTemplate = result;
-    //   this.smsTemplateCbx.loading = false;
-    // });
-
     this.loadDataFromApi();
   }
 
@@ -66,25 +53,9 @@ export class SmsBirthdayFormManualComponent implements OnInit {
       )
   }
 
-  // loadSmsTemplate() {
-  //   this.searchSmsTemplate().subscribe(
-  //     (res: any) => {
-  //       this.filteredTemplate = res;
-  //     }
-  //   )
-  // }
-
   searchSmsTemplate(q?: string) {
     return this.smsTemplateService.getAutoComplete(q);
   }
-
-  // addTemplate() {
-  //   const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-  //   modalRef.componentInstance.title = 'Tạo mẫu tin';
-  //   modalRef.result.then((val) => {
-  //     this.loadSmsTemplate();
-  //   })
-  // }
 
   pageChange(event) {
     this.skip = event.skip;
@@ -92,26 +63,15 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   }
 
   onSend() {
-    // if (this.formGroup.invalid) { return; }
-    // var val = this.formGroup.value;
-    // val.partnerIds = this.selectedIds ? this.selectedIds : [];
-    // console.log(val);
-
-    var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
+    var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
     modalRef.componentInstance.title = "Tạo tin gửi";
-    modalRef.componentInstance.id = this.selectedIds ? this.selectedIds : [];
+    modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
+    modalRef.componentInstance.provider = 'res.partner';
     modalRef.result.then(
       result => {
 
       }
     )
-
-    // val.configSMSId = val.configSMS.id;
-    // this.composeMessageService.create(val).subscribe(
-    //   result => {
-    //     console.log(result);
-    //   }
-    // )
   }
 
 }
