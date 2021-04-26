@@ -19,18 +19,18 @@ export class SmsTemplateCrUpComponent implements OnInit {
   skip: number = 0;
   textareaLimit: number = 500;
   id: string;
-  templates: any =
+  templates: any[] = [
     {
       text: null,
       templateType: 'text'
     }
-
+  ];
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private smsTemplateService: SmsTemplateService,
     private notificationService: NotificationService,
-
+    
   ) { }
 
   ngOnInit() {
@@ -64,7 +64,7 @@ export class SmsTemplateCrUpComponent implements OnInit {
     if (this.formGroup.invalid) { return false; }
     var formValue = this.formGroup.value;
     formValue.body = JSON.stringify(this.templates);
-
+    
     if (this.id) {
       this.smsTemplateService.update(this.id, formValue).subscribe(
         (res) => {
