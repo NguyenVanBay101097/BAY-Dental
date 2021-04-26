@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
@@ -25,6 +26,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     private partnerService: PartnerService,
     private smsTemplateService: SmsTemplateService,
     private modalService: NgbModal,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -58,6 +60,10 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   }
 
   onSend() {
+    if(this.selectedIds.length == 0){
+      this.notify("chưa chọn khách hàng", false);
+    }
+    else{
     var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
     modalRef.componentInstance.title = "Tạo tin gửi";
     modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
@@ -67,6 +73,17 @@ export class SmsBirthdayFormManualComponent implements OnInit {
 
       }
     )
+  }
+
+  }
+  notify(title, isSuccess = true) {
+    this.notificationService.show({
+      content: title,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: isSuccess ? 'success' : 'error', icon: true },
+    });
   }
 
 }

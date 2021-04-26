@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
@@ -23,6 +24,7 @@ export class SmsAppointmentFormManualComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private partnerService: PartnerService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -51,14 +53,29 @@ export class SmsAppointmentFormManualComponent implements OnInit {
   }
 
   onSend() {
-    var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
-    modalRef.componentInstance.title = "Tạo tin gửi";
-    modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
-    modalRef.componentInstance.provider = "res.appointment"
-    modalRef.result.then(
-      result => {
+    if (this.selectedIds.length == 0) {
+      this.notify("chưa chọn khách hàng", false);
+    }
+    else {
+      var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
+      modalRef.componentInstance.title = "Tạo tin gửi";
+      modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
+      modalRef.componentInstance.provider = "res.appointment"
+      modalRef.result.then(
+        result => {
 
-      }
-    )
+        }
+      )
+    }
+  }
+
+  notify(title, isSuccess = true) {
+    this.notificationService.show({
+      content: title,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: isSuccess ? 'success' : 'error', icon: true },
+    });
   }
 }
