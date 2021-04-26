@@ -70,7 +70,7 @@ namespace Infrastructure.HangfireJobService
                 smsComposer.Body = config.AppointmentTemplate.Body;
                 context.SmsComposers.Add(smsComposer);
                 await context.SaveChangesAsync();
-                await CreateSmsSms(context, smsComposer, partnerIds);
+                await CreateSmsSms(context, smsComposer, partnerIds, config.CompanyId);
                 foreach (var appointment in listAppointments)
                 {
                     appointment.DateAppointmentReminder = now;
@@ -99,44 +99,48 @@ namespace Infrastructure.HangfireJobService
                 smsComposer.Body = config.BirthdayTemplate.Body;
                 context.SmsComposers.Add(smsComposer);
                 context.SaveChanges();
-                await CreateSmsSms(context, smsComposer, partners.Select(x => x.Id));
+                await CreateSmsSms(context, smsComposer, partners.Select(x => x.Id), config.CompanyId);
             }
         }
 
-        public async Task CreateSmsSms(CatalogDbContext context, SmsComposer composer, IEnumerable<Guid> ids)
+        public async Task CreateSmsSms(CatalogDbContext context, SmsComposer composer, IEnumerable<Guid> ids, Guid companyId)
         {
             var listSms = new List<SmsSms>();
             var partners = await context.Partners.Where(x => ids.Contains(x.Id)).Include(x => x.Title).ToListAsync();
+            var company = await context.Companies.Where(x => x.Id == companyId).FirstOrDefaultAsync();
             foreach (var partner in partners)
             {
-                //var content = await PersonalizedContent(context, composer.Body, partner);
+                var content = await PersonalizedContent(context, composer.Body, partner, company);
                 var sms = new SmsSms();
                 sms.Id = GuidComb.GenerateComb();
-                sms.Body = composer.Body;
+                sms.Body = content;
                 sms.Number = !string.IsNullOrEmpty(partner.Phone) ? partner.Phone : "";
                 sms.PartnerId = partner.Id;
                 sms.State = "sending";
                 listSms.Add(sms);
             }
+
+            await context.SmsSmss.AddRangeAsync(listSms);
+            await context.SaveChangesAsync();
+
             var dict = await SendSMS(listSms, context);
             foreach (var item in listSms)
             {
                 if (dict.ContainsKey(item.Id))
                 {
                     item.State = dict[item.Id];
+                    context.Entry(item).State = EntityState.Modified;
                 }
             }
-            context.SmsSmss.AddRange(listSms);
-            await context.SaveChangesAsync();
 
+            await context.SaveChangesAsync();
         }
 
-        private async Task<string> PersonalizedContent(CatalogDbContext context, string body, Partner partner)
+        private async Task<string> PersonalizedContent(CatalogDbContext context, string body, Partner partner, Company company)
         {
-            var company = await context.Companies.FirstOrDefaultAsync();
             var content = JsonConvert.DeserializeObject<Body>(body);
-
-            var messageContent = content.text.Replace("{ten_khach_hang}", partner.Name.Split(' ').Last())
+            var messageContent = content.text
+                .Replace("{ten_khach_hang}", partner.Name.Split(' ').Last())
                 .Replace("{ho_ten_khach_hang}", partner.DisplayName)
                 .Replace("{ten_cong_ty}", company.Name)
                 .Replace("{danh_xung_khach_hang}", partner.Title != null ? partner.Title.Name : "");

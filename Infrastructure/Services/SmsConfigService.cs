@@ -34,27 +34,26 @@ namespace Infrastructure.Services
         public void ActionRunJob(SmsConfig model)
         {
             var hostName = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobIdApp = $"{hostName}_Sms_AppointmentAutomaticReminder";
+            var jobIdBir = $"{hostName}_Sms_BirthdayAutomaticReminder";
+
             if (model.IsAppointmentAutomation)
             {
-                var jobId = $"{hostName}_AppointmentAutomaticReminder_{model.Id}";
-                RecurringJob.AddOrUpdate<ISmsJobService>(jobId, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
-                model.JobId = jobId;
+                RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
             }
-
-            else if (model.IsBirthdayAutomation)
+            else
             {
-                var jobId = $"{hostName}_BirthdayAutomaticReminder_{model.Id}";
-                RecurringJob.AddOrUpdate<ISmsJobService>(jobId, x => x.RunJob(hostName, model.Id), $"* 8 * * *", TimeZoneInfo.Local);
-                model.JobId = jobId;
+                ActionStopJob(jobIdApp);
             }
 
-            else if (!string.IsNullOrEmpty(model.JobId) && (!model.IsBirthdayAutomation || !model.IsAppointmentAutomation))
+            if (model.IsBirthdayAutomation)
             {
-                ActionStopJob(model.JobId);
-                model.JobId = "";
+                RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunJob(hostName, model.Id), $"* 8 * * *", TimeZoneInfo.Local);
             }
-
-            Update(model);
+            else
+            {
+                ActionStopJob(jobIdBir);
+            }
         }
 
         public void ActionStopJob(string jobId)
