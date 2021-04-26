@@ -12,5 +12,8 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<SaleOrderPromotionDisplay>> GetPagedResultAsync(SaleOrderPromotionPaged val);
         Task RemovePromotion(IEnumerable<Guid> ids);
+        SaleOrderPromotion PreparePromotionToOrder(SaleOrder self, SaleCouponProgram program, decimal discountAmount);
+        SaleOrderPromotion PreparePromotionToOrderLine(SaleOrderLine self, SaleCouponProgram program, decimal discountAmount);
+        void _ComputePromotionType(SaleOrderPromotion self, SaleCouponProgram program);
     }
 }

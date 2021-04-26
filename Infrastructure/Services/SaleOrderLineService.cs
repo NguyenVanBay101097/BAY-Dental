@@ -50,11 +50,6 @@ namespace Infrastructure.Services
 
             foreach (var line in self)
             {
-                //var discountType = line.DiscountType ?? "percentage";
-                //if (discountType == "percentage")
-                //    line.PriceSubTotal = Math.Round(line.ProductUOMQty * line.PriceUnit * (1 - line.Discount / 100));
-                //else
-                //    line.PriceSubTotal = Math.Max(0, line.ProductUOMQty * line.PriceUnit - (line.DiscountFixed ?? 0));
 
                 line.PriceSubTotal = Math.Round(line.ProductUOMQty * (line.PriceUnit - (line.AmountDiscountTotal ?? 0)));
                 line.PriceTax = 0;
@@ -357,8 +352,8 @@ namespace Infrastructure.Services
 
         public void _ComputeAmountDiscountTotal(IEnumerable<SaleOrderLine> self)
         {
-            foreach(var line in self)
-                line.AmountDiscountTotal = line.Promotions.Sum(x => x.Amount);               
+            foreach (var line in self)
+                line.AmountDiscountTotal = line.Promotions.Sum(x => x.Amount);
         }
 
         public async Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val)
@@ -735,14 +730,124 @@ namespace Infrastructure.Services
                 };
 
                 await orderPromotionObj.CreateAsync(promotion);
-            }           
+            }
 
             //tính lại tổng tiền ưu đãi saleorderlines
-            _ComputeAmountDiscountTotal(new List<SaleOrderLine>() { orderLine});
+            _ComputeAmountDiscountTotal(new List<SaleOrderLine>() { orderLine });
             ComputeAmount(new List<SaleOrderLine>() { orderLine });
 
             orderObj._AmountAll(orderLine.Order);
             await orderObj.UpdateAsync(orderLine.Order);
+        }
+
+        public async Task ApplyPromotionOnOrderLine(ApplyPromotionRequest val)
+        {
+            var programObj = GetService<ISaleCouponProgramService>();
+            var couponObj = GetService<ISaleCouponService>();
+            var orderLine = await SearchQuery(x => x.Id == val.Id)
+              .Include(x => x.Product)
+              .Include(x => x.Promotions)
+              .Include(x => x.Order).ThenInclude(x => x.Promotions)
+              .Include(x => x.Order).ThenInclude(x => x.OrderLines)
+              .Include(x => x.SaleOrderLineInvoice2Rels)
+              .FirstOrDefaultAsync();
+            var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+            if (program != null)
+            {
+                var error_status = await programObj._CheckPromotionApplySaleLine(program, orderLine);
+                if (string.IsNullOrEmpty(error_status.Error))
+                {
+                    await _CreateRewardLine(orderLine, program);
+
+                }
+                else
+                    throw new Exception(error_status.Error);
+            }
+        }
+
+        private async Task _CreateRewardLine(SaleOrderLine self, SaleCouponProgram program)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var orderPromotionObj = GetService<ISaleOrderPromotionService>();
+            var promotions = _GetRewardLineValues(self, program);
+            //foreach (var line in lines)
+            //    line.Order = self;
+
+            await orderPromotionObj.CreateAsync(promotions);
+
+            //tính lại tổng tiền ưu đãi saleorderlines
+            _ComputeAmountDiscountTotal(new List<SaleOrderLine>() { self });
+            ComputeAmount(new List<SaleOrderLine>() { self });
+
+            orderObj._AmountAll(self.Order);
+            await orderObj.UpdateAsync(self.Order);
+        }
+
+        public decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line)
+        {
+            var discount_amount = line.ProductUOMQty * (line.PriceUnit * (1 - line.Discount / 100)) *
+                ((program.DiscountPercentage ?? 0) / 100);
+            return discount_amount ;
+        }
+
+        private decimal _GetRewardValuesDiscountFixedAmount(SaleOrderLine self, SaleCouponProgram program)
+        {
+            var total_amount = self.PriceSubTotal;
+            var fixed_amount = program.DiscountFixedAmount ?? 0;
+            if (total_amount < fixed_amount)
+                return total_amount;
+            return fixed_amount;
+        }
+
+        private SaleOrderPromotion _GetRewardLineValues(SaleOrderLine self, SaleCouponProgram program)
+        {
+            if (program.RewardType == "discount")
+                return _GetRewardValuesDiscount(self, program);
+
+            return new SaleOrderPromotion();
+        }
+
+        public SaleOrderPromotion _GetRewardValuesDiscount(SaleOrderLine self, SaleCouponProgram program)
+        {
+            var promotionObj = GetService<ISaleOrderPromotionService>();
+            var programObj = GetService<ISaleCouponProgramService>();
+
+            if (program.DiscountLineProduct == null)
+            {
+                var productObj = GetService<IProductService>();
+                program.DiscountLineProduct = productObj.GetById(program.DiscountLineProductId);
+            }
+
+            if (program.DiscountType == "fixed_amount")
+            {
+
+                var discountAmount = _GetRewardValuesDiscountFixedAmount(self, program);
+                var promotionLine = promotionObj.PreparePromotionToOrderLine(self, program, discountAmount);
+
+                return promotionLine;
+            }
+
+
+            var rewards = new List<SaleOrderPromotion>();
+            if (program.DiscountApplyOn == "on_order")
+                throw new Exception("Chương trình khuyến mãi không đúng định dạng");
+
+            if (program.DiscountApplyOn == "specific_products")
+            {
+                var discount_specific_product_ids = program.DiscountSpecificProducts.Select(x => x.ProductId).ToList();
+                //We should not exclude reward line that offer this product since we need to offer only the discount on the real paid product (regular product - free product)
+                var free_product_lines = programObj.SearchQuery(x => x.RewardType == "product" && discount_specific_product_ids.Contains(x.RewardProductId.Value)).Select(x => x.DiscountLineProductId.Value).ToList();
+                var tmp = discount_specific_product_ids.Union(free_product_lines);
+                if (tmp.Contains(self.ProductId.Value))
+                {
+                    var discount_amount = _GetRewardValuesDiscountPercentagePerLine(program, self);
+                    var promotionLine = promotionObj.PreparePromotionToOrderLine(self, program, discount_amount);
+
+                    return promotionLine;
+                }
+            }
+
+            return new SaleOrderPromotion();
         }
 
         private async Task<Product> _GetProductDiscountToOrderLine()

@@ -53,5 +53,9 @@ namespace Infrastructure.Services
         void _ComputeAmountDiscountTotal(IEnumerable<SaleOrderLine> self);
 
         Task ApplyDiscountOnOrderLine(ApplyDiscountViewModel val);
+
+        Task ApplyPromotionOnOrderLine(ApplyPromotionRequest val);
+
+        decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line);
     }
 }

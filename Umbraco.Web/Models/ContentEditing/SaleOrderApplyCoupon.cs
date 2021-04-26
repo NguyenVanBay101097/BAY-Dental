@@ -10,7 +10,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string CouponCode { get; set; }
     }
 
-    public class SaleOrderApplyPromotion
+    public class ApplyPromotionRequest
     {
         public Guid Id { get; set; }
         public Guid SaleProgramId { get; set; }

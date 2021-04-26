@@ -34,7 +34,7 @@ namespace Infrastructure.Services
         Task ApplyCoupon(SaleOrderApplyCoupon val);
         Task ApplyPromotion(Guid id);
 
-        Task ApplyPromotionOnOrder(SaleOrderApplyPromotion val);
+        Task ApplyPromotionOnOrder(ApplyPromotionRequest val);
 
         Task ApplyDiscountOnOrder(ApplyDiscountViewModel val);
 

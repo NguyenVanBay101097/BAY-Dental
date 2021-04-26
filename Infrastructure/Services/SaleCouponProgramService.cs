@@ -337,6 +337,39 @@ namespace Infrastructure.Services
 
             return message;
         }
+
+        public async Task<CheckPromoCodeMessage> _CheckPromotionApplySaleLine(SaleCouponProgram self, SaleOrderLine line)
+        {
+            var message = new CheckPromoCodeMessage();
+            var saleObj = GetService<ISaleOrderService>();
+            //var applicable_programs = await saleObj._GetApplicablePrograms(order);
+            var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
+            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > line.Order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo < line.Order.DateOrder))
+                message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
+            else if (self.ProgramType != "promotion_program" || self.PromoCodeUsage == "code_needed" || self.DiscountApplyOn == "on_order")
+                message.Error = "Khuyến mãi Không áp dụng cho dịch vụ";           
+            else if(line.Order.Promotions.Any(x => x.ProductId == self.DiscountLineProductId))
+                message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
+            else if (line.Promotions.Any(x => x.ProductId == self.DiscountLineProductId))
+                message.Error = "Chương trình khuyến mãi đã được áp dụng cho dịch vụ này";
+            else if (line.Order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
+                message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";
+            else if (!self.Active)
+                message.Error = "Chương trình khuyến mãi không có giá trị";
+            //else if (order.CodePromoProgram != null && !string.IsNullOrEmpty(order.CodePromoProgram.PromoCode) && self.PromoCodeUsage == "code_needed")
+            //    message.Error = "Mã khuyến mãi không thể cộng dồn.";
+            //else if (_IsGlobalDiscountProgram(self) && saleObj._IsGlobalDiscountAlreadyApplied(order))
+            //    message.Error = "Chiết khấu tổng không thể cộng dồn";
+            else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !saleObj._IsRewardInOrderLines(line.Order, self))
+                message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
+            //else
+            //{
+            //    if (!applicable_programs.Contains(self) && self.PromoApplicability == "on_current_order")
+            //        message.Error = "Không đạt điều kiện nào để có thể nhận thưởng!";
+            //}
+
+            return message;
+        }
         //public _FilterProgramsOnProducts(IEnumerable<SaleCouponProgram> self, SaleOrder order)
         //{
         //    //To get valid programs according to product list.

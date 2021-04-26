@@ -795,6 +795,10 @@ namespace Infrastructure.Services
 
         public IList<SaleOrderPromotion> _GetRewardValuesDiscount(SaleOrder self, SaleCouponProgram program)
         {
+            var programObj = GetService<ISaleCouponProgramService>();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var promotionObj = GetService<ISaleOrderPromotionService>();
+
             if (program.DiscountLineProduct == null)
             {
                 var productObj = GetService<IProductService>();
@@ -805,12 +809,12 @@ namespace Infrastructure.Services
             {
              
                 var discountAmount = _GetRewardValuesDiscountFixedAmount(self, program);
-                var promotionLine = PreparePromotionToOrder(self, program, discountAmount);
+                var promotionLine = promotionObj.PreparePromotionToOrder(self, program, discountAmount);
               
                 return new List<SaleOrderPromotion>() { promotionLine };
             }
 
-            var programObj = GetService<ISaleCouponProgramService>();
+          
             var rewards = new List<SaleOrderPromotion>();
             var lines = _GetPaidOrderLines(self);
             if (program.DiscountApplyOn == "specific_products" || program.DiscountApplyOn == "on_order")
@@ -828,12 +832,12 @@ namespace Infrastructure.Services
 
                 foreach (var line in lines)
                 {
-                    var discount_line_amount = _GetRewardValuesDiscountPercentagePerLine(self, program, line);
+                    var discount_line_amount = saleLineObj._GetRewardValuesDiscountPercentagePerLine(program, line);
                     if (discount_line_amount > 0)
                         total_discount_amount += discount_line_amount; 
                 }
 
-                var promotionLine = PreparePromotionToOrder(self, program, total_discount_amount);
+                var promotionLine = promotionObj.PreparePromotionToOrder(self, program, total_discount_amount);
 
                 rewards.Add(promotionLine);
             }
@@ -841,48 +845,6 @@ namespace Infrastructure.Services
             return rewards;
         }
 
-        private SaleOrderPromotion PreparePromotionToOrder(SaleOrder self, SaleCouponProgram program , decimal discountAmount)
-        {
-            var promotionLine = new SaleOrderPromotion
-            {
-                Name = program.Name,
-                ProductId = program.DiscountLineProductId,
-                Amount = discountAmount,
-                SaleOrderId = self.Id,                
-            };
-
-            _ComputePromotionType(promotionLine, program);
-
-            foreach (var line in self.OrderLines)
-            {
-                var subTotal = line.PriceSubTotal;
-                if (subTotal == 0)
-                    continue;
-
-                promotionLine.SaleOrderPromotionChilds.Add(new SaleOrderPromotion
-                {
-                    Name = promotionLine.Name,
-                    Amount = (subTotal / (self.AmountTotal ?? 0)) * discountAmount / line.ProductUOMQty,
-                    ProductId = promotionLine.ProductId,
-                    SaleOrderLineId = line.Id,
-                    Type = promotionLine.Type
-                });
-            }
-
-            return promotionLine;
-        }
-
-        public void _ComputePromotionType (SaleOrderPromotion self , SaleCouponProgram program)
-        {
-            if(program.ProgramType == "coupon_program" || (program.ProgramType == "coupon_program" && program.PromoCodeUsage == "code_needed"))
-            {
-                self.Type = "code_usage_program";
-            }
-            else
-            {
-                self.Type = "promotion_program";
-            }
-        }
 
         public async Task _ComputeAmountPromotionToOrder(IEnumerable<Guid> ids)
         {
@@ -894,18 +856,9 @@ namespace Infrastructure.Services
                 orderLineObj.ComputeAmount(order.OrderLines);
                 _AmountAll(order);
             }
-                
-            
-
+                           
             await UpdateAsync(orders);
-        }
-
-        private decimal _GetRewardValuesDiscountPercentagePerLine(SaleOrder self, SaleCouponProgram program, SaleOrderLine line)
-        {
-            var discount_amount = line.ProductUOMQty * (line.PriceUnit * (1 - line.Discount / 100)) *
-                ((program.DiscountPercentage ?? 0) / 100);
-            return discount_amount;
-        }
+        }  
 
         private decimal _GetRewardValuesDiscountFixedAmount(SaleOrder self, SaleCouponProgram program)
         {
@@ -1067,7 +1020,7 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
-        public async Task ApplyPromotionOnOrder(SaleOrderApplyPromotion val)
+        public async Task ApplyPromotionOnOrder(ApplyPromotionRequest val)
         {
             var programObj = GetService<ISaleCouponProgramService>();
             var couponObj = GetService<ISaleCouponService>();

@@ -201,7 +201,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Update")]
-        public async Task<IActionResult> ApplyPromotion(SaleOrderApplyPromotion val)
+        public async Task<IActionResult> ApplyPromotion(ApplyPromotionRequest val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();

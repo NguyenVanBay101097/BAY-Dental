@@ -82,6 +82,17 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]     
+        public async Task<IActionResult> ApplyPromotion(ApplyPromotionRequest val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.ApplyPromotionOnOrderLine(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         [HttpPatch("{id}/[action]")]
         public async Task<IActionResult> PatchIsActive(Guid id, SaleOrderLineIsActivePatch result)
         {
