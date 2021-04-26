@@ -12,9 +12,10 @@
                         <tr>
                             <td colspan="1" class="o_td_label d-flex mb-2">
                                 <div class="form-check mr-2">
-                                    <input class="form-check-input" type="checkbox" id="check" formControlName="isAuto" />
+                                    <input class="form-check-input" type="checkbox" id="check"
+                                        formControlName="isBirthdayAutomation" />
                                     <label class="form-check-label o_form_label" for="check">
-                                        Check
+                                        Automatic
                                     </label>
                                 </div>
                             </td>
@@ -26,7 +27,9 @@
                                 </label>
                             </td>
                             <td colspan="1" class="d-flex" style="width: 100%;">
-                                <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'" formControlName="content" [filterable]="true" #smsTemplateCbx [valueField]="'id'">
+                                <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
+                                    formControlName="birthdayTemplate" [filterable]="true" #smsTemplateCbx
+                                    [valueField]="'id'">
                                 </kendo-combobox>
                                 <a class="btn btn-sm btn-light" (click)="addTemplate()">
                                     <span class="k-icon k-i-plus"></span>
