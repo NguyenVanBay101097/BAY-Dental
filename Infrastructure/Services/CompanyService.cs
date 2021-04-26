@@ -143,6 +143,9 @@ namespace Infrastructure.Services
 
             //insert những irmodelfield
             await InsertIrModelFieldData();
+
+            var appRoleService = GetService<IApplicationRoleService>();
+            await appRoleService.CreateBaseUserRole();
         }
 
         public async Task AddIrDataForSurvey()

@@ -34,13 +34,14 @@ namespace TMTDentalAPI.Controllers
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IMyCache _cache;
         private readonly AppTenant _tenant;
+        private readonly IApplicationRoleService _appRoleService;
 
         public EmployeesController(IEmployeeService employeeService, IHrPayrollStructureTypeService structureTypeService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
             UserManager<ApplicationUser> userManager, IApplicationRoleFunctionService roleFunctionService,
             IIRModelDataService iRModelDataService, IResGroupService resGroupService, RoleManager<ApplicationRole> roleManager,
-            IMyCache cache, ITenant<AppTenant> tenant
-            )
+            IMyCache cache, ITenant<AppTenant> tenant,
+            IApplicationRoleService appRoleService)
         {
             _employeeService = employeeService;
             _structureTypeService = structureTypeService;
@@ -54,6 +55,7 @@ namespace TMTDentalAPI.Controllers
             _roleManager = roleManager;
             _cache = cache;
             _tenant = tenant?.Value;
+            _appRoleService = appRoleService;
         }
 
         [HttpGet]
@@ -243,6 +245,9 @@ namespace TMTDentalAPI.Controllers
 
                 //update role
                 await UpdateRole(employee, val);
+
+                //add cho nhân viên role base
+                await UpdateBaseRole(employee);
             }
             else
             {
@@ -254,9 +259,30 @@ namespace TMTDentalAPI.Controllers
             }
         }
 
+        private async Task UpdateBaseRole(Employee employee)
+        {
+            if (employee.User != null)
+            {
+                var hasBaseRole = await _userManager.IsInRoleAsync(employee.User, "BaseUser");
+                if (!hasBaseRole)
+                {
+                    //tìm base role, nếu chưa có thì tạo
+                    ApplicationRole baseRole = await _roleManager.Roles.Where(x => x.Name == "BaseUser").FirstOrDefaultAsync();
+                    if (baseRole == null)
+                    {
+                        baseRole = await _appRoleService.CreateBaseUserRole();
+                        
+                    }
+
+                    await _userManager.AddToRoleAsync(employee.User, baseRole.Name);
+                }
+            }
+        }
+
         private async Task UpdateRole(Employee employee, EmployeeSave val)
         {
             var currentRoleNames = await this._userManager.GetRolesAsync(employee.User);
+           
             //remove all role
             var result = await _userManager.RemoveFromRolesAsync(employee.User, currentRoleNames);
             if (!result.Succeeded)

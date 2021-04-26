@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavSidebarService } from '../nav-sidebar.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PermissionService } from '../permission.service';
 
 @Component({
   selector: 'app-layout-sidebar',
@@ -10,12 +11,17 @@ import { AuthService } from 'src/app/auth/auth.service';
 export class LayoutSidebarComponent implements OnInit {
   activeIndex = -1;
   folded = false;
-  menuItems: { name: string, icon?: string, link?: string, groups?: string, children?: { name: string, link?: string, params?: Object, groups?: string }[] }[] = [
+
+  menuItems: any[] = [
     {
       name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/dashboard',
     },
     {
-      name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers'
+      name: 'Khách hàng',
+      icon: 'fas fa-users',
+      children: [],
+      link: '/partners/customers',
+      permissions: ['Basic.Partner.Read']
     },
     {
       name: 'Quản lý lịch hẹn',
@@ -24,9 +30,15 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Lịch hẹn', link: '/appointments/kanban' },
         { name: 'Quá hạn/ Hủy hẹn', link: '/appointments/over-cancel' }
       ],
+      permissions: ['Basic.Appointment.Read']
     },
-    { name: 'Bán thuốc', icon: 'fas fa-capsules', children: [], link: '/medicine-orders', groups: 'medicineOrder.group_medicine' },
-
+    {
+      name: 'Bán thuốc',
+      icon: 'fas fa-capsules',
+      children: [],
+      link: '/medicine-orders',
+      groups: 'medicineOrder.group_medicine',
+    },
     // {
     //   name: 'Thống kê labo',
     //   icon: 'fas fa-tooth',
@@ -164,9 +176,9 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Thông số Labo', link: '/labo-orders/labo-managerment' },
         { name: 'Loại thu chi', link: '/loai-thu-chi' },
         { name: 'Tiêu chí kiểm kho', link: '/stock/criterias' },
-        { name: 'Loại thu chi', link: '/loai-thu-chi'},
-        { name: 'Tiêu chí kiểm kho', link: '/stock/criterias'},
-        { name: 'Thông tin chẩn đoán răng', link: '/tooth-diagnosis'},
+        { name: 'Loại thu chi', link: '/loai-thu-chi' },
+        { name: 'Tiêu chí kiểm kho', link: '/stock/criterias' },
+        { name: 'Thông tin chẩn đoán răng', link: '/tooth-diagnosis' },
         // { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' }},
         // { name: 'Vật liệu Labo', link: '/products/labos' },
         // { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
@@ -208,9 +220,71 @@ export class LayoutSidebarComponent implements OnInit {
       ]
     },
   ];
-  constructor(public sidebarService: NavSidebarService, public authService: AuthService) { }
+
+  menus: any[] = [];
+
+
+  constructor(public sidebarService: NavSidebarService, public authService: AuthService,
+    private permissionService: PermissionService) { }
 
   ngOnInit() {
+    this.menus = this.filterMenus();
+    this.permissionService.permissionStoreChangeEmitter.subscribe(() => {
+      this.menus = this.filterMenus();
+    });
+  }
+
+  filterMenus() {
+    var menuItems = this.menuItems.filter(x => {
+      if (x.groups) {
+        return this.permissionService.hasDefined(x.groups);
+      }
+      
+      return true;
+    });
+
+    var list: any[] = [];
+    for (var i = 0; i < menuItems.length; i++) {
+      var menuItem = menuItems[i];
+      if (this.hasPermission(menuItem)) {
+        list.push(menuItem);
+        if (menuItem.children) {
+          menuItem.children.forEach(child => {
+            if (this.hasPermission(child)) {
+              list.push(child);
+            }
+          });
+        }
+      }
+    }
+
+    return list;
+  }
+
+  hasPermission(menuItem) {
+    var pm = localStorage.getItem("user_permission");
+    if (pm != null) {
+      var user_permission = JSON.parse(pm);
+      if (user_permission.isUserRoot) {
+        return true;
+      }
+
+      if (menuItem.permissions) {
+        var listPermission = user_permission.permission;
+        for (var i = 0; i < menuItem.permissions.length; i++) {
+          var permission = menuItem.permissions[i];
+          if (listPermission.includes(permission)) {
+            return true;
+          }
+        }
+
+        return false;
+      }
+
+      return true;
+    }
+
+    return false;
   }
 
   onMenuClick(index) {

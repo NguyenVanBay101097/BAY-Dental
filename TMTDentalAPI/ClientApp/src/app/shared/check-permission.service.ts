@@ -15,10 +15,9 @@ export class CheckPermissionService {
             }
             if (user_permission.permission) {
                 var arr_permission = permission.split(",").map(x => x.trim());
-                arr_permission.forEach(x => {
-                    
+                return arr_permission.some(x => {
+                    return user_permission.permission.includes(x);
                 });
-                return user_permission.permission.includes(permission);
             }
         }
         return false;

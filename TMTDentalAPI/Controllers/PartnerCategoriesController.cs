@@ -32,7 +32,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        [CheckAccess(Actions = "Catalog.PartnerCategory.Read,Basic.Partner.Read")]
+        [CheckAccess(Actions = "Catalog.PartnerCategory.Read")]
         public async Task<IActionResult> Get([FromQuery] PartnerCategoryPaged val)
         {
             var result = await _partnerCategoryService.GetPagedResultAsync(val);
