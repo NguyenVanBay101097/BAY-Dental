@@ -1130,7 +1130,9 @@ namespace Infrastructure.Services
         {
             var display = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             var lineObj = GetService<ISaleOrderLineService>();
-            display.OrderLines = await _mapper.ProjectTo<SaleOrderLineDisplay>(lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+            var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence)).Include(x => x.Advisory).Include(x => x.Assistant).Include(x => x.Promotions)
+                .Include(x => x.Product).Include(x => x.ToothCategory).Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth).Include(x => x.Employee).Include(x => x.Counselor).Include(x => x.OrderPartner).ToListAsync();
+            display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
             return display;
         }
 
