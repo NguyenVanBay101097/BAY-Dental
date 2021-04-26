@@ -40,7 +40,7 @@ export class SmsTemplateService {
   }
 
   getPaged(val) {
-    return this.http.get(this.base_api + this.apiUrl, { params: val });
+    return this.http.get(this.base_api + this.apiUrl, { params: new HttpParams({fromObject: val}) });
   }
 
   delete(id: string) {
