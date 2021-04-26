@@ -12,4 +12,8 @@ export class SmsComposerService {
   create(val) {
     return this.http.post(this.base_api + this.apiUrl, val);
   }
+
+  actionSendSms(id:string){
+    return this.http.get(this.base_api + this.apiUrl +'/ActionSendSms/'+ id);
+  }
 }

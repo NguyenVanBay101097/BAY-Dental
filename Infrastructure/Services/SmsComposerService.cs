@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using Infrastructure.Helpers;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SaasKit.Multitenancy;
 using System;
@@ -23,9 +24,8 @@ namespace Infrastructure.Services
             _smsSendMessageService = smsSendMessageService;
         }
 
-        public override async Task<SmsComposer> CreateAsync(SmsComposer entity)
+        public async Task ActionSendSms(SmsComposer entity)
         {
-            entity = await base.CreateAsync(entity);
             var hostName = _tenant != null ? _tenant.Hostname : "localhost";
             await using var context = DbContextHelper.GetCatalogDbContext(hostName, _configuration);
             try
@@ -47,8 +47,6 @@ namespace Infrastructure.Services
 
                 throw new Exception(ex.Message);
             }
-
-            return entity;
         }
     }
 }

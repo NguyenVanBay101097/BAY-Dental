@@ -48,7 +48,7 @@ namespace Infrastructure.Services
 
             if (model.IsBirthdayAutomation)
             {
-                RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunJob(hostName, model.Id), $"* 8 * * *", TimeZoneInfo.Local);
+                RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunJob(hostName, model.Id), $"0 8 * * *", TimeZoneInfo.Local);
             }
             else
             {
@@ -58,7 +58,7 @@ namespace Infrastructure.Services
 
         public void ActionStopJob(string jobId)
         {
-            BackgroundJob.Delete(jobId);
+            RecurringJob.RemoveIfExists(jobId);
         }
     }
 }
