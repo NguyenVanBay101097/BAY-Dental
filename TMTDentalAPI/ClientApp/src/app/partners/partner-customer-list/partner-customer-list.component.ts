@@ -17,6 +17,7 @@ import { PartnerCategoryPopoverComponent } from './partner-category-popover/part
 import { PartnersBindingDirective } from 'src/app/shared/directives/partners-binding.directive';
 import { PartnerCustomerAutoGenerateCodeDialogComponent } from '../partner-customer-auto-generate-code-dialog/partner-customer-auto-generate-code-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -57,7 +58,8 @@ export class PartnerCustomerListComponent implements OnInit {
   };
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
-    private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService) { }
+    private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
+    private checkPermissionService: CheckPermissionService) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
