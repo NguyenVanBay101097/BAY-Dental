@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { SmsSmsPaged, SmsSmsService } from '../sms-sms.service';
 
 @Component({
-  selector: 'app-sms-statistic',
+  selector: 'app-sms-statisticaddd',
   templateUrl: './sms-statistic.component.html',
-  styleUrls: ['./sms-statistic.component.css']
+  styleUrls: ['./sms-statistic.component.css'],
 })
 export class SmsStatisticComponent implements OnInit {
   gridData: GridDataResult;
@@ -24,9 +25,12 @@ export class SmsStatisticComponent implements OnInit {
   searchUpdate = new Subject<string>();
 
   constructor(
+    private smsSmsService: SmsSmsService
   ) { }
 
   ngOnInit() {
+    this.loadDataFromApi();
+
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -34,35 +38,34 @@ export class SmsStatisticComponent implements OnInit {
         this.skip = 0;
         this.loadDataFromApi();
       });
-
-    this.loadDataFromApi();
   }
 
   loadDataFromApi() {
-    var val = {
-      limit: this.limit,
-      offset: this.skip,
-      search: this.search || '',
-      state: this.state || ''
-    }
-    // this.messageLineService.getPaged(val)
-    //   .pipe(map((response: any) => (<GridDataResult>{
-    //     data: response.items,
-    //     total: response.totalItems
-    //   }))).subscribe(res => {
-    //     this.gridData = res;
-    //   })
+    var val = new SmsSmsPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.state = this.state || '';
+
+    this.smsSmsService.getPaged(val)
+      .pipe(map((response: any) => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))).subscribe(res => {
+        this.gridData = res;
+        console.log(res);
+      })
   }
 
   onChangeState(state) {
-    if(state){
+    if (state) {
       this.state = state.value;
       this.skip = 0;
       this.loadDataFromApi();
     }
   }
 
-  pageChange(event) { 
+  pageChange(event) {
     this.skip = event.skip;
     this.loadDataFromApi();
   }

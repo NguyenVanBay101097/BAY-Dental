@@ -29,8 +29,8 @@
                 {{dataItem.dateCreated | date:'short'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="phone" title="Điện thoại" width="200"></kendo-grid-column>
-        <kendo-grid-column field="content" title="Nội dung tin nhắn"></kendo-grid-column>
+        <kendo-grid-column field="number" title="Điện thoại" width="200"></kendo-grid-column>
+        <kendo-grid-column field="body" title="Nội dung tin nhắn"></kendo-grid-column>
         <kendo-grid-column title="Trạng thái" width="150">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <span *ngIf="dataItem.state=='sending'">Đang gửi</span>

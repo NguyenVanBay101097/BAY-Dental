@@ -489,6 +489,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SmsAccountProfile());
                 mc.AddProfile(new SmsTemplateProfile());
                 mc.AddProfile(new SmsConfigProfile());
+                mc.AddProfile(new SmsSmsProfile());
+
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
