@@ -112,9 +112,9 @@ namespace Infrastructure.Services
                 {
                     foreach (var res in responses)
                     {
-                        if (res.SmsId.HasValue)
+                        if (res.SmsSmsId.HasValue)
                         {
-                            dict.Add(res.SmsId.Value, res.Message);
+                            dict.Add(res.SmsSmsId.Value, res.Message);
                         }
                     }
                 }
@@ -161,11 +161,11 @@ namespace Infrastructure.Services
                 var jsonObject = JsonConvert.SerializeObject(val);
                 var content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
                 var result = await client.PostAsync(url, content);
-                model.SmsId = val.SmsId;
                 if (result.IsSuccessStatusCode)
                 {
                     var response = await result.Content.ReadAsStringAsync();
                     model = JsonConvert.DeserializeObject<ESMSSendMessageResponseModel>(response);
+
                     if (model != null && model.CodeResult.Equals("100"))
                     {
                         model.Message = "success";
@@ -179,6 +179,7 @@ namespace Infrastructure.Services
                 {
                     model.Message = "fails";
                 }
+                model.SmsSmsId = val.SmsId;
                 listReponse.Add(model);
             }
             return listReponse;
@@ -280,7 +281,7 @@ namespace Infrastructure.Services
             public string CodeResult { get; set; }
             public string CountRegenerate { get; set; }
             public string SMSID { get; set; }
-            public Guid? SmsId { get; set; }
+            public Guid? SmsSmsId { get; set; }
             public string Message { get; set; }
         }
 

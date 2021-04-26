@@ -47,7 +47,7 @@ namespace Infrastructure.Services
 
                 throw new Exception(ex.Message);
             }
-
+                
             return entity;
         }
     }
