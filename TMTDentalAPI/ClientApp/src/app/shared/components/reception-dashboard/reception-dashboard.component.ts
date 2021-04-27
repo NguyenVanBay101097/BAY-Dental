@@ -3,20 +3,16 @@ import { Router } from '@angular/router';
 import { DataStateChangeEvent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { process, State } from '@progress/kendo-data-query';
-import { forkJoin, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { AccountReportGeneralLedgerService, ReportCashBankGeneralLedger } from 'src/app/account-report-general-ledgers/account-report-general-ledger.service';
+import { forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AppointmentPaged } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { AuthService } from 'src/app/auth/auth.service';
-import { LaboOrderReportInput, LaboOrderReportOutput, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
-import { PartnerCustomerReportInput, PartnerCustomerReportOutput, PartnerService } from 'src/app/partners/partner.service';
-import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
-import { SaleReportItem, SaleReportSearch, SaleReportService } from 'src/app/sale-report/sale-report.service';
+import { LaboOrderReportOutput } from 'src/app/labo-orders/labo-order.service';
+import { SaleReportSearch, SaleReportService } from 'src/app/sale-report/sale-report.service';
 import { DataBindingDirective } from '@progress/kendo-angular-grid';
-import { FundBookSearch, FundBookService } from '../../fund-book.service';
-import { CashBookPaged, CashBookService } from 'src/app/cash-book/cash-book.service';
-import { PartnerOldNewReport, PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
+import { CashBookService } from 'src/app/cash-book/cash-book.service';
+import { CheckPermissionService } from '../../check-permission.service';
 
 @Component({
   selector: 'app-reception-dashboard',
@@ -34,47 +30,38 @@ export class ReceptionDashboardComponent implements OnInit {
   appointmentStateCount: any = {};
   search: string = '';
   totalService: number;
-  laboOrderReport: LaboOrderReportOutput;
-  reportValueCash: any;
-  reportValueBank: any;
   reportValueCashByDate: any;
   reportValueBankByDate: any;
-
   public state: State = {
     skip: this.offset,
     take: this.limit,
-
     // Initial filter descriptor
     filter: {
       logic: 'and',
       filters: [{ field: 'name', operator: 'contains', value: '' }]
     }
   };
-
   public gridData: any[];
   public gridView: any[];
-  laboOrderStateCount: any = {};
-  laboOrderStates: any[] = [
-    { value: 'danhan', text: 'LABO ĐÃ NHẬN'},
-    { value: 'toihan', text: 'LABO TỚI HẸN'},
-  ]
+
+  // permission
+  showCashBankReport = this.checkPermissionService.check('Report.CashBankAccount');
+  showLaboOrderReport = this.checkPermissionService.check('');
+  showPartnerCustomerReport = this.checkPermissionService.check('Report.PartnerOldNew');
+  showSaleReport = this.checkPermissionService.check('Report.Sale');
 
   constructor(private intlService: IntlService,
     private appointmentService: AppointmentService,
     private saleReportService: SaleReportService,
-    private laboOrderService: LaboOrderService,
-    private partnerService: PartnerService,
     private router: Router,
     private authService: AuthService,
-    private reportGeneralLedgerService: AccountReportGeneralLedgerService,
-    private cashBookService: CashBookService
+    private cashBookService: CashBookService, 
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
     this.gridView = this.gridData;
     this.loadAppoiment();
-    this.loadLaboOrderStateCount();
-    this.loadDataMoney();
     this.loadDataMoneyByDateTime();
     this.loadService();
   }
@@ -99,16 +86,6 @@ export class ReceptionDashboardComponent implements OnInit {
     }, err => {
       console.log(err);
     })
-  }
-
-  loadDataMoney() {
-    var companyId = this.authService.userInfo.companyId;
-    let cash = this.cashBookService.getTotal({ resultSelection: "cash", companyId: companyId });
-    let bank = this.cashBookService.getTotal({ resultSelection: "bank", companyId: companyId });
-    forkJoin([cash, bank]).subscribe(results => {
-      this.reportValueCash = results[0];
-      this.reportValueBank = results[1];
-    });
   }
 
   loadDataMoneyByDateTime() {
@@ -140,37 +117,6 @@ export class ReceptionDashboardComponent implements OnInit {
     forkJoin(obs).subscribe((result: any) => {
       this.appointmentStateCount['all'] = result[0].totalItems;
       this.appointmentStateCount['done'] = result[1].totalItems;
-    });
-  }
-
-  // loadLaboOrderReport() {
-  //   var val = new LaboOrderReportInput();
-  //   val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-  //   val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
-  //   val.companyId = this.authService.userInfo.companyId;
-  //   this.laboOrderService.getLaboOrderReport(val).subscribe(
-  //     result => {
-  //       this.laboOrderReport = result;
-  //     },
-  //     error => {
-
-  //     }
-  //   );
-  // }
-
-  loadLaboOrderStateCount() {
-    forkJoin(this.laboOrderStates.map(x => {
-      var val = new LaboOrderReportInput();
-      val.state = x.value;
-      val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-      val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-      return this.laboOrderService.getCountLaboOrder(val).pipe(
-        switchMap(count => of({state: x.value, count: count}))
-      );
-    })).subscribe((result) => {
-      result.forEach(item => {
-        this.laboOrderStateCount[item.state] = item.count;
-      });
     });
   }
 

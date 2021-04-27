@@ -45,22 +45,16 @@
             <h4 class="header-title">BÁO CÁO HÔM NAY</h4>
             <div class="t_report_today_detail">
                 <div class="t_kanban_left">
-                    <app-dashboard-sale-report></app-dashboard-sale-report>
-                    <app-dashboard-cash-bank-report></app-dashboard-cash-bank-report>
-                    <div class="card t_card_right border-secondary">
+                    <div *ngIf="showSaleReport" class="card t_card_right border-secondary">
+                        <app-dashboard-sale-report></app-dashboard-sale-report>
+                    </div>
+                    <div *ngIf="showCashBankReport" class="card t_card_right border-secondary">
+                        <app-dashboard-cash-bank-report></app-dashboard-cash-bank-report>
+                    </div>
+                    <div *ngIf="showPartnerCustomerReport" class="card t_card_right border-secondary">
                         <app-dashboard-partner-customer-report></app-dashboard-partner-customer-report>
                     </div>
-                    <div class="card t_card_right border-secondary">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div class="t_report_item" *ngFor="let state of laboOrderStates">
-                                    <span class="font-weight-bold">{{state.text}}</span>
-                                    <h4 class="text-primary">
-                                        {{laboOrderStateCount[state.value] || 0}}
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
+                    <div *ngIf="showLaboOrderReport" class="card t_card_right border-secondary">
                         <app-dashboard-labo-order-report></app-dashboard-labo-order-report>
                     </div>
                     <div class="t_card_right t_card_ghost"></div>

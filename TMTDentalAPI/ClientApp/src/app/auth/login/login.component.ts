@@ -28,12 +28,12 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.authService.login(this.loginForm.value).subscribe(data => {
-      if (data.succeeded) {
-        this.router.navigateByUrl('/');
-      } else {
-        // alert("Tài khoản hoặc mật khẩu không đúng");
+    this.authService.login(this.loginForm.value).subscribe((data: any) => {
+      if (data.succeeded == false) {
         alert(data.message);
+      } else {
+        localStorage.setItem('user_permission', JSON.stringify(data));
+        this.router.navigateByUrl('/');
       }
     }, error => {
       console.log('error login', error);
