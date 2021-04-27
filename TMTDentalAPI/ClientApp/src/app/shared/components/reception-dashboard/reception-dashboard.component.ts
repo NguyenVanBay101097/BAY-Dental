@@ -29,14 +29,12 @@ import { PartnerOldNewReport, PartnerOldNewReportService } from 'src/app/sale-re
 export class ReceptionDashboardComponent implements OnInit {
   @ViewChild(DataBindingDirective, { static: true }) dataBinding: DataBindingDirective;
 
-  saleReport: SaleReportItem;
   limit = 20;
   offset = 0;
   appointmentStateCount: any = {};
   search: string = '';
   totalService: number;
   laboOrderReport: LaboOrderReportOutput;
-  partnerOldNewReport: PartnerOldNewReport;
   reportValueCash: any;
   reportValueBank: any;
   reportValueCashByDate: any;
@@ -66,7 +64,6 @@ export class ReceptionDashboardComponent implements OnInit {
     private saleReportService: SaleReportService,
     private laboOrderService: LaboOrderService,
     private partnerService: PartnerService,
-    private partnerOldNewReportService: PartnerOldNewReportService,
     private router: Router,
     private authService: AuthService,
     private reportGeneralLedgerService: AccountReportGeneralLedgerService,
@@ -75,35 +72,11 @@ export class ReceptionDashboardComponent implements OnInit {
 
   ngOnInit() {
     this.gridView = this.gridData;
-    this.loadSaleReport();
     this.loadAppoiment();
     this.loadLaboOrderStateCount();
-    this.loadPartnerCustomerReport();
     this.loadDataMoney();
     this.loadDataMoneyByDateTime();
     this.loadService();
-  }
-
-  loadSaleReport() {
-    var val = new SaleReportSearch();
-    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
-    val.companyId = this.authService.userInfo.companyId;
-    val.isQuotation = false;
-    val.state = 'sale,done';
-    // val.groupBy = "customer"
-    this.saleReportService.getReport(val).subscribe(
-      result => {
-        if (result.length) {
-          this.saleReport = result[0];
-        } else {
-          this.saleReport = null;
-        }
-      },
-      error => {
-
-      }
-    );
   }
 
   loadService() {
@@ -199,21 +172,6 @@ export class ReceptionDashboardComponent implements OnInit {
         this.laboOrderStateCount[item.state] = item.count;
       });
     });
-  }
-
-  loadPartnerCustomerReport() {
-    var val = new PartnerCustomerReportInput();
-    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
-    val.companyId = this.authService.userInfo.companyId;
-    this.partnerOldNewReportService.getSumaryPartnerOldNewReport(val).subscribe(
-      result => {
-        this.partnerOldNewReport = result;
-      },
-      error => {
-
-      }
-    );
   }
 
   exportServiceExcelFile() {

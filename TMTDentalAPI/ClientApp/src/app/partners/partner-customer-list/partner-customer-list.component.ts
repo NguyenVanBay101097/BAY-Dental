@@ -57,6 +57,8 @@ export class PartnerCustomerListComponent implements OnInit {
     params: {}
   };
 
+  canExport = false;
+
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
     private checkPermissionService: CheckPermissionService) { }
@@ -85,10 +87,8 @@ export class PartnerCustomerListComponent implements OnInit {
       });
 
     this.loadFilteredCategs();
-  }
 
-  get canExport() {
-    return this.checkPermissionService.check('Basic.Partner.Export');
+    this.canExport = this.checkPermissionService.check('Basic.Partner.Export');
   }
 
   updateFilter() {

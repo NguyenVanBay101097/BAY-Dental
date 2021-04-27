@@ -83,6 +83,10 @@ import { SearchAllComponent } from './search-all/search-all.component';
 import { ProductListShareComponent } from './product-list-share/product-list-share.component';
 import { DiscountPopoverShareComponent } from './discount-popover-share/discount-popover-share.component';
 import { ServiceListSearchDropdownComponent } from './service-list-search-dropdown/service-list-search-dropdown.component';
+import { DashboardCashBankReportComponent } from './components/dashboard-cash-bank-report/dashboard-cash-bank-report.component';
+import { DashboardLaboOrderReportComponent } from './components/dashboard-labo-order-report/dashboard-labo-order-report.component';
+import { DashboardPartnerCustomerReportComponent } from './components/dashboard-partner-customer-report/dashboard-partner-customer-report.component';
+import { DashboardSaleReportComponent } from './components/dashboard-sale-report/dashboard-sale-report.component';
 
 @NgModule({
   declarations: [
@@ -158,7 +162,11 @@ import { ServiceListSearchDropdownComponent } from './service-list-search-dropdo
     SearchAllComponent,
     ProductListShareComponent,
     DiscountPopoverShareComponent,
-    ServiceListSearchDropdownComponent
+    ServiceListSearchDropdownComponent, 
+    DashboardCashBankReportComponent, 
+    DashboardLaboOrderReportComponent, 
+    DashboardPartnerCustomerReportComponent, 
+    DashboardSaleReportComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -224,7 +232,11 @@ import { ServiceListSearchDropdownComponent } from './service-list-search-dropdo
     SearchAllComponent,
     ProductListShareComponent,
     DiscountPopoverShareComponent,
-    ServiceListSearchDropdownComponent
+    ServiceListSearchDropdownComponent, 
+    DashboardCashBankReportComponent, 
+    DashboardLaboOrderReportComponent, 
+    DashboardPartnerCustomerReportComponent, 
+    DashboardSaleReportComponent
   ],
   imports: [
     NgbModule,
