@@ -56,7 +56,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "System.ApplicationRole.Read")]
         public async Task<IActionResult> Get([FromQuery]ApplicationRolePaged val)
         {
-            var query = _roleManager.Roles;
+            var query = _roleManager.Roles.Where(x => x.Hidden == false);
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NormalizedName.Contains(val.Search));
             query = query.OrderBy(x => x.Name);
