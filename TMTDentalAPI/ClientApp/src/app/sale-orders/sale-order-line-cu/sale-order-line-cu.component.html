@@ -37,7 +37,7 @@
                     </ng-template>
 
                     <ng-template #popContent let-greeting="greeting">
-                        <kendo-numerictextbox style="width:100%;" [format]="'n0'" [spinners]="false" formControlName="priceUnit" (change)="onChangeQuantity()" (keyup)="onChangeQuantity()">
+                        <kendo-numerictextbox style="width:100%;" [format]="'n0'" [spinners]="false" formControlName="priceUnit" (valueChange)="onChangeQuantity()">
                         </kendo-numerictextbox>
                     </ng-template>
                     <ng-template #popTitle let-language="language">Giá gốc</ng-template>
@@ -49,7 +49,9 @@
                     {{line.productUOMQty | number}}
                 </ng-container>
                 <ng-template #elseTemplateQty>
-                    <input (change)="onChangeQuantity()" (keyup)="onChangeQuantity()" type="number" *ngIf="!isEditting" min="1" style="width:100%;" class="form-control" formControlName="productUOMQty">
+                    <kendo-numerictextbox style="width:100%;" [format]="'n0'" [min]="0" [spinners]="false" formControlName="productUOMQty" (valueChange)="onChangeQuantity()">
+                    </kendo-numerictextbox>
+                    <!-- <input (change)="onChangeQuantity()" type="number" min="0" style="width:100%;" class="form-control" formControlName="productUOMQty"> -->
                 </ng-template>
             </div>
             <!-- thành tiền -->
@@ -212,7 +214,7 @@
             </label>
             <label class="d-flex justify-content-between mb-0">
                 <label>Ưu đãi dịch vụ</label>
-            <button>giảm</button>
+            <img src="../../../assets/icons/promotion-bg-primary.svg" alt="">
             <label>{{formInfoControl('amountPromotionToOrderLine').value | number}}</label>
             </label>
         </div>
