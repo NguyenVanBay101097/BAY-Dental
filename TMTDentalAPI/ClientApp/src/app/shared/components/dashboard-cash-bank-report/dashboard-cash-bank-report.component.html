@@ -1,18 +1,16 @@
-<div class="card t_card_right border-secondary">
-    <div class="card-body">
-        <div class="d-flex">
-            <div class="t_report_item">
-                <span class="font-weight-bold">TIỀN MẶT</span>
-                <h4 class="text-primary">
-                    {{(reportValueCash ? reportValueCash : 0) | number}}
-                </h4>
-            </div>
-            <div class="t_report_item">
-                <span class="font-weight-bold">NGÂN HÀNG</span>
-                <h4 class="text-primary">
-                    {{(reportValueBank ? reportValueBank : 0) | number}}
-                </h4>
-            </div>
+<div class="card-body">
+    <div class="d-flex justify-content-around">
+        <div class="t_report_item">
+            <span class="font-weight-bold">TIỀN MẶT</span>
+            <h4 class="text-primary">
+                {{(reportValueCash ? reportValueCash : 0) | number}}
+            </h4>
+        </div>
+        <div class="t_report_item">
+            <span class="font-weight-bold">NGÂN HÀNG</span>
+            <h4 class="text-primary">
+                {{(reportValueBank ? reportValueBank : 0) | number}}
+            </h4>
         </div>
     </div>
 </div>
