@@ -51,7 +51,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<SaleOrderLineDisplay> OrderLines { get; set; } = new List<SaleOrderLineDisplay>();
 
-
+        public IEnumerable<SaleOrderPromotionBasic> Promotions { get; set; } = new List<SaleOrderPromotionBasic>();
 
         public Guid CompanyId { get; set; }
 
