@@ -1134,6 +1134,17 @@ namespace Infrastructure.Services
             var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence)).Include(x => x.Advisory).Include(x => x.Assistant).Include(x => x.Promotions)
                 .Include(x => x.Product).Include(x => x.ToothCategory).Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth).Include(x => x.Employee).Include(x => x.Counselor).Include(x => x.OrderPartner).ToListAsync();
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
+
+            var promotionObj = GetService<ISaleOrderPromotionService>();
+            display.Promotions = await promotionObj.SearchQuery(x => x.SaleOrderId.HasValue && x.SaleOrderId == display.Id).Select(x => new SaleOrderPromotionBasic
+            {
+                Id = x.Id,
+                Name = x.Name,
+                ProductId = x.ProductId,
+                Amount = x.Amount,
+                Type = x.Type
+            }).ToListAsync();
+
             return display;
         }
 
@@ -1179,7 +1190,6 @@ namespace Infrastructure.Services
             saleLineObj._GetToInvoiceAmount(order.OrderLines);
             saleLineObj._ComputeInvoiceStatus(order.OrderLines);
             saleLineObj._ComputeLinePaymentRels(order.OrderLines);
-            await saleLineObj.RecomputeCommissions(order.OrderLines);
             await UpdateAsync(order);
 
             _AmountAll(order);
@@ -2251,7 +2261,6 @@ namespace Infrastructure.Services
             res.PartnerId = val.PartnerId;
             res.PricelistId = val.PricelistId;
             res.IsFast = true;
-            res.JournalId = val.JournalId;
 
             var order = _mapper.Map<SaleOrder>(res);
 
@@ -2294,10 +2303,23 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             await saleLineObj.CreateAsync(lines);
 
+  
+            saleLineObj.UpdateOrderInfo(order.OrderLines, order);
+            saleLineObj.ComputeAmount(order.OrderLines);
+            saleLineObj._GetInvoiceQty(order.OrderLines);
+            saleLineObj._GetToInvoiceQty(order.OrderLines);
+            saleLineObj._GetInvoiceAmount(order.OrderLines);
+            saleLineObj._GetToInvoiceAmount(order.OrderLines);
+            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+            saleLineObj._ComputeLinePaymentRels(order.OrderLines);
+
             _AmountAll(order);
 
             await UpdateAsync(order);
-            //confirm sale order       
+
+            ///xử lý ưu đãi 
+
+            //done sale order       
             order.State = "done";
             order.DateDone = DateTime.Now;
             foreach (var line in order.OrderLines)
@@ -2306,45 +2328,47 @@ namespace Infrastructure.Services
                     continue;
 
                 line.State = "done";
-            }
-
-            saleLineObj._GetToInvoiceQty(order.OrderLines);
-            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
-
-            await saleLineObj.RecomputeCommissions(order.OrderLines);
-
-
-            var invoices = await _CreateInvoices(new List<SaleOrder>() { order }, final: true);
-            var moveObj = GetService<IAccountMoveService>();
-            await moveObj.ActionPost(invoices);
-            saleLineObj._GetInvoiceQty(order.OrderLines);
-            saleLineObj._GetToInvoiceQty(order.OrderLines);
-            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
-            saleLineObj._ComputeLinePaymentRels(order.OrderLines);
+            }        
 
 
             _GetInvoiced(new List<SaleOrder>() { order });
             _ComputeResidual(new List<SaleOrder>() { order });
             await UpdateAsync(new List<SaleOrder>() { order });
 
-            //thanh toan
+            //tạo thanh toán phiếu điều trị nhanh
             var amountTotal = order.AmountTotal ?? 0;
-            var payment = new AccountPayment()
+            var salePayment = new SaleOrderPayment()
             {
                 Amount = amountTotal,
-                JournalId = val.JournalId,
-                PaymentType = amountTotal > 0 ? "inbound" : "outbound",
-                PartnerId = order.PartnerId,
-                PartnerType = "customer",
+                Date = order.DateOrder,
+                OrderId = order.Id,
                 CompanyId = order.CompanyId
             };
 
-            payment.SaleOrderPaymentRels.Add(new SaleOrderPaymentRel { SaleOrderId = order.Id });
-            foreach (var orderLine in order.OrderLines)
-                payment.SaleOrderLinePaymentRels.Add(new SaleOrderLinePaymentRel { SaleOrderLineId = orderLine.Id, AmountPrepaid = orderLine.PriceTotal });
-            var paymentObj = GetService<IAccountPaymentService>();
-            await paymentObj.CreateAsync(payment);
-            await paymentObj.Post(new List<Guid>() { payment.Id });
+            ///tạo SaleOrderPaymentHistoryLineSave từ orderlines          
+            foreach(var line in order.OrderLines)
+            {
+                salePayment.Lines.Add(new SaleOrderPaymentHistoryLine
+                {
+                    SaleOrderLineId = line.Id,
+                    Amount = line.PriceSubTotal,
+                    SaleOrderPayment = salePayment
+                });
+            }
+
+            var journalObj = GetService<IAccountJournalService>();
+            var journalCash = await journalObj.GetJournalByTypeAndCompany("cash", order.CompanyId);
+            //tạo ra phương thức thanh toán mặc định là tiền mặt
+            salePayment.JournalLines.Add(new SaleOrderPaymentJournalLine()
+            {
+                SaleOrderPayment = salePayment,
+                JournalId = journalCash.Id,
+                Amount = amountTotal
+            });
+           
+            var paymentObj = GetService<ISaleOrderPaymentService>();
+            await paymentObj.CreateAsync(salePayment);
+            await paymentObj.ActionPayment(new List<Guid>() { salePayment.Id });
 
             var basic = _mapper.Map<SaleOrderBasic>(order);
             return basic;
