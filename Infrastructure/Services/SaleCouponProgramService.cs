@@ -288,7 +288,7 @@ namespace Infrastructure.Services
                 message.Error = $"Mã khuyến mãi {coupon_code} đã hết hạn.";
             else if (!_FilterOnMinimumAmount(new List<SaleCouponProgram>() { self }, order).Any())
                 message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
-            else if (!string.IsNullOrEmpty(self.PromoCode) && (order.Promotions.Any(x=> x.SaleCouponProgramId == self.Id)))
+            else if (!string.IsNullOrEmpty(self.PromoCode) && (order.Promotions.Any(x=> x.ProductId == self.DiscountLineProductId)))
                 message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (string.IsNullOrEmpty(self.PromoCode) && order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
                 message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";
