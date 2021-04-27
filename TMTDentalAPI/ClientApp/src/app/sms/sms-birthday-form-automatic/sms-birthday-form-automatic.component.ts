@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
@@ -30,7 +31,8 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     private fb: FormBuilder,
     private modalService: NgbModal,
     private smsTemplateService: SmsTemplateService,
-    private smsConfigService: SmsConfigService
+    private smsConfigService: SmsConfigService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -85,13 +87,15 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(
         res => {
-          console.log(res);
+          // console.log(res);
+          this.notify("cập nhật thiết lập thành công", true);
         }
       )
     } else {
       this.smsConfigService.create(val).subscribe(
         res => {
-          console.log(res);
+          // console.log(res);
+          this.notify("thiết lập thành công", true);
         }
       )
     }
@@ -105,5 +109,13 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
       this.loadSmsTemplate();
     })
   }
-
+  notify(title, isSuccess = true) {
+    this.notificationService.show({
+      content: title,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: isSuccess ? 'success' : 'error', icon: true },
+    });
+  }
 }

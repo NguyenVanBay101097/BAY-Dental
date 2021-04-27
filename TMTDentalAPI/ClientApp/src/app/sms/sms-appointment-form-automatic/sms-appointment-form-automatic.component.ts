@@ -83,15 +83,15 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(
         res => {
-          this.notify('cập nhật thành công', true);
-          console.log(res);
+          this.notify("cập nhật thiết lập thành công", true);
+          // console.log(res);
         }
       )
     } else {
       this.smsConfigService.create(val).subscribe(
         res => {
-          this.notify("thêm mới thành công", true);
-          console.log(res);
+          this.notify("thiết lập thành công", true);
+          // console.log(res);
         }
       )
     }
