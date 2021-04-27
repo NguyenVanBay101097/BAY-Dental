@@ -1,6 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="this.activeModal.close(false)" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -11,36 +11,45 @@
                     <!-- giảm tiền -->
                     <div>
                         <label for="">Giảm thành tiền</label>
-                        <div class="d-flex">
-                            <kendo-numerictextbox *ngIf="form.discountType == this.discountTypeDict['VNĐ']" [min]="0" [autoCorrect]="true" [(ngModel)]="form.discountFixed" style="width:50%" [format]="'n0'" [spinners]="false" (change)="onChangeDiscount($event)">
-                            </kendo-numerictextbox>
-                            <kendo-numerictextbox *ngIf="form.discountType == this.discountTypeDict['%']" [min]="0" [autoCorrect]="true" [max]="100" [(ngModel)]="form.discountPercent" style="width:50%" [spinners]="false" (change)="onChangeDiscount($event)">
-                            </kendo-numerictextbox>
-                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                <label *ngFor="let item of  discountTypeDict| keyvalue; let i = index" [ngClass]="{'active': form.discountType == item.value}" class="btn btn-outline-primary mx-2">
-                                  <input (change)="onChangeDiscountType($event)" type="radio" [(ngModel)]="form.discountType" value="{{item.value}}" name="typeDiscount" [id]="item.value" checked> {{item.key}}
-                                </label>
+
+                        <ng-container *ngIf="getListPromotion('discount').length == 0; else elseTemplateDiscount">
+                            <div class="d-flex">
+                                <kendo-numerictextbox *ngIf="form.discountType == this.discountTypeDict['VNĐ']" [min]="0" [autoCorrect]="true" [(ngModel)]="form.discountFixed" style="width:50%" [format]="'n0'" [spinners]="false" (change)="onChangeDiscount($event)">
+                                </kendo-numerictextbox>
+                                <kendo-numerictextbox *ngIf="form.discountType == this.discountTypeDict['%']" [min]="0" [autoCorrect]="true" [max]="100" [(ngModel)]="form.discountPercent" [format]="'n0'" style="width:50%" [spinners]="false" (change)="onChangeDiscount($event)">
+                                </kendo-numerictextbox>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="discountTypes" [(ngModel)]="form.discountType" (change)="onChangeDiscountType()" id="percentage1" value="percentage">
+                                    <label class="form-check-label" for="percentage1">%</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="discountTypes" [(ngModel)]="form.discountType" (change)="onChangeDiscountType()" id="fixed1" value="fixed">
+                                    <label class="form-check-label" for="fixed1">VNĐ</label>
+                                </div>
+                                <button (click)="applyDiscount()" class="btn btn-primary ml-auto">Áp dụng</button>
                             </div>
-                            <button (click)="applyDiscount()" class="btn btn-primary ml-auto">Áp dụng</button>
-                        </div>
+                        </ng-container>
+                        <ng-template #elseTemplateDiscount>
+                            <p *ngFor="let item of getListPromotion('discount')" class="d-flex justify-content-between">
+                                <label for="">{{item.amount}}</label>
+                                <label for=""><span class="k-icon k-i-delete" (click)="onDeletePromotion(item)"></span></label>
+                            </p>
+                        </ng-template>
+
                     </div>
                     <!-- mã thủ công -->
-                    <div>
+                    <div *ngIf="this.salerOrderId">
                         <label for="">Mã khuyến mãi/coupon</label>
-                        <div class="d-flex">
-                            <input [(ngModel)]="form.code" type="text" class="form-control">
-                            <button class="btn btn-primary ml-auto">Áp dụng</button>
+                        <div class="d-flex justify-content-between">
+                            <div class=" flex-fill mr-3">
+                                <input [(ngModel)]="form.code" type="text" class="form-control">
+                            </div>
+                            <button (click)="applyCoupon()" class="btn btn-primary ml-auto">Áp dụng</button>
                         </div>
                         <div>
-                            <p class="d-flex justify-content-between">
-                                <label for="">Chương trình 1</label>
-                                <button type="button" class="btn btn-icon btn-sm btn-light" (click)="onDelete()">
-                                <span class="k-icon k-i-delete"></span>
-                            </button>
-                            </p>
-                            <p class="d-flex justify-content-between">
-                                <label for="">Chương trình 1</label>
-                                <button type="button" class="btn btn-icon btn-sm btn-light" (click)="onDelete()">
+                            <p *ngFor="let item of getListPromotion('code_usage_program'); let i = index" class="d-flex justify-content-between">
+                                <label for="">{{item.name}}</label>
+                                <button type="button" class="btn btn-icon btn-sm btn-light" (click)="onDeletePromotion(item)">
                                 <span class="k-icon k-i-delete"></span>
                             </button>
                             </p>
@@ -52,9 +61,16 @@
                         <div>
                             <p *ngFor="let item of autoPromotions" class="d-flex justify-content-between">
                                 <label for="">{{item.name}}</label>
-                                <button type="button" class="btn btn-primary" (click)="onDelete()">
+                                <ng-container *ngIf="!getApplied(item); else elseTemplate">
+                                    <button type="button" class="btn btn-primary" (click)="applyPromotion(item)">
                                 Chọn
                             </button>
+                                </ng-container>
+                                <ng-template #elseTemplate>
+                                    <button type="button" class="btn btn-secondary" (click)="onDeletePromotion(getApplied(item))">
+                                Bỏ chọn
+                            </button>
+                                </ng-template>
                             </p>
                         </div>
                     </div>
@@ -65,5 +81,5 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="this.activeModal.dismiss()" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="this.activeModal.close(true)" accesskey="q">Đóng</button>
 </footer>

@@ -25,6 +25,6 @@ export class SaleOrderPromotionService {
   }
 
  removePromotion(ids: string[]) {
-  return this.http.post(this.baseApi + this.apiUrl, {ids: ids} );
+  return this.http.post(this.baseApi + this.apiUrl + '/RemovePromotion', ids );
   }
 }

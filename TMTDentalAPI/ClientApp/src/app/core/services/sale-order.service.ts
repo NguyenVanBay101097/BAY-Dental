@@ -127,8 +127,8 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyServiceCards', data);
     }
 
-    applyPromotion(id: string) {
-        return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/ApplyPromotion', {});
+    applyPromotion(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotion', val);
     }
 
     applyDiscountDefault(data: DiscountDefault) {

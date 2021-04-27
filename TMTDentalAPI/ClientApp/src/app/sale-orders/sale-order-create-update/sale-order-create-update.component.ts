@@ -1,5 +1,5 @@
 import { DiscountDefault } from '../../core/services/sale-order.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { switchMap, mergeMap } from 'rxjs/operators';
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
@@ -23,7 +23,7 @@ import { PriceListService } from 'src/app/price-list/price-list.service';
 import { SaleOrderApplyCouponDialogComponent } from '../sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { of } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { LaboOrderBasic, LaboOrderService, LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
@@ -52,6 +52,7 @@ import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.ser
 import { EmployeePaged } from 'src/app/employees/employee';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { SaleOrderPromotionDialogComponent } from '../sale-order-promotion-dialog/sale-order-promotion-dialog.component';
+import { SaleOrderLineCuComponent } from '../sale-order-line-cu/sale-order-line-cu.component';
 
 declare var $: any;
 
@@ -98,14 +99,17 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   saleOrderLine: any;
   payments: AccountPaymentBasic[] = [];
   paymentsInfo: PaymentInfoContent[] = [];
-  
+
   searchCardBarcode: string;
   listTeeths: any[] = [];
   type: string;
   submitted = false;
   amountAdvanceBalance: number = 0;
-  selectedIndex = -1;
   defaultToothCate: ToothCategoryBasic;
+
+  childEmiter = new BehaviorSubject<any>(null);
+  @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
+  lineSelected = null;
 
   constructor(
     private fb: FormBuilder,
@@ -125,11 +129,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private printService: PrintService,
     private accountPaymentOdataService: AccountPaymentsOdataService,
     private toothCategoryService: ToothCategoryService,
-    
+
   ) {
   }
 
   ngOnInit() {
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
@@ -234,14 +239,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   loadToothCateDefault() {
     this.toothCategoryService.getDefaultCategory().subscribe(
-      res=> {
+      res => {
         this.defaultToothCate = res;
       }
     );
   }
 
-  
-  updateLineInfo(line,lineControl) {
+
+  updateLineInfo(line, lineControl) {
     line.toothCategoryId = line.toothCategory.id;
     line.assistantId = line.assistant ? line.assistant.id : null;
     line.employeeId = line.employee ? line.employee.id : null;
@@ -258,6 +263,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     lineControl.updateValueAndValidity();
     // this.onChangeQuantity(lineControl);
     this.computeAmountTotal();
+
+    this.lineSelected = null;
   }
 
   get cardValue() {
@@ -735,6 +742,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSaveConfirm() {
+    //update line trước khi lưu
+    if (this.lineSelected != null) {
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      viewChild.updateLineInfo();
+    }
+
     this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
@@ -814,6 +827,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
+    //update line trước khi lưu
+    if (this.lineSelected != null) {
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      viewChild.updateLineInfo();
+    }
+
     this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
@@ -821,7 +840,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     const val = this.getFormDataSave();
 
     if (this.saleOrderId) {
-      this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
+      this.saleOrderService.update(this.saleOrderId, val).subscribe((res) => {
         this.notificationService.show({
           content: 'Lưu thành công',
           hideAfter: 3000,
@@ -848,29 +867,33 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  patchValueSaleOrder(result) {
+    this.saleOrder = result;
+    this.formGroup.patchValue(result);
+    let dateOrder = new Date(result.dateOrder);
+    this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+
+    if (result.partner) {
+      this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+    }
+
+    let control = this.formGroup.get('orderLines') as FormArray;
+    control.clear();
+    result.orderLines.forEach(line => {
+      var g = this.fb.group(line);
+      g.setControl('teeth', this.fb.array(line.teeth));
+      control.push(g);
+    });
+
+    this.formGroup.markAsPristine();
+    this.getAmountAdvanceBalance();
+  }
+
   loadRecord() {
     if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
-        this.saleOrder = result;
-        this.formGroup.patchValue(result);
-        let dateOrder = new Date(result.dateOrder);
-        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
-
-        if (result.partner) {
-          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
-        }
-
-        let control = this.formGroup.get('orderLines') as FormArray;
-        control.clear();
-        result.orderLines.forEach(line => {
-          var g = this.fb.group(line);
-          g.setControl('teeth', this.fb.array(line.teeth));
-          control.push(g);
-        });
-
-        this.formGroup.markAsPristine();
+        this.patchValueSaleOrder(result);
       });
-      this.getAmountAdvanceBalance();
     }
   }
 
@@ -934,7 +957,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   addLine(val) {
-    if(this.selectedIndex != -1) {
+    if (this.lineSelected) {
       this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để thêm dịch vụ khác');
       return;
     }
@@ -963,21 +986,27 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       teeth: this.fb.array([]),
       toothCategory: this.defaultToothCate,
       toothCategoryId: this.defaultToothCate.id,
-      counselor : null,
-      counselorId : null,
+      counselor: null,
+      counselorId: null,
       toothType: 'manual',
       isActive: true,
       amountPromotionToOrder: 0,
       amountPromotionToOrderLine: 0
     };
     var res = this.fb.group(value);
-   
+
     this.orderLines.push(res);
     this.orderLines.markAsDirty();
     this.computeAmountTotal();
- 
-    this.saleOrderLine = null;
 
+    this.saleOrderLine = null;
+    this.lineSelected = res.value;
+
+    // mặc định là trạng thái sửa
+    setTimeout(() => {
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      viewChild.onEditLine();
+    }, 0);
   }
 
   //Mở popup Sửa dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
@@ -1242,30 +1271,75 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   getAmount() {
-    return (this.orderLines.value as any[]).reduce((total, cur)=> {
-      return total + cur.priceSubTotal;
-    },0);
+    return (this.orderLines.value as any[]).reduce((total, cur) => {
+      return total + cur.priceUnit * cur.productUOMQty;
+    }, 0);
   }
 
   getTotalDiscount() {
-    return (this.orderLines.value as any[]).reduce((total, cur)=> {
+    return (this.orderLines.value as any[]).reduce((total, cur) => {
       return total + cur.amountPromotionToOrder + cur.amountPromotionToOrderLine;
-    },0);
+    }, 0);
   }
 
   onDeleteLine(index) {
     this.orderLines.removeAt(index);
     this.computeAmountTotal();
+    this.lineSelected = null;
   }
 
   onOpenSaleOrderPromotion() {
-    let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-    modalRef.componentInstance.salerOrderId = this.saleOrderId;
-    modalRef.result.then(() => {
-      this.loadRecord();
-    }, () => {
-    });
+
+    if (!this.saleOrderId) {
+      this.submitted = true;
+      if (!this.formGroup.valid) {
+        return false;
+      }
+      const val = this.getFormDataSave();
+      this.saleOrderService.create(val).subscribe((result: any) => {
+        this.saleOrderId = result.id;
+        let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+        modalRef.componentInstance.salerOrderId = result.id;
+        modalRef.result.then(() => {
+          this.router.navigate(["/sale-orders/form"], {
+            queryParams: { id: result.id },
+          });
+        }, () => {
+        });
+      });
+    } else {
+
+      let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+      modalRef.componentInstance.salerOrderId = this.saleOrderId;
+      modalRef.result.then(() => {
+        this.loadRecord();
+      }, () => {
+      });
+    }
   }
- 
+
+  onEditLine(line) {
+    if (this.lineSelected != null) {
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để chỉnh sửa dịch vụ khác');
+    } else {
+      this.lineSelected = line;
+      var viewChild = this.lineVCR.find(x => x.line == line);
+      viewChild.onEditLine();
+    }
+  }
+
+  onCancelEditLine(line) {
+    this.lineSelected = null;
+  }
+
+  sumPromotionSaleOrder() {
+    if(this.saleOrderId) {
+      return (this.saleOrder.promotions as any[]).reduce((total, cur) => {
+        return total + cur.amount;
+      },0);
+    }
+    return 0;
+  }
+
 }
 

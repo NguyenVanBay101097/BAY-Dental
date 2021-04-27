@@ -12,30 +12,24 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { SaleOrderLineLaboOrdersDialogComponent } from "../sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component";
 import { ToothCategoryService } from "src/app/tooth-categories/tooth-category.service";
 import { NotificationService } from "@progress/kendo-angular-notification";
+import { SaleOrderPromotionDialogComponent } from "../sale-order-promotion-dialog/sale-order-promotion-dialog.component";
+import { BehaviorSubject, Subject } from "rxjs";
 
 @Component({
   selector: "app-sale-order-line-cu",
   templateUrl: "./sale-order-line-cu.component.html",
   styleUrls: ["./sale-order-line-cu.component.css"],
 })
+
 export class SaleOrderLineCuComponent implements OnInit {
   @Input() line: SaleOrderLineDisplay;
 
-  private _selectedIndex = 0;
-  @Input() set selectedIndex(value) {
-    this._selectedIndex = value;
-    this.selectedIndexChange.emit(value);
-  }
-  get selectedIndex() {
-    return this._selectedIndex;
-  }
-  @Output()
-  selectedIndexChange: EventEmitter<number> = new EventEmitter<number>();
+  @Output() onUpdateEvent = new EventEmitter<any>();
+  @Output() onDeleteEvent = new EventEmitter<any>();
+  @Output() onEditEvent = new EventEmitter<any>();
+  @Output() onCancelEvent = new EventEmitter<any>();
 
-  @Input() currentIndex: number;
-
-  @Output() onUpdate = new EventEmitter<SaleOrderLineDisplay>();
-  @Output() onDelete = new EventEmitter<any>();
+  isEditting: boolean = false;
 
   filteredEmployees: any[] = [];
   initialListEmployees: any = [];
@@ -62,6 +56,12 @@ export class SaleOrderLineCuComponent implements OnInit {
   ngOnInit() {
     this.formGroupInfo = this.fb.group(this.line);
     this.formGroupInfo.setControl("teeth", this.fb.array([]));
+
+    if (this.line.teeth) {
+      this.line.teeth.forEach((tooth) => {
+        this.TeethFA.push(this.fb.group(tooth));
+      });
+    }
     this.computeAmount();
 
     this.loadEmployees();
@@ -86,17 +86,11 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   editLine() {
-    if (this.selectedIndex != -1) {
-      this.notify(
-        "error",
-        "Vui lòng hoàn thành dịch vụ hiện tại để sửa dịch vụ khác"
-      );
-      return;
-    }
+    this.onEditEvent.emit(this.line);
+  }
 
-    this.selectedIndex = this.currentIndex;
-    // this.selectedIndexChange.emit(this.currentIndex);
-
+  onEditLine() {
+    this.isEditting = true;
     this.formGroupInfo = this.fb.group(this.line);
     this.formGroupInfo.setControl("teeth", this.fb.array([]));
 
@@ -149,7 +143,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   deleteLine() {
-    this.onDelete.emit(this.currentIndex);
+    this.onDeleteEvent.emit();
   }
 
   loadToothCategories() {
@@ -160,7 +154,7 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   getToothCateLine() {
     var res =
-      this.selectedIndex == this.currentIndex
+    this.isEditting
         ? this.formInfoControl("toothCategory").value
         : this.line.toothCategory;
     return res;
@@ -168,7 +162,7 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   getToothTypeLine() {
     var res =
-      this.selectedIndex == this.currentIndex
+    this.isEditting
         ? this.formInfoControl("toothType").value
         : this.line.toothType;
     return res;
@@ -200,7 +194,7 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   isSelected(tooth: any) {
     var index = -1;
-    if (this.selectedIndex != this.currentIndex) {
+    if (!this.isEditting) {
       index = this.line.teeth.findIndex((x) => x.id == tooth.id);
     } else {
       var teethForm = this.TeethFA.value as any[];
@@ -255,7 +249,9 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   updateLineInfo() {
-    this.onUpdate.emit(this.formGroupInfo.value);
+    this.isEditting = false;
+    this.onUpdateEvent.emit( this.formGroupInfo.value);
+    
   }
 
   onChangeQuantity() {
@@ -304,7 +300,31 @@ export class SaleOrderLineCuComponent implements OnInit {
     });
   }
 
-  editPriceUnit() {
-    
+  // onOpenPromotion() {
+   
+
+  //     let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+  //     modalRef.componentInstance.saleOrderLineId = this.line.id;
+  //     modalRef.result.then(() => {
+  //       this.onEmit.emit({action: 'reload', data: null});
+
+  //     }, () => {
+  //     });
+  // }
+
+  onCancel() {
+    this.isEditting = false;
+    this.onCancelEvent.emit(this.line);
   }
+
+  viewTeeth() {
+    var toothType = this.line.toothType;
+    if(toothType == "manual") {
+      var teeth = this.line.teeth as any[];
+      return teeth.map(x=> x.name).join(',');
+    } else {
+      return this.toothTypeDict.find(x=> x.value == toothType).name;
+    }
+  }
+
 }

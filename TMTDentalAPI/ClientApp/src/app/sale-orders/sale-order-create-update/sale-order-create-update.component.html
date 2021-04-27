@@ -215,10 +215,10 @@
                             </div>
                             <div class="d-flex overflow-auto">
                                 <div class="w-75 d-flex flex-column">
-                                    <!-- Component Form Service Payment -->
+                                    <!-- saleorderline -->
 
                                     <div class="overflow-auto">
-                                        <div class="div-table w-100" formArrayName="orderLines">
+                                        <div class="div-table w-100">
                                             <div class="div-row bg-primary text-white">
                                                 <div style="width: 200px;" class="div-cell py-1">Dịch vụ</div>
                                                 <div style="width: 130px;" class="div-cell py-1 text-right">Đơn giá</div>
@@ -230,23 +230,24 @@
                                             </div>
                                         </div>
                                         <ng-container *ngFor="let line of orderLines.controls; let i=index">
-                                            <app-sale-order-line-cu [currentIndex]="i" [(selectedIndex)]="selectedIndex" [line]="line.value" (onDelete)="onDeleteLine(i)" (onUpdate)="updateLineInfo($event, line)"></app-sale-order-line-cu>
+                                            <app-sale-order-line-cu #lineTemplate [line]="line.value" (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)"></app-sale-order-line-cu>
                                         </ng-container>
                                     </div>
                                 </div>
                                 <div class="w-25 pl-3">
                                     <div class="card mb-3">
-                                        <div class="card-header bg-primary text-white pl-2 py-1">Ưu đãi phiếu điều trị
+                                        <div class="card-header bg-primary text-white pl-2 py-1 d-flex">Ưu đãi phiếu điều trị
                                             <button (click)="onOpenSaleOrderPromotion()">giảm</button>
+                                            <span class="ml-auto">{{sumPromotionSaleOrder() | number}}</span>
                                         </div>
-                                        <div class="card-body px-2">
+                                        <div class="card-body px-3">
                                             <p class="d-flex justify-content-between">
                                                 <label class="font-weight-600">Ưu đãi</label>
                                                 <label class="font-weight-600">Số tiền giảm</label>
                                             </p>
-                                            <p class="d-flex justify-content-between">
-                                                <label class="font-weight-600">Giảm tiền</label>
-                                                <label class="font-weight-600">20.000.000</label>
+                                            <p *ngFor="let item of saleOrder.promotions" class="d-flex justify-content-between">
+                                                <label class="font-weight-600">{{item.name}}</label>
+                                                <label class="font-weight-600">{{item.amount | number}}</label>
                                             </p>
                                         </div>
                                     </div>

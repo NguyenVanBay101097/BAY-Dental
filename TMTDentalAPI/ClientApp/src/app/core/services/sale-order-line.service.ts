@@ -85,4 +85,16 @@ export class SaleOrderLineService {
     getListLineIsLabo(val: any):Observable<PagedResult2<any>> {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetListLineIsLabo', { params: new HttpParams({ fromObject: val }) });
     }
+
+    applyDiscountOnOrderLine(val){
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnOrderLine', val);
+    }
+
+    applyPromotion(val){
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotion', val);
+    }
+
+    patchIsActive(id, val){
+        return this.http.patch(this.baseApi + this.apiUrl + '/' + id + '/PatchIsActive',val)
+    }
 }
