@@ -407,6 +407,7 @@ namespace Infrastructure.Services
             var couponObj = GetService<ISaleCouponService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var order = await SearchQuery(x => x.Id == val.Id)
+             .Include(x=> x.Promotions)
              .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).Include("OrderLines.Product")
              .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
              .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
@@ -2616,7 +2617,7 @@ namespace Infrastructure.Services
             {
                 promotion = new SaleOrderPromotion
                 {
-                    Name = product.Name,
+                    Name = "Giảm tiền",
                     ProductId = product.Id,
                     Amount = (discount_amount ?? 0),
                     Type = "discount",
