@@ -116,3 +116,7 @@
 .btn:hover {
     cursor: pointer;
 }
+
+.pointer:hover {
+    cursor: pointer;
+}

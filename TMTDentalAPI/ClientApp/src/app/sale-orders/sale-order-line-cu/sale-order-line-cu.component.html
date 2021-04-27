@@ -208,14 +208,14 @@
         </div>
         <!-- ưu đãi -->
         <div class="border col-4 py-2">
-            <label class="d-flex justify-content-between mb-2">
+            <label class="d-flex mb-2">
                 <label>Ưu đãi phiếu điều trị</label>
-            <label>{{formInfoControl('amountPromotionToOrder').value | number}}</label>
+            <label class="ml-auto">{{formInfoControl('amountPromotionToOrder').value | number}}</label>
             </label>
             <label class="d-flex justify-content-between mb-0">
-                <label>Ưu đãi dịch vụ</label>
-            <img src="../../../assets/icons/promotion-bg-primary.svg" alt="">
-            <label>{{formInfoControl('amountPromotionToOrderLine').value | number}}</label>
+                Ưu đãi dịch vụ
+            <img class="ml-2 pointer" src="../../../assets/icons/promotion-bg-primary.svg" alt="">
+            <label class="ml-auto">{{formInfoControl('amountPromotionToOrderLine').value | number}}</label>
             </label>
         </div>
         <div *ngIf="isEditting" class="popover-footer d-flex justify-content-end mr-3">

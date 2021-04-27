@@ -74,7 +74,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   getPriceUnitLinePromotion(line) {
-    return line.priceUnit;
+    return line.priceUnit - line.amountDiscountTotal;
   }
 
   formInfoControl(value: string) {
