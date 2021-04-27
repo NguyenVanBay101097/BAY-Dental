@@ -68,6 +68,7 @@ export class PartnerCustomerListComponent implements OnInit {
     private checkPermissionService: CheckPermissionService) { }
 
   ngOnInit() {
+    this.checkRole();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -78,7 +79,8 @@ export class PartnerCustomerListComponent implements OnInit {
         this.skip = 0;
       });
 
-    this.categMst.filterChange
+    if (this.canFilterPartnerCategory && this.categMst) {
+      this.categMst.filterChange
       .asObservable()
       .pipe(
         debounceTime(300),
@@ -89,9 +91,9 @@ export class PartnerCustomerListComponent implements OnInit {
         this.filteredCategs = result;
         this.categMst.loading = false;
       });
+    }
 
     this.loadFilteredCategs();
-    this.hideRole();
   }
 
   updateFilter() {
@@ -254,7 +256,7 @@ export class PartnerCustomerListComponent implements OnInit {
     });
   }
 
-  hideRole(){
+  checkRole(){
     this.canExport = this.checkPermissionService.check('Basic.Partner.Export');
     this.canAdd = this.checkPermissionService.check('Basic.Partner.Create');
     this.canImport = this.checkPermissionService.check('Basic.Partner.Import');
