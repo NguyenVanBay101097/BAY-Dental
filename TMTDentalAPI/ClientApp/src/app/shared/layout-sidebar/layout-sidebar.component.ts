@@ -244,17 +244,19 @@ export class LayoutSidebarComponent implements OnInit {
     });
 
     var list: any[] = [];
+
     for (var i = 0; i < menuItems.length; i++) {
       var menuItem = menuItems[i];
       if (this.hasPermission(menuItem)) {
-        list.push(menuItem);
+       // list.push(menuItem);
         if (menuItem.children) {
           menuItem.children.forEach(child => {
             if (this.hasPermission(child)) {
-              list.push(child);
+              child.show = true;
             }
           });
         }
+        list.push(menuItem);
       }
     }
 

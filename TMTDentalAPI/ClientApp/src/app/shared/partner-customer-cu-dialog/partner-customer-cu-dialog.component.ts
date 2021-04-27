@@ -97,6 +97,12 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   submitted = false;
 
+  showPartnerSource = false;
+  showPartnerHistories = false;
+  showPartnerTitles = false;
+  showEmployees = false;
+  showPartnerCategories = false;
+
   get f() { return this.formGroup.controls; }
 
   constructor(
@@ -563,5 +569,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   onAvatarUploaded(data) {
     this.f.avatar.setValue(data ? data.fileUrl : null);
+  }
+
+  checkRole(){
   }
 }

@@ -93,7 +93,9 @@ export class PartnerCustomerListComponent implements OnInit {
       });
     }
 
-    this.loadFilteredCategs();
+    if(this.canFilterPartnerCategory){
+      this.loadFilteredCategs();
+    }
   }
 
   updateFilter() {
