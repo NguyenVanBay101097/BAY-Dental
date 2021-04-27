@@ -99,7 +99,7 @@ namespace Infrastructure.Services
 
         public void _ComputePromotionType(SaleOrderPromotion self, SaleCouponProgram program)
         {
-            if (program.ProgramType == "coupon_program" || (program.ProgramType == "coupon_program" && program.PromoCodeUsage == "code_needed"))
+            if (program.ProgramType == "coupon_program" || (program.ProgramType == "promotion_program" && program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode)))
             {
                 self.Type = "code_usage_program";
             }
