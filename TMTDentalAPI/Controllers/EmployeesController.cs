@@ -84,7 +84,7 @@ namespace TMTDentalAPI.Controllers
             if (employee.User != null)
             {
                 var roleNames = await _userManager.GetRolesAsync(employee.User);
-                res.Roles = await _roleManager.Roles.Where(x => roleNames.Contains(x.Name))
+                res.Roles = await _roleManager.Roles.Where(x => roleNames.Contains(x.Name) && x.Hidden == false)
                     .Select(x => new ApplicationRoleBasic() { Id = x.Id, Name = x.Name }).ToListAsync();
             }
             return Ok(res);
