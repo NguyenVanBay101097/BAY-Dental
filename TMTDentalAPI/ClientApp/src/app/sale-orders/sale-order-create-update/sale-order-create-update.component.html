@@ -32,7 +32,7 @@
                         <a [routerLink]="['/partners/customer/' + customerId + '/treatment']" class="btn btn-secondary btn-sm">
                             Trở lại
                         </a>
-                        <button type="button" *ngIf="['sale'].indexOf(saleOrder.state) !== -1" class="btn btn-secondary btn-sm" (click)="actionEdit()">
+                        <button type="button" *ngIf="this.saleOrderId" class="btn btn-secondary btn-sm" (click)="actionEdit()">
                             Sửa dịch vụ
                         </button>
                         <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder.state != 'done'" (click)="onSave()">

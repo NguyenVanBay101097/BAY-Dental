@@ -32,6 +32,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Output() onCancelEvent = new EventEmitter<any>();
 
   isEditting: boolean = false;
+  canEdit = false;
 
   filteredEmployees: any[] = [];
   initialListEmployees: any = [];
@@ -336,7 +337,10 @@ export class SaleOrderLineCuComponent implements OnInit {
       modalRef.componentInstance.title = 'Ngừng dịch vụ';
       modalRef.componentInstance.body = 'Bạn chắc chắn muốn ngừng dịch vụ này?';
       modalRef.result.then(() => {
-      
+        this.saleOrderLineService.patchIsActive(this.line.id,active).subscribe(()=> {
+          this.line.isActive = active;
+          this.notify('success', 'Thành công');
+        });
       });
     } else {
 
