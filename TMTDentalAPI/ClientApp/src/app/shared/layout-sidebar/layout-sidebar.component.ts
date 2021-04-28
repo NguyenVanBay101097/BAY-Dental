@@ -75,7 +75,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey.group_manager', permissions: ['Survey.Assignment.Read'] },
         { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.group_manager', permissions: ['Survey.Question.Read'] },
       ],
-      groups: 'survey.group_user,survey.group_manager',
+      groups: 'survey.group_survey',
       permissions: ['Survey.UserInput.Read', 'Survey.Assignment.Read', 'Survey.Question.Read']
     },
     {

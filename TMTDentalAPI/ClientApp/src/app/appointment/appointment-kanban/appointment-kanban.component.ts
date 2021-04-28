@@ -20,6 +20,7 @@ import { UserPaged, UserService } from 'src/app/users/user.service';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-appointment-kanban',
@@ -42,6 +43,12 @@ export class AppointmentKanbanComponent implements OnInit {
   listEmployees: EmployeeBasic[] = [];
   filterEmployee: any;
 
+  // permission
+  showAppointmentCreate = this.checkPermissionService.check(["Basic.Appointment.Create"]);
+  showAppointmentEdit = this.checkPermissionService.check(["Basic.Appointment.Edit"]);
+  showAppointmentDelete = this.checkPermissionService.check(["Basic.Appointment.Delete"]);
+  showEmployeeRead = this.checkPermissionService.check(["Catalog.Employee.Read"]);
+  showCustomerLink = this.checkPermissionService.check(["Basic.Partner.Read"]);
 
   public today: Date = new Date(new Date().toDateString());
   public next3days: Date = new Date(new Date(new Date().setDate(new Date().getDate() + 3)).toDateString());
@@ -49,7 +56,9 @@ export class AppointmentKanbanComponent implements OnInit {
   appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
   constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal, private dotkhamService: DotKhamService,
-    private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService) { }
+    private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService, 
+    private checkPermissionService: CheckPermissionService
+  ) { }
 
   ngOnInit() {
     this.dateFrom = this.today;

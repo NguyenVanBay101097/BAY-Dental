@@ -14,7 +14,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button class="btn btn-primary btn-sm" (click)="createAppointment()">
+                    <button *ngIf="showAppointmentCreate" class="btn btn-primary btn-sm" (click)="createAppointment()">
                         <i class="fas fa-calendar-plus"></i>&nbsp;Tạo lịch hẹn</button>
                     <button class="btn btn-primary btn-sm" (click)="refreshData()">
                         <i class="fas fa-sync"></i>&nbsp;Làm mới</button>
@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="o_cp_sidebar">
-                <div>
+                <div *ngIf="showEmployeeRead">
                     <kendo-combobox [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)"
                         class="kendo-combobox-sm" [filterable]="true" [data]="listEmployees" #employeeCbx
                         [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
@@ -70,15 +70,16 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <a class="text-primary o_kanban_record_title" title="Xem hồ sơ khách hàng"
-                                            [routerLink]="['/partners/customer/' + appointment.partnerId]">
-                                            <span>{{appointment.partnerDisplayName}}</span>
+                                            [routerLink]="['/partners/customer/' + appointment.partnerId]" 
+                                            [class.disabled]="showCustomerLink">
+                                            {{appointment.partnerDisplayName}}
                                         </a>
                                     </div>
                                     <div>
                                         <div class="d-flex">
-                                            <i class="far fa-edit text-success mr-1 click_i "
+                                            <i *ngIf="showAppointmentEdit" class="far fa-edit text-success mr-1 click_i "
                                                 (click)="editAppointment(appointment);$event.stopPropagation();"></i>
-                                            <i class="far fa-trash-alt text-danger click_i "
+                                            <i *ngIf="showAppointmentDelete" class="far fa-trash-alt text-danger click_i "
                                                 (click)="deleteAppointment(appointment)"></i>
                                         </div>
                                     </div>
