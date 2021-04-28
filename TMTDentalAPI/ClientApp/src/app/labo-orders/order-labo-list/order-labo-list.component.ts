@@ -38,7 +38,8 @@ export class OrderLaboListComponent implements OnInit {
     { name: 'Chờ nhận', value: 'chonhan' },
     { name: 'Tới hạn', value: 'toihan' },
   ];
-  canUpdate: boolean = false;
+  canUpdate = false;
+  canUpdateSaleOrder = false;
   constructor(private laboOrderService: LaboOrderService, private modalService: NgbModal, private intlService: IntlService, private notificationService: NotificationService, private checkPermissionService: CheckPermissionService) { }
 
   ngOnInit() {
@@ -149,6 +150,7 @@ export class OrderLaboListComponent implements OnInit {
   }
 
   checkRole() {
-    this.canUpdate = this.checkPermissionService.check('Labo.OrderLabo.Update');
+    this.canUpdate = this.checkPermissionService.check(['Labo.OrderLabo.Update']);
+    this.canUpdateSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Update']);
   }
 }

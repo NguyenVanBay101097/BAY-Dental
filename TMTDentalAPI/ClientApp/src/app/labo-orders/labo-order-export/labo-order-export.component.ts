@@ -45,7 +45,8 @@ export class LaboOrderExportComponent implements OnInit {
   ];
   stateFilterOptionSelected = this.stateFilterOptions[0];
 
-  canUpdate: boolean = false;
+  canUpdate = false;
+  canUpdateSaleOrder = false;
 
   constructor(
     private laboOrderService: LaboOrderService, 
@@ -148,6 +149,7 @@ export class LaboOrderExportComponent implements OnInit {
   }
 
   checkRole(){
-    this.canUpdate = this.checkPermissionService.check('Labo.ExportLabo.Update');
+    this.canUpdate = this.checkPermissionService.check(['Labo.ExportLabo.Update']);
+    this.canUpdateSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Update']);
   }
 }
