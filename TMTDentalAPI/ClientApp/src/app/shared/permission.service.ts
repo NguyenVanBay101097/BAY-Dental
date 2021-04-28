@@ -35,7 +35,6 @@ export class PermissionService {
     }
 
     public hasDefined(permission: string): boolean {
-        this._permissionStore = JSON.parse(localStorage.getItem('group_permission'));
         if (typeof permission !== "string")
             return false;
         let index = this._permissionStore.indexOf(permission.toLowerCase());
