@@ -10,13 +10,11 @@ export class CheckPermissionService {
         const pm = localStorage.getItem("user_permission");
         const user_permission = JSON.parse(pm);
         if (user_permission) {
-            console.log(user_permission);
             if (user_permission.isUserRoot) {
                 return true;
             }
             if (user_permission.permission) {
-                var arr_permission = permission.split(",").map(x => x.trim());
-                return arr_permission.some(x => {
+                return permission.some(x => {
                     return user_permission.permission.includes(x);
                 });
             }
