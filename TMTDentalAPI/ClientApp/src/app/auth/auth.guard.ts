@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
         state: RouterStateSnapshot
     ): boolean {
         let url: string = state.url;
-
+        console.log(next.data);
         return this.checkLogin(url);
     }
 

@@ -87,6 +87,7 @@ import { DashboardCashBankReportComponent } from './components/dashboard-cash-ba
 import { DashboardLaboOrderReportComponent } from './components/dashboard-labo-order-report/dashboard-labo-order-report.component';
 import { DashboardPartnerCustomerReportComponent } from './components/dashboard-partner-customer-report/dashboard-partner-customer-report.component';
 import { DashboardSaleReportComponent } from './components/dashboard-sale-report/dashboard-sale-report.component';
+import { DashboardServiceTodayReportComponent } from './components/dashboard-service-today-report/dashboard-service-today-report.component';
 
 @NgModule({
   declarations: [
@@ -166,7 +167,8 @@ import { DashboardSaleReportComponent } from './components/dashboard-sale-report
     DashboardCashBankReportComponent, 
     DashboardLaboOrderReportComponent, 
     DashboardPartnerCustomerReportComponent, 
-    DashboardSaleReportComponent
+    DashboardSaleReportComponent, 
+    DashboardServiceTodayReportComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -236,7 +238,8 @@ import { DashboardSaleReportComponent } from './components/dashboard-sale-report
     DashboardCashBankReportComponent, 
     DashboardLaboOrderReportComponent, 
     DashboardPartnerCustomerReportComponent, 
-    DashboardSaleReportComponent
+    DashboardSaleReportComponent, 
+    DashboardServiceTodayReportComponent
   ],
   imports: [
     NgbModule,
