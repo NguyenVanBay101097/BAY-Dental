@@ -3,19 +3,21 @@
         <h6 class="mb-0">Danh sách phiếu Labo</h6>
     </div>
     <div class="card-body p-2">
-        <div class="mb-2">
+        <div class="mb-2" *ngIf="canAdd">
             <button type="button" class="btn btn-primary btn-sm" (click)="createItem()">Tạo phiếu Labo</button>
         </div>
-        <kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
-             (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
+        <kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
             <!-- <kendo-grid-column field="date" title="Ngày">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.date | date: 'shortDate'}}
                 </ng-template>
             </kendo-grid-column> -->
-            <kendo-grid-column field="name"  title="Số phiếu" width="100">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <kendo-grid-column field="name" title="Số phiếu" width="100">
+                <ng-template *ngIf="canUpdate else elseBlock" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     <a class="text-primary" (click)="editItem(dataItem)"> {{dataItem.name}}</a>
+                </ng-template>
+                <ng-template #elseBlock kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.name}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="partnerName" title="NCC Labo" width="150">
@@ -62,9 +64,9 @@
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     <button class="btn btn-sm mr-1" title="In" (click)="printLabo(dataItem)">
                         <i class="fas fa-print"></i></button>
-                    <button class="btn btn-sm mr-1" title="Sửa" (click)="editItem(dataItem)">
+                    <button *ngIf="canUpdate" class="btn btn-sm mr-1" title="Sửa" (click)="editItem(dataItem)">
                         <span class="fas fa-edit"></span></button>
-                    <button class="btn btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                    <button *ngIf="canDelete" class="btn btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
                         <span class="fas fa-trash-alt"></span></button>
                 </ng-template>
             </kendo-grid-column>

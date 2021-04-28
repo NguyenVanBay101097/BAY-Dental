@@ -6,6 +6,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { LaboOrderReceiptDialogComponent } from '../labo-order-receipt-dialog/labo-order-receipt-dialog.component';
 import { LaboOrderBasic, LaboOrderService, OrderLaboPaged } from '../labo-order.service';
@@ -33,16 +34,16 @@ export class OrderLaboListComponent implements OnInit {
   ];
 
   filterLaboStatus = [
-    {name:'Trễ hạn',value:'trehan'},
-    {name:'Chờ nhận',value:'chonhan'},
-    {name:'Tới hạn',value:'toihan'},
+    { name: 'Trễ hạn', value: 'trehan' },
+    { name: 'Chờ nhận', value: 'chonhan' },
+    { name: 'Tới hạn', value: 'toihan' },
   ];
-  
-  constructor(private laboOrderService: LaboOrderService,private modalService: NgbModal,private intlService: IntlService,private notificationService: NotificationService,) { }
+  canUpdate: boolean = false;
+  constructor(private laboOrderService: LaboOrderService, private modalService: NgbModal, private intlService: IntlService, private notificationService: NotificationService, private checkPermissionService: CheckPermissionService) { }
 
   ngOnInit() {
     this.loadDataFromApi();
-
+    this.checkRole();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -82,19 +83,19 @@ export class OrderLaboListComponent implements OnInit {
       return "Trễ hạn";
     } else if (val.datePlanned != null && now.getDate() == datePlanned.getDate() && now.getMonth() == datePlanned.getMonth() && now.getFullYear() == datePlanned.getFullYear()) {
       return "Tới hạn";
-    } else  {
+    } else {
       return "Chờ nhận";
     }
   }
 
-  getTextColor(val){
+  getTextColor(val) {
     var today = new Date();
     var now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     var datePlanned = new Date(val.datePlanned);
     if (val.datePlanned != null && now > datePlanned) {
-      return {'text-danger': true};
+      return { 'text-danger': true };
     } else if (val.datePlanned != null && now.getDate() == datePlanned.getDate() && now.getMonth() == datePlanned.getMonth() && now.getFullYear() == datePlanned.getFullYear()) {
-      return {'text-success':true};
+      return { 'text-success': true };
     } else {
       return;
     }
@@ -106,7 +107,7 @@ export class OrderLaboListComponent implements OnInit {
   }
 
   onChangeLaboState(e) {
-    this.stateFilter = e? e.value : null;
+    this.stateFilter = e ? e.value : null;
     this.skip = 0;
     this.loadDataFromApi();
   }
@@ -133,18 +134,21 @@ export class OrderLaboListComponent implements OnInit {
 
   cellClick(item) {
     console.log(item);
-    
+
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thông tin phiếu Labo';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.saleOrderLineId = item.saleOrderLineId;
 
     modalRef.result.then(res => {
-      if(res) {
+      if (res) {
         this.loadDataFromApi();
       }
     }, () => {
     });
   }
 
+  checkRole() {
+    this.canUpdate = this.checkPermissionService.check('Labo.OrderLabo.Update');
+  }
 }
