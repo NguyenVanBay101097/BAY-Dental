@@ -33,7 +33,10 @@ import { PartnerAdvanceListComponent } from '../partner-advances/partner-advance
 
 const routes: Routes = [
   {
-    path: 'customers', component: PartnerCustomerListComponent
+    path: 'customers', component: PartnerCustomerListComponent,
+    data: {
+      permissions: ['a', 'b']
+    }
   },
 
   {

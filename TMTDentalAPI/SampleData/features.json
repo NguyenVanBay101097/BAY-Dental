@@ -933,6 +933,24 @@
             "Permission": "Report.PartnerOldNew"
           }
         ]
+      },
+      {
+        "Name": "Thống kê labo",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.LaboOrder"
+          }
+        ]
+      },
+      {
+        "Name": "Thống kê lịch hẹn",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Appointment"
+          }
+        ]
       }
     ]
   },
