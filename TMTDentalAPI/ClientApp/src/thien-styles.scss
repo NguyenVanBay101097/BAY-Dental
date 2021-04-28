@@ -495,3 +495,6 @@ $rose-900: #881337;
         height: 38px;
     }
 }
+a.disabled {
+    pointer-events: none;
+}

@@ -101,9 +101,9 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Bảng lương', link: '/hr/payslip-run/form', permissions: ['Salary.HrPayslipRun.Read', 'Salary.HrPayslipRun.Create', 'Salary.HrPayslipRun.Update'] },
         // { name: 'Phiếu lương', link: '/hr/payslips' },
-        { name: 'Chấm công', link: 'time-keepings', permissions: ['Salary.ChamCong.Read'] },
+        { name: 'Chấm công', link: '/time-keepings', permissions: ['Salary.ChamCong.Read'] },
         { name: 'Quản lý tạm ứng - chi lương', link: '/salary-payment', permissions: ['Salary.SalaryPayment.Read'] },
-        { name: 'Báo cáo thanh toán lương', link: 'hr/salary-reports', permissions: ['Salary.AccountCommonPartnerReport'] },
+        { name: 'Báo cáo thanh toán lương', link: '/hr/salary-reports', permissions: ['Salary.AccountCommonPartnerReport'] },
       ],
       permissions: ['Salary.HrPayslipRun.Read', 'Salary.ChamCong.Read', 'Salary.SalaryPayment.Read', 'Salary.AccountCommonPartnerReport']
     },
