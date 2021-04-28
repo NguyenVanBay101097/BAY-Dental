@@ -71,11 +71,11 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Khảo sát đánh giá',
       icon: 'fas fa-poll',
       children: [
-        { name: 'Danh sách khảo sát', link: '/surveys', groups: 'survey.group_user,survey.group_manager', permissions: ['Survey.UserInput.Read'] },
-        { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey.group_manager', permissions: ['Survey.Assignment.Read'] },
-        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.group_manager', permissions: ['Survey.Question.Read'] },
+        { name: 'Danh sách khảo sát', link: '/surveys', permissions: ['Survey.UserInput.Read'] },
+        { name: 'Quản lý phân việc', link: '/surveys/manage', permissions: ['Survey.Assignment.Read'] },
+        { name: 'Câu hỏi khảo sát', link: '/surveys/config', permissions: ['Survey.Question.Read'] },
       ],
-      groups: 'survey.group_user,survey.group_manager',
+      groups: 'survey.group_survey',
       permissions: ['Survey.UserInput.Read', 'Survey.Assignment.Read', 'Survey.Question.Read']
     },
     {
@@ -281,9 +281,9 @@ export class LayoutSidebarComponent implements OnInit {
     for (var i = 0; i < menuItems.length; i++) {
       var menuItem = menuItems[i];
       if (this.hasPermission(menuItem)) {
-       // list.push(menuItem);
+        // list.push(menuItem);
         if (menuItem.children) {
-          var childArr : any[] = []; 
+          var childArr: any[] = [];
           menuItem.children.forEach(child => {
             if (this.hasPermission(child)) {
               childArr.push(child);

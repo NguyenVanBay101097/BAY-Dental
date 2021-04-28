@@ -32,13 +32,12 @@ export class AppComponent {
     private modalService: NgbModal,
     private irConfigParamService: IrConfigParameterService) {
     this.loadGroups();
-
     this.authService.currentUser.subscribe((user) => {
       if (user) {
         this.loadIrConfigParam();
         this.authService.getGroups().subscribe((result: any) => {
           console.log(result);
-          
+
           this.permissionService.define(result);
         });
       }
@@ -105,6 +104,7 @@ export class AppComponent {
       this.authService.getGroups().subscribe((result: any) => {
         console.log(result);
         this.permissionService.define(result);
+        localStorage.setItem('group_permission', JSON.stringify(result));
       });
       // this.authService.currentUser.subscribe(user => {
       //   if (user) {
