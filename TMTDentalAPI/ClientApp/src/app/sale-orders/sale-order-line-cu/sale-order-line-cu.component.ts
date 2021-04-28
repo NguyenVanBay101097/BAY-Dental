@@ -14,6 +14,8 @@ import { ToothCategoryService } from "src/app/tooth-categories/tooth-category.se
 import { NotificationService } from "@progress/kendo-angular-notification";
 import { SaleOrderPromotionDialogComponent } from "../sale-order-promotion-dialog/sale-order-promotion-dialog.component";
 import { BehaviorSubject, Subject } from "rxjs";
+import { SaleOrderLineService } from "src/app/core/services/sale-order-line.service";
+import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: "app-sale-order-line-cu",
@@ -50,7 +52,8 @@ export class SaleOrderLineCuComponent implements OnInit {
     private ToothService: ToothService,
     private modalService: NgbModal,
     private toothCategoryService: ToothCategoryService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private saleOrderLineService: SaleOrderLineService
   ) {}
 
   ngOnInit() {
@@ -325,6 +328,24 @@ export class SaleOrderLineCuComponent implements OnInit {
     } else {
       return this.toothTypeDict.find(x=> x.value == toothType).name;
     }
+  }
+
+  onActive(active) {
+    if(!active) {
+      const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Ngừng dịch vụ';
+      modalRef.componentInstance.body = 'Bạn chắc chắn muốn ngừng dịch vụ này?';
+      modalRef.result.then(() => {
+      
+      });
+    } else {
+
+      this.saleOrderLineService.patchIsActive(this.line.id,active).subscribe(()=> {
+        this.line.isActive = active;
+        this.notify('success', 'Thành công');
+      });
+    }
+   
   }
 
 }

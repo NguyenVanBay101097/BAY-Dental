@@ -94,7 +94,7 @@ export class SaleOrderLineService {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotion', val);
     }
 
-    patchIsActive(id, val){
-        return this.http.patch(this.baseApi + this.apiUrl + '/' + id + '/PatchIsActive',val)
+    patchIsActive(id, active){
+        return this.http.patch(this.baseApi + this.apiUrl + '/' + id + '/PatchIsActive',{active: active})
     }
 }

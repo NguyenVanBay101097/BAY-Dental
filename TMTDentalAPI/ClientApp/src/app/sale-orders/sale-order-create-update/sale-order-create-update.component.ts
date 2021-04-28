@@ -1277,9 +1277,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   getTotalDiscount() {
-    return (this.orderLines.value as any[]).reduce((total, cur) => {
-      return total + cur.amountPromotionToOrder + cur.amountPromotionToOrderLine;
+    var res = (this.orderLines.value as any[]).reduce((total, cur) => {
+      return total + cur.amountDiscountTotal * cur.productUOMQty;
     }, 0);
+    
+    return Math.round(res/1000)*1000;
   }
 
   onDeleteLine(index) {
@@ -1289,13 +1291,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onOpenSaleOrderPromotion() {
+    const val = this.getFormDataSave();
 
     if (!this.saleOrderId) {
       this.submitted = true;
       if (!this.formGroup.valid) {
         return false;
       }
-      const val = this.getFormDataSave();
       this.saleOrderService.create(val).subscribe((result: any) => {
         this.saleOrderId = result.id;
         let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
@@ -1309,11 +1311,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       });
     } else {
 
-      let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-      modalRef.componentInstance.salerOrderId = this.saleOrderId;
-      modalRef.result.then(() => {
-        this.loadRecord();
-      }, () => {
+      this.saleOrderService.update(this.saleOrderId,val).subscribe((result: any) => {
+        let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+        modalRef.componentInstance.salerOrderId = this.saleOrderId;
+        modalRef.result.then(() => {
+          this.loadRecord();
+        }, () => {
+        });
       });
     }
   }
@@ -1333,7 +1337,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   sumPromotionSaleOrder() {
-    if(this.saleOrderId) {
+    if(this.saleOrderId && this.saleOrder.promotions) {
       return (this.saleOrder.promotions as any[]).reduce((total, cur) => {
         return total + cur.amount;
       },0);
