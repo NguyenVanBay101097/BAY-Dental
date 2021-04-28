@@ -913,7 +913,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   actionEdit() {
-
+this.lineVCR.forEach(vc => {
+  vc.canEdit = true;
+});
   }
 
   get orderLines() {

@@ -158,7 +158,7 @@
         <!-- loại răng -->
         <div *ngIf="isEditting" class="d-inline-flex w-100 mb-2">
             <div *ngFor="let item of filteredToothCategories; let cateIndex = index" class="form-check form-check-inline" style="vertical-align: -webkit-baseline-middle;">
-                <input [attr.disabled]=" !isEditting ? true : null" [checked]=" item.id === getToothCateLine().id" (change)="onChangeToothCategory(item)" class="btn-check hidden" type="radio" [name]="'toothCategory'" formControlName="toothCategory" [id]="'toothCategory' + cateIndex">
+                <input [attr.disabled]=" !isEditting ? true : null" [checked]=" item.id === getToothCateLine().id" (change)="onChangeToothCategory(item)" class="btn-check hide" type="radio" [name]="'toothCategory'" formControlName="toothCategory" [id]="'toothCategory' + cateIndex">
                 <label [ngClass]="{'disabled': !isEditting}" [class]="item.id === getToothCateLine().id ? 'btn btn-primary':'btn btn-outline-primary'" class="btn" [for]="'toothCategory' + cateIndex ">{{item.name}}</label>
             </div>
         </div>
@@ -179,7 +179,7 @@
                 <div class="col-sm-3 row">
                     <ng-container *ngFor="let item of toothTypeDict; let toothTypeIndex = index">
                         <div class="col-6 pl-0">
-                            <input (change)="onChangeToothTypeLine(item.value)" [attr.disabled]="!isEditting ? true : null" [value]='item.value' [checked]=" item.value === getToothTypeLine()" class="btn-check hidden" type="radio" name="toothType" formControlName="toothType" [id]="'toothType' + toothTypeIndex">
+                            <input (change)="onChangeToothTypeLine(item.value)" [attr.disabled]="!isEditting ? true : null" [value]='item.value' [checked]=" item.value === getToothTypeLine()" class="btn-check hide" type="radio" name="toothType" formControlName="toothType" [id]="'toothType' + toothTypeIndex">
                             <label [ngClass]="{'disabled':  !isEditting}" [class]="item.value === getToothTypeLine() ? 'btn btn-primary w-100':'btn btn-outline-primary w-100'" class="btn" [for]="'toothType' + toothTypeIndex">{{item.name}}</label>
                         </div>
                     </ng-container>
