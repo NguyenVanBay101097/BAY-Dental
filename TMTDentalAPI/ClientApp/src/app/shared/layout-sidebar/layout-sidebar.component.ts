@@ -51,9 +51,9 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Labo',
       icon: 'fas fa-tooth',
       children: [
-        { name: 'Quản lý phiếu Labo', link: '/labo-orders/service', permissions: ['Labo.LaboOrder.Read'] },
-        { name: 'Đơn hàng Labo', link: '/labo-orders/order', permissions: ['Labo.OrderLabo.Read'] },
-        { name: 'Xuất Labo cho khách', link: '/labo-orders/export', permissions: ['Labo.ExportLabo.Read'] },
+        { name: 'Quản lý phiếu Labo', link: '/labo-orders/service', permissions: ['Labo.LaboOrder.Read', '.LaboOrder.Create', 'Labo.LaboOrder.Update', 'Labo.LaboOrder.Delete'] },
+        { name: 'Đơn hàng Labo', link: '/labo-orders/order', permissions: ['Labo.OrderLabo.Read', 'Labo.OrderLabo.Update'] },
+        { name: 'Xuất Labo cho khách', link: '/labo-orders/export', permissions: ['Labo.ExportLabo.Read', 'Labo.ExportLabo.Update'] },
       ],
       permissions: ['Labo.LaboOrder.Read', 'Labo.OrderLabo.Read', 'Labo.ExportLabo.Read']
     },
@@ -73,16 +73,16 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Danh sách khảo sát', link: '/surveys', groups: 'survey.group_user,survey.group_manager', permissions: ['Survey.UserInput.Read'] },
         { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey.group_manager', permissions: ['Survey.Assignment.Read'] },
-        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.group_manager', permissions: ['Survey.Question.Read'] },
+        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.group_manager', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'] },
       ],
-      groups: 'survey.group_user,survey.group_manager',
+      groups: 'survey.group_survey',
       permissions: ['Survey.UserInput.Read', 'Survey.Assignment.Read', 'Survey.Question.Read']
     },
     {
       name: 'Mua hàng',
       icon: 'fas fa-shopping-cart',
       children: [
-        { name: 'Mua hàng', link: '/purchase/orders', params: { type: 'order' }, permissions: ['Purchase.Order.Read'] },
+        { name: 'Mua hàng', link: '/purchase/orders', params: { type: 'order' }, permissions: ['Purchase.Order.Read', 'Purchase.Order.Create', 'Purchase.Order.Update', 'Purchase.Order.Delete'] },
         { name: 'Trả hàng', link: '/purchase/orders', params: { type: 'refund' }, permissions: ['Purchase.Order.Read'] },
       ],
       permissions: ['Purchase.Order.Read']
@@ -99,7 +99,7 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Lương',
       icon: 'fas fa-money-bill-alt',
       children: [
-        { name: 'Bảng lương', link: '/hr/payslip-run/form', permissions: ['Salary.HrPayslipRun.Read'] },
+        { name: 'Bảng lương', link: '/hr/payslip-run/form', permissions: ['Salary.HrPayslipRun.Read', 'Salary.HrPayslipRun.Create', 'Salary.HrPayslipRun.Update'] },
         // { name: 'Phiếu lương', link: '/hr/payslips' },
         { name: 'Chấm công', link: '/time-keepings', permissions: ['Salary.ChamCong.Read'] },
         { name: 'Quản lý tạm ứng - chi lương', link: '/salary-payment', permissions: ['Salary.SalaryPayment.Read'] },

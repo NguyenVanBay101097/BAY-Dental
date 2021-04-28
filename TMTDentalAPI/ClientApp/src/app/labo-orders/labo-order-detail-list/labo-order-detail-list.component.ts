@@ -125,8 +125,8 @@ export class LaboOrderDetailListComponent implements OnInit {
   }
 
   checkRole(){
-    this.canAdd = this.checkPermissionService.check('Labo.LaboOrder.Create');
-    this.canUpdate = this.checkPermissionService.check('Labo.LaboOrder.Update');
-    this.canDelete = this.checkPermissionService.check('Labo.LaboOrder.Delete');
+    this.canAdd = this.checkPermissionService.check(['Labo.LaboOrder.Create']);
+    this.canUpdate = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
+    this.canDelete = this.checkPermissionService.check(['Labo.LaboOrder.Delete']);
   }
 }

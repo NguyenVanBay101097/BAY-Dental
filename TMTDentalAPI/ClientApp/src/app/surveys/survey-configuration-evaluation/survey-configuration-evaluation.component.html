@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="o_cp_left">
-        <div class="o_cp_buttons">
+        <div class="o_cp_buttons" *ngIf="canAdd">
             <button class="btn btn-primary btn-sm" (click)="createQuestion()">Thêm</button>
         </div>
         <div class="o_cp_sidebar">
@@ -26,7 +26,7 @@
             <thead>
                 <th scope="col">STT</th>
                 <th scope="col">Câu hỏi</th>
-                <th scope="col">Thao tác</th>
+                <th scope="col" *ngIf="canAdd || canUpdate || canDelete">Thao tác</th>
             </thead>
             <tbody cdkDropList (cdkDropListDropped)="onDrop($event)">
                 <tr *ngFor="let item of questions;index as i" cdkDrag cdkDragLockAxis="y">
@@ -40,19 +40,19 @@
                     <td class="col-md">{{item.name}}</td>
                     <td class="col-sm">
                         <div class="d-flex text-center">
-                            <button class="btn btn-success mr-2 btn-sm" title="Sửa" (click)="editQuestion(item)">
+                            <button class="btn btn-success mr-2 btn-sm" title="Sửa" (click)="editQuestion(item)" *ngIf="canUpdate">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-info mr-2 btn-sm" title="Nhân đôi" (click)="doubleQuestion(item)">
+                            <button class="btn btn-info mr-2 btn-sm" title="Nhân đôi" (click)="doubleQuestion(item)" *ngIf="canAdd">
                                 <i class="far fa-copy"></i>
                             </button>
-                            <button [ngClass]="item.active? 'btn-danger': 'btn-info'" class="btn btn-info mr-2 btn-sm" (click)="actionActive(item)">
+                            <button [ngClass]="item.active? 'btn-danger': 'btn-info'" class="btn btn-info mr-2 btn-sm" (click)="actionActive(item)" *ngIf="canUpdate">
                                 <i *ngIf="item.active" title="Ẩn câu hỏi"
                                 class="fas fa-eye-slash"></i>
                                 <i *ngIf="!item.active" title="Hiện câu hỏi"
                                 class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm mr-2" title="Sửa" (click)="removeQuestion(item)">
+                            <button class="btn btn-danger btn-sm mr-2" title="Sửa" (click)="removeQuestion(item)" *ngIf="canDelete">
                                 <i class="far fa-trash-alt"></i>
                             </button>
                         </div>

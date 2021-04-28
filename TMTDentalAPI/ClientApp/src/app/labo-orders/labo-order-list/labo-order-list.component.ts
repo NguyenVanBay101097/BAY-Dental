@@ -61,7 +61,7 @@ export class LaboOrderListComponent implements OnInit {
     this.filterPaged.limit = this.limit;
     this.filterPaged.offset = this.skip;
     this.loadDataFromApi();
-
+    this.checkRole();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -207,6 +207,6 @@ export class LaboOrderListComponent implements OnInit {
   }
 
   checkRole(){
-    // this.canUpdateSaleOrder = this.checkPermissionService.check('')
+    this.canUpdateSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Update']);
   }
 }
