@@ -45,7 +45,7 @@ namespace TMTDentalAPI.Middlewares
                     try
                     {
                         await lockObj.WaitAsync();
-                        await _mediator.Publish(new ProcessUpdateNotification());
+                        await _mediator.Publish(new ProcessUpdateNotification(context));
 
                         var tenantDbContext = (TenantDbContext)context.RequestServices.GetService(typeof(TenantDbContext));
                         var tnt = tenantDbContext.Tenants.Where(x => x.Hostname == tenant.Hostname).FirstOrDefault();

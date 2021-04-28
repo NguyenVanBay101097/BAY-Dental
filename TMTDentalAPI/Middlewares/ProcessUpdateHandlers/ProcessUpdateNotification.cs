@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,5 +9,10 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 {
     public class ProcessUpdateNotification : INotification 
     {
+        private readonly HttpContext _context;
+        public ProcessUpdateNotification(HttpContext context)
+        {
+            _context = context;
+        }
     }
 }
