@@ -93,7 +93,7 @@ export class LayoutSidebarComponent implements OnInit {
       link: '/stock/stock-report-xuat-nhap-ton',
       children: [
       ],
-      permissions: ['Stock.Picking.Read']
+      permissions: ['Report.Stock']
     },
     {
       name: 'Lương',
@@ -180,10 +180,10 @@ export class LayoutSidebarComponent implements OnInit {
         // { name: 'Tiểu sử bệnh', link: '/histories' },
         // { name: 'Danh xưng', link: '/partner-titles' },
         { name: 'Đơn vị tính', link: '/uoms', groups: 'product.group_uom', permissions: ['UoM.UoMs.Read'] },
-        { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
+        { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom', permissions:["UoM.UoMCategory.Read"] },
         { name: 'Bảng hoa hồng', link: '/commissions/v2', permissions: ['Catalog.Commission.Read'] },
         { name: 'Nhân viên', link: '/employees', permissions: ['Catalog.Employee.Read'] },
-        { name: 'Thông số Labo', link: '/labo-orders/labo-managerment' },
+        { name: 'Thông số Labo', link: '/labo-orders/labo-managerment',permissions:["Catalog.Products.Read"] },
         { name: 'Loại thu chi', link: '/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
         { name: 'Tiêu chí kiểm kho', link: '/stock/criterias', permissions: ['Stock.Criteria.Read'] },
         { name: 'Thông tin chẩn đoán răng', link: '/tooth-diagnosis' },

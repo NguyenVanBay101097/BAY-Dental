@@ -91,14 +91,37 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
             var role = _mapper.Map<ApplicationRole>(val);
-           
-            foreach(var function in val.Functions)
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\additionalFeatures.json");
+            using (var reader = new StreamReader(filePath))
             {
-                role.Functions.Add(new ApplicationRoleFunction()
+                var fileContent = reader.ReadToEnd();
+                var additionalFeatures = JsonConvert.DeserializeObject<List<AdditionalPermissionViewModel>>(fileContent);
+
+                foreach (var function in val.Functions)
                 {
-                    Func = function
-                });
+                    role.Functions.Add(new ApplicationRoleFunction()
+                    {
+                        Func = function
+                    });
+                    foreach (var feature in additionalFeatures)
+                    {
+                        if(feature.Permissions.Contains(function))
+                        {
+                            foreach (var item in feature.Additionals)
+                            {
+                                role.Functions.Add(new ApplicationRoleFunction()
+                                {
+                                    Func = item
+                                });
+                            }
+                        }
+                    }
+                    
+                }
+
+
             }
+            
 
             try
             {

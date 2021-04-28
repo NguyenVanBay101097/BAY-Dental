@@ -4,7 +4,7 @@
             <div class="d-flex">
                 <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Ngày" [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
                 </app-tai-date-range-filter-dropdown>
-                <button type="button" class="btn btn-primary btn-sm mx-1" accesskey="c" (click)="createItem()">Tạo phiếu nhập</button>
+                <button type="button" class="btn btn-primary btn-sm mx-1" accesskey="c" (click)="createItem()" *ngIf="canCreate">Tạo phiếu nhập</button>
             </div>
         </div>
         <div class="o_cp_searchview">
@@ -50,9 +50,9 @@
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)" *ngIf="canUpdate">
                     <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)" *ngIf="canDelete">
                     <span class="far fa-trash-alt"></span></button>
             </ng-template>
         </kendo-grid-column>

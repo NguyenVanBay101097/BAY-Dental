@@ -259,10 +259,10 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   checkRole(){
-    this.canExport = this.checkPermissionService.check('Basic.Partner.Export');
-    this.canAdd = this.checkPermissionService.check('Basic.Partner.Create');
-    this.canImport = this.checkPermissionService.check('Basic.Partner.Import');
-    this.canFilterPartnerCategory = this.checkPermissionService.check("Catalog.PartnerCategory.Read")
-    this.canUpdateExcel = this.checkPermissionService.check("Basic.Partner.UpdateExcel");
+    this.canExport = this.checkPermissionService.check(['Basic.Partner.Export']);
+    this.canAdd = this.checkPermissionService.check(['Basic.Partner.Create']);
+    this.canImport = this.checkPermissionService.check(['Basic.Partner.Import']);
+    this.canFilterPartnerCategory = this.checkPermissionService.check(["Catalog.PartnerCategory.Read"])
+    this.canUpdateExcel = this.checkPermissionService.check(["Basic.Partner.UpdateExcel"]);
   }
 }

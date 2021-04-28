@@ -4,6 +4,11 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
+    public class AdditionalPermissionViewModel
+    {
+        public string[] Permissions { get; set; }
+        public string[] Additionals { get; set; }
+    }
     public class PermissionTreeViewModel
     {
         public string Name { get; set; }

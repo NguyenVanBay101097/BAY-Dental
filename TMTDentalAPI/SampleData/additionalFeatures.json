@@ -1,0 +1,36 @@
+﻿[
+  {
+    "Permissions": [ "Basic.Partner.Read" ],
+    "Additionals": [
+      "Catalog.History.Read",
+      "Catalog.PartnerTitle.Read"
+    ]
+  },
+  {
+    "Permissions": [
+      "Basic.Partner.Create",
+      "Basic.Partner.Update"
+    ],
+     "Additionals":
+      [
+        "Basic.Partner.Read",
+        "Catalog.History.Read",
+        "Catalog.PartnerTitle.Read",
+        "Catalog.Employee.Read",
+        "Catalog.PartnerCategory.Read",
+        "Catalog.PartnerSource.Read"
+      ]
+  },
+  {
+    "Permissions": [ "Basic.Appointment.Read" ],
+    "Additionals": [
+      "Catalog.Employee.Read"
+    ]
+  },
+  {
+    "Permissions": [ "Stock.Picking.Create" ],
+    "Additionals": [
+      
+    ]
+  }
+]
