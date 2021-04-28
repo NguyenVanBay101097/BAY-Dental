@@ -92,7 +92,7 @@
                 {{getState(dataItem)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="id" width="80">
+        <kendo-grid-column field="id" width="80" *ngIf="canUpdate">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Xuất khách
             </ng-template>

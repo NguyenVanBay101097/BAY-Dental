@@ -7,6 +7,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { LaboOrderExportDialogComponent } from '../labo-order-export-dialog/labo-order-export-dialog.component';
 import { ExportLaboPaged, LaboOrderService } from '../labo-order.service';
 
@@ -44,16 +45,19 @@ export class LaboOrderExportComponent implements OnInit {
   ];
   stateFilterOptionSelected = this.stateFilterOptions[0];
 
+  canUpdate: boolean = false;
+
   constructor(
     private laboOrderService: LaboOrderService, 
     private intlService: IntlService, 
     private modalService: NgbModal,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
-
+    this.checkRole();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -141,5 +145,9 @@ export class LaboOrderExportComponent implements OnInit {
       }   
       this.loadDataFromApi();
     }, er => { });
+  }
+
+  checkRole(){
+    this.canUpdate = this.checkPermissionService.check('Labo.ExportLabo.Update');
   }
 }
