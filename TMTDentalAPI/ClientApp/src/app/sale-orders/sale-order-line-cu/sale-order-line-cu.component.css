@@ -50,3 +50,14 @@
 .pointer:hover {
     cursor: pointer;
 }
+
+.btn-icon:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.btn-icon {
+    padding: 4px;
+    margin-right: 2px;
+    border-radius: 4px;
+}

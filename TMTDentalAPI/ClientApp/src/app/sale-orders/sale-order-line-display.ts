@@ -30,4 +30,5 @@ export class SaleOrderLineDisplay {
     assistant: EmployeeSimple;
     counselor: EmployeeSimple;
     toothType: string;
+    isActive: boolean;
 }

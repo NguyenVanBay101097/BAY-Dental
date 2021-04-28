@@ -95,20 +95,25 @@
             </div>
             <!-- thao tác -->
             <div style="width: 100px;" class="div-cell text-center">
-                <button *ngIf="!isEditting" type="button" class="btn btn-icon btn-sm btn-primary" title="Sửa dịch vụ" (click)="editLine()">
-                            <i _ngcontent-sgd-c6="" class="far fa-edit"></i>
-                        </button>
-                <button type="button" class="btn btn-icon btn-sm btn-light" title="Quản lý phiếu labo" (click)="showLaboList(line.id)">
-                            <i class="fas fa-tooth"></i>
-                        </button>
-                <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteLine()">
-                            <span class="k-icon k-i-delete"></span>
-                        </button>
+                <i *ngIf="!isEditting" title="Sửa dịch vụ" class="far fa-edit bg-success btn-icon text-white" (click)="editLine()"></i>
+
+                <i class="fas fa-tooth btn-icon" *ngIf="line.id" title="Quản lý phiếu labo" (click)="showLaboList(line.id)"></i>
+                <i *ngIf="!isEditting" title="Xóa dịch vụ" class="fa fa-trash-alt bg-danger text-white btn-icon" (click)="deleteLine()"></i>
+                <span *ngIf="this.line.id" type="button" (click)="onActive(!line.isActive)">
+                        <ng-container *ngIf="line.isActive == true; else elseTemplateActive">
+                            <img width="92%"  class="btn-icon p-0" src="../../../assets/icons/minus.svg" title="Ngừng dịch vụ" alt="Ngừng dịch vụ">
+                            </ng-container>
+                            <ng-template #elseTemplateActive>
+                            <img  width="92%"  class="btn-icon p-0" src="../../../assets/icons/plus.svg" title=" Làm dịch vụ" alt="Làm dịch vụ">
+                            </ng-template>
+                
+                        
+                        </span>
             </div>
         </div>
     </div>
     <!-- thông tin bổ sung -->
-    <div class="border-right border-left border-bottom p-2 mt-3">
+    <div class="border-right border-left border-bottom p-2 mb-3">
         <label class="font-weight-600">THÔNG TIN BỔ SUNG</label>
         <!-- bác sĩ phụ tá -->
         <div class="form-group row mx-0">
