@@ -44,11 +44,11 @@ export class AppointmentKanbanComponent implements OnInit {
   filterEmployee: any;
 
   // permission
-  showAppointmentCreate = this.checkPermissionService.check(["Basic.Appointment.Create"]);
-  showAppointmentEdit = this.checkPermissionService.check(["Basic.Appointment.Edit"]);
-  showAppointmentDelete = this.checkPermissionService.check(["Basic.Appointment.Delete"]);
-  showEmployeeRead = this.checkPermissionService.check(["Catalog.Employee.Read"]);
-  showCustomerLink = this.checkPermissionService.check(["Basic.Partner.Read"]);
+  canAppointmentCreate = this.checkPermissionService.check(["Basic.Appointment.Create"]);
+  canAppointmentEdit = this.checkPermissionService.check(["Basic.Appointment.Edit"]);
+  canAppointmentDelete = this.checkPermissionService.check(["Basic.Appointment.Delete"]);
+  canEmployeeRead = this.checkPermissionService.check(["Catalog.Employee.Read"]);
+  canCustomerLink = this.checkPermissionService.check(["Basic.Partner.Read"]);
 
   public today: Date = new Date(new Date().toDateString());
   public next3days: Date = new Date(new Date(new Date().setDate(new Date().getDate() + 3)).toDateString());
@@ -75,16 +75,18 @@ export class AppointmentKanbanComponent implements OnInit {
 
     this.loadListEmployees();
 
-    this.employeeCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => this.employeeCbx.loading = true),
-      switchMap(val => this.searchEmployees(val))
-    ).subscribe(
-      rs => {
-        this.listEmployees = rs.items;
-        this.employeeCbx.loading = false;
-      }
-    )
+    if (this.employeeCbx) {
+      this.employeeCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => this.employeeCbx.loading = true),
+        switchMap(val => this.searchEmployees(val))
+      ).subscribe(
+        rs => {
+          this.listEmployees = rs.items;
+          this.employeeCbx.loading = false;
+        }
+      )
+    }
   }
 
   searchEmployees(search?: string) {

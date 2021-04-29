@@ -43,9 +43,9 @@ export class AppointmentOverCancelComponent implements OnInit {
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate())).toDateString());
 
   // permission
-  showAppointmentEdit = this.checkPermissionService.check(["Basic.Appointment.Edit"]);
-  showEmployeeRead = this.checkPermissionService.check(["Catalog.Employee.Read"]);
-  showCustomerLink = this.checkPermissionService.check(["Basic.Partner.Read"]);
+  canAppointmentEdit = this.checkPermissionService.check(["Basic.Appointment.Edit"]);
+  canEmployeeRead = this.checkPermissionService.check(["Catalog.Employee.Read"]);
+  canCustomerLink = this.checkPermissionService.check(["Basic.Partner.Read"]);
 
   constructor(
     private appointmentService: AppointmentService,
@@ -71,18 +71,19 @@ export class AppointmentOverCancelComponent implements OnInit {
 
     this.loadListEmployees();
     this.getCountState();
-    this.employeeCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => this.employeeCbx.loading = true),
-      switchMap(val => this.searchEmployees(val))
-    ).subscribe(
-      rs => {
-        this.listEmployees = rs.items;
-        this.employeeCbx.loading = false;
-      }
-    )
 
-
+    if (this.employeeCbx) {
+      this.employeeCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => this.employeeCbx.loading = true),
+        switchMap(val => this.searchEmployees(val))
+      ).subscribe(
+        rs => {
+          this.listEmployees = rs.items;
+          this.employeeCbx.loading = false;
+        }
+      )
+    }
   }
 
   getCountState() {
