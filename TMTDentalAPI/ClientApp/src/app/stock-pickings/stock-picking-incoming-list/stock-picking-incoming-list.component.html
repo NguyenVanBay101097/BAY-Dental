@@ -45,7 +45,7 @@
                 {{getState(dataItem)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="id" width="100">
+        <kendo-grid-column field="id" width="100" *ngIf="canUpdate && canDelete">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>

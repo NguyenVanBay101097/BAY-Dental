@@ -11,15 +11,14 @@
       "Basic.Partner.Create",
       "Basic.Partner.Update"
     ],
-     "Additionals":
-      [
-        "Basic.Partner.Read",
-        "Catalog.History.Read",
-        "Catalog.PartnerTitle.Read",
-        "Catalog.Employee.Read",
-        "Catalog.PartnerCategory.Read",
-        "Catalog.PartnerSource.Read"
-      ]
+    "Additionals": [
+      "Basic.Partner.Read",
+      "Catalog.History.Read",
+      "Catalog.PartnerTitle.Read",
+      "Catalog.Employee.Read",
+      "Catalog.PartnerCategory.Read",
+      "Catalog.PartnerSource.Read"
+    ]
   },
   {
     "Permissions": [ "Basic.Appointment.Read" ],
@@ -28,9 +27,65 @@
     ]
   },
   {
-    "Permissions": [ "Stock.Picking.Create" ],
+    "Permissions": [ "Stock.Picking.Create", "Stock.Picking.Update" ],
     "Additionals": [
-      
+      "Catalog.Products.Read",
+      "Basic.Partner.Read"
+    ]
+  },
+  {
+    "Permissions": [ "Stock.Inventory.Create", "Stock.Inventory.Update" ],
+    "Additionals": [
+      "Stock.Inventory.Read",
+      "Catalog.ProductCategory.Read"
+
+    ]
+  },
+  {
+    "Permissions": [
+      "Basic.Appointment.Create",
+      "Basic.Appointment.Update"
+    ],
+    "Additionals": [
+      "Basic.Partner.Read",
+      "Catalog.Employee.Read",
+      "Catalog.Employee.Create",
+      "Catalog.Products.Read"
+    ]
+  },
+  {
+    "Permissions": [
+      "Account.PhieuThuChi.Create",
+      "Account.PhieuThuChi.Update"
+    ],
+    "Additionals": [
+      "Account.LoaiThuChi.Read",
+      "Account.LoaiThuChi.Create",
+      "Basic.Partner.Read"
+    ]
+  },
+  {
+    "Permissions": [
+      "LoyaltyCard.CardCard.Create",
+      "LoyaltyCard.CardCard.Update"
+    ],
+    "Additionals": [
+      "Basic.Partner.Read",
+      "LoyaltyCard.CardType.Read"
+    ]
+  },
+  {
+    "Permissions": [
+      "ServiceCard.Order.Create",
+      "ServiceCard.Order.Update"
+    ],
+    "Additionals": [
+      "Basic.Partner.Read",
+      "Basic.Partner.Create",
+      "System.ApplicationUser.Read",
+      "ServiceCard.Type.Read",
+      "Basic.AccountPayment.Create",
+      "Basic.AccountPayment.Update"
     ]
   }
 ]

@@ -93,7 +93,7 @@ export class LayoutSidebarComponent implements OnInit {
       link: '/stock/stock-report-xuat-nhap-ton',
       children: [
       ],
-      permissions: ['Report.Stock']
+      permissions: ["Report.Stock","Stock.Picking.Read","Basic.ProductRequest.Read","Stock.Inventory.Read"]
     },
     {
       name: 'Lương',
