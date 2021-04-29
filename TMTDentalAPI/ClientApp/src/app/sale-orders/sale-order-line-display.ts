@@ -30,5 +30,6 @@ export class SaleOrderLineDisplay {
     assistant: EmployeeSimple;
     counselor: EmployeeSimple;
     toothType: string;
+    productIsLabo: boolean;
     isActive: boolean;
 }

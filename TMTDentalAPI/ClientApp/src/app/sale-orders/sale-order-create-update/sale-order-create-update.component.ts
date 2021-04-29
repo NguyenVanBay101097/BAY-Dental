@@ -53,6 +53,7 @@ import { EmployeePaged } from 'src/app/employees/employee';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { SaleOrderPromotionDialogComponent } from '../sale-order-promotion-dialog/sale-order-promotion-dialog.component';
 import { SaleOrderLineCuComponent } from '../sale-order-line-cu/sale-order-line-cu.component';
+import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 
 declare var $: any;
 
@@ -83,6 +84,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   filteredUsers: UserSimple[];
   filteredPricelists: ProductPriceListBasic[];
   discountDefault: DiscountDefault;
+  // isEditting = true;
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -134,7 +136,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
@@ -198,9 +199,22 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
             });
 
             this.formGroup.markAsPristine();
+            // nếu đã confirm thì line mặc định là cannot edit
+            this.onCannotEdit();
           });
       }
     )
+  }
+
+  onCannotEdit() {
+    // setTimeout(() => {
+    //   if(this.saleOrder.state == 'sale') {
+      //  this.isEditting = false;
+        // this.lineVCR.forEach(vc => {
+        //   vc.canEdit = false;
+        // });
+    //    }
+    //  }, 0);
   }
 
   get stateControl() {
@@ -893,6 +907,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
         this.patchValueSaleOrder(result);
+        this.onCannotEdit();
       });
     }
   }
@@ -913,9 +928,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   actionEdit() {
-this.lineVCR.forEach(vc => {
-  vc.canEdit = true;
-});
+    // this.isEditting = true;
+// this.lineVCR.forEach(vc => {
+//   vc.canEdit = true;
+// });
   }
 
   get orderLines() {
@@ -1086,7 +1102,7 @@ this.lineVCR.forEach(vc => {
   // }
 
   get getAmountPaidTotal() {
-    return this.getFormControl('paidTotal').value;
+    return this.getFormControl('paidTotal') ? this.getFormControl('paidTotal').value : 0;
   }
 
   // get getState() {
@@ -1280,16 +1296,18 @@ this.lineVCR.forEach(vc => {
 
   getTotalDiscount() {
     var res = (this.orderLines.value as any[]).reduce((total, cur) => {
-      return total + cur.amountDiscountTotal * cur.productUOMQty;
+      return total + (cur.amountDiscountTotal || 0) * cur.productUOMQty;
     }, 0);
     
     return Math.round(res/1000)*1000;
   }
 
   onDeleteLine(index) {
+    if(this.orderLines.controls[index].value == this.lineSelected) {
+      this.lineSelected = null;
+    }
     this.orderLines.removeAt(index);
     this.computeAmountTotal();
-    this.lineSelected = null;
   }
 
   onOpenSaleOrderPromotion() {

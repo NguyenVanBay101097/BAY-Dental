@@ -19,16 +19,45 @@
 }
 
 .tooth-item-collapsed {
-    padding: 10px;
+    padding: .25rem .5rem;
     border: 1px solid #ccc;
     display: inline-block;
-    margin-right: 4px;
     cursor: pointer;
+    /* margin-top: .25rem;
+    margin-bottom: .25rem; */
+    border-right: none;
+    border-radius: 0;
 }
 
-.tooth-item-collapsed.selected {
-    background-color: #5095f0;
-    color: #fff;
+.tooth-wrapper .tooth-item-collapsed:last-child {
+    border-right: 1px solid #ccc;
+}
+
+.table-tooth tr td {
+    padding: 0;
+}
+
+.table-tooth tr:first-child td {
+    padding-bottom: .25rem;
+}
+
+.table-tooth tr:last-child td {
+    padding-top: .25rem;
+}
+
+.table-tooth tr td:first-child {
+    padding-right: .25rem;
+}
+
+.table-tooth tr td:last-child {
+    padding-left: .25rem;
+}
+
+.tooth-item-collapsed.selected,
+.tooth-item-collapsed:hover {
+    background-color: #F5FAFF;
+    color: #007BFF;
+    border-color: #007BFF;
 }
 
 .teeth-map td {
@@ -41,10 +70,6 @@
 
 .icon:hover {
     cursor: pointer;
-}
-
-.icon {
-    color: hsl(211deg 100% 50%)!important;
 }
 
 .pointer:hover {
@@ -60,4 +85,21 @@
     padding: 4px;
     margin-right: 2px;
     border-radius: 4px;
+}
+
+.btn-radio-active,
+.btn-radio:hover {
+    background: #F5FAFF !important;
+    border: 1px solid #007BFF !important;
+    box-sizing: border-box;
+    border-radius: 4px;
+    color: #007BFF !important;
+}
+
+.btn-radio {
+    background: #FFFFFF;
+    border: 1px solid #EBEDEF;
+    box-sizing: border-box;
+    border-radius: 4px;
+    color: #828588;
 }

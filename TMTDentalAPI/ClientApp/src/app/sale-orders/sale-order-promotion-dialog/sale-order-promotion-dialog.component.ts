@@ -122,7 +122,6 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
   }
 
   applyDiscount() {
-    if (this.form.discountPercent > 0 || this.form.discountFixed > 0) {
       var val = {
         id: this.salerOrderId ? this.salerOrderId : this.salerOrderLineId,
         discountType: this.form.discountType,
@@ -134,7 +133,6 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
         this.notificationService.notify('success', 'Thành công!');
         this.loadAllPromotionApplied();
       });
-    } 
   }
 
   onDeletePromotion(item) {

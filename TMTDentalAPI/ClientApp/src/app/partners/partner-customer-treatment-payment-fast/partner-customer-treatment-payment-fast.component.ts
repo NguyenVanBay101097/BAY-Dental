@@ -1,5 +1,5 @@
 import { EmployeeSimple } from './../../employees/employee';
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -50,6 +50,9 @@ import { PartnerSimple, PartnerPaged } from '../partner-simple';
 import { PartnerService } from '../partner.service';
 import { PrintSaleOrderComponent } from 'src/app/shared/print-sale-order/print-sale-order.component';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { SaleOrderLineCuComponent } from 'src/app/sale-orders/sale-order-line-cu/sale-order-line-cu.component';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 
 @Component({
   selector: 'app-partner-customer-treatment-payment-fast',
@@ -73,6 +76,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   valueSearch: string;
   submitted = false;
 
+  lineSelected = null;
+  @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -80,7 +85,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
   @ViewChild(PrintSaleOrderComponent, { static: true }) printSaleOrderComponent: PrintSaleOrderComponent;
   @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
-  @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
+  // @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild('search', { static: true }) searchElement: ElementRef;
 
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
@@ -93,6 +98,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   paymentsInfo: PaymentInfoContent[] = [];
   filteredEmployees: EmployeeSimple[] = [];
   @ViewChild(ToaThuocPrintComponent, { static: true }) toaThuocPrintComponent: ToaThuocPrintComponent;
+  defaultToothCate: ToothCategoryBasic;
 
   searchCardBarcode: string;
   partnerSend: any;
@@ -108,7 +114,13 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     private paymentService: AccountPaymentService,
     private odataPartnerService: PartnersService,
     private printService: PrintService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService) {
+    private laboOrderService: LaboOrderService,
+     private dotKhamService: DotKhamService,
+      private employeeService: EmployeeService,
+      private notifyService: NotifyService,
+      private toothCategoryService: ToothCategoryService
+      
+      ) {
   }
 
   ngOnInit() {
@@ -150,9 +162,31 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         this.partnerCbx.loading = false;
       }
     )
+//load default loại răng
+    this.loadToothCateDefault();
 
     // this.loadPricelists();
   }
+
+  
+  onCannotEdit() {
+    // setTimeout(() => {
+    //   if(this.saleOrder.state == 'sale') {
+    //     this.lineVCR.forEach(vc => {
+    //       vc.canEdit = false;
+    //     });
+    //    }
+    //  }, 0);
+  }
+
+  loadToothCateDefault() {
+    this.toothCategoryService.getDefaultCategory().subscribe(
+      res => {
+        this.defaultToothCate = res;
+      }
+    );
+  }
+
 
   loadEmployees() {
     this.searchEmployees().subscribe(result => {
@@ -214,6 +248,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         this.formGroup.markAsPristine();
         this.getPriceSubTotal();
         this.computeAmountTotal();
+
+        this.onCannotEdit();
       });
   }
 
@@ -868,6 +904,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     val.pricelistId = val.pricelist.id;
     val.userId = val.user ? val.user.id : null;
     val.cardId = val.card ? val.card.id : null;
+    val.amountTotal = (val.orderLines as any[]).reduce((total, cur) => {
+      return total + cur.productUOMQty * cur.priceUnit;
+    },0);
     val.orderLines.forEach(line => {
       if (line.employee) {
         line.employeeId = line.employee.id;
@@ -875,11 +914,18 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       if (line.teeth) {
         line.toothIds = line.teeth.map(x => x.id);
       }
+      line.priceSubTotal = line.productUOMQty * line.priceUnit
     });
     return val;
   }
 
   onSaveConfirm() {
+   //update line trước khi lưu
+   if (this.lineSelected != null) {
+    var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+    viewChild.updateLineInfo();
+  }
+
     if (!this.formGroup.valid) {
       return false;
     }
@@ -964,6 +1010,12 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onSave() {
+      //update line trước khi lưu
+      if (this.lineSelected != null) {
+        var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+        viewChild.updateLineInfo();
+      }
+
     if (!this.formGroup.valid) {
       return false;
     }
@@ -1122,23 +1174,55 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   addLine(val) {
-    console.log(val);
-    var res = this.fb.group(val);
-
-    // line.teeth = this.fb.array(line.teeth);
-    if (!this.orderLines.controls.some(x => x.value.productId === res.value.productId)) {
-      this.orderLines.push(res);
-    } else {
-      var line = this.orderLines.controls.find(x => x.value.productId === res.value.productId);
-      if (line) {
-        line.value.productUOMQty += 1;
-        line.patchValue(line.value);
-      }
+    if (this.lineSelected) {
+      this.notifyService.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để thêm dịch vụ khác');
+      return;
     }
-    this.getPriceSubTotal();
+
+    var value = {
+      amountPaid: 0,
+      amountResidual: 0,
+      diagnostic: '',
+      discount: 0,
+      discountFixed: 0,
+      discountType: 'percentage',
+      employee: null,
+      employeeId: '',
+      assistant: null,
+      assistantId: '',
+      name: val.name,
+      priceSubTotal: val.listPrice * 1,
+      priceUnit: val.listPrice,
+      productId: val.id,
+      product: {
+        id: val.id,
+        name: val.name
+      },
+      productUOMQty: 1,
+      state: 'draft',
+      teeth: this.fb.array([]),
+      toothCategory: this.defaultToothCate,
+      toothCategoryId: this.defaultToothCate.id,
+      counselor: null,
+      counselorId: null,
+      toothType: 'manual',
+      isActive: true,
+      amountPromotionToOrder: 0,
+      amountPromotionToOrderLine: 0
+    };
+    var res = this.fb.group(value);
+    this.orderLines.push(res);
     this.orderLines.markAsDirty();
     this.computeAmountTotal();
+
     this.saleOrderLine = null;
+    this.lineSelected = res.value;
+    
+    // mặc định là trạng thái sửa
+     setTimeout(() => {
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      viewChild.onEditLine();
+    }, 0);
   }
 
   copyLine(line: FormGroup) {
@@ -1546,4 +1630,61 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.getPriceSubTotal();
     this.computeAmountTotal();
   }
+
+  onCancelEditLine(line) {
+    this.lineSelected = null;
+  }
+
+  getAmount() {
+    return (this.orderLines.value as any[]).reduce((total, cur) => {
+      return total + cur.priceUnit * cur.productUOMQty;
+    }, 0);
+  }
+
+  getTotalDiscount() {
+    var res = (this.orderLines.value as any[]).reduce((total, cur) => {
+      return total + (cur.amountDiscountTotal || 0) * cur.productUOMQty;
+    }, 0);
+    
+    return Math.round(res/1000)*1000;
+  }
+
+  onDeleteLine(index) {
+    this.orderLines.removeAt(index);
+    this.computeAmountTotal();
+    this.lineSelected = null;
+  }
+
+  onEditLine(line) {
+    if (this.lineSelected != null) {
+      this.notifyService.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để chỉnh sửa dịch vụ khác');
+    } else {
+      this.lineSelected = line;
+      var viewChild = this.lineVCR.find(x => x.line == line);
+      viewChild.onEditLine();
+    }
+  }
+
+  
+  updateLineInfo(line, lineControl) {
+    line.toothCategoryId = line.toothCategory.id;
+    line.assistantId = line.assistant ? line.assistant.id : null;
+    line.employeeId = line.employee ? line.employee.id : null;
+    // line.productUOMQty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
+    line.counselorId = line.counselor ? line.counselor.id : null;
+    lineControl.patchValue(line);
+
+    lineControl.get('teeth').clear();
+    line.teeth.forEach(teeth => {
+      let g = this.fb.group(teeth);
+      lineControl.get('teeth').push(g);
+    });
+
+    lineControl.updateValueAndValidity();
+    // this.onChangeQuantity(lineControl);
+    this.computeAmountTotal();
+
+    this.lineSelected = null;
+  }
+
 }
