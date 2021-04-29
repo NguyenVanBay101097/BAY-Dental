@@ -7,22 +7,19 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    public class SaleOrderPromotionConfiguration : IEntityTypeConfiguration<SaleOrderPromotion>
-    {
-        public void Configure(EntityTypeBuilder<SaleOrderPromotion> builder)
-        {
-            builder.HasOne(x => x.SaleCouponProgram)
-            .WithMany()
-            .HasForeignKey(x => x.SaleCouponProgramId);         
+    public class SaleOrderPromotionLineConfiguration : IEntityTypeConfiguration<SaleOrderPromotionLine>
 
-            builder.HasOne(x => x.SaleOrder)
-            .WithMany(x => x.Promotions)
-            .HasForeignKey(x => x.SaleOrderId);
+    {
+        public void Configure(EntityTypeBuilder<SaleOrderPromotionLine> builder)
+        {
+
+            builder.HasOne(x => x.Promotion)
+              .WithMany(x => x.Lines)
+              .HasForeignKey(x => x.PromotionId);
 
             builder.HasOne(x => x.SaleOrderLine)
-              .WithMany()
+              .WithMany(x=>x.PromotionLines)
               .HasForeignKey(x => x.SaleOrderLineId);
-
 
             builder.HasOne(x => x.CreatedBy)
                 .WithMany()

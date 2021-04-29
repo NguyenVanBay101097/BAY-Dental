@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210428103543_thuong_AddDiscountType_SaleOrderPromotion")]
+    partial class thuong_AddDiscountType_SaleOrderPromotion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7915,6 +7917,12 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("SaleCouponProgramId")
                         .HasColumnType("uniqueidentifier");
 
@@ -7934,6 +7942,10 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("ProductId");
+
                     b.HasIndex("SaleCouponProgramId");
 
                     b.HasIndex("SaleOrderId");
@@ -7943,49 +7955,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("SaleOrderPromotions");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderPromotionLine", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("PriceUnit")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("PromotionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SaleOrderLineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("PromotionId");
-
-                    b.HasIndex("SaleOrderLineId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SaleOrderPromotionLines");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderServiceCardCardRel", b =>
@@ -13951,6 +13920,14 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("ApplicationCore.Entities.SaleOrderPromotion", "Parent")
+                        .WithMany("SaleOrderPromotionChilds")
+                        .HasForeignKey("ParentId");
+
+                    b.HasOne("ApplicationCore.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
                     b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "SaleCouponProgram")
                         .WithMany()
                         .HasForeignKey("SaleCouponProgramId");
@@ -13960,31 +13937,8 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("SaleOrderId");
 
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany()
+                        .WithMany("Promotions")
                         .HasForeignKey("SaleOrderLineId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderPromotionLine", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrderPromotion", "Promotion")
-                        .WithMany("Lines")
-                        .HasForeignKey("PromotionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany("PromotionLines")
-                        .HasForeignKey("SaleOrderLineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

@@ -9,7 +9,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 {
     public class ProcessUpdateNotification : INotification 
     {
-        private readonly HttpContext _context;
+        public readonly HttpContext _context;
         public ProcessUpdateNotification(HttpContext context)
         {
             _context = context;

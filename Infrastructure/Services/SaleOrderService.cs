@@ -407,8 +407,9 @@ namespace Infrastructure.Services
             var couponObj = GetService<ISaleCouponService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var order = await SearchQuery(x => x.Id == val.Id)
-             .Include(x=> x.Promotions)
-             .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).Include("OrderLines.Product")
+             .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+             .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines)
+              .Include(x => x.OrderLines).ThenInclude(x => x.Product)
              .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
              .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
              .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
@@ -850,7 +851,7 @@ namespace Infrastructure.Services
         public async Task _ComputeAmountPromotionToOrder(IEnumerable<Guid> ids)
         {
             var orderLineObj = GetService<ISaleOrderLineService>();
-            var orders = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ToListAsync();
+            var orders = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines).ToListAsync();
             foreach (var order in orders)
             {
                 orderLineObj._ComputeAmountDiscountTotal(order.OrderLines);
@@ -1027,7 +1028,8 @@ namespace Infrastructure.Services
             var couponObj = GetService<ISaleCouponService>();
             var orderLineObj = GetService<ISaleOrderLineService>();
             var order = await SearchQuery(x => x.Id == val.Id)
-              .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).Include("OrderLines.Product")
+              .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+              .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines).Include("OrderLines.Product")
               .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
               .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
               .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
@@ -1131,16 +1133,15 @@ namespace Infrastructure.Services
         {
             var display = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             var lineObj = GetService<ISaleOrderLineService>();
-            var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence)).Include(x => x.Advisory).Include(x => x.Assistant).Include(x => x.Promotions)
+            var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence)).Include(x => x.Advisory).Include(x => x.Assistant).Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
                 .Include(x => x.Product).Include(x => x.ToothCategory).Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth).Include(x => x.Employee).Include(x => x.Counselor).Include(x => x.OrderPartner).ToListAsync();
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
 
             var promotionObj = GetService<ISaleOrderPromotionService>();
-            display.Promotions = await promotionObj.SearchQuery(x => x.SaleOrderId.HasValue && x.SaleOrderId == display.Id).Select(x => new SaleOrderPromotionBasic
+            display.Promotions = await promotionObj.SearchQuery(x => x.SaleOrderId.HasValue && x.SaleOrderId == display.Id && !x.SaleOrderLineId.HasValue).Select(x => new SaleOrderPromotionBasic
             {
                 Id = x.Id,
                 Name = x.Name,
-                ProductId = x.ProductId,
                 Amount = x.Amount,
                 Type = x.Type
             }).ToListAsync();
@@ -1175,7 +1176,11 @@ namespace Infrastructure.Services
 
         public async Task UpdateOrderAsync(Guid id, SaleOrderSave val)
         {
-            var order = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var order = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Promotions)
+                .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines)
+                .FirstOrDefaultAsync();
+
             order = _mapper.Map(val, order);
 
             await SaveOrderLines(val, order);
@@ -1197,13 +1202,13 @@ namespace Infrastructure.Services
 
             await UpdateAsync(order);
 
-            var self = new List<SaleOrder>() { order };
-            // await _GenerateDotKhamSteps(self);
-
-            //if (order.InvoiceStatus == "to invoice")
+            ////compute promotion nếu có
+            //if (order.Promotions.Any())
             //{
-            //    await ActionInvoiceCreateV2(order.Id);
+            //    var promotionObj = GetService<ISaleOrderPromotionService>();
+            //    await promotionObj._PrepareUpdatePromotion(order.Promotions.Select(x => x.Id).ToList());
             //}
+
         }
 
         private async Task<AccountInvoice> CreateInvoice(IList<SaleOrderLine> saleLines, SaleOrder order, string type = "out_invoice")
@@ -1276,12 +1281,19 @@ namespace Infrastructure.Services
 
             if (lineToRemoves.Any())
             {
+                var promotionObj = GetService<ISaleOrderPromotionService>();
                 var dkStepObj = GetService<IDotKhamStepService>();
                 var saleLineIds = lineToRemoves.Select(x => x.Id).ToList();
                 var removeDkSteps = await dkStepObj.SearchQuery(x => saleLineIds.Contains(x.SaleLineId.Value)).ToListAsync();
                 if (removeDkSteps.Any(x => x.IsDone))
                     throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
                 await dkStepObj.DeleteAsync(removeDkSteps);
+
+
+                ///remove promotions in saleorderline
+                //var promotion_ids = lineToRemoves.SelectMany(x => x.PromotionLines.Select(s => s.PromotionId)).Distinct().ToList();
+                //await promotionObj.RemovePromotion(promotion_ids);
+
                 await saleLineObj.Unlink(lineToRemoves.Select(x => x.Id).ToList());
             }
 
@@ -1483,6 +1495,8 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
+                .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+                .Include(x => x.Promotions).ThenInclude(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
                 .Include("OrderLines.SaleOrderLinePaymentRels")
                 .ToListAsync();
 
@@ -1497,7 +1511,9 @@ namespace Infrastructure.Services
                     line.State = "sale";
                 }
 
+                saleLineObj._GetInvoiceQty(order.OrderLines);
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
+                saleLineObj._GetInvoiceAmount(order.OrderLines);
                 saleLineObj._GetToInvoiceAmount(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
                 saleLineObj.ComputeResidual(order.OrderLines);
@@ -1524,6 +1540,7 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
 
             await _GenerateDotKhamSteps(self);
+
         }
 
         public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id)
@@ -2045,7 +2062,7 @@ namespace Infrastructure.Services
 
                 foreach (var line in order.OrderLines)
                 {
-                    residual += line.AmountInvoiced;
+                    residual += line.PriceSubTotal - (line.AmountInvoiced ?? 0);
                 }
 
 
@@ -2303,7 +2320,7 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             await saleLineObj.CreateAsync(lines);
 
-  
+
             saleLineObj.UpdateOrderInfo(order.OrderLines, order);
             saleLineObj.ComputeAmount(order.OrderLines);
             saleLineObj._GetInvoiceQty(order.OrderLines);
@@ -2328,7 +2345,7 @@ namespace Infrastructure.Services
                     continue;
 
                 line.State = "done";
-            }        
+            }
 
 
             _GetInvoiced(new List<SaleOrder>() { order });
@@ -2346,7 +2363,7 @@ namespace Infrastructure.Services
             };
 
             ///tạo SaleOrderPaymentHistoryLineSave từ orderlines          
-            foreach(var line in order.OrderLines)
+            foreach (var line in order.OrderLines)
             {
                 salePayment.Lines.Add(new SaleOrderPaymentHistoryLine
                 {
@@ -2365,7 +2382,7 @@ namespace Infrastructure.Services
                 JournalId = journalCash.Id,
                 Amount = amountTotal
             });
-           
+
             var paymentObj = GetService<ISaleOrderPaymentService>();
             await paymentObj.CreateAsync(salePayment);
             await paymentObj.ActionPayment(new List<Guid>() { salePayment.Id });
@@ -2626,13 +2643,12 @@ namespace Infrastructure.Services
         {
             var orderPromotionObj = GetService<ISaleOrderPromotionService>();
             var orderLineObj = GetService<ISaleOrderLineService>();
-            var product = await _GetProductDiscount();
 
-            var order = await SearchQuery(x => x.Id == val.Id).Include(x => x.OrderLines).Include(x => x.Promotions).FirstOrDefaultAsync();
-            var total = order.AmountTotal;
+            var order = await SearchQuery(x => x.Id == val.Id).Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines).Include(x => x.Promotions).ThenInclude(x => x.Lines).FirstOrDefaultAsync();
+            var total = order.OrderLines.Sum(x => x.PriceUnit * x.ProductUOMQty);
             var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
 
-            var promotion = order.Promotions.Where(x => x.ProductId == product.Id).FirstOrDefault();
+            var promotion = order.Promotions.Where(x => x.Type == "discount").FirstOrDefault();
             if (promotion != null)
             {
                 promotion.Amount = (discount_amount ?? 0);
@@ -2642,8 +2658,10 @@ namespace Infrastructure.Services
                 promotion = new SaleOrderPromotion
                 {
                     Name = "Giảm tiền",
-                    ProductId = product.Id,
                     Amount = (discount_amount ?? 0),
+                    DiscountType = val.DiscountType,
+                    DiscountPercent = val.DiscountPercent,
+                    DiscountFixed = val.DiscountFixed,
                     Type = "discount",
                     SaleOrderId = order.Id
                 };
@@ -2658,16 +2676,14 @@ namespace Infrastructure.Services
                     if (line.ProductUOMQty == 0)
                         continue;
 
-                    var amount = (decimal)((((line.ProductUOMQty * line.PriceUnit) / order.AmountTotal) * promotion.Amount) / line.ProductUOMQty);
+                    var amount = (decimal)((((line.ProductUOMQty * line.PriceUnit) / order.AmountTotal) * promotion.Amount));
                     if (amount != 0)
                     {
-                        promotion.SaleOrderPromotionChilds.Add(new SaleOrderPromotion
+                        promotion.Lines.Add(new SaleOrderPromotionLine
                         {
-                            Name = promotion.Name,
-                            ProductId = promotion.ProductId,
                             Amount = Math.Round(amount, 0),
+                            PriceUnit = amount / line.ProductUOMQty,
                             SaleOrderLineId = line.Id,
-                            Type = "discount"
                         });
                     }
                 }

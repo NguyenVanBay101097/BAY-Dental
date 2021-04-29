@@ -288,7 +288,7 @@ namespace Infrastructure.Services
                 message.Error = $"Mã khuyến mãi {coupon_code} đã hết hạn.";
             else if (!_FilterOnMinimumAmount(new List<SaleCouponProgram>() { self }, order).Any())
                 message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
-            else if (!string.IsNullOrEmpty(self.PromoCode) && (order.Promotions.Any(x=> x.ProductId == self.DiscountLineProductId)))
+            else if (!string.IsNullOrEmpty(self.PromoCode) && (order.Promotions.Any(x=> x.SaleCouponProgramId == self.Id)))
                 message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (string.IsNullOrEmpty(self.PromoCode) && order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
                 message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";
@@ -324,7 +324,7 @@ namespace Infrastructure.Services
                 message.Error = "Khuyến mãi Không áp dụng cho đơn hàng";
             else if (!_FilterOnMinimumAmount(new List<SaleCouponProgram>() { self }, order).Any())
                 message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
-            else if (!string.IsNullOrEmpty(self.PromoCode) && (order.Promotions.Any(x => x.ProductId == self.DiscountLineProductId)))
+            else if (!string.IsNullOrEmpty(self.PromoCode) && (order.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (string.IsNullOrEmpty(self.PromoCode) && order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
                 message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";
@@ -355,9 +355,9 @@ namespace Infrastructure.Services
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if (self.ProgramType != "promotion_program" || self.PromoCodeUsage == "code_needed" || self.DiscountApplyOn == "on_order")
                 message.Error = "Khuyến mãi Không áp dụng cho dịch vụ";           
-            else if(line.Order.Promotions.Any(x => x.ProductId == self.DiscountLineProductId))
+            else if(line.Order.Promotions.Any(x => x.SaleCouponProgramId == self.Id))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
-            else if (line.Promotions.Any(x => x.ProductId == self.DiscountLineProductId))
+            else if (line.PromotionLines.Any(x => x.Promotion.SaleCouponProgramId == self.Id))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho dịch vụ này";
             else if (line.Order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
                 message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";

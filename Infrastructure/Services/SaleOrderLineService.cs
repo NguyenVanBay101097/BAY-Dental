@@ -353,7 +353,7 @@ namespace Infrastructure.Services
         public void _ComputeAmountDiscountTotal(IEnumerable<SaleOrderLine> self)
         {
             foreach (var line in self)
-                line.AmountDiscountTotal = line.Promotions.Sum(x => x.Amount);
+                line.AmountDiscountTotal = line.PromotionLines.Sum(x => x.PriceUnit);
         }
 
         public async Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val)
@@ -423,7 +423,7 @@ namespace Infrastructure.Services
             var serviceCardObj = GetService<IServiceCardCardService>();
 
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).Include(x => x.SaleOrderLinePaymentRels)
-                .Include(x => x.Order).Include(x => x.Promotions).ToListAsync();
+                .Include(x => x.Order).Include(x => x.PromotionLines).ThenInclude(x => x.Promotion).ThenInclude(x => x.SaleCouponProgram).ToListAsync();
 
 
             if (self.Any(x => x.State != "draft" && x.State != "cancel" && x.State != "sale"))
@@ -469,7 +469,7 @@ namespace Infrastructure.Services
                 await serviceCardObj._ComputeResidual(card_ids);
 
                 var promotionObj = GetService<ISaleOrderPromotionService>();
-                var promotionIds = await promotionObj.SearchQuery(x => ids.Contains(x.SaleOrderLineId.Value) && !x.ParentId.HasValue).Select(x => x.Id).ToListAsync();
+                var promotionIds = await promotionObj.SearchQuery(x => ids.Contains(x.SaleOrderLineId.Value) && x.SaleOrderId.HasValue).Select(x => x.Id).ToListAsync();
                 if (promotionIds.Any())
                     await promotionObj.RemovePromotion(promotionIds);
 
@@ -713,13 +713,12 @@ namespace Infrastructure.Services
         {
             var orderPromotionObj = GetService<ISaleOrderPromotionService>();
             var orderObj = GetService<ISaleOrderService>();
-            var product = await _GetProductDiscountToOrderLine();
 
-            var orderLine = await SearchQuery(x => x.Id == val.Id).Include(x => x.Order).Include(x => x.Promotions).FirstOrDefaultAsync();
+            var orderLine = await SearchQuery(x => x.Id == val.Id).Include(x => x.Order).Include(x => x.PromotionLines).ThenInclude(x => x.Promotion).ThenInclude(x => x.SaleCouponProgram).FirstOrDefaultAsync();
             var total = orderLine.PriceUnit;
             var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
 
-            var promotion = orderLine.Promotions.Where(x => x.ProductId == product.Id).FirstOrDefault();
+            var promotion = orderPromotionObj.SearchQuery(x => x.SaleOrderLineId == orderLine.Id && x.Type == "discount" && x.SaleOrderId.HasValue).FirstOrDefault();
             if (promotion != null)
             {
                 promotion.Amount = (discount_amount ?? 0);
@@ -728,12 +727,22 @@ namespace Infrastructure.Services
             {
                 promotion = new SaleOrderPromotion
                 {
-                    Name = product.Name,
-                    ProductId = product.Id,
+                    Name = "Giảm tiền",
                     Amount = (discount_amount ?? 0),
+                    DiscountType = val.DiscountType,
+                    DiscountPercent = val.DiscountPercent,
+                    DiscountFixed = val.DiscountFixed,
                     Type = "discount",
-                    SaleOrderLineId = orderLine.Id
+                    SaleOrderLineId = orderLine.Id,
+                    SaleOrderId = orderLine.OrderId
                 };
+
+                promotion.Lines.Add(new SaleOrderPromotionLine
+                {
+                    SaleOrderLineId = promotion.SaleOrderLineId.Value,
+                    Amount = promotion.Amount,
+                    PriceUnit = promotion.Amount / orderLine.ProductUOMQty,
+                });
 
                 await orderPromotionObj.CreateAsync(promotion);
             }
@@ -752,7 +761,7 @@ namespace Infrastructure.Services
             var couponObj = GetService<ISaleCouponService>();
             var orderLine = await SearchQuery(x => x.Id == val.Id)
               .Include(x => x.Product)
-              .Include(x => x.Promotions)
+              .Include(x => x.PromotionLines)
               .Include(x => x.Order).ThenInclude(x => x.Promotions)
               .Include(x => x.Order).ThenInclude(x => x.OrderLines)
               .Include(x => x.SaleOrderLineInvoice2Rels)
@@ -893,6 +902,21 @@ namespace Infrastructure.Services
             }
 
             return product;
+        }
+
+        public void RecomputePromotion(IEnumerable<SaleOrderLine> self)
+        {
+            //vong lap
+            foreach (var line in self)
+            {
+                //line.Promotions
+            }
+
+            //lay ra nhung uu dai dang ap dung
+
+            //tinh lai so tien promotion
+
+
         }
     }
 }

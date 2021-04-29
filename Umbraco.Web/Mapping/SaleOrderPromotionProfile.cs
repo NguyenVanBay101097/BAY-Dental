@@ -19,11 +19,11 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrderPromotionSave, SaleOrderPromotion>()
           .ForMember(x => x.Id, x => x.Ignore())
-          .ForMember(x => x.SaleOrderPromotionChilds, x => x.Ignore());
+          .ForMember(x => x.Lines, x => x.Ignore());
 
             CreateMap<SaleOrderPromotionDisplay, SaleOrderPromotion>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.SaleOrderPromotionChilds, x => x.Ignore());
+                .ForMember(x => x.Lines, x => x.Ignore());
         }
     }
 }

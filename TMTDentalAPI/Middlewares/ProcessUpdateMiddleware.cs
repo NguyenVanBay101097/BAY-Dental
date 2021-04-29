@@ -34,6 +34,7 @@ namespace TMTDentalAPI.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
+            //neeus url cua request ma == 'ProcessUpdate'
             var tenantContext = context.GetTenantContext<AppTenant>();
             var tenant = tenantContext?.Tenant;
             if (tenant != null)

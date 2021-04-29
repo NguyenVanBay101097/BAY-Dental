@@ -8,6 +8,7 @@ namespace ApplicationCore.Entities
     /// discount: ProductId, ko ProductId
     /// coupon: ProductId, SaleProgram
     /// promotion: ProductId, 
+    /// Ưu đãi
     /// </summary>
     public class SaleOrderPromotion : BaseEntity
     {
@@ -16,25 +17,32 @@ namespace ApplicationCore.Entities
         public decimal Amount { get; set; }
 
         /// <summary>
-        /// chương trình khuyến mãi , chương trình coupon
+        /// Xác định ưu đãi cho phiếu điều trị
         /// </summary>
-        public Guid? SaleCouponProgramId { get; set; }
-        public SaleCouponProgram SaleCouponProgram { get; set; }
-
-        public Guid? ParentId { get; set; }
-        public SaleOrderPromotion Parent { get;set;}
-
         public Guid? SaleOrderId { get; set; }
         public SaleOrder SaleOrder { get; set; }
 
+        /// <summary>
+        /// Ưu đãi trên dịch vụ
+        /// </summary>
         public Guid? SaleOrderLineId { get; set; }
         public SaleOrderLine SaleOrderLine { get; set; }
 
         /// <summary>
-        /// Product discount , promotion , coupon
+        /// percentage : giảm phần trăm
+        /// fixed : giảm tiền
         /// </summary>
-        public Guid? ProductId { get; set; }
-        public Product Product { get; set; }
+        public string DiscountType { get; set; }
+
+        public decimal? DiscountPercent { get; set; }
+
+        public decimal? DiscountFixed { get; set; }
+
+        /// <summary>
+        /// chương trình khuyến mãi , chương trình coupon
+        /// </summary>
+        public Guid? SaleCouponProgramId { get; set; }
+        public SaleCouponProgram SaleCouponProgram { get; set; }
 
         /// <summary>
         /// discount: giảm tiền
@@ -42,8 +50,9 @@ namespace ApplicationCore.Entities
         /// promotion_program : chương trình khuyến mãi
         /// </summary>
         public string Type { get; set; }
+        
 
-        public ICollection<SaleOrderPromotion> SaleOrderPromotionChilds { get; set; } = new List<SaleOrderPromotion>();
+        public ICollection<SaleOrderPromotionLine> Lines { get; set; } = new List<SaleOrderPromotionLine>();
 
     }
 }

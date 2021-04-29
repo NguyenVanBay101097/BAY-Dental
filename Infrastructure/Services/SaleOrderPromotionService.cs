@@ -31,7 +31,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.SaleOrderId == val.SaleOrderId.Value);
 
             if (val.SaleOrderLineId.HasValue)
-                query = query.Where(x => x.SaleOrderLineId == val.SaleOrderLineId.Value && !x.ParentId.HasValue);
+                query = query.Where(x => x.SaleOrderLineId == val.SaleOrderLineId.Value && x.SaleOrderId.HasValue);
 
             var totalItems = await query.CountAsync();
 
@@ -50,12 +50,56 @@ namespace Infrastructure.Services
             return paged;
         }
 
+        public async Task _PrepareUpdatePromotion(IEnumerable<Guid> ids)
+        {
+            var order_ids = new List<Guid>().AsEnumerable();
+            var promotions = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.SaleCouponProgram)
+                .Include(x => x.SaleOrder).ThenInclude(x => x.OrderLines)
+                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
+                .ToListAsync();
+
+            foreach (var promotion in promotions)
+            {
+                if (promotion.SaleOrderId.HasValue)
+                    order_ids = order_ids.Union(new List<Guid>() { promotion.SaleOrderId.Value });
+
+                var total = promotion.SaleOrder.OrderLines.Sum(x => (x.PriceUnit * x.ProductUOMQty));
+                if (promotion.Type == "discount")
+                {
+
+                    promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
+                }
+
+                if (promotion.SaleCouponProgramId.HasValue)
+                {
+                    if (promotion.SaleCouponProgram.DiscountType == "fixed_amount")
+                        promotion.Amount = promotion.SaleCouponProgram.DiscountFixedAmount ?? 0;
+                    else
+                        promotion.Amount = total * (promotion.SaleCouponProgram.DiscountPercentage ?? 0) / 100;
+                }
+
+
+                foreach (var child in promotion.Lines)
+                {
+                    child.Amount = ((child.SaleOrderLine.PriceUnit * child.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / child.SaleOrderLine.ProductUOMQty;
+                }
+            }
+
+            await UpdateAsync(promotions);
+
+            var orderObj = GetService<ISaleOrderService>();
+            if (order_ids.Any())
+                await orderObj._ComputeAmountPromotionToOrder(order_ids);
+
+        }
+
         public SaleOrderPromotion PreparePromotionToOrder(SaleOrder self, SaleCouponProgram program, decimal discountAmount)
         {
             var promotionLine = new SaleOrderPromotion
             {
                 Name = program.Name,
-                ProductId = program.DiscountLineProductId,
+                SaleCouponProgramId = program.Id,
                 Amount = discountAmount,
                 SaleOrderId = self.Id,
             };
@@ -68,13 +112,11 @@ namespace Infrastructure.Services
                 if (subTotal == 0)
                     continue;
 
-                promotionLine.SaleOrderPromotionChilds.Add(new SaleOrderPromotion
+                promotionLine.Lines.Add(new SaleOrderPromotionLine
                 {
-                    Name = promotionLine.Name,
-                    Amount = (subTotal / (self.AmountTotal ?? 0)) * discountAmount / line.ProductUOMQty,
-                    ProductId = promotionLine.ProductId,
+                    Amount = (subTotal / (self.AmountTotal ?? 0)) * discountAmount,
+                    PriceUnit = (subTotal / (self.AmountTotal ?? 0)) * discountAmount / line.ProductUOMQty,
                     SaleOrderLineId = line.Id,
-                    Type = promotionLine.Type
                 });
             }
 
@@ -87,12 +129,18 @@ namespace Infrastructure.Services
             {
                 Name = program.Name,
                 Amount = Math.Round((self.PriceSubTotal / (self.Order.AmountTotal ?? 0)) * discountAmount / self.ProductUOMQty),
-                ProductId = program.DiscountLineProductId,
+                SaleCouponProgramId = program.Id,
                 SaleOrderLineId = self.Id,
             };
 
             _ComputePromotionType(promotionLine, program);
-         
+
+            promotionLine.Lines.Add(new SaleOrderPromotionLine
+            {
+                Amount = (self.PriceSubTotal / (self.Order.AmountTotal ?? 0)) * discountAmount,
+                PriceUnit = Math.Round((self.PriceSubTotal / (self.Order.AmountTotal ?? 0)) * discountAmount / self.ProductUOMQty),
+                SaleOrderLineId = self.Id,
+            });
 
             return promotionLine;
         }
@@ -118,34 +166,22 @@ namespace Infrastructure.Services
             var saleLineIds = new List<Guid>().AsEnumerable();
             var couponObj = GetService<ISaleCouponService>();
             var promotions = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.SaleOrderPromotionChilds).ThenInclude(x => x.Parent)               
-                .Include(x => x.Parent)
+                .Include(x => x.Lines)
+                .Include(x => x.SaleCouponProgram)
+                .Include(x => x.SaleOrder)
                 .ToListAsync();
             //có thể là ưu đãi phiếu điều trị hoặc là ưu đãi dịch vụ
             //nếu là ưu đã 
             foreach (var promotion in promotions)
             {
-                if (promotion.SaleOrderId.HasValue)
-                    order_ids = order_ids.Union(new List<Guid>() { promotion.SaleOrderId.Value });
-
-                if (promotion.SaleOrderLineId.HasValue && !promotion.ParentId.HasValue)
-                    saleLineIds = saleLineIds.Union(new List<Guid>() { promotion.SaleOrderLineId.Value });
-
-                //xóa ưu đãi phiếu điều trị: discount, coupon, promotion
-                if (promotion.SaleOrderPromotionChilds.Any())
-                {
-                    //Xóa discount phân bổ
-                    await DeleteAsync(promotion.SaleOrderPromotionChilds);
-                }
-
 
                 //Tìm những coupon áp dụng trên promotion để update lại state
-                if (promotion.SaleOrderId.HasValue)
+                if (promotion.SaleCouponProgramId.HasValue && promotion.SaleCouponProgram.ProgramType == "coupon_program")
                 {
                     var appliedCoupons = await couponObj.SearchQuery(x => x.SaleOrderId == promotion.SaleOrderId)
                         .Include(x => x.Program).ToListAsync();
 
-                    var coupons_to_reactivate = appliedCoupons.Where(x => x.Program.DiscountLineProductId == promotion.ProductId).ToList();
+                    var coupons_to_reactivate = appliedCoupons.Where(x => x.Program.Id == promotion.SaleCouponProgramId).ToList();
                     foreach (var coupon in coupons_to_reactivate)
                     {
                         coupon.State = "new";
@@ -161,18 +197,7 @@ namespace Infrastructure.Services
             await DeleteAsync(promotions);
 
             ///update AmountDiscountTotal lines to order      
-
-            if (order_ids.Any())
-                await orderObj._ComputeAmountPromotionToOrder(order_ids);
-
-            if (saleLineIds.Any())
-            {
-                var orderIds = await orderObj.SearchQuery(x => x.OrderLines.Any(s => saleLineIds.Contains(s.Id)))
-                    .Select(x=>x.Id)
-                    .ToListAsync();
-
-                await orderObj._ComputeAmountPromotionToOrder(orderIds);
-            }
+            await orderObj._ComputeAmountPromotionToOrder(promotions.Select(x => x.SaleOrderId.Value).ToList());
 
         }
 
