@@ -34,6 +34,7 @@ export class SaleOrderDisplay {
     order: SaleOrderBasic;
     invoiceCount: number;
     paidTotal: number;
+    promotions: any[];
 }
 
 export class SaleOrderDisplayVm {

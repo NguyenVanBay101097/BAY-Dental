@@ -1,6 +1,6 @@
 <header class="modal-header bg-primary text-white py-1">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close text-white" style="opacity: 1;" data-dismiss="modal" aria-label="Close" (click)="this.activeModal.close(false)" tabindex="-1">×</button>
+    <button type="button" class="close text-white" style="opacity: 1;" data-dismiss="modal" aria-label="Close" (click)="onClose()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -48,9 +48,9 @@
                             </div>
                             <button (click)="applyCoupon()" class="btn btn-sm btn-primary ml-auto  btn-use">Áp dụng</button>
                         </div>
-                        <div class="mt-2">
-                            <div *ngFor="let item of getListPromotion('code_usage_program'); let i = index" class="d-flex justify-content-between mb-2">
-                                <label class="mb-0" for="">{{item.name}}</label>
+                        <div class="">
+                            <div *ngFor="let item of getListPromotion('code_usage_program'); let i = index" class="d-flex justify-content-between mt-2">
+                                <label class="mb-0" for="">  <img src="../../../assets/icons/promotion.svg" alt=""> {{item.name}}</label>
                                 <i title="Xóa giảm tiền" class="fa fa-trash-alt bg-danger text-white btn-icon" (click)="onDeletePromotion(item)"></i>
 
                             </div>
@@ -58,10 +58,12 @@
                     </div>
                     <!-- mã tự động -->
                     <div>
-                        <label for="" class="font-weight-600">Danh sách khuyến mãi</label>
+                        <label for="" class="font-weight-600 mb-0">Danh sách khuyến mãi</label>
                         <div>
-                            <p *ngFor="let item of autoPromotions" class="d-flex justify-content-between">
-                                <label for="">{{item.name}}</label>
+                            <p *ngFor="let item of autoPromotions" class="d-flex justify-content-between my-0 mt-1">
+                                <label class="my-0" for="">
+                                    <img src="../../../assets/icons/promotion.svg" alt="">
+                                    {{item.name}}</label>
                                 <ng-container *ngIf="!getApplied(item); else elseTemplate">
                                     <button type="button" class="btn btn-sm btn-primary  btn-use" (click)="applyPromotion(item)">
                                 Chọn
@@ -82,5 +84,5 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="this.activeModal.close(true)" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onClose()" accesskey="q">Đóng</button>
 </footer>

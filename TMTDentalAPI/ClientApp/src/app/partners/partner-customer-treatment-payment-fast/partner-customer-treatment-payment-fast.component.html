@@ -164,6 +164,23 @@
                         </div>
                     </div>
                     <div class="w-25 pl-3">
+                        <!-- ưu đãi -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-primary text-white pl-2 py-1 d-flex">Ưu đãi phiếu điều trị
+                                <img class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
+                                <span class="ml-auto">{{sumPromotionSaleOrder() | number}}</span>
+                            </div>
+                            <div class="card-body px-3">
+                                <p class="d-flex justify-content-between">
+                                    <label class="font-weight-600">Ưu đãi</label>
+                                    <label class="font-weight-600">Số tiền giảm</label>
+                                </p>
+                                <p *ngFor="let item of saleOrder.promotions" class="d-flex justify-content-between">
+                                    <label class="font-weight-600">{{item.name}}</label>
+                                    <label class="font-weight-600">{{item.amount | number}}</label>
+                                </p>
+                            </div>
+                        </div>
                         <div class="card mb-3">
                             <div class="card-header bg-primary text-white pl-2 py-1">Thanh toán</div>
                             <div class="card-body px-2">
