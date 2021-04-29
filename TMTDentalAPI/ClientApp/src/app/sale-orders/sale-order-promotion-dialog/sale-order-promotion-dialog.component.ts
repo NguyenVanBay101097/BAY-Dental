@@ -40,6 +40,7 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
 
   autoPromotions = [];
   appliedPromotions = [];
+  isChange = false;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -72,6 +73,10 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
   }
 
   loadAllPromotionApplied() {
+    if(!this.salerOrderId && !this.salerOrderLineId) {
+      return;
+    }
+
     var val = new SaleOrderPromotionPaged();
     val.limit = 0;
     val.offset = 0;
@@ -104,7 +109,7 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
       this.saleOrderSevice.applyCouponOnOrder(val).subscribe((res) => {
         this.notificationService.notify('success', 'Thành công!');
         this.loadAllPromotionApplied();
-
+        this.isChange = true;
       });
   }
 
@@ -118,11 +123,12 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
       apply$.subscribe((res) => {
       this.notificationService.notify('success', 'Thành công!');
       this.loadAllPromotionApplied();
+      this.isChange = true;
+
     });
   }
 
   applyDiscount() {
-    if (this.form.discountPercent > 0 || this.form.discountFixed > 0) {
       var val = {
         id: this.salerOrderId ? this.salerOrderId : this.salerOrderLineId,
         discountType: this.form.discountType,
@@ -133,8 +139,9 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
       apply$.subscribe((res) => {
         this.notificationService.notify('success', 'Thành công!');
         this.loadAllPromotionApplied();
+        this.isChange = true;
+
       });
-    } 
   }
 
   onDeletePromotion(item) {
@@ -145,6 +152,8 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
         this.saleOrderPromotionService.removePromotion([item.id]).subscribe(res => {
           this.notificationService.notify('success', 'Thành công!');
           this.loadAllPromotionApplied();
+        this.isChange = true;
+
         }) 
       }, () => {
       });
@@ -159,5 +168,9 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
     var listApllied = this.getListPromotion('promotion_program');
     var index = listApllied.findIndex(x=> item.discountLineProductId == x.productId);
     return listApllied[index];
+  }
+
+  onClose(){
+    this.activeModal.close(this.isChange ? true: false);
   }
 }

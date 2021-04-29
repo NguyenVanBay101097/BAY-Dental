@@ -32,9 +32,9 @@
                         <a [routerLink]="['/partners/customer/' + customerId + '/treatment']" class="btn btn-secondary btn-sm">
                             Trở lại
                         </a>
-                        <button type="button" *ngIf="this.saleOrderId" class="btn btn-secondary btn-sm" (click)="actionEdit()">
+                        <!-- <button type="button" *ngIf="saleOrder.state == 'sale' && !isEditting" class="btn btn-secondary btn-sm" (click)="actionEdit()">
                             Sửa dịch vụ
-                        </button>
+                        </button> -->
                         <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder.state != 'done'" (click)="onSave()">
                             Lưu
                         </button>
@@ -210,17 +210,18 @@
                 <div class="tab-content flex-1-1-100 overflow-hidden">
                     <div class="tab-pane active h-100" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <div class="w-100 h-100 d-flex flex-column">
+                            <!-- && isEditting -->
                             <div *ngIf="isEditSate()" class="w-25 mb-2">
                                 <app-service-list-search-dropdown (onSelectService)="addLine($event)"></app-service-list-search-dropdown>
                             </div>
-                            <div class="d-flex overflow-auto">
+                            <div class="d-flex overflow-auto w-100">
                                 <div class="w-75 d-flex flex-column">
                                     <!-- saleorderline -->
 
-                                    <div class="overflow-auto">
+                                    <div class="overflow-auto w-100">
                                         <div class="div-table w-100">
                                             <div class="div-row bg-primary text-white">
-                                                <div style="width: 200px;" class="div-cell py-1">Dịch vụ</div>
+                                                <div style="width: 200px;" class="div-cell py-1 pl-2">Dịch vụ</div>
                                                 <div style="width: 130px;" class="div-cell py-1 text-right">Đơn giá</div>
                                                 <div style="width: 100px;" class="div-cell py-1 text-right">Số lượng</div>
                                                 <div style="width: 100px;" class="div-cell py-1 text-right">Thành tiền</div>
@@ -235,6 +236,7 @@
                                     </div>
                                 </div>
                                 <div class="w-25 pl-3">
+                                    <!-- ưu đãi -->
                                     <div class="card mb-3">
                                         <div class="card-header bg-primary text-white pl-2 py-1 d-flex">Ưu đãi phiếu điều trị
                                             <img class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">

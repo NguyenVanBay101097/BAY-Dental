@@ -120,3 +120,7 @@
 .pointer:hover {
     cursor: pointer;
 }
+
+.div-cell {
+    border-left: none;
+}

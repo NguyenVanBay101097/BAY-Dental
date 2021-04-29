@@ -1,5 +1,5 @@
 import { EmployeeSimple } from './../../employees/employee';
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -50,6 +50,10 @@ import { PartnerSimple, PartnerPaged } from '../partner-simple';
 import { PartnerService } from '../partner.service';
 import { PrintSaleOrderComponent } from 'src/app/shared/print-sale-order/print-sale-order.component';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { SaleOrderLineCuComponent } from 'src/app/sale-orders/sale-order-line-cu/sale-order-line-cu.component';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { SaleOrderPromotionDialogComponent } from 'src/app/sale-orders/sale-order-promotion-dialog/sale-order-promotion-dialog.component';
 
 @Component({
   selector: 'app-partner-customer-treatment-payment-fast',
@@ -73,6 +77,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   valueSearch: string;
   submitted = false;
 
+  lineSelected = null;
+  @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -80,7 +86,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
   @ViewChild(PrintSaleOrderComponent, { static: true }) printSaleOrderComponent: PrintSaleOrderComponent;
   @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
-  @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
+  // @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild('search', { static: true }) searchElement: ElementRef;
 
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
@@ -93,6 +99,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   paymentsInfo: PaymentInfoContent[] = [];
   filteredEmployees: EmployeeSimple[] = [];
   @ViewChild(ToaThuocPrintComponent, { static: true }) toaThuocPrintComponent: ToaThuocPrintComponent;
+  defaultToothCate: ToothCategoryBasic;
 
   searchCardBarcode: string;
   partnerSend: any;
@@ -101,14 +108,16 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   get f() { return this.formGroup.controls; }
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService, private toaThuocService: ToaThuocService,
-    private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService, private accountJournalService: AccountJournalService,
-    private saleOrderLineService: SaleOrderLineService, private intlService: IntlService, private modalService: NgbModal,
-    private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
-    private pricelistService: PriceListService, private errorService: AppSharedShowErrorService, private authService: AuthService,
-    private paymentService: AccountPaymentService,
+   private route: ActivatedRoute, private saleOrderService: SaleOrderService, private accountJournalService: AccountJournalService,
+  private intlService: IntlService, private modalService: NgbModal,
+    private router: Router, private notificationService: NotificationService, 
+     private authService: AuthService,
     private odataPartnerService: PartnersService,
     private printService: PrintService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService) {
+      private notifyService: NotifyService,
+      private toothCategoryService: ToothCategoryService
+      
+      ) {
   }
 
   ngOnInit() {
@@ -133,12 +142,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.routeActive();
 
 
-    this.loadEmployees();
     this.loadPartners();
-    // this.getAccountPaymentReconcicles();
-    this.loadDotKhamList();
-    // this.loadLaboOrderList();
-    this.loadPayments();
 
     this.partnerCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -151,34 +155,16 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       }
     )
 
-    // this.loadPricelists();
+//load default loại răng
+    this.loadToothCateDefault();
   }
 
-  loadEmployees() {
-    this.searchEmployees().subscribe(result => {
-      this.filteredEmployees = _.unionBy(this.filteredEmployees, result, 'id');
-    });
-  }
-
-
-  searchEmployees(filter?: string) {
-    var val = new EmployeePaged();
-    val.search = filter || '';
-    val.isDoctor = true;
-    return this.employeeService.getEmployeeSimpleList(val);
-  }
-
-  @HostListener('window:keydown', ['$event'])
-  keyEvent(event: KeyboardEvent) {
-    let charCode = (event.which) ? event.which : event.keyCode;
-    if (charCode == 113) {
-      setTimeout(() => {
-        this.searchElement.nativeElement.focus();
-      }, 0);
-    } else if (charCode == 46) {
-      console.log('Delete Key Pressed');
-    }
-
+  loadToothCateDefault() {
+    this.toothCategoryService.getDefaultCategory().subscribe(
+      res => {
+        this.defaultToothCate = res;
+      }
+    );
   }
 
   routeActive() {
@@ -214,20 +200,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         this.formGroup.markAsPristine();
         this.getPriceSubTotal();
         this.computeAmountTotal();
+
       });
-  }
-
-  get customerId() {
-    var parterIdParam = this.route.snapshot.queryParamMap.get('partner_id');
-    if (parterIdParam) {
-      return parterIdParam;
-    }
-
-    if (this.saleOrderId && this.saleOrder) {
-      return this.saleOrder.partnerId;
-    }
-
-    return undefined;
   }
 
   get partner() {
@@ -285,18 +259,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   actionPayment() {
-    // if (!this.getPartner) {
-    //   this.notificationService.show({
-    //     content: "Chọn khách hàng trước khi thanh toán",
-    //     hideAfter: 3000,
-    //     position: { horizontal: 'center', vertical: 'top' },
-    //     animation: { type: 'fade', duration: 400 },
-    //     type: { style: 'error', icon: true }
-    //   });
-
-    //   return false;
-    // }
-
     this.submitted = true;
 
     if (this.formGroup.invalid) {
@@ -331,412 +293,10 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     });
   }
 
-
-  updateCustomerModal() {
-    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa khách hàng';
-    modalRef.componentInstance.id = this.partner.id;
-
-    modalRef.result.then(() => {
-    }, () => {
-    });
-  }
-
-  searchCustomerDialog() {
-    let modalRef = this.modalService.open(PartnerSearchDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Tìm khách hàng';
-    modalRef.componentInstance.domain = { customer: true };
-
-    modalRef.result.then(result => {
-      if (result.length) {
-        var p = result[0].dataItem;
-        this.formGroup.get('partner').patchValue(p);
-        this.filteredPartners = _.unionBy(this.filteredPartners, [p], 'id');
-        this.onChangePartner(p);
-      }
-    }, () => {
-    });
-  }
-
-  loadDotKhamList() {
-    if (this.saleOrderId) {
-      return this.saleOrderService.getDotKhamList(this.saleOrderId).subscribe(result => {
-        this.dotKhams = result;
-      });
-    }
-  }
-
-  loadLaboOrderList() {
-    if (this.saleOrderId) {
-      var val = new LaboOrderPaged();
-      val.saleOrderId = this.saleOrderId;
-      return this.laboOrderService.GetFromSaleOrder_OrderLine(val).subscribe(result => {
-        this.laboOrders = result.items;
-      });
-    }
-  }
-
-  get cardValue() {
-    return this.formGroup.get('card').value;
-  }
-
   loadPartners() {
     this.searchPartners().subscribe(result => {
       this.filteredPartners = _.unionBy(this.filteredPartners, result, 'id');
     });
-  }
-
-  loadPricelists() {
-    this.searchPricelists().subscribe(result => {
-      this.filteredPricelists = _.unionBy(this.filteredPricelists, result.items, 'id');
-    });
-  }
-
-  searchCard() {
-    var barcode = this.searchCardBarcode;
-    var val = new CardCardPaged();
-    val.limit = 1;
-    val.barcode = barcode;
-    val.state = "in_use";
-    val.isExpired = false;
-    this.cardCardService.getPaged(val).subscribe(result => {
-      if (result.items.length) {
-        this.formGroup.get('card').patchValue(result.items[0]);
-        this.searchCardBarcode = '';
-      } else {
-        this.notificationService.show({
-          content: 'Không tìm thấy thẻ thành viên hoặc thẻ thành viên không còn khả dụng.',
-          hideAfter: 3000,
-          position: { horizontal: 'right', vertical: 'bottom' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'error', icon: true }
-        });
-      }
-    });
-  }
-
-  showApplyCardDialog() {
-    var partner = this.formGroup.get('partner').value;
-    if (!partner) {
-      this.notificationService.show({
-        content: 'Vui lòng chọn khách hàng',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
-
-      return false;
-    }
-
-    if (this.saleOrderId) {
-      if (this.formGroup.dirty) {
-        this.saveRecord().subscribe(() => {
-          let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-          modalRef.componentInstance.orderId = this.saleOrderId;
-          modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
-          modalRef.result.then(() => {
-            this.loadRecord();
-          }, () => {
-          });
-        })
-      } else {
-        let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-        modalRef.componentInstance.orderId = this.saleOrderId;
-        modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
-        modalRef.result.then(() => {
-          this.loadRecord();
-        }, () => {
-        });
-      }
-    } else {
-      if (!this.formGroup.valid) {
-        return false;
-      }
-
-      this.createRecord().subscribe(result => {
-        this.router.navigate(['/partners/treatment-paymentfast/from'], {
-          queryParams: {
-            id: result.id
-          },
-        });
-
-        let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-        modalRef.componentInstance.orderId = result.id;
-        modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
-        modalRef.result.then(() => {
-          this.loadRecord();
-        }, () => {
-        });
-      });
-    }
-  }
-
-  lineEditable(line: FormControl) {
-    if (line.get('isRewardLine')) {
-      return !line.get('isRewardLine').value;
-    }
-
-    return true;
-  }
-
-  showApplyCouponDialog() {
-    if (this.saleOrderId) {
-      if (this.formGroup.dirty) {
-        this.saveRecord().subscribe(() => {
-          let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-          modalRef.componentInstance.orderId = this.saleOrderId;
-          modalRef.result.then(() => {
-            this.loadRecord();
-          }, () => {
-          });
-        })
-      } else {
-        let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.orderId = this.saleOrderId;
-        modalRef.result.then(() => {
-          this.loadRecord();
-        }, () => {
-        });
-      }
-    } else {
-      if (!this.formGroup.valid) {
-        return false;
-      }
-
-      this.createRecord().subscribe(result => {
-        this.router.navigate(['/sale-orders/form'], {
-          queryParams: {
-            id: result.id
-          },
-        });
-
-        let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.orderId = result.id;
-        modalRef.result.then(() => {
-          this.loadRecord();
-        }, () => {
-        });
-      });
-    }
-  }
-
-  getCouponLines() {
-    var lines = this.orderLines.value;
-    var list = [];
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i];
-      if (line.couponId) {
-        list.push(line);
-      }
-    }
-
-    return list;
-  }
-
-  getPromotionLines() {
-    var lines = this.orderLines.value;
-    var list = [];
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i];
-      if (line.promotionId) {
-        list.push(line);
-      }
-    }
-
-    return list;
-  }
-
-  getTotalDiscountCoupon() {
-    var total = 0;
-    var lines = this.getCouponLines();
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i];
-      total = total + line.priceSubTotal;
-    }
-
-    return total;
-  }
-
-  getTotalDiscountPromotion() {
-    var total = 0;
-    var lines = this.getPromotionLines();
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i];
-      total = total + line.priceSubTotal;
-    }
-
-    return total;
-  }
-
-  isCouponLine(line: FormControl) {
-    var c = line.get('couponId');
-    if (c) {
-      return c.value != null;
-    }
-    return false;
-  }
-
-  isPromotionLine(line: FormControl) {
-    var c = line.get('promotionId');
-    if (c) {
-      return c.value != null;
-    }
-    return false;
-  }
-
-  deleteCouponLine(line) {
-    var index = _.findIndex(this.orderLines.controls, o => o.get('id').value == line.id);
-    if (index != -1) {
-      this.orderLines.removeAt(index);
-
-      this.saveRecord().subscribe(() => {
-        this.loadRecord();
-      }, () => {
-        this.loadRecord();
-      });
-    }
-  }
-
-  applyPromotion() {
-    if (this.saleOrderId) {
-      if (this.formGroup.dirty) {
-        this.saveRecord().subscribe(() => {
-          if (this.saleOrder.state == "draft") {
-            this.onSaveConfirm();
-          }
-
-          this.saleOrderService.applyPromotion(this.saleOrderId).subscribe(() => {
-            this.loadRecord();
-          }, (error) => {
-            this.errorService.show(error);
-          });
-        });
-      } else {
-        if (this.saleOrder.state == "draft") {
-          this.onSaveConfirm();
-        }
-        this.saleOrderService.applyPromotion(this.saleOrderId).subscribe(() => {
-          this.loadRecord();
-        }, (error) => {
-          this.errorService.show(error);
-        });
-      }
-    } else {
-      this.createRecord().subscribe((result) => {
-        this.router.navigate(['/partners/treatment-paymentfast/from'], {
-          queryParams: {
-            id: result.id
-          },
-        });
-
-        if (this.saleOrder.state == "draft") {
-          this.onSaveConfirm();
-        }
-
-        this.saleOrderService.applyPromotion(result.id).subscribe(() => {
-          this.loadRecord();
-        });
-      });
-    }
-  }
-
-  onApplyDiscount(val: any) {
-    if (this.saleOrderId) {
-      this.discountDefault = val;
-      this.discountDefault.saleOrderId = this.saleOrderId;
-      this.saleOrderService.applyDiscountDefault(this.discountDefault).subscribe(() => {
-        this.loadRecord();
-      }, (error) => {
-        this.errorService.show(error);
-      });
-    }
-    else {
-      if (!this.formGroup.valid) {
-        return false;
-      }
-
-      this.createRecord().subscribe(result => {
-        this.router.navigate(['/partners/treatment-paymentfast/from'], {
-          queryParams: {
-            id: result.id
-          },
-        });
-
-        val.saleOrderId = result.id;
-        this.saleOrderService.applyDiscountDefault(val).subscribe(() => {
-          this.loadRecord();
-        }, (error) => {
-          this.errorService.show(error);
-        });
-      });
-    }
-  }
-
-  createRecord() {
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.userId = val.user ? val.user.id : null;
-    val.cardId = val.card ? val.card.id : null;
-    val.orderLines.forEach(line => {
-      line.toothIds = line.teeth.map(x => x.id);
-    });
-    return this.saleOrderService.create(val);
-  }
-
-  getDiscountNumber(line: FormGroup) {
-    var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
-    if (discountType == 'fixed') {
-      return line.get('discountFixed').value;
-    } else {
-      return line.get('discount').value;
-    }
-  }
-
-  getDiscountTypeDisplay(line: FormGroup) {
-    var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
-    if (discountType == 'fixed') {
-      return "";
-    } else {
-      return '%';
-    }
-  }
-
-  saveRecord() {
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.userId = val.user ? val.user.id : null;
-    val.cardId = val.card ? val.card.id : null;
-    val.orderLines.forEach(line => {
-      line.toothIds = line.teeth.map(x => x.id);
-    });
-    return this.saleOrderService.update(this.saleOrderId, val);
-  }
-
-  removeCard() {
-    this.formGroup.get('card').patchValue(null);
-  }
-
-  loadUsers() {
-    this.searchUsers().subscribe(result => {
-      this.filteredUsers = _.unionBy(this.filteredUsers, result, 'id');
-    });
-  }
-
-  searchUsers(filter?: string) {
-    var val = new UserPaged();
-    val.search = filter;
-    return this.userService.autocompleteSimple(val);
-  }
-
-  searchPricelists(filter?: string) {
-    var val = new ProductPricelistPaged();
-    val.search = filter || '';
-    return this.pricelistService.loadPriceListList(val);
   }
 
   searchPartners(filter?: string) {
@@ -746,98 +306,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     return this.partnerService.getAutocompleteSimple(val);
   }
 
-  createNew() {
-    //resetform
-    this.router.navigate(['/partners/treatment-paymentfast/from']);
-
-  }
-
-  actionConfirm() {
-    if (!this.formGroup.valid) {
-      return false;
-    }
-
-    if (!this.saleOrderId) {
-      return false;
-    }
-
-    of(this.formGroup.dirty)
-      .pipe(
-        mergeMap(r => {
-          if (r) {
-            var val = this.getFormDataSave();
-            return this.saleOrderService.update(this.saleOrderId, val);
-          } else {
-            return of(true);
-          }
-        }),
-        mergeMap(() => {
-          return this.saleOrderService.actionConfirm([this.saleOrderId]);
-        }),
-      )
-      .subscribe(() => {
-        this.loadRecord();
-      })
-  }
-
-  actionViewInvoice() {
-    if (this.saleOrderId) {
-      this.router.navigate(['/sale-orders/' + this.saleOrderId + '/invoices']);
-    }
-  }
-
-  actionInvoiceCreateV2() {
-    if (this.saleOrderId) {
-      this.saleOrderService.actionInvoiceCreateV2(this.saleOrderId).subscribe(() => {
-        this.notificationService.show({
-          content: 'Cập nhật thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.loadRecord();
-      });
-    }
-  }
-
-
-  actionLabo(item?) {
-    if (this.saleOrderId) {
-      let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      if (item && item.id) {
-        modalRef.componentInstance.title = 'Cập nhật phiếu labo';
-        modalRef.componentInstance.id = item.id;
-      }
-      else {
-        modalRef.componentInstance.title = 'Tạo phiếu Labo';
-      }
-
-      modalRef.componentInstance.saleOrderId = this.saleOrderId;
-
-      modalRef.result.then(res => {
-        if (res) {
-          this.loadLaboOrderList();
-        }
-      }, () => {
-      });
-    }
-  }
-
-  showTeethDiagnostic(line: FormGroup) {
-    var list = [];
-    var teeth = line.get('teeth').value;
-    if (teeth.length) {
-      list.push(teeth.map(x => x.name).join(','));
-    }
-
-    var diagnostic = line.get('diagnostic').value;
-    if (diagnostic) {
-      list.push(diagnostic);
-    }
-
-    return list.join('; ');
-  }
 
   printFastSaleOrder(saleOrderId) {
     this.saleOrderService.printSaleOrder(saleOrderId).subscribe((result: any) => {
@@ -845,21 +313,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     });
   }
 
-  actionDone() {
-    if (this.saleOrderId) {
-      this.saleOrderService.actionDone([this.saleOrderId]).subscribe(() => {
-        this.loadRecord();
-      });
-    }
-  }
-
-  actionUnlock() {
-    if (this.saleOrderId) {
-      this.saleOrderService.actionUnlock([this.saleOrderId]).subscribe(() => {
-        this.loadRecord();
-      });
-    }
-  }
 
   getFormDataSave() {
     var val = this.formGroup.value;
@@ -868,6 +321,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     val.pricelistId = val.pricelist.id;
     val.userId = val.user ? val.user.id : null;
     val.cardId = val.card ? val.card.id : null;
+    val.amountTotal = (val.orderLines as any[]).reduce((total, cur) => {
+      return total + cur.productUOMQty * cur.priceUnit;
+    },0);
     val.orderLines.forEach(line => {
       if (line.employee) {
         line.employeeId = line.employee.id;
@@ -875,131 +331,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       if (line.teeth) {
         line.toothIds = line.teeth.map(x => x.id);
       }
+      line.priceSubTotal = line.productUOMQty * line.priceUnit
     });
     return val;
-  }
-
-  onSaveConfirm() {
-    if (!this.formGroup.valid) {
-      return false;
-    }
-    var val = this.getFormDataSave();
-    if (!this.saleOrderId) {
-      this.saleOrderService.create(val)
-        .pipe(
-          mergeMap(r => {
-            this.saleOrderId = r.id;
-            return this.saleOrderService.actionConfirm([r.id]);
-          })
-        )
-        .subscribe(r => {
-          this.router.navigate(['partners/treatment-paymentfast/from'], {
-            queryParams: {
-              id: this.saleOrderId
-            },
-          });
-          this.journalFixed = this.formGroup.get('journal').value;
-          this.loadRecord();
-        });
-    } else {
-      this.saleOrderService.update(this.saleOrderId, val).pipe(
-        mergeMap(r => {
-          return this.saleOrderService.actionConfirm([this.saleOrderId]);
-        })
-      ).subscribe(() => {
-        this.router.navigate(['partners/treatment-paymentfast/from'], {
-          queryParams: {
-            id: this.saleOrderId
-          },
-        });
-        this.journalFixed = this.formGroup.get('journal').value;
-        this.loadRecord();
-      }, () => {
-        this.loadRecord();
-      });
-    }
-
-  }
-
-  checkPromotion(id) {
-    this.saleOrderService.checkPromotion(id).subscribe(result => {
-      if (result) {
-        this.showConfirmApplyPromotion(id);
-      } else {
-      }
-    });
-  }
-
-  showConfirmApplyPromotion(id) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Quên cập nhật khuyến mãi?';
-    modalRef.componentInstance.body = 'Hệ thống phát hiện có chương trình khuyến mãi có thể áp dụng cho đơn hàng này, bạn có muốn áp dụng trước khi xác nhận không?';
-    modalRef.result.then(() => {
-      this.saleOrderService.applyPromotion(id).subscribe(() => {
-        this.saleOrderService.actionConfirm([id]).subscribe(() => {
-          this.loadRecord();
-        });
-      });
-    }, () => {
-      this.saleOrderService.actionConfirm([id]).subscribe(() => {
-        this.loadRecord();
-      });
-    });
-  }
-
-  confirmOrder(id) {
-    return this.saleOrderService.actionConfirm(id);
-  }
-
-  isTurnOnSalePromotion() {
-    var groups = [];
-    if (localStorage.getItem('groups')) {
-      groups = JSON.parse(localStorage.getItem('groups'));
-    }
-
-    var arr = ['sale.group_sale_coupon_promotion'];
-    var intersect = _.intersection(groups, arr);
-    var res = intersect.length == arr.length;
-    return res;
-  }
-
-  onSave() {
-    if (!this.formGroup.valid) {
-      return false;
-    }
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.cardId = val.card ? val.card.id : null;
-    val.orderLines.forEach(line => {
-      line.toothIds = line.teeth.map(x => x.id);
-    });
-    if (this.saleOrderId) {
-      this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.loadRecord();
-      }, () => {
-        this.loadRecord();
-      });
-    } else {
-      this.saleOrderService.create(val).subscribe(result => {
-        this.router.navigate(['partners/treatment-paymentfast/from'], {
-          queryParams: {
-            id: result['id']
-          },
-        });
-        this.loadRecord();
-        // this.router.navigate(['partners/treatment-paymentfast/from'], { queryParams: { id: result.id } });
-
-      });
-    }
   }
 
   onChangePartner(value) {
@@ -1049,119 +383,61 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     }
   }
 
-  actionCancel() {
-    if (this.saleOrderId) {
-      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Hủy phiếu điều trị';
-      modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy?';
-      modalRef.result.then(() => {
-        this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => {
-          this.loadRecord();
-        });
-      }, () => {
-      });
-    }
-  }
-
+  
   get orderLines() {
     return this.formGroup.get('orderLines') as FormArray;
   }
 
-  //Mở popup thêm dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
-  showAddLineModal() {
-    // var partner = this.formGroup.get('partner').value;
-    // if (!partner) {
-    //   this.notificationService.show({
-    //     content: 'Vui lòng chọn khách hàng',
-    //     hideAfter: 3000,
-    //     position: { horizontal: 'center', vertical: 'top' },
-    //     animation: { type: 'fade', duration: 400 },
-    //     type: { style: 'error', icon: true }
-    //   });
-    //   return false;
-    // }
-
-    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm dịch vụ điều trị';
-    modalRef.componentInstance.partnerId = this.partnerId;
-    var pricelist = this.formGroup.get('pricelist').value;
-    modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
-    if (this.formGroup.get('state').value == "draft") {
-      modalRef.componentInstance.showSaveACreate = true;
-    }
-
-    modalRef.result.then(result => {
-      for (let i = 0; i < result.length; i++) {
-        let line = result[i] as any;
-        line.teeth = this.fb.array(line.teeth);
-        this.orderLines.push(this.fb.group(line));
-        this.orderLines.markAsDirty();
-        this.computeAmountTotal();
-      }
-
-      /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
-      if (this.formGroup.get('state').value == "sale") {
-        var val = this.getFormDataSave();
-        this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-          this.notificationService.show({
-            content: 'Lưu thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
-          this.loadRecord();
-        }, () => {
-          this.loadRecord();
-        });
-      }
-    }, () => {
-    });
-
-
-  }
-
   addLine(val) {
-    console.log(val);
-    var res = this.fb.group(val);
-
-    // line.teeth = this.fb.array(line.teeth);
-    if (!this.orderLines.controls.some(x => x.value.productId === res.value.productId)) {
-      this.orderLines.push(res);
-    } else {
-      var line = this.orderLines.controls.find(x => x.value.productId === res.value.productId);
-      if (line) {
-        line.value.productUOMQty += 1;
-        line.patchValue(line.value);
-      }
+    if (this.lineSelected) {
+      this.notifyService.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để thêm dịch vụ khác');
+      return;
     }
-    this.getPriceSubTotal();
+
+    var value = {
+      amountPaid: 0,
+      amountResidual: 0,
+      diagnostic: '',
+      discount: 0,
+      discountFixed: 0,
+      discountType: 'percentage',
+      employee: null,
+      employeeId: '',
+      assistant: null,
+      assistantId: '',
+      name: val.name,
+      priceSubTotal: val.listPrice * 1,
+      priceUnit: val.listPrice,
+      productId: val.id,
+      product: {
+        id: val.id,
+        name: val.name
+      },
+      productUOMQty: 1,
+      state: 'draft',
+      teeth: this.fb.array([]),
+      toothCategory: this.defaultToothCate,
+      toothCategoryId: this.defaultToothCate.id,
+      counselor: null,
+      counselorId: null,
+      toothType: 'manual',
+      isActive: true,
+      amountPromotionToOrder: 0,
+      amountPromotionToOrderLine: 0
+    };
+    var res = this.fb.group(value);
+    this.orderLines.push(res);
     this.orderLines.markAsDirty();
     this.computeAmountTotal();
+
     this.saleOrderLine = null;
-  }
-
-  copyLine(line: FormGroup) {
-    this.orderLines.push(line);
-    this.getPriceSubTotal();
-    this.computeAmountTotal();
-    this.orderLines.markAsDirty();
-  }
-
-  updateTeeth(event, line) {
-    var teeth = event.teeth;
-    var teethFormArray = line.get('teeth') as FormArray;
-    line.patchValue(event);
-    teethFormArray.clear();
-    teeth.forEach(tooth => {
-      teethFormArray.push(this.fb.group(tooth));
-    });
-
-    line.get('diagnostic').setValue(event.diagnostic);
-    // line.get('productUOMQty').setValue(teeth.length ? teeth.length : 1);
-
-    this.getPriceSubTotal();
-    this.computeAmountTotal();
+    this.lineSelected = res.value;
+    
+    // mặc định là trạng thái sửa
+     setTimeout(() => {
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      viewChild.onEditLine();
+    }, 0);
   }
 
   getPriceSubTotal() {
@@ -1182,107 +458,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     });
 
   }
-
-  //Mở popup thêm thông tin bổ sung
-  addInfoLineModal(line: FormGroup) {
-    let modalRef = this.modalService.open(PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm thông tin bổ sung';
-    modalRef.componentInstance.partnerId = this.partnerId;
-    modalRef.componentInstance.line = line.value;
-
-    modalRef.result.then(result => {
-      var a = result as any;
-      line.patchValue(a);
-      line.setControl('teeth', this.fb.array(a.teeth || []));
-      this.computeAmountTotal();
-      this.orderLines.markAsDirty();
-
-      /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
-      // if (this.formGroup.get('state').value == "sale") {
-      //   var val = this.getFormDataSave();
-      //   this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-      //     this.notificationService.show({
-      //       content: 'Lưu thành công',
-      //       hideAfter: 3000,
-      //       position: { horizontal: 'center', vertical: 'top' },
-      //       animation: { type: 'fade', duration: 400 },
-      //       type: { style: 'success', icon: true }
-      //     });
-      //     this.loadRecord();
-      //   }, () => {
-      //     this.loadRecord();
-      //   });
-      // }
-    }, () => {
-    });
-
-
-  }
-
-  //Mở popup Sửa dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
-  editLine(line: FormGroup) {
-    var partner = this.formGroup.get('partner').value;
-    if (!partner) {
-      alert('Vui lòng chọn khách hàng');
-      return false;
-    }
-
-    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
-    modalRef.componentInstance.line = line.value;
-    modalRef.componentInstance.partnerId = partner.Id;
-    var pricelist = this.formGroup.get('pricelist').value;
-    modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
-
-    modalRef.result.then(result => {
-      var a = result[0] as any;
-      line.patchValue(a);
-      line.setControl('teeth', this.fb.array(a.teeth || []));
-      this.computeAmountTotal();
-      this.orderLines.markAsDirty();
-
-      /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
-      if (this.formGroup.get('state').value == "sale") {
-        var val = this.getFormDataSave();
-        this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-          this.notificationService.show({
-            content: 'Sửa thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
-          this.loadRecord();
-        }, () => {
-          this.loadRecord();
-        });
-      }
-    }, () => {
-    });
-  }
-
-  lineTeeth(line: FormGroup) {
-    var teeth = line.get('teeth').value as any[];
-    return teeth.map(x => x.name).join(',');
-  }
-
-  deleteLine(index: number) {
-    if (this.formGroup.get('state').value == "draft" || this.formGroup.get('state').value == "cancel") {
-      this.orderLines.removeAt(index);
-      this.computeAmountTotal();
-      this.orderLines.markAsDirty();
-    } else {
-      this.notificationService.show({
-        content: 'Chỉ có thể xóa dịch vụ khi phiếu điều trị ở trạng thái nháp',
-        hideAfter: 5000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
-    }
-  }
-
-
   ///Toa thuốc
   createToaThuoc() {
     let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
@@ -1301,10 +476,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.toaThuocService.getPrint(item.id).subscribe((result: any) => {
       this.printService.printHtml(result.html);
     });
-  }
-
-  onChangeSearch(value) {
-    this.valueSearch = value;
   }
 
   ///lịch hẹn
@@ -1354,196 +525,106 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.formGroup.get('amountTotal').patchValue(total);
   }
 
-  //Tính nợ theo số tổng
-  computeResidual(total) {
-    let diff = this.getAmountTotal - this.getResidual;
-    let residual = total - diff;
-    this.formGroup.get('residual').patchValue(residual);
+
+
+  onCancelEditLine(line) {
+    this.lineSelected = null;
   }
 
-  actionSaleOrderPayment() {
-    if (this.saleOrderId) {
-      this.paymentService.saleDefaultGet([this.saleOrderId]).subscribe(rs2 => {
-        let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal component-host-scrollable', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.title = 'Thanh toán';
-        modalRef.componentInstance.defaultVal = rs2;
-        modalRef.result.then(() => {
-          this.notificationService.show({
-            content: 'Thanh toán thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
+  getAmount() {
+    return (this.orderLines.value as any[]).reduce((total, cur) => {
+      return total + cur.priceUnit * cur.productUOMQty;
+    }, 0);
+  }
 
-          this.loadRecord();
-          this.loadPayments();
-        }, () => {
-        });
-      })
+  getTotalDiscount() {
+    var res = (this.orderLines.value as any[]).reduce((total, cur) => {
+      return total + (cur.amountDiscountTotal || 0) * cur.productUOMQty;
+    }, 0);
+    
+    return Math.round(res/1000)*1000;
+  }
+
+  onDeleteLine(index) {
+    this.orderLines.removeAt(index);
+    this.computeAmountTotal();
+    this.lineSelected = null;
+  }
+
+  onEditLine(line) {
+    if (this.lineSelected != null) {
+      this.notifyService.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để chỉnh sửa dịch vụ khác');
+    } else {
+      this.lineSelected = line;
+      var viewChild = this.lineVCR.find(x => x.line == line);
+      viewChild.onEditLine();
     }
   }
 
-  // hủy dịch vụ
-  cancelSaleOrderLine(line: FormGroup) {
-    var idControl = line.get('id');
-    if (idControl) {
-      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
-      modalRef.componentInstance.title = "Hủy Dịch vụ";
-      modalRef.componentInstance.body = `Bạn có chắc chắn muốn hủy dịch vụ ${line.get('name').value}?`;
+  
+  updateLineInfo(line, lineControl) {
+    line.toothCategoryId = line.toothCategory.id;
+    line.assistantId = line.assistant ? line.assistant.id : null;
+    line.employeeId = line.employee ? line.employee.id : null;
+    // line.productUOMQty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
+    line.counselorId = line.counselor ? line.counselor.id : null;
+    lineControl.patchValue(line);
 
-      modalRef.result.then(() => {
-        this.saleOrderLineService.cancelOrderLine([idControl.value]).subscribe(() => {
-          this.notificationService.show({
-            content: 'hủy dịch vụ thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
-          this.loadRecord();
-        }, () => {
-          this.loadRecord();
-        });
-      }, (err) => {
-        console.log(err);
-      });
-    }
-  }
-
-
-  loadPayments() {
-    if (this.saleOrderId) {
-      this.saleOrderService.getPayments(this.saleOrderId).subscribe(result => {
-        this.paymentsInfo = result;
-      });
-    }
-  }
-
-  deletePayment(payment) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa thanh toán';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
-    modalRef.result.then(() => {
-      this.paymentService.unlink([payment.accountPaymentId]).subscribe(() => {
-        this.notificationService.show({
-          content: 'Xóa thanh toán thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-
-        this.loadRecord();
-        this.loadPayments();
-      });
+    lineControl.get('teeth').clear();
+    line.teeth.forEach(teeth => {
+      let g = this.fb.group(teeth);
+      lineControl.get('teeth').push(g);
     });
-  }
 
-  printPayment(payment) {
-    this.saleOrderService.getPrint(payment.accountPaymentId).subscribe(result => {
-      this.accountPaymentPrintComponent.print(result);
-    });
-  }
-
-  getAccountPaymentReconcicles() {
-    if (this.saleOrderId) {
-      this.saleOrderService.getAccountPaymentReconcicles(this.saleOrderId).subscribe(
-        rs => {
-          this.paymentsInfo = rs;
-        }
-      )
-    }
-  }
-
-  showLaboList(id?: string) {
-    const modalRef = this.modalService.open(
-      SaleOrderLineLaboOrdersDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' }
-    );
-
-    modalRef.componentInstance.title = 'Danh sách phiếu labo';
-    modalRef.componentInstance.saleOrderLineId = id;
-    modalRef.result.then((val) => {
-    }, er => { });
-  }
-
-  onChangeQuantity(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
-    if (res) {
-      res.patchValue(line.value);
-    }
-    this.getPriceSubTotal();
+    lineControl.updateValueAndValidity();
+    // this.onChangeQuantity(lineControl);
     this.computeAmountTotal();
 
+    this.lineSelected = null;
   }
 
-  // onChangeDiscountFixed(event, line: FormGroup) {
-  //   var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
-  //   if (res) {
-  //     res.value.discountType = event.discountType;
-  //     if (event.discountType = "fixed") {
-  //       res.value.discountFixed = event.discountFixed;
-  //     } else {
-  //       res.value.discount = event.discount;
-  //     }
-  //     res.patchValue(line.value);
-  //   }
-  //   this.getPriceSubTotal();
-  //   this.computeAmountTotal();
-  // }
+  onOpenSaleOrderPromotion() {
+    const val = this.getFormDataSave();
 
-  onChangePriceUnit(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
-    if (res) {
-      res.patchValue(line.value);
-    }
-    this.getPriceSubTotal();
-    this.computeAmountTotal();
-  }
-
-  updateSaleOrder() {
-    if (this.formGroup.get('state').value == "sale") {
-      var val = this.getFormDataSave();
-      this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.loadRecord();
-      }, () => {
-        this.loadRecord();
-      });
-    }
-
-  }
-
-  onChangeDiscount(event, line: FormGroup) {
-
-    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
-    if (res) {
-      line.value.discountType = event.discountType;
-      if (event.discountType == "fixed") {
-        line.value.discountFixed = event.discountFixed;
-      } else {
-        line.value.discount = event.discountPercent;
+    if (!this.saleOrderId) {
+      this.submitted = true;
+      if (!this.formGroup.valid) {
+        return false;
       }
-      res.patchValue(line.value);
+      this.saleOrderService.create(val).subscribe((result: any) => {
+        this.saleOrderId = result.id;
+        let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+        modalRef.componentInstance.salerOrderId = result.id;
+        modalRef.result.then(() => {
+          this.router.navigate(["/sale-orders/form"], {
+            queryParams: { id: result.id },
+          });
+        }, () => {
+        });
+      });
+    } else {
+
+      this.saleOrderService.update(this.saleOrderId,val).subscribe((result: any) => {
+        let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+        modalRef.componentInstance.salerOrderId = this.saleOrderId;
+        modalRef.result.then((res) => {
+         if(res) {
+          this.loadRecord();
+         }
+        }, () => {
+        });
+      });
     }
-    this.getPriceSubTotal();
-    this.computeAmountTotal();
   }
 
-  onChangeDiscountType(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
-    if (res) {
-      res.value.discount = 0;
-      res.value.discountFixed = 0;
-      res.patchValue(line.value);
+  sumPromotionSaleOrder() {
+    if(this.saleOrderId && this.saleOrder.promotions) {
+      return (this.saleOrder.promotions as any[]).reduce((total, cur) => {
+        return total + cur.amount;
+      },0);
     }
-    this.getPriceSubTotal();
-    this.computeAmountTotal();
+    return 0;
   }
+
+
 }

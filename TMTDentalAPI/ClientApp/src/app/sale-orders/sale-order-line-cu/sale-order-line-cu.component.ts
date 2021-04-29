@@ -32,7 +32,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Output() onCancelEvent = new EventEmitter<any>();
 
   isEditting: boolean = false;
-  canEdit = false;
+  // canEdit = true;
 
   filteredEmployees: any[] = [];
   initialListEmployees: any = [];
@@ -78,7 +78,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   getPriceUnitLinePromotion(line) {
-    return line.priceUnit - line.amountDiscountTotal;
+    return line.priceUnit - (line.amountDiscountTotal || 0);
   }
 
   formInfoControl(value: string) {
@@ -95,6 +95,7 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   onEditLine() {
     this.isEditting = true;
+    // this.canEdit = true;
     this.formGroupInfo = this.fb.group(this.line);
     this.formGroupInfo.setControl("teeth", this.fb.array([]));
 
@@ -304,17 +305,17 @@ export class SaleOrderLineCuComponent implements OnInit {
     });
   }
 
-  // onOpenPromotion() {
+  onOpenPromotion() {
    
 
-  //     let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-  //     modalRef.componentInstance.saleOrderLineId = this.line.id;
-  //     modalRef.result.then(() => {
-  //       this.onEmit.emit({action: 'reload', data: null});
+      let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+      modalRef.componentInstance.salerOrderLineId = this.line.id;
+      modalRef.result.then(() => {
+        // this.onEmit.emit({action: 'reload', data: null});
 
-  //     }, () => {
-  //     });
-  // }
+      }, () => {
+      });
+  }
 
   onCancel() {
     this.isEditting = false;

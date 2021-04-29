@@ -1577,6 +1577,9 @@ span.char-count {
 .div-table {
     display: table;
     border-collapse: collapse;
+}
+
+.div-table-border {
     border: 1px solid hsl(210deg 14% 89%)
 }
 
@@ -1586,7 +1589,10 @@ span.char-count {
 
 .div-cell {
     display: table-cell;
-    padding: .75rem;
+    padding: .25rem;
+}
+
+.div-cell-border {
     border: 1px solid hsl(210deg 14% 89%)
 }
 
