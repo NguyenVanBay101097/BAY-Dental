@@ -2676,7 +2676,7 @@ namespace Infrastructure.Services
                     if (line.ProductUOMQty == 0)
                         continue;
 
-                    var amount = (decimal)((((line.ProductUOMQty * line.PriceUnit) / order.AmountTotal) * promotion.Amount));
+                    var amount = (decimal)((((line.ProductUOMQty * line.PriceUnit) / total) * promotion.Amount));
                     if (amount != 0)
                     {
                         promotion.Lines.Add(new SaleOrderPromotionLine
