@@ -3,7 +3,7 @@
         <div class="t_fast_access">
             <h4 class="header-title">TRUY CẬP NHANH</h4>
             <div class="t_kanban">
-                <a *ngIf="showAppointmentLink" [routerLink]="['/appointments/kanban']" class="card bg-primary t_card">
+                <a *ngIf="canAppointmentLink" [routerLink]="['/appointments/kanban']" class="card bg-primary t_card">
                     <div class="card-body">
                         <div class="d-flex">
                             <img class="image-custom" src="./assets/images/icons-tdental/calendar.png" alt="Lịch hẹn">
@@ -11,7 +11,7 @@
                         </div>
                     </div>
                 </a>
-                <a *ngIf="showCustomerLink" [routerLink]="['/partners/customers']" class="card bg-primary t_card">
+                <a *ngIf="canCustomerLink" [routerLink]="['/partners/customers']" class="card bg-primary t_card">
                     <div class="card-body">
                         <div class="d-flex">
                             <img class="image-custom" src="./assets/images/icons-tdental/KH.png" alt="Lịch hẹn">
@@ -19,7 +19,7 @@
                         </div>
                     </div>
                 </a>
-                <a *ngIf="showPurchaseOrderLink" [routerLink]="['/purchase/orders/create']" [queryParams]="{type: 'order'}"
+                <a *ngIf="canPurchaseOrderLink" [routerLink]="['/purchase/orders/create']" [queryParams]="{type: 'order'}"
                     class="card bg-primary t_card">
                     <div class="card-body">
                         <div class="d-flex">
@@ -28,7 +28,7 @@
                         </div>
                     </div>
                 </a>
-                <a *ngIf="showTreatmentPaymentFastLink" [routerLink]="['/partners/treatment-paymentfast/from']" class="card bg-primary t_card">
+                <a *ngIf="canTreatmentPaymentFastLink" [routerLink]="['/partners/treatment-paymentfast/from']" class="card bg-primary t_card">
                     <div class="card-body">
                         <div class="d-flex">
                             <img class="image-custom" src="./assets/images/icons-tdental/pdt-n.png"
@@ -45,23 +45,23 @@
             <h4 class="header-title">BÁO CÁO HÔM NAY</h4>
             <div class="t_report_today_detail">
                 <div class="t_kanban_left">
-                    <div *ngIf="showSaleReport" class="card t_card_right border-secondary">
+                    <div *ngIf="canSaleReport" class="card t_card_right border-secondary">
                         <app-dashboard-sale-report></app-dashboard-sale-report>
                     </div>
-                    <div *ngIf="showCashBankReport" class="card t_card_right border-secondary">
+                    <div *ngIf="canCashBankReport" class="card t_card_right border-secondary">
                         <app-dashboard-cash-bank-report></app-dashboard-cash-bank-report>
                     </div>
-                    <div *ngIf="showPartnerCustomerReport" class="card t_card_right border-secondary">
+                    <div *ngIf="canPartnerCustomerReport" class="card t_card_right border-secondary">
                         <app-dashboard-partner-customer-report></app-dashboard-partner-customer-report>
                     </div>
-                    <div *ngIf="showLaboOrderReport" class="card t_card_right border-secondary">
+                    <div *ngIf="canLaboOrderReport" class="card t_card_right border-secondary">
                         <app-dashboard-labo-order-report></app-dashboard-labo-order-report>
                     </div>
                     <div class="t_card_right t_card_ghost"></div>
                     <div class="t_card_right t_card_ghost"></div>
                 </div>
                 <div class="t_kanban_right">
-                    <div *ngIf="showCashBankReport" class="card border-secondary">
+                    <div *ngIf="canCashBankReport" class="card border-secondary">
                         <app-dashboard-cash-bank-report [getToday]="true"></app-dashboard-cash-bank-report>
                     </div>
                 </div>
@@ -69,9 +69,9 @@
         </div>
     </div>
     <div>
-        <app-appointment-list-today *ngIf="showAppointment"></app-appointment-list-today>
+        <app-appointment-list-today *ngIf="canAppointment"></app-appointment-list-today>
     </div>
     <div>
-        <app-dashboard-service-today-report *ngIf="showSaleReport"></app-dashboard-service-today-report>
+        <app-dashboard-service-today-report *ngIf="canSaleReport"></app-dashboard-service-today-report>
     </div>
 </div>

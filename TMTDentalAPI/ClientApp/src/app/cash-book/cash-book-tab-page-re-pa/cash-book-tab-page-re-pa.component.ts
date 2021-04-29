@@ -12,6 +12,7 @@ import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-paym
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { PhieuThuChiPaged, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-cash-book-tab-page-re-pa',
@@ -29,6 +30,11 @@ export class CashBookTabPageRePaComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
 
+  // permission 
+  canPhieuThuChiCreate = this.checkPermissionService.check(["Account.PhieuThuChi.Create"]);
+  canPhieuThuChiUpdate = this.checkPermissionService.check(["Account.PhieuThuChi.Update"]);
+  canPhieuThuChiDelete = this.checkPermissionService.check(["Account.PhieuThuChi.Delete"]);
+
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
@@ -38,7 +44,8 @@ export class CashBookTabPageRePaComponent implements OnInit {
     private authService: AuthService, 
     private phieuThuChiService: PhieuThuChiService,
     private notificationService: NotificationService,
-    private printService: PrintService
+    private printService: PrintService, 
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {

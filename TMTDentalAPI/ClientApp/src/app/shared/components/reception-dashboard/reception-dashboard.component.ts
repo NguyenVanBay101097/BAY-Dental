@@ -11,15 +11,15 @@ import { CheckPermissionService } from '../../check-permission.service';
 })
 export class ReceptionDashboardComponent implements OnInit {
   // permission
-  showAppointmentLink = this.checkPermissionService.check(['Basic.Appointment.Read']);
-  showCustomerLink = this.checkPermissionService.check(['Basic.Partner.Read']);
-  showPurchaseOrderLink = this.checkPermissionService.check(['Purchase.Order.Read']);
-  showTreatmentPaymentFastLink = this.checkPermissionService.check(['Basic.SaleOrder.Read']);
-  showCashBankReport = this.checkPermissionService.check(['Report.CashBankAccount']);
-  showLaboOrderReport = this.checkPermissionService.check(['Report.LaboOrder']);
-  showPartnerCustomerReport = this.checkPermissionService.check(['Report.PartnerOldNew']);
-  showSaleReport = this.checkPermissionService.check(['Report.Sale']);
-  showAppointment = this.checkPermissionService.check(['Report.Appointment']);
+  canAppointmentLink = this.checkPermissionService.check(['Basic.Appointment.Read']);
+  canCustomerLink = this.checkPermissionService.check(['Basic.Partner.Read']);
+  canPurchaseOrderLink = this.checkPermissionService.check(['Purchase.Order.Read']);
+  canTreatmentPaymentFastLink = this.checkPermissionService.check(['Basic.SaleOrder.Read']);
+  canCashBankReport = this.checkPermissionService.check(['Report.CashBankAccount']);
+  canLaboOrderReport = this.checkPermissionService.check(['Report.LaboOrder']);
+  canPartnerCustomerReport = this.checkPermissionService.check(['Report.PartnerOldNew']);
+  canSaleReport = this.checkPermissionService.check(['Report.Sale']);
+  canAppointment = this.checkPermissionService.check(['Report.Appointment']);
 
   constructor(private checkPermissionService: CheckPermissionService) { }
 

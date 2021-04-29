@@ -139,7 +139,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [class.d-none]="formReadonly" [data]="filteredPartners" [filterable]="true" #partnerCbx [textField]="'displayName'" formControlName="partner"
-                                    [valueField]="'id'">
+                                        [valueField]="'id'">
                                     </kendo-combobox>
                                     <span *ngIf="formReadonly">{{phieuThuChiDisplay.partner?.displayName}}</span>
                                 </td>
@@ -152,10 +152,10 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" *ngIf="phieuThuChiDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onSavePrint(true)">Lưu và In</button>
-    <button type="button" *ngIf="phieuThuChiDisplay.state == 'draft'" class="btn btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
-    <button type="button" *ngIf="phieuThuChiDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
-    <button type="button" *ngIf="phieuThuChiDisplay.state == 'posted'" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
-    <button type="button" *ngIf="phieuThuChiDisplay.state == 'posted'" class="btn btn-danger mr-2" (click)="onCancel()">Hủy phiếu</button>
+    <button type="button" *ngIf="canPhieuThuChiUpdate && phieuThuChiDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onSavePrint(true)">Lưu và In</button>
+    <button type="button" *ngIf="canPhieuThuChiUpdate && phieuThuChiDisplay.state == 'draft'" class="btn btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
+    <button type="button" *ngIf="canPhieuThuChiUpdate && phieuThuChiDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
+    <button type="button" *ngIf="canPhieuThuChiUpdate && phieuThuChiDisplay.state == 'posted'" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
+    <button type="button" *ngIf="canPhieuThuChiUpdate && phieuThuChiDisplay.state == 'posted'" class="btn btn-danger mr-2" (click)="onCancel()">Hủy phiếu</button>
     <button type="button" class="btn btn-light" (click)="onClose()">Đóng</button>
 </div>
