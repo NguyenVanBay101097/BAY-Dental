@@ -20,7 +20,7 @@ namespace Infrastructure.EntityConfigurations
             .HasForeignKey(x => x.SaleOrderId);
 
             builder.HasOne(x => x.SaleOrderLine)
-              .WithMany()
+              .WithMany(x => x.Promotions)
               .HasForeignKey(x => x.SaleOrderLineId);
 
 

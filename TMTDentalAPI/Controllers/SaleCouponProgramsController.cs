@@ -47,6 +47,30 @@ namespace TMTDentalAPI.Controllers
             return Ok(display);
         }
 
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
+        public async Task<IActionResult> GetPromotionBySaleOrder()
+        {
+            var result = await _programService.GetPromotionBySaleOrder();
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
+        public async Task<IActionResult> GetPromotionBySaleOrderLine([FromQuery] Guid productId)
+        {
+            var result = await _programService.GetPromotionBySaleOrderLine(productId);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
+        public async Task<IActionResult> GetPromotionUsageCode([FromQuery] string code)
+        {
+            var result = await _programService.GetPromotionDisplayUsageCode(code);
+            return Ok(result);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Create")]
         public async Task<IActionResult> Create(SaleCouponProgramSave val)

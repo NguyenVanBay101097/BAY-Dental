@@ -47,7 +47,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
-        public async Task<IActionResult> Get([FromQuery]SaleOrderPaged val)
+        public async Task<IActionResult> Get([FromQuery] SaleOrderPaged val)
         {
             var result = await _saleOrderService.GetPagedResultAsync(val);
             return Ok(result);
@@ -112,7 +112,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("DefaultGet")]
-        public async Task<IActionResult> DefaultGet([FromQuery]SaleOrderDefaultGet val)
+        public async Task<IActionResult> DefaultGet([FromQuery] SaleOrderDefaultGet val)
         {
             var res = await _saleOrderService.DefaultGet(val);
             return Ok(res);
@@ -182,9 +182,9 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _saleOrderService.ApplyCoupon(val);
+            var res = await _saleOrderService.ApplyCoupon(val);
             _unitOfWork.Commit();
-            return NoContent();
+            return Ok(res);
         }
 
         [HttpPost("[action]")]
@@ -445,12 +445,12 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ToSurvey([FromBody]SaleOrderToSurveyFilter val)
+        public async Task<IActionResult> ToSurvey([FromBody] SaleOrderToSurveyFilter val)
         {
             var paged = await _saleOrderService.GetToSurveyPagedAsync(val);
             return Ok(paged);
         }
-        
+
         [HttpPost("{id}/[action]")]
         public async Task<IActionResult> GetLineForProductRequest(Guid id)
         {

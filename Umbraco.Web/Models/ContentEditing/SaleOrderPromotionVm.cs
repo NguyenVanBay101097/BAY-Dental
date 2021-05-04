@@ -26,8 +26,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string Name { get; set; }
 
-        public Guid? ProductId { get; set; }
-        public ProductSimple Product { get; set; }
+        public Guid? SaleCouponProgramId {get;set;}
 
         public decimal Amount { get; set; }
 
@@ -54,9 +53,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid? SaleCouponProgramId { get; set; }
         public SaleCouponProgramDisplay SaleCouponProgram { get; set; }
-
-        public Guid? ParentId { get; set; }
-        public SaleOrderPromotionDisplay Parent { get; set; }
 
         public Guid? SaleOrderId { get; set; }
         public SaleOrderDisplay SaleOrder { get; set; }

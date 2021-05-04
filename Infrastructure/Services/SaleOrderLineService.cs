@@ -353,7 +353,7 @@ namespace Infrastructure.Services
         public void _ComputeAmountDiscountTotal(IEnumerable<SaleOrderLine> self)
         {
             foreach (var line in self)
-                line.AmountDiscountTotal = line.PromotionLines.Sum(x => x.PriceUnit);
+                line.AmountDiscountTotal = line.Promotions.Sum(x => x.Lines.Sum(s => s.PriceUnit));
         }
 
         public async Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val)
@@ -423,7 +423,9 @@ namespace Infrastructure.Services
             var serviceCardObj = GetService<IServiceCardCardService>();
 
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).Include(x => x.SaleOrderLinePaymentRels)
-                .Include(x => x.Order).Include(x => x.PromotionLines).ThenInclude(x => x.Promotion).ThenInclude(x => x.SaleCouponProgram).ToListAsync();
+                .Include(x => x.Order).Include(x => x.Promotions).ThenInclude(x => x.Lines)
+                .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+                .ToListAsync();
 
 
             if (self.Any(x => x.State != "draft" && x.State != "cancel" && x.State != "sale"))
@@ -714,7 +716,11 @@ namespace Infrastructure.Services
             var orderPromotionObj = GetService<ISaleOrderPromotionService>();
             var orderObj = GetService<ISaleOrderService>();
 
-            var orderLine = await SearchQuery(x => x.Id == val.Id).Include(x => x.Order).Include(x => x.PromotionLines).ThenInclude(x => x.Promotion).ThenInclude(x => x.SaleCouponProgram).FirstOrDefaultAsync();
+            var orderLine = await SearchQuery(x => x.Id == val.Id).Include(x => x.Order)
+                .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+                .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+                .FirstOrDefaultAsync();
+
             var total = orderLine.PriceUnit;
             var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
 
@@ -761,7 +767,7 @@ namespace Infrastructure.Services
             var couponObj = GetService<ISaleCouponService>();
             var orderLine = await SearchQuery(x => x.Id == val.Id)
               .Include(x => x.Product)
-              .Include(x => x.PromotionLines)
+              .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
               .Include(x => x.Order).ThenInclude(x => x.Promotions)
               .Include(x => x.Order).ThenInclude(x => x.OrderLines)
               .Include(x => x.SaleOrderLineInvoice2Rels)
@@ -865,51 +871,41 @@ namespace Infrastructure.Services
             return new SaleOrderPromotion();
         }
 
-        private async Task<Product> _GetProductDiscountToOrderLine()
-        {
-            var productObj = GetService<IProductService>();
-            var modelDataModel = GetService<IIRModelDataService>();
-            var product = await modelDataModel.GetRef<Product>("saleline.product_discount_default");
-            if (product == null)
-            {
-                var categObj = GetService<IProductCategoryService>();
-                var categ = await categObj.DefaultCategory();
-                var uomObj = GetService<IUoMService>();
-                var uom = await uomObj.SearchQuery().FirstOrDefaultAsync();
 
-                product = new Product()
-                {
-                    PurchaseOK = false,
-                    SaleOK = false,
-                    Type = "service",
-                    Name = "Giảm tiền",
-                    UOMId = uom.Id,
-                    UOMPOId = uom.Id,
-                    CategId = categ.Id,
-                    ListPrice = 0,
-                };
-
-                await productObj.CreateAsync(product);
-
-                var modeldata = new IRModelData
-                {
-                    Model = "product.discount",
-                    Module = "saleline",
-                    Name = "product_discount_default",
-                    ResId = product.Id.ToString()
-                };
-                await modelDataModel.CreateAsync(modeldata);
-            }
-
-            return product;
-        }
-
-        public void RecomputePromotion(IEnumerable<SaleOrderLine> self)
+        public void RecomputePromotionLine(IEnumerable<SaleOrderLine> self)
         {
             //vong lap
+
             foreach (var line in self)
             {
-                //line.Promotions
+                if (line.Promotions.Any())
+                {
+                    foreach (var promotion in line.Promotions)
+                    {
+                        var total = self.Sum(x => (x.PriceUnit * x.ProductUOMQty));
+                        if (promotion.Type == "discount")
+                        {
+
+                            promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
+                        }
+
+                        if (promotion.SaleCouponProgramId.HasValue)
+                        {
+                            if (promotion.SaleCouponProgram.DiscountType == "fixed_amount")
+                                promotion.Amount = promotion.SaleCouponProgram.DiscountFixedAmount ?? 0;
+                            else
+                                promotion.Amount = total * (promotion.SaleCouponProgram.DiscountPercentage ?? 0) / 100;
+                        }
+
+
+                        foreach (var child in promotion.Lines)
+                        {
+                            child.Amount = ((line.PriceUnit * line.ProductUOMQty) / total) * promotion.Amount;
+                            child.PriceUnit = ((line.PriceUnit * line.ProductUOMQty) / total) * promotion.Amount / line.ProductUOMQty;
+                        }
+                    }
+
+                }
             }
 
             //lay ra nhung uu dai dang ap dung

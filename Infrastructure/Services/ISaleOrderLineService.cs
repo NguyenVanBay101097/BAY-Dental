@@ -52,6 +52,8 @@ namespace Infrastructure.Services
 
         void _ComputeAmountDiscountTotal(IEnumerable<SaleOrderLine> self);
 
+        void RecomputePromotionLine(IEnumerable<SaleOrderLine> self);
+
         Task ApplyDiscountOnOrderLine(ApplyDiscountViewModel val);
 
         Task ApplyPromotionOnOrderLine(ApplyPromotionRequest val);

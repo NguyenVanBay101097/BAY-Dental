@@ -128,17 +128,18 @@ namespace Infrastructure.Services
             var promotionLine = new SaleOrderPromotion
             {
                 Name = program.Name,
-                Amount = Math.Round((self.PriceSubTotal / (self.Order.AmountTotal ?? 0)) * discountAmount / self.ProductUOMQty),
+                Amount = Math.Round(((self.PriceUnit * self.ProductUOMQty) / (self.Order.AmountTotal ?? 0)) * discountAmount / self.ProductUOMQty),
                 SaleCouponProgramId = program.Id,
                 SaleOrderLineId = self.Id,
+                SaleOrderId = self.OrderId
             };
 
             _ComputePromotionType(promotionLine, program);
 
             promotionLine.Lines.Add(new SaleOrderPromotionLine
             {
-                Amount = (self.PriceSubTotal / (self.Order.AmountTotal ?? 0)) * discountAmount,
-                PriceUnit = Math.Round((self.PriceSubTotal / (self.Order.AmountTotal ?? 0)) * discountAmount / self.ProductUOMQty),
+                Amount = ((self.PriceUnit * self.ProductUOMQty) / (self.Order.AmountTotal ?? 0)) * discountAmount,
+                PriceUnit = Math.Round(((self.PriceUnit * self.ProductUOMQty) / (self.Order.AmountTotal ?? 0)) * discountAmount / self.ProductUOMQty),
                 SaleOrderLineId = self.Id,
             });
 

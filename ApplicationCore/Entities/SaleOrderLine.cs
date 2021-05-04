@@ -183,7 +183,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// danh sách chương trình ưu đãi
         /// </summary>
-        public ICollection<SaleOrderPromotionLine> PromotionLines { get; set; } = new List<SaleOrderPromotionLine>();
+        public ICollection<SaleOrderPromotion> Promotions { get; set; } = new List<SaleOrderPromotion>();
 
         /// <summary>
         /// Xác định line bị hủy bỏ

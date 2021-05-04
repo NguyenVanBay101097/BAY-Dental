@@ -400,7 +400,7 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
-        public async Task ApplyCoupon(SaleOrderApplyCoupon val)
+        public async Task<SaleCouponProgramResponse> ApplyCoupon(SaleOrderApplyCoupon val)
         {
             var couponCode = val.CouponCode;
             var programObj = GetService<ISaleCouponProgramService>();
@@ -408,7 +408,7 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             var order = await SearchQuery(x => x.Id == val.Id)
              .Include(x => x.Promotions).ThenInclude(x => x.Lines)
-             .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines)
+             .Include(x => x.OrderLines).ThenInclude(x => x.Promotions)
               .Include(x => x.OrderLines).ThenInclude(x => x.Product)
              .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
              .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
@@ -432,41 +432,47 @@ namespace Infrastructure.Services
                         {
                             var coupon = await _CreateRewardCoupon(order, program);
                         }
+
+                        return new SaleCouponProgramResponse { Error = null, Success = true, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
                     }
                     else
                     {
                         await _CreateRewardLine(order, program);
                         await UpdateAsync(order);
+                        return new SaleCouponProgramResponse { Error = null, Success = true, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
                     }
                 }
                 else
-                    throw new Exception(error_status.Error);
+                    //throw new Exception(error_status.Error);
+                    return new SaleCouponProgramResponse { Error = error_status.Error, Success = false, SaleCouponProgram = null };
             }
             else
             {
-                var coupon = await couponObj.SearchQuery(x => x.Code == couponCode)
-             .Include(x => x.Program).Include(x => x.Program.DiscountLineProduct).Include(x => x.Partner).FirstOrDefaultAsync();
+                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };
 
-                if (coupon != null)
-                {
-                    var error_status = await couponObj._CheckCouponCode(coupon, order);
-                    if (string.IsNullOrEmpty(error_status.Error))
-                    {
-                        await _CreateRewardLine(order, coupon.Program);
+                //   var coupon = await couponObj.SearchQuery(x => x.Code == couponCode)
+                //.Include(x => x.Program).Include(x => x.Program.DiscountLineProduct).Include(x => x.Partner).FirstOrDefaultAsync();
 
-                        order.AppliedCoupons.Add(coupon);
-                        _ComputeResidual(new List<SaleOrder>() { order });
+                //   if (coupon != null)
+                //   {
+                //       var error_status = await couponObj._CheckCouponCode(coupon, order);
+                //       if (string.IsNullOrEmpty(error_status.Error))
+                //       {
+                //           await _CreateRewardLine(order, coupon.Program);
 
-                        await UpdateAsync(order);
+                //           order.AppliedCoupons.Add(coupon);
+                //           _ComputeResidual(new List<SaleOrder>() { order });
 
-                        coupon.State = "used";
-                        await couponObj.UpdateAsync(coupon);
-                    }
-                    else
-                        throw new Exception(error_status.Error);
-                }
-                else
-                    throw new Exception($"Mã {couponCode} không có giá trị");
+                //           await UpdateAsync(order);
+
+                //           coupon.State = "used";
+                //           await couponObj.UpdateAsync(coupon);
+                //       }
+                //       else
+                //           throw new Exception(error_status.Error);
+                //   }
+                //   else
+                //       throw new Exception($"Mã {couponCode} không có giá trị");
             }
         }
 
@@ -851,7 +857,7 @@ namespace Infrastructure.Services
         public async Task _ComputeAmountPromotionToOrder(IEnumerable<Guid> ids)
         {
             var orderLineObj = GetService<ISaleOrderLineService>();
-            var orders = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines).ToListAsync();
+            var orders = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines).ToListAsync();
             foreach (var order in orders)
             {
                 orderLineObj._ComputeAmountDiscountTotal(order.OrderLines);
@@ -1029,7 +1035,8 @@ namespace Infrastructure.Services
             var orderLineObj = GetService<ISaleOrderLineService>();
             var order = await SearchQuery(x => x.Id == val.Id)
               .Include(x => x.Promotions).ThenInclude(x => x.Lines)
-              .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines).Include("OrderLines.Product")
+              .Include(x => x.OrderLines).ThenInclude(x => x.Promotions)
+              .Include("OrderLines.Product")
               .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
               .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
               .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
@@ -1133,7 +1140,7 @@ namespace Infrastructure.Services
         {
             var display = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             var lineObj = GetService<ISaleOrderLineService>();
-            var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence)).Include(x => x.Advisory).Include(x => x.Assistant).Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
+            var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence)).Include(x => x.Advisory).Include(x => x.Assistant).Include(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.Product).Include(x => x.ToothCategory).Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth).Include(x => x.Employee).Include(x => x.Counselor).Include(x => x.OrderPartner).ToListAsync();
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
 
@@ -1178,7 +1185,8 @@ namespace Infrastructure.Services
         {
             var order = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Promotions)
-                .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines)
+                .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
+                .Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
                 .FirstOrDefaultAsync();
 
             order = _mapper.Map(val, order);
@@ -1195,7 +1203,14 @@ namespace Infrastructure.Services
             saleLineObj._GetToInvoiceAmount(order.OrderLines);
             saleLineObj._ComputeInvoiceStatus(order.OrderLines);
             saleLineObj._ComputeLinePaymentRels(order.OrderLines);
+            saleLineObj.RecomputePromotionLine(order.OrderLines);
+
+            ReComputePromotionOrder(order);
             await UpdateAsync(order);
+
+            //tính lại tổng tiền ưu đãi saleorderlines
+            saleLineObj._ComputeAmountDiscountTotal(order.OrderLines);
+            saleLineObj.ComputeAmount(order.OrderLines);
 
             _AmountAll(order);
             _GetInvoiced(new List<SaleOrder>() { order });
@@ -1209,6 +1224,34 @@ namespace Infrastructure.Services
             //    await promotionObj._PrepareUpdatePromotion(order.Promotions.Select(x => x.Id).ToList());
             //}
 
+        }
+
+        public void ReComputePromotionOrder(SaleOrder order)
+        {
+            foreach (var promotion in order.Promotions)
+            {
+
+                var total = promotion.SaleOrder.OrderLines.Sum(x => (x.PriceUnit * x.ProductUOMQty));
+                if (promotion.Type == "discount")
+                {
+
+                    promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
+                }
+
+                if (promotion.SaleCouponProgramId.HasValue)
+                {
+                    if (promotion.SaleCouponProgram.DiscountType == "fixed_amount")
+                        promotion.Amount = promotion.SaleCouponProgram.DiscountFixedAmount ?? 0;
+                    else
+                        promotion.Amount = total * (promotion.SaleCouponProgram.DiscountPercentage ?? 0) / 100;
+                }
+
+
+                foreach (var child in promotion.Lines)
+                {
+                    child.Amount = ((child.SaleOrderLine.PriceUnit * child.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / child.SaleOrderLine.ProductUOMQty;
+                }
+            }
         }
 
         private async Task<AccountInvoice> CreateInvoice(IList<SaleOrderLine> saleLines, SaleOrder order, string type = "out_invoice")
@@ -2644,7 +2687,7 @@ namespace Infrastructure.Services
             var orderPromotionObj = GetService<ISaleOrderPromotionService>();
             var orderLineObj = GetService<ISaleOrderLineService>();
 
-            var order = await SearchQuery(x => x.Id == val.Id).Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines).Include(x => x.Promotions).ThenInclude(x => x.Lines).FirstOrDefaultAsync();
+            var order = await SearchQuery(x => x.Id == val.Id).Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines).FirstOrDefaultAsync();
             var total = order.OrderLines.Sum(x => x.PriceUnit * x.ProductUOMQty);
             var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
 
