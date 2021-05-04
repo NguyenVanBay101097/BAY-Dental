@@ -1184,7 +1184,7 @@ namespace Infrastructure.Services
         public async Task UpdateOrderAsync(Guid id, SaleOrderSave val)
         {
             var order = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Promotions)
+                .Include(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
                 .FirstOrDefaultAsync();
@@ -1249,7 +1249,8 @@ namespace Infrastructure.Services
 
                 foreach (var child in promotion.Lines)
                 {
-                    child.Amount = ((child.SaleOrderLine.PriceUnit * child.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / child.SaleOrderLine.ProductUOMQty;
+                    child.Amount = ((child.SaleOrderLine.PriceUnit * child.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount;
+                    child.PriceUnit = ((child.SaleOrderLine.PriceUnit * child.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / child.SaleOrderLine.ProductUOMQty;
                 }
             }
         }

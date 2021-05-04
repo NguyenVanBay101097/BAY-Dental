@@ -54,14 +54,10 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrder()
         {
-            var now = DateTime.Now;
-
-            var promotions = await SearchQuery(x => x.Active 
-            && (x.RuleDateFrom.HasValue && now >= x.RuleDateFrom) 
-            && (x.RuleDateTo.HasValue && now <= x.RuleDateTo.Value.AbsoluteEndOfDate())
-            && (string.IsNullOrEmpty(x.ProgramType) && x.ProgramType == "promotion_program")
-            && (string.IsNullOrEmpty(x.PromoCodeUsage) && x.PromoCodeUsage == "no_code_needed")
-            && x.DiscountApplyOn == "on_order").ToListAsync();
+            var today = DateTime.Today;
+            var promotions = await SearchQuery(x => x.Active && x.ProgramType == "promotion_program"
+            && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order" 
+            && (!x.RuleDateFrom.HasValue || x.RuleDateFrom.Value >= today) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)).ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
             return basics;
@@ -69,13 +65,11 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrderLine(Guid productId)
         {
-            var now = DateTime.Now;
+            var today = DateTime.Today;
 
-            var promotions = await SearchQuery(x => x.Active
-            && (x.RuleDateFrom.HasValue && now >= x.RuleDateFrom)
-            && (x.RuleDateTo.HasValue && now <= x.RuleDateTo.Value.AbsoluteEndOfDate())
-            && (string.IsNullOrEmpty(x.ProgramType) && x.ProgramType == "promotion_program")
-            && (string.IsNullOrEmpty(x.PromoCodeUsage) && x.PromoCodeUsage == "no_code_needed")
+            var promotions = await SearchQuery(x => x.Active && x.ProgramType == "promotion_program"
+            && x.PromoCodeUsage == "no_code_needed" 
+            && (!x.RuleDateFrom.HasValue || x.RuleDateFrom.Value >= today) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
             && x.DiscountApplyOn == "specific_products" && x.DiscountSpecificProducts.Any(s => s.ProductId == productId)).ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
@@ -433,15 +427,15 @@ namespace Infrastructure.Services
                 res.Success = false;
                 res.SaleCouponProgram = null;
             }
-                
+
             else if ((program.RuleDateFrom.HasValue && program.RuleDateFrom > now) || (program.RuleDateTo.HasValue && program.RuleDateTo < now))
             {
                 res.Error = "Mã khuyến mãi đã hết hạn";
                 res.Success = false;
                 res.SaleCouponProgram = null;
             }
-            
-           
+
+
             return res;
         }
 
