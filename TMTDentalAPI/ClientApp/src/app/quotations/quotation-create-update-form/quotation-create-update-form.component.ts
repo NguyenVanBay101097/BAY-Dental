@@ -5,6 +5,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { values } from 'lodash';
 import { from } from 'rxjs';
 import { debounceTime, delay, map, switchMap, tap } from 'rxjs/operators';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
@@ -52,6 +53,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   quotation: QuotationsDisplay;
   filteredAdvisoryEmployees: EmployeeSimple[] = [];
   search: string = '';
+  isEditing: boolean = true;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
 
 
@@ -115,7 +117,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
           result.lines.forEach(line => {
             // this.addLineFromApi(line);
-            this.addLineFromProduct(line);
+            // this.addLineFromProduct(line);
+            this.addLine(line);
           });
 
           const paymentcontrol = this.formGroup.get('payments') as FormArray;
@@ -272,7 +275,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.loadTeethMap(data.toothCategory);
     if (data.teeth) {
       this.teethSelected = Object.assign([], data.teeth);
-    }
+    }    
   }
 
   updateLineInfo(lineControl) {
@@ -419,8 +422,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   onSave() {
-    debugger
     var val = this.getDataFormGroup();
+    console.log(val);
+    return;
     if (this.quotationId) {
       this.quotationService.update(this.quotationId, val).subscribe(
         () => {
@@ -475,6 +479,41 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     val.search = search;
     // val.hasRoot = false;
     return this.employeeService.getEmployeeSimpleList(val)
+  }
+
+  addLine(val) {
+    var line = new QuotationLineDisplay();
+    if (val.id) {
+      line.id = val.id;
+    }
+    line.diagnostic = val.diagnostic;
+    line.discount = val.discount ? val.discount : 0;
+    line.discountType = val.discountType ? val.discountType : 'percentage';
+    line.productId = val.productId ? val.productId : val.id;
+    line.qty = val.qty ? val.qty : 1;
+    line.advisoryId = val.advisoryId;
+    line.advisoryEmployee = val.advisoryEmployee;
+    line.advisoryEmployeeId = val.advisoryEmployeeId;
+    line.subPrice = val.subPrice ? val.subPrice : (val.listPrice ? val.listPrice : 0);
+    line.name = val.name;
+    line.amount = val.amount;
+    line.teeth = this.fb.array([]);
+    if (val.teeth) {
+      val.teeth.forEach(item => {
+        line.teeth.push(this.fb.group(item))
+      })
+    }
+    line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
+    line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
+    
+    var res = this.fb.group(line);
+    this.linesArray.push(res);
+    this.linesArray.markAsDirty();
+    this.createFormInfo(line);
+  }
+
+  editLine(index: number) { 
+    this.isEditing = true;
   }
 }
 

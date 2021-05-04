@@ -8,9 +8,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { QuotationService } from './quotation.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { QuotationLineCuComponent } from './quotation-line-cu/quotation-line-cu.component';
 
 @NgModule({
-  declarations: [QuotationCreateUpdateFormComponent],
+  declarations: [QuotationCreateUpdateFormComponent, QuotationLineCuComponent],
   imports: [
     CommonModule,
     QuotationsRoutingModule,
@@ -19,6 +21,8 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
     ReactiveFormsModule,
     MyCustomKendoModule,
     SharedModule,
+    NgbModule,
+    // NgModule
   ],
   providers: [QuotationService]
 })
