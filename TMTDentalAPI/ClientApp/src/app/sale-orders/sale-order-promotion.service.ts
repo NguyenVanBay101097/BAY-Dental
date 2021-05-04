@@ -10,6 +10,16 @@ export class SaleOrderPromotionPaged {
   saleOrderLineId: string;
 }
 
+export class SaleOrderPromotionSave {
+name: string;
+amount: number;
+type: string;
+saleCouponProgramId: string;
+discountType: string;
+discountPercent: number;
+discountFixed: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })

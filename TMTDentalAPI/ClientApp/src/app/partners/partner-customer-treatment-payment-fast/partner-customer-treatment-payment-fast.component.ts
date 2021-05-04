@@ -136,6 +136,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       pricelist: [null],
       journal: [null, Validators.required],
       payments: null,
+      promotion: this.fb.array([])
     });
 
     this.loadFilteredJournals();
@@ -204,6 +205,26 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       });
   }
 
+  getControl(value) {
+    return this.formGroup.get(value);
+  }
+
+  get getAmountTotal() {
+    return this.formGroup.get('amountTotal').value;
+  }
+
+  get getState() {
+    return this.formGroup.get('state').value;
+  }
+
+  get getResidual() {
+    return this.formGroup.get('residual').value;
+  }
+
+  get getPartner() {
+    return this.formGroup.get('partner').value;
+  }
+
   get partner() {
     var control = this.formGroup.get('partner');
     return control ? control.value : null;
@@ -220,6 +241,11 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   get partnerAddress() {
     return this.formGroup.get('partnerAddress').value;
   }
+
+  get orderLines() {
+    return this.formGroup.get('orderLines') as FormArray;
+  }
+
 
   quickCreateCustomer() {
     let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
@@ -383,11 +409,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     }
   }
 
-  
-  get orderLines() {
-    return this.formGroup.get('orderLines') as FormArray;
-  }
-
   addLine(val) {
     if (this.lineSelected) {
       this.notifyService.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để thêm dịch vụ khác');
@@ -496,25 +517,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     });
   }
 
-
-
-
-  get getAmountTotal() {
-    return this.formGroup.get('amountTotal').value;
-  }
-
-  get getState() {
-    return this.formGroup.get('state').value;
-  }
-
-  get getResidual() {
-    return this.formGroup.get('residual').value;
-  }
-
-  get getPartner() {
-    return this.formGroup.get('partner').value;
-  }
-
   computeAmountTotal() {
     let total = 0;
     this.orderLines.controls.forEach(line => {
@@ -584,38 +586,25 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onOpenSaleOrderPromotion() {
-    const val = this.getFormDataSave();
 
-    if (!this.saleOrderId) {
-      this.submitted = true;
-      if (!this.formGroup.valid) {
-        return false;
-      }
-      this.saleOrderService.create(val).subscribe((result: any) => {
-        this.saleOrderId = result.id;
-        let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-        modalRef.componentInstance.salerOrderId = result.id;
-        modalRef.result.then(() => {
-          this.router.navigate(["/sale-orders/form"], {
-            queryParams: { id: result.id },
-          });
-        }, () => {
-        });
-      });
-    } else {
+    let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    (modalRef.componentInstance as SaleOrderPromotionDialogComponent).saleOrder = this.formGroup.value;
 
-      this.saleOrderService.update(this.saleOrderId,val).subscribe((result: any) => {
-        let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-        modalRef.componentInstance.salerOrderId = this.saleOrderId;
-        modalRef.result.then((res) => {
-         if(res) {
-          this.loadRecord();
-         }
-        }, () => {
-        });
+    modalRef.result.then((res: any[]) => {
+      console.log(res);
+
+    if(res){
+      var promotionFA = this.getControl('promotion') as FormArray;
+      promotionFA.clear();
+      res.forEach(pro => {
+        promotionFA.push(this.fb.group(pro));
       });
+
     }
+    });
   }
+
+
 
   sumPromotionSaleOrder() {
     if(this.saleOrderId && this.saleOrder.promotions) {

@@ -201,10 +201,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   onCannotEdit() {
     // setTimeout(() => {
     //   if(this.saleOrder.state == 'sale') {
-      //  this.isEditting = false;
-        // this.lineVCR.forEach(vc => {
-        //   vc.canEdit = false;
-        // });
+    //  this.isEditting = false;
+    // this.lineVCR.forEach(vc => {
+    //   vc.canEdit = false;
+    // });
     //    }
     //  }, 0);
   }
@@ -447,15 +447,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
         this.patchValueSaleOrder(result);
         this.onCannotEdit();
+        this.saleOrder = result;
       });
     }
   }
 
   actionEdit() {
     // this.isEditting = true;
-// this.lineVCR.forEach(vc => {
-//   vc.canEdit = true;
-// });
+    // this.lineVCR.forEach(vc => {
+    //   vc.canEdit = true;
+    // });
   }
 
   get orderLines() {
@@ -526,7 +527,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   get getAmountPaidTotal() {
     return this.getFormControl('paidTotal') ? this.getFormControl('paidTotal').value : 0;
   }
-  
+
   get getResidual() {
     return this.getFormControl('residual').value;
   }
@@ -619,7 +620,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadRecord();
   }
 
- 
+
   isEditSate() {
     return ['draft', 'sale'].indexOf(this.getFormControl('state').value) !== -1
   }
@@ -634,12 +635,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     var res = (this.orderLines.value as any[]).reduce((total, cur) => {
       return total + (cur.amountDiscountTotal || 0) * cur.productUOMQty;
     }, 0);
-    
-    return Math.round(res/1000)*1000;
+
+    return Math.round(res / 1000) * 1000;
   }
 
   onDeleteLine(index) {
-    if(this.orderLines.controls[index].value == this.lineSelected) {
+    if (this.orderLines.controls[index].value == this.lineSelected) {
       this.lineSelected = null;
     }
     this.orderLines.removeAt(index);
@@ -656,25 +657,38 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       }
       this.saleOrderService.create(val).subscribe((result: any) => {
         this.saleOrderId = result.id;
-        let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-        modalRef.componentInstance.salerOrderId = result.id;
-        modalRef.result.then(() => {
-          this.router.navigate(["/sale-orders/form"], {
-            queryParams: { id: result.id },
-          });
-        }, () => {
+        this.saleOrder = result;
+        this.saleOrder.promotions = [];
+
+        this.router.navigate(["/sale-orders/form"], {
+          queryParams: { id: result.id },
         });
+
+        let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+          modalRef.componentInstance.saleOrder = this.saleOrder;
+          modalRef.componentInstance.getUpdateSJ().subscribe(res => {
+            this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+              this.patchValueSaleOrder(result);
+              this.onCannotEdit();
+              this.saleOrder = result;
+              modalRef.componentInstance.saleOrder = this.saleOrder;
+            });
+          });
+       
       });
     } else {
 
-      this.saleOrderService.update(this.saleOrderId,val).subscribe((result: any) => {
+      this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
         let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-        modalRef.componentInstance.salerOrderId = this.saleOrderId;
-        modalRef.result.then((res) => {
-         if(res) {
-          this.loadRecord();
-         }
-        }, () => {
+        modalRef.componentInstance.saleOrder = this.saleOrder;
+        modalRef.componentInstance.getUpdateSJ().subscribe(res => {
+          this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+            this.patchValueSaleOrder(result);
+            this.onCannotEdit();
+            this.saleOrder = result;
+            modalRef.componentInstance.saleOrder = this.saleOrder;
+
+          });
         });
       });
     }
@@ -695,12 +709,20 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   sumPromotionSaleOrder() {
-    if(this.saleOrderId && this.saleOrder.promotions) {
+    if (this.saleOrderId && this.saleOrder.promotions) {
       return (this.saleOrder.promotions as any[]).reduce((total, cur) => {
         return total + cur.amount;
-      },0);
+      }, 0);
     }
     return 0;
+  }
+
+  onUpdateOpenLinePromotion(line, lineControl) {
+    this.updateLineInfo(line, lineControl);
+    const val = this.getFormDataSave();
+    this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
+      
+    });
   }
 
 }

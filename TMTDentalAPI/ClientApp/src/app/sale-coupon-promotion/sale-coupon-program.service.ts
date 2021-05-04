@@ -15,6 +15,7 @@ export class SaleCouponProgramPaged {
     ids: string[];
     discountApplyOn: string;
     promoCodeUsage: string;
+    productId: string;
 }
 
 export class SaleCouponProgramBasic {
@@ -30,6 +31,9 @@ export class SaleCouponProgramDisplay {
     rewardProduct: ProductSimple;
     ruleDateFrom: string;
     ruleDateTo: string;
+    discountType: string;
+    discountPercentage: number;
+    discountFixedAmount: number;
 }
 
 export class SaleCouponProgramSave {
@@ -80,5 +84,13 @@ export class SaleCouponProgramService {
 
     generateCoupons(data: any) {
         return this.http.post(this.baseApi + this.apiUrl + "/GenerateCoupons", data);
+    }
+
+    getByCode(code: string): Observable<SaleCouponProgramDisplay>{
+        return this.http.post<SaleCouponProgramDisplay>(this.baseApi + this.apiUrl + '/', {code: code});
+    }
+
+    getPromotionBySaleOrder(){
+return this.http.get(this.baseApi + this.apiUrl + "/GetPromotionBySaleOrder");
     }
 }

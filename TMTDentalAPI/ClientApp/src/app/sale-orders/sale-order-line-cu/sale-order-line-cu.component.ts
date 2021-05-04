@@ -306,15 +306,17 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   onOpenPromotion() {
-   
+    this.onUpdateEvent.emit( this.formGroupInfo.value);
+  }
 
-      let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-      modalRef.componentInstance.salerOrderLineId = this.line.id;
-      modalRef.result.then(() => {
-        // this.onEmit.emit({action: 'reload', data: null});
+  onOpenPromotionModal() {
+    let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.saleOrderLine = this.line;
+    modalRef.result.then(() => {
+      // this.onEmit.emit({action: 'reload', data: null});
 
-      }, () => {
-      });
+    }, () => {
+    });
   }
 
   onCancel() {

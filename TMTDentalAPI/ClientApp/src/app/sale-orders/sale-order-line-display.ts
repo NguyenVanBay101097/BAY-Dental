@@ -32,4 +32,5 @@ export class SaleOrderLineDisplay {
     toothType: string;
     productIsLabo: boolean;
     isActive: boolean;
+    promotions: any[];
 }

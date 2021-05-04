@@ -1,0 +1,40 @@
+.form-check-inline {
+    display: -webkit-inline-box;
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    padding-left: 0;
+    margin-right: 0rem;
+}
+
+input[type="radio"] {
+    visibility: hidden;
+    height: 0;
+    width: 0;
+}
+
+.form-check label {
+    width: 55px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
+    background-color: #FFFFFF;
+    color: #828588;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all .3s ease-out;
+    border: 1px solid #EBEDEF;
+}
+
+input[type="radio"]:checked+label {
+    background: #F5FAFF !important;
+    border: 1px solid #007BFF !important;
+    box-sizing: border-box;
+    border-radius: 4px;
+    color: #007BFF !important;
+}
+
+.btn-use {
+    min-width: 87px;
+}

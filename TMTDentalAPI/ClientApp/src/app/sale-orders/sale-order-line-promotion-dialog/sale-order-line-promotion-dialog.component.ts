@@ -1,35 +1,23 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { FormGroup } from "@angular/forms";
-import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { NotificationService } from "@progress/kendo-angular-notification";
-import { Subject } from "rxjs";
-import { SaleOrderLineService } from "src/app/core/services/sale-order-line.service";
-import { SaleOrderService } from "src/app/core/services/sale-order.service";
-import {
-  SaleCouponProgramDisplay,
-  SaleCouponProgramPaged,
-  SaleCouponProgramService,
-} from "src/app/sale-coupon-promotion/sale-coupon-program.service";
-import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
-import { NotifyService } from "src/app/shared/services/notify.service";
-import { setTimeout } from "timers";
-import { SaleOrderDisplay } from "../sale-order-display";
-import { SaleOrderLineDisplay } from "../sale-order-line-display";
-import {
-  SaleOrderPromotionPaged,
-  SaleOrderPromotionSave,
-  SaleOrderPromotionService,
-} from "../sale-order-promotion.service";
+import { Component, OnInit } from '@angular/core';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subject } from 'rxjs';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
+import { SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { SaleCouponProgramPaged, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { SaleOrderDisplay } from '../sale-order-display';
+import { SaleOrderLineDisplay } from '../sale-order-line-display';
+import { SaleOrderPromotionService } from '../sale-order-promotion.service';
 
 @Component({
-  selector: "app-sale-order-promotion-dialog",
-  templateUrl: "./sale-order-promotion-dialog.component.html",
-  styleUrls: ["./sale-order-promotion-dialog.component.css"],
+  selector: 'app-sale-order-line-promotion-dialog',
+  templateUrl: './sale-order-line-promotion-dialog.component.html',
+  styleUrls: ['./sale-order-line-promotion-dialog.component.css']
 })
-export class SaleOrderPromotionDialogComponent implements OnInit {
+export class SaleOrderLinePromotionDialogComponent implements OnInit {
 
- title = "Ưu đãi phiếu điều trị";
-  saleOrder: SaleOrderDisplay = null;//input
+  title = "Ưu đãi phiếu điều trị";
   saleOrderLine: SaleOrderLineDisplay = null;//input
 
 
@@ -65,20 +53,24 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
   }
 
   loadDefaultPromotion() {
-    this.promotionService.getPromotionBySaleOrder().subscribe((res: any) => {
-      this.autoPromotions = res;
+    var val = new SaleCouponProgramPaged();
+    val.limit = 0;
+    val.offset = 0;
+    val.programType = "promotion_program";
+    val.promoCodeUsage = "no_code_needed";
+    val.discountApplyOn = 'specific_products';
+    val.productId = this.saleOrderLine ? this.saleOrderLine.productId : '';
+    
+    this.promotionService.getPaged(val).subscribe((res) => {
+      this.autoPromotions = res.items;
     });
   }
 
 
   getAmountToApply() {
-    if (this.saleOrder) {
-      return this.saleOrder.orderLines.reduce((total, cur) => {
-        return total + cur.priceUnit * cur.productUOMQty;
-      }, 0);
-    } else {
+
       return this.saleOrderLine.priceUnit * this.saleOrderLine.productUOMQty;
-    }
+ 
   }
 
   // pushAppliedPromotion(type, program = null) { // val: code or programId
@@ -116,7 +108,7 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
       if (this.code.trim() == '') return;
 
       var val = {
-        id: this.saleOrder.id,
+        id: this.saleOrderLine.id,
         couponCode: this.code,
       };
       this.saleOrderSevice.applyCouponOnOrder(val).subscribe((res) => {
@@ -128,11 +120,11 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
 
   applyPromotion(item) {
       var val = {
-        id: this.saleOrder ? this.saleOrder.id : this.saleOrderLine.id,
+        id:this.saleOrderLine.id,
         saleProgramId: item.id,
       };
 
-      var apply$ = this.saleOrder ? this.saleOrderSevice.applyPromotion(val) : this.saleOrderLineService.applyPromotion(val);
+      var apply$ = this.saleOrderLineService.applyPromotion(val);
       apply$.subscribe((res) => {
         this.notificationService.notify('success', 'Thành công!');
         this.updateSubject.next(true);
@@ -143,12 +135,12 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
 
   applyDiscount(value) {
       var val = {
-        id: this.saleOrder ? this.saleOrder.id : this.saleOrderLine.id,
+        id: this.saleOrderLine.id,
         discountType: value.discountType,
         discountPercent: value.discountPercent,
         discountFixed: value.discountFixed,
       };
-      var apply$ = this.saleOrder ? this.saleOrderSevice.applyDiscountOnOrder(val) : this.saleOrderLineService.applyDiscountOnOrderLine(val);
+      var apply$ = this.saleOrderLineService.applyDiscountOnOrderLine(val);
       apply$.subscribe((res) => {
         this.notificationService.notify('success', 'Thành công!');
         this.isChange = true;
@@ -180,16 +172,16 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
   }
 
   sumPromotion() {
-    return this.saleOrder.promotions.reduce((total, cur) => { return total + cur.amount }, 0);
+    return this.saleOrderLine.promotions.reduce((total, cur) => { return total + cur.amount }, 0);
   }
 
   getListPromotion(type): any[] {
-    return this.saleOrder.promotions.filter(x => x.type == type);
+    return this.saleOrderLine.promotions.filter(x => x.type == type);
   }
 
   getApplied(item) {// item is salecouponprogram
-    var index = this.saleOrder.promotions.findIndex(x => x.saleCouponProgramId == item.id);
-    return  this.saleOrder.promotions[index];
+    var index = this.saleOrderLine.promotions.findIndex(x => x.saleCouponProgramId == item.id);
+    return  this.saleOrderLine.promotions[index];
   }
 
 }
