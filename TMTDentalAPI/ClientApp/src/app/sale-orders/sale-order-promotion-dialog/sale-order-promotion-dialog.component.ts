@@ -120,10 +120,17 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
         couponCode: this.code,
       };
       this.saleOrderSevice.applyCouponOnOrder(val).subscribe((res) => {
+        console.log(res);
         this.notificationService.notify('success', 'Thành công!');
         this.updateSubject.next(true);
         this.isChange = true;
       });
+  }
+
+  onApplyCouponSuccess() {
+    this.notificationService.notify('success', 'Thành công!');
+    this.updateSubject.next(true);
+    this.isChange = true;
   }
 
   applyPromotion(item) {

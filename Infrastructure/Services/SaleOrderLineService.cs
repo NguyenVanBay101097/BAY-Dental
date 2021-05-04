@@ -352,8 +352,9 @@ namespace Infrastructure.Services
 
         public void _ComputeAmountDiscountTotal(IEnumerable<SaleOrderLine> self)
         {
+            //Trường hợp ưu đãi phiếu điều trị thì ko đúng, sum từ PromotionLines là đúng
             foreach (var line in self)
-                line.AmountDiscountTotal = line.Promotions.Sum(x => x.Lines.Sum(s => s.PriceUnit));
+                line.AmountDiscountTotal = line.PromotionLines.Sum(x => x.PriceUnit);
         }
 
         public async Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val)
@@ -806,6 +807,7 @@ namespace Infrastructure.Services
 
         public decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line)
         {
+            //discount_amount = so luong * don gia da giam * phan tram
             var discount_amount = line.ProductUOMQty * (line.PriceUnit * (1 - line.Discount / 100)) *
                 ((program.DiscountPercentage ?? 0) / 100);
             return discount_amount;

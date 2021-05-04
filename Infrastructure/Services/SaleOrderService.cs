@@ -1140,8 +1140,17 @@ namespace Infrastructure.Services
         {
             var display = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             var lineObj = GetService<ISaleOrderLineService>();
-            var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence)).Include(x => x.Advisory).Include(x => x.Assistant).Include(x => x.Promotions).ThenInclude(x => x.Lines)
-                .Include(x => x.Product).Include(x => x.ToothCategory).Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth).Include(x => x.Employee).Include(x => x.Counselor).Include(x => x.OrderPartner).ToListAsync();
+            var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))
+                .Include(x => x.Advisory)
+                .Include(x => x.Assistant)
+                .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
+                .Include(x => x.Product)
+                .Include(x => x.ToothCategory)
+                .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
+                .Include(x => x.Employee)
+                .Include(x => x.Counselor)
+                .Include(x => x.OrderPartner).ToListAsync();
+
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
 
             var promotionObj = GetService<ISaleOrderPromotionService>();
@@ -2720,13 +2729,13 @@ namespace Infrastructure.Services
                     if (line.ProductUOMQty == 0)
                         continue;
 
-                    var amount = (decimal)((((line.ProductUOMQty * line.PriceUnit) / total) * promotion.Amount));
+                    var amount = Math.Round((((line.ProductUOMQty * line.PriceUnit) / total) * promotion.Amount));
                     if (amount != 0)
                     {
                         promotion.Lines.Add(new SaleOrderPromotionLine
                         {
-                            Amount = Math.Round(amount, 0),
-                            PriceUnit = amount / line.ProductUOMQty,
+                            Amount = amount,
+                            PriceUnit = Math.Round(amount / line.ProductUOMQty),
                             SaleOrderLineId = line.Id,
                         });
                     }

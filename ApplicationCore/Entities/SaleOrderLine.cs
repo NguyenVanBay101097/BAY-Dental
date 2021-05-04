@@ -185,6 +185,8 @@ namespace ApplicationCore.Entities
         /// </summary>
         public ICollection<SaleOrderPromotion> Promotions { get; set; } = new List<SaleOrderPromotion>();
 
+        public ICollection<SaleOrderPromotionLine> PromotionLines { get; set; } = new List<SaleOrderPromotionLine>();
+
         /// <summary>
         /// Xác định line bị hủy bỏ
         /// </summary>

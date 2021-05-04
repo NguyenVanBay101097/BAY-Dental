@@ -274,9 +274,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   getAmountAdvanceBalance() {
-    this.partnerService.getAmountAdvanceBalance(this.partner.id).subscribe(result => {
-      this.amountAdvanceBalance = result;
-    })
+    // this.partnerService.getAmountAdvanceBalance(this.partner.id).subscribe(result => {
+    //   this.amountAdvanceBalance = result;
+    // })
   }
 
   printSaleOrder() {

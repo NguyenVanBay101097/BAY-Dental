@@ -16,8 +16,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrderLine, SaleOrderLineDisplay>()
                  .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)))
-                 .ForMember(x => x.AmountPromotionToOrder, x => x.MapFrom(s => s.Promotions.Where(s => s.SaleOrderId.HasValue && !s.SaleOrderLineId.HasValue).Sum(s => s.Lines.Sum(c => c.PriceUnit))))
-                 .ForMember(x => x.AmountPromotionToOrderLine, x => x.MapFrom(s => s.Promotions.Where(s => s.SaleOrderId.HasValue && s.SaleOrderLineId.HasValue).Sum(s => s.Lines.Sum(c => c.PriceUnit))));
+                 .ForMember(x => x.AmountPromotionToOrder, x => x.MapFrom(s => s.PromotionLines.Where(s => !s.Promotion.SaleOrderLineId.HasValue).Sum(s => s.PriceUnit)))
+                 .ForMember(x => x.AmountPromotionToOrderLine, x => x.MapFrom(s => s.PromotionLines.Where(s => s.Promotion.SaleOrderLineId.HasValue).Sum(s => s.PriceUnit)));
 
 
             CreateMap<SaleOrderLineDisplay, SaleOrderLine>()
