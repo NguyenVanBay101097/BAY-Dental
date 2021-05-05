@@ -6,10 +6,11 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { values } from 'lodash';
+import { result } from 'lodash';
 import { from } from 'rxjs';
 import { debounceTime, delay, map, switchMap, tap } from 'rxjs/operators';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
-import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeBasic, EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 // import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
 // import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
@@ -35,6 +36,8 @@ import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../qu
   styleUrls: ['./quotation-create-update-form.component.css']
 })
 export class QuotationCreateUpdateFormComponent implements OnInit {
+  
+  @ViewChild("empCbx", { static: true }) empCbx: ComboBoxComponent;
   formGroup: FormGroup;
   formGroupInfo: FormGroup;
   partner: any;
@@ -55,6 +58,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   quotation: QuotationsDisplay;
   filteredAdvisoryEmployees: EmployeeSimple[] = [];
   search: string = '';
+  filterData: EmployeeBasic[] = [];
   isEditing: boolean = true;
   lineSelected = null;
   defaultToothCate: ToothCategoryBasic;
@@ -80,6 +84,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       partnerId: ['', Validators.required],
+      employeeId: null,
+      employeeAdvisory: null,
       employeeId: ['', Validators.required],
       employee: [null, Validators.required],
       note: '',
@@ -94,6 +100,19 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.routeActive();
     this.loadToothCategories();
 
+    this.loadEmployees();
+
+    this.empCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.empCbx.loading = true)),
+        switchMap((value) => this.searchEmployees(value))
+      )
+      .subscribe((result) => {
+        this.filterData = result.items;
+        this.empCbx.loading = false;
+      });
     this.loadEmployees();
   }
 
@@ -120,7 +139,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.formGroup.get('employeeId').patchValue(result.employeeId);
           this.formGroup.get('dateQuotation').patchValue(new Date(result.dateQuotation));
           this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "MM/dd/yyyy"));
-          this.formGroup.get('dateApplies').patchValue(result.dateApplies)
+          this.formGroup.get('dateApplies').patchValue(result.dateApplies);
+           this.formGroup.get('employeeAdvisory').patchValue(result.employee);
           const control = this.formGroup.get('lines') as FormArray;
           control.clear();
 
@@ -142,6 +162,20 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.formGroup.markAsPristine();
         }
       )
+  }
+
+  searchEmployees(q?:string){
+    var val = new EmployeePaged();
+    val.limit = 10;
+    val.offset = 0;
+    val.search = q || '';
+    return this.employeeService.getEmployeePaged(val);
+  }
+
+  loadEmployees(){
+    this.searchEmployees().subscribe(result => {
+      this.filterData = result.items;
+    })
   }
 
   addLineFromProduct(val) {
@@ -430,7 +464,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   // Luu
   getDataFormGroup() {
     var value = this.formGroup.value;
-    // console.log(value);
+    if(value.employeeAdvisory){
+      value.employeeId = value.employeeAdvisory.id;
+    }
     value.dateQuotation = this.intlService.formatDate(value.dateQuotation, "yyyy-MM-dd");
     value.companyId = this.quotation.companyId;
     value.employeeId = value.employee.id;

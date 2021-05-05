@@ -33,12 +33,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IApplicationRoleFunctionService _roleFunctionService;
         private readonly IMyCache _cache;
         private readonly AppTenant _tenant;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public ApplicationRolesController(RoleManager<ApplicationRole> roleManager,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
             UserManager<ApplicationUser> userManager,
             IApplicationRoleFunctionService roleFunctionService, ITenant<AppTenant> tenant,
-            IMyCache cache)
+            IMyCache cache, IWebHostEnvironment webHostEnvironment)
         {
             _roleManager = roleManager;
             _mapper = mapper;
@@ -48,6 +49,7 @@ namespace TMTDentalAPI.Controllers
             _roleFunctionService = roleFunctionService;
             _cache = cache;
             _tenant = tenant?.Value;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet]
@@ -214,6 +216,33 @@ namespace TMTDentalAPI.Controllers
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
             }
             return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetPermissionTree(string id)
+        {
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\features.json");
+            using (var reader = new StreamReader(filePath))
+            {
+                var fileContent = reader.ReadToEnd();
+                var groups = JsonConvert.DeserializeObject<List<PermissionTreeV2GroupViewModel>>(fileContent);
+                if (!string.IsNullOrEmpty(id))
+                {
+                    var role = await _roleManager.Roles.Where(x => x.Id == id).Include(x => x.Functions).FirstOrDefaultAsync();
+                    foreach (var group in groups)
+                    {
+                        foreach (var funct in group.Functions)
+                        {
+                            foreach (var op in funct.Ops)
+                            {
+                                op.Checked = role.Functions.Any(x => x.Func == op.Permission);
+                            }
+                        }
+                    }
+                }
+
+                return Ok(groups);
+            }
         }
     }
 }
