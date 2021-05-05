@@ -723,7 +723,7 @@ namespace Infrastructure.Services
                 .Include(x => x.PromotionLines)
                 .FirstOrDefaultAsync();
 
-            var total = orderLine.PriceUnit;
+            var total = orderLine.PriceUnit * orderLine.ProductUOMQty;
             var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
 
             var promotion = orderPromotionObj.SearchQuery(x => x.SaleOrderLineId == orderLine.Id && x.Type == "discount" && x.SaleOrderId.HasValue).FirstOrDefault();
