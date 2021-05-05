@@ -54,6 +54,10 @@ namespace Infrastructure.Services
 
         void RecomputePromotionLine(IEnumerable<SaleOrderLine> self);
 
+        SaleOrderPromotion _GetRewardLineValues(SaleOrderLine self, SaleCouponProgram program);
+
+        SaleOrderPromotion _GetRewardValuesDiscount(SaleOrderLine self, SaleCouponProgram program);
+
         Task ApplyDiscountOnOrderLine(ApplyDiscountViewModel val);
 
         Task<SaleCouponProgramResponse> ApplyPromotionUsageCodeOnOrderLine(ApplyPromotionUsageCode val);

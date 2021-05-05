@@ -15,6 +15,6 @@ namespace Infrastructure.Services
         SaleOrderPromotion PreparePromotionToOrder(SaleOrder self, SaleCouponProgram program, decimal discountAmount);
         SaleOrderPromotion PreparePromotionToOrderLine(SaleOrderLine self, SaleCouponProgram program, decimal discountAmount);
         void _ComputePromotionType(SaleOrderPromotion self, SaleCouponProgram program);
-        Task _PrepareUpdatePromotion(IEnumerable<Guid> ids);
+       
     }
 }
