@@ -116,7 +116,7 @@ namespace Infrastructure.Services
                 promotionLine.Lines.Add(new SaleOrderPromotionLine
                 {
                     Amount = Math.Round(subTotal / total * discountAmount),
-                    PriceUnit = line.ProductUOMQty != 0 ? Math.Round(subTotal / total * discountAmount / line.ProductUOMQty) : 0,
+                    PriceUnit = (double)(line.ProductUOMQty != 0 ? Math.Round(subTotal / total * discountAmount / line.ProductUOMQty) : 0),
                     SaleOrderLineId = line.Id,
                 });
             }
@@ -141,7 +141,7 @@ namespace Infrastructure.Services
             promotionLine.Lines.Add(new SaleOrderPromotionLine
             {
                 Amount = promotionLine.Amount,
-                PriceUnit = Math.Round(promotionLine.Amount / self.ProductUOMQty),
+                PriceUnit = (double)(promotionLine.Amount / self.ProductUOMQty),
                 SaleOrderLineId = self.Id,
             });
 

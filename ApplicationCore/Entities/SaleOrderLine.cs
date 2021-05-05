@@ -164,7 +164,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Tổng đơn giá giảm của dịch vụ
         /// </summary>
-        public decimal? AmountDiscountTotal { get; set; }
+        public double? AmountDiscountTotal { get; set; }
 
         /// <summary>
         /// bác sĩ được hưởng hoa hồng

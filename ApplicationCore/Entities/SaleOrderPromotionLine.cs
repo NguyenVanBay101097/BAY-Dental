@@ -15,7 +15,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Đơn giá phẩn bổ = Amount / Số lượng
         /// </summary>
-        public decimal PriceUnit { get; set; }
+        public double PriceUnit { get; set; }
 
         /// <summary>
         /// 

@@ -1253,8 +1253,8 @@ namespace Infrastructure.Services
                 foreach(var line in promotion.Lines)
                 {
                     line.Amount = ((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount;
-                    line.PriceUnit = line.SaleOrderLine.ProductUOMQty != 0 ?
-                        Math.Round(((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / line.SaleOrderLine.ProductUOMQty) : 0;
+                    line.PriceUnit = (double)(line.SaleOrderLine.ProductUOMQty != 0 ?
+                       ((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / line.SaleOrderLine.ProductUOMQty : 0);
                 }             
             }
         }
@@ -2724,13 +2724,13 @@ namespace Infrastructure.Services
                     if (line.ProductUOMQty == 0)
                         continue;
 
-                    var amount = Math.Round((((line.ProductUOMQty * line.PriceUnit) / total) * promotion.Amount));
+                    var amount = (((line.ProductUOMQty * line.PriceUnit) / total) * promotion.Amount);
                     if (amount != 0)
                     {
                         promotion.Lines.Add(new SaleOrderPromotionLine
                         {
                             Amount = amount,
-                            PriceUnit = line.ProductUOMQty != 0 ? Math.Round(amount / line.ProductUOMQty) : 0,
+                            PriceUnit = (double)(line.ProductUOMQty != 0 ? amount / line.ProductUOMQty : 0),
                             SaleOrderLineId = line.Id,
                         });
                     }

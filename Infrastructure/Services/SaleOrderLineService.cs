@@ -51,7 +51,7 @@ namespace Infrastructure.Services
             foreach (var line in self)
             {
 
-                line.PriceSubTotal = Math.Round(line.ProductUOMQty * (line.PriceUnit - (line.AmountDiscountTotal ?? 0)));
+                line.PriceSubTotal = Math.Round(line.ProductUOMQty * (line.PriceUnit - (decimal)(line.AmountDiscountTotal ?? 0)));
                 line.PriceTax = 0;
                 line.PriceTotal = line.PriceSubTotal + line.PriceTax;
             }
@@ -749,7 +749,7 @@ namespace Infrastructure.Services
                 {
                     SaleOrderLineId = promotion.SaleOrderLineId.Value,
                     Amount = promotion.Amount,
-                    PriceUnit = orderLine.ProductUOMQty != 0 ? Math.Round(promotion.Amount / orderLine.ProductUOMQty) : 0,
+                    PriceUnit = (double)(orderLine.ProductUOMQty != 0 ? (promotion.Amount / orderLine.ProductUOMQty) : 0),
                 });
 
                 await orderPromotionObj.CreateAsync(promotion);
@@ -944,7 +944,7 @@ namespace Infrastructure.Services
                         foreach (var child in promotion.Lines)
                         {
                             child.Amount = promotion.Amount;
-                            child.PriceUnit = line.ProductUOMQty != 0 ? Math.Round(promotion.Amount / line.ProductUOMQty) : 0;
+                            child.PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0);
                         }
                     }
                 }
