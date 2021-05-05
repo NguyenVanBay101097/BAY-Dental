@@ -58,7 +58,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? RuleDateTo { get; set; }
 
         public string DiscountApplyOn { get; set; }
-
+        public bool? NotIncremental { get; set; }
+        public decimal? SaleOrderMinimumAmount { get; set; }
+        public string Days { get; set; }
         public IEnumerable<Guid> DiscountSpecificProductIds { get; set; } = new List<Guid>();
+        public IEnumerable<Guid> DiscountSpecificProductCategoryIds { get; set; } = new List<Guid>();
     }
 }

@@ -59,14 +59,16 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? DiscountLineProductId { get; set; }
         public Product DiscountLineProduct { get; set; }
-
         /// <summary>
         /// Thời gian hiệu lực khi coupon đc tạo ra: ngày
         /// </summary>
         public int? ValidityDuration { get; set; }
-
+        /// <summary>
+        /// Không áp dụng cộng dồn khuyến mãi
+        /// </summary>
+        public bool? NotIncremental { get; set; }
         public ICollection<SaleCouponProgramProductRel> DiscountSpecificProducts { get; set; } = new List<SaleCouponProgramProductRel>();
-
+        public ICollection<SaleCouponProgramProductCategoryRel> DiscountSpecificProductCategories { get; set; } = new List<SaleCouponProgramProductCategoryRel>();
         public ICollection<SaleCoupon> Coupons { get; set; } = new List<SaleCoupon>();
 
         public ICollection<SaleOrderLine> SaleLines { get; set; } = new List<SaleOrderLine>();
@@ -116,5 +118,8 @@ namespace ApplicationCore.Entities
         public string RewardDescription { get; set; }
 
         public string DiscountApplyOn { get; set; }
+
+        public decimal? SaleOrderMinimumAmount { get; set; }
+        public string Days { get; set; }
     }
 }

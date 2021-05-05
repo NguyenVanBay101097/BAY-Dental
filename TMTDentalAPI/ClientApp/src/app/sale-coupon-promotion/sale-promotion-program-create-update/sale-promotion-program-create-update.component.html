@@ -85,7 +85,7 @@
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Tiền mua tối thiểu
@@ -95,7 +95,7 @@
                                     <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="ruleMinimumAmount">
                                     </kendo-numerictextbox>
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <td class="o_td_label">
                                     <label class="o_form_label">Sử dụng mã khuyến mãi</label></td>
@@ -137,6 +137,14 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td colspan="2" style="width: 100%;">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" (change)="changeCheckbox($event.target.checked)" formControlName="notIncremental" id="notIncremental">
+                                        <label class="form-check-label" for="notIncremental">Không áp dụng cộng dồn khuyến mãi</label>
+                                      </div>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td class="o_td_label">
                                     <label class="o_form_label oe_inline">Áp dụng
                                         trên</label></td>
@@ -165,6 +173,24 @@
                                 <td style="width: 100%;">
                                     <kendo-datepicker formControlName="ruleDateToObj">
                                     </kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="width: 100%;">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" (change)="changeCheckboxSelectDay($event.target.checked)"  id="daysSelected" [checked]="isSelectedDay">
+                                        <label class="form-check-label" for="daysSelected">Chọn các thứ trong tuần</label>
+                                      </div>
+                                </td>
+                            </tr>
+                            <tr
+                                [class.d-none]="!isSelectedDay">
+                                <td></td>
+                                <td style="width: 100%;">
+                                    <kendo-multiselect [data]="listDay" [filterable]="true"
+                                        [textField]="'name'" [valueField]="'id'"
+                                        formControlName="daysSelected">
+                                    </kendo-multiselect>
                                 </td>
                             </tr>
                         </tbody>
@@ -274,12 +300,38 @@
                                             <option value="percentage">Phần trăm</option>
                                             <option value="fixed_amount">Giảm tiền</option>
                                         </select>
-                                        <kendo-numerictextbox [class.d-none]="discountType != 'percentage'" [min]="0"
+                                        <!-- <kendo-numerictextbox [class.d-none]="discountType != 'percentage'" [min]="0"
                                             [format]="'n0'" formControlName="discountPercentage">
                                         </kendo-numerictextbox>
-                                        <span [class.d-none]="discountType != 'percentage'">%</span>
+                                        <span [class.d-none]="discountType != 'percentage'">%</span> -->
                                     </div>
                                 </td>
+                            </tr>
+                            <tr [class.d-none]="rewardType != 'discount' || discountType != 'percentage'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Phần trăm giảm giá
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                        formControlName="discountPercentage">
+                                    </kendo-numerictextbox>
+                                </td>
+                                <td [class.d-none]="discountType != 'percentage'">%</td>
+                            </tr>
+                            <tr [class.d-none]="rewardType != 'discount' || discountType != 'percentage'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Mức giảm tối đa
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                        formControlName="discountMaxAmount">
+                                    </kendo-numerictextbox>
+                                </td>
+                                <td [class.d-none]="discountType != 'percentage'">VNĐ</td>
                             </tr>
                             <tr [class.d-none]="rewardType != 'discount' || discountType != 'fixed_amount'">
                                 <td colspan="1" class="o_td_label">
@@ -309,6 +361,14 @@
 
                                         <div class="custom-control custom-radio o_radio_item">
                                             <input type="radio" formControlName="discountApplyOn"
+                                                class="custom-control-input o_radio_input" value="specific_product_categories"
+                                                id="radio151_specific_product_categories">
+                                            <label class="custom-control-label o_form_label"
+                                                for="radio151_specific_product_categories">Trên vài nhóm dịch vụ cụ thể</label>
+                                        </div>
+
+                                        <div class="custom-control custom-radio o_radio_item">
+                                            <input type="radio" formControlName="discountApplyOn"
                                                 class="custom-control-input o_radio_input" value="specific_products"
                                                 id="radio151_specific_products">
                                             <label class="custom-control-label o_form_label"
@@ -327,6 +387,28 @@
                                         formControlName="discountSpecificProducts">
                                     </kendo-multiselect>
                                 </td>
+                            </tr>
+                            <tr
+                                [class.d-none]="discountApplyOn != 'specific_product_categories' || discountType != 'percentage'">
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Nhóm dịch vụ</label></td>
+                                <td style="width: 100%;">
+                                    <kendo-multiselect [data]="listProductCategories" [filterable]="true" #productCategoriesMultiSelect
+                                        [textField]="'name'" [valueField]="'id'"
+                                        formControlName="discountSpecificProductCategories">
+                                    </kendo-multiselect>
+                                </td>
+                            </tr>
+                            <tr
+                                [class.d-none]="discountApplyOn != 'on_order' || discountType != 'percentage'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Trị giá PĐT tối thiểu</label></td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                            formControlName="saleOrderMinimumAmount">
+                                    </kendo-numerictextbox>
+                                </td>
+                                <td>VNĐ</td>
                             </tr>
                             <!-- <tr
                                 [class.d-none]="discountType != 'percentage' || ['product', 'free_shipping'].indexOf(rewardType) !== -1">

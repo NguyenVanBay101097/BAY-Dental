@@ -28,6 +28,7 @@ export class SaleCouponProgramDisplay {
     rewardProduct: ProductSimple;
     ruleDateFrom: string;
     ruleDateTo: string;
+    days: string;
 }
 
 export class SaleCouponProgramSave {

@@ -86,6 +86,12 @@
     <Compile Remove="Data\Migrations\20210405025546_AddCompanyToQuotation.Designer.cs" />
     <Compile Remove="Data\Migrations\20210405025953_AddCompanyToQuotation.cs" />
     <Compile Remove="Data\Migrations\20210405025953_AddCompanyToQuotation.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210505090331_addFieldIntoSaleCouponProgram.cs" />
+    <Compile Remove="Data\Migrations\20210505090331_addFieldIntoSaleCouponProgram.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210505095333_addFieldIntoSaleCouponProgramPart2.cs" />
+    <Compile Remove="Data\Migrations\20210505095333_addFieldIntoSaleCouponProgramPart2.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210505102630_AddFieldIntoSaleCouponProgram.cs" />
+    <Compile Remove="Data\Migrations\20210505102630_AddFieldIntoSaleCouponProgram.Designer.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.Designer.cs" />
     <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.cs" />

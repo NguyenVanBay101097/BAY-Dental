@@ -131,6 +131,7 @@ namespace Infrastructure.Data
         public DbSet<IrModuleCategory> IrModuleCategories { get; set; }
         public DbSet<IrConfigParameter> IrConfigParameters { get; set; }
         public DbSet<SaleCouponProgramProductRel> SaleCouponProgramProductRels { get; set; }
+        public DbSet<SaleCouponProgramProductCategoryRel> SaleCouponProgramProductCategoryRels { get; set; }
         public DbSet<SaleOrderNoCodePromoProgram> SaleOrderNoCodePromoPrograms { get; set; }
         public DbSet<ZaloOAConfig> ZaloOAConfigs { get; set; }
         public DbSet<IRModelField> IRModelFields { get; set; }
@@ -302,6 +303,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new RoutingConfiguration());
             builder.ApplyConfiguration(new RoutingLineConfiguration());
             builder.ApplyConfiguration(new DotKhamConfiguration());
+            builder.ApplyConfiguration(new SaleCouponProgramProductCategoryRelConfiguration());
             builder.ApplyConfiguration(new DotKhamLineConfiguration());
             builder.ApplyConfiguration(new DotKhamLineOperationConfiguration());
             builder.ApplyConfiguration(new ToaThuocConfiguration());

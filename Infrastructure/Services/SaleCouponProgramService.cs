@@ -82,7 +82,7 @@ namespace Infrastructure.Services
                 program.CompanyId = CompanyId;
 
             await SaveDiscountSpecificProducts(program, val);
-
+            await SaveDiscountSpecificProductCategories(program, val);
             if (!program.DiscountLineProductId.HasValue)
             {
                 var discountProduct = await GetOrCreateDiscountProduct(program);
@@ -167,6 +167,20 @@ namespace Infrastructure.Services
             {
                 var product = await productObj.GetByIdAsync(productId);
                 program.DiscountSpecificProducts.Add(new SaleCouponProgramProductRel { ProductId = productId, Product = product });
+            }
+        }
+
+        private async Task SaveDiscountSpecificProductCategories(SaleCouponProgram program, SaleCouponProgramSave val)
+        {
+            var productCategoryObj = GetService<IProductCategoryService>();
+            var to_remove = program.DiscountSpecificProductCategories.Where(x => !val.DiscountSpecificProductCategoryIds.Contains(x.ProductCategoryId)).ToList();
+            foreach (var item in to_remove)
+                program.DiscountSpecificProductCategories.Remove(item);
+            var to_add = val.DiscountSpecificProductCategoryIds.Where(x => !program.DiscountSpecificProductCategories.Any(s => s.ProductCategoryId == x)).ToList();
+            foreach (var productCategoryId in to_add)
+            {
+                var productCategory = await productCategoryObj.GetByIdAsync(productCategoryId);
+                program.DiscountSpecificProductCategories.Add(new SaleCouponProgramProductCategoryRel { ProductCategoryId = productCategoryId, ProductCategory = productCategory });
             }
         }
 
@@ -363,6 +377,8 @@ namespace Infrastructure.Services
 
             return product;
         }
+
+
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {

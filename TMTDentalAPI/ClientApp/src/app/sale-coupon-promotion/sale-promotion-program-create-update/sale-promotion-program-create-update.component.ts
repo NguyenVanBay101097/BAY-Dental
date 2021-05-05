@@ -13,6 +13,8 @@ import { SaleCouponProgramGenerateCouponsDialogComponent } from '../sale-coupon-
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { ProductCategory } from 'src/app/product-categories/product-category';
+import { ProductCategoryBasic, ProductCategoryFilter, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 
 @Component({
   selector: 'app-sale-promotion-program-create-update',
@@ -28,14 +30,17 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   program: SaleCouponProgramDisplay = new SaleCouponProgramDisplay();
   submitted = false;
   filteredProducts: ProductSimple[];
+  isSelectedDay = true;
+  listDay: any[] = [];
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
   listProducts: ProductSimple[];
+  listProductCategories: ProductCategory[];
   @ViewChild('productMultiSelect', { static: true }) productMultiSelect: MultiSelectComponent;
-
+  @ViewChild('productCategoriesMultiSelect', {static:true}) productCategoriesMultiSelect: MultiSelectComponent;
   constructor(private fb: FormBuilder, private programService: SaleCouponProgramService,
     private router: Router, private route: ActivatedRoute, private notificationService: NotificationService,
-    private modalService: NgbModal, private productService: ProductService, private intlService: IntlService) { }
+    private modalService: NgbModal, private productService: ProductService, private productCategoryService: ProductCategoryService, private intlService: IntlService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -51,6 +56,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       ruleMinQuantity: 1,
       discountApplyOn: 'on_order',
       discountSpecificProducts: null,
+      discountSpecificProductCategories: null,
+      notIncremental: true,
       companyId: null,
       discountMaxAmount: 0,
       rewardProductQuantity: 1,
@@ -59,10 +66,10 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       ruleDateFromObj: null,
       ruleDateToObj: null,
       maximumUseNumber: 0,
-      promoCode: null
+      promoCode: null,
+      saleOrderMinimumAmount: 0,
+      daysSelected: null
     });
-
-
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get("id");
       if (this.id) {
@@ -81,15 +88,19 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
           ruleMinQuantity: 1,
           discountApplyOn: 'on_order',
           discountSpecificProducts: null,
+          discountSpecificProductCategories: null,
           companyId: null,
           discountMaxAmount: 0,
+          notIncremental: true,
           rewardProductQuantity: 1,
           promoApplicability: 'on_current_order',
           promoCodeUsage: 'no_code_needed',
           ruleDateFromObj: null,
           ruleDateToObj: null,
           maximumUseNumber: 0,
-          promoCode: null
+          promoCode: null,
+          saleOrderMinimumAmount: 0,
+          daysSelected: null
         });
 
         this.program = new SaleCouponProgramDisplay();
@@ -109,7 +120,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     this.loadFilteredProducts();
 
     this.loadListProducts();
-
+    this.loadListProductCategories();
+    this.loadListDay();
     this.productMultiSelect.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.productMultiSelect.loading = true)),
@@ -117,6 +129,15 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     ).subscribe(result => {
       this.listProducts = result;
       this.productMultiSelect.loading = false;
+    });
+
+    this.productCategoriesMultiSelect.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.productCategoriesMultiSelect.loading = true)),
+      switchMap(value => this.searchProductCategories(value))
+    ).subscribe(result => {
+      this.listProductCategories = result;
+      this.productCategoriesMultiSelect.loading = false;
     });
   }
 
@@ -134,6 +155,19 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     this.searchProducts().subscribe(result => {
       this.listProducts = _.unionBy(this.listProducts, result, 'id');
     });
+  }
+
+  loadListProductCategories(){
+    this.searchProductCategories().subscribe(result => {
+      this.listProductCategories = _.unionBy(this.listProductCategories,result, 'id');
+    })
+  }
+
+  searchProductCategories(search?: string){
+    var val = new ProductCategoryPaged();
+    val.search = search;
+    val.type = 'service';
+    return this.productCategoryService.autocomplete(val);
   }
 
   searchProducts(search?: string) {
@@ -172,6 +206,13 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.formGroup.get('promoCode').setValue(null);
     }
   }
+  changeCheckbox(value){
+    this.f.NotIncremental.setValue(value);
+  }
+
+  changeCheckboxSelectDay(value){
+    this.isSelectedDay = value;
+  }
 
   generateCoupons() {
     if (this.id) {
@@ -204,7 +245,12 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   loadRecord() {
     this.programService.get(this.id).subscribe(result => {
       this.program = result;
+      var dayIds = result.days.split(",");
+      this.listDay.forEach(day => {
+        
+      });
       this.formGroup.patchValue(result);
+     this.f.daysSelected.setValue(result.days.split(","));
       if (result.rewardProduct) {
         this.filteredProducts = _.unionBy(this.filteredProducts, [result.rewardProduct], 'id');
       }
@@ -221,7 +267,17 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
     });
   }
-
+  loadListDay(){
+    this.listDay = [
+      {id:'Mon',name:'Thứ 2'},
+      {id:'Tue',name:'Thứ 3'},
+      {id:'Wed',name:'Thứ 4'},
+      {id:'Thu',name:'Thứ 5'},
+      {id:'Fri',name:'Thứ 6'},
+      {id:'Sat',name:'Thứ 7'},
+      {id:'Sun',name:'Chủ Nhật'}
+    ]
+  }
   createNew() {
     this.router.navigate(['programs/promotion-programs/form']);
   }
@@ -233,10 +289,15 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     }
 
     var value = this.formGroup.value;
+    console.log(value);
+    
     value.rewardProductId = value.rewardProduct ? value.rewardProduct.id : null;
     value.ruleDateFrom = value.ruleDateFromObj ? this.intlService.formatDate(value.ruleDateFromObj, 'g', 'en-US') : null;
     value.ruleDateTo = value.ruleDateToObj ? this.intlService.formatDate(value.ruleDateToObj, 'g', 'en-US') : null;
     value.discountSpecificProductIds = value.discountSpecificProducts ? value.discountSpecificProducts.map(x => x.id) : [];
+    value.discountSpecificProductCategoryIds = value.discountSpecificProductCategories ? value.discountSpecificProductCategories.map(x => x.id) : [];
+    var days = value.daysSelected ? value.daysSelected.map(x => x.id) : [];
+    value.days = days.toString();
     if (this.id) {
       this.programService.update(this.id, value).subscribe(() => {
         this.notificationService.show({
