@@ -57,7 +57,7 @@ namespace Infrastructure.Services
             var today = DateTime.Today;
             var promotions = await SearchQuery(x => x.Active && x.ProgramType == "promotion_program"
             && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order" 
-            && (!x.RuleDateFrom.HasValue || x.RuleDateFrom.Value >= today) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)).ToListAsync();
+            && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)).ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
             return basics;
@@ -69,7 +69,7 @@ namespace Infrastructure.Services
 
             var promotions = await SearchQuery(x => x.Active && x.ProgramType == "promotion_program"
             && x.PromoCodeUsage == "no_code_needed" 
-            && (!x.RuleDateFrom.HasValue || x.RuleDateFrom.Value >= today) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
+            && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
             && x.DiscountApplyOn == "specific_products" && x.DiscountSpecificProducts.Any(s => s.ProductId == productId)).ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
@@ -371,8 +371,8 @@ namespace Infrastructure.Services
             var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
             if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > line.Order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo < line.Order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
-            else if (self.ProgramType != "promotion_program" || self.PromoCodeUsage == "code_needed" || self.DiscountApplyOn == "on_order")
-                message.Error = "Khuyến mãi Không áp dụng cho dịch vụ";
+            else if(!self.DiscountSpecificProducts.Any(x=> x.ProductId == line.ProductId))
+                message.Error = "Khuyến mãi Không áp dụng cho dịch vụ này";
             else if (line.Order.Promotions.Any(x => x.SaleCouponProgramId == self.Id))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (line.Promotions.Any(x => x.SaleCouponProgramId == self.Id))

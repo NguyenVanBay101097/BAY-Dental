@@ -720,6 +720,7 @@ namespace Infrastructure.Services
             var orderLine = await SearchQuery(x => x.Id == val.Id).Include(x => x.Order)
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
                 .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+                .Include(x => x.PromotionLines)
                 .FirstOrDefaultAsync();
 
             var total = orderLine.PriceUnit;
@@ -748,7 +749,7 @@ namespace Infrastructure.Services
                 {
                     SaleOrderLineId = promotion.SaleOrderLineId.Value,
                     Amount = promotion.Amount,
-                    PriceUnit = promotion.Amount / orderLine.ProductUOMQty,
+                    PriceUnit = Math.Round(promotion.Amount / orderLine.ProductUOMQty),
                 });
 
                 await orderPromotionObj.CreateAsync(promotion);
@@ -813,7 +814,7 @@ namespace Infrastructure.Services
                 var error_status = await programObj._CheckPromotionApplySaleLine(program, orderLine);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
-                        await _CreateRewardLine(orderLine, program);
+                    await _CreateRewardLine(orderLine, program);
 
                     return new SaleCouponProgramResponse { Error = null, Success = true, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
                 }

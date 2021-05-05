@@ -857,7 +857,9 @@ namespace Infrastructure.Services
         public async Task _ComputeAmountPromotionToOrder(IEnumerable<Guid> ids)
         {
             var orderLineObj = GetService<ISaleOrderLineService>();
-            var orders = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines).ToListAsync();
+            var orders = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines)        
+                .ToListAsync();
             foreach (var order in orders)
             {
                 orderLineObj._ComputeAmountDiscountTotal(order.OrderLines);
@@ -1159,6 +1161,7 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 Name = x.Name,
                 Amount = x.Amount,
+                SaleCouponProgramId = x.SaleCouponProgramId,
                 Type = x.Type
             }).ToListAsync();
 

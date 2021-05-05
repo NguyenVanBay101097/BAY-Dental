@@ -129,7 +129,7 @@ namespace Infrastructure.Services
             var promotionLine = new SaleOrderPromotion
             {
                 Name = program.Name,
-                Amount = Math.Round(total * discountAmount),
+                Amount = Math.Round(discountAmount),
                 SaleCouponProgramId = program.Id,
                 SaleOrderLineId = self.Id,
                 SaleOrderId = self.OrderId
