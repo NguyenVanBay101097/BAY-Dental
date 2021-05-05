@@ -637,7 +637,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       }
       this.saleOrderService.create(val).subscribe((result: any) => {
         this.saleOrderId = result.id;
-        this.patchValueSaleOrder(result);
         this.router.navigate(["/sale-orders/form"], {
           queryParams: { id: result.id },
         });
