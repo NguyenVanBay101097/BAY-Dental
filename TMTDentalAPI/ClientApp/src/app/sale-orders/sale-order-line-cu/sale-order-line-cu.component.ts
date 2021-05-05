@@ -305,7 +305,7 @@ export class SaleOrderLineCuComponent implements OnInit {
     this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
   }
 
-  // onOpenPromotionModal() {
+  // onOpenPromotionDialog() {
   //   let modalRef = this.modalService.open(SaleOrderLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
   //   if(!this.line.promotions) this.line.promotions = [];
   //   modalRef.componentInstance.saleOrderLine = this.line;

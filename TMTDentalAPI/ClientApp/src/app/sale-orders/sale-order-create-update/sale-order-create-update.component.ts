@@ -494,7 +494,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   get getAmountPaidTotal() {
-    return this.getFormControl('paidTotal') ? this.getFormControl('paidTotal').value : 0;
+    return this.getAmountTotal - this.getResidual;
   }
 
   get getResidual() {
