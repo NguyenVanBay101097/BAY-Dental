@@ -58,6 +58,7 @@
     background-color: #F5FAFF;
     color: #007BFF;
     border-color: #007BFF;
+    border-right: 1px solid #007BFF !important;
 }
 
 .teeth-map td {
@@ -88,6 +89,7 @@
 }
 
 .btn-radio-active,
+.promotions,
 .btn-radio:hover {
     background: #F5FAFF !important;
     border: 1px solid #007BFF !important;

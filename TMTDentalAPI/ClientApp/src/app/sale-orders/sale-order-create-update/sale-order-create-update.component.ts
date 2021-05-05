@@ -367,6 +367,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       });
     } else {
       this.saleOrderService.create(val).subscribe((result: any) => {
+        this.saleOrderId = result.id;
         this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
       });
     }
@@ -382,7 +383,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   patchValueSaleOrder(result) {
     this.saleOrder = result;
-    this.saleOrderId = result.id || null;
     this.formGroup.patchValue(result);
     let dateOrder = new Date(result.dateOrder);
     this.formGroup.get('dateOrderObj').patchValue(dateOrder);
@@ -605,7 +605,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       return total + (cur.amountDiscountTotal || 0) * cur.productUOMQty;
     }, 0);
 
-    return Math.round(res / 1000) * 1000;
+    return res;
   }
 
   onDeleteLine(index) {
@@ -636,6 +636,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         return false;
       }
       this.saleOrderService.create(val).subscribe((result: any) => {
+        this.saleOrderId = result.id;
         this.patchValueSaleOrder(result);
         this.router.navigate(["/sale-orders/form"], {
           queryParams: { id: result.id },
