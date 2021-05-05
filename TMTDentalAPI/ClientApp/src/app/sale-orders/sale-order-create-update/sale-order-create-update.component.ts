@@ -637,6 +637,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       }
       this.saleOrderService.create(val).subscribe((result: any) => {
         this.saleOrderId = result.id;
+        this.saleOrder = result;
+        this.saleOrder.promotions = [];
+        
         this.router.navigate(["/sale-orders/form"], {
           queryParams: { id: result.id },
         });
@@ -711,7 +714,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
         this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
           this.patchValueSaleOrder(result);
-          this.onOpenLinePromotionDialog(innerHeight);
+          this.onOpenLinePromotionDialog(i);
 
         });
       });
