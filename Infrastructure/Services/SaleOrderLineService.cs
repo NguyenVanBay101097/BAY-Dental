@@ -772,6 +772,7 @@ namespace Infrastructure.Services
               .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
               .Include(x => x.Order).ThenInclude(x => x.Promotions)
               .Include(x => x.Order).ThenInclude(x => x.OrderLines)
+              .Include(x => x.PromotionLines)
               .Include(x => x.SaleOrderLineInvoice2Rels)
               .FirstOrDefaultAsync();
             var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
@@ -800,6 +801,7 @@ namespace Infrastructure.Services
             var couponObj = GetService<ISaleCouponService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var orderLine = await SearchQuery(x => x.Id == val.Id)
+                .Include(x => x.PromotionLines)
                 .Include(x => x.Product)
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
                 .Include(x => x.Order).ThenInclude(x => x.Promotions)
