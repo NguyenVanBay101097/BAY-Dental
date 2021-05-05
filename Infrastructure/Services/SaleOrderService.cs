@@ -1194,6 +1194,7 @@ namespace Infrastructure.Services
         {
             var order = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+                .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
                 .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
                 .FirstOrDefaultAsync();
