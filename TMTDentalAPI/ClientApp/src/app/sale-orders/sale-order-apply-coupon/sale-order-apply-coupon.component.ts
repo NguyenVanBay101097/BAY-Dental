@@ -28,7 +28,6 @@ export class SaleOrderApplyCouponComponent implements OnInit {
     var val = this.formGroup.value;
     val.id = this.orderId;
     this.saleOrderService.applyCouponOnOrder(val).subscribe((res: any) => {
-      console.log(res);
       if (res.success) {
         this.errorMsg = '';
         this.applySuccess.emit(null);

@@ -231,7 +231,7 @@
                                             </div>
                                         </div>
                                         <ng-container *ngFor="let line of orderLines.controls; let i=index">
-                                            <app-sale-order-line-cu #lineTemplate [line]="line.value" (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)"></app-sale-order-line-cu>
+                                            <app-sale-order-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)" [line]="line.value" (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)"></app-sale-order-line-cu>
                                         </ng-container>
                                     </div>
                                 </div>

@@ -30,7 +30,6 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
 
  title = "Ưu đãi phiếu điều trị";
   saleOrder: SaleOrderDisplay = null;//input
-  saleOrderLine: SaleOrderLineDisplay = null;//input
 
 
 // input
@@ -76,9 +75,8 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
       return this.saleOrder.orderLines.reduce((total, cur) => {
         return total + cur.priceUnit * cur.productUOMQty;
       }, 0);
-    } else {
-      return this.saleOrderLine.priceUnit * this.saleOrderLine.productUOMQty;
-    }
+    } 
+    return 0;
   }
 
   // pushAppliedPromotion(type, program = null) { // val: code or programId
@@ -135,7 +133,7 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
 
   applyPromotion(item) {
       var val = {
-        id: this.saleOrder ? this.saleOrder.id : this.saleOrderLine.id,
+        id:this.saleOrder.id,
         saleProgramId: item.id,
       };
 
@@ -150,7 +148,7 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
 
   applyDiscount(value) {
       var val = {
-        id: this.saleOrder ? this.saleOrder.id : this.saleOrderLine.id,
+        id: this.saleOrder.id,
         discountType: value.discountType,
         discountPercent: value.discountPercent,
         discountFixed: value.discountFixed,

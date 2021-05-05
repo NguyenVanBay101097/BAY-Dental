@@ -41,6 +41,7 @@ import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-p
 import { SaleOrderLinePromotionDialogComponent } from './sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component';
 import { PromotionDiscountComponent } from './promotion-discount/promotion-discount.component';
 import { SaleOrderApplyCouponComponent } from './sale-order-apply-coupon/sale-order-apply-coupon.component';
+import { SaleOrderLineApplyCouponComponent } from './sale-order-line-apply-coupon/sale-order-line-apply-coupon.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import { SaleOrderApplyCouponComponent } from './sale-order-apply-coupon/sale-or
     SaleOrderLinePromotionDialogComponent,
     PromotionDiscountComponent,
     SaleOrderApplyCouponComponent,
+    SaleOrderLineApplyCouponComponent,
   ],
   imports: [
     CommonModule,
@@ -104,7 +106,8 @@ import { SaleOrderApplyCouponComponent } from './sale-order-apply-coupon/sale-or
     TreatmentProcessServiceDialogComponent,
     SaleOrdersDotkhamCuComponent,
     SaleOrderProductRequestDialogComponent,
-    SaleOrderPromotionDialogComponent
+    SaleOrderPromotionDialogComponent,
+    SaleOrderLinePromotionDialogComponent
   ]
 })
 export class SaleOrdersModule { }

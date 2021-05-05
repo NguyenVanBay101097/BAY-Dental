@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
@@ -15,20 +15,16 @@ import { SaleOrderPromotionService } from '../sale-order-promotion.service';
   templateUrl: './sale-order-line-promotion-dialog.component.html',
   styleUrls: ['./sale-order-line-promotion-dialog.component.css']
 })
-export class SaleOrderLinePromotionDialogComponent implements OnInit {
+export class SaleOrderLinePromotionDialogComponent implements OnInit , OnDestroy {
 
-  title = "Ưu đãi phiếu điều trị";
-  saleOrderLine: SaleOrderLineDisplay = null;//input
-
-
-// input
+  title = "Ưu đãi Dịch vụ";
   autoPromotions = [];
+ @Input() saleOrderLine: SaleOrderLineDisplay = null;
 
   private updateSubject = new Subject<any>();
 
   isChange = false;
   code = '';
-
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -42,9 +38,14 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit {
 
   ngOnInit() {
     setTimeout(() => {
+console.log(this.saleOrderLine);
 
       this.loadDefaultPromotion();
     }, 300);
+  }
+
+  ngOnDestroy(): void {
+    // this.updateSubject.unsubscribe();
   }
 
 
@@ -53,16 +54,8 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit {
   }
 
   loadDefaultPromotion() {
-    var val = new SaleCouponProgramPaged();
-    val.limit = 0;
-    val.offset = 0;
-    val.programType = "promotion_program";
-    val.promoCodeUsage = "no_code_needed";
-    val.discountApplyOn = 'specific_products';
-    val.productId = this.saleOrderLine ? this.saleOrderLine.productId : '';
-    
-    this.promotionService.getPaged(val).subscribe((res) => {
-      this.autoPromotions = res.items;
+    this.promotionService.getPromotionBySaleOrderLine(this.saleOrderLine.productId).subscribe((res: any) => {
+      this.autoPromotions = res;
     });
   }
 
@@ -73,49 +66,10 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit {
  
   }
 
-  // pushAppliedPromotion(type, program = null) { // val: code or programId
-  //   var amount = 0;
-
-  //   switch (type) {
-  //     case 'discount':
-  //       amount = this.form.discountType == this.discountTypeDict["%"] ? this.form.discountPercent * this.getAmountToApply() / 100 : this.form.discountFixed;
-  //       break;
-  //   case 'code_usage_program':
-  //     this.promotionService.getByCode(this.form.code).subscribe((res) => {
-  //       amount = res.discountType == this.discountTypeDict["%"] ? res.discountPercentage * this.getAmountToApply() / 100 : res.discountFixedAmount;
-  //     });
-  //     break;
-  //     case 'promotion_program':
-  //       this.promotionService.get(program.id).subscribe((res: SaleCouponProgramDisplay) => {
-  //       amount = res.discountType == this.discountTypeDict["%"] ? res.discountPercentage * this.getAmountToApply() / 100 : res.discountFixedAmount;
-  //       });
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  //   this.saleOrder.promotions.push({
-  //     amount: amount,
-  //     type: type,
-  //     discountType: this.form.discountType,
-  //     discountPercent: this.form.discountPercent,
-  //     discountFixed: this.form.discountFixed,
-  //   } as SaleOrderPromotionSave);
-  //   this.notificationService.notify('success', 'Thành công!');
-  //   this.isChange = true;
-  // }
-
-  applyPromotionManual() {
-      if (this.code.trim() == '') return;
-
-      var val = {
-        id: this.saleOrderLine.id,
-        couponCode: this.code,
-      };
-      this.saleOrderSevice.applyCouponOnOrder(val).subscribe((res) => {
-        this.notificationService.notify('success', 'Thành công!');
-        this.updateSubject.next(true);
-        this.isChange = true;
-      });
+  onApplyCouponSuccess() {
+    this.notificationService.notify('success', 'Thành công!');
+    this.updateSubject.next(true);
+    this.isChange = true;
   }
 
   applyPromotion(item) {

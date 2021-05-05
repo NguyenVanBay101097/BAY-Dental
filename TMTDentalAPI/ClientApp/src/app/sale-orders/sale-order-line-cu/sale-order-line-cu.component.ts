@@ -16,6 +16,7 @@ import { SaleOrderPromotionDialogComponent } from "../sale-order-promotion-dialo
 import { BehaviorSubject, Subject } from "rxjs";
 import { SaleOrderLineService } from "src/app/core/services/sale-order-line.service";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
+import { SaleOrderLinePromotionDialogComponent } from "../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component";
 
 @Component({
   selector: "app-sale-order-line-cu",
@@ -27,6 +28,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Input() line: SaleOrderLineDisplay;
 
   @Output() onUpdateEvent = new EventEmitter<any>();
+  @Output() onUpdateOpenPromotionEvent = new EventEmitter<any>();
   @Output() onDeleteEvent = new EventEmitter<any>();
   @Output() onEditEvent = new EventEmitter<any>();
   @Output() onCancelEvent = new EventEmitter<any>();
@@ -55,17 +57,14 @@ export class SaleOrderLineCuComponent implements OnInit {
     private toothCategoryService: ToothCategoryService,
     private notificationService: NotificationService,
     private saleOrderLineService: SaleOrderLineService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.formGroupInfo = this.fb.group(this.line);
-    this.formGroupInfo.setControl("teeth", this.fb.array([]));
 
-    if (this.line.teeth) {
-      this.line.teeth.forEach((tooth) => {
-        this.TeethFA.push(this.fb.group(tooth));
-      });
-    }
+    this.formGroupInfo.setControl('teeth', this.fb.array(this.line.teeth));
+    this.formGroupInfo.setControl('promotions', this.fb.array(this.line.promotions));
+
     this.computeAmount();
 
     this.loadEmployees();
@@ -142,8 +141,8 @@ export class SaleOrderLineCuComponent implements OnInit {
     modalRef.componentInstance.title = "Danh sách phiếu labo";
     modalRef.componentInstance.saleOrderLineId = id;
     modalRef.result.then(
-      (val) => {},
-      (er) => {}
+      (val) => { },
+      (er) => { }
     );
   }
 
@@ -159,7 +158,7 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   getToothCateLine() {
     var res =
-    this.isEditting
+      this.isEditting
         ? this.formInfoControl("toothCategory").value
         : this.line.toothCategory;
     return res;
@@ -167,7 +166,7 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   getToothTypeLine() {
     var res =
-    this.isEditting
+      this.isEditting
         ? this.formInfoControl("toothType").value
         : this.line.toothType;
     return res;
@@ -255,8 +254,8 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   updateLineInfo() {
     this.isEditting = false;
-    this.onUpdateEvent.emit( this.formGroupInfo.value);
-    
+    this.onUpdateEvent.emit(this.formGroupInfo.value);
+
   }
 
   onChangeQuantity() {
@@ -306,18 +305,20 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   onOpenPromotion() {
-    this.onUpdateEvent.emit( this.formGroupInfo.value);
+    this.isEditting = false;
+    this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
   }
 
-  onOpenPromotionModal() {
-    let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-    modalRef.componentInstance.saleOrderLine = this.line;
-    modalRef.result.then(() => {
-      // this.onEmit.emit({action: 'reload', data: null});
+  // onOpenPromotionModal() {
+  //   let modalRef = this.modalService.open(SaleOrderLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+  //   if(!this.line.promotions) this.line.promotions = [];
+  //   modalRef.componentInstance.saleOrderLine = this.line;
+  //   modalRef.result.then(() => {
+  //     // this.onEmit.emit({action: 'reload', data: null});
 
-    }, () => {
-    });
-  }
+  //   }, () => {
+  //   });
+  // }
 
   onCancel() {
     this.isEditting = false;
@@ -326,33 +327,33 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   viewTeeth() {
     var toothType = this.line.toothType;
-    if(toothType == "manual") {
+    if (toothType == "manual") {
       var teeth = this.line.teeth as any[];
-      return teeth.map(x=> x.name).join(',');
+      return teeth.map(x => x.name).join(',');
     } else {
-      return this.toothTypeDict.find(x=> x.value == toothType).name;
+      return this.toothTypeDict.find(x => x.value == toothType).name;
     }
   }
 
   onActive(active) {
-    if(!active) {
+    if (!active) {
       const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Ngừng dịch vụ';
       modalRef.componentInstance.body = 'Bạn chắc chắn muốn ngừng dịch vụ này?';
       modalRef.result.then(() => {
-        this.saleOrderLineService.patchIsActive(this.line.id,active).subscribe(()=> {
+        this.saleOrderLineService.patchIsActive(this.line.id, active).subscribe(() => {
           this.line.isActive = active;
           this.notify('success', 'Thành công');
         });
       });
     } else {
 
-      this.saleOrderLineService.patchIsActive(this.line.id,active).subscribe(()=> {
+      this.saleOrderLineService.patchIsActive(this.line.id, active).subscribe(() => {
         this.line.isActive = active;
         this.notify('success', 'Thành công');
       });
     }
-   
+
   }
 
 }

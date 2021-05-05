@@ -86,11 +86,15 @@ export class SaleCouponProgramService {
         return this.http.post(this.baseApi + this.apiUrl + "/GenerateCoupons", data);
     }
 
-    getByCode(code: string): Observable<SaleCouponProgramDisplay>{
-        return this.http.post<SaleCouponProgramDisplay>(this.baseApi + this.apiUrl + '/', {code: code});
+    getByCode(code: string): Observable<SaleCouponProgramDisplay> {
+        return this.http.post<SaleCouponProgramDisplay>(this.baseApi + this.apiUrl + '/', { code: code });
     }
 
-    getPromotionBySaleOrder(){
-return this.http.get(this.baseApi + this.apiUrl + "/GetPromotionBySaleOrder");
+    getPromotionBySaleOrder() {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetPromotionBySaleOrder");
+    }
+
+    getPromotionBySaleOrderLine(id) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetPromotionBySaleOrderLine?productId=" + id);
     }
 }

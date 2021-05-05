@@ -31,12 +31,6 @@
                     <div>
                         <label for="" class="font-weight-600">Mã khuyến mãi</label>
                         <app-sale-order-apply-coupon [orderId]="saleOrder.id" (applySuccess)="onApplyCouponSuccess()"></app-sale-order-apply-coupon>
-                        <!-- <div class="d-flex justify-content-between">
-                            <div class=" flex-fill mr-3">
-                                <input [(ngModel)]="code" placeholder="Nhập mã khuyến mãi" type="text" class="form-control">
-                            </div>
-                            <button (click)="applyPromotionManual()" class="btn btn-sm btn-primary ml-auto  btn-use">Áp dụng</button>
-                        </div> -->
                         <div class="">
                             <div *ngFor="let item of getListPromotion('code_usage_program'); let i = index" class="d-flex justify-content-between mt-2">
                                 <label class="mb-0" for="">  <img src="../../../assets/icons/promotion.svg" alt=""> {{item.name}}</label>

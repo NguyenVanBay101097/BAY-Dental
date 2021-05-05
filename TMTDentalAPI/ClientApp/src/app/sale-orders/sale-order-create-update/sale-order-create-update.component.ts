@@ -54,6 +54,7 @@ import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categori
 import { SaleOrderPromotionDialogComponent } from '../sale-order-promotion-dialog/sale-order-promotion-dialog.component';
 import { SaleOrderLineCuComponent } from '../sale-order-line-cu/sale-order-line-cu.component';
 import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
+import { SaleOrderLinePromotionDialogComponent } from '../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component';
 
 declare var $: any;
 
@@ -161,52 +162,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
               return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
             }
           })).subscribe((result: any) => {
-            this.saleOrder = result;
-            this.formGroup.patchValue(result);
-            let dateOrder = new Date(result.dateOrder);
-            this.formGroup.get('dateOrderObj').patchValue(dateOrder);
-
-            if (result.User) {
-              this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
-            }
-
-            if (result.Partner) {
-              this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
-              if (!this.saleOrderId) {
-                this.onChangePartner(result.partner);
-              }
-              this.getAmountAdvanceBalance();
-            }
-
-            // if (result.pricelist) {
-            //   this.filteredPricelists = _.unionBy(this.filteredPricelists, [result.pricelist], 'id');
-            // }
-
-            const control = this.formGroup.get('orderLines') as FormArray;
-            control.clear();
-            result.orderLines.forEach(line => {
-              var g = this.fb.group(line);
-              g.setControl('teeth', this.fb.array(line.teeth));
-              control.push(g);
-            });
-
-            this.formGroup.markAsPristine();
-            // nếu đã confirm thì line mặc định là cannot edit
-            this.onCannotEdit();
+            this.patchValueSaleOrder(result);
           });
       }
     )
-  }
-
-  onCannotEdit() {
-    // setTimeout(() => {
-    //   if(this.saleOrder.state == 'sale') {
-    //  this.isEditting = false;
-    // this.lineVCR.forEach(vc => {
-    //   vc.canEdit = false;
-    // });
-    //    }
-    //  }, 0);
   }
 
   get stateControl() {
@@ -264,6 +223,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     line.teeth.forEach(teeth => {
       let g = this.fb.group(teeth);
       lineControl.get('teeth').push(g);
+      lineControl.get('promotions').push(g);
     });
 
     lineControl.updateValueAndValidity();
@@ -426,8 +386,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     let dateOrder = new Date(result.dateOrder);
     this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-    if (result.partner) {
+    if (result.User) {
+      this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+    }
+    if (result.Partner) {
       this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+      if (!this.saleOrderId) {
+        this.onChangePartner(result.partner);
+      }
     }
 
     let control = this.formGroup.get('orderLines') as FormArray;
@@ -435,6 +401,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     result.orderLines.forEach(line => {
       var g = this.fb.group(line);
       g.setControl('teeth', this.fb.array(line.teeth));
+      g.setControl('promotions', this.fb.array(line.promotions));
       control.push(g);
     });
 
@@ -442,11 +409,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.getAmountAdvanceBalance();
   }
 
+
   loadRecord() {
     if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
         this.patchValueSaleOrder(result);
-        this.onCannotEdit();
         this.saleOrder = result;
       });
     }
@@ -665,16 +632,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         });
 
         let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-          modalRef.componentInstance.saleOrder = this.saleOrder;
-          modalRef.componentInstance.getUpdateSJ().subscribe(res => {
-            this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
-              this.patchValueSaleOrder(result);
-              this.onCannotEdit();
-              this.saleOrder = result;
-              modalRef.componentInstance.saleOrder = this.saleOrder;
-            });
+        modalRef.componentInstance.saleOrder = this.saleOrder;
+        modalRef.componentInstance.getUpdateSJ().subscribe(res => {
+          this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+            this.patchValueSaleOrder(result);
+            modalRef.componentInstance.saleOrder = this.saleOrder;
           });
-       
+        });
+
       });
     } else {
 
@@ -684,8 +649,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         modalRef.componentInstance.getUpdateSJ().subscribe(res => {
           this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
             this.patchValueSaleOrder(result);
-            this.onCannotEdit();
-            this.saleOrder = result;
             modalRef.componentInstance.saleOrder = this.saleOrder;
 
           });
@@ -717,13 +680,50 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return 0;
   }
 
-  onUpdateOpenLinePromotion(line, lineControl) {
-    this.updateLineInfo(line, lineControl);
+  onUpdateOpenLinePromotion(line, lineControl, i) {
+    this.updateLineInfo(line, lineControl);// lưu ở client
     const val = this.getFormDataSave();
-    this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
-      
-    });
+    if (!this.saleOrderId) {
+      this.saleOrderService.create(val).subscribe((result: any) => {
+        this.saleOrderId = result.id;
+        this.router.navigate(["/sale-orders/form"], {
+          queryParams: { id: result.id },
+        });
+        this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+          this.patchValueSaleOrder(result);
+
+          let modalRef = this.modalService.open(SaleOrderLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+          modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
+          modalRef.componentInstance.getUpdateSJ().subscribe(res => {
+            this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+              this.patchValueSaleOrder(result);
+              modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
+
+            });
+          });
+
+        });
+      })
+    } else {
+
+      this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
+        this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+          this.patchValueSaleOrder(result);
+          let modalRef = this.modalService.open(SaleOrderLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+          modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
+          modalRef.componentInstance.getUpdateSJ().subscribe(res => {
+            this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+              this.patchValueSaleOrder(result);
+              modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
+
+            });
+          });
+
+        });
+      });
+    }
   }
+
 
 }
 
