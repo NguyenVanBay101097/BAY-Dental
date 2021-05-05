@@ -17,15 +17,15 @@ export class SaleOrderLineApplyCouponComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      couponCode: ['', Validators.required]
+      couponCode: ['']
     });
   }
 
   onSave() {
-    if (!this.formGroup.valid) {
-      return false;
+    if(this.formGroup.value.couponCode.trim() == '') {
+      this.errorMsg = 'Vui lòng nhập mã khuyến mãi';
+      return;
     }
-
     var val = this.formGroup.value;
     val.id = this.lineId;
     this.saleOrderLineService.applyPromotionUsageCode(val).subscribe((res: any) => {

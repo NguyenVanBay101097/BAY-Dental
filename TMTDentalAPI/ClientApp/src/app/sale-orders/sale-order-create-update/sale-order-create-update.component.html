@@ -243,11 +243,11 @@
                                             <span class="ml-auto">{{sumPromotionSaleOrder() | number}}</span>
                                         </div>
                                         <div class="card-body px-3">
-                                            <p class="d-flex justify-content-between">
+                                            <p *ngIf="this.saleOrder.promotions?.length" class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Ưu đãi</label>
                                                 <label class="font-weight-600">Số tiền giảm</label>
                                             </p>
-                                            <p *ngFor="let item of saleOrder.promotions" class="d-flex justify-content-between">
+                                            <p *ngFor="let item of saleOrder.promotions" class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">{{item.name}}</label>
                                                 <label class="font-weight-600">{{item.amount | number}}</label>
                                             </p>
@@ -256,15 +256,15 @@
                                     <div class="card mb-3">
                                         <div class="card-header bg-primary text-white pl-2 py-1">Thanh toán</div>
                                         <div class="card-body px-2">
-                                            <p class="d-flex justify-content-between">
+                                            <p class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Thành tiền</label>
                                                 <label class="font-weight-600">{{getAmount() | number}}</label>
                                             </p>
-                                            <p class="d-flex justify-content-between">
+                                            <p class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Tổng giảm giá</label>
                                                 <label class="font-weight-600">{{getTotalDiscount() | number}}</label>
                                             </p>
-                                            <p class="d-flex justify-content-between">
+                                            <p class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Tổng tiền</label>
                                                 <label class="font-weight-600">{{getAmount() - getTotalDiscount() | number}}</label>
                                             </p>
