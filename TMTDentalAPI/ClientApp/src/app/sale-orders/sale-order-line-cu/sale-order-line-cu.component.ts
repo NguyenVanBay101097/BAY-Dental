@@ -96,13 +96,9 @@ export class SaleOrderLineCuComponent implements OnInit {
     this.isEditting = true;
     // this.canEdit = true;
     this.formGroupInfo = this.fb.group(this.line);
-    this.formGroupInfo.setControl("teeth", this.fb.array([]));
+    this.formGroupInfo.setControl("teeth", this.fb.array(this.line.teeth));
+    this.formGroupInfo.setControl("promotions", this.fb.array(this.line.promotions));
 
-    if (this.line.teeth) {
-      this.line.teeth.forEach((tooth) => {
-        this.TeethFA.push(this.fb.group(tooth));
-      });
-    }
   }
 
   onEmployeeFilter(value) {

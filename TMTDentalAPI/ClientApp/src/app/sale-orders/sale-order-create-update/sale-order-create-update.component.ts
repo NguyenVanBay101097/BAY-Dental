@@ -382,6 +382,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   patchValueSaleOrder(result) {
     this.saleOrder = result;
+    this.saleOrderId = result.id || null;
     this.formGroup.patchValue(result);
     let dateOrder = new Date(result.dateOrder);
     this.formGroup.get('dateOrderObj').patchValue(dateOrder);
@@ -458,6 +459,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       productUOMQty: 1,
       state: 'draft',
       teeth: this.fb.array([]),
+      promotions: this.fb.array([]),
       toothCategory: this.defaultToothCate,
       toothCategoryId: this.defaultToothCate.id,
       counselor: null,
@@ -614,6 +616,17 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.computeAmountTotal();
   }
 
+  openSaleOrderPromotionDialog() {
+    let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.saleOrder = this.saleOrder;
+    modalRef.componentInstance.getUpdateSJ().subscribe(res => {
+      this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+        this.patchValueSaleOrder(result);
+        modalRef.componentInstance.saleOrder = this.saleOrder;
+      });
+    });
+  }
+
   onOpenSaleOrderPromotion() {
     const val = this.getFormDataSave();
 
@@ -623,36 +636,17 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         return false;
       }
       this.saleOrderService.create(val).subscribe((result: any) => {
-        this.saleOrderId = result.id;
-        this.saleOrder = result;
-        this.saleOrder.promotions = [];
-
+        this.patchValueSaleOrder(result);
         this.router.navigate(["/sale-orders/form"], {
           queryParams: { id: result.id },
         });
 
-        let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-        modalRef.componentInstance.saleOrder = this.saleOrder;
-        modalRef.componentInstance.getUpdateSJ().subscribe(res => {
-          this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
-            this.patchValueSaleOrder(result);
-            modalRef.componentInstance.saleOrder = this.saleOrder;
-          });
-        });
-
+        this.openSaleOrderPromotionDialog();
       });
     } else {
 
       this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
-        let modalRef = this.modalService.open(SaleOrderPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-        modalRef.componentInstance.saleOrder = this.saleOrder;
-        modalRef.componentInstance.getUpdateSJ().subscribe(res => {
-          this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
-            this.patchValueSaleOrder(result);
-            modalRef.componentInstance.saleOrder = this.saleOrder;
-
-          });
-        });
+        this.openSaleOrderPromotionDialog();
       });
     }
   }
@@ -680,10 +674,27 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return 0;
   }
 
+  onOpenLinePromotionDialog(i){
+    let modalRef = this.modalService.open(SaleOrderLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
+    modalRef.componentInstance.getUpdateSJ().subscribe(res => {
+      this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+        this.patchValueSaleOrder(result);
+        modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
+
+      });
+    });
+  }
+
   onUpdateOpenLinePromotion(line, lineControl, i) {
     this.updateLineInfo(line, lineControl);// lưu ở client
     const val = this.getFormDataSave();
     if (!this.saleOrderId) {
+      this.submitted = true;
+      if (!this.formGroup.valid) {
+        return false;
+      }
+
       this.saleOrderService.create(val).subscribe((result: any) => {
         this.saleOrderId = result.id;
         this.router.navigate(["/sale-orders/form"], {
@@ -691,16 +702,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         });
         this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
           this.patchValueSaleOrder(result);
-
-          let modalRef = this.modalService.open(SaleOrderLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-          modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
-          modalRef.componentInstance.getUpdateSJ().subscribe(res => {
-            this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
-              this.patchValueSaleOrder(result);
-              modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
-
-            });
-          });
+          this.onOpenLinePromotionDialog(i);
 
         });
       })
@@ -709,21 +711,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
         this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
           this.patchValueSaleOrder(result);
-          let modalRef = this.modalService.open(SaleOrderLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-          modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
-          modalRef.componentInstance.getUpdateSJ().subscribe(res => {
-            this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
-              this.patchValueSaleOrder(result);
-              modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
-
-            });
-          });
+          this.onOpenLinePromotionDialog(innerHeight);
 
         });
       });
     }
   }
-
 
 }
 

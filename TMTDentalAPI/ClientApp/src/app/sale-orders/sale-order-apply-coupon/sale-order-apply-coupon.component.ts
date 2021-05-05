@@ -16,15 +16,19 @@ export class SaleOrderApplyCouponComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      couponCode: ['', Validators.required]
+      couponCode: ['']
     });
   }
 
   onSave() {
-    if (!this.formGroup.valid) {
-      return false;
-    }
+    // if (!this.formGroup.valid) {
+    //   return false;
+    // }
 
+    if(this.formGroup.value.couponCode.trim() == '') {
+      this.errorMsg = 'Vui lòng nhập mã khuyến mãi';
+      return;
+    }
     var val = this.formGroup.value;
     val.id = this.orderId;
     this.saleOrderService.applyCouponOnOrder(val).subscribe((res: any) => {
