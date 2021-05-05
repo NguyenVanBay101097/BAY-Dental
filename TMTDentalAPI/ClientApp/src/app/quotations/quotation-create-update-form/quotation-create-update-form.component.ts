@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -19,6 +19,7 @@ import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.ser
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 // import { UserSimple } from 'src/app/users/user-simple';
 import { UserBasic, UserPaged, UserService } from 'src/app/users/user.service';
+import { QuotationLineCuComponent } from '../quotation-line-cu/quotation-line-cu.component';
 import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../quotation.service';
 
 @Component({
@@ -39,6 +40,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   partner: any;
   // user: any;
   employee: any;
+  // employeeId: string;
   saleOrders: any;
   dateFrom: Date;
   dateTo: Date;
@@ -54,6 +56,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   filteredAdvisoryEmployees: EmployeeSimple[] = [];
   search: string = '';
   isEditing: boolean = true;
+  lineSelected = null;
+  defaultToothCate: ToothCategoryBasic;
+  filteredEmployees: any[] = [];
+  initialListEmployees: any = [];
+  @ViewChildren('lineTemplate') lineVCR: QueryList<QuotationLineCuComponent>;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
 
 
@@ -74,6 +81,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.formGroup = this.fb.group({
       partnerId: ['', Validators.required],
       employeeId: ['', Validators.required],
+      employee: [null, Validators.required],
       note: '',
       dateQuotation: [null, Validators.required],
       dateApplies: [0, Validators.required],
@@ -86,7 +94,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.routeActive();
     this.loadToothCategories();
 
-    this.loadEmployee();
+    this.loadEmployees();
   }
 
   routeActive() {
@@ -105,6 +113,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.partner = result.partner;
           this.partnerId = result.partnerId;
           this.employee = result.employee;
+          // this.employeeId = result.employeeId;
           this.saleOrders = result.orders;
           this.formGroup.get('note').patchValue(result.note);
           this.formGroup.get('partnerId').patchValue(result.partnerId);
@@ -275,22 +284,43 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.loadTeethMap(data.toothCategory);
     if (data.teeth) {
       this.teethSelected = Object.assign([], data.teeth);
-    }    
+    }
   }
 
-  updateLineInfo(lineControl) {
-    var line = this.formGroupInfo.value;
-    line.teeth = this.teethSelected;
-    // line.advisoryUserId = line.advisoryUser ? line.advisoryUser.id : null;
-    line.advisoryEmployeeId = line.advisoryEmployee ? line.advisoryEmployee.id : null;
-    line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
+  // updateLineInfo(lineControl) {
+  //   var line = this.formGroupInfo.value;
+  //   line.teeth = this.teethSelected;
+  //   // line.advisoryUserId = line.advisoryUser ? line.advisoryUser.id : null;
+  //   line.advisoryEmployeeId = line.advisoryEmployee ? line.advisoryEmployee.id : null;
+  //   line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
+  //   lineControl.patchValue(line);
+  //   lineControl.get('teeth').clear();
+  //   line.teeth.forEach(teeth => {
+  //     let g = this.fb.group(teeth);
+  //     lineControl.get('teeth').push(g);
+  //   });
+  //   this.onChangeQuantity(lineControl);
+  // }
+  updateLineInfo(line, lineControl) {
+    line.toothCategoryId = line.toothCategory.id;
+    line.assistantId = line.assistant ? line.assistant.id : null;
+    line.employeeId = line.employee ? line.employee.id : null;
+    // line.productUOMQty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
+    line.counselorId = line.counselor ? line.counselor.id : null;
     lineControl.patchValue(line);
+
     lineControl.get('teeth').clear();
     line.teeth.forEach(teeth => {
       let g = this.fb.group(teeth);
       lineControl.get('teeth').push(g);
     });
-    this.onChangeQuantity(lineControl);
+
+    lineControl.updateValueAndValidity();
+    //// this.onChangeQuantity(lineControl);
+    // this.computeAmountTotal();
+    // console.log(line);
+
+    this.lineSelected = null;
   }
 
   // load teeth 
@@ -400,8 +430,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   // Luu
   getDataFormGroup() {
     var value = this.formGroup.value;
+    // console.log(value);
     value.dateQuotation = this.intlService.formatDate(value.dateQuotation, "yyyy-MM-dd");
     value.companyId = this.quotation.companyId;
+    value.employeeId = value.employee.id;
+    value.totalAmount = this.getAmountTotal();
+    delete value.employee;
     if (this.quotationId) {
       value.Id = this.quotationId;
     }
@@ -424,7 +458,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   onSave() {
     var val = this.getDataFormGroup();
     console.log(val);
-    return;
     if (this.quotationId) {
       this.quotationService.update(this.quotationId, val).subscribe(
         () => {
@@ -464,14 +497,14 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.patchValue(line.value);
   }
 
-  loadEmployee(search?: string) {
-    this.search = search || '';
-    this.searchEmployees(this.search).subscribe(
-      result => {
-        this.filteredAdvisoryEmployees = result;
-      }
-    )
-  }
+  // loadEmployee(search?: string) {
+  //   this.search = search || '';
+  //   this.searchEmployees(this.search).subscribe(
+  //     result => {
+  //       this.filteredAdvisoryEmployees = result;
+  //     }
+  //   )
+  // }
 
 
   searchEmployees(search: string) {
@@ -480,8 +513,33 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     // val.hasRoot = false;
     return this.employeeService.getEmployeeSimpleList(val)
   }
+  loadEmployees() {
+    var val = new EmployeePaged();
+    val.limit = 20;
+    val.offset = 0;
+    val.isDoctor = true;
+    val.active = true;
+
+    this.employeeService
+      .getEmployeeSimpleList(val)
+      .subscribe((result: any[]) => {
+        this.initialListEmployees = result;
+        // this.filteredEmployees = this.initialListEmployees.slice(0, 20);
+      });
+  }
+  onEmployeeFilter(value) {
+    // console.log(value);
+
+    // this.filteredEmployees = this.initialListEmployees
+    //   .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
+    //   .slice(0, 20);
+  }
 
   addLine(val) {
+    if (this.lineSelected) {
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để thêm dịch vụ khác');
+      return;
+    }
     var line = new QuotationLineDisplay();
     if (val.id) {
       line.id = val.id;
@@ -497,6 +555,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.subPrice = val.subPrice ? val.subPrice : (val.listPrice ? val.listPrice : 0);
     line.name = val.name;
     line.amount = val.amount;
+    line.toothType = val.toothType ? val.toothType : "manual";
     line.teeth = this.fb.array([]);
     if (val.teeth) {
       val.teeth.forEach(item => {
@@ -505,15 +564,50 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     }
     line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
     line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
-    
+
     var res = this.fb.group(line);
     this.linesArray.push(res);
     this.linesArray.markAsDirty();
     this.createFormInfo(line);
+
+    this.lineSelected = res.value;
+    // mặc định là trạng thái sửa
+    setTimeout(() => {
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      viewChild.onEditLine();
+    }, 0);
   }
 
-  editLine(index: number) { 
-    this.isEditing = true;
+  onEditLine(line) {
+    // console.log(line);
+    if (this.lineSelected != null) {
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để chỉnh sửa dịch vụ khác');
+    } else {
+      this.lineSelected = line;
+      var viewChild = this.lineVCR.find(x => x.line == line);
+      viewChild.onEditLine();
+    }
+  }
+
+  onDeleteLine(index) {
+    this.linesArray.removeAt(index);
+    this.getAmountTotal();
+    this.linesArray.markAsDirty();
+  }
+
+  onCancelEditLine(line) {
+    this.lineSelected = null;
+
+  }
+
+  notify(type, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: type, icon: true }
+    });
   }
 }
 

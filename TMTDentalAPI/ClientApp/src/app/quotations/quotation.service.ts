@@ -30,6 +30,7 @@ export class QuotationLineDisplay {
   name: string;
   amount: number;
   teeth: any;
+  toothType: string;
 }
 export class QuotationLineSave {
   productId: string;
