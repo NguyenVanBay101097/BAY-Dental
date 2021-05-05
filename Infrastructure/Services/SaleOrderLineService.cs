@@ -762,7 +762,7 @@ namespace Infrastructure.Services
             await orderObj.UpdateAsync(orderLine.Order);
         }
 
-        public async Task ApplyPromotionOnOrderLine(ApplyPromotionRequest val)
+        public async Task<SaleCouponProgramResponse> ApplyPromotionOnOrderLine(ApplyPromotionRequest val)
         {
             var programObj = GetService<ISaleCouponProgramService>();
             var couponObj = GetService<ISaleCouponService>();
@@ -780,10 +780,51 @@ namespace Infrastructure.Services
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
                     await _CreateRewardLine(orderLine, program);
-
+                    return new SaleCouponProgramResponse { Error = null, Success = true, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
                 }
                 else
-                    throw new Exception(error_status.Error);
+                    return new SaleCouponProgramResponse { Error = error_status.Error, Success = false, SaleCouponProgram = null };
+            }
+            else
+            {
+                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };
+
+            }
+        }
+
+        public async Task<SaleCouponProgramResponse> ApplyPromotionUsageCodeOnOrderLine(ApplyPromotionUsageCode val)
+        {
+            var couponCode = val.CouponCode;
+            var programObj = GetService<ISaleCouponProgramService>();
+            var couponObj = GetService<ISaleCouponService>();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var orderLine = await SearchQuery(x => x.Id == val.Id)
+                .Include(x => x.Product)
+                .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+                .Include(x => x.Order).ThenInclude(x => x.Promotions)
+                .Include(x => x.Order).ThenInclude(x => x.OrderLines)
+                .Include(x => x.SaleOrderLineInvoice2Rels)
+                .FirstOrDefaultAsync();
+
+            //Chương trình khuyến mãi sử dụng mã
+            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).FirstOrDefaultAsync();
+            if (program != null)
+            {
+                var error_status = await programObj._CheckPromotionApplySaleLine(program, orderLine);
+                if (string.IsNullOrEmpty(error_status.Error))
+                {
+                        await _CreateRewardLine(orderLine, program);
+
+                    return new SaleCouponProgramResponse { Error = null, Success = true, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
+                }
+                else
+                    //throw new Exception(error_status.Error);
+                    return new SaleCouponProgramResponse { Error = error_status.Error, Success = false, SaleCouponProgram = null };
+            }
+            else
+            {
+                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };
+
             }
         }
 

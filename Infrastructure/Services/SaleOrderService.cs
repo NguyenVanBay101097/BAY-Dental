@@ -400,7 +400,7 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
-        public async Task<SaleCouponProgramResponse> ApplyCoupon(SaleOrderApplyCoupon val)
+        public async Task<SaleCouponProgramResponse> ApplyCoupon(ApplyPromotionUsageCode val)
         {
             var couponCode = val.CouponCode;
             var programObj = GetService<ISaleCouponProgramService>();

@@ -32,7 +32,7 @@ namespace Infrastructure.Services
         Task _ComputeAmountPromotionToOrder(IEnumerable<Guid> ids);
 
         //Task ApplyCoupon(SaleOrderApplyCoupon val);
-        Task<SaleCouponProgramResponse> ApplyCoupon(SaleOrderApplyCoupon val);
+        Task<SaleCouponProgramResponse> ApplyCoupon(ApplyPromotionUsageCode val);
         Task ApplyPromotion(Guid id);
 
         Task ApplyPromotionOnOrder(ApplyPromotionRequest val);

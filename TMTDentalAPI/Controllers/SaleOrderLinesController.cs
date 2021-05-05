@@ -82,15 +82,26 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyPromotionUsageCode(ApplyPromotionUsageCode val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            var res = await _saleLineService.ApplyPromotionUsageCodeOnOrderLine(val);
+            _unitOfWork.Commit();
+            return Ok(res);
+        }
+
         [HttpPost("[action]")]     
         public async Task<IActionResult> ApplyPromotion(ApplyPromotionRequest val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _saleLineService.ApplyPromotionOnOrderLine(val);
+           var res =  await _saleLineService.ApplyPromotionOnOrderLine(val);
             _unitOfWork.Commit();
-            return NoContent();
+            return Ok(res);
         }
 
         [HttpPatch("{id}/[action]")]

@@ -125,10 +125,11 @@ namespace Infrastructure.Services
 
         public SaleOrderPromotion PreparePromotionToOrderLine(SaleOrderLine self, SaleCouponProgram program, decimal discountAmount)
         {
+            var total = self.PriceUnit * self.ProductUOMQty;
             var promotionLine = new SaleOrderPromotion
             {
                 Name = program.Name,
-                Amount = Math.Round(((self.PriceUnit * self.ProductUOMQty) / (self.Order.AmountTotal ?? 0)) * discountAmount / self.ProductUOMQty),
+                Amount = Math.Round(total * discountAmount),
                 SaleCouponProgramId = program.Id,
                 SaleOrderLineId = self.Id,
                 SaleOrderId = self.OrderId
@@ -138,8 +139,8 @@ namespace Infrastructure.Services
 
             promotionLine.Lines.Add(new SaleOrderPromotionLine
             {
-                Amount = ((self.PriceUnit * self.ProductUOMQty) / (self.Order.AmountTotal ?? 0)) * discountAmount,
-                PriceUnit = Math.Round(((self.PriceUnit * self.ProductUOMQty) / (self.Order.AmountTotal ?? 0)) * discountAmount / self.ProductUOMQty),
+                Amount = promotionLine.Amount,
+                PriceUnit = Math.Round(promotionLine.Amount / self.ProductUOMQty),
                 SaleOrderLineId = self.Id,
             });
 

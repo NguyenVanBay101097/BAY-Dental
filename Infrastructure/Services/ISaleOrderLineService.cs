@@ -56,7 +56,9 @@ namespace Infrastructure.Services
 
         Task ApplyDiscountOnOrderLine(ApplyDiscountViewModel val);
 
-        Task ApplyPromotionOnOrderLine(ApplyPromotionRequest val);
+        Task<SaleCouponProgramResponse> ApplyPromotionUsageCodeOnOrderLine(ApplyPromotionUsageCode val);
+
+        Task<SaleCouponProgramResponse> ApplyPromotionOnOrderLine(ApplyPromotionRequest val);
 
         decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line);
     }

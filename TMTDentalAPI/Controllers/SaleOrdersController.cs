@@ -177,7 +177,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Update")]
-        public async Task<IActionResult> ApplyCouponOnOrder(SaleOrderApplyCoupon val)
+        public async Task<IActionResult> ApplyCouponOnOrder(ApplyPromotionUsageCode val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();

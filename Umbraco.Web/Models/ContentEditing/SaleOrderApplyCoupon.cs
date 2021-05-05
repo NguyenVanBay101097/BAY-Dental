@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class SaleOrderApplyCoupon
+    public class ApplyPromotionUsageCode
     {
         public Guid Id { get; set; }
         public string CouponCode { get; set; }
