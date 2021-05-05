@@ -38,7 +38,6 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
   private updateSubject = new Subject<any>();
 
   isChange = false;
-  code = '';
 
 
   constructor(
@@ -109,21 +108,6 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
   //   this.notificationService.notify('success', 'Thành công!');
   //   this.isChange = true;
   // }
-
-  applyPromotionManual() {
-      if (this.code.trim() == '') return;
-
-      var val = {
-        id: this.saleOrder.id,
-        couponCode: this.code,
-      };
-      this.saleOrderSevice.applyCouponOnOrder(val).subscribe((res) => {
-        console.log(res);
-        this.notificationService.notify('success', 'Thành công!');
-        this.updateSubject.next(true);
-        this.isChange = true;
-      });
-  }
 
   onApplyCouponSuccess() {
     this.notificationService.notify('success', 'Thành công!');
