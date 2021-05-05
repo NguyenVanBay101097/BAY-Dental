@@ -749,7 +749,7 @@ namespace Infrastructure.Services
                 {
                     SaleOrderLineId = promotion.SaleOrderLineId.Value,
                     Amount = promotion.Amount,
-                    PriceUnit = Math.Round(promotion.Amount / orderLine.ProductUOMQty),
+                    PriceUnit = orderLine.ProductUOMQty != 0 ? Math.Round(promotion.Amount / orderLine.ProductUOMQty) : 0,
                 });
 
                 await orderPromotionObj.CreateAsync(promotion);
@@ -942,7 +942,7 @@ namespace Infrastructure.Services
                         foreach (var child in promotion.Lines)
                         {
                             child.Amount = promotion.Amount;
-                            child.PriceUnit = promotion.Amount / line.ProductUOMQty;
+                            child.PriceUnit = line.ProductUOMQty != 0 ? Math.Round(promotion.Amount / line.ProductUOMQty) : 0;
                         }
                     }
                 }

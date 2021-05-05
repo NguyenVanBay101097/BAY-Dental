@@ -106,16 +106,17 @@ namespace Infrastructure.Services
 
             _ComputePromotionType(promotionLine, program);
 
+            var total = self.OrderLines.Sum(x => x.PriceUnit * x.ProductUOMQty);
             foreach (var line in self.OrderLines)
             {
-                var subTotal = line.PriceSubTotal;
+                var subTotal = line.PriceUnit * line.ProductUOMQty;
                 if (subTotal == 0)
                     continue;
 
                 promotionLine.Lines.Add(new SaleOrderPromotionLine
                 {
-                    Amount = (subTotal / (self.AmountTotal ?? 0)) * discountAmount,
-                    PriceUnit = (subTotal / (self.AmountTotal ?? 0)) * discountAmount / line.ProductUOMQty,
+                    Amount = Math.Round(subTotal / total * discountAmount),
+                    PriceUnit = line.ProductUOMQty != 0 ? Math.Round(subTotal / total * discountAmount / line.ProductUOMQty) : 0,
                     SaleOrderLineId = line.Id,
                 });
             }

@@ -1234,9 +1234,8 @@ namespace Infrastructure.Services
 
         public void ReComputePromotionOrder(SaleOrder order)
         {
-            foreach (var promotion in order.Promotions)
+            foreach (var promotion in order.Promotions.Where(x => !x.SaleOrderLineId.HasValue))
             {
-                
                 var total = promotion.Lines.Select(x => x.SaleOrderLine).Sum(x => (x.PriceUnit * x.ProductUOMQty));
                 if (promotion.Type == "discount")
                 {
@@ -1254,7 +1253,8 @@ namespace Infrastructure.Services
                 foreach(var line in promotion.Lines)
                 {
                     line.Amount = ((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount;
-                    line.PriceUnit = ((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / line.SaleOrderLine.ProductUOMQty;
+                    line.PriceUnit = line.SaleOrderLine.ProductUOMQty != 0 ?
+                        Math.Round(((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / line.SaleOrderLine.ProductUOMQty) : 0;
                 }             
             }
         }
@@ -2696,7 +2696,7 @@ namespace Infrastructure.Services
             var total = order.OrderLines.Sum(x => x.PriceUnit * x.ProductUOMQty);
             var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
 
-            var promotion = order.Promotions.Where(x => x.Type == "discount").FirstOrDefault();
+            var promotion = order.Promotions.Where(x => x.Type == "discount" && !x.SaleOrderLineId.HasValue).FirstOrDefault();
             if (promotion != null)
             {
                 promotion.Amount = (discount_amount ?? 0);
@@ -2730,7 +2730,7 @@ namespace Infrastructure.Services
                         promotion.Lines.Add(new SaleOrderPromotionLine
                         {
                             Amount = amount,
-                            PriceUnit = Math.Round(amount / line.ProductUOMQty),
+                            PriceUnit = line.ProductUOMQty != 0 ? Math.Round(amount / line.ProductUOMQty) : 0,
                             SaleOrderLineId = line.Id,
                         });
                     }
