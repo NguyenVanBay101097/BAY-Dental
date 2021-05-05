@@ -130,7 +130,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
@@ -629,6 +628,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onOpenSaleOrderPromotion() {
+     //update line trước khi lưu
+     if (this.lineSelected != null) {
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      viewChild.updateLineInfo();
+    }
     const val = this.getFormDataSave();
 
     if (!this.saleOrderId) {
@@ -691,7 +695,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onUpdateOpenLinePromotion(line, lineControl, i) {
-    this.updateLineInfo(line, lineControl);// lưu ở client
+     //update line trước khi lưu
+     if (this.lineSelected != null) {
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      viewChild.updateLineInfo();
+    }
+    // this.updateLineInfo(line, lineControl);// lưu ở client
     const val = this.getFormDataSave();
     if (!this.saleOrderId) {
       this.submitted = true;
