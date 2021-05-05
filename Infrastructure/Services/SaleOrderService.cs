@@ -1226,25 +1226,17 @@ namespace Infrastructure.Services
             _GetInvoiced(new List<SaleOrder>() { order });
 
             await UpdateAsync(order);
-
-            ////compute promotion nếu có
-            //if (order.Promotions.Any())
-            //{
-            //    var promotionObj = GetService<ISaleOrderPromotionService>();
-            //    await promotionObj._PrepareUpdatePromotion(order.Promotions.Select(x => x.Id).ToList());
-            //}
-
+       
         }
 
         public void ReComputePromotionOrder(SaleOrder order)
         {
             foreach (var promotion in order.Promotions)
             {
-
-                var total = promotion.SaleOrder.OrderLines.Sum(x => (x.PriceUnit * x.ProductUOMQty));
+                
+                var total = promotion.Lines.Select(x => x.SaleOrderLine).Sum(x => (x.PriceUnit * x.ProductUOMQty));
                 if (promotion.Type == "discount")
                 {
-
                     promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
                 }
 
@@ -1256,12 +1248,11 @@ namespace Infrastructure.Services
                         promotion.Amount = total * (promotion.SaleCouponProgram.DiscountPercentage ?? 0) / 100;
                 }
 
-
-                foreach (var child in promotion.Lines)
+                foreach(var line in promotion.Lines)
                 {
-                    child.Amount = ((child.SaleOrderLine.PriceUnit * child.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount;
-                    child.PriceUnit = ((child.SaleOrderLine.PriceUnit * child.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / child.SaleOrderLine.ProductUOMQty;
-                }
+                    line.Amount = ((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount;
+                    line.PriceUnit = ((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / line.SaleOrderLine.ProductUOMQty;
+                }             
             }
         }
 

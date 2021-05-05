@@ -877,17 +877,15 @@ namespace Infrastructure.Services
         public void RecomputePromotionLine(IEnumerable<SaleOrderLine> self)
         {
             //vong lap
-
             foreach (var line in self)
             {
                 if (line.Promotions.Any())
                 {
                     foreach (var promotion in line.Promotions)
                     {
-                        var total = self.Sum(x => (x.PriceUnit * x.ProductUOMQty));
+                        var total = line.PriceUnit * line.ProductUOMQty;
                         if (promotion.Type == "discount")
                         {
-
                             promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
                         }
 
@@ -899,14 +897,12 @@ namespace Infrastructure.Services
                                 promotion.Amount = total * (promotion.SaleCouponProgram.DiscountPercentage ?? 0) / 100;
                         }
 
-
                         foreach (var child in promotion.Lines)
                         {
-                            child.Amount = ((line.PriceUnit * line.ProductUOMQty) / total) * promotion.Amount;
-                            child.PriceUnit = ((line.PriceUnit * line.ProductUOMQty) / total) * promotion.Amount / line.ProductUOMQty;
+                            child.Amount = promotion.Amount;
+                            child.PriceUnit = promotion.Amount / line.ProductUOMQty;
                         }
                     }
-
                 }
             }
 
