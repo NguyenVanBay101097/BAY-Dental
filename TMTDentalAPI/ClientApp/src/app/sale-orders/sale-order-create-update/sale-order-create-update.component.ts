@@ -130,6 +130,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
@@ -639,7 +640,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.saleOrderId = result.id;
         this.saleOrder = result;
         this.saleOrder.promotions = [];
-        
+
         this.router.navigate(["/sale-orders/form"], {
           queryParams: { id: result.id },
         });
