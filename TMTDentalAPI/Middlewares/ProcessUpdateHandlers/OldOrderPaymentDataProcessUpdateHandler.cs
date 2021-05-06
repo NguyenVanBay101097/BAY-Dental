@@ -57,6 +57,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                     var orders = orderObj.SearchQuery(x => x.CompanyId == company.Id && x.State != "draft")
                         .Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLinePaymentRels).ThenInclude(x => x.Payment)
                         .Include(x => x.OrderLines).ThenInclude(x => x.PartnerCommissions)
+                        .Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLineInvoice2Rels)
                         .ToList();
 
                     //vòng lặp các phiếu điều trị xóa các hóa đơn 
@@ -78,24 +79,23 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                                 continue;
 
                             if (line.SaleOrderLinePaymentRels.Any())
+                            {
                                 payment_ids = payment_ids.Union(line.SaleOrderLinePaymentRels.Select(x => x.PaymentId).ToList());
-
-
-
-
-                            linePaymentRelObj.DeleteAsync(line.SaleOrderLinePaymentRels);
-                            var amountPaid = linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
-                            line.AmountPaid = amountPaid.Result;
-                            line.AmountResidual = 0;
-
-                            saleLineObj._GetInvoiceQty(order.OrderLines);
-                            saleLineObj._GetToInvoiceQty(order.OrderLines);
-                            saleLineObj._GetInvoiceAmount(order.OrderLines);
-                            saleLineObj._GetToInvoiceAmount(order.OrderLines);
-                            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
-                            saleLineObj._RemovePartnerCommissions(order.OrderLines.Select(x => x.Id).ToList());
-                            order.Residual = 0;
+                                linePaymentRelObj.DeleteAsync(line.SaleOrderLinePaymentRels);
+                                var amountPaid = linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid ?? 0);
+                                line.AmountPaid = amountPaid.Result;
+                                line.AmountResidual = 0;
+                            }
+                                                                                
                         }
+
+                        saleLineObj._GetInvoiceQty(order.OrderLines);
+                        saleLineObj._GetToInvoiceQty(order.OrderLines);
+                        saleLineObj._GetInvoiceAmount(order.OrderLines);
+                        saleLineObj._GetToInvoiceAmount(order.OrderLines);
+                        saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+                        saleLineObj._RemovePartnerCommissions(order.OrderLines.Select(x => x.Id).ToList());
+                        order.Residual = 0;
 
                         orderObj._GetInvoiced(new List<SaleOrder>() { order });
                         orderObj.UpdateAsync(order);
