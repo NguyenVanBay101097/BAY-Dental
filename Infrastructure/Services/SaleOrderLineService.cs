@@ -152,6 +152,18 @@ namespace Infrastructure.Services
 
                 if (line.Id == Guid.Empty)
                     line.State = order.State;
+
+                //if (line.Promotions.Any())
+                //{
+                //    foreach (var promotion in line.Promotions)
+                //    {
+                //        if (promotion.SaleOrderId.HasValue)
+                //            continue;
+
+                //        promotion.SaleOrder = order;
+                //    }
+                        
+                //}
             }
         }
 
