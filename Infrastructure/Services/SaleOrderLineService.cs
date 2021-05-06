@@ -811,7 +811,7 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
 
             //Chương trình khuyến mãi sử dụng mã
-            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).FirstOrDefaultAsync();
+            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).Include(x => x.DiscountSpecificProducts).FirstOrDefaultAsync();
             if (program != null)
             {
                 var error_status = await programObj._CheckPromotionApplySaleLine(program, orderLine);
@@ -853,18 +853,10 @@ namespace Infrastructure.Services
         public decimal _GetRewardValuesDiscountPercentagePerOrderLine(SaleCouponProgram program, SaleOrderLine line)
         {
             //discount_amount = so luong * don gia da giam * phan tram
-            var discount_amount = line.ProductUOMQty * (line.PriceUnit * (1 - line.Discount / 100)) *
+            var price_reduce = (line.PriceUnit * (1 - line.Discount / 100)) *
                 ((program.DiscountPercentage ?? 0) / 100);
+            var discount_amount = (line.PriceUnit - price_reduce) * line.ProductUOMQty;
             return discount_amount;
-        }
-
-        private decimal _GetRewardValuesDiscountFixedAmount(SaleOrderLine self, SaleCouponProgram program)
-        {
-            var total_amount = self.PriceSubTotal;
-            var fixed_amount = program.DiscountFixedAmount ?? 0;
-            if (total_amount < fixed_amount)
-                return total_amount;
-            return fixed_amount;
         }
 
         public decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line)
@@ -876,8 +868,9 @@ namespace Infrastructure.Services
         }
 
         private decimal _GetRewardValuesDiscountFixedAmountLine(SaleOrderLine self, SaleCouponProgram program)
-        {          
-            var fixed_amount = self.PriceUnit - (program.DiscountFixedAmount ?? 0);       
+        {
+            var price_reduce = self.PriceUnit - (program.DiscountFixedAmount ?? 0);
+            var fixed_amount = (self.PriceUnit - price_reduce) * self.ProductUOMQty;
             return fixed_amount;
         }
 

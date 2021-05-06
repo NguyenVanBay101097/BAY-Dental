@@ -13,11 +13,14 @@ export class SaleOrderPromotionPaged {
 export class SaleOrderPromotionSave {
 name: string;
 amount: number;
-type: string;
 saleCouponProgramId: string;
+saleOrderId: string;
+saleOrderLineId: string;
 discountType: string;
 discountPercent: number;
 discountFixed: number;
+type: string;
+
 }
 
 @Injectable({

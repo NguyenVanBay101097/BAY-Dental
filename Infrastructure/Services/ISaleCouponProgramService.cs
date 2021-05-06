@@ -33,6 +33,6 @@ namespace Infrastructure.Services
         Task ActionArchive(IEnumerable<Guid> ids);
         Task ActionUnArchive(IEnumerable<Guid> ids);
 
-        Task<SaleCouponProgramResponse> GetPromotionDisplayUsageCode(string code);
+        Task<SaleCouponProgramResponse> GetPromotionDisplayUsageCode(string code, Guid? productId);
     }
 }

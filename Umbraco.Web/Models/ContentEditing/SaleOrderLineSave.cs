@@ -32,6 +32,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
 
+
+        /// <summary>
+        /// danh sách chương trình ưu đãi
+        /// </summary>
+        public ICollection<SaleOrderPromotionSave> Promotions { get; set; } = new List<SaleOrderPromotionSave>();
+
         public string State { get; set; }
 
         public string DiscountType { get; set; }

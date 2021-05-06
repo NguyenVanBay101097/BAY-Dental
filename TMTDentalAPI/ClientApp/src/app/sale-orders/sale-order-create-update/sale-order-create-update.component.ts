@@ -211,7 +211,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
 
-  updateLineInfo(line, lineControl) {
+  updateLineInfo(line, lineControl: FormGroup) {
     line.toothCategoryId = line.toothCategory.id;
     line.assistantId = line.assistant ? line.assistant.id : null;
     line.employeeId = line.employee ? line.employee.id : null;
@@ -219,12 +219,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     line.counselorId = line.counselor ? line.counselor.id : null;
     lineControl.patchValue(line);
 
-    lineControl.get('teeth').clear();
-    line.teeth.forEach(teeth => {
-      let g = this.fb.group(teeth);
-      lineControl.get('teeth').push(g);
-      lineControl.get('promotions').push(g);
-    });
+    lineControl.setControl('teeth', this.fb.array(line.teeth));
+    lineControl.setControl('promotions', this.fb.array(line.promotions));
 
     lineControl.updateValueAndValidity();
     // this.onChangeQuantity(lineControl);

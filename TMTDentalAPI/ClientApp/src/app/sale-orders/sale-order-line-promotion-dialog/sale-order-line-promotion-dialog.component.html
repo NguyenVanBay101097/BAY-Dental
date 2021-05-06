@@ -12,14 +12,14 @@
                 <div class="o_group">
                     <!-- giảm tiền -->
                     <div>
-                        <label for="" class="font-weight-600">Giảm thành tiền</label>
+                        <label for="" class="font-weight-600">Giảm đơn giá</label>
 
                         <ng-container *ngIf="getListPromotion('discount').length == 0; else elseTemplateDiscount">
                             <app-promotion-discount (applyEvent)="applyDiscount($event)"></app-promotion-discount>
                         </ng-container>
                         <ng-template #elseTemplateDiscount>
                             <p *ngFor="let item of getListPromotion('discount')" class="d-flex justify-content-between">
-                                <label for="" class="font-weight-600">{{item.amount | number}}</label>
+                                <label for="" class="font-weight-600">{{getPriceUnitPromotion(item.amount) | number: '1.0-0'}}</label>
                                 <label for="">
                                     <i title="Xóa giảm tiền" class="fa fa-trash-alt bg-danger text-white btn-icon" (click)="onDeletePromotion(item)"></i>
                                 </label>
