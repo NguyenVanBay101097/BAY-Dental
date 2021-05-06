@@ -23,10 +23,10 @@
     border: 1px solid #ccc;
     display: inline-block;
     cursor: pointer;
-    /* margin-top: .25rem;
-    margin-bottom: .25rem; */
-    border-right: none;
     border-radius: 0;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+    box-shadow: none;
 }
 
 .tooth-wrapper .tooth-item-collapsed:last-child {
@@ -89,7 +89,6 @@
 }
 
 .btn-radio-active,
-.promotions,
 .btn-radio:hover {
     background: #F5FAFF !important;
     border: 1px solid #007BFF !important;
@@ -98,10 +97,24 @@
     color: #007BFF !important;
 }
 
+.promotions {
+    background: #F5FAFF !important;
+    border: 1px solid #007BFF !important;
+    box-sizing: border-box;
+    border-radius: 4px;
+    color: #007BFF !important;
+    max-width: 350px;
+}
+
 .btn-radio {
     background: #FFFFFF;
     border: 1px solid #EBEDEF;
     box-sizing: border-box;
     border-radius: 4px;
     color: #828588;
+}
+
+.button_actions .btn {
+    padding: 0.125rem 0.35rem;
+    margin-right: 5px;
 }

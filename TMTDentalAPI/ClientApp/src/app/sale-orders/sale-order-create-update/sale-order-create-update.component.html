@@ -86,7 +86,7 @@
                                     <a *ngIf="partner" [routerLink]="['/partners/customer/' + partner.id]">{{partner.displayName}}</a>
                                 </td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Báo giá
@@ -94,7 +94,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr *ngIf="saleOrder.Quote">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -211,7 +211,7 @@
                     <div class="tab-pane active h-100" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <div class="w-100 h-100 d-flex flex-column">
                             <!-- && isEditting -->
-                            <div *ngIf="isEditSate()" class="w-25 mb-2">
+                            <div *ngIf="isEditSate()" class="mb-2">
                                 <app-service-list-search-dropdown (onSelectService)="addLine($event)"></app-service-list-search-dropdown>
                             </div>
                             <div class="d-flex overflow-auto w-100">
@@ -238,24 +238,24 @@
                                 <div class="w-25 pl-3">
                                     <!-- ưu đãi -->
                                     <div class="card mb-3">
-                                        <div class="card-header bg-primary text-white pl-2 py-1 d-flex">Ưu đãi phiếu điều trị
+                                        <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">Ưu đãi phiếu điều trị
                                             <img class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
                                             <span class="ml-auto">{{sumPromotionSaleOrder() | number}}</span>
                                         </div>
-                                        <div class="card-body px-3">
-                                            <p *ngIf="this.saleOrder.promotions?.length" class="d-flex justify-content-between mb-0">
-                                                <label class="font-weight-600">Ưu đãi</label>
-                                                <label class="font-weight-600">Số tiền giảm</label>
-                                            </p>
-                                            <p *ngFor="let item of saleOrder.promotions" class="d-flex justify-content-between mb-0">
-                                                <label class="font-weight-600">{{item.name}}</label>
-                                                <label class="font-weight-600">{{item.amount | number}}</label>
-                                            </p>
+                                        <div class="card-body px-3 py-2">
+                                            <div *ngIf="this.saleOrder.promotions?.length" class="d-flex justify-content-between mb-1">
+                                                <span class="font-weight-600">Ưu đãi</span>
+                                                <span class="font-weight-600">Số tiền giảm</span>
+                                            </div>
+                                            <div *ngFor="let item of saleOrder.promotions" class="d-flex justify-content-between mb-1">
+                                                <span>{{item.name}}</span>
+                                                <span>{{item.amount | number}}</span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="card mb-3">
-                                        <div class="card-header bg-primary text-white pl-2 py-1">Thanh toán</div>
-                                        <div class="card-body px-2">
+                                        <div class="card-header bg-primary text-white px-3 py-1">Thanh toán</div>
+                                        <div class="card-body px-3 py-2">
                                             <p class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Thành tiền</label>
                                                 <label class="font-weight-600">{{getAmount() | number}}</label>
