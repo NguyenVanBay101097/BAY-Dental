@@ -2319,19 +2319,17 @@ namespace Infrastructure.Services
         public async Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderSave val)
         {
             var programObj = GetService<ISaleCouponProgramService>();
-            var lineObj = GetService<ISaleOrderLineService>();
+            var saleLineService = GetService<ISaleOrderLineService>();
             var res = new SaleOrderSave();
             res.CompanyId = val.CompanyId;
             res.DateOrder = val.DateOrder;
             res.Note = val.Note;
-            res.OrderLines = val.OrderLines;
             res.PartnerId = val.PartnerId;
             res.PricelistId = val.PricelistId;
             res.IsFast = true;
 
             var order = _mapper.Map<SaleOrder>(res);
             await CreateAsync(order);
-            //tạo sale order        
 
             var lines = new List<SaleOrderLine>();
             var sequence = 0;
@@ -2353,6 +2351,8 @@ namespace Infrastructure.Services
                     }
                 }
 
+                await saleLineService.CreateAsync(saleLine);
+
                 if (line.Promotions.Any())
                 {
                     foreach (var item in line.Promotions)
@@ -2370,7 +2370,7 @@ namespace Infrastructure.Services
                             promotion.DiscountFixed = item.DiscountFixed;
                             promotion.DiscountPercent = item.DiscountPercent;
                             promotion.SaleOrderLine = saleLine;
-                            promotion.SaleOrderId = order.Id;
+                            promotion.SaleOrderId = saleLine.OrderId;
 
                             promotion.Lines.Add(new SaleOrderPromotionLine
                             {
@@ -2389,7 +2389,7 @@ namespace Infrastructure.Services
                                 var error_status = await programObj._CheckPromotionApplySaleLine(program, saleLine);
                                 if (string.IsNullOrEmpty(error_status.Error))
                                 {
-                                    saleLine.Promotions.Add(lineObj._GetRewardLineValues(saleLine, program));
+                                    saleLine.Promotions.Add(saleLineService._GetRewardLineValues(saleLine, program));
                                 }
                             }
                         }
@@ -2397,12 +2397,12 @@ namespace Infrastructure.Services
                     }
                 }
 
-
-                lines.Add(saleLine);
             }
+                  
+            _AmountAll(order);
+            await UpdateAsync(order);
 
-            var saleLineObj = GetService<ISaleOrderLineService>();
-            await saleLineObj.CreateAsync(lines);
+          
             ///xử lý ưu đãi chi order
             if (val.Promotions.Any())
             {
@@ -2427,7 +2427,7 @@ namespace Infrastructure.Services
                             {
                                 reward.Lines.Add(new SaleOrderPromotionLine
                                 {
-                                    SaleOrderLineId = promotion.SaleOrderLineId.Value,
+                                    SaleOrderLineId = line.Id,
                                     Amount = promotion.Amount,
                                     PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
                                 });
@@ -2454,22 +2454,23 @@ namespace Infrastructure.Services
             }
 
 
-            saleLineObj.UpdateOrderInfo(order.OrderLines, order);
-            saleLineObj.ComputeAmount(order.OrderLines);
-            saleLineObj._GetInvoiceQty(order.OrderLines);
-            saleLineObj._GetToInvoiceQty(order.OrderLines);
-            saleLineObj._GetInvoiceAmount(order.OrderLines);
-            saleLineObj._GetToInvoiceAmount(order.OrderLines);
-            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
-            saleLineObj._ComputeLinePaymentRels(order.OrderLines);
-
+            saleLineService.UpdateOrderInfo(order.OrderLines, order);
+            saleLineService.ComputeAmount(order.OrderLines);
+            saleLineService._GetInvoiceQty(order.OrderLines);
+            saleLineService._GetToInvoiceQty(order.OrderLines);
+            saleLineService._GetInvoiceAmount(order.OrderLines);
+            saleLineService._GetToInvoiceAmount(order.OrderLines);
+            saleLineService._ComputeInvoiceStatus(order.OrderLines);
+            saleLineService._ComputeLinePaymentRels(order.OrderLines);
+            await UpdateAsync(order);
 
             //tính lại tổng tiền ưu đãi saleorderlines
-            saleLineObj._ComputeAmountDiscountTotal(order.OrderLines);
-            saleLineObj.ComputeAmount(order.OrderLines);
+            saleLineService._ComputeAmountDiscountTotal(order.OrderLines);
+            saleLineService.ComputeAmount(order.OrderLines);
 
             _AmountAll(order);
-
+            _GetInvoiced(new List<SaleOrder>() { order });
+            _ComputeResidual(new List<SaleOrder>() { order });
             await UpdateAsync(order);
 
 
@@ -2484,9 +2485,7 @@ namespace Infrastructure.Services
 
                 line.State = "done";
             }
-
-            _GetInvoiced(new List<SaleOrder>() { order });
-            _ComputeResidual(new List<SaleOrder>() { order });
+            
             await UpdateAsync(new List<SaleOrder>() { order });
 
             //tạo thanh toán phiếu điều trị nhanh
