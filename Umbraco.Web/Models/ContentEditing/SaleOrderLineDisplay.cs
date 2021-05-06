@@ -89,6 +89,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? AmountResidual { get; set; }
 
+        public decimal? AmountInvoiced { get; set; }
+
         public bool IsRewardLine { get; set; }
 
         public bool IsCancelled { get; set; }

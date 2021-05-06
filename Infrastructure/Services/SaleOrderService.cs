@@ -2277,8 +2277,8 @@ namespace Infrastructure.Services
                         Id = x.Id,
                         Name = x.Name,
                         PriceTotal = x.PriceTotal,
-                        AmountPaid = x.AmountPaid,
-                        AmountResidual = x.AmountResidual,
+                        AmountPaid = x.AmountInvoiced,
+                        AmountResidual = x.PriceTotal - x.AmountInvoiced,
                     }
                 }).ToListAsync();
 

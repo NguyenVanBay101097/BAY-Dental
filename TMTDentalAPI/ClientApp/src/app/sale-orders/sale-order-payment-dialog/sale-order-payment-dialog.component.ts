@@ -38,6 +38,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   advanceAmount: number = 0;
   cashSuggestions: number[] = [];
   partnerCash = 0;
+  returnCash = 0;
   maxAmount: number = 0;
 
   constructor(
@@ -149,7 +150,21 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     return this.accountJournalService.autocomplete(val);
   }
 
+  isThanhToanDu() {
+    var paymentLines = this.journalLinesFC.value;
+    var totalAmountPaymentLines = paymentLines.reduce((a, b) => {
+      return a + b.amount;
+    }, 0);
+
+    return totalAmountPaymentLines == this.amount;
+  }
+
   save() {
+    if (!this.isThanhToanDu()) {
+      alert('Vui lòng phân bổ đủ số tiền cần thanh toán');
+      return false;
+    }
+
     this.submitted = true;
     if (!this.paymentForm.valid) {
       return;
@@ -176,6 +191,11 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   saveAndPrint() {
+    if (!this.isThanhToanDu()) {
+      alert('Vui lòng phân bổ đủ số tiền cần thanh toán');
+      return false;
+    }
+    
     this.submitted = true;
     if (!this.paymentForm.valid) {
       return;
@@ -266,9 +286,9 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     });
   }
 
-  getReturnOverPaid() {
-    var amount = this.getValueForm("amount");
-    return this.partnerCash - amount > 0 ? this.partnerCash - amount : 0;
+  updateReturnCash() {
+    var returnAmount = this.partnerCash - this.getAmountCashLine();
+    this.returnCash = returnAmount > 0 ? returnAmount : 0;
   }
 
   nextStep() {
@@ -289,6 +309,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     }
 
     this.partnerCash = paymentAmount;
+    this.updateReturnCash();
     this.cashSuggestions = this.getCalcAmountSuggestions(paymentAmount);
 
     // this.partnerCash = this.getValueForm("amount");
@@ -321,12 +342,16 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       (x) => x.journalId == journal.id
     );
     if (index == -1) {
+      var soTienConLai = this.amount - this.laySoTienThanhToanExceptCashAndIndex(index);
       var g = this.fb.group({
         journalId: journal.id,
         journal: journal,
-        amount: 0,
+        amount: soTienConLai,
       });
       this.journalLinesFC.push(g);
+
+      this.onChangeJournalLineAmount(soTienConLai, this.journalLinesFC.controls.indexOf(g));
+      this.onBlurJournalLineAmount();
     }
   }
 
@@ -376,6 +401,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   onCashSuggestionClick(amount: number){
     this.partnerCash = amount;
+    this.updateReturnCash();
   }
 
   isJournalActiveClass(item: AccountJournalSimple) {
@@ -385,6 +411,62 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   onDeleteJournalLine(index) {
     this.journalLinesFC.removeAt(index);
     this.onJournalLineAmountChange();
+  }
+
+  onBlurJournalLineAmount() {
+    this.partnerCash = this.getAmountCashLine();
+    this.cashSuggestions = this.getCalcAmountSuggestions(this.partnerCash);
+    this.updateReturnCash();
+  }
+
+  onValuePartnerCashChange(e) {
+    this.updateReturnCash();
+  }
+
+  getAmountCashLine() {
+    var cashLine = this.getCashLineControl();
+    return cashLine.value.amount;
+  }
+
+  laySoTienThanhToanExceptCashAndIndex(index) {
+    var paymentLines = this.journalLinesFC.value;
+    var total = 0;
+    for(var i = 0; i < paymentLines.length; i++) {
+      var line = paymentLines[i];
+      if (i != index && line.journal.type != 'cash') {
+        total += line.amount;
+      }
+    }
+
+    return total;
+  }
+
+  getCashLineControl() {
+    for(var i = 0; i < this.journalLinesFC.controls.length; i++) {
+      var control = this.journalLinesFC.controls[i];
+      var controlValue = control.value;
+      if (controlValue.journal.type == 'cash') {
+        return control;
+      }
+    }
+
+    return null;
+  }
+
+  onChangeJournalLineAmount(e, index) {
+    var soTienThanhToan = this.laySoTienThanhToanExceptCashAndIndex(index);
+    var soTienConLai = this.amount - soTienThanhToan;
+    var currentLine = this.journalLinesFC.controls[index];
+    var currentLineValue = currentLine.value;
+    var cashLine = this.getCashLineControl();
+
+    if (currentLineValue.amount > soTienConLai) {
+      currentLine.get('amount').setValue(soTienConLai);
+      cashLine.get('amount').setValue(0);
+    } else {
+      var soTienCashConLai = soTienConLai - currentLineValue.amount;
+      cashLine.get('amount').setValue(soTienCashConLai);
+    }
   }
 
   onJournalLineAmountChange(val = null, journalLine = null){

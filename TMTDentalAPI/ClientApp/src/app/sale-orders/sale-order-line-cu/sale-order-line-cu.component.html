@@ -77,21 +77,11 @@
             </div>
             <!-- thanh toán -->
             <div style="width: 100px;" class="div-cell text-right">
-                <ng-container *ngIf="!isEditting; else elseTemplateAmountPaid">
-                    {{line.amountPaid | number}}
-                </ng-container>
-                <ng-template #elseTemplateAmountPaid>
-                    {{ formInfoControl('amountPaid').value | number }}
-                </ng-template>
+                {{line.amountInvoiced | number}}
             </div>
             <!-- còn lại -->
             <div style="width: 100px;" class="div-cell text-right">
-                <ng-container *ngIf="!isEditting; else elseTemplateAmountRes">
-                    {{line.amountResidual | number}}
-                </ng-container>
-                <ng-template #elseTemplateAmountRes>
-                    {{ formInfoControl('amountResidual').value | number }}
-                </ng-template>
+                {{(line.priceSubTotal - line.amountInvoiced) | number}}
             </div>
             <!-- thao tác -->
             <div style="width: 100px;" *ngIf="line.state != 'done'" class="div-cell text-center button_actions">
