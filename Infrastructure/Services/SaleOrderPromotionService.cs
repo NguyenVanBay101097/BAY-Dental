@@ -73,7 +73,7 @@ namespace Infrastructure.Services
                 promotionLine.Lines.Add(new SaleOrderPromotionLine
                 {
                     Amount = Math.Round(subTotal / total * discountAmount),
-                    PriceUnit = (double)(line.ProductUOMQty != 0 ? Math.Round(subTotal / total * discountAmount / line.ProductUOMQty) : 0),
+                    PriceUnit = (double)(line.ProductUOMQty != 0 ? (subTotal / total * discountAmount / line.ProductUOMQty) : 0),
                     SaleOrderLineId = line.Id,
                 });
             }

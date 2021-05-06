@@ -2369,8 +2369,8 @@ namespace Infrastructure.Services
                             promotion.DiscountType = item.DiscountType;
                             promotion.DiscountFixed = item.DiscountFixed;
                             promotion.DiscountPercent = item.DiscountPercent;
-                            promotion.SaleOrderLineId = saleLine.Id;
-                            promotion.SaleOrderId = saleLine.Order.Id;
+                            promotion.SaleOrderLine = saleLine;
+                            promotion.SaleOrderId = order.Id;
 
                             promotion.Lines.Add(new SaleOrderPromotionLine
                             {
