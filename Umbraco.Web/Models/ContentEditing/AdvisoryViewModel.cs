@@ -10,6 +10,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public DateTime Date { get; set; }
         public EmployeeSimple Employee { get; set; }
+        public string ToothType { get; set; }
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
         public IEnumerable<ToothDiagnosisBasic> ToothDiagnosis { get; set; } = new List<ToothDiagnosisBasic>();
         public IEnumerable<ProductSimple> Product { get; set; } = new List<ProductSimple>();
@@ -37,6 +38,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? EmployeeId { get; set; }
         public DateTime Date { get; set; }
         public Guid? ToothCategoryId { get; set; }
+        /// <summary>
+        /// whole_jaw: nguyên hàm
+        /// upper_jaw : hàm trên
+        /// lower_jaw : hàm dưới
+        /// manual :  thủ công
+        /// </summary>
+        public string ToothType { get; set; }
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
         public IEnumerable<Guid> ToothDiagnosisIds { get; set; } = new List<Guid>();
         public IEnumerable<Guid> ProductIds { get; set; } = new List<Guid>();
@@ -60,6 +68,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime Date { get; set; }
         public Guid? ToothCategoryId { get; set; }
         public ToothCategoryBasic ToothCategory { get; set; }
+        /// <summary>
+        /// whole_jaw: nguyên hàm
+        /// upper_jaw : hàm trên
+        /// lower_jaw : hàm dưới
+        /// manual :  thủ công
+        /// </summary>
+        public string ToothType { get; set; }
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
         public IEnumerable<ToothDiagnosisBasic> ToothDiagnosis { get; set; } = new List<ToothDiagnosisBasic>();
         public IEnumerable<ProductSimple> Product { get; set; } = new List<ProductSimple>();
