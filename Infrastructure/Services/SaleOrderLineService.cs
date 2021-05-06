@@ -810,7 +810,7 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
 
             //Chương trình khuyến mãi sử dụng mã
-            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).FirstOrDefaultAsync();
+            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).Include(x => x.DiscountSpecificProducts).FirstOrDefaultAsync();
             if (program != null)
             {
                 var error_status = await programObj._CheckPromotionApplySaleLine(program, orderLine);
