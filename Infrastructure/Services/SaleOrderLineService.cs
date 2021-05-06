@@ -854,7 +854,7 @@ namespace Infrastructure.Services
         {
             //discount_amount = so luong * don gia da giam * phan tram
             var price_reduce = (line.PriceUnit * (1 - line.Discount / 100)) *
-                ((program.DiscountPercentage ?? 0) / 100);
+                (1 - (program.DiscountPercentage ?? 0) / 100);
             var discount_amount = (line.PriceUnit - price_reduce) * line.ProductUOMQty;
             return discount_amount;
         }

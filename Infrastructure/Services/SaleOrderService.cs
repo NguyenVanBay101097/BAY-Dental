@@ -819,7 +819,7 @@ namespace Infrastructure.Services
                 var discountAmount = _GetRewardValuesDiscountFixedAmount(self, program);
                 var promotionLine = promotionObj.PreparePromotionToOrder(self, program, discountAmount);
 
-                return promotionLine ;
+                return promotionLine;
             }
 
 
@@ -847,7 +847,7 @@ namespace Infrastructure.Services
 
                 reward = promotionObj.PreparePromotionToOrder(self, program, total_discount_amount);
 
-              
+
             }
 
             return reward;
@@ -2355,29 +2355,35 @@ namespace Infrastructure.Services
 
                 if (line.Promotions.Any())
                 {
-                    foreach (var promotion in saleLine.Promotions)
+                    foreach (var item in line.Promotions)
                     {
                         var discount_amount = 0M;
-                        if (promotion.Type == "discount")
+                        if (item.Type == "discount")
                         {
-                            discount_amount = (promotion.DiscountType == "percentage" ? line.PriceUnit * (1 - (promotion.DiscountPercent ?? 0) / 100) : (promotion.DiscountFixed ?? 0) * line.ProductUOMQty);
+                            var price_reduce = item.DiscountType == "percentage" ? line.PriceUnit * (1 - (item.DiscountPercent ?? 0) / 100) : (item.DiscountFixed ?? 0);
+                            discount_amount = (saleLine.PriceUnit - price_reduce) * line.ProductUOMQty;
+                            var promotion = new SaleOrderPromotion();
+
                             promotion.Name = "Giảm tiền";
                             promotion.Amount = discount_amount;
-                            promotion.SaleOrderLineId = line.Id;
-                            promotion.SaleOrderId = order.Id;
+                            promotion.DiscountType = item.DiscountType;
+                            promotion.DiscountFixed = item.DiscountFixed;
+                            promotion.DiscountPercent = item.DiscountPercent;
+                            promotion.SaleOrderLineId = saleLine.Id;
+                            promotion.SaleOrderId = saleLine.Order.Id;
 
                             promotion.Lines.Add(new SaleOrderPromotionLine
                             {
-                                SaleOrderLineId = promotion.SaleOrderLineId.Value,
+                                SaleOrderLine = saleLine,
                                 Amount = promotion.Amount,
                                 PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
                             });
 
                             saleLine.Promotions.Add(promotion);
                         }
-                        else if (promotion.Type == "code_usage_program" || promotion.Type == "promotion_program")
+                        else if (item.Type == "code_usage_program" || item.Type == "promotion_program")
                         {
-                            var program = await programObj.SearchQuery(x => x.Id == promotion.SaleCouponProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+                            var program = await programObj.SearchQuery(x => x.Id == item.SaleCouponProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
                             if (program != null)
                             {
                                 var error_status = await programObj._CheckPromotionApplySaleLine(program, saleLine);
@@ -2420,11 +2426,11 @@ namespace Infrastructure.Services
                             foreach (var line in order.OrderLines)
                             {
                                 reward.Lines.Add(new SaleOrderPromotionLine
-                                 {
-                                     SaleOrderLineId = promotion.SaleOrderLineId.Value,
-                                     Amount = promotion.Amount,
-                                     PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
-                                 });
+                                {
+                                    SaleOrderLineId = promotion.SaleOrderLineId.Value,
+                                    Amount = promotion.Amount,
+                                    PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
+                                });
                             }
                         }
 
@@ -2438,7 +2444,7 @@ namespace Infrastructure.Services
                             var error_status = await programObj._CheckPromotion(program, order);
                             if (string.IsNullOrEmpty(error_status.Error))
                             {
-                                 order.Promotions.Add(_GetRewardLineValues(order, program));
+                                order.Promotions.Add(_GetRewardLineValues(order, program));
                             }
                         }
                     }

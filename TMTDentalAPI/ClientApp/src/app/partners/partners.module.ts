@@ -88,6 +88,8 @@ import { PartnerCustomerAdvisoryCuDialogComponent } from './partner-customer-adv
 import { ToothDiagnosisPopoverComponent } from './partner-customer-advisory/partner-customer-advisory-list/tooth-diagnosis-popover/tooth-diagnosis-popover.component';
 import { PartnerCustomerSaleOrderQuotationsLinesComponent } from './partner-customer-sale-order-quotations-lines/partner-customer-sale-order-quotations-lines.component';
 import { ConsultingServicePopoverComponent } from './partner-customer-advisory/partner-customer-advisory-list/consulting-service-popover/consulting-service-popover.component';
+import { PartnerCustomerTreatmentFastPromotionComponent } from './partner-customer-treatment-fast-promotion/partner-customer-treatment-fast-promotion.component';
+import { PartnerCustomerTreatmentLineFastPromotionComponent } from './partner-customer-treatment-line-fast-promotion/partner-customer-treatment-line-fast-promotion.component';
 
 
 @NgModule({
@@ -164,7 +166,9 @@ import { ConsultingServicePopoverComponent } from './partner-customer-advisory/p
     PartnerCustomerAdvisoryCuDialogComponent,
     ToothDiagnosisPopoverComponent,
     PartnerCustomerSaleOrderQuotationsLinesComponent,
-    ConsultingServicePopoverComponent
+    ConsultingServicePopoverComponent,
+    PartnerCustomerTreatmentFastPromotionComponent,
+    PartnerCustomerTreatmentLineFastPromotionComponent
   ],
   imports: [
     CommonModule,
@@ -195,7 +199,9 @@ import { ConsultingServicePopoverComponent } from './partner-customer-advisory/p
     SaleOrderApplyDiscountDefaultDialogComponent,
     PartnerCustomerAutoGenerateCodeDialogComponent,
     PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent,
-    PartnerCustomerAdvisoryCuDialogComponent
+    PartnerCustomerAdvisoryCuDialogComponent,
+    PartnerCustomerTreatmentFastPromotionComponent,
+    PartnerCustomerTreatmentLineFastPromotionComponent
   ],
   providers: [SaleCouponProgramService],
   exports: [
