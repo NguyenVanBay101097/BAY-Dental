@@ -58,10 +58,10 @@
             <div style="width: 100px;" class="div-cell text-right">
                 <div>
                     <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
-                        {{line.priceSubTotal | number}}
+                        {{line.priceSubTotal | number: '1.0-0'}}
                     </ng-container>
                     <ng-template #elseTemplatePriceSub>
-                        {{formInfoControl('priceSubTotal').value | number}}
+                        {{formInfoControl('priceSubTotal').value | number: '1.0-0'}}
                     </ng-template>
                 </div>
                 <div>
@@ -238,7 +238,7 @@
             <label class="d-flex justify-content-between mb-0">
                 Ưu đãi dịch vụ
             <img (click)="onOpenPromotion()" class="ml-2 pointer" src="../../../assets/icons/promotion-bg-primary.svg" alt="">
-            <label class="ml-auto">{{formInfoControl('amountPromotionToOrderLine').value | number}}</label>
+            <label class="ml-auto">{{formInfoControl('amountPromotionToOrderLine').value | number : '1.0-0'}}</label>
             </label>
         </div>
 

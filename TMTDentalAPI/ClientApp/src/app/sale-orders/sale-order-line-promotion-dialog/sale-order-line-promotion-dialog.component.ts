@@ -136,4 +136,8 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit , OnDestroy
     return  this.saleOrderLine.promotions[index];
   }
 
+  getPriceUnitPromotion(amount) {
+    return this.saleOrderLine ? amount/this.saleOrderLine.productUOMQty : 0;
+  }
+
 }
