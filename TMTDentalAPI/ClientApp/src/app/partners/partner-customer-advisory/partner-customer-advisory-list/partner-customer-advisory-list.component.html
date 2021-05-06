@@ -68,7 +68,7 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="teeth" title="Răng" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem>
-                        {{getTeeth(dataItem.teeth)}}
+                        {{dataItem.toothType == 'manual' ? getTeeth(dataItem.teeth) : getToothType(dataItem.toothType)}}
                     </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column title="Chẩn đoán" width="150">
