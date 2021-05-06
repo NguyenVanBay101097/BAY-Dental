@@ -47,6 +47,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class PartnerAdvanceSummaryFilter
     {
+        public Guid? PartnerId { get; set; }
+
         public string Type { get; set; }
         public DateTime? DateFrom { get; set; }
 
