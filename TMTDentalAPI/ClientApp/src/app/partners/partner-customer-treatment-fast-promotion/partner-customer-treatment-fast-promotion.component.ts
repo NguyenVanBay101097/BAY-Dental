@@ -102,15 +102,22 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
     var ob = new Subject<any>();
     var amount = 0;
     ob.subscribe(res => {
+      var exist = this.saleOrder.promotions.find(x=> (x.type == type && type == 'discount') || (program && x.saleCouponProgramId == program.id));
+      if(exist){
+        exist.type == 'code_usage_program'?this.errorMsg='Chương trình khuyến mãi đã được áp dụng cho đơn hàng này' : this.notificationService.notify('error', 'Ưu đãi đã được áp dụng cho đơn hàng này');
+        return;
+      }
+
       this.saleOrder.promotions.push({
         amount: amount,
         type: type,
-        discountType:  type == 'discount'? this.form.discountType : null,
-        discountPercent: type == 'discount'? this.form.discountPercent : 0,
-        discountFixed: type == 'discount'?  this.form.discountFixed : 0,
+        discountType:  type == 'discount'? this.form.discountType : program.discountType,
+        discountPercent: type == 'discount'? this.form.discountPercent : program.discountPercentage,
+        discountFixed: type == 'discount'?  this.form.discountFixed : program.discountFixedAmount,
         saleCouponProgramId : program? program.id : null,
         name: type == 'discount' ? 'Giảm tiền' : program.name
       } as SaleOrderPromotionSave );
+      this.errorMsg = '';
   
       this.notificationService.notify('success', 'Thành công!');
       this.isChange = true;

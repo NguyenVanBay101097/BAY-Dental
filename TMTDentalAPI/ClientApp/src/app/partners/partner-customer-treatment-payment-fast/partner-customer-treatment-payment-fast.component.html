@@ -155,7 +155,7 @@
                                     <div style="width: 100px;" class="div-cell py-1 text-right">Thành tiền</div>
                                     <div style="width: 100px;" class="div-cell py-1 text-right">Thanh toán</div>
                                     <div style="width: 100px;" class="div-cell py-1 text-right">Còn lại</div>
-                                    <div style="width: 100px;" class="div-cell py-1 text-center">Thao tác</div>
+                                    <div style="width: 100px;" class="div-cell py-1 text-center" *ngIf="getState == 'done'">Thao tác</div>
                                 </div>
                             </div>
                             <ng-container *ngFor="let line of orderLines.controls; let i=index">
@@ -167,18 +167,18 @@
                         <!-- ưu đãi -->
                         <div class="card mb-3">
                             <div class="card-header bg-primary text-white pl-2 py-1 d-flex">Ưu đãi phiếu điều trị
-                                <img class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
+                                <img *ngIf="getState != 'done'" class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
                                 <span class="ml-auto">{{sumPromotionSaleOrder() | number}}</span>
                             </div>
-                            <div class="card-body px-3">
-                                <p class="d-flex justify-content-between">
-                                    <label class="font-weight-600">Ưu đãi</label>
-                                    <label class="font-weight-600">Số tiền giảm</label>
-                                </p>
-                                <p *ngFor="let item of saleOrder.promotions" class="d-flex justify-content-between">
-                                    <label class="font-weight-600">{{item.name}}</label>
-                                    <label class="font-weight-600">{{item.amount | number}}</label>
-                                </p>
+                            <div class="card-body px-3 py-2">
+                                <div *ngIf="this.saleOrder.promotions?.length" class="d-flex justify-content-between mb-1">
+                                    <span class="font-weight-600">Ưu đãi</span>
+                                    <span class="font-weight-600">Số tiền giảm</span>
+                                </div>
+                                <div *ngFor="let item of saleOrder.promotions" class="d-flex justify-content-between mb-1">
+                                    <span>{{item.name}}</span>
+                                    <span>{{item.amount | number}}</span>
+                                </div>
                             </div>
                         </div>
                         <div class="card mb-3">

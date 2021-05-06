@@ -29,7 +29,7 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
     VNĐ: "fixed",
     "%": "percentage",
   };
- @Input() saleOrderLine: SaleOrderLineDisplay = null;
+  @Input() saleOrderLine: SaleOrderLineDisplay = null;
 
   private updateSubject = new Subject<any>();
 
@@ -81,12 +81,12 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
 
   getAmountToApply() {
 
-      return this.saleOrderLine.priceUnit * this.saleOrderLine.productUOMQty;
- 
+    return this.saleOrderLine.priceUnit * this.saleOrderLine.productUOMQty;
+
   }
 
   popPromotion(item: SaleOrderPromotionSave) {
-    var i = this.saleOrderLine.promotions.findIndex(x=> x == item);
+    var i = this.saleOrderLine.promotions.findIndex(x => x == item);
     this.saleOrderLine.promotions.splice(i, 1);
 
     this.notificationService.notify('success', 'Thành công!');
@@ -98,16 +98,23 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
     var ob = new Subject<any>();
     var amount = 0;
     ob.subscribe(res => {
+      var exist = this.saleOrderLine.promotions.find(x => (x.type == type && type == 'discount') || (program && x.saleCouponProgramId == program.id));
+      if (exist) {
+        exist.type == 'code_usage_program' ? this.errorMsg = 'Chương trình khuyến mãi đã được áp dụng cho dịch vụ này' : this.notificationService.notify('error', 'Ưu đãi đã được áp dụng cho dịch vụ này');
+        return;
+      }
+
       this.saleOrderLine.promotions.push({
         amount: amount,
         type: type,
-        discountType:  type == 'discount'? this.form.discountType : null,
-        discountPercent: type == 'discount'? this.form.discountPercent : 0,
-        discountFixed: type == 'discount'?  this.form.discountFixed : 0,
-        saleCouponProgramId : program? program.id : null,
+        discountType: type == 'discount' ? this.form.discountType : null,
+        discountPercent: type == 'discount' ? this.form.discountPercent : 0,
+        discountFixed: type == 'discount' ? this.form.discountFixed : 0,
+        saleCouponProgramId: program ? program.id : null,
         name: type == 'discount' ? 'Giảm tiền' : program.name
-      } as SaleOrderPromotionSave );
-  
+      } as SaleOrderPromotionSave);
+      this.errorMsg = '';
+
       this.notificationService.notify('success', 'Thành công!');
       this.isChange = true;
       this.updateSubject.next(this.saleOrderLine);
@@ -117,7 +124,7 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
       case 'discount':
 
         var price_reduce = this.form.discountType == this.discountTypeDict["%"] ? this.saleOrderLine.priceUnit * (1 - this.form.discountPercent / 100) : this.saleOrderLine.priceUnit - this.form.discountFixed;
-            amount = (this.saleOrderLine.priceUnit - price_reduce);
+        amount = (this.saleOrderLine.priceUnit - price_reduce) * this.saleOrderLine.productUOMQty;
         ob.next();
         break;
       case 'code_usage_program':
@@ -168,7 +175,7 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
     modalRef.componentInstance.title = "Xóa ưu đãi";
     modalRef.componentInstance.body = `Bạn có muốn xóa ưu đãi ${item.name}?`
     modalRef.result.then(() => {
-     this.popPromotion(item);
+      this.popPromotion(item);
     }, () => {
     });
   }
@@ -189,6 +196,10 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
   getApplied(item) {// item is salecouponprogram
     var index = this.saleOrderLine.promotions.findIndex(x => x.saleCouponProgramId == item.id);
     return this.saleOrderLine.promotions[index];
+  }
+
+  getPriceUnitPromotion(amount) {
+    return this.saleOrderLine ? amount/this.saleOrderLine.productUOMQty : 0;
   }
 
 }
