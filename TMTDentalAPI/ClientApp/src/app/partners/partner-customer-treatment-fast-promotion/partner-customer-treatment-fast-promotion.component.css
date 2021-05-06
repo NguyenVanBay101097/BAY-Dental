@@ -65,3 +65,27 @@ input[type="radio"]:checked+label {
 .fa-trash-alt {
     max-height: 25px;
 }
+
+.discount-options .btn {
+    min-width: 50px;
+    margin-right: 5px;
+}
+
+.discount-options .btn:last-child {
+    margin-right: 0;
+}
+
+.discount-options .btn.active {
+    background: #F5FAFF !important;
+    border: 1px solid #007BFF !important;
+    color: #007BFF !important;
+}
+
+.div-manual-code input {
+    flex: 1 1 auto;
+}
+
+.div-manual-code button {
+    flex: 0 0 auto;
+    margin-left: 1rem;
+}

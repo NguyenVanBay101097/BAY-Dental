@@ -230,9 +230,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   getAmountAdvanceBalance() {
-    // this.partnerService.getAmountAdvanceBalance(this.partner.id).subscribe(result => {
-    //   this.amountAdvanceBalance = result;
-    // })
+    this.partnerService.getAmountAdvanceBalance(this.partner.id).subscribe(result => {
+      this.amountAdvanceBalance = result;
+    })
   }
 
   printSaleOrder() {
@@ -246,6 +246,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionDone() {
     if (this.saleOrderId) {
       this.saleOrderService.actionDone([this.saleOrderId]).subscribe(() => {
+        this.loadRecord();
+      });
+    }
+  }
+
+  actionCancel() {
+    if (this.saleOrderId) {
+      this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => {
         this.loadRecord();
       });
     }
