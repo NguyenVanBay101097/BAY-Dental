@@ -50,9 +50,9 @@
                         <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
                 Cập nhật công nợ
             </button> -->
-                        <!-- <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
-                Hủy phiếu
-            </button> -->
+                        <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
+                            Hủy phiếu
+                        </button>
                         <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
                             Hoàn thành
                         </button>
@@ -143,8 +143,8 @@
                     </table>
                     <div *ngIf="['sale'].indexOf(saleOrder.state) !== -1" class="d-flex">
                         <div class="card-wrapper mr-2">
-                            <div class="card border-secondary">
-                                <div class="card-body">
+                            <div class="card border-secondary amount-summary">
+                                <div class="card-body px-3 py-2">
                                     <div class="text-center">
                                         <span class="font-weight-bold">Tiền điều trị</span>
                                         <h4 class="text-sale">{{getAmountTotal | number}}</h4>
@@ -153,8 +153,8 @@
                             </div>
                         </div>
                         <div class="card-wrapper mr-2">
-                            <div class="card border-secondary">
-                                <div class="card-body">
+                            <div class="card border-secondary amount-summary">
+                                <div class="card-body px-3 py-2">
                                     <div class="text-center">
                                         <span class="font-weight-bold">Tiền thanh toán</span>
                                         <h4 class="text-primary">{{getAmountPaidTotal | number}}</h4>
@@ -163,8 +163,8 @@
                             </div>
                         </div>
                         <div class="card-wrapper mr-2">
-                            <div class="card border-secondary">
-                                <div class="card-body">
+                            <div class="card border-secondary amount-summary">
+                                <div class="card-body px-3 py-2">
                                     <div class="text-center">
                                         <span class="font-weight-bold">Còn lại</span>
                                         <h4 class="text-success">{{getAmountTotal - getAmountPaidTotal | number}}</h4>
@@ -173,11 +173,11 @@
                             </div>
                         </div>
                         <div class="card-wrapper mr-2">
-                            <div class="card border-secondary">
-                                <div class="card-body">
+                            <div class="card border-secondary amount-summary">
+                                <div class="card-body px-3 py-2">
                                     <div class="text-center">
                                         <span class="font-weight-bold">Tiền tạm ứng </span>
-                                        <h4 class="text-advance">{{amountAdvanceBalance | number}}</h4>
+                                        <h4 class="text-info">{{amountAdvanceBalance | number}}</h4>
                                     </div>
                                 </div>
                             </div>

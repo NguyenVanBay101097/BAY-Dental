@@ -24,3 +24,12 @@
 .pointer:hover {
     cursor: pointer;
 }
+
+.payment-methods {
+    display: flex;
+}
+
+.payment-methods button {
+    flex: 0 0 150px;
+}
+

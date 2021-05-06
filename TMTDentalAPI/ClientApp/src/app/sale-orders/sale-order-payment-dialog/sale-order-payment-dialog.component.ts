@@ -120,19 +120,20 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   loadFilteredJournals() {
     this.searchJournals().subscribe((result) => {
+      console.log(result);
       this.filteredJournals = result;
-      if (this.filteredJournals && this.filteredJournals.length > 1) {
-        this.journalLinesFC.clear();
-        // add default tiền mặt
-        var cashJournal = this.filteredJournals.find((x) => x.type == "cash");
-        var g = this.fb.group({
-          journalId: cashJournal.id,
-          journal: cashJournal,
-          amount: this.maxAmount,
-        });
-        this.journalLinesFC.push(g);
-        this.addCashSuggest();
-      }
+      // if (this.filteredJournals && this.filteredJournals.length > 1) {
+      //   this.journalLinesFC.clear();
+      //   // add default tiền mặt
+      //   var cashJournal = this.filteredJournals.find((x) => x.type == "cash");
+      //   var g = this.fb.group({
+      //     journalId: cashJournal.id,
+      //     journal: cashJournal,
+      //     amount: this.maxAmount,
+      //   });
+      //   this.journalLinesFC.push(g);
+      //   this.addCashSuggest();
+      // }
     });
   }
 
@@ -273,9 +274,26 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   nextStep() {
     this.step++;
     //gán lại default
-    this.partnerCash = this.getValueForm("amount");
-    this.journalLinesFC.controls[0].get("amount").setValue(this.partnerCash);
-    this.addCashSuggest();
+    //Nếu chưa có dòng phương thức tiền mặt thì add, có thì update tiền mặt mặc định
+    var paymentAmount = this.getValueForm("amount");
+    var cashJournal = this.filteredJournals.find(x => x.type == 'cash');
+    var cashPaymentLine = this.journalLinesFC.controls.find(x => x.get('journalId').value == cashJournal.id);
+    if (cashPaymentLine) {
+      cashPaymentLine.get('amount').setValue(paymentAmount);
+    } else {
+      this.journalLinesFC.push(this.fb.group({
+        journalId: cashJournal.id,
+        journal: cashJournal,
+        amount: paymentAmount,
+      }));
+    }
+
+    this.partnerCash = paymentAmount;
+    this.cashSuggestions = this.getCalcAmountSuggestions(paymentAmount);
+
+    // this.partnerCash = this.getValueForm("amount");
+    // this.journalLinesFC.controls[0].get("amount").setValue(this.partnerCash);
+    //this.addCashSuggest();
   }
 
   backPreviousStep() {

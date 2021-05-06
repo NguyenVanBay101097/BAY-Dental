@@ -124,3 +124,7 @@
 .div-cell {
     border-left: none;
 }
+
+.card.amount-summary {
+    min-width: 200px;
+}
