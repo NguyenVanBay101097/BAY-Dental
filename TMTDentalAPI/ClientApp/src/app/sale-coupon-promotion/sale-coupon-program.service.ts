@@ -23,12 +23,17 @@ export class SaleCouponProgramBasic {
 export class SaleCouponProgramDisplay {
     id: string;
     name: string;
+    active: boolean;
     couponCount: number;
     orderCount: number;
     rewardProduct: ProductSimple;
     ruleDateFrom: string;
     ruleDateTo: string;
     days: string;
+    notIncremental: boolean;
+    saleOrderMinimumAmount: number;
+    discountSpecificProducts: any;
+    discountSpecificProductCategories: any;
 }
 
 export class SaleCouponProgramSave {

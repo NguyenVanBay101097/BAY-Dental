@@ -20,6 +20,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CompanyId { get; set; }
 
+        public bool Active { get; set; }
+
         /// <summary>
         /// Loại chiết khấu
         /// percentage: phần trăm, fixed_amount: tiền cố định

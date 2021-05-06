@@ -14,10 +14,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
-                        Lưu</button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
-                        Thêm mới</button>
+                   
                 </div>
             </div>
         </div>
@@ -34,24 +31,30 @@
                     <!-- <button type="button" name="315" class="btn btn-secondary btn-sm" (click)="generateCoupons()">
                         <span>Khởi tạo Coupon</span>
                     </button> -->
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+                        Lưu
+                    </button>
+                    <!-- <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
+                        Thêm mới</button> -->
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onActive()">
+                        Kích hoạt
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="!active" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': active, 'btn-secondary': !active}"
+                        type="button">
+                        Kích hoạt
+                    </button>
+                    <button [disabled]="active" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': !active, 'btn-secondary': active }"
+                        type="button">
+                        Nháp
+                    </button>
                 </div>
             </div>
             <div class="o_form_sheet">
                 <div class="o_not_full oe_button_box">
-                    <!-- <button type="button" class="btn oe_stat_button" (click)="viewCoupons()">
-                        <i class="fas o_button_icon fa-ticket-alt"></i>
-                        <div name="coupon_count" class="o_field_widget o_stat_info o_readonly_modifier">
-                            <span class="o_stat_value">{{(program.couponCount || 0) | number}}</span>
-                            <span class="o_stat_text">Coupon</span>
-                        </div>
-                    </button> -->
-                    <button type="button" class="btn oe_stat_button">
-                        <i class="fas o_button_icon fa-dollar-sign"></i>
-                        <div name="order_count" class="o_field_widget o_stat_info o_readonly_modifier">
-                            <span class="o_stat_value">{{(program.orderCount || 0) | number}}</span>
-                            <span class="o_stat_text">Đơn hàng</span>
-                        </div>
-                    </button>
                 </div>
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Tên chương trình</label>
@@ -163,7 +166,7 @@
                                 <td class="o_td_label">
                                     <label class="o_form_label">Ngày bắt đầu</label></td>
                                 <td style="width: 100%;">
-                                    <kendo-datepicker formControlName="ruleDateFromObj">
+                                    <kendo-datepicker formControlName="ruleDateFromObj" (valueChange)="onChangeDate($event)" >
                                     </kendo-datepicker>
                                 </td>
                             </tr>
@@ -171,14 +174,17 @@
                                 <td class="o_td_label">
                                     <label class="o_form_label">Ngày kết thúc</label></td>
                                 <td style="width: 100%;">
-                                    <kendo-datepicker formControlName="ruleDateToObj">
+                                    <kendo-datepicker formControlName="ruleDateToObj" (valueChange)="onChangeDate($event)">
                                     </kendo-datepicker>
+                                    <div *ngIf="f.ruleDateToObj.errors" class="text-danger mb-1">
+                                        <div *ngIf="f.ruleDateToObj.errors.dateIncorrect">Chọn lại ngày kết thúc</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="2" style="width: 100%;">
                                     <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" (change)="changeCheckboxSelectDay($event.target.checked)"  id="daysSelected" [checked]="isSelectedDay">
+                                        <input formControlName="isSelectDay" type="checkbox" class="form-check-input" (valueChange)="changeCheckboxSelectDay($event.target.checked)"  id="daysSelected" [checked]="isSelectedDay">
                                         <label class="form-check-label" for="daysSelected">Chọn các thứ trong tuần</label>
                                       </div>
                                 </td>
@@ -188,6 +194,7 @@
                                 <td></td>
                                 <td style="width: 100%;">
                                     <kendo-multiselect [data]="listDay" [filterable]="true"
+                                        [valuePrimitive]="true"
                                         [textField]="'name'" [valueField]="'id'"
                                         formControlName="daysSelected">
                                     </kendo-multiselect>
@@ -296,7 +303,10 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
-                                        <select class="form-control" formControlName="discountType">
+                                        <select class="form-control" formControlName="discountType" 
+                                            #mySelect
+                                            (change) = "onChangeSelect(mySelect.value)"
+                                        >
                                             <option value="percentage">Phần trăm</option>
                                             <option value="fixed_amount">Giảm tiền</option>
                                         </select>
@@ -317,6 +327,9 @@
                                     <kendo-numerictextbox [min]="0" [format]="'n0'"
                                         formControlName="discountPercentage">
                                     </kendo-numerictextbox>
+                                    <div *ngIf="f.discountPercentage.errors && (f.discountPercentage.touched || f.discountPercentage.dirty || submitted)" class="text-danger mb-1">
+                                        <div *ngIf="f.discountPercentage.errors.required">Nhập phần trăm giảm giá</div>
+                                    </div>
                                 </td>
                                 <td [class.d-none]="discountType != 'percentage'">%</td>
                             </tr>
@@ -343,6 +356,9 @@
                                     <kendo-numerictextbox [min]="0" [format]="'n0'"
                                         formControlName="discountFixedAmount">
                                     </kendo-numerictextbox>
+                                    <div *ngIf="f.discountFixedAmount.errors && (f.discountFixedAmount.touched || f.discountFixedAmount.dirty || submitted)" class="text-danger mb-1">
+                                        <div *ngIf="f.discountFixedAmount.errors.required">Nhập số tiền giảm</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr
@@ -354,7 +370,8 @@
                                         <div class="custom-control custom-radio o_radio_item">
                                             <input type="radio" formControlName="discountApplyOn"
                                                 class="custom-control-input o_radio_input" id="radio151_on_order"
-                                                value="on_order">
+                                                value="on_order"
+                                                (change)="onChangeOption($event)">
                                             <label class="custom-control-label o_form_label"
                                                 for="radio151_on_order">Trên đơn hàng</label>
                                         </div>
@@ -362,7 +379,8 @@
                                         <div class="custom-control custom-radio o_radio_item">
                                             <input type="radio" formControlName="discountApplyOn"
                                                 class="custom-control-input o_radio_input" value="specific_product_categories"
-                                                id="radio151_specific_product_categories">
+                                                id="radio151_specific_product_categories"
+                                                (change)="onChangeOption($event)">
                                             <label class="custom-control-label o_form_label"
                                                 for="radio151_specific_product_categories">Trên vài nhóm dịch vụ cụ thể</label>
                                         </div>
@@ -370,7 +388,8 @@
                                         <div class="custom-control custom-radio o_radio_item">
                                             <input type="radio" formControlName="discountApplyOn"
                                                 class="custom-control-input o_radio_input" value="specific_products"
-                                                id="radio151_specific_products">
+                                                id="radio151_specific_products"
+                                                (change)="onChangeOption($event)">
                                             <label class="custom-control-label o_form_label"
                                                 for="radio151_specific_products">Trên vài dịch vụ cụ thể</label>
                                         </div>
@@ -386,6 +405,9 @@
                                         [textField]="'name'" [valueField]="'id'"
                                         formControlName="discountSpecificProducts">
                                     </kendo-multiselect>
+                                    <div *ngIf="f.discountSpecificProducts.errors && (f.discountSpecificProducts.touched || f.discountSpecificProducts.dirty || submitted)" class="text-danger mb-1">
+                                        <div *ngIf="f.discountSpecificProducts.errors.required">Chọn dịch vụ</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr
@@ -397,6 +419,9 @@
                                         [textField]="'name'" [valueField]="'id'"
                                         formControlName="discountSpecificProductCategories">
                                     </kendo-multiselect>
+                                    <div *ngIf="f.discountSpecificProductCategories.errors && (f.discountSpecificProductCategories.touched || f.discountSpecificProductCategories.dirty || submitted)" class="text-danger mb-1">
+                                        <div *ngIf="f.discountSpecificProductCategories.errors.required">Chọn nhóm dịch vụ</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr
@@ -407,6 +432,9 @@
                                     <kendo-numerictextbox [min]="0" [format]="'n0'"
                                             formControlName="saleOrderMinimumAmount">
                                     </kendo-numerictextbox>
+                                    <div *ngIf="f.saleOrderMinimumAmount.errors && (f.saleOrderMinimumAmount.touched || f.saleOrderMinimumAmount.dirty || submitted)" class="text-danger mb-1">
+                                        <div *ngIf="f.saleOrderMinimumAmount.errors.required">Nhập trị giá tối thiểu</div>
+                                    </div>
                                 </td>
                                 <td>VNĐ</td>
                             </tr>
