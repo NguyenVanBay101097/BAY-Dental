@@ -36,7 +36,9 @@ export class SaleOrderLineCuComponent implements OnInit {
   isEditting: boolean = false;
   // canEdit = true;
 
-  filteredEmployees: any[] = [];
+  filteredEmployeesDoctor: any[] = [];
+  filteredEmployeesAssistant: any[] = [];
+  filteredEmployeesCounselor: any[] = [];
   initialListEmployees: any = [];
   filteredToothCategories: any[];
   hamList: { [key: string]: {} };
@@ -102,9 +104,18 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   onEmployeeFilter(value) {
-    this.filteredEmployees = this.initialListEmployees
-      .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
-      .slice(0, 20);
+    this.filteredEmployeesDoctor = this.initialListEmployees
+      .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
+
+  onEmployeeAssistant(value) {
+    this.filteredEmployeesAssistant = this.initialListEmployees
+      .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
+
+  onEmployeeCounselor(value) {
+    this.filteredEmployeesCounselor = this.initialListEmployees
+      .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
   }
 
   loadEmployees() {
@@ -118,7 +129,9 @@ export class SaleOrderLineCuComponent implements OnInit {
       .getEmployeeSimpleList(val)
       .subscribe((result: any[]) => {
         this.initialListEmployees = result;
-        this.filteredEmployees = this.initialListEmployees.slice(0, 20);
+        this.filteredEmployeesDoctor = this.initialListEmployees.slice();
+        this.filteredEmployeesCounselor = this.initialListEmployees.slice();
+        this.filteredEmployeesAssistant = this.initialListEmployees.slice();
       });
   }
 

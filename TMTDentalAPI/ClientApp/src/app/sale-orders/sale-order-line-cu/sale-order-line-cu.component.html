@@ -1,4 +1,4 @@
-<ng-container [formGroup]="formGroupInfo">
+<div [formGroup]="formGroupInfo" class="bg-white">
 
     <div class="div-table w-100">
         <div class="div-row border-left border-right border-top">
@@ -94,20 +94,33 @@
                 </ng-template>
             </div>
             <!-- thao tác -->
-            <div style="width: 100px;" *ngIf="line.state != 'done'" class="div-cell text-center">
+            <div style="width: 100px;" *ngIf="line.state != 'done'" class="div-cell text-center button_actions">
                 <!-- && canEdit -->
-                <i *ngIf="!isEditting " title="Sửa dịch vụ" class="far fa-edit bg-success btn-icon text-white" (click)="editLine()"></i>
+                <button *ngIf="!isEditting" type="button" (click)="editLine()" title="Sửa dịch vụ" class="btn btn-sm btn-success">
+                    <i class="far fa-edit"></i>
+                </button>
+               
+                <button type="button" class="btn btn-sm btn-light" title="Quản lý phiếu labo" *ngIf="line.id  && line.productIsLabo && line.state == 'sale'" (click)="showLaboList(line.id)">
+                    <i class="fas fa-tooth btn-icon"></i>
+                </button>
 
-                <i class="fas fa-tooth btn-icon" *ngIf="line.id  && line.productIsLabo && line.state == 'sale'" title="Quản lý phiếu labo" (click)="showLaboList(line.id)"></i>
+                <button type="button" title="Xóa dịch vụ" (click)="deleteLine()" class="btn btn-danger btn-sm">
+                    <i class="far fa-trash-alt"></i>
+                </button>
+              
                 <!-- && canEdit -->
-                <i title="Xóa dịch vụ" class="fa fa-trash-alt bg-danger text-white btn-icon" (click)="deleteLine()"></i>
+               
                 <ng-container *ngIf="line.id">
                     <ng-container *ngIf="line.isActive == true; else elseTemplateActive">
-                        <i (click)="onActive(!line.isActive)" class="fas fa-minus-circle bg-white text-secondary border btn-icon" title="Ngừng dịch vụ"></i>
+                        <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-danger" title="Ngừng dịch vụ">
+                            <i class="fas fa-minus-circle text-white"></i>
+                        </button>
                         <!-- <img width="92%"  class="btn-icon p-0" src="../../../assets/icons/minus.svg" title="Ngừng dịch vụ" alt="Ngừng dịch vụ"> -->
                     </ng-container>
                     <ng-template #elseTemplateActive>
-                        <i (click)="onActive(!line.isActive)" class="fas fa-minus-circle text-white bg-danger border btn-icon" title=" Làm dịch vụ"></i>
+                        <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-light" title="Làm dịch vụ">
+                            <i class="fas fa-minus-circle text-secondary"></i>
+                        </button>
                         <!-- <img  width="92%"  class="btn-icon p-0" src="../../../assets/icons/plus.svg" title=" Làm dịch vụ" alt="Làm dịch vụ"> -->
                     </ng-template>
                 </ng-container>
@@ -121,24 +134,24 @@
         <div class="row mx-0">
             <div class="col-sm-4 mt-0 px-0">
                 <div class="row mx-0">
-                    <label class="col-sm-4 font-weight-600 pl-0">
+                    <label class="col-sm-4 font-weight-600 pl-0 col-form-label">
                                         Bác sĩ
                                     </label>
                     <div class="col-sm-8">
                         <span class="form-control-plaintext" *ngIf="!isEditting">{{line.employee?.name}}</span>
-                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="isEditting" style="width:100%;" [data]="initialListEmployees" [textField]="'name'" #employeeCbx formControlName="employee" [valueField]="'id'">
+                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesDoctor" [textField]="'name'" #employeeCbx formControlName="employee" [valueField]="'id'">
                         </kendo-combobox>
                     </div>
                 </div>
             </div>
             <div class="col-sm-4 mt-0 px-0 pl-2">
                 <div class="row mx-0">
-                    <label class="col-sm-4 font-weight-600 pl-0">
+                    <label class="col-sm-4 font-weight-600 pl-0 col-form-label">
                                         Phụ tá
                                     </label>
                     <div class="col-sm-8">
                         <span class="form-control-plaintext" *ngIf="!isEditting">{{line.assistant?.name}}</span>
-                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="isEditting" style="width:100%;" [data]="initialListEmployees" [textField]="'name'" #assistantCbx formControlName="assistant" [valueField]="'id'">
+                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeAssistant($event)" *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesAssistant" [textField]="'name'" #assistantCbx formControlName="assistant" [valueField]="'id'">
                         </kendo-combobox>
                     </div>
                 </div>
@@ -146,12 +159,12 @@
             </div>
             <div class="col-sm-4 mt-0 px-0 pl-2">
                 <div class="row mx-0">
-                    <label class="col-sm-4 font-weight-600 pl-0">
+                    <label class="col-sm-4 font-weight-600 pl-0 col-form-label">
                                         Người tư vấn
                                     </label>
                     <div class="col-sm-8">
                         <span class="form-control-plaintext" *ngIf="!isEditting">{{line.counselor?.name}}</span>
-                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="isEditting" style="width:100%;" [data]="initialListEmployees" [textField]="'name'" #counselorCbx formControlName="counselor" [valueField]="'id'">
+                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeCounselor($event)" *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesCounselor" [textField]="'name'" #counselorCbx formControlName="counselor" [valueField]="'id'">
                         </kendo-combobox>
                     </div>
                 </div>
@@ -230,20 +243,21 @@
 
         <hr *ngIf="this.isEditting">
         <!-- ưu đãi -->
-        <div class="border col-4 py-2 mt-1 promotions">
-            <label class="d-flex mb-2">
-                <label>Ưu đãi phiếu điều trị</label>
-            <label class="ml-auto">{{formInfoControl('amountPromotionToOrder').value | number}}</label>
-            </label>
-            <label class="d-flex justify-content-between mb-0">
-                Ưu đãi dịch vụ
-            <img (click)="onOpenPromotion()" class="ml-2 pointer" src="../../../assets/icons/promotion-bg-primary.svg" alt="">
-            <label class="ml-auto">{{formInfoControl('amountPromotionToOrderLine').value | number : '1.0-0'}}</label>
-            </label>
+        <div class="card border promotions">
+            <div class="card-body px-3 py-2">
+                <div class="d-flex">
+                    <span>Ưu đãi phiếu điều trị</span>
+                    <span class="ml-auto">{{formInfoControl('amountPromotionToOrder').value | number}}</span>
+                </div>
+                <div class="d-flex">
+                    <span>Ưu đãi dịch vụ</span>
+                    <img (click)="onOpenPromotion()" class="ml-2 pointer" src="../../../assets/icons/promotion-bg-primary.svg" alt="">
+                    <span class="ml-auto">{{formInfoControl('amountPromotionToOrderLine').value | number}}</span>
+                </div>
+            </div>
         </div>
-
     </div>
 
     <!-- thong tin bo sung -->
 
-</ng-container>
+</div>

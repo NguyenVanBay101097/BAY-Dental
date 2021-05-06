@@ -17,5 +17,13 @@
 }
 
 .input-search {
-    padding-left: 30px;
+    padding-left: 36px;
+}
+
+._wrapper {
+    max-width: 400px;
+}
+
+._wrapper .input-search {
+    box-shadow: none;
 }
