@@ -361,7 +361,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       if (line.teeth) {
         line.toothIds = line.teeth.map(x => x.id);
       }
-      line.priceSubTotal = line.productUOMQty * line.priceUnit
+     
+      line.priceSubTotal = Math.round(line.productUOMQty * (line.priceUnit - line.amountDiscountTotal))
     });
     return val;
   }
@@ -557,6 +558,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.orderLines.removeAt(index);
     this.computeAmountTotal();
     this.lineSelected = null;
+    this.saleOrder = this.getFormDataSave();
+    this.patchValueSaleOrder(this.saleOrder);
   }
 
   onEditLine(line) {
@@ -586,6 +589,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.computeAmountTotal();
 
     this.lineSelected = null;
+    this.onComputePromotion();
   }
 
   patchValueSaleOrder(result) {
@@ -616,26 +620,62 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     });
 
     this.formGroup.markAsPristine();
+    this.onComputePromotion();
   }
 
-  onComputeLinePromotion() {
+  getAmountPromotionOfSaleOrder(promotion: SaleOrderPromotionSave) {//get amount of saleorder from saleorderpromotion
+    var amount = 0;
+    this.saleOrder = this.getFormDataSave();
+    var total = this.saleOrder.orderLines.reduce((total, cur) => {
+      return total + cur.priceUnit * cur.productUOMQty;
+    }, 0);
+    switch (promotion.type) {
+      case 'discount':
+        amount = promotion.discountType == 'percentage' ? promotion.discountPercent * total / 100 : promotion.discountFixed;
+        break;
+      case 'code_usage_program':
+        amount = promotion.discountType == 'percentage' ? promotion.discountPercent * total / 100 : promotion.discountFixed;
+        break;
+      case 'promotion_program':
+        amount = promotion.discountType == 'percentage' ? promotion.discountPercent * total / 100 : promotion.discountFixed;
+        break;
+      default:
+        break;
+    }
+
+    return amount;
+  }
+
+  onComputePromotion() {
     var promotions = this.getControl('promotions').value as any[];
     var total = this.getAmount();
 
+    //compute saleorderpromotion
+    promotions.forEach(pro => {
+      pro.amount = this.getAmountPromotionOfSaleOrder(pro);
+    });
+    this.formGroup.setControl('promotions', this.fb.array(promotions));
+    //compute saleorderline promotion
     var lineFA = this.getControl('orderLines') as FormArray;
     lineFA.controls.forEach((lineFG: FormGroup) => {
       var line = lineFG.value;
-      let amountToOrder = 0;      
+      let amountToOrder = 0;
       promotions.forEach((pro: SaleOrderPromotionSave) => {
-        amountToOrder += (((line.productUOMQty * line.priceUnit) / total) * pro.amount);
+        amountToOrder += ((((line.productUOMQty * line.priceUnit) / total) * pro.amount) / line.productUOMQty);
       })
-      let amountToLine = (line.promotions as any[]).reduce((total, pro) => {
-        return total + pro.amount;
-      },0);
+
+      let linePromotions = line.promotions;
+      // linePromotions.forEach(pro => {
+      //   pro.amount = 
+      // });
+      let amountToLine = linePromotions.reduce((total, pro) => {
+        return total + (pro.amount / line.productUOMQty);
+      }, 0);
 
       lineFG.get('amountPromotionToOrder').setValue(amountToOrder);
       lineFG.get('amountPromotionToOrderLine').setValue(amountToLine);
       lineFG.get('amountDiscountTotal').setValue(amountToOrder + amountToLine);
+      lineFG.get('priceSubTotal').setValue(Math.round((line.priceUnit - amountToOrder - amountToLine) * line.productUOMQty));
     })
   }
 
@@ -645,7 +685,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     modalRef.componentInstance.getUpdateSJ().subscribe(res => {
       this.patchValueSaleOrder(res);
       //phân bổ 
-      this.onComputeLinePromotion();
       this.saleOrder = this.getFormDataSave();//phân bổ xong pass lại saleOrder
       modalRef.componentInstance.saleOrder = this.saleOrder;
     });
@@ -671,29 +710,29 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     return 0;
   }
 
-  
-  onOpenLinePromotionDialog(i){
+
+  onOpenLinePromotionDialog(i) {
     let modalRef = this.modalService.open(PartnerCustomerTreatmentLineFastPromotionComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
     modalRef.componentInstance.getUpdateSJ().subscribe(res => {//res is saleorderline value
-      this.updateLineInfo(res,this.orderLines.controls[i] );
+      this.updateLineInfo(res, this.orderLines.controls[i]);
       this.saleOrder = this.getFormDataSave();
       this.patchValueSaleOrder(this.saleOrder);
-        this.onComputeLinePromotion();//phân bổ, tính lại promotionline
-        //phân bổ xong pass lại saleorderline
-        modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
+      //phân bổ, tính lại promotionline
+      //phân bổ xong pass lại saleorderline
+      modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
     });
   }
 
   onUpdateOpenLinePromotion(line, lineControl, i) {
     //update line trước khi mở popup promotion
     if (this.lineSelected != null) {
-     var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-     viewChild.updateLineInfo();
-   }
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      viewChild.updateLineInfo();
+    }
 
-   this.saleOrder = this.getFormDataSave();
-   this.onOpenLinePromotionDialog(i);
- }
+    this.saleOrder = this.getFormDataSave();
+    this.onOpenLinePromotionDialog(i);
+  }
 
 }

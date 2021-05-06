@@ -861,8 +861,9 @@ namespace Infrastructure.Services
 
         public decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line)
         {
+            var total = line.PriceUnit * line.ProductUOMQty;
             //discount_amount = so luong * don gia da giam * phan tram        
-            var discount_amount = (line.PriceUnit * (1 - line.Discount / 100)) *
+            var discount_amount = (total * (1 - line.Discount / 100)) *
                 ((program.DiscountPercentage ?? 0) / 100);
             return discount_amount;
         }

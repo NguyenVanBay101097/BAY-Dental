@@ -16,19 +16,27 @@
 
                         <ng-container *ngIf="getListPromotion('discount').length == 0; else elseTemplateDiscount">
                             <div class="d-flex">
-                                <kendo-numerictextbox class="font-weight-600" *ngIf="form.discountType == this.discountTypeDict['VNĐ']" [min]="0" [autoCorrect]="true" [(ngModel)]="form.discountFixed" style="width:50%" [format]="'n0'" [spinners]="false" (change)="onChangeDiscount($event)">
-                                </kendo-numerictextbox>
-                                <kendo-numerictextbox class="font-weight-600" *ngIf="form.discountType == this.discountTypeDict['%']" [min]="0" [autoCorrect]="true" [max]="100" [(ngModel)]="form.discountPercent" [format]="'n0'" style="width:50%" [spinners]="false" (change)="onChangeDiscount($event)">
-                                </kendo-numerictextbox>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="discountTypes" [(ngModel)]="form.discountType" (change)="onChangeDiscountType()" id="percentage1" value="percentage">
-                                    <label class="form-check-label" for="percentage1">%</label>
+                                <div class="d-flex flex-fill">
+                                    <div class="flex-fill">
+                                        <kendo-numerictextbox class="font-weight-600" *ngIf="form.discountType == this.discountTypeDict['VNĐ']" [min]="0" [autoCorrect]="true" [(ngModel)]="form.discountFixed" style="width:100%" [format]="'n0'" [spinners]="false" (change)="onChangeDiscount($event)">
+                                        </kendo-numerictextbox>
+                                        <kendo-numerictextbox class="font-weight-600" *ngIf="form.discountType == this.discountTypeDict['%']" [min]="0" [autoCorrect]="true" [max]="100" [(ngModel)]="form.discountPercent" [format]="'n0'" style="width:100%" [spinners]="false" (change)="onChangeDiscount($event)">
+                                        </kendo-numerictextbox>
+                                    </div>
+                                    <div class="btn-group-toggle discount-options ml-2">
+                                        <label class="btn border" [class.active]="form.discountType == 'percentage'">
+                                            <input class="form-check-input" type="radio" autocomplete="off" [(ngModel)]="form.discountType" (change)="onChangeDiscountType()" id="percentage1" value="percentage">
+                                            %
+                                        </label>
+                                        <label class="btn border" [class.active]="form.discountType == 'fixed'">
+                                            <input class="form-check-input" type="radio" autocomplete="off" [(ngModel)]="form.discountType" (change)="onChangeDiscountType()" id="fixed1" value="fixed">
+                                            VNĐ
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="discountTypes" [(ngModel)]="form.discountType" (change)="onChangeDiscountType()" id="fixed1" value="fixed">
-                                    <label class="form-check-label" for="fixed1">VNĐ</label>
+                                <div class="ml-3">
+                                    <button (click)="applyDiscount()" class="btn btn-primary ml-auto btn-use">Áp dụng</button>
                                 </div>
-                                <button (click)="applyDiscount()" class="btn btn-sm btn-primary ml-auto btn-use">Áp dụng</button>
                             </div>
                         </ng-container>
                         <ng-template #elseTemplateDiscount>
@@ -42,13 +50,11 @@
 
                     </div>
                     <!-- mã thủ công -->
-                    <div>
+                    <div class="">
                         <label for="" class="font-weight-600">Mã khuyến mãi</label>
-                        <div class="input-group">
-                            <input placeholder="Nhập mã khuyễn mãi" type="text" class="form-control" [(ngModel)]="form.code" />
-                            <span class="input-group-append">
-                              <button type="button" class="btn btn-primary" (click)="onApplyCoupon()">Áp dụng</button>
-                            </span>
+                        <div class="d-flex div-manual-code">
+                            <input type="text" class="form-control" [(ngModel)]="form.code" />
+                            <button type="button" class="btn btn-primary" (click)="onApplyCoupon()">Áp dụng</button>
                         </div>
                         <p *ngIf="errorMsg" class="text-danger">{{errorMsg}}</p>
                         <div class="">
