@@ -45,7 +45,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.PriceUnit, x => x.Condition(s => s.State == "draft"))
                 .ForMember(x => x.Discount, x => x.Condition(s => s.State == "draft"))
-                .ForMember(x => x.ProductId, x => x.Condition(s => s.State == "draft"));
+                .ForMember(x => x.ProductId, x => x.Condition(s => s.State == "draft"))
+                .ForMember(x => x.Promotions, x => x.Ignore());
 
             CreateMap<SaleOrderLine, SaleOrderLinePrintVM>();
 

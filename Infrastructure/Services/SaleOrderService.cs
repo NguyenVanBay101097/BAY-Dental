@@ -576,11 +576,11 @@ namespace Infrastructure.Services
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
             var orderPromotionObj = GetService<ISaleOrderPromotionService>();
-            var promotions = _GetRewardLineValues(self, program);
+            var promotion = _GetRewardLineValues(self, program);
             //foreach (var line in lines)
             //    line.Order = self;
 
-            await orderPromotionObj.CreateAsync(promotions);
+            await orderPromotionObj.CreateAsync(promotion);
 
             //tính lại tổng tiền ưu đãi saleorderlines
             saleLineObj._ComputeAmountDiscountTotal(self.OrderLines);
@@ -592,13 +592,13 @@ namespace Infrastructure.Services
         }
 
 
-        private IEnumerable<SaleOrderPromotion> _GetRewardLineValues(SaleOrder self, SaleCouponProgram program)
+        private SaleOrderPromotion _GetRewardLineValues(SaleOrder self, SaleCouponProgram program)
         {
             if (program.RewardType == "discount")
                 return _GetRewardValuesDiscount(self, program);
             //else if (program.RewardType == "product")
             //    return new List<SaleOrderLine>() { _GetRewardValuesProduct(self, program) };
-            return new List<SaleOrderPromotion>();
+            return new SaleOrderPromotion();
         }
 
         private SaleOrderLine _GetRewardValuesProduct(SaleOrder self, SaleCouponProgram program)
@@ -801,7 +801,7 @@ namespace Infrastructure.Services
             return applied_programs.Where(x => programObj._IsGlobalDiscountProgram(x)).Any();
         }
 
-        public IList<SaleOrderPromotion> _GetRewardValuesDiscount(SaleOrder self, SaleCouponProgram program)
+        public SaleOrderPromotion _GetRewardValuesDiscount(SaleOrder self, SaleCouponProgram program)
         {
             var programObj = GetService<ISaleCouponProgramService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
@@ -819,11 +819,11 @@ namespace Infrastructure.Services
                 var discountAmount = _GetRewardValuesDiscountFixedAmount(self, program);
                 var promotionLine = promotionObj.PreparePromotionToOrder(self, program, discountAmount);
 
-                return new List<SaleOrderPromotion>() { promotionLine };
+                return promotionLine ;
             }
 
 
-            var rewards = new List<SaleOrderPromotion>();
+            var reward = new SaleOrderPromotion();
             var lines = _GetPaidOrderLines(self);
             if (program.DiscountApplyOn == "specific_products" || program.DiscountApplyOn == "on_order")
             {
@@ -845,12 +845,12 @@ namespace Infrastructure.Services
                         total_discount_amount += discount_line_amount;
                 }
 
-                var promotionLine = promotionObj.PreparePromotionToOrder(self, program, total_discount_amount);
+                reward = promotionObj.PreparePromotionToOrder(self, program, total_discount_amount);
 
-                rewards.Add(promotionLine);
+              
             }
 
-            return rewards;
+            return reward;
         }
 
 
@@ -2353,43 +2353,44 @@ namespace Infrastructure.Services
                     }
                 }
 
-                //if (line.Promotions.Any())
-                //{
-                //    foreach (var promotion in saleLine.Promotions)
-                //    {
-                //        var total = line.PriceUnit * line.ProductUOMQty;
-                //        var discount_amount = 0M;
-                //        if (promotion.Type == "discount")
-                //        {
-                //            discount_amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
-                //            promotion.Name = "Giảm tiền";
-                //            promotion.Amount = discount_amount;
-                //            promotion.SaleOrderLineId = line.Id;
-                //            promotion.SaleOrderId = order.Id;
+                if (line.Promotions.Any())
+                {
+                    foreach (var promotion in saleLine.Promotions)
+                    {
+                        var discount_amount = 0M;
+                        if (promotion.Type == "discount")
+                        {
+                            discount_amount = (promotion.DiscountType == "percentage" ? line.PriceUnit * (1 - (promotion.DiscountPercent ?? 0) / 100) : (promotion.DiscountFixed ?? 0) * line.ProductUOMQty);
+                            promotion.Name = "Giảm tiền";
+                            promotion.Amount = discount_amount;
+                            promotion.SaleOrderLineId = line.Id;
+                            promotion.SaleOrderId = order.Id;
 
-                //            promotion.Lines.Add(new SaleOrderPromotionLine
-                //            {
-                //                SaleOrderLineId = promotion.SaleOrderLineId.Value,
-                //                Amount = promotion.Amount,
-                //                PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
-                //            });
-                //        }
-                //        else if (promotion.Type == "code_usage_program" || promotion.Type == "promotion_program")
-                //        {
-                //            var program = await programObj.SearchQuery(x => x.Id == promotion.SaleCouponProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
-                //            if (program != null)
-                //            {
-                //                var error_status = await programObj._CheckPromotionApplySaleLine(program, saleLine);
-                //                if (string.IsNullOrEmpty(error_status.Error))
-                //                {
-                //                    promotion = lineObj._GetRewardLineValues(saleLine, program);
-                //                }
-                //            }
-                //        }
+                            promotion.Lines.Add(new SaleOrderPromotionLine
+                            {
+                                SaleOrderLineId = promotion.SaleOrderLineId.Value,
+                                Amount = promotion.Amount,
+                                PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
+                            });
+
+                            saleLine.Promotions.Add(promotion);
+                        }
+                        else if (promotion.Type == "code_usage_program" || promotion.Type == "promotion_program")
+                        {
+                            var program = await programObj.SearchQuery(x => x.Id == promotion.SaleCouponProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+                            if (program != null)
+                            {
+                                var error_status = await programObj._CheckPromotionApplySaleLine(program, saleLine);
+                                if (string.IsNullOrEmpty(error_status.Error))
+                                {
+                                    saleLine.Promotions.Add(lineObj._GetRewardLineValues(saleLine, program));
+                                }
+                            }
+                        }
 
 
-                //    }
-                //}
+                    }
+                }
 
 
                 lines.Add(saleLine);
@@ -2400,7 +2401,51 @@ namespace Infrastructure.Services
             ///xử lý ưu đãi chi order
             if (val.Promotions.Any())
             {
+                foreach (var promotion in val.Promotions)
+                {
+                    var total = order.OrderLines.Sum(x => x.PriceUnit * x.ProductUOMQty);
+                    var discount_amount = 0M;
+                    if (promotion.Type == "discount")
+                    {
+                        discount_amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
+                        var reward = new SaleOrderPromotion();
+                        reward.Name = "Giảm tiền";
+                        reward.Amount = discount_amount;
+                        reward.DiscountType = promotion.DiscountType;
+                        reward.DiscountFixed = promotion.DiscountFixed;
+                        reward.DiscountPercent = promotion.DiscountPercent;
+                        reward.SaleOrderId = order.Id;
 
+                        if (order.OrderLines.Any())
+                        {
+                            foreach (var line in order.OrderLines)
+                            {
+                                reward.Lines.Add(new SaleOrderPromotionLine
+                                 {
+                                     SaleOrderLineId = promotion.SaleOrderLineId.Value,
+                                     Amount = promotion.Amount,
+                                     PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
+                                 });
+                            }
+                        }
+
+                        order.Promotions.Add(reward);
+                    }
+                    else if (promotion.Type == "code_usage_program" || promotion.Type == "promotion_program")
+                    {
+                        var program = await programObj.SearchQuery(x => x.Id == promotion.SaleCouponProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+                        if (program != null)
+                        {
+                            var error_status = await programObj._CheckPromotion(program, order);
+                            if (string.IsNullOrEmpty(error_status.Error))
+                            {
+                                 order.Promotions.Add(_GetRewardLineValues(order, program));
+                            }
+                        }
+                    }
+
+
+                }
             }
 
 
