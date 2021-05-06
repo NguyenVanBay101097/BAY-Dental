@@ -86,8 +86,8 @@ export class SaleCouponProgramService {
         return this.http.post(this.baseApi + this.apiUrl + "/GenerateCoupons", data);
     }
 
-    getPromotionUsageCode(code: string): Observable<any> {
-        return this.http.get<any>(this.baseApi + this.apiUrl + '/GetPromotionUsageCode?code='+ code);
+    getPromotionUsageCode(code: string,productId?: string): Observable<any> {
+        return this.http.get<any>(this.baseApi + this.apiUrl + '/GetPromotionUsageCode?code='+ code + (productId? '&productId='+ productId : ''));
     }
 
     getPromotionBySaleOrder() {

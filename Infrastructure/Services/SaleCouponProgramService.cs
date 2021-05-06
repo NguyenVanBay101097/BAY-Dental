@@ -427,6 +427,12 @@ namespace Infrastructure.Services
                 res.Success = false;
                 res.SaleCouponProgram = null;
             }
+            else if (!productId.HasValue && program.DiscountApplyOn == "specific_products")
+            {
+                res.Error = "Khuyến mãi không áp dụng cho đơn hàng";
+                res.Success = false;
+                res.SaleCouponProgram = null;
+            }
             else if (productId.HasValue && !program.DiscountSpecificProducts.Any(x => x.ProductId == productId))
             {
                 res.Error = "Mã khuyến mãi không áp dụng cho dịch vụ này";
