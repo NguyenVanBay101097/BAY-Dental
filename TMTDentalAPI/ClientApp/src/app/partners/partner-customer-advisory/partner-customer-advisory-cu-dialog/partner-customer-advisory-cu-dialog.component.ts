@@ -31,9 +31,17 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   productSelectedFromApi: any[] = [];
   cateId: string;
   submitted = false;
+  title: string;
   customerId: string;
   id: string;
   filterData: EmployeeBasic[] = [];
+  toothTypeDict = [
+    { name: "Hàm trên", value: "upper_jaw" },
+    { name: "Nguyên Hàm", value: "whole_jaw" },
+    { name: "Hàm dưới", value: "lower_jaw" },
+    { name: "Chọn răng", value: "manual" },
+  ];
+
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
@@ -55,14 +63,13 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       employeeId: null,
       employeeAdvisory: null,
       toothCategoryId:[null],
-      teeth: [[], Validators.required],
+      toothType: "manual",
+      teeth: [],
       toothDiagnosis: [[], Validators.required],
       product: [[], Validators.required],
       note: [],
       companyId: [null,Validators.required]
     })
-
-    
 
     setTimeout(() => {
       this.loadToothCategories();
@@ -72,9 +79,10 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       })
       
       this.loadEmployees();
-      if(this.id){
+
+      if(this.id) {
         this.getById();
-      }else{
+      } else {
         this.getDefault();
       }
     });
@@ -90,14 +98,12 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
         this.filterData = result.items;
         this.empCbx.loading = false;
       });
-    
-
-    
-
   }
 
-  get f(){
-    return this.myForm.controls;
+  get f() { return this.myForm.controls; }
+
+  getValueFormControl(key: string) {
+    return this.myForm.get(key).value;
   }
 
   loadTeethMap(categ: ToothCategoryBasic) {
@@ -122,6 +128,13 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     }
   }
 
+  onChangeToothType(toothType) {
+    if (toothType != "manual") {
+      this.teethSelected = [];
+      this.f.teeth.setValue(this.teethSelected);
+    }
+  }
+
   isSelected(tooth: ToothDisplay) {
     for (var i = 0; i < this.teethSelected.length; i++) {
       if (this.teethSelected[i].id === tooth.id) {
@@ -133,15 +146,16 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   }
 
   onSelected(tooth: ToothDisplay) {
-    if (this.isSelected(tooth)) {
-      var index = this.getSelectedIndex(tooth);
-      this.teethSelected.splice(index, 1);
-    } else {
-      this.teethSelected.push(tooth);
+    if (this.getValueFormControl("toothType") == "manual") {
+      if (this.isSelected(tooth)) {
+        var index = this.getSelectedIndex(tooth);
+        this.teethSelected.splice(index, 1);
+      } else {
+        this.teethSelected.push(tooth);
+      }
+      this.f.teeth.setValue(this.teethSelected);
     }
-    this.f.teeth.setValue(this.teethSelected);
   }
-
 
   getSelectedIndex(tooth: ToothDisplay) {
     for (var i = 0; i < this.teethSelected.length; i++) {
@@ -153,8 +167,6 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     return null;
   }
 
-  
-
   loadDefaultToothCategory() {
     return this.toothCategoryService.getDefaultCategory();
   }
@@ -163,7 +175,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     return this.toothCategoryService.getAll().subscribe(result => this.filteredToothCategories = result);
   }
 
-  searchEmployees(q?:string){
+  searchEmployees(q?:string) {
     var val = new EmployeePaged();
     val.limit = 10;
     val.offset = 0;
@@ -171,7 +183,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     return this.employeeService.getEmployeePaged(val);
   }
 
-  loadEmployees(){
+  loadEmployees() {
     this.searchEmployees().subscribe(result => {
       this.filterData = result.items;
     })
@@ -186,13 +198,13 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     }
   }
 
-  onSave(){
+  onSave() {
     this.submitted = true;
     if (!this.myForm.valid) {
       return false;
     }
     var valueForm = this.myForm.value;
-    if(valueForm.employeeAdvisory){
+    if (valueForm.employeeAdvisory) {
       valueForm.employeeId = valueForm.employeeAdvisory.id;
     }
     valueForm.date = this.intlService.formatDate(valueForm.dateObj, 'yyyy-MM-ddTHH:mm:ss');
@@ -200,18 +212,17 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     valueForm.toothIds = this.teethSelected.map(x => x.id);
     valueForm.toothDiagnosisIds = valueForm.toothDiagnosis.map(x => x.id);
     valueForm.productIds = valueForm.product.map(x => x.id);
-    if(this.id){
+    if (this.id) {
       this.advisoryService.update(valueForm,this.id).subscribe(() => {
         this.notify("success","Lưu thành công");
         this.activeModal.close(true);
       })
-    }else{
+    } else {
       this.advisoryService.create(valueForm).subscribe(() => {
         this.notify("success","Lưu thành công");
         this.activeModal.close(true);
       })
     }
-    
   }
 
   notify(style, content) {
@@ -224,7 +235,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     });
   }
 
-  getDefault(){
+  getDefault() {
     var val = new AdvisoryDefaultGet();
     val.customerId = this.customerId
     this.advisoryService.getDefault(val).subscribe(result => {
@@ -235,7 +246,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     })
   }
 
-  getById(){
+  getById() {
     this.advisoryService.get(this.id).subscribe(result => {
       this.cateId = result.toothCategoryId;
       this.loadTeethMap(result.toothCategory);
@@ -253,7 +264,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   }
 
 
-  updateDiagnosis(data){
+  updateDiagnosis(data) {
     this.f.toothDiagnosis.setValue(data);
     var ids = data.map(x => x.id);
     this.toothDiagnosisService.getProducts(ids).subscribe(result => {
@@ -267,26 +278,24 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       this.productSelectedFromApi = result;
     })
   }
-  updateProduct(data){
+
+  updateProduct(data) {
     this.f.product.setValue(data);
   }
 
   resetForm(){
-    if(this.id){
+    if (this.id) {
       this.getById();
-    }
-    else{
-      this.f.toothDiagnosis.setValue([]);
-      this.f.product.setValue([]);
+    } else {
+      this.getDefault();
       this.teethSelected = [];
-      this.f.teeth.setValue(this.teethSelected);
-      this.f.note.reset();
     }
     
   }
 
-  viewPartner(){
+  viewPartner() {
     this.router.navigate(['/partners/customer/'+this.customerId+'/overview']);
     this.activeModal.dismiss();
   }
+  
 }

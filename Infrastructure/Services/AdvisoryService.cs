@@ -31,6 +31,8 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<AdvisoryBasic>> GetPagedResultAsync(AdvisoryPaged val)
         {
+            var toothService = GetService<IToothService>();
+
             var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.Search))
@@ -41,7 +43,29 @@ namespace Infrastructure.Services
 
             if (val.ToothIds.Any())
             {
-                query = query.Where(x => x.AdvisoryToothRels.Any(s => val.ToothIds.Contains(s.ToothId)));
+                var allTooths = await toothService.SearchQuery().ToListAsync();
+                var listIdsRangTrenVinhVien = allTooths.Where(x => x.ViTriHam == "0_up" && Convert.ToInt32(x.Name) < 50).Select(x => x.Id).ToList();
+                var listIdsRangDuoiVinhVien = allTooths.Where(x => x.ViTriHam == "1_down" && Convert.ToInt32(x.Name) < 50).Select(x => x.Id).ToList();
+                var listIdsRangTrenSua = allTooths.Where(x => x.ViTriHam == "0_up" && Convert.ToInt32(x.Name) > 50).Select(x => x.Id).ToList();
+                var listIdsRangDuoiSua = allTooths.Where(x => x.ViTriHam == "1_down" && Convert.ToInt32(x.Name) > 50).Select(x => x.Id).ToList();
+
+                var inUpperVinhVien = val.ToothIds.Any(s => listIdsRangTrenVinhVien.Contains(s));
+                var inLowerVinhVien = val.ToothIds.Any(s => listIdsRangDuoiVinhVien.Contains(s));
+                var inUpperSua = val.ToothIds.Any(s => listIdsRangTrenSua.Contains(s));
+                var inLowerSua = val.ToothIds.Any(s => listIdsRangDuoiSua.Contains(s));
+                var inVinhVien = val.ToothIds.Any(s => listIdsRangTrenVinhVien.Contains(s)) ||
+                    val.ToothIds.Any(s => listIdsRangDuoiVinhVien.Contains(s));
+                var inSua = val.ToothIds.Any(s => listIdsRangTrenSua.Contains(s)) ||
+                    val.ToothIds.Any(s => listIdsRangDuoiSua.Contains(s));
+
+                query = query.Where(x => 
+                (x.ToothType == "whole_jaw" && inVinhVien && x.ToothCategory.Sequence == 1) ||
+                (x.ToothType == "whole_jaw" && inSua && x.ToothCategory.Sequence == 2) ||
+                (x.ToothType == "upper_jaw" && inUpperVinhVien && x.ToothCategory.Sequence == 1) ||
+                (x.ToothType == "upper_jaw" && inUpperSua && x.ToothCategory.Sequence == 2) ||
+                (x.ToothType == "lower_jaw" && inLowerVinhVien && x.ToothCategory.Sequence == 1) ||
+                (x.ToothType == "lower_jaw" && inLowerSua && x.ToothCategory.Sequence == 2) ||
+                (x.ToothType == "manual" && x.AdvisoryToothRels.Any(s => val.ToothIds.Contains(s.ToothId))));
             }
 
             if (val.DateFrom.HasValue)
@@ -97,7 +121,6 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
 
             var res = _mapper.Map<AdvisoryDisplay>(advisory);
-
             return res;
         }
 
@@ -221,7 +244,7 @@ namespace Infrastructure.Services
                 res.CustomerId = partner.Id;
                 res.Customer = _mapper.Map<PartnerSimple>(partner);
             }
-
+            res.ToothType = "manual";
             return res;
         }
 
@@ -476,6 +499,18 @@ namespace Infrastructure.Services
             };
 
             return paged;
+        }
+
+        private bool CheckViTriHam(string toothType, string viTriHam)
+        {
+            if (toothType == "upper_jaw" && viTriHam == "0_up")
+                return true;
+            else if (toothType == "lower_jaw" && viTriHam == "1_down")
+                return true;
+            else if (toothType == "whole_jaw")
+                return true;
+            else
+                return false;
         }
     }
 }

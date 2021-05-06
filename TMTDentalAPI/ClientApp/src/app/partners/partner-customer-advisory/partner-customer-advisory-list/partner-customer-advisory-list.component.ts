@@ -80,7 +80,8 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     this.loadDataFromApi();
     
   }
-  createAdvisory(){
+
+  createAdvisory() {
     const modalRef = this.modalService.open(PartnerCustomerAdvisoryCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm thông tin tư vấn';
     modalRef.componentInstance.customerId = this.customerId;
@@ -89,7 +90,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     }, er => { })
   }
 
-  createQuotations(){
+  createQuotations() {
     if (!this.mySelection || this.mySelection.length == 0) 
     {
       this.notify('error', 'Bạn chưa chọn thông tin tư vấn');
@@ -109,7 +110,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     )
   }
 
-  createSaleOrder(){
+  createSaleOrder() {
     if (!this.mySelection || this.mySelection.length == 0) 
     {
       this.notify('error', 'Bạn chưa chọn thông tin tư vấn');
@@ -233,6 +234,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     val.customerId = this.customerId;
     val.toothIds = this.teethSelected.map(x => x.id);
     this.advisoryService.getPaged(val).subscribe(res => {
+      console.log(res);
       this.gridData =  <GridDataResult> {
         data: res.items,       
         total: res.totalItems
@@ -327,4 +329,18 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     });
   }
 
+  getToothType(toothType) {
+    switch (toothType) {
+      case "upper_jaw":
+        return "Hàm trên";
+      case "whole_jaw":
+        return "Nguyên hàm";
+      case "lower_jaw":
+        return "Hàm dưới";
+      case "manual":
+        return "Chọn răng";
+      default:
+        break;
+    }
+  }
 }
