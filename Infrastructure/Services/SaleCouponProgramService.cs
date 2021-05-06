@@ -56,7 +56,7 @@ namespace Infrastructure.Services
         {
             var today = DateTime.Today;
             var promotions = await SearchQuery(x => x.Active && x.ProgramType == "promotion_program"
-            && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order" 
+            && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order"
             && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)).ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
@@ -68,7 +68,7 @@ namespace Infrastructure.Services
             var today = DateTime.Today;
 
             var promotions = await SearchQuery(x => x.Active && x.ProgramType == "promotion_program"
-            && x.PromoCodeUsage == "no_code_needed" 
+            && x.PromoCodeUsage == "no_code_needed"
             && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
             && x.DiscountApplyOn == "specific_products" && x.DiscountSpecificProducts.Any(s => s.ProductId == productId)).ToListAsync();
 
@@ -371,7 +371,7 @@ namespace Infrastructure.Services
             var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
             if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > line.Order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo < line.Order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
-            else if(!self.DiscountSpecificProducts.Any(x=> x.ProductId == line.ProductId))
+            else if (!self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId))
                 message.Error = "Khuyến mãi Không áp dụng cho dịch vụ này";
             else if (line.Order.Promotions.Any(x => x.SaleCouponProgramId == self.Id))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
@@ -410,11 +410,11 @@ namespace Infrastructure.Services
         //    }
         //}
 
-        public async Task<SaleCouponProgramResponse> GetPromotionDisplayUsageCode(string code)
+        public async Task<SaleCouponProgramResponse> GetPromotionDisplayUsageCode(string code, Guid? productId)
         {
             var now = DateTime.Now;
             //Chương trình khuyến mãi sử dụng mã
-            var program = await SearchQuery(x => x.PromoCode == code).FirstOrDefaultAsync();
+            var program = await SearchQuery(x => x.PromoCode == code).Include(x => x.DiscountSpecificProducts).FirstOrDefaultAsync();
             if (program == null)
                 return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
 
@@ -427,7 +427,12 @@ namespace Infrastructure.Services
                 res.Success = false;
                 res.SaleCouponProgram = null;
             }
-
+            else if (productId.HasValue && !program.DiscountSpecificProducts.Any(x => x.ProductId == productId))
+            {
+                res.Error = "Mã khuyến mãi không áp dụng cho dịch vụ này";
+                res.Success = false;
+                res.SaleCouponProgram = null;
+            }
             else if ((program.RuleDateFrom.HasValue && program.RuleDateFrom > now) || (program.RuleDateTo.HasValue && program.RuleDateTo < now))
             {
                 res.Error = "Mã khuyến mãi đã hết hạn";

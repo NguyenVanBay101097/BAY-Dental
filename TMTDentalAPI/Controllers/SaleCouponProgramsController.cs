@@ -30,7 +30,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet]
         [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
-        public async Task<IActionResult> Get([FromQuery]SaleCouponProgramPaged val)
+        public async Task<IActionResult> Get([FromQuery] SaleCouponProgramPaged val)
         {
             var result = await _programService.GetPagedResultAsync(val);
             return Ok(result);
@@ -65,9 +65,9 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
-        public async Task<IActionResult> GetPromotionUsageCode([FromQuery] string code)
+        public async Task<IActionResult> GetPromotionUsageCode([FromQuery] string code, Guid? productId)
         {
-            var result = await _programService.GetPromotionDisplayUsageCode(code);
+            var result = await _programService.GetPromotionDisplayUsageCode(code, productId);
             return Ok(result);
         }
 
