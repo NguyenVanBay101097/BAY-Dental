@@ -559,6 +559,10 @@ namespace Infrastructure.Services
             var amls = _AmountResidual(amlsToRecompute);
             await UpdateAsync(amls);
 
+            //trigger update self
+            var aml2s = _AmountResidual(self.Select(x => x.Id).ToList());
+            await UpdateAsync(aml2s);
+
             var invoiceIds = amls.Select(x => x.MoveId).Distinct().ToList();
             if (invoiceIds.Any())
             {
@@ -584,6 +588,8 @@ namespace Infrastructure.Services
                     await saleObj.UpdateResidual(cardOrderIds);
                 }
             }
+
+
         }
 
         public override ISpecification<AccountMoveLine> RuleDomainGet(IRRule rule)

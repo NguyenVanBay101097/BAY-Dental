@@ -107,6 +107,7 @@ export class PartnerAdvanceListComponent implements OnInit {
     forkJoin(this.types.map(x => {
       var val = new PartnerAdvanceSummaryFilter();
       val.type = x.value;
+      val.partnerId = this.partnerId;
       return this.partnerAdvanceService.getSumary(val).pipe(
         switchMap(amount => of({ type: x.value, amount: amount }))
       );

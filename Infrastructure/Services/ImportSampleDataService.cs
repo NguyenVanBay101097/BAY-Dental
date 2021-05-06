@@ -282,7 +282,7 @@ namespace Infrastructure.Services
                 company_main = await companyObj.GetByIdAsync(user_root.CompanyId);
             if (partner_main == null)
                 partner_main = await partnerObj.GetByIdAsync(company_main.PartnerId);
-          
+
             await _dbContext.ExecuteSqlCommandAsync("update AccountJournals set DefaultCreditAccountId = null, DefaultDebitAccountId = null");
             await _dbContext.ExecuteSqlCommandAsync("update Companies set AccountIncomeId = null, AccountExpenseId = null");
             await _dbContext.ExecuteSqlCommandAsync("Delete AccountPartialReconciles");
@@ -402,6 +402,131 @@ namespace Infrastructure.Services
             await irConfigParameterObj.SetParam("import_sample_data", "Installed");
         }
 
+        public async Task OldSaleOrderPaymentProcessUpdate()
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var moveObj = GetService<IAccountMoveService>();
+            var amlObj = GetService<IAccountMoveLineService>();
+            var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
+            var orderPaymentObj = GetService<ISaleOrderPaymentService>();
+            var journalObj = GetService<IAccountJournalService>();
+            var accPaymentObj = GetService<IAccountPaymentService>();
+            var move_ids = new List<Guid>().AsEnumerable();
+
+            var payment_ids = new List<Guid>().AsEnumerable();
+
+            ///tìm các chi nhánh của tenant
+            var companies = _dbContext.Companies.ToList();
+
+            foreach (var company in companies)
+            {
+                //lấy các phiếu điều trị đã xác nhận và thanh toán
+                var orders = await orderObj.SearchQuery(x => x.CompanyId == company.Id && x.State != "draft")
+                    .Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLinePaymentRels).ThenInclude(x => x.Payment)
+                    .Include(x => x.OrderLines).ThenInclude(x => x.PartnerCommissions)
+                    .Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLineInvoice2Rels)
+                    .ToListAsync();
+
+                //vòng lặp các phiếu điều trị xóa các hóa đơn 
+                foreach (var order in orders)
+                {
+                    payment_ids = await accPaymentObj.SearchQuery(x => x.SaleOrderPaymentRels.Any(s => s.SaleOrderId == order.Id)).Select(x => x.Id).ToListAsync();
+
+                    ///cancel các payment cũ
+                    if (payment_ids.Any())
+                        await accPaymentObj.CancelAsync(payment_ids);
+
+
+                    var mIds = await amlObj.SearchQuery(x => x.SaleLineRels.Any(s => s.OrderLine.OrderId == order.Id)).Select(x => x.MoveId).Distinct().ToListAsync();
+                    move_ids = move_ids.Union(mIds);
+
+                    ///xóa hóa đơn doanh thu của phiếu điều trị khi xác nhận
+                    await orderObj.UpdateAsync(order);
+
+                    if (move_ids.Any())
+                    {
+                        await moveObj.ButtonDraft(move_ids);
+
+                        await moveObj.Unlink(move_ids);
+                    }
+
+                    foreach (var line in order.OrderLines)
+                    {
+                        if (line.State == "cancel")
+                            continue;
+
+                        if (line.SaleOrderLinePaymentRels.Any())
+                        {                          
+                            await linePaymentRelObj.DeleteAsync(line.SaleOrderLinePaymentRels);
+                            line.AmountPaid = 0;
+                            line.AmountResidual = 0;
+                        }
+
+                    }
+
+
+                    saleLineObj._GetInvoiceQty(order.OrderLines);
+                    saleLineObj._GetToInvoiceQty(order.OrderLines);
+                    saleLineObj._GetInvoiceAmount(order.OrderLines);
+                    saleLineObj._GetToInvoiceAmount(order.OrderLines);
+                    saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+                    await saleLineObj._RemovePartnerCommissions(order.OrderLines.Select(x => x.Id).ToList());
+                    order.Residual = 0;
+
+                    orderObj._GetInvoiced(new List<SaleOrder>() { order });
+                    await orderObj.UpdateAsync(order);
+
+                    //tạo thanh toán phiếu điều trị 
+                    //vòng lặp các thanh toán của phiếu điều trị 
+                    if (payment_ids.Any())
+                    {
+                        var accountPayments = accPaymentObj.SearchQuery(x => payment_ids.Contains(x.Id) && x.State == "Cancel").Include(x => x.SaleOrderLinePaymentRels).ToList();
+                        foreach (var accPayment in accountPayments)
+                        {
+                            var salePayment = new SaleOrderPayment()
+                            {
+                                Amount = accPayment.Amount,
+                                Date = accPayment.PaymentDate,
+                                OrderId = order.Id,
+                                CompanyId = order.CompanyId
+                            };
+
+                            ///tạo SaleOrderPaymentHistoryLineSave từ orderlines          
+                            foreach (var line in accPayment.SaleOrderLinePaymentRels)
+                            {
+                                salePayment.Lines.Add(new SaleOrderPaymentHistoryLine
+                                {
+                                    SaleOrderLineId = line.SaleOrderLineId,
+                                    Amount = line.AmountPrepaid.HasValue ? line.AmountPrepaid.Value : 0,
+                                    SaleOrderPayment = salePayment
+                                });
+                            }
+
+
+                            //tạo ra phương thức thanh toán 
+                            salePayment.JournalLines.Add(new SaleOrderPaymentJournalLine()
+                            {
+                                SaleOrderPayment = salePayment,
+                                JournalId = accPayment.JournalId,
+                                Amount = accPayment.Amount
+                            });
+
+
+                            await orderPaymentObj.CreateAsync(salePayment);
+                            await orderPaymentObj.ActionPayment(new List<Guid>() { salePayment.Id });
+                        }
+
+                        await accPaymentObj.DeleteAsync(accountPayments);
+
+                    }
+
+
+                }
+
+            }
+
+        }
 
         protected T GetService<T>()
         {

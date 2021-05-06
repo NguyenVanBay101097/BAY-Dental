@@ -90,6 +90,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date >= val.DateFrom);
             }
 
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
             if (val.DateTo.HasValue)
             {
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
