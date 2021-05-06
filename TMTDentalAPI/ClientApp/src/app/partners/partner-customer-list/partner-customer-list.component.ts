@@ -88,7 +88,8 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   get canExport() {
-    return this.checkPermissionService.check('Basic.Partner.Export');
+    var result = this.checkPermissionService.check('Basic.Partner.Export');
+    return result;
   }
 
   updateFilter() {
@@ -96,6 +97,7 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   refreshData() {
+    debugger
     this.dataBinding.rebind();
   }
 

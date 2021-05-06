@@ -101,5 +101,13 @@
     border-radius: 4px;
     color: #828588;
     height: 50px;
-    padding-top: 13px !important;
+    /* padding-top: 13px !important; */
+    position: relative;
+}
+
+.btn-radio .btn-radio-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

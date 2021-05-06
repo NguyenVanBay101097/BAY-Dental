@@ -54,6 +54,7 @@ export class QuotationsBasic {
   note: string;
   totalAmount: number;
   state: string;
+  toothType: string;
 }
 
 export class QuotationsDisplay {

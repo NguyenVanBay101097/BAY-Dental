@@ -5,21 +5,12 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { values } from 'lodash';
-import { result } from 'lodash';
-import { from } from 'rxjs';
 import { debounceTime, delay, map, switchMap, tap } from 'rxjs/operators';
-import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { EmployeeBasic, EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-// import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
-// import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import { PrintService } from 'src/app/shared/services/print.service';
-import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-// import { UserSimple } from 'src/app/users/user-simple';
-import { UserBasic, UserPaged, UserService } from 'src/app/users/user.service';
 import { QuotationLineCuComponent } from '../quotation-line-cu/quotation-line-cu.component';
 import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../quotation.service';
 
@@ -36,12 +27,11 @@ import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../qu
   styleUrls: ['./quotation-create-update-form.component.css']
 })
 export class QuotationCreateUpdateFormComponent implements OnInit {
-  
+
   @ViewChild("empCbx", { static: true }) empCbx: ComboBoxComponent;
   formGroup: FormGroup;
   formGroupInfo: FormGroup;
   partner: any;
-  // user: any;
   employee: any;
   // employeeId: string;
   saleOrders: any;
@@ -84,8 +74,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       partnerId: ['', Validators.required],
-      employeeId: null,
-      employeeAdvisory: null,
+      // employeeId: null,
+      // employeeAdvisory: null,
       employeeId: ['', Validators.required],
       employee: [null, Validators.required],
       note: '',
@@ -109,11 +99,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         tap(() => (this.empCbx.loading = true)),
         switchMap((value) => this.searchEmployees(value))
       )
-      .subscribe((result) => {
+      .subscribe((result:any) => {
         this.filterData = result.items;
         this.empCbx.loading = false;
       });
-    this.loadEmployees();
+    // this.loadEmployees();
   }
 
   routeActive() {
@@ -131,23 +121,22 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.quotation = result;
           this.partner = result.partner;
           this.partnerId = result.partnerId;
-          this.employee = result.employee;
+          // this.employee = result.employee;
           // this.employeeId = result.employeeId;
           this.saleOrders = result.orders;
           this.formGroup.get('note').patchValue(result.note);
           this.formGroup.get('partnerId').patchValue(result.partnerId);
           this.formGroup.get('employeeId').patchValue(result.employeeId);
+          this.formGroup.get('employee').patchValue(result.employee);
           this.formGroup.get('dateQuotation').patchValue(new Date(result.dateQuotation));
           this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "MM/dd/yyyy"));
           this.formGroup.get('dateApplies').patchValue(result.dateApplies);
-           this.formGroup.get('employeeAdvisory').patchValue(result.employee);
+          // this.formGroup.get('employeeAdvisory').patchValue(result.employee);
           const control = this.formGroup.get('lines') as FormArray;
           control.clear();
 
           result.lines.forEach(line => {
-            // this.addLineFromApi(line);
-            // this.addLineFromProduct(line);
-            this.addLine(line);
+            this.addLine(line, false);
           });
 
           const paymentcontrol = this.formGroup.get('payments') as FormArray;
@@ -163,6 +152,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         }
       )
   }
+  get f() { return this.formGroup.controls; }
 
   searchEmployees(q?:string){
     var val = new EmployeePaged();
@@ -335,10 +325,13 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   //   });
   //   this.onChangeQuantity(lineControl);
   // }
+
   updateLineInfo(line, lineControl) {
+    
     line.toothCategoryId = line.toothCategory.id;
     line.assistantId = line.assistant ? line.assistant.id : null;
     line.employeeId = line.employee ? line.employee.id : null;
+    line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
     // line.productUOMQty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
     line.counselorId = line.counselor ? line.counselor.id : null;
     lineControl.patchValue(line);
@@ -352,7 +345,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     lineControl.updateValueAndValidity();
     //// this.onChangeQuantity(lineControl);
     // this.computeAmountTotal();
-    // console.log(line);
 
     this.lineSelected = null;
   }
@@ -464,9 +456,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   // Luu
   getDataFormGroup() {
     var value = this.formGroup.value;
-    if(value.employeeAdvisory){
-      value.employeeId = value.employeeAdvisory.id;
-    }
+    // if (value.employeeAdvisory) {
+    //   value.employeeId = value.employeeAdvisory.id;
+    // }
     value.dateQuotation = this.intlService.formatDate(value.dateQuotation, "yyyy-MM-dd");
     value.companyId = this.quotation.companyId;
     value.employeeId = value.employee.id;
@@ -493,7 +485,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   onSave() {
     var val = this.getDataFormGroup();
-    console.log(val);
     if (this.quotationId) {
       this.quotationService.update(this.quotationId, val).subscribe(
         () => {
@@ -543,41 +534,40 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   // }
 
 
-  searchEmployees(search: string) {
-    var val = new EmployeePaged();
-    val.search = search;
-    // val.hasRoot = false;
-    return this.employeeService.getEmployeeSimpleList(val)
-  }
-  loadEmployees() {
-    var val = new EmployeePaged();
-    val.limit = 20;
-    val.offset = 0;
-    val.isDoctor = true;
-    val.active = true;
+  // searchEmployees(search: string) {
+  //   var val = new EmployeePaged();
+  //   val.search = search;
+  //   // val.hasRoot = false;
+  //   return this.employeeService.getEmployeeSimpleList(val)
+  // }
+  // loadEmployees() {
+  //   var val = new EmployeePaged();
+  //   val.limit = 20;
+  //   val.offset = 0;
+  //   val.isDoctor = true;
+  //   val.active = true;
 
-    this.employeeService
-      .getEmployeeSimpleList(val)
-      .subscribe((result: any[]) => {
-        this.initialListEmployees = result;
-        // this.filteredEmployees = this.initialListEmployees.slice(0, 20);
-      });
-  }
+  //   this.employeeService
+  //     .getEmployeeSimpleList(val)
+  //     .subscribe((result: any[]) => {
+  //       this.initialListEmployees = result;
+  //       this.filteredEmployees = this.initialListEmployees.slice(0, 20);
+  //     });
+  // }
   onEmployeeFilter(value) {
-    // console.log(value);
-
-    // this.filteredEmployees = this.initialListEmployees
-    //   .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
-    //   .slice(0, 20);
+    this.filteredEmployees = this.initialListEmployees
+      .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
+      .slice(0, 20);
   }
 
-  addLine(val) {
-    if (this.lineSelected) {
+  addLine(val, addNew) {
+    if (addNew && this.lineSelected) {
       this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để thêm dịch vụ khác');
       return;
     }
+
     var line = new QuotationLineDisplay();
-    if (val.id) {
+    if (this.quotationId && val.id) {
       line.id = val.id;
     }
     line.diagnostic = val.diagnostic;
@@ -598,6 +588,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         line.teeth.push(this.fb.group(item))
       })
     }
+    
     line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
     line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
 
@@ -606,16 +597,17 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.linesArray.markAsDirty();
     this.createFormInfo(line);
 
-    this.lineSelected = res.value;
-    // mặc định là trạng thái sửa
-    setTimeout(() => {
-      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      viewChild.onEditLine();
-    }, 0);
+    if (addNew) {
+      this.lineSelected = res.value;
+      // mặc định là trạng thái sửa
+      setTimeout(() => {
+        var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+        viewChild.onEditLine();
+      }, 0);
+    }
   }
 
   onEditLine(line) {
-    // console.log(line);
     if (this.lineSelected != null) {
       this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để chỉnh sửa dịch vụ khác');
     } else {
@@ -623,12 +615,14 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       var viewChild = this.lineVCR.find(x => x.line == line);
       viewChild.onEditLine();
     }
+    this.lineSelected = null;
   }
 
   onDeleteLine(index) {
     this.linesArray.removeAt(index);
     this.getAmountTotal();
     this.linesArray.markAsDirty();
+    this.lineSelected = null;
   }
 
   onCancelEditLine(line) {

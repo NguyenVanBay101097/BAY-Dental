@@ -135,3 +135,9 @@
 .div-row {
     border: 1px solid #dee2e6 !important;
 }
+
+.text-cell {
+    font-size: 1rem;
+    color: #212529;
+    font-weight: bold;
+}

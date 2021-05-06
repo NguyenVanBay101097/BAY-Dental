@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { EmployeePaged } from 'src/app/employees/employee';
@@ -20,7 +20,7 @@ export class QuotationLineCuComponent implements OnInit {
   @Output() onEditEvent = new EventEmitter<any>();
   @Output() onCancelEvent = new EventEmitter<any>();
 
-  isEditting: boolean = true;
+  isEditting: boolean = false;
   filteredEmployees: any[] = [];
   initialListEmployees: any = [];
   filteredToothCategories: any[];
@@ -33,7 +33,6 @@ export class QuotationLineCuComponent implements OnInit {
     { name: "Chọn răng", value: "manual" },
   ];
   formGroupInfo: FormGroup;
-
   constructor(
     private fb: FormBuilder,
     private employeeService: EmployeeService,
@@ -47,13 +46,14 @@ export class QuotationLineCuComponent implements OnInit {
 
   ngOnInit() {
     this.formGroupInfo = this.fb.group(this.line);
+    this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
     this.formGroupInfo.setControl("teeth", this.fb.array([]));
-
     if (this.line.teeth) {
       this.line.teeth.forEach((tooth) => {
         this.TeethFA.push(this.fb.group(tooth));
       });
     }
+
     this.loadEmployees();
     this.loadToothCategories();
     this.loadTeethList();
@@ -62,6 +62,8 @@ export class QuotationLineCuComponent implements OnInit {
   get TeethFA() {
     return this.formGroupInfo.get("teeth") as FormArray;
   }
+  get f() { return this.formGroupInfo.controls; }
+
   formInfoControl(value: string) {
     return this.formGroupInfo.get(value);
   }
@@ -79,8 +81,6 @@ export class QuotationLineCuComponent implements OnInit {
     var priceUnit = this.getPriceUnitLinePromotion(this.formGroupInfo.value);
     this.formInfoControl("amount").setValue(priceUnit * getquanTity);
     return priceUnit * getquanTity;
-    // console.log(this.formInfoControl("amount").value);
-
   }
 
   loadEmployees() {
@@ -112,7 +112,7 @@ export class QuotationLineCuComponent implements OnInit {
   }
   onChangeToothCategory(value: any) {
     if (value.id) {
-      this.TeethFA.clear();
+      // this.TeethFA.clear();
       this.loadTeethMap(value);
       this.formGroupInfo.get("toothCategory").setValue(value);
     }
@@ -222,10 +222,7 @@ export class QuotationLineCuComponent implements OnInit {
     if (this.formInfoControl("advisoryEmployee").value) {
       this.isEditting = false;
       var value = this.formGroupInfo.value;
-      value.advisoryEmployeeId = this.formInfoControl("advisoryEmployee")?this.formInfoControl("advisoryEmployee").value.id:null;
-      value.advisoryId = this.formInfoControl("advisoryEmployee")?this.formInfoControl("advisoryEmployee").value.id:null;
-      console.log(value);
-
+      value.advisoryEmployeeId = this.formInfoControl("advisoryEmployee") ? this.formInfoControl("advisoryEmployee").value.id : null;
       this.onUpdateEvent.emit(value);
     }
 
@@ -235,21 +232,21 @@ export class QuotationLineCuComponent implements OnInit {
     this.isEditting = false;
     this.onCancelEvent.emit(this.line);
   }
+
   viewTeeth() {
     var toothType = this.line.toothType;
     if (toothType == "manual") {
       var teeth = this.line.teeth as any[];
-      return teeth.map(x => x.name).join(',');
+      return teeth.map(x => x.name).join(', ');
     } else {
       return this.toothTypeDict.find(x => x.value == toothType).name;
     }
   }
   onEditLine() {
     this.isEditting = true;
-    // this.canEdit = true;
     this.formGroupInfo = this.fb.group(this.line);
+    this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
     this.formGroupInfo.setControl("teeth", this.fb.array([]));
-
     if (this.line.teeth) {
       this.line.teeth.forEach((tooth) => {
         this.TeethFA.push(this.fb.group(tooth));

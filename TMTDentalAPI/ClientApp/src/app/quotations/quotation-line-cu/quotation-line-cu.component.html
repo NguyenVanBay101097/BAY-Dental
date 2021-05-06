@@ -90,9 +90,12 @@
         <div class=" row mx-0">
             <label class="col-sm-2 font-weight-600 p-0">Người tư vấn</label>
             <div class="col-sm-4 px-0">
-                <span class="form-control-plaintext" *ngIf="!isEditting">{{line.advisoryEmployee?.name}}</span>
+                <span class="form-control-plaintext p-0" *ngIf="!isEditting">{{line.advisoryEmployee?.name}}</span>
                 <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="isEditting" style="width:100%;" [data]="initialListEmployees" [textField]="'name'" #counselorCbx formControlName="advisoryEmployee" [valueField]="'id'">
                 </kendo-combobox>
+                <div *ngIf="f.advisoryEmployee.errors && (f.advisoryEmployee.touched || f.advisoryEmployee.dirty)" class="text-danger">
+                    <div *ngIf="f.advisoryEmployee.errors.required">Chọn người tư vấn</div>
+                </div>
             </div>
         </div>
         <!-- loại răng -->
@@ -101,7 +104,11 @@
             <div class="col-3 row">
                 <div *ngFor="let item of filteredToothCategories; let cateIndex = index" class="col-6 pr-0">
                     <input [attr.disabled]=" !isEditting ? true : null" [checked]=" item.id === getToothCateLine().id" (change)="onChangeToothCategory(item)" class="btn-check hide" type="radio" [name]="'toothCategory'" formControlName="toothCategory" [id]="'toothCategory' + cateIndex">
-                    <label [ngClass]="{'disabled': !isEditting}" class="btn btn-sm btn-radio w-100 p-0" [class.btn-radio-active]="item.id === getToothCateLine().id" [for]="'toothCategory' + cateIndex ">{{item.name}}</label>
+                    <label [ngClass]="{'disabled': !isEditting}" class="btn btn-sm btn-radio w-100 p-0" [class.btn-radio-active]="item.id === getToothCateLine().id" [for]="'toothCategory' + cateIndex ">
+                        <span class="btn-radio-text">
+                            {{item.name}}
+                        </span>
+                    </label>
                 </div>
             </div>
 
@@ -113,7 +120,7 @@
         <ng-container *ngIf="!isEditting; else elseTemplateTeeth">
             <div class="row mx-0">
                 <label class="col-sm-2 font-weight-600 p-0">Răng</label>
-                <div class="col-sm-10">
+                <div class="">
                     <span>{{viewTeeth()}}</span>
                 </div>
             </div>
@@ -125,7 +132,11 @@
                     <ng-container *ngFor="let item of toothTypeDict; let toothTypeIndex = index">
                         <div class="col-6 pl-0">
                             <input (change)="onChangeToothTypeLine(item.value)" [attr.disabled]="!isEditting ? true : null" [value]='item.value' [checked]=" item.value === getToothTypeLine()" class="btn-check hide" type="radio" name="toothType" formControlName="toothType" [id]="'toothType' + toothTypeIndex">
-                            <label [ngClass]="{'disabled':  !isEditting}" [class]="item.value === getToothTypeLine() ? 'btn btn-sm btn-radio-active w-100':'btn btn-sm w-100'" class="btn btn-radio" [for]="'toothType' + toothTypeIndex">{{item.name}}</label>
+                            <label [ngClass]="{'disabled':  !isEditting}" [class]="item.value === getToothTypeLine() ? 'btn btn-sm btn-radio-active w-100':'btn btn-sm w-100'" class="btn btn-radio" [for]="'toothType' + toothTypeIndex">
+                                <span class="btn-radio-text">
+                                    {{item.name}}
+                                </span>
+                            </label>
                         </div>
                     </ng-container>
                 </div>
