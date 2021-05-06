@@ -38,3 +38,18 @@ input[type="radio"]:checked+label {
 .btn-use {
     min-width: 87px;
 }
+
+.discount-options .btn {
+    min-width: 50px;
+    margin-right: 5px;
+}
+
+.discount-options .btn:last-child {
+    margin-right: 0;
+}
+
+.discount-options .btn.active {
+    background: #F5FAFF !important;
+    border: 1px solid #007BFF !important;
+    color: #007BFF !important;
+}
