@@ -858,7 +858,7 @@ namespace Infrastructure.Services
         {
             var orderLineObj = GetService<ISaleOrderLineService>();
             var orders = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines)        
+                .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines)
                 .ToListAsync();
             foreach (var order in orders)
             {
@@ -1229,7 +1229,7 @@ namespace Infrastructure.Services
             _GetInvoiced(new List<SaleOrder>() { order });
 
             await UpdateAsync(order);
-       
+
         }
 
         public void ReComputePromotionOrder(SaleOrder order)
@@ -1250,12 +1250,12 @@ namespace Infrastructure.Services
                         promotion.Amount = total * (promotion.SaleCouponProgram.DiscountPercentage ?? 0) / 100;
                 }
 
-                foreach(var line in promotion.Lines)
+                foreach (var line in promotion.Lines)
                 {
                     line.Amount = ((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount;
-                    line.PriceUnit = line.SaleOrderLine.ProductUOMQty != 0 ?
-                        Math.Round(((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / line.SaleOrderLine.ProductUOMQty) : 0;
-                }             
+                    line.PriceUnit = (double)(line.SaleOrderLine.ProductUOMQty != 0 ?
+                       ((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / line.SaleOrderLine.ProductUOMQty : 0);
+                }
             }
         }
 
@@ -2318,6 +2318,8 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderSave val)
         {
+            var programObj = GetService<ISaleCouponProgramService>();
+            var lineObj = GetService<ISaleOrderLineService>();
             var res = new SaleOrderSave();
             res.CompanyId = val.CompanyId;
             res.DateOrder = val.DateOrder;
@@ -2328,45 +2330,78 @@ namespace Infrastructure.Services
             res.IsFast = true;
 
             var order = _mapper.Map<SaleOrder>(res);
-
-            //tạo sale order
-            if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
-            {
-                var sequenceService = GetService<IIRSequenceService>();
-                if (order.IsQuotation == true)
-                {
-                    order.Name = await sequenceService.NextByCode("sale.quotation");
-                    if (string.IsNullOrEmpty(order.Name))
-                    {
-                        await InsertSaleQuotationSequence();
-                        order.Name = await sequenceService.NextByCode("sale.quotation");
-                    }
-                }
-                else
-                    order.Name = await sequenceService.NextByCode("sale.order");
-            }
+            await CreateAsync(order);
+            //tạo sale order        
 
             var lines = new List<SaleOrderLine>();
             var sequence = 0;
-            foreach (var item in val.OrderLines)
+            foreach (var line in val.OrderLines)
             {
-                var saleLine = _mapper.Map<SaleOrderLine>(item);
+                var saleLine = _mapper.Map<SaleOrderLine>(line);
                 saleLine.Order = order;
                 saleLine.Sequence = sequence++;
                 saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
-                foreach (var toothId in item.ToothIds)
+
+                if (line.ToothType == "manual")
                 {
-                    saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                    foreach (var toothId in line.ToothIds)
                     {
-                        ToothId = toothId
-                    });
+                        saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                        {
+                            ToothId = toothId
+                        });
+                    }
                 }
+
+                //if (line.Promotions.Any())
+                //{
+                //    foreach (var promotion in saleLine.Promotions)
+                //    {
+                //        var total = line.PriceUnit * line.ProductUOMQty;
+                //        var discount_amount = 0M;
+                //        if (promotion.Type == "discount")
+                //        {
+                //            discount_amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
+                //            promotion.Name = "Giảm tiền";
+                //            promotion.Amount = discount_amount;
+                //            promotion.SaleOrderLineId = line.Id;
+                //            promotion.SaleOrderId = order.Id;
+
+                //            promotion.Lines.Add(new SaleOrderPromotionLine
+                //            {
+                //                SaleOrderLineId = promotion.SaleOrderLineId.Value,
+                //                Amount = promotion.Amount,
+                //                PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
+                //            });
+                //        }
+                //        else if (promotion.Type == "code_usage_program" || promotion.Type == "promotion_program")
+                //        {
+                //            var program = await programObj.SearchQuery(x => x.Id == promotion.SaleCouponProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+                //            if (program != null)
+                //            {
+                //                var error_status = await programObj._CheckPromotionApplySaleLine(program, saleLine);
+                //                if (string.IsNullOrEmpty(error_status.Error))
+                //                {
+                //                    promotion = lineObj._GetRewardLineValues(saleLine, program);
+                //                }
+                //            }
+                //        }
+
+
+                //    }
+                //}
+
 
                 lines.Add(saleLine);
             }
 
             var saleLineObj = GetService<ISaleOrderLineService>();
             await saleLineObj.CreateAsync(lines);
+            ///xử lý ưu đãi chi order
+            if (val.Promotions.Any())
+            {
+
+            }
 
 
             saleLineObj.UpdateOrderInfo(order.OrderLines, order);
@@ -2378,11 +2413,16 @@ namespace Infrastructure.Services
             saleLineObj._ComputeInvoiceStatus(order.OrderLines);
             saleLineObj._ComputeLinePaymentRels(order.OrderLines);
 
+
+            //tính lại tổng tiền ưu đãi saleorderlines
+            saleLineObj._ComputeAmountDiscountTotal(order.OrderLines);
+            saleLineObj.ComputeAmount(order.OrderLines);
+
             _AmountAll(order);
 
             await UpdateAsync(order);
 
-            ///xử lý ưu đãi 
+
 
             //done sale order       
             order.State = "done";
@@ -2394,7 +2434,6 @@ namespace Infrastructure.Services
 
                 line.State = "done";
             }
-
 
             _GetInvoiced(new List<SaleOrder>() { order });
             _ComputeResidual(new List<SaleOrder>() { order });
@@ -2724,13 +2763,13 @@ namespace Infrastructure.Services
                     if (line.ProductUOMQty == 0)
                         continue;
 
-                    var amount = Math.Round((((line.ProductUOMQty * line.PriceUnit) / total) * promotion.Amount));
+                    var amount = (((line.ProductUOMQty * line.PriceUnit) / total) * promotion.Amount);
                     if (amount != 0)
                     {
                         promotion.Lines.Add(new SaleOrderPromotionLine
                         {
                             Amount = amount,
-                            PriceUnit = line.ProductUOMQty != 0 ? Math.Round(amount / line.ProductUOMQty) : 0,
+                            PriceUnit = (double)(line.ProductUOMQty != 0 ? amount / line.ProductUOMQty : 0),
                             SaleOrderLineId = line.Id,
                         });
                     }

@@ -66,7 +66,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// danh sách chương trình ưu đãi
         /// </summary>
-        //public ICollection<SaleOrderPromotionSave> Promotions { get; set; } = new List<SaleOrderPromotionSave>();
+        public ICollection<SaleOrderPromotionSave> Promotions { get; set; } = new List<SaleOrderPromotionSave>();
 
         public Guid CompanyId { get; set; }
 

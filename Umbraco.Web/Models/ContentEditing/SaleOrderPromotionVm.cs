@@ -75,6 +75,15 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal Amount { get; set; }
 
+        /// <summary>
+        /// percentage : giảm phần trăm
+        /// fixed : giảm tiền
+        /// </summary>
+        public string DiscountType { get; set; }
+
+        public decimal? DiscountPercent { get; set; }
+
+        public decimal? DiscountFixed { get; set; }
 
         /// <summary>
         /// chương trình khuyến mãi , chương trình coupon
@@ -85,6 +94,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? SaleOrderLineId { get; set; }
 
+        public IEnumerable<SaleOrderPromotionLineSave> Lines { get; set; } = new List<SaleOrderPromotionLineSave>();
+
         /// <summary>
         /// discount: giảm tiền
         /// coupon_program : chương trình coupon
@@ -93,4 +104,5 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type { get; set; }
 
     }
+
 }

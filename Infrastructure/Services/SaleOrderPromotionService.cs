@@ -50,50 +50,7 @@ namespace Infrastructure.Services
             return paged;
         }
 
-        public async Task _PrepareUpdatePromotion(IEnumerable<Guid> ids)
-        {
-            var order_ids = new List<Guid>().AsEnumerable();
-            var promotions = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.SaleCouponProgram)
-                .Include(x => x.SaleOrder).ThenInclude(x => x.OrderLines)
-                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
-                .ToListAsync();
-
-            foreach (var promotion in promotions)
-            {
-                if (promotion.SaleOrderId.HasValue)
-                    order_ids = order_ids.Union(new List<Guid>() { promotion.SaleOrderId.Value });
-
-                var total = promotion.SaleOrder.OrderLines.Sum(x => (x.PriceUnit * x.ProductUOMQty));
-                if (promotion.Type == "discount")
-                {
-
-                    promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
-                }
-
-                if (promotion.SaleCouponProgramId.HasValue)
-                {
-                    if (promotion.SaleCouponProgram.DiscountType == "fixed_amount")
-                        promotion.Amount = promotion.SaleCouponProgram.DiscountFixedAmount ?? 0;
-                    else
-                        promotion.Amount = total * (promotion.SaleCouponProgram.DiscountPercentage ?? 0) / 100;
-                }
-
-
-                foreach (var child in promotion.Lines)
-                {
-                    child.Amount = ((child.SaleOrderLine.PriceUnit * child.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / child.SaleOrderLine.ProductUOMQty;
-                }
-            }
-
-            await UpdateAsync(promotions);
-
-            var orderObj = GetService<ISaleOrderService>();
-            if (order_ids.Any())
-                await orderObj._ComputeAmountPromotionToOrder(order_ids);
-
-        }
-
+     
         public SaleOrderPromotion PreparePromotionToOrder(SaleOrder self, SaleCouponProgram program, decimal discountAmount)
         {
             var promotionLine = new SaleOrderPromotion
@@ -116,7 +73,7 @@ namespace Infrastructure.Services
                 promotionLine.Lines.Add(new SaleOrderPromotionLine
                 {
                     Amount = Math.Round(subTotal / total * discountAmount),
-                    PriceUnit = line.ProductUOMQty != 0 ? Math.Round(subTotal / total * discountAmount / line.ProductUOMQty) : 0,
+                    PriceUnit = (double)(line.ProductUOMQty != 0 ? Math.Round(subTotal / total * discountAmount / line.ProductUOMQty) : 0),
                     SaleOrderLineId = line.Id,
                 });
             }
@@ -141,7 +98,7 @@ namespace Infrastructure.Services
             promotionLine.Lines.Add(new SaleOrderPromotionLine
             {
                 Amount = promotionLine.Amount,
-                PriceUnit = Math.Round(promotionLine.Amount / self.ProductUOMQty),
+                PriceUnit = (double)(promotionLine.Amount / self.ProductUOMQty),
                 SaleOrderLineId = self.Id,
             });
 

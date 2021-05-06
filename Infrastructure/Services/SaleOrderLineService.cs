@@ -51,7 +51,7 @@ namespace Infrastructure.Services
             foreach (var line in self)
             {
 
-                line.PriceSubTotal = Math.Round(line.ProductUOMQty * (line.PriceUnit - (line.AmountDiscountTotal ?? 0)));
+                line.PriceSubTotal = Math.Round(line.ProductUOMQty * (line.PriceUnit - (decimal)(line.AmountDiscountTotal ?? 0)));
                 line.PriceTax = 0;
                 line.PriceTotal = line.PriceSubTotal + line.PriceTax;
             }
@@ -724,7 +724,8 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
 
             var total = orderLine.PriceUnit * orderLine.ProductUOMQty;
-            var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
+            var price_reduce = val.DiscountType == "percentage" ? orderLine.PriceUnit * (1 - val.DiscountPercent / 100) : orderLine.PriceUnit - val.DiscountFixed;
+            var discount_amount = (orderLine.PriceUnit - price_reduce) * orderLine.ProductUOMQty;
 
             var promotion = orderPromotionObj.SearchQuery(x => x.SaleOrderLineId == orderLine.Id && x.Type == "discount" && x.SaleOrderId.HasValue).FirstOrDefault();
             if (promotion != null)
@@ -749,7 +750,7 @@ namespace Infrastructure.Services
                 {
                     SaleOrderLineId = promotion.SaleOrderLineId.Value,
                     Amount = promotion.Amount,
-                    PriceUnit = orderLine.ProductUOMQty != 0 ? Math.Round(promotion.Amount / orderLine.ProductUOMQty) : 0,
+                    PriceUnit = (double)(orderLine.ProductUOMQty != 0 ? (promotion.Amount / orderLine.ProductUOMQty) : 0),
                 });
 
                 await orderPromotionObj.CreateAsync(promotion);
@@ -835,11 +836,11 @@ namespace Infrastructure.Services
         {
             var orderObj = GetService<ISaleOrderService>();
             var orderPromotionObj = GetService<ISaleOrderPromotionService>();
-            var promotions = _GetRewardLineValues(self, program);
+            var promotion = _GetRewardLineValues(self, program);
             //foreach (var line in lines)
             //    line.Order = self;
 
-            await orderPromotionObj.CreateAsync(promotions);
+            await orderPromotionObj.CreateAsync(promotion);
 
             //tính lại tổng tiền ưu đãi saleorderlines
             _ComputeAmountDiscountTotal(new List<SaleOrderLine>() { self });
@@ -849,24 +850,31 @@ namespace Infrastructure.Services
             await orderObj.UpdateAsync(self.Order);
         }
 
-        public decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line)
+        public decimal _GetRewardValuesDiscountPercentagePerOrderLine(SaleCouponProgram program, SaleOrderLine line)
         {
             //discount_amount = so luong * don gia da giam * phan tram
-            var discount_amount = line.ProductUOMQty * (line.PriceUnit * (1 - line.Discount / 100)) *
+            var price_reduce = (line.PriceUnit * (1 - line.Discount / 100)) *
+                ((program.DiscountPercentage ?? 0) / 100);
+            var discount_amount = (line.PriceUnit - price_reduce) * line.ProductUOMQty;
+            return discount_amount;
+        }
+
+        public decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line)
+        {
+            //discount_amount = so luong * don gia da giam * phan tram        
+            var discount_amount = (line.PriceUnit * (1 - line.Discount / 100)) *
                 ((program.DiscountPercentage ?? 0) / 100);
             return discount_amount;
         }
 
-        private decimal _GetRewardValuesDiscountFixedAmount(SaleOrderLine self, SaleCouponProgram program)
+        private decimal _GetRewardValuesDiscountFixedAmountLine(SaleOrderLine self, SaleCouponProgram program)
         {
-            var total_amount = self.PriceSubTotal;
-            var fixed_amount = program.DiscountFixedAmount ?? 0;
-            if (total_amount < fixed_amount)
-                return total_amount;
+            var price_reduce = self.PriceUnit - (program.DiscountFixedAmount ?? 0);
+            var fixed_amount = (self.PriceUnit - price_reduce) * self.ProductUOMQty;
             return fixed_amount;
         }
 
-        private SaleOrderPromotion _GetRewardLineValues(SaleOrderLine self, SaleCouponProgram program)
+        public SaleOrderPromotion _GetRewardLineValues(SaleOrderLine self, SaleCouponProgram program)
         {
             if (program.RewardType == "discount")
                 return _GetRewardValuesDiscount(self, program);
@@ -888,7 +896,7 @@ namespace Infrastructure.Services
             if (program.DiscountType == "fixed_amount")
             {
 
-                var discountAmount = _GetRewardValuesDiscountFixedAmount(self, program);
+                var discountAmount = _GetRewardValuesDiscountFixedAmountLine(self, program);
                 var promotionLine = promotionObj.PreparePromotionToOrderLine(self, program, discountAmount);
 
                 return promotionLine;
@@ -907,7 +915,7 @@ namespace Infrastructure.Services
                 var tmp = discount_specific_product_ids.Union(free_product_lines);
                 if (tmp.Contains(self.ProductId.Value))
                 {
-                    var discount_amount = _GetRewardValuesDiscountPercentagePerLine(program, self);
+                    var discount_amount = _GetRewardValuesDiscountPercentagePerOrderLine(program, self);
                     var promotionLine = promotionObj.PreparePromotionToOrderLine(self, program, discount_amount);
 
                     return promotionLine;
@@ -944,7 +952,7 @@ namespace Infrastructure.Services
                         foreach (var child in promotion.Lines)
                         {
                             child.Amount = promotion.Amount;
-                            child.PriceUnit = line.ProductUOMQty != 0 ? Math.Round(promotion.Amount / line.ProductUOMQty) : 0;
+                            child.PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0);
                         }
                     }
                 }
