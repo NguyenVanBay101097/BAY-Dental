@@ -444,7 +444,7 @@ namespace Infrastructure.Services
             if (self.Any(x => x.State != "draft" && x.State != "cancel" && x.State != "sale"))
                 throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
 
-            if (self.Any(x => x.SaleOrderLinePaymentRels.Any()))
+            if (self.Any(x => x.PaymentHistoryLines.Any()))
                 throw new Exception("không thể xóa dịch vụ đã thanh toán");
 
             foreach (var line in self.Where(x => x.IsRewardLine))
