@@ -227,7 +227,7 @@
                                                 <div style="width: 100px;" class="div-cell py-1 text-right">Thành tiền</div>
                                                 <div style="width: 100px;" class="div-cell py-1 text-right">Thanh toán</div>
                                                 <div style="width: 100px;" class="div-cell py-1 text-right">Còn lại</div>
-                                                <div style="width: 100px;" class="div-cell py-1 text-center">Thao tác</div>
+                                                <div style="width: 100px;" class="div-cell py-1 text-center" *ngIf="stateControl.value != 'done'">Thao tác</div>
                                             </div>
                                         </div>
                                         <ng-container *ngFor="let line of orderLines.controls; let i=index">
@@ -239,7 +239,7 @@
                                     <!-- ưu đãi -->
                                     <div class="card mb-3">
                                         <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">Ưu đãi phiếu điều trị
-                                            <img class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
+                                            <img *ngIf="stateControl.value != 'done'" class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
                                             <span class="ml-auto">{{sumPromotionSaleOrder() | number}}</span>
                                         </div>
                                         <div class="card-body px-3 py-2">

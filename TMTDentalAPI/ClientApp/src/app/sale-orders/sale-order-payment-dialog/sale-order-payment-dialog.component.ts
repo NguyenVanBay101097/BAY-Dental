@@ -458,7 +458,18 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     var soTienConLai = this.amount - soTienThanhToan;
     var currentLine = this.journalLinesFC.controls[index];
     var currentLineValue = currentLine.value;
+
     var cashLine = this.getCashLineControl();
+
+    //kiểm tra số tiền của index, nếu là type advance thì ko cho phép vượt quá số tối đa
+    if (currentLineValue.journal.type == 'advance') {
+      if (currentLineValue.amount > this.advanceAmount) {
+        currentLine.get('amount').setValue(this.advanceAmount);
+      } else {
+        currentLine.get('amount').setValue(currentLineValue.amount);
+      }
+      currentLineValue = currentLine.value;
+    }
 
     if (currentLineValue.amount > soTienConLai) {
       currentLine.get('amount').setValue(soTienConLai);

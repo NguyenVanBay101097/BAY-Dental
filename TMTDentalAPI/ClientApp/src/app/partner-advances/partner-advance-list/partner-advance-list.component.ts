@@ -84,6 +84,8 @@ export class PartnerAdvanceListComponent implements OnInit {
     paged.search = this.search ? this.search : '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
+    paged.partnerId = this.partnerId;
+
     this.partnerAdvanceService.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -91,7 +93,6 @@ export class PartnerAdvanceListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
-
       this.loading = false;
     }, err => {
       this.loading = false;
@@ -132,7 +133,7 @@ export class PartnerAdvanceListComponent implements OnInit {
    loadAmounBalance(){
     if (this.partnerId) {
       this.partnerService.getAmountAdvanceBalance(this.partnerId).subscribe((res : number) => {
-        this.amountBalance = Math.abs(res);
+        this.amountBalance = res;
       });
     }
   }

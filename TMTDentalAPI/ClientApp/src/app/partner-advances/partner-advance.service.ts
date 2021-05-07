@@ -9,7 +9,7 @@ export class PartnerAdvancePaged {
   search: string;
   dateFrom: string;
   dateTo: string;
-
+  partnerId: string;
 }
 
 

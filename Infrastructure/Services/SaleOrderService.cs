@@ -2398,11 +2398,11 @@ namespace Infrastructure.Services
                 }
 
             }
-                  
+
             _AmountAll(order);
             await UpdateAsync(order);
 
-          
+
             ///xử lý ưu đãi chi order
             if (val.Promotions.Any())
             {
@@ -2438,10 +2438,16 @@ namespace Infrastructure.Services
                     }
                     else if (promotion.Type == "code_usage_program" || promotion.Type == "promotion_program")
                     {
+                        var error_status = new CheckPromoCodeMessage();
                         var program = await programObj.SearchQuery(x => x.Id == promotion.SaleCouponProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
                         if (program != null)
                         {
-                            var error_status = await programObj._CheckPromotion(program, order);
+                            if (program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode))
+                                error_status = await programObj._CheckPromoCode(program, order, program.PromoCode);
+                            else
+                                error_status = await programObj._CheckPromotion(program, order);
+
+
                             if (string.IsNullOrEmpty(error_status.Error))
                             {
                                 order.Promotions.Add(_GetRewardLineValues(order, program));
@@ -2485,7 +2491,7 @@ namespace Infrastructure.Services
 
                 line.State = "done";
             }
-            
+
             await UpdateAsync(new List<SaleOrder>() { order });
 
             //tạo thanh toán phiếu điều trị nhanh

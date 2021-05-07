@@ -107,9 +107,9 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
       this.saleOrderLine.promotions.push({
         amount: amount,
         type: type,
-        discountType: type == 'discount' ? this.form.discountType : null,
-        discountPercent: type == 'discount' ? this.form.discountPercent : 0,
-        discountFixed: type == 'discount' ? this.form.discountFixed : 0,
+        discountType:  type == 'discount'? this.form.discountType : program.discountType,
+        discountPercent: type == 'discount'? this.form.discountPercent : program.discountPercentage,
+        discountFixed: type == 'discount'?  this.form.discountFixed : program.discountFixedAmount,
         saleCouponProgramId: program ? program.id : null,
         name: type == 'discount' ? 'Giảm tiền' : program.name
       } as SaleOrderPromotionSave);

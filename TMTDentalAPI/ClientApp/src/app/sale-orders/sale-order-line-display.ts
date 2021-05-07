@@ -33,4 +33,5 @@ export class SaleOrderLineDisplay {
     productIsLabo: boolean;
     isActive: boolean;
     promotions: any[];
+    amountInvoiced: number;
 }

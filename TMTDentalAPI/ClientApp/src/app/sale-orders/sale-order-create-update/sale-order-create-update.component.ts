@@ -401,6 +401,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       }
     }
 
+    this.formGroup.setControl('promotions', this.fb.array(result.promotions));
+
     let control = this.formGroup.get('orderLines') as FormArray;
     control.clear();
     result.orderLines.forEach(line => {
@@ -455,6 +457,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       name: val.name,
       priceSubTotal: val.listPrice * 1,
       priceUnit: val.listPrice,
+      amountInvoiced: 0,//thanh toán
       productId: val.id,
       product: {
         id: val.id,
