@@ -1,105 +1,102 @@
-<header class="modal-header bg-primary text-white py-1">
+<header class="modal-header bg-primary text-white py-2">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <span class="ml-auto font-weight-600 align-self-center">{{sumPromotion()|number}}</span>
+    <!-- <span class="ml-auto font-weight-600 align-self-center">{{sumPromotion()|number}}</span> -->
     <button type="button" class="close text-white ml-1" style="opacity: 1;" data-dismiss="modal" aria-label="Close" (click)="onClose()" tabindex="-1">×</button>
 </header>
 
 
 <div class="modal-body o_act_window">
-    <div class="o_form_view">
-        <div class="o_form_sheet_bg">
-            <div class="o_form_sheet">
-                <div class="o_group">
-                    <!-- giảm tiền -->
-                    <div>
-                        <label for="" class="font-weight-600">Giảm thành tiền</label>
+    <div class="px-3 py-2">
+        <!-- giảm tiền -->
+        <div class="mb-2">
+            <label class="font-weight-600">Giảm thành tiền</label>
 
-                        <ng-container *ngIf="getListPromotion('discount').length == 0; else elseTemplateDiscount">
-                            <div class="d-flex">
-                                <div class="d-flex flex-fill">
-                                    <div class="flex-fill">
-                                        <kendo-numerictextbox class="font-weight-600" *ngIf="form.discountType == this.discountTypeDict['VNĐ']" [min]="0" [autoCorrect]="true" [(ngModel)]="form.discountFixed" style="width:100%" [format]="'n0'" [spinners]="false" (change)="onChangeDiscount($event)">
-                                        </kendo-numerictextbox>
-                                        <kendo-numerictextbox class="font-weight-600" *ngIf="form.discountType == this.discountTypeDict['%']" [min]="0" [autoCorrect]="true" [max]="100" [(ngModel)]="form.discountPercent" [format]="'n0'" style="width:100%" [spinners]="false" (change)="onChangeDiscount($event)">
-                                        </kendo-numerictextbox>
-                                    </div>
-                                    <div class="btn-group-toggle discount-options ml-2">
-                                        <label class="btn border" [class.active]="form.discountType == 'percentage'">
+            <ng-container *ngIf="getListPromotion('discount').length == 0; else elseTemplateDiscount">
+                <div class="d-flex">
+                    <div class="d-flex flex-fill">
+                        <div class="flex-fill">
+                            <kendo-numerictextbox class="font-weight-600" *ngIf="form.discountType == this.discountTypeDict['VNĐ']" [min]="0" [autoCorrect]="true" [(ngModel)]="form.discountFixed" style="width:100%" [format]="'n0'" [spinners]="false" (change)="onChangeDiscount($event)">
+                            </kendo-numerictextbox>
+                            <kendo-numerictextbox class="font-weight-600" *ngIf="form.discountType == this.discountTypeDict['%']" [min]="0" [autoCorrect]="true" [max]="100" [(ngModel)]="form.discountPercent" [format]="'n0'" style="width:100%" [spinners]="false" (change)="onChangeDiscount($event)">
+                            </kendo-numerictextbox>
+                        </div>
+                        <div class="btn-group-toggle discount-options ml-2">
+                            <label class="btn border" [class.active]="form.discountType == 'percentage'">
                                             <input class="form-check-input" type="radio" autocomplete="off" [(ngModel)]="form.discountType" (change)="onChangeDiscountType()" id="percentage1" value="percentage">
                                             %
                                         </label>
-                                        <label class="btn border" [class.active]="form.discountType == 'fixed'">
+                            <label class="btn border" [class.active]="form.discountType == 'fixed'">
                                             <input class="form-check-input" type="radio" autocomplete="off" [(ngModel)]="form.discountType" (change)="onChangeDiscountType()" id="fixed1" value="fixed">
                                             VNĐ
                                         </label>
-                                    </div>
-                                </div>
-                                <div class="ml-3">
-                                    <button (click)="applyDiscount()" class="btn btn-primary ml-auto btn-use">Áp dụng</button>
-                                </div>
-                            </div>
-                        </ng-container>
-                        <ng-template #elseTemplateDiscount>
-                            <p *ngFor="let item of getListPromotion('discount')" class="d-flex justify-content-between">
-                                <label for="" class="font-weight-600">{{item.amount | number}}</label>
-                                <label for="">
-                                    <i title="Xóa giảm tiền" class="fa fa-trash-alt bg-danger text-white btn-icon" (click)="onDeletePromotion(item)"></i>
-                                </label>
-                            </p>
-                        </ng-template>
-
-                    </div>
-                    <!-- mã thủ công -->
-                    <div class="">
-                        <label for="" class="font-weight-600">Mã khuyến mãi</label>
-                        <div class="d-flex div-manual-code">
-                            <input type="text" class="form-control" [(ngModel)]="form.code" />
-                            <button type="button" class="btn btn-primary" (click)="onApplyCoupon()">Áp dụng</button>
-                        </div>
-                        <p *ngIf="errorMsg" class="text-danger">{{errorMsg}}</p>
-                        <div class="">
-                            <div *ngFor="let item of getListPromotion('code_usage_program'); let i = index" class="d-flex justify-content-between mt-2">
-                                <label class="mb-0" for="">  <img src="../../../assets/icons/promotion.svg" alt=""> {{item.name}}</label>
-                                <i title="Xóa giảm tiền" class="fa fa-trash-alt bg-danger text-white btn-icon" (click)="onDeletePromotion(item)"></i>
-
-                            </div>
                         </div>
                     </div>
-                    <!-- mã tự động -->
-                    <div>
-                        <label for="" class="font-weight-600 mb-0">Danh sách khuyến mãi</label>
-                        <div>
-                            <p *ngFor="let item of autoPromotions" class="d-flex justify-content-between my-0 mt-1">
-                                <label class="my-0" for="">
+                    <div class="ml-3">
+                        <button (click)="applyDiscount()" class="btn btn-primary ml-auto btn-use">Áp dụng</button>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-template #elseTemplateDiscount>
+                <div *ngFor="let item of getListPromotion('discount')" class="d-flex justify-content-between">
+                    <span class="font-weight-600">{{item.amount | number}}</span>
+                    <button type="button" class="btn bg-danger btn-sm" (click)="onDeletePromotion(item)">
+                                    <i title="Xóa giảm tiền" class="far fa-trash-alt text-white"></i>
+                                </button>
+                </div>
+            </ng-template>
+
+        </div>
+        <!-- mã thủ công -->
+        <div class="mb-2">
+            <label class="font-weight-600">Mã khuyến mãi</label>
+            <div class="d-flex div-manual-code">
+                <input type="text" class="form-control" [(ngModel)]="form.code" />
+                <button type="button" class="btn btn-primary" (click)="onApplyCoupon()">Áp dụng</button>
+            </div>
+            <p *ngIf="errorMsg" class="text-danger">{{errorMsg}}</p>
+            <div class="">
+                <div *ngFor="let item of getListPromotion('code_usage_program'); let i = index" class="d-flex justify-content-between mt-2">
+                    <label class="mb-0" for="">  <img src="../../../assets/icons/promotion.svg" alt=""> {{item.name}}</label>
+                    <i title="Xóa giảm tiền" class="fa fa-trash-alt bg-danger text-white btn-icon" (click)="onDeletePromotion(item)"></i>
+
+                </div>
+            </div>
+        </div>
+        <!-- mã tự động -->
+        <div class="mb-2">
+            <label class="font-weight-600 mb-0">Danh sách khuyến mãi</label>
+            <div>
+                <p *ngFor="let item of autoPromotions" class="d-flex justify-content-between my-0 mt-1">
+                    <label class="my-0" for="">
                                     <img src="../../../assets/icons/promotion.svg" alt="">
                                     {{item.name}}</label>
-                                <ng-container *ngIf="!getApplied(item); else elseTemplateBtnApply">
-                                    <button type="button" class="btn btn-sm btn-primary  btn-use" (click)="applyPromotion(item)">
+                    <ng-container *ngIf="!getApplied(item); else elseTemplateBtnApply">
+                        <button type="button" class="btn btn-sm btn-primary" (click)="applyPromotion(item)">
                                 Chọn
                             </button>
-                                </ng-container>
-                                <ng-template #elseTemplateBtnApply>
-                                    <label>Đã áp dụng</label>
-                                </ng-template>
-                            </p>
-                        </div>
-                    </div>
-                    <!-- khuyến mãi đã chọn -->
-                    <div>
-                        <label for="" class="font-weight-600 mb-0">Khuyến mãi đã chọn</label>
-                        <div>
-                            <p *ngFor="let item of getListPromotion('promotion_program')" class="d-flex justify-content-between my-0 mt-1">
-                                <label class="my-0" for="">
+                    </ng-container>
+                    <ng-template #elseTemplateBtnApply>
+                        <label>Đã áp dụng</label>
+                    </ng-template>
+                </p>
+            </div>
+        </div>
+        <!-- khuyến mãi đã chọn -->
+        <div *ngIf="getListPromotion('promotion_program').length">
+            <label class="font-weight-600 mb-0">Khuyến mãi đã chọn</label>
+            <div>
+                <div *ngFor="let item of getListPromotion('promotion_program')" class="d-flex justify-content-between mb-2">
+                    <span>
                                     <img src="../../../assets/icons/promotion.svg" alt="">
-                                    {{item.name}}</label>
-                                <i title="Xóa khuyến mãi" class="fa fa-trash-alt bg-danger text-white btn-icon" (click)="onDeletePromotion(item)"></i>
-                            </p>
-                        </div>
-                    </div>
+                                    {{item.name}}</span>
+                    <button type="button" class="btn btn-danger btn-sm" (click)="onDeletePromotion(item)" title="Xóa khuyến mãi">
+                                    <i class="far fa-trash-alt"></i>
+                                </button>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
 
 
