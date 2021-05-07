@@ -80,6 +80,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<SaleOrderPayment> SaleOrderPayments { get; set; } = new List<SaleOrderPayment>();
 
+        public ICollection<SaleOrderPaymentRel> SaleOrderPaymentRels { get; set; } = new List<SaleOrderPaymentRel>();
+
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
 
