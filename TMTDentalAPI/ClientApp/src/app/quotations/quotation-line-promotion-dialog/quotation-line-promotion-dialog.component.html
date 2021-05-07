@@ -1,0 +1,29 @@
+<header class="modal-header bg-primary text-white py-2">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close text-white ml-1" style="opacity: 1;" data-dismiss="modal" aria-label="Close" (click)="onClose()" tabindex="-1">×</button>
+</header>
+
+
+<div class="modal-body o_act_window">
+    <div class="px-3 py-2">
+        <div>
+            <!-- giảm tiền -->
+            <div class="mb-2">
+                <label class="font-weight-600">Giảm đơn giá</label>
+
+                <!-- <ng-container *ngIf="getListPromotion('discount').length == 0; else elseTemplateDiscount">
+                    <app-promotion-discount (applyEvent)="applyDiscount($event)"></app-promotion-discount>
+                </ng-container>
+                <ng-template #elseTemplateDiscount> -->
+                <div *ngFor="let item of getListPromotion('discount')" class="d-flex justify-content-between align-items-center">
+                    <span class="font-weight-600">{{getPriceUnitPromotion(item.amount) | number: '1.0-0'}}</span>
+                    <button type="button" class="btn bg-danger btn-sm" (click)="onDeletePromotion(item)">
+                            <i title="Xóa giảm tiền" class="far fa-trash-alt text-white"></i>
+                        </button>
+                </div>
+                <!-- </ng-template> -->
+
+            </div>
+        </div>
+    </div>
+</div>

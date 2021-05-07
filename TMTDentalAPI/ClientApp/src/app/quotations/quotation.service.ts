@@ -31,6 +31,7 @@ export class QuotationLineDisplay {
   amount: number;
   teeth: any;
   toothType: string;
+  promotions: any[];
 }
 export class QuotationLineSave {
   productId: string;

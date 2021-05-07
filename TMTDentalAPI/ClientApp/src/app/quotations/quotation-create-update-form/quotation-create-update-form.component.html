@@ -142,7 +142,8 @@
                                         </div>
                                     </div>
                                     <ng-container *ngFor="let line of linesArray.controls; let i=index">
-                                        <app-quotation-line-cu #lineTemplate [line]="line.value" (onCancelEvent)="onCancelEditLine($event)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)" (onDeleteEvent)="onDeleteLine(i)">
+                                        <app-quotation-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)" [line]="line.value" (onCancelEvent)="onCancelEditLine($event)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)"
+                                            (onDeleteEvent)="onDeleteLine(i)">
                                         </app-quotation-line-cu>
                                     </ng-container>
                                 </div>

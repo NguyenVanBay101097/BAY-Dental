@@ -19,6 +19,8 @@ export class QuotationLineCuComponent implements OnInit {
   @Output() onDeleteEvent = new EventEmitter<any>();
   @Output() onEditEvent = new EventEmitter<any>();
   @Output() onCancelEvent = new EventEmitter<any>();
+  @Output() onUpdateOpenPromotionEvent = new EventEmitter<any>();
+
 
   isEditting: boolean = false;
   filteredEmployees: any[] = [];
@@ -215,7 +217,10 @@ export class QuotationLineCuComponent implements OnInit {
     this.onDeleteEvent.emit();
   }
 
-  onOpenPromotion() { }
+  onOpenPromotion() { 
+    this.isEditting = false;
+    this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
+  }
 
   updateLineInfo() {
       this.isEditting = false;

@@ -2,6 +2,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -12,6 +13,7 @@ import { PrintService } from 'src/app/shared/services/print.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { QuotationLineCuComponent } from '../quotation-line-cu/quotation-line-cu.component';
+import { QuotationLinePromotionDialogComponent } from '../quotation-line-promotion-dialog/quotation-line-promotion-dialog.component';
 import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../quotation.service';
 
 @Component({
@@ -68,7 +70,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     private intlService: IntlService,
     private router: Router,
     private printService: PrintService,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
+    private modalService: NgbModal,
   ) { }
 
   ngOnInit() {
@@ -626,6 +629,20 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   onCancelEditLine(line) {
     this.lineSelected = null;
+  }
+
+  onUpdateOpenLinePromotion(line, lineControl, i) {
+    // if (this.lineSelected != null) {
+    //   var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+    //   viewChild.updateLineInfo();
+    // }
+    
+    this.onOpenLinePromotionDialog(i);
+    this.lineSelected = null;
+  }
+
+  onOpenLinePromotionDialog(i){
+    let modalRef = this.modalService.open(QuotationLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
   }
 
   notify(type, content) {
