@@ -45,6 +45,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateOrderTo);
             }
 
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
 
             var totalItems = await query.CountAsync();
 

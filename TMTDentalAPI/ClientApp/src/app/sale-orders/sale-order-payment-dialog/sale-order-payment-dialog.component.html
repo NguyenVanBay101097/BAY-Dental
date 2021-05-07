@@ -161,10 +161,10 @@
                                                 (blur)="onBlurJournalLineAmount()"
                                                 (valueChange)="onChangeJournalLineAmount($event, i)"
                                                 class="k-numerictextbox-text-right w-100" formControlName="amount" [spinners]="false" [format]="'n0'"></kendo-numerictextbox>
-                                            <!-- <div class="d-flex">
-                                                <label *ngIf="journalFG.value.journal.type == 'advance'" class="text-muted my-1">Tạm ứng hiện có: {{advanceAmount | number}}</label>
-                                                <label *ngIf="journalFG.value.journal.type == 'advance' && advanceAmount < journalFG.value.amount" class="text-danger my-1 ml-auto">Tiền tạm ứng không đủ</label>
-                                            </div> -->
+                                            <div class="d-flex" *ngIf="journalFG.value.journal.type == 'advance'">
+                                                <label class="text-muted my-1">Tạm ứng hiện có: {{advanceAmount | number}}</label>
+                                                <!-- <label *ngIf="journalFG.value.journal.type == 'advance' && advanceAmount < journalFG.value.amount" class="text-danger my-1 ml-auto">Tiền tạm ứng không đủ</label> -->
+                                            </div>
                                         </div>
                                     </div>
                                 </ng-container>
