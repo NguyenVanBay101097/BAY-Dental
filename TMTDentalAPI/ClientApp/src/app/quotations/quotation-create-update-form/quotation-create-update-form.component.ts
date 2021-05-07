@@ -99,7 +99,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         tap(() => (this.empCbx.loading = true)),
         switchMap((value) => this.searchEmployees(value))
       )
-      .subscribe((result:any) => {
+      .subscribe((result: any) => {
         this.filterData = result.items;
         this.empCbx.loading = false;
       });
@@ -154,7 +154,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
   get f() { return this.formGroup.controls; }
 
-  searchEmployees(q?:string){
+  searchEmployees(q?: string) {
     var val = new EmployeePaged();
     val.limit = 10;
     val.offset = 0;
@@ -162,7 +162,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     return this.employeeService.getEmployeePaged(val);
   }
 
-  loadEmployees(){
+  loadEmployees() {
     this.searchEmployees().subscribe(result => {
       this.filterData = result.items;
     })
@@ -326,28 +326,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   //   this.onChangeQuantity(lineControl);
   // }
 
-  updateLineInfo(line, lineControl) {
-    
-    line.toothCategoryId = line.toothCategory.id;
-    line.assistantId = line.assistant ? line.assistant.id : null;
-    line.employeeId = line.employee ? line.employee.id : null;
-    line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
-    // line.productUOMQty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
-    line.counselorId = line.counselor ? line.counselor.id : null;
-    lineControl.patchValue(line);
 
-    lineControl.get('teeth').clear();
-    line.teeth.forEach(teeth => {
-      let g = this.fb.group(teeth);
-      lineControl.get('teeth').push(g);
-    });
-
-    lineControl.updateValueAndValidity();
-    //// this.onChangeQuantity(lineControl);
-    // this.computeAmountTotal();
-
-    this.lineSelected = null;
-  }
 
   // load teeth 
   loadTeethMap(categ: ToothCategoryBasic) {
@@ -588,7 +567,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         line.teeth.push(this.fb.group(item))
       })
     }
-    
+
     line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
     line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
 
@@ -615,6 +594,29 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       var viewChild = this.lineVCR.find(x => x.line == line);
       viewChild.onEditLine();
     }
+    // this.lineSelected = null;
+  }
+
+  updateLineInfo(line, lineControl) {
+    line.toothCategoryId = line.toothCategory.id;
+    line.assistantId = line.assistant ? line.assistant.id : null;
+    line.employeeId = line.employee ? line.employee.id : null;
+    line.advisoryEmployeeId = line.advisoryEmployee ? line.advisoryEmployee.id : null;
+    line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
+    // line.productUOMQty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
+    line.counselorId = line.counselor ? line.counselor.id : null;
+    lineControl.patchValue(line);
+
+    lineControl.get('teeth').clear();
+    line.teeth.forEach(teeth => {
+      let g = this.fb.group(teeth);
+      lineControl.get('teeth').push(g);
+    });
+
+    lineControl.updateValueAndValidity();
+    //// this.onChangeQuantity(lineControl);
+    // this.computeAmountTotal();
+
     this.lineSelected = null;
   }
 
@@ -627,7 +629,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   onCancelEditLine(line) {
     this.lineSelected = null;
-
   }
 
   notify(type, content) {

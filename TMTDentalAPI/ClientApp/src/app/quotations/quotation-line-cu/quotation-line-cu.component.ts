@@ -40,13 +40,11 @@ export class QuotationLineCuComponent implements OnInit {
     private notificationService: NotificationService,
     private ToothService: ToothService,
     private toothCategoryService: ToothCategoryService,
-
-
   ) { }
 
   ngOnInit() {
     this.formGroupInfo = this.fb.group(this.line);
-    this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
+    // this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
     this.formGroupInfo.setControl("teeth", this.fb.array([]));
     if (this.line.teeth) {
       this.line.teeth.forEach((tooth) => {
@@ -219,13 +217,9 @@ export class QuotationLineCuComponent implements OnInit {
   onOpenPromotion() { }
 
   updateLineInfo() {
-    if (this.formInfoControl("advisoryEmployee").value) {
       this.isEditting = false;
       var value = this.formGroupInfo.value;
-      value.advisoryEmployeeId = this.formInfoControl("advisoryEmployee") ? this.formInfoControl("advisoryEmployee").value.id : null;
       this.onUpdateEvent.emit(value);
-    }
-
   }
 
   onCancel() {
@@ -245,12 +239,22 @@ export class QuotationLineCuComponent implements OnInit {
   onEditLine() {
     this.isEditting = true;
     this.formGroupInfo = this.fb.group(this.line);
-    this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
+    // this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
     this.formGroupInfo.setControl("teeth", this.fb.array([]));
     if (this.line.teeth) {
       this.line.teeth.forEach((tooth) => {
         this.TeethFA.push(this.fb.group(tooth));
       });
     }
+  }
+
+  notify(type, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: type, icon: true }
+    });
   }
 }
