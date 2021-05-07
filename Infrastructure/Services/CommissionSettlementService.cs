@@ -224,13 +224,13 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
             {
                 val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.Payment.PaymentDate >= val.DateFrom);
+                query = query.Where(x => x.Date >= val.DateFrom);
             }
 
             if (val.DateTo.HasValue)
             {
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Payment.PaymentDate <= val.DateTo);
+                query = query.Where(x => x.Date <= val.DateTo);
             }
 
             if (val.CompanyId.HasValue)
@@ -267,13 +267,13 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
             {
                 val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.Payment.PaymentDate >= val.DateFrom);
+                query = query.Where(x => x.Date >= val.DateFrom);
             }
 
             if (val.DateTo.HasValue)
             {
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Payment.PaymentDate <= val.DateTo);
+                query = query.Where(x => x.Date <= val.DateTo);
             }
 
             if (val.CompanyId.HasValue)
@@ -282,14 +282,14 @@ namespace Infrastructure.Services
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
 
-            var items = await query.OrderBy(x => x.Payment.PaymentDate).Skip(val.Offset).Take(val.Limit)
+            var items = await query.OrderBy(x => x.Date).Skip(val.Offset).Take(val.Limit)
                 .Select(x => new CommissionSettlementReportDetailOutput
                 {
                     Amount = x.Amount,
                     BaseAmount = x.BaseAmount,
-                    Date = x.Payment.PaymentDate,
+                    Date = x.Date,
                     Percentage = x.Percentage,
-                    ProductName = x.SaleOrderLine.Name
+                    ProductName = x.Product.Name
                 }).ToListAsync();
 
             var totalItems = await query.CountAsync();

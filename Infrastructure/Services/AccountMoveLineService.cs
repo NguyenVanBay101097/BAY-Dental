@@ -617,7 +617,7 @@ namespace Infrastructure.Services
             var moveObj = GetService<IAccountMoveService>();
             var accountObj = GetService<IAccountAccountService>();
 
-            var companyId = CompanyId;
+            var companyId = self.CompanyId;
             if (moveObj.IsSaleDocument(self.Move, include_receipts: true))
             {
                 var account = await accountObj.SearchQuery(x => x.Code == "5111" && x.CompanyId == companyId).FirstOrDefaultAsync();
