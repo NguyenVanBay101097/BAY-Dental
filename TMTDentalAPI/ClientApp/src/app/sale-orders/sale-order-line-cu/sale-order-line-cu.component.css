@@ -1,6 +1,7 @@
-/* :host {
-    display: contents;
-} */
+:host {
+    display: table;
+    width: 100%;
+}
 
 .b-sticky-left {
     position: sticky;

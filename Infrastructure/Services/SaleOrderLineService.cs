@@ -162,7 +162,7 @@ namespace Infrastructure.Services
 
                 //        promotion.SaleOrder = order;
                 //    }
-                        
+
                 //}
             }
         }
@@ -438,6 +438,7 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).Include(x => x.SaleOrderLinePaymentRels)
                 .Include(x => x.Order).Include(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+                .Include(x => x.PaymentHistoryLines)
                 .ToListAsync();
 
 
