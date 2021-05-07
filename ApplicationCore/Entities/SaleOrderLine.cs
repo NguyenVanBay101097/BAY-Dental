@@ -106,6 +106,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<SaleOrderLineInvoiceRel> SaleOrderLineInvoiceRels { get; set; } = new List<SaleOrderLineInvoiceRel>();
 
+        public ICollection<SaleOrderPaymentHistoryLine> PaymentHistoryLines { get; set; } = new List<SaleOrderPaymentHistoryLine>();
+
         public Guid? ToothCategoryId { get; set; }
         public ToothCategory ToothCategory { get; set; }
 
