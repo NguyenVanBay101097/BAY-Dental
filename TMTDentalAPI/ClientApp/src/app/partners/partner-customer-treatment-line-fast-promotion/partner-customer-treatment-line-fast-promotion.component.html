@@ -1,4 +1,4 @@
-<header class="modal-header bg-primary text-white py-1">
+<header class="modal-header bg-primary text-white py-2">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
     <!-- <span class="ml-auto font-weight-600 align-self-center">{{sumPromotion()|number}}</span> -->
     <button type="button" class="close text-white ml-1" style="opacity: 1;" data-dismiss="modal" aria-label="Close" (click)="onClose()" tabindex="-1">×</button>
@@ -48,7 +48,7 @@
 
             </div>
             <!-- mã thủ công -->
-            <div class="">
+            <div class="mb-2">
                 <label for="" class="font-weight-600">Mã khuyến mãi</label>
                 <div class="d-flex div-manual-code">
                     <input type="text" class="form-control" [(ngModel)]="form.code" />
@@ -64,7 +64,7 @@
                 </div>
             </div>
             <!-- mã tự động -->
-            <div>
+            <div class="mb-2">
                 <label for="" class="font-weight-600 mb-0">Danh sách khuyến mãi</label>
                 <div>
                     <p *ngFor="let item of autoPromotions" class="d-flex justify-content-between my-0 mt-1">
@@ -72,7 +72,7 @@
                                     <img src="../../../assets/icons/promotion.svg" alt="">
                                     {{item.name}}</label>
                         <ng-container *ngIf="!getApplied(item); else elseTemplateBtnApply">
-                            <button type="button" class="btn btn-sm btn-primary  btn-use" (click)="applyPromotion(item)">
+                            <button type="button" class="btn btn-sm btn-primary" (click)="applyPromotion(item)">
                                 Chọn
                             </button>
                         </ng-container>
@@ -83,15 +83,17 @@
                 </div>
             </div>
             <!-- khuyến mãi đã chọn -->
-            <div>
-                <label for="" class="font-weight-600 mb-0">Khuyến mãi đã chọn</label>
+            <div *ngIf="getListPromotion('promotion_program').length">
+                <label class="font-weight-600 mb-0">Khuyến mãi đã chọn</label>
                 <div>
-                    <p *ngFor="let item of getListPromotion('promotion_program')" class="d-flex justify-content-between my-0 mt-1">
-                        <label class="my-0" for="">
-                                    <img src="../../../assets/icons/promotion.svg" alt="">
-                                    {{item.name}}</label>
-                        <i title="Xóa khuyến mãi" class="fa fa-trash-alt bg-danger text-white btn-icon" (click)="onDeletePromotion(item)"></i>
-                    </p>
+                    <div *ngFor="let item of getListPromotion('promotion_program')" class="d-flex justify-content-between mb-2">
+                        <span>
+                            <img src="../../../assets/icons/promotion.svg" alt="">
+                            {{item.name}}</span>
+                        <button type="button" class="btn btn-danger btn-sm" (click)="onDeletePromotion(item)" title="Xóa khuyến mãi">
+                            <i class="far fa-trash-alt"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

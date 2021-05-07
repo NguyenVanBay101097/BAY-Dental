@@ -326,7 +326,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   getFormDataToReload() {
     var res = this.getFormDataSave();
-    delete res.toothIds;
+    res.orderLines.forEach(line => {
+      delete line.toothIds;
+    });
     return res;
   }
 
@@ -577,9 +579,10 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
     this.lineSelected = null;
     this.onComputePromotion();
+    this.patchValueSaleOrder(this.getFormDataToReload(), false);
   }
 
-  patchValueSaleOrder(result, compute = true) {
+  patchValueSaleOrder(result, computePromotion = true) {
     this.saleOrder = result;
     this.formGroup.patchValue(result);
     let dateOrder = new Date(result.dateOrder);
@@ -607,7 +610,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     });
 
     this.formGroup.markAsPristine();
-    if(compute) {
+    if(computePromotion) {
     this.onComputePromotion();
     }
   }

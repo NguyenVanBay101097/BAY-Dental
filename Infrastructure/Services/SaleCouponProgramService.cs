@@ -373,7 +373,7 @@ namespace Infrastructure.Services
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if (!self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId))
                 message.Error = "Khuyến mãi Không áp dụng cho dịch vụ này";
-            else if (line.Order.Promotions.Any(x => x.SaleCouponProgramId == self.Id))
+            else if (line.Order.Promotions.Where(x => x.SaleOrderId.HasValue && !x.SaleOrderLineId.HasValue).Any(x => x.SaleCouponProgramId == self.Id))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (line.Promotions.Any(x => x.SaleCouponProgramId == self.Id))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho dịch vụ này";

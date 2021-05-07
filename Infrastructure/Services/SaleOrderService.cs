@@ -1335,6 +1335,7 @@ namespace Infrastructure.Services
                 var removeDkSteps = await dkStepObj.SearchQuery(x => saleLineIds.Contains(x.SaleLineId.Value)).ToListAsync();
                 if (removeDkSteps.Any(x => x.IsDone))
                     throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
+
                 await dkStepObj.DeleteAsync(removeDkSteps);
 
 
@@ -2425,11 +2426,12 @@ namespace Infrastructure.Services
                         {
                             foreach (var line in order.OrderLines)
                             {
+                                var amount = (((line.ProductUOMQty * line.PriceUnit) / total) * promotion.Amount);
                                 reward.Lines.Add(new SaleOrderPromotionLine
                                 {
                                     SaleOrderLineId = line.Id,
                                     Amount = promotion.Amount,
-                                    PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
+                                    PriceUnit = (double)(line.ProductUOMQty != 0 ? (amount / line.ProductUOMQty) : 0),
                                 });
                             }
                         }
