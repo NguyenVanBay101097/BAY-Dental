@@ -92,15 +92,16 @@ export class QuotationLineCuComponent implements OnInit {
       .getEmployeeSimpleList(val)
       .subscribe((result: any[]) => {
         this.initialListEmployees = result;
-        // this.filteredEmployees = this.initialListEmployees.slice(0, 20);
+        this.filteredEmployees = this.initialListEmployees.slice(0, 20);
       });
   }
 
   onEmployeeFilter(value) {
-    this.filteredEmployees = this.initialListEmployees
+     this.filteredEmployees = this.initialListEmployees
       .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
       .slice(0, 20);
   }
+
   getToothCateLine() {
     var res =
       this.isEditting

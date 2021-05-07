@@ -291,11 +291,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     }
   }
 
-  deleteLine(index: number) {
-    this.linesArray.removeAt(index);
-    this.getAmountTotal();
-    this.linesArray.markAsDirty();
-  }
+  // deleteLine(index: number) {
+  //   this.linesArray.removeAt(index);
+  //   this.getAmountTotal();
+  //   this.linesArray.markAsDirty();
+  // }
 
   createFormInfo(data: any) {
     this.formGroupInfo = this.fb.group({
@@ -533,11 +533,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   //       this.filteredEmployees = this.initialListEmployees.slice(0, 20);
   //     });
   // }
-  onEmployeeFilter(value) {
-    this.filteredEmployees = this.initialListEmployees
-      .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
-      .slice(0, 20);
-  }
+
+  // onEmployeeFilter(value) {
+  //   this.filteredEmployees = this.initialListEmployees
+  //     .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
+  //     .slice(0, 20);
+  // }
 
   addLine(val, addNew) {
     if (addNew && this.lineSelected) {
@@ -594,17 +595,13 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       var viewChild = this.lineVCR.find(x => x.line == line);
       viewChild.onEditLine();
     }
-    // this.lineSelected = null;
   }
 
   updateLineInfo(line, lineControl) {
     line.toothCategoryId = line.toothCategory.id;
-    line.assistantId = line.assistant ? line.assistant.id : null;
     line.employeeId = line.employee ? line.employee.id : null;
     line.advisoryEmployeeId = line.advisoryEmployee ? line.advisoryEmployee.id : null;
     line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
-    // line.productUOMQty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
-    line.counselorId = line.counselor ? line.counselor.id : null;
     lineControl.patchValue(line);
 
     lineControl.get('teeth').clear();
