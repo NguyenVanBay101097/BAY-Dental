@@ -132,7 +132,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal PaymentAmount { get; set; }
 
+        public IEnumerable<SaleOrderBasic> Orders { get; set; }
     }
-
-
 }
