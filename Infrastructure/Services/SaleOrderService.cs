@@ -2392,6 +2392,8 @@ namespace Infrastructure.Services
                                 {
                                     saleLine.Promotions.Add(saleLineService._GetRewardLineValues(saleLine, program));
                                 }
+                                else
+                                    throw new Exception(error_status.Error);
                             }
                         }
 
@@ -2454,6 +2456,8 @@ namespace Infrastructure.Services
                             {
                                 order.Promotions.Add(_GetRewardLineValues(order, program));
                             }
+                            else
+                                throw new Exception(error_status.Error);
                         }
                     }
 
