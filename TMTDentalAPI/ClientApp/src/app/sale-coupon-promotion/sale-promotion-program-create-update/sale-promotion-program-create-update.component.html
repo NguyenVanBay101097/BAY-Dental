@@ -130,6 +130,14 @@
                                     <input type="text" class="form-control" formControlName="promoCode">
                                 </td>
                             </tr>
+                            <tr [class.d-none]="promoCodeUsage != 'code_needed'">
+                                <td class="o_td_label">
+                                    <label class="o_form_label o_required_modifier">Số lần áp dụng</label>
+                                </td>
+                                <td style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="maximumUseNumber">
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -184,9 +192,9 @@
                             <tr>
                                 <td colspan="2" style="width: 100%;">
                                     <div class="form-check">
-                                        <input formControlName="isSelectDay" type="checkbox" class="form-check-input" (valueChange)="changeCheckboxSelectDay($event.target.checked)"  id="daysSelected" [checked]="isSelectedDay">
+                                        <input formControlName="isSelectDay" type="checkbox" class="form-check-input" (change)="changeCheckboxSelectDay($event.target.checked)"  id="daysSelected" [checked]="isSelectedDay">
                                         <label class="form-check-label" for="daysSelected">Chọn các thứ trong tuần</label>
-                                      </div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr
@@ -195,7 +203,7 @@
                                 <td style="width: 100%;">
                                     <kendo-multiselect [data]="listDay" [filterable]="true"
                                         [valuePrimitive]="true"
-                                        [textField]="'name'" [valueField]="'id'"
+                                        textField="name" valueField="id"
                                         formControlName="daysSelected">
                                     </kendo-multiselect>
                                 </td>
@@ -430,10 +438,10 @@
                                     <label class="o_form_label">Trị giá PĐT tối thiểu</label></td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                            formControlName="saleOrderMinimumAmount">
+                                            formControlName="ruleMinimumAmount">
                                     </kendo-numerictextbox>
-                                    <div *ngIf="f.saleOrderMinimumAmount.errors && (f.saleOrderMinimumAmount.touched || f.saleOrderMinimumAmount.dirty || submitted)" class="text-danger mb-1">
-                                        <div *ngIf="f.saleOrderMinimumAmount.errors.required">Nhập trị giá tối thiểu</div>
+                                    <div *ngIf="f.ruleMinimumAmount.errors && (f.ruleMinimumAmount.touched || f.ruleMinimumAmount.dirty || submitted)" class="text-danger mb-1">
+                                        <div *ngIf="f.ruleMinimumAmount.errors.required">Nhập trị giá tối thiểu</div>
                                     </div>
                                 </td>
                                 <td>VNĐ</td>

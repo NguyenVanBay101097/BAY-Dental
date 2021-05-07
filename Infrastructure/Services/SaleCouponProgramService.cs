@@ -77,6 +77,19 @@ namespace Infrastructure.Services
 
         public async Task<SaleCouponProgram> CreateProgram(SaleCouponProgramSave val)
         {
+            if (val.PromoCode.IsNullEmpty())
+            {
+                var saleCouponProgramObj = GetService<ISaleCouponProgramService>();
+                var code = "";
+                var promoCodes = saleCouponProgramObj.SearchQuery().Select(x => x.PromoCode).ToList();
+                do
+                {
+                    code = GeneratePromoCode();
+                }
+                while (promoCodes.Contains(code));
+                val.PromoCode = code;
+               
+            }
             var program = _mapper.Map<SaleCouponProgram>(val);
             if (!program.CompanyId.HasValue)
                 program.CompanyId = CompanyId;
@@ -92,7 +105,7 @@ namespace Infrastructure.Services
             _CheckDiscountPercentage(program);
             _CheckRuleMinimumAmount(program);
             _CheckRuleMinQuantity(program);
-            await _CheckPromoCodeConstraint(program);
+           // await _CheckPromoCodeConstraint(program);
             return await CreateAsync(program);
         }
 
@@ -587,6 +600,17 @@ namespace Infrastructure.Services
                 PromotionProgramId = rule.Id,
                 CouponId = coupon != null ? coupon.Id : (Guid?)null
             };
+        }
+
+        private string GeneratePromoCode()
+        {
+            Random _random = new Random();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var month = DateTime.Now.ToString("MM");
+            var year = DateTime.Now.ToString("yyyy");
+            var code = new string(Enumerable.Repeat(chars, 4)
+              .Select(s => s[_random.Next(s.Length)]).ToArray()) + month + year;
+            return code;
         }
     }
 

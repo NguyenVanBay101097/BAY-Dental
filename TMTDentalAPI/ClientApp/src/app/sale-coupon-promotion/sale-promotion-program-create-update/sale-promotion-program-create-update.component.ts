@@ -35,6 +35,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   filteredProducts: ProductSimple[];
   isSelectedDay = true;
   listDay: any[] = [];
+  days: any[] = [];
   startDate = new Date();
   endDate = new Date();
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
@@ -49,8 +50,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-    this.startDate.setHours(0,0,0,0);
-    this.endDate.setHours(23,59,59,999);
+   this.startDate.setHours(0,0,0,0);
+   this.endDate.setHours(23,59,59,999);
     this.formGroup = this.fb.group({
       name: [null, Validators.required],
       ruleMinimumAmount: 0,
@@ -76,9 +77,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       ruleDateFromObj: [this.startDate],
       maximumUseNumber: 0,
       promoCode: null,
-      saleOrderMinimumAmount: [0, Validators.required],
       daysSelected: null,
-      isSelectDay: true
+      isSelectDay: true,
     });
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get("id");
@@ -110,9 +110,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
           ruleDateFromObj: [this.startDate],
           maximumUseNumber: 0,
           promoCode: null,
-          saleOrderMinimumAmount: [0, Validators.required],
           daysSelected: null,
-          isSelectDay: true
+          isSelectDay: true,
         });
 
         this.program = new SaleCouponProgramDisplay();
@@ -236,24 +235,14 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   onChangeDate(){
-    var start = this.f.ruleDateFromObj.value;
-    var end = this.f.ruleDateToObj.value;
+    var start = new Date(this.f.ruleDateFromObj.value);
+    var end = new Date(this.f.ruleDateToObj.value);
     if (end<start){
       this.f.ruleDateToObj.setErrors({'dateIncorrect': true});
     }
     else{
-      debugger
-      var list = [];
-      for (var i = start; i <= end ; i.setDate(i.getDate() + 1)) {
-          if(!list.includes(i.getDay())){
-            list.push(i.getDay());
-          }
-          
-      }
-      console.log(this.listDay);
-      
-      this.listDay = this.listDay.filter(x => list.includes(x.id as number));
-      
+      this.f.daysSelected.reset();
+      this.loadListDay();
       this.f.ruleDateToObj.clearValidators();
       this.f.ruleDateToObj.updateValueAndValidity();
     }
@@ -261,7 +250,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   changeCheckbox(value){
-    this.f.NotIncremental.setValue(value);
+    this.f.notIncremental.setValue(value);
   }
 
   changeCheckboxSelectDay(value){
@@ -300,7 +289,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     this.programService.get(this.id).subscribe(result => {
       this.program = result;
       var dayIds = result.days ? result.days.split(",") : [];
-      this.f.daysSelected.setValue(dayIds);
+      this.f.daysSelected.setValue(dayIds.map(Number));
       
       this.formGroup.patchValue(result);
       if (result.rewardProduct) {
@@ -317,23 +306,37 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
         this.formGroup.get('ruleDateToObj').patchValue(ruleDateTo);
       }
 
+      this.loadListDay();
       if (result.active){
         this.disabled();
       }
 
+
     });
   }
   loadListDay(){
-    
-    this.listDay = [
-      {id:'0',name:'Chủ Nhật'},
-      {id:'1',name:'Thứ 2'},
-      {id:'2',name:'Thứ 3'},
-      {id:'3',name:'Thứ 4'},
-      {id:'4',name:'Thứ 5'},
-      {id:'5',name:'Thứ 6'},
-      {id:'6',name:'Thứ 7'},
+    this.days = [
+      {id:0,name:'Chủ Nhật'},
+      {id:1,name:'Thứ 2'},
+      {id:2,name:'Thứ 3'},
+      {id:3,name:'Thứ 4'},
+      {id:4,name:'Thứ 5'},
+      {id:5,name:'Thứ 6'},
+      {id:6,name:'Thứ 7'},
     ]
+
+    var start = new Date(this.f.ruleDateFromObj.value);
+    var end = new Date(this.f.ruleDateToObj.value);
+    var list = [];
+      for (var i = start; i <= end ; i.setDate(i.getDate() + 1)) {
+          if(!list.includes(i.getDay())){
+            list.push(i.getDay());
+          }
+          
+      }
+      this.listDay = this.days.filter(x => {
+        return list.includes(x.id);
+      });
   }
 
   disabled(){
@@ -357,7 +360,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     this.f.discountApplyOn.disable();
     this.f.discountSpecificProducts.disable();
     this.f.discountSpecificProductCategories.disable();
-    this.f.saleOrderMinimumAmount.disable();
+    this.f.ruleMinimumAmount.disable();
   }
 
   createNew() {
@@ -435,20 +438,20 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.f.discountSpecificProducts.updateValueAndValidity();
       this.f.discountSpecificProductCategories.clearValidators();
       this.f.discountSpecificProductCategories.updateValueAndValidity();
-      this.f.saleOrderMinimumAmount.setValidators(Validators.required);
-      this.f.saleOrderMinimumAmount.updateValueAndValidity();
+      this.f.ruleMinimumAmount.setValidators(Validators.required);
+      this.f.ruleMinimumAmount.updateValueAndValidity();
     }
     else if(value == 'specific_products'){
-      this.f.saleOrderMinimumAmount.clearValidators();
-      this.f.saleOrderMinimumAmount.updateValueAndValidity();
+      this.f.ruleMinimumAmount.clearValidators();
+      this.f.ruleMinimumAmount.updateValueAndValidity();
       this.f.discountSpecificProductCategories.clearValidators();
       this.f.discountSpecificProductCategories.updateValueAndValidity();
       this.f.discountSpecificProducts.setValidators(Validators.required);
       this.f.discountSpecificProducts.updateValueAndValidity();
     }
     else{
-      this.f.saleOrderMinimumAmount.clearValidators();
-      this.f.saleOrderMinimumAmount.updateValueAndValidity();
+      this.f.ruleMinimumAmount.clearValidators();
+      this.f.ruleMinimumAmount.updateValueAndValidity();
       this.f.discountSpecificProducts.clearValidators();
       this.f.discountSpecificProducts.updateValueAndValidity();
       this.f.discountSpecificProductCategories.setValidators(Validators.required);

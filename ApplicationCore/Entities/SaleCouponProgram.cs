@@ -118,8 +118,6 @@ namespace ApplicationCore.Entities
         public string RewardDescription { get; set; }
 
         public string DiscountApplyOn { get; set; }
-
-        public decimal? SaleOrderMinimumAmount { get; set; }
         public string Days { get; set; }
     }
 }

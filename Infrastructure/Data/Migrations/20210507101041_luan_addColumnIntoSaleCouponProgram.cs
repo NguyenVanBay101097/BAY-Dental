@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
-    public partial class AddFieldIntoSaleCouponProgram : Migration
+    public partial class luan_addColumnIntoSaleCouponProgram : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,11 +14,6 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.AddColumn<bool>(
                 name: "NotIncremental",
-                table: "SaleCouponPrograms",
-                nullable: true);
-
-            migrationBuilder.AddColumn<decimal>(
-                name: "SaleOrderMinimumAmount",
                 table: "SaleCouponPrograms",
                 nullable: true);
 
@@ -63,10 +58,6 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropColumn(
                 name: "NotIncremental",
-                table: "SaleCouponPrograms");
-
-            migrationBuilder.DropColumn(
-                name: "SaleOrderMinimumAmount",
                 table: "SaleCouponPrograms");
         }
     }
