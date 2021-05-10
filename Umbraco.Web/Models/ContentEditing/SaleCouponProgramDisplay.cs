@@ -20,6 +20,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CompanyId { get; set; }
 
+        public bool Active { get; set; }
+
         /// <summary>
         /// Loại chiết khấu
         /// percentage: phần trăm, fixed_amount: tiền cố định
@@ -66,7 +68,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string DiscountApplyOn { get; set; }
         public bool? NotIncremental { get; set; }
-        public decimal? SaleOrderMinimumAmount { get; set; }
         public string Days { get; set; }
         public IEnumerable<ProductSimple> DiscountSpecificProducts { get; set; } = new List<ProductSimple>();
         public IEnumerable<ProductCategorySimple> DiscountSpecificProductCategories { get; set; } = new List<ProductCategorySimple>();

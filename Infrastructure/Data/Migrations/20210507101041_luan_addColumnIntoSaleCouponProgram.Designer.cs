@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20210505103150_AddFieldIntoSaleCouponProgram")]
-    partial class AddFieldIntoSaleCouponProgram
+    [Migration("20210507101041_luan_addColumnIntoSaleCouponProgram")]
+    partial class luan_addColumnIntoSaleCouponProgram
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -7199,9 +7199,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("RuleMinimumAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("SaleOrderMinimumAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("Sequence")

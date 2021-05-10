@@ -8,7 +8,7 @@ namespace ApplicationCore.Entities
     {
         public SaleCouponProgram()
         {
-            Active = true;
+            Active = false;
             RewardType = "discount";
             PromoApplicability = "on_current_order";
             ProgramType = "coupon_program";
@@ -126,8 +126,6 @@ namespace ApplicationCore.Entities
         public string RewardDescription { get; set; }
 
         public string DiscountApplyOn { get; set; }
-
-        public decimal? SaleOrderMinimumAmount { get; set; }
         public string Days { get; set; }
     }
 }

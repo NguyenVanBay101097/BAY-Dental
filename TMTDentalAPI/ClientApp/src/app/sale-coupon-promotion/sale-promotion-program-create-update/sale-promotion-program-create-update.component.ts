@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
@@ -15,6 +15,9 @@ import { ProductFilter, ProductService } from 'src/app/products/product.service'
 import { IntlService } from '@progress/kendo-angular-intl';
 import { ProductCategory } from 'src/app/product-categories/product-category';
 import { ProductCategoryBasic, ProductCategoryFilter, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
+import { element } from 'protractor';
+import { result } from 'lodash';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-sale-promotion-program-create-update',
@@ -32,6 +35,9 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   filteredProducts: ProductSimple[];
   isSelectedDay = true;
   listDay: any[] = [];
+  days: any[] = [];
+  startDate = new Date();
+  endDate = new Date();
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
   listProducts: ProductSimple[];
@@ -40,14 +46,17 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   @ViewChild('productCategoriesMultiSelect', {static:true}) productCategoriesMultiSelect: MultiSelectComponent;
   constructor(private fb: FormBuilder, private programService: SaleCouponProgramService,
     private router: Router, private route: ActivatedRoute, private notificationService: NotificationService,
-    private modalService: NgbModal, private productService: ProductService, private productCategoryService: ProductCategoryService, private intlService: IntlService) { }
+    private modalService: NgbModal, private productService: ProductService, private productCategoryService: ProductCategoryService, private intlService: IntlService,
+    ) { }
 
   ngOnInit() {
+   this.startDate.setHours(0,0,0,0);
+   this.endDate.setHours(23,59,59,999);
     this.formGroup = this.fb.group({
       name: [null, Validators.required],
       ruleMinimumAmount: 0,
       discountType: 'percentage',
-      discountPercentage: 0,
+      discountPercentage: [0, Validators.required],
       discountFixedAmount: 0,
       validityDuration: 1,
       programType: 'promotion_program',
@@ -55,20 +64,21 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       rewardType: 'discount',
       ruleMinQuantity: 1,
       discountApplyOn: 'on_order',
-      discountSpecificProducts: null,
-      discountSpecificProductCategories: null,
+      discountSpecificProducts: [null],
+      discountSpecificProductCategories: [null],
+      active: false,
       notIncremental: true,
       companyId: null,
       discountMaxAmount: 0,
       rewardProductQuantity: 1,
       promoApplicability: 'on_current_order',
       promoCodeUsage: 'no_code_needed',
-      ruleDateFromObj: null,
-      ruleDateToObj: null,
+      ruleDateToObj: [this.endDate],
+      ruleDateFromObj: [this.startDate],
       maximumUseNumber: 0,
       promoCode: null,
-      saleOrderMinimumAmount: 0,
-      daysSelected: null
+      daysSelected: null,
+      isSelectDay: true,
     });
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get("id");
@@ -79,7 +89,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
           name: [null, Validators.required],
           ruleMinimumAmount: 0,
           discountType: 'percentage',
-          discountPercentage: 0,
+          discountPercentage: [0, Validators.required],
           discountFixedAmount: 0,
           validityDuration: 1,
           programType: 'promotion_program',
@@ -87,20 +97,21 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
           rewardType: 'discount',
           ruleMinQuantity: 1,
           discountApplyOn: 'on_order',
-          discountSpecificProducts: null,
-          discountSpecificProductCategories: null,
+          discountSpecificProducts: [null],
+          discountSpecificProductCategories: [null],
           companyId: null,
+          active: false,
           discountMaxAmount: 0,
           notIncremental: true,
           rewardProductQuantity: 1,
           promoApplicability: 'on_current_order',
           promoCodeUsage: 'no_code_needed',
-          ruleDateFromObj: null,
-          ruleDateToObj: null,
+          ruleDateToObj: [this.endDate],
+          ruleDateFromObj: [this.startDate],
           maximumUseNumber: 0,
           promoCode: null,
-          saleOrderMinimumAmount: 0,
-          daysSelected: null
+          daysSelected: null,
+          isSelectDay: true,
         });
 
         this.program = new SaleCouponProgramDisplay();
@@ -201,13 +212,45 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     return this.formGroup.get('promoCodeUsage').value;
   }
 
+  get active() {
+    return this.formGroup.get('active').value;
+  }
+
+  getDataFromBody(){
+    var value = this.formGroup.value;
+    value.rewardProductId = value.rewardProduct ? value.rewardProduct.id : null;
+    value.ruleDateFrom = value.ruleDateFromObj ? this.intlService.formatDate(value.ruleDateFromObj, 'g', 'en-US') : null;
+    value.ruleDateTo = value.ruleDateToObj ? this.intlService.formatDate(value.ruleDateToObj, 'g', 'en-US') : null;
+    value.discountSpecificProductIds = value.discountSpecificProducts ? value.discountSpecificProducts.map(x => x.id) : [];
+    value.discountSpecificProductCategoryIds = value.discountSpecificProductCategories ? value.discountSpecificProductCategories.map(x => x.id) : [];
+    var days = value.daysSelected ? value.daysSelected : [];
+    value.days = days.toString();
+    return value;
+  }
+
   onChangePromoCodeUsage() {
     if (this.promoCodeUsage == 'no_code_needed') {
       this.formGroup.get('promoCode').setValue(null);
     }
   }
+
+  onChangeDate(){
+    var start = new Date(this.f.ruleDateFromObj.value);
+    var end = new Date(this.f.ruleDateToObj.value);
+    if (end<start){
+      this.f.ruleDateToObj.setErrors({'dateIncorrect': true});
+    }
+    else{
+      this.f.daysSelected.reset();
+      this.loadListDay();
+      this.f.ruleDateToObj.clearValidators();
+      this.f.ruleDateToObj.updateValueAndValidity();
+    }
+    
+  }
+
   changeCheckbox(value){
-    this.f.NotIncremental.setValue(value);
+    this.f.notIncremental.setValue(value);
   }
 
   changeCheckboxSelectDay(value){
@@ -245,12 +288,10 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   loadRecord() {
     this.programService.get(this.id).subscribe(result => {
       this.program = result;
-      var dayIds = result.days.split(",");
-      this.listDay.forEach(day => {
-        
-      });
+      var dayIds = result.days ? result.days.split(",") : [];
+      this.f.daysSelected.setValue(dayIds.map(Number));
+      
       this.formGroup.patchValue(result);
-     this.f.daysSelected.setValue(result.days.split(","));
       if (result.rewardProduct) {
         this.filteredProducts = _.unionBy(this.filteredProducts, [result.rewardProduct], 'id');
       }
@@ -265,19 +306,63 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
         this.formGroup.get('ruleDateToObj').patchValue(ruleDateTo);
       }
 
+      this.loadListDay();
+      if (result.active){
+        this.disabled();
+      }
+
+
     });
   }
   loadListDay(){
-    this.listDay = [
-      {id:'Mon',name:'Thứ 2'},
-      {id:'Tue',name:'Thứ 3'},
-      {id:'Wed',name:'Thứ 4'},
-      {id:'Thu',name:'Thứ 5'},
-      {id:'Fri',name:'Thứ 6'},
-      {id:'Sat',name:'Thứ 7'},
-      {id:'Sun',name:'Chủ Nhật'}
+    this.days = [
+      {id:0,name:'Chủ Nhật'},
+      {id:1,name:'Thứ 2'},
+      {id:2,name:'Thứ 3'},
+      {id:3,name:'Thứ 4'},
+      {id:4,name:'Thứ 5'},
+      {id:5,name:'Thứ 6'},
+      {id:6,name:'Thứ 7'},
     ]
+
+    var start = new Date(this.f.ruleDateFromObj.value);
+    var end = new Date(this.f.ruleDateToObj.value);
+    var list = [];
+      for (var i = start; i <= end ; i.setDate(i.getDate() + 1)) {
+          if(!list.includes(i.getDay())){
+            list.push(i.getDay());
+          }
+          
+      }
+      this.listDay = this.days.filter(x => {
+        return list.includes(x.id);
+      });
   }
+
+  disabled(){
+    this.f.name.disable();
+    this.f.ruleMinQuantity.disable();
+    this.f.promoCodeUsage.disable();
+    this.f.promoCodeUsage.disable();
+    this.f.promoCode.disable();
+    this.f.notIncremental.disable();
+    this.f.maximumUseNumber.disable();
+    this.f.ruleDateFromObj.disable();
+    this.f.ruleDateToObj.disable();
+    this.f.isSelectDay.disable();
+    this.f.daysSelected.disable();
+    this.f.rewardProduct.disable();
+    this.f.rewardProductQuantity.disable();
+    this.f.discountType.disable();
+    this.f.discountPercentage.disable();
+    this.f.discountMaxAmount.disable();
+    this.f.discountFixedAmount.disable();
+    this.f.discountApplyOn.disable();
+    this.f.discountSpecificProducts.disable();
+    this.f.discountSpecificProductCategories.disable();
+    this.f.ruleMinimumAmount.disable();
+  }
+
   createNew() {
     this.router.navigate(['programs/promotion-programs/form']);
   }
@@ -288,34 +373,103 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       return false;
     }
 
-    var value = this.formGroup.value;
-    console.log(value);
+    var value = this.getDataFromBody();
     
-    value.rewardProductId = value.rewardProduct ? value.rewardProduct.id : null;
-    value.ruleDateFrom = value.ruleDateFromObj ? this.intlService.formatDate(value.ruleDateFromObj, 'g', 'en-US') : null;
-    value.ruleDateTo = value.ruleDateToObj ? this.intlService.formatDate(value.ruleDateToObj, 'g', 'en-US') : null;
-    value.discountSpecificProductIds = value.discountSpecificProducts ? value.discountSpecificProducts.map(x => x.id) : [];
-    value.discountSpecificProductCategoryIds = value.discountSpecificProductCategories ? value.discountSpecificProductCategories.map(x => x.id) : [];
-    var days = value.daysSelected ? value.daysSelected.map(x => x.id) : [];
-    value.days = days.toString();
     if (this.id) {
       this.programService.update(this.id, value).subscribe(() => {
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
+        this.notify('Lưu thành công');
         this.loadRecord();
       });
     } else {
       this.programService.create(value).subscribe(result => {
+        this.notify('Lưu thành công');
         this.router.navigate(['programs/promotion-programs/form'], { queryParams: { id: result.id } });
       });
     }
   }
 
+  onActive(){
+    this.submitted = true;
+    if (!this.formGroup.valid) {
+      return false;
+    }
+      let modalRef =this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+      modalRef.componentInstance.title = 'Kích hoạt chương trình khuyến mãi';
+      modalRef.componentInstance.body = 'Bạn có muốn kích hoạt chương trình khuyến mãi?';
+      modalRef.result.then(()=>{
+        if (this.id){
+          this.programService.actionUnArchive([this.id]).subscribe(()=>{
+            this.notify('Đã kích hoạt CTKM thành công');
+            this.loadRecord();
+          });
+        }
+        else {
+          var value = this.getDataFromBody();
+          this.programService.create(value).subscribe(result => {
+            this.programService.actionUnArchive([result.id]).subscribe(()=>{
+              this.notify('Đã kích hoạt CTKM thành công');
+              this.loadRecord();
+            });
+          });
+        }
+      })
+      
+  }
+
+  onChangeSelect(value){
+    if(value == 'percentage'){
+      this.f.discountFixedAmount.clearValidators();
+      this.f.discountFixedAmount.updateValueAndValidity();
+      this.f.discountPercentage.setValidators(Validators.required);
+      this.f.discountPercentage.updateValueAndValidity();
+    }
+    else{
+      this.f.discountPercentage.clearValidators();
+      this.f.discountPercentage.updateValueAndValidity();
+      this.f.discountFixedAmount.setValidators(Validators.required);
+      this.f.discountFixedAmount.updateValueAndValidity();
+    }
+  }
+
+  onChangeOption(e){
+    var value = e.target.value;
+    if(value == 'on_order'){
+      this.f.discountSpecificProducts.clearValidators();
+      this.f.discountSpecificProducts.updateValueAndValidity();
+      this.f.discountSpecificProductCategories.clearValidators();
+      this.f.discountSpecificProductCategories.updateValueAndValidity();
+      this.f.ruleMinimumAmount.setValidators(Validators.required);
+      this.f.ruleMinimumAmount.updateValueAndValidity();
+    }
+    else if(value == 'specific_products'){
+      this.f.ruleMinimumAmount.clearValidators();
+      this.f.ruleMinimumAmount.updateValueAndValidity();
+      this.f.discountSpecificProductCategories.clearValidators();
+      this.f.discountSpecificProductCategories.updateValueAndValidity();
+      this.f.discountSpecificProducts.setValidators(Validators.required);
+      this.f.discountSpecificProducts.updateValueAndValidity();
+    }
+    else{
+      this.f.ruleMinimumAmount.clearValidators();
+      this.f.ruleMinimumAmount.updateValueAndValidity();
+      this.f.discountSpecificProducts.clearValidators();
+      this.f.discountSpecificProducts.updateValueAndValidity();
+      this.f.discountSpecificProductCategories.setValidators(Validators.required);
+      this.f.discountSpecificProductCategories.updateValueAndValidity();
+    }
+  }
+
+  notify(alert){
+    this.notificationService.show({
+      content: alert,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: 'success', icon: true }
+    });
+  }
+
 }
+
 
 

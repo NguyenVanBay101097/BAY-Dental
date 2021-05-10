@@ -7199,9 +7199,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("RuleMinimumAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("SaleOrderMinimumAmount")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int?>("Sequence")
                         .HasColumnType("int");
 

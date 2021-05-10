@@ -92,6 +92,16 @@
     <Compile Remove="Data\Migrations\20210505095333_addFieldIntoSaleCouponProgramPart2.Designer.cs" />
     <Compile Remove="Data\Migrations\20210505102630_AddFieldIntoSaleCouponProgram.cs" />
     <Compile Remove="Data\Migrations\20210505102630_AddFieldIntoSaleCouponProgram.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210505103150_AddFieldIntoSaleCouponProgram.cs" />
+    <Compile Remove="Data\Migrations\20210505103150_AddFieldIntoSaleCouponProgram.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210507043105_addColumnIntoSaleCouponProgram.cs" />
+    <Compile Remove="Data\Migrations\20210507043105_addColumnIntoSaleCouponProgram.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210507094751_addColumnIntoSaleCouponProgram.cs" />
+    <Compile Remove="Data\Migrations\20210507094751_addColumnIntoSaleCouponProgram.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210507095300_luan_addColumnIntoSaleCouponProgram.cs" />
+    <Compile Remove="Data\Migrations\20210507095300_luan_addColumnIntoSaleCouponProgram.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210507100315_luan_addColumnIntoSaleCouponProgram.cs" />
+    <Compile Remove="Data\Migrations\20210507100315_luan_addColumnIntoSaleCouponProgram.Designer.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.Designer.cs" />
     <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.cs" />
