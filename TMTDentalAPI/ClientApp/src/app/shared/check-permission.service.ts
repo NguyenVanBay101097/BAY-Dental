@@ -7,7 +7,6 @@ export class CheckPermissionService {
     constructor() {}
 
     check(permission) {
-        debugger;
         const pm = localStorage.getItem("user_permission");
         const user_permission = JSON.parse(pm);
         if (user_permission) {
