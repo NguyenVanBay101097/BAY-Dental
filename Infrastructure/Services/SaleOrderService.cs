@@ -2361,7 +2361,7 @@ namespace Infrastructure.Services
                         var discount_amount = 0M;
                         if (item.Type == "discount")
                         {
-                            var price_reduce = item.DiscountType == "percentage" ? line.PriceUnit * (1 - (item.DiscountPercent ?? 0) / 100) : (item.DiscountFixed ?? 0);
+                            var price_reduce = item.DiscountType == "percentage" ? line.PriceUnit * (1 - (item.DiscountPercent ?? 0) / 100) : (line.PriceUnit - item.DiscountFixed ?? 0);
                             discount_amount = (saleLine.PriceUnit - price_reduce) * line.ProductUOMQty;
                             var promotion = new SaleOrderPromotion();
 
@@ -2433,7 +2433,7 @@ namespace Infrastructure.Services
                                 {
                                     SaleOrderLineId = line.Id,
                                     Amount = promotion.Amount,
-                                    PriceUnit = (double)(line.ProductUOMQty != 0 ? (amount / line.ProductUOMQty) : 0),
+                                    PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
                                 });
                             }
                         }
