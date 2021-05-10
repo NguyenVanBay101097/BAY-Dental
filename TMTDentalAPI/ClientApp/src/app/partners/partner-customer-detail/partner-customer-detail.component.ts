@@ -36,6 +36,8 @@ export class PartnerCustomerDetailComponent implements OnInit {
         this.loadPartner(this.id);
       }
     });
+
+    this.checkRole();
   }
 
   loadPartner(id: string) {
