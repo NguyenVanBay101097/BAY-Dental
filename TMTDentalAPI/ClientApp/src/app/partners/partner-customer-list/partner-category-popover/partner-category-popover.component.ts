@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { of } from 'rxjs/internal/observable/of';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { PartnerCategoryDisplay, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { PartnerCategoriesService } from 'src/app/shared/services/partner-categories.service';
 import { PartnerAddRemoveTags, PartnerService } from '../../partner.service';
 
@@ -17,6 +18,7 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   @Input() tags = [];
   @Input() dataPopOver = [];
   tags_temp;
+  canCreate = false;
   search_partnerCategory: string;
   searchUpdatePopOver = new Subject<string>();
   @Input() popOverPlace = 'left';
@@ -33,12 +35,13 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   constructor(
     private partnerCategoriesService: PartnerCategoriesService,
     private partnerCategoryService: PartnerCategoryService,
-    private partnerService: PartnerService
+    private partnerService: PartnerService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
     this.tags_temp = this.tags;
-
+    this.canCreate = this.checkPermissionService.check(["Catalog.PartnerCategory.Create"]);
     this.searchUpdatePopOver.pipe(
       debounceTime(400),
       distinctUntilChanged())

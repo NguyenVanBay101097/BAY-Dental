@@ -7,7 +7,7 @@ const routes: Routes = [
   {
     path: 'quotations',
     loadChildren: () => import('./quotations/quotations.module').then(m => m.QuotationsModule),
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
   },
   {
     path: 'stock-inventories',

@@ -8,6 +8,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { PurchaseOrderService, PurchaseOrderPaged, PurchaseOrderBasic } from '../purchase-order.service';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-purchase-order-list',
@@ -37,10 +38,14 @@ export class PurchaseOrderListComponent implements OnInit {
     { text: 'Đơn hàng', value: 'purchase,done' },
     { text: 'Nháp', value: 'draft,cancel' }
   ];
-
+  canAdd = true;
+  canUpdate = true;
+  canDelete = true;
   constructor(private purchaseOrderService: PurchaseOrderService,
     private router: Router,
-    private modalService: NgbModal, private route: ActivatedRoute, private intlService: IntlService) { }
+    private modalService: NgbModal, private route: ActivatedRoute, private intlService: IntlService,
+    private checkPermissionService: CheckPermissionService
+    ) { }
 
   ngOnInit() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -49,7 +54,7 @@ export class PurchaseOrderListComponent implements OnInit {
       this.skip = 0;
       this.loadDataFromApi();
     });
-
+    this.checkRole();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -163,6 +168,12 @@ export class PurchaseOrderListComponent implements OnInit {
         this.loadDataFromApi();
       });
     });
+  }
+
+  checkRole() {
+    this.canAdd = this.checkPermissionService.check(['Purchase.Order.Create']);
+    this.canUpdate = this.checkPermissionService.check(['Purchase.Order.Update']);
+    this.canDelete = this.checkPermissionService.check(['Purchase.Order.Delete']);
   }
 }
 

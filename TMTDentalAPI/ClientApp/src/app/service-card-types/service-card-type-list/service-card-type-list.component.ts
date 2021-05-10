@@ -7,6 +7,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { ServiceCardTypeService } from '../service-card-type.service';
 import { ServiceCardTypePaged } from '../service-card-type-paged';
 import { ServiceCardTypeCuDialogComponent } from '../service-card-type-cu-dialog/service-card-type-cu-dialog.component';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-service-card-type-list',
@@ -26,8 +27,13 @@ export class ServiceCardTypeListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   title = 'Loại thẻ tiền mặt';
 
+  // permission 
+  canServiceCardTypeCreate = this.checkPermissionService.check(["ServiceCard.Type.Create"]);
+  canServiceCardTypeUpdate = this.checkPermissionService.check(["ServiceCard.Type.Update"]);
+  canServiceCardTypeDelete = this.checkPermissionService.check(["ServiceCard.Type.Delete"]);
+
   constructor(private cardTypeService: ServiceCardTypeService,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal, private checkPermissionService: CheckPermissionService) { }
 
   ngOnInit() {
     this.loadDataFromApi();

@@ -57,11 +57,18 @@ export class PartnerCustomerListComponent implements OnInit {
     params: {}
   };
 
+  canExport = false;
+  canAdd = false;
+  canImport = false;
+  canFilterPartnerCategory = false;
+  canUpdateExcel = false;
+
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
     private checkPermissionService: CheckPermissionService) { }
 
   ngOnInit() {
+    this.checkRole();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -72,7 +79,8 @@ export class PartnerCustomerListComponent implements OnInit {
         this.skip = 0;
       });
 
-    this.categMst.filterChange
+    if (this.canFilterPartnerCategory && this.categMst) {
+      this.categMst.filterChange
       .asObservable()
       .pipe(
         debounceTime(300),
@@ -83,7 +91,11 @@ export class PartnerCustomerListComponent implements OnInit {
         this.filteredCategs = result;
         this.categMst.loading = false;
       });
+    }
 
+    if(this.canFilterPartnerCategory){
+      this.loadFilteredCategs();
+    }
     this.loadFilteredCategs();
   }
 
@@ -251,5 +263,13 @@ export class PartnerCustomerListComponent implements OnInit {
       });
     }, () => {
     });
+  }
+
+  checkRole(){
+    this.canExport = this.checkPermissionService.check(['Basic.Partner.Export']);
+    this.canAdd = this.checkPermissionService.check(['Basic.Partner.Create']);
+    this.canImport = this.checkPermissionService.check(['Basic.Partner.Import']);
+    this.canFilterPartnerCategory = this.checkPermissionService.check(["Catalog.PartnerCategory.Read"])
+    this.canUpdateExcel = this.checkPermissionService.check(["Basic.Partner.UpdateExcel"]);
   }
 }

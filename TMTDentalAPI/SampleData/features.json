@@ -225,24 +225,6 @@
             "Permission": "Purchase.Order.Delete"
           }
         ]
-      },
-      {
-        "Name": "Hóa Đơn thuốc",
-        "Permission": "Medicine.MedicineOrder",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "Medicine.MedicineOrder.Read"
-          },
-          {
-            "Name": "Thanh toán",
-            "Permission": "Medicine.MedicineOrder.Payment"
-          },
-          {
-            "Name": "Hủy thanh toán",
-            "Permission": "Medicine.MedicineOrder.Cancel"
-          }
-        ]
       }
     ]
   },
@@ -931,6 +913,24 @@
           {
             "Name": "Xem",
             "Permission": "Report.PartnerOldNew"
+          }
+        ]
+      },
+      {
+        "Name": "Thống kê labo",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.LaboOrder"
+          }
+        ]
+      },
+      {
+        "Name": "Thống kê lịch hẹn",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Appointment"
           }
         ]
       }

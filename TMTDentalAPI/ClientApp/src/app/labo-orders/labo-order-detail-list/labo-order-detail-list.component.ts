@@ -7,6 +7,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { PrintService } from 'src/app/shared/services/print.service';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { Subject } from 'rxjs';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-labo-order-detail-list',
@@ -22,11 +23,20 @@ export class LaboOrderDetailListComponent implements OnInit {
   gridData: GridDataResult;
   details: LaboOrderBasic[];
   loading = false;
+
+  // check permissions
+  canAdd: boolean= false;
+  canUpdate: boolean = false;
+  canDelete: boolean = false;
+
   constructor(private laboOrderService: LaboOrderService, private modalService: NgbModal,
-    private printService: PrintService) { }
+    private printService: PrintService, 
+    private checkPermissionService: CheckPermissionService
+    ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
+    this.checkRole();
   }
 
   loadDataFromApi() {
@@ -114,4 +124,9 @@ export class LaboOrderDetailListComponent implements OnInit {
     });
   }
 
+  checkRole(){
+    this.canAdd = this.checkPermissionService.check(['Labo.LaboOrder.Create']);
+    this.canUpdate = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
+    this.canDelete = this.checkPermissionService.check(['Labo.LaboOrder.Delete']);
+  }
 }

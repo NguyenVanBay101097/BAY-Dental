@@ -46,19 +46,19 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="id && stateControl == 'draft'" class="btn btn-primary btn-sm"
+                    <button type="button" *ngIf="id && stateControl == 'draft' && canPrepareInventory" class="btn btn-primary btn-sm"
                         (click)="prepareInventory()" accesskey="1">
                         Bắt đầu kiểm kho
                     </button>
-                    <button type="button" *ngIf="id && stateControl == 'confirmed'" class="btn btn-primary btn-sm"
+                    <button type="button" *ngIf="id && stateControl == 'confirmed' && canActionDone" class="btn btn-primary btn-sm"
                         (click)="actionDone()" accesskey="1">
                         Xác nhận kiểm kho
                     </button>
-                    <button type="button" *ngIf="id && stateControl == 'confirmed'" class="btn btn-danger btn-sm"
+                    <button type="button" *ngIf="id && stateControl == 'confirmed' && canCancel" class="btn btn-danger btn-sm"
                         (click)="actionCancel()" accesskey="1">
                         Hủy phiếu
                     </button>
-                    <button type="button" *ngIf="id && stateControl != 'draft'" class="btn btn-primary btn-sm" (click)="onPrintStockInventory()">
+                    <button type="button" *ngIf="id && stateControl != 'draft' && canPrint" class="btn btn-primary btn-sm" (click)="onPrintStockInventory()">
                         In phiếu</button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">

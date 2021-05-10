@@ -30,12 +30,16 @@ import { PartnerCustomerTreatmentListComponent } from './partner-customer-treatm
 import { PartnerCustomerQuotationListComponent } from './partner-customer-quotation/partner-customer-quotation-list/partner-customer-quotation-list.component';
 import { PartnerCustomerAdvisoryListComponent } from './partner-customer-advisory/partner-customer-advisory-list/partner-customer-advisory-list.component';
 import { PartnerAdvanceListComponent } from '../partner-advances/partner-advance-list/partner-advance-list.component';
+import { AuthGuard } from '../auth/auth.guard';
 
 const routes: Routes = [
   {
-    path: 'customers', component: PartnerCustomerListComponent
+    path: 'customers', component: PartnerCustomerListComponent,
+    canActivate: [AuthGuard],
+    data: {
+      permissions: ['Basic.Partner.Read']
+    }
   },
-
   {
     path: 'treatment-paymentfast/from',
     component: PartnerCustomerTreatmentPaymentFastComponent

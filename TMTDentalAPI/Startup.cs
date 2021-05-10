@@ -331,6 +331,7 @@ namespace TMTDentalAPI
             services.AddScoped<ISaleOrderPaymentService, SaleOrderPaymentService>();
             services.AddScoped<ISaleOrderPaymentHistoryLineService, SaleOrderPaymentHistoryLineService>();
             services.AddScoped<ISaleOrderPaymentJournalLineService, SaleOrderPaymentJournalLineService>();
+            services.AddScoped<IApplicationRoleService, ApplicationRoleService>();
 
             services.AddMemoryCache();
 
