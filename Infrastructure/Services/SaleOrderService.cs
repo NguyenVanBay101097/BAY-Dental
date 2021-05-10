@@ -387,12 +387,15 @@ namespace Infrastructure.Services
 
         public async Task ActionUnlock(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var lineObj = GetService<ISaleOrderLineService>();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.OrderLines).ToListAsync();
 
             foreach (var sale in self)
             {
                 sale.State = "sale";
                 sale.DateDone = null;
+
+                lineObj.UpdateOrderInfo(sale.OrderLines, sale);
             }
 
 
@@ -1239,6 +1242,7 @@ namespace Infrastructure.Services
                 var total = promotion.Lines.Select(x => x.SaleOrderLine).Sum(x => (x.PriceUnit * x.ProductUOMQty));
                 if (promotion.Type == "discount")
                 {
+
                     promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
                 }
 

@@ -149,21 +149,9 @@ namespace Infrastructure.Services
                 line.OrderPartnerId = order.PartnerId;
                 line.CompanyId = order.CompanyId;
                 line.Order = order;
+                line.State = order.State;
 
-                if (line.Id == Guid.Empty)
-                    line.State = order.State;
 
-                //if (line.Promotions.Any())
-                //{
-                //    foreach (var promotion in line.Promotions)
-                //    {
-                //        if (promotion.SaleOrderId.HasValue)
-                //            continue;
-
-                //        promotion.SaleOrder = order;
-                //    }
-
-                //}
             }
         }
 
@@ -952,7 +940,9 @@ namespace Infrastructure.Services
                         var total = line.PriceUnit * line.ProductUOMQty;
                         if (promotion.Type == "discount")
                         {
-                            promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
+                            var price_reduce = promotion.DiscountType == "percentage" ? line.PriceUnit * (1 - (promotion.DiscountPercent ?? 0) / 100) : (line.PriceUnit - promotion.DiscountFixed ?? 0);
+                            var discount_amount = (line.PriceUnit - price_reduce) * line.ProductUOMQty;
+                            promotion.Amount = discount_amount;
                         }
 
                         if (promotion.SaleCouponProgramId.HasValue)
