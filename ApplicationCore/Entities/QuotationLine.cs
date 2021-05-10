@@ -51,6 +51,10 @@ namespace ApplicationCore.Entities
 
         public ICollection<QuotationLineToothRel> QuotationLineToothRels { get; set; } = new List<QuotationLineToothRel>();
 
+        public ICollection<QuotationPromotion> Promotions { get; set; } = new List<QuotationPromotion>();
+
+        public ICollection<QuotationPromotionLine> PromotionLines { get; set; } = new List<QuotationPromotionLine>();
+
         /// <summary>
         /// Phiếu báo giá
         /// </summary>

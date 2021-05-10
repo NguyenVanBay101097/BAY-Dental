@@ -115,6 +115,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string ToothType { get; set; }
 
+
+        public IEnumerable<QuotationPromotionBasic> Promotions { get; set; } = new List<QuotationPromotionBasic>();
     }
 
     public class QuotationLineSimple
