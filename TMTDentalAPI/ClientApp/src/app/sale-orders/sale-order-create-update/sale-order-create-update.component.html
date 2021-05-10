@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<div class="o_content">
+<div class="o_content h-100 overflow-hidden">
     <form class="o_form_view h-100" [formGroup]="formGroup">
         <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
             <div class="flex-0-0-auto">
@@ -214,22 +214,22 @@
                             <div *ngIf="isEditSate()" class="mb-2">
                                 <app-service-list-search-dropdown (onSelectService)="addLine($event)"></app-service-list-search-dropdown>
                             </div>
-                            <div class="d-flex overflow-auto w-100">
+                            <div class="d-flex overflow-hidden w-100">
                                 <div class="w-75 d-flex flex-column">
                                     <!-- saleorderline -->
 
-                                    <div class="overflow-auto w-100">
-                                        <div class="div-table w-100">
-                                            <div class="div-row bg-primary text-white">
-                                                <div style="width: 200px;" class="div-cell py-1 pl-2">Dịch vụ</div>
-                                                <div style="width: 130px;" class="div-cell py-1 text-right">Đơn giá</div>
-                                                <div style="width: 100px;" class="div-cell py-1 text-right">Số lượng</div>
-                                                <div style="width: 100px;" class="div-cell py-1 text-right">Thành tiền</div>
-                                                <div style="width: 100px;" class="div-cell py-1 text-right">Thanh toán</div>
-                                                <div style="width: 100px;" class="div-cell py-1 text-right">Còn lại</div>
-                                                <div style="width: 100px;" class="div-cell py-1 text-center" *ngIf="stateControl.value != 'done'">Thao tác</div>
-                                            </div>
+                                    <div class="div-table w-100 flex-0-0-auto overflow-auto">
+                                        <div class="div-row bg-primary text-white">
+                                            <div style="width: 200px;" class="div-cell py-1 pl-2">Dịch vụ</div>
+                                            <div style="width: 130px;" class="div-cell py-1 text-right">Đơn giá</div>
+                                            <div style="width: 100px;" class="div-cell py-1 text-right">Số lượng</div>
+                                            <div style="width: 100px;" class="div-cell py-1 text-right">Thành tiền</div>
+                                            <div style="width: 100px;" class="div-cell py-1 text-right">Thanh toán</div>
+                                            <div style="width: 100px;" class="div-cell py-1 text-right">Còn lại</div>
+                                            <div style="width: 100px;" class="div-cell py-1 text-center" *ngIf="stateControl.value != 'done'">Thao tác</div>
                                         </div>
+                                    </div>
+                                    <div class="flex-1-1-100 overflow-auto">
                                         <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                             <app-sale-order-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)" [line]="line.value" (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)"></app-sale-order-line-cu>
                                         </ng-container>
