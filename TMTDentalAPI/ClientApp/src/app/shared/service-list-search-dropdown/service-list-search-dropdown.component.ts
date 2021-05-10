@@ -53,7 +53,7 @@ export class ServiceListSearchDropdownComponent implements OnInit {
 
 seachService$(search) {
   var val = new ProductPaged();
-  val.limit = 0;
+  val.limit = 10;
   val.offset = 0;
   val.search = search ? search : '';
   val.type2 = 'service';

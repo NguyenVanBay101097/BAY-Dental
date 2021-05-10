@@ -97,13 +97,18 @@ namespace Infrastructure.Services
                 saleLine.Order = order;
                 saleLine.Sequence = sequence++;
                 saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
-                foreach (var toothId in item.ToothIds)
+
+                if (item.ToothType == "manual")
                 {
-                    saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                    foreach (var toothId in item.ToothIds)
                     {
-                        ToothId = toothId
-                    });
+                        saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                        {
+                            ToothId = toothId
+                        });
+                    }
                 }
+
 
                 lines.Add(saleLine);
             }
@@ -153,18 +158,18 @@ namespace Infrastructure.Services
         {
             var totalAmountUntaxed = 0M;
             var totalAmountTax = 0M;
-            var Residual = 0M;
+            var totalInvoiced = 0M;
 
             foreach (var line in order.OrderLines)
             {
                 totalAmountUntaxed += line.PriceSubTotal;
                 totalAmountTax += line.PriceTax;
-                Residual += line.AmountResidual.Value;
+                totalInvoiced += (line.AmountInvoiced ?? 0);
             }
             order.AmountTax = Math.Round(totalAmountTax);
             order.AmountUntaxed = Math.Round(totalAmountUntaxed);
             order.AmountTotal = order.AmountTax + order.AmountUntaxed;
-            order.Residual = Residual;
+            order.Residual = order.AmountTotal - totalInvoiced;
         }
 
         public async Task<PagedResult<SaleOrder>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "")
@@ -382,12 +387,15 @@ namespace Infrastructure.Services
 
         public async Task ActionUnlock(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var lineObj = GetService<ISaleOrderLineService>();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.OrderLines).ToListAsync();
 
             foreach (var sale in self)
             {
                 sale.State = "sale";
                 sale.DateDone = null;
+
+                lineObj.UpdateOrderInfo(sale.OrderLines, sale);
             }
 
 
@@ -395,13 +403,16 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
-        public async Task ApplyCoupon(SaleOrderApplyCoupon val)
+        public async Task<SaleCouponProgramResponse> ApplyCoupon(ApplyPromotionUsageCode val)
         {
             var couponCode = val.CouponCode;
             var programObj = GetService<ISaleCouponProgramService>();
             var couponObj = GetService<ISaleCouponService>();
+            var saleLineObj = GetService<ISaleOrderLineService>();
             var order = await SearchQuery(x => x.Id == val.Id)
-             .Include(x => x.OrderLines).Include("OrderLines.Product")
+             .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+             .Include(x => x.OrderLines).ThenInclude(x => x.Promotions)
+              .Include(x => x.OrderLines).ThenInclude(x => x.Product)
              .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
              .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
              .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
@@ -409,6 +420,7 @@ namespace Infrastructure.Services
              .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
              .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move").FirstOrDefaultAsync();
 
+            //Chương trình khuyến mãi sử dụng mã
             var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).FirstOrDefaultAsync();
             if (program != null)
             {
@@ -423,41 +435,47 @@ namespace Infrastructure.Services
                         {
                             var coupon = await _CreateRewardCoupon(order, program);
                         }
+
+                        return new SaleCouponProgramResponse { Error = null, Success = true, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
                     }
                     else
                     {
                         await _CreateRewardLine(order, program);
-                        order.CodePromoProgramId = program.Id;
                         await UpdateAsync(order);
+                        return new SaleCouponProgramResponse { Error = null, Success = true, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
                     }
                 }
                 else
-                    throw new Exception(error_status.Error);
+                    //throw new Exception(error_status.Error);
+                    return new SaleCouponProgramResponse { Error = error_status.Error, Success = false, SaleCouponProgram = null };
             }
             else
             {
-                var coupon = await couponObj.SearchQuery(x => x.Code == couponCode)
-             .Include(x => x.Program).Include(x => x.Program.DiscountLineProduct).Include(x => x.Partner).FirstOrDefaultAsync();
+                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };
 
-                if (coupon != null)
-                {
-                    var error_status = await couponObj._CheckCouponCode(coupon, order);
-                    if (string.IsNullOrEmpty(error_status.Error))
-                    {
-                        await _CreateRewardLine(order, coupon.Program);
+                //   var coupon = await couponObj.SearchQuery(x => x.Code == couponCode)
+                //.Include(x => x.Program).Include(x => x.Program.DiscountLineProduct).Include(x => x.Partner).FirstOrDefaultAsync();
 
-                        order.AppliedCoupons.Add(coupon);
-                        _ComputeResidual(new List<SaleOrder>() { order });
-                        await UpdateAsync(order);
+                //   if (coupon != null)
+                //   {
+                //       var error_status = await couponObj._CheckCouponCode(coupon, order);
+                //       if (string.IsNullOrEmpty(error_status.Error))
+                //       {
+                //           await _CreateRewardLine(order, coupon.Program);
 
-                        coupon.State = "used";
-                        await couponObj.UpdateAsync(coupon);
-                    }
-                    else
-                        throw new Exception(error_status.Error);
-                }
-                else
-                    throw new Exception($"Mã {couponCode} không có giá trị");
+                //           order.AppliedCoupons.Add(coupon);
+                //           _ComputeResidual(new List<SaleOrder>() { order });
+
+                //           await UpdateAsync(order);
+
+                //           coupon.State = "used";
+                //           await couponObj.UpdateAsync(coupon);
+                //       }
+                //       else
+                //           throw new Exception(error_status.Error);
+                //   }
+                //   else
+                //       throw new Exception($"Mã {couponCode} không có giá trị");
             }
         }
 
@@ -560,31 +578,30 @@ namespace Infrastructure.Services
         private async Task _CreateRewardLine(SaleOrder self, SaleCouponProgram program)
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
-            var lines = _GetRewardLineValues(self, program);
-            foreach (var line in lines)
-                line.Order = self;
+            var orderPromotionObj = GetService<ISaleOrderPromotionService>();
+            var promotion = _GetRewardLineValues(self, program);
+            //foreach (var line in lines)
+            //    line.Order = self;
 
-            saleLineObj.UpdateProps(lines);
-            saleLineObj.ComputeAmount(lines);
-            saleLineObj._GetInvoiceQty(lines);
-            saleLineObj._GetToInvoiceQty(lines);
-            saleLineObj._ComputeInvoiceStatus(lines);
+            await orderPromotionObj.CreateAsync(promotion);
 
-            foreach (var line in lines)
-                self.OrderLines.Add(line);
+            //tính lại tổng tiền ưu đãi saleorderlines
+            saleLineObj._ComputeAmountDiscountTotal(self.OrderLines);
+            saleLineObj.ComputeAmount(self.OrderLines);
 
             _AmountAll(self);
             _GetInvoiced(new List<SaleOrder>() { self });
             await UpdateAsync(self);
         }
 
-        private IEnumerable<SaleOrderLine> _GetRewardLineValues(SaleOrder self, SaleCouponProgram program)
+
+        private SaleOrderPromotion _GetRewardLineValues(SaleOrder self, SaleCouponProgram program)
         {
             if (program.RewardType == "discount")
                 return _GetRewardValuesDiscount(self, program);
-            else if (program.RewardType == "product")
-                return new List<SaleOrderLine>() { _GetRewardValuesProduct(self, program) };
-            return new List<SaleOrderLine>();
+            //else if (program.RewardType == "product")
+            //    return new List<SaleOrderLine>() { _GetRewardValuesProduct(self, program) };
+            return new SaleOrderPromotion();
         }
 
         private SaleOrderLine _GetRewardValuesProduct(SaleOrder self, SaleCouponProgram program)
@@ -787,13 +804,12 @@ namespace Infrastructure.Services
             return applied_programs.Where(x => programObj._IsGlobalDiscountProgram(x)).Any();
         }
 
-        public void GetRewardLineValues(SaleOrder self, SaleCouponProgram program)
+        public SaleOrderPromotion _GetRewardValuesDiscount(SaleOrder self, SaleCouponProgram program)
         {
+            var programObj = GetService<ISaleCouponProgramService>();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var promotionObj = GetService<ISaleOrderPromotionService>();
 
-        }
-
-        public IList<SaleOrderLine> _GetRewardValuesDiscount(SaleOrder self, SaleCouponProgram program)
-        {
             if (program.DiscountLineProduct == null)
             {
                 var productObj = GetService<IProductService>();
@@ -802,24 +818,15 @@ namespace Infrastructure.Services
 
             if (program.DiscountType == "fixed_amount")
             {
-                return new List<SaleOrderLine>()
-                {
-                    new SaleOrderLine()
-                    {
-                        Name = $"Giảm giá: " + program.Name,
-                        ProductId = program.DiscountLineProductId,
-                        PriceUnit = -_GetRewardValuesDiscountFixedAmount(self, program),
-                        ProductUOMQty = 1,
-                        ProductUOMId = program.DiscountLineProduct.UOMId,
-                        IsRewardLine = true,
-                    }
-                };
+
+                var discountAmount = _GetRewardValuesDiscountFixedAmount(self, program);
+                var promotionLine = promotionObj.PreparePromotionToOrder(self, program, discountAmount);
+
+                return promotionLine;
             }
 
 
-
-            var programObj = GetService<ISaleCouponProgramService>();
-            var rewards = new List<SaleOrderLine>();
+            var reward = new SaleOrderPromotion();
             var lines = _GetPaidOrderLines(self);
             if (program.DiscountApplyOn == "specific_products" || program.DiscountApplyOn == "on_order")
             {
@@ -836,30 +843,34 @@ namespace Infrastructure.Services
 
                 foreach (var line in lines)
                 {
-                    var discount_line_amount = _GetRewardValuesDiscountPercentagePerLine(self, program, line);
+                    var discount_line_amount = saleLineObj._GetRewardValuesDiscountPercentagePerLine(program, line);
                     if (discount_line_amount > 0)
                         total_discount_amount += discount_line_amount;
                 }
 
-                rewards.Add(new SaleOrderLine
-                {
-                    Name = $"Giảm giá: {program.Name}",
-                    ProductId = program.DiscountLineProductId,
-                    PriceUnit = -total_discount_amount,
-                    ProductUOMQty = 1,
-                    ProductUOMId = program.DiscountLineProduct.UOMId,
-                    IsRewardLine = true,
-                });
+                reward = promotionObj.PreparePromotionToOrder(self, program, total_discount_amount);
+
+
             }
 
-            return rewards;
+            return reward;
         }
 
-        private decimal _GetRewardValuesDiscountPercentagePerLine(SaleOrder self, SaleCouponProgram program, SaleOrderLine line)
+
+        public async Task _ComputeAmountPromotionToOrder(IEnumerable<Guid> ids)
         {
-            var discount_amount = line.ProductUOMQty * (line.PriceUnit * (1 - line.Discount / 100)) *
-                ((program.DiscountPercentage ?? 0) / 100);
-            return discount_amount;
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var orders = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines)
+                .ToListAsync();
+            foreach (var order in orders)
+            {
+                orderLineObj._ComputeAmountDiscountTotal(order.OrderLines);
+                orderLineObj.ComputeAmount(order.OrderLines);
+                _AmountAll(order);
+            }
+
+            await UpdateAsync(orders);
         }
 
         private decimal _GetRewardValuesDiscountFixedAmount(SaleOrder self, SaleCouponProgram program)
@@ -1022,6 +1033,53 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
+        public async Task ApplyPromotionOnOrder(ApplyPromotionRequest val)
+        {
+            var programObj = GetService<ISaleCouponProgramService>();
+            var couponObj = GetService<ISaleCouponService>();
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var order = await SearchQuery(x => x.Id == val.Id)
+              .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+              .Include(x => x.OrderLines).ThenInclude(x => x.Promotions)
+              .Include("OrderLines.Product")
+              .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
+              .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
+              .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
+              .Include("OrderLines.SaleOrderLineInvoice2Rels")
+              .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+              .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move").FirstOrDefaultAsync();
+            var soLineObj = GetService<ISaleOrderLineService>();
+            var product_list = new List<ApplyPromotionProductListItem>();
+            var ruleObj = GetService<IPromotionRuleService>();
+            var coupons = new List<SaleCoupon>();
+
+            var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId).FirstOrDefaultAsync();
+            if (program != null)
+            {
+                var error_status = await programObj._CheckPromotion(program, order);
+                if (string.IsNullOrEmpty(error_status.Error))
+                {
+                    if (program.PromoApplicability == "on_next_order")
+                    {
+                        // # Avoid creating the coupon if it already exist
+                        var discount_line_product_ids = order.GeneratedCoupons.Where(x => x.State == "new" || x.State == "reserved").Select(x => x.Program.DiscountLineProductId);
+                        if (!discount_line_product_ids.Contains(program.DiscountLineProductId))
+                        {
+                            var coupon = await _CreateRewardCoupon(order, program);
+                        }
+                    }
+                    else
+                    {
+                        await _CreateRewardLine(order, program);
+
+                        await UpdateAsync(order);
+                    }
+                }
+                else
+                    throw new Exception(error_status.Error);
+            }
+        }
+
         public async Task UpdateDiscountLine(SaleOrderSearchPromotionRuleItem rule, SaleOrder order, decimal amount_total, decimal qty = 1,
             Guid? productId = null, Guid? categId = null)
         {
@@ -1087,17 +1145,39 @@ namespace Infrastructure.Services
         {
             var display = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             var lineObj = GetService<ISaleOrderLineService>();
-            display.OrderLines = await _mapper.ProjectTo<SaleOrderLineDisplay>(lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+            var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))
+                .Include(x => x.Advisory)
+                .Include(x => x.Assistant)
+                .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
+                .Include(x => x.Product)
+                .Include(x => x.ToothCategory)
+                .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
+                .Include(x => x.Employee)
+                .Include(x => x.Counselor)
+                .Include(x => x.OrderPartner).ToListAsync();
+
+            display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
+
+            var promotionObj = GetService<ISaleOrderPromotionService>();
+            display.Promotions = await promotionObj.SearchQuery(x => x.SaleOrderId.HasValue && x.SaleOrderId == display.Id && !x.SaleOrderLineId.HasValue).Select(x => new SaleOrderPromotionBasic
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Amount = x.Amount,
+                SaleCouponProgramId = x.SaleCouponProgramId,
+                Type = x.Type
+            }).ToListAsync();
+
             return display;
         }
 
-        public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
-        {
-            var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
-            var lineObj = GetService<ISaleOrderLineService>();
-            res.OrderLines = await _mapper.ProjectTo<SaleOrderLineDisplay>(lineObj.SearchQuery(x => x.OrderId == id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
-            return res;
-        }
+        //public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
+        //{
+        //    var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+        //    var lineObj = GetService<ISaleOrderLineService>();
+        //    res.OrderLines = await _mapper.ProjectTo<SaleOrderLineDisplay>(lineObj.SearchQuery(x => x.OrderId == id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+        //    return res;
+        //}
 
         public async Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid id)
         {
@@ -1118,7 +1198,13 @@ namespace Infrastructure.Services
 
         public async Task UpdateOrderAsync(Guid id, SaleOrderSave val)
         {
-            var order = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var order = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+                .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+                .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
+                .Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
+                .FirstOrDefaultAsync();
+
             order = _mapper.Map(val, order);
 
             await SaveOrderLines(val, order);
@@ -1133,21 +1219,48 @@ namespace Infrastructure.Services
             saleLineObj._GetToInvoiceAmount(order.OrderLines);
             saleLineObj._ComputeInvoiceStatus(order.OrderLines);
             saleLineObj._ComputeLinePaymentRels(order.OrderLines);
-            await saleLineObj.RecomputeCommissions(order.OrderLines);
+            saleLineObj.RecomputePromotionLine(order.OrderLines);
+
+            ReComputePromotionOrder(order);
             await UpdateAsync(order);
+
+            //tính lại tổng tiền ưu đãi saleorderlines
+            saleLineObj._ComputeAmountDiscountTotal(order.OrderLines);
+            saleLineObj.ComputeAmount(order.OrderLines);
 
             _AmountAll(order);
             _GetInvoiced(new List<SaleOrder>() { order });
 
             await UpdateAsync(order);
 
-            var self = new List<SaleOrder>() { order };
-            // await _GenerateDotKhamSteps(self);
+        }
 
-            //if (order.InvoiceStatus == "to invoice")
-            //{
-            //    await ActionInvoiceCreateV2(order.Id);
-            //}
+        public void ReComputePromotionOrder(SaleOrder order)
+        {
+            foreach (var promotion in order.Promotions.Where(x => !x.SaleOrderLineId.HasValue))
+            {
+                var total = promotion.Lines.Select(x => x.SaleOrderLine).Sum(x => (x.PriceUnit * x.ProductUOMQty));
+                if (promotion.Type == "discount")
+                {
+
+                    promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
+                }
+
+                if (promotion.SaleCouponProgramId.HasValue)
+                {
+                    if (promotion.SaleCouponProgram.DiscountType == "fixed_amount")
+                        promotion.Amount = promotion.SaleCouponProgram.DiscountFixedAmount ?? 0;
+                    else
+                        promotion.Amount = total * (promotion.SaleCouponProgram.DiscountPercentage ?? 0) / 100;
+                }
+
+                foreach (var line in promotion.Lines)
+                {
+                    line.Amount = ((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount;
+                    line.PriceUnit = (double)(line.SaleOrderLine.ProductUOMQty != 0 ?
+                       ((line.SaleOrderLine.PriceUnit * line.SaleOrderLine.ProductUOMQty) / total) * promotion.Amount / line.SaleOrderLine.ProductUOMQty : 0);
+                }
+            }
         }
 
         private async Task<AccountInvoice> CreateInvoice(IList<SaleOrderLine> saleLines, SaleOrder order, string type = "out_invoice")
@@ -1220,12 +1333,20 @@ namespace Infrastructure.Services
 
             if (lineToRemoves.Any())
             {
+                var promotionObj = GetService<ISaleOrderPromotionService>();
                 var dkStepObj = GetService<IDotKhamStepService>();
                 var saleLineIds = lineToRemoves.Select(x => x.Id).ToList();
                 var removeDkSteps = await dkStepObj.SearchQuery(x => saleLineIds.Contains(x.SaleLineId.Value)).ToListAsync();
                 if (removeDkSteps.Any(x => x.IsDone))
                     throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
+
                 await dkStepObj.DeleteAsync(removeDkSteps);
+
+
+                ///remove promotions in saleorderline
+                //var promotion_ids = lineToRemoves.SelectMany(x => x.PromotionLines.Select(s => s.PromotionId)).Distinct().ToList();
+                //await promotionObj.RemovePromotion(promotion_ids);
+
                 await saleLineObj.Unlink(lineToRemoves.Select(x => x.Id).ToList());
             }
 
@@ -1245,13 +1366,17 @@ namespace Infrastructure.Services
                     saleLine.AmountPaid = 0;
                     saleLine.AmountResidual = 0;
                     saleLine.PriceUnit = line.PriceUnit;
-                    foreach (var toothId in line.ToothIds)
+                    if (line.ToothType == "manual")
                     {
-                        saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                        foreach (var toothId in line.ToothIds)
                         {
-                            ToothId = toothId
-                        });
+                            saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                            {
+                                ToothId = toothId
+                            });
+                        }
                     }
+
                     to_add.Add(saleLine);
                 }
                 else
@@ -1265,12 +1390,15 @@ namespace Infrastructure.Services
                         saleLine.Sequence = sequence++;
                         saleLine.Order = order;
                         saleLine.SaleOrderLineToothRels.Clear();
-                        foreach (var toothId in line.ToothIds)
+                        if (line.ToothType == "manual")
                         {
-                            saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                            foreach (var toothId in line.ToothIds)
                             {
-                                ToothId = toothId
-                            });
+                                saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                                {
+                                    ToothId = toothId
+                                });
+                            }
                         }
                         to_update.Add(saleLine);
                     }
@@ -1291,6 +1419,7 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
                 .Include(x => x.DotKhams)
+                .Include(x => x.Promotions)
                 .ToListAsync();
 
             var states = new string[] { "draft", "cancel" };
@@ -1338,6 +1467,13 @@ namespace Infrastructure.Services
             var line_ids = self.SelectMany(x => x.OrderLines).Select(x => x.Id).ToList();
             var saleLineObj = GetService<ISaleOrderLineService>();
             await saleLineObj.Unlink(line_ids);
+
+
+            var promotionObj = GetService<ISaleOrderPromotionService>();
+            var promotionIds = await promotionObj.SearchQuery(x => ids.Contains(x.SaleOrderId.Value)).Select(x => x.Id).ToListAsync();
+            if (promotionIds.Any())
+                await promotionObj.RemovePromotion(promotionIds);
+
 
 
 
@@ -1412,6 +1548,8 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
+                .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+                .Include(x => x.Promotions).ThenInclude(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
                 .Include("OrderLines.SaleOrderLinePaymentRels")
                 .ToListAsync();
 
@@ -1426,7 +1564,9 @@ namespace Infrastructure.Services
                     line.State = "sale";
                 }
 
+                saleLineObj._GetInvoiceQty(order.OrderLines);
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
+                saleLineObj._GetInvoiceAmount(order.OrderLines);
                 saleLineObj._GetToInvoiceAmount(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
                 saleLineObj.ComputeResidual(order.OrderLines);
@@ -1453,6 +1593,7 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
 
             await _GenerateDotKhamSteps(self);
+
         }
 
         public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id)
@@ -1805,115 +1946,115 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task RecomputeCouponLines(IEnumerable<Guid> ids)
-        {
-            var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.OrderLines)
-                .Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
-                .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
-                .Include(x => x.CodePromoProgram).ToListAsync();
-            foreach (var order in self)
-            {
-                //if(order.AppliedCoupons != null)
-                //{
-                //    foreach(var coupon in order.AppliedCoupons)
-                //    {
-                //        throw new Exception($"Không thể thêm khuyến mãi do đã tồn tại Coupon : {coupon.Program.Name} trên tổng tiền  !!!");
-                //    }
+        //public async Task RecomputeCouponLines(IEnumerable<Guid> ids)
+        //{
+        //    var self = await SearchQuery(x => ids.Contains(x.Id))
+        //        .Include(x => x.OrderLines)
+        //        .Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
+        //        .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
+        //        .Include("OrderLines.SaleOrderLineInvoice2Rels")
+        //        .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+        //        .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
+        //        .Include(x => x.CodePromoProgram).ToListAsync();
+        //    foreach (var order in self)
+        //    {
+        //        //if(order.AppliedCoupons != null)
+        //        //{
+        //        //    foreach(var coupon in order.AppliedCoupons)
+        //        //    {
+        //        //        throw new Exception($"Không thể thêm khuyến mãi do đã tồn tại Coupon : {coupon.Program.Name} trên tổng tiền  !!!");
+        //        //    }
 
-                //}
-                await _RemoveInvalidRewardLines(order);
-                await _CreateNewNoCodePromoRewardLines(order);
-                await _UpdateExistingRewardLines(order);
-            }
-        }
+        //        //}
+        //        await _RemoveInvalidRewardLines(order);
+        //        await _CreateNewNoCodePromoRewardLines(order);
+        //        await _UpdateExistingRewardLines(order);
+        //    }
+        //}
 
-        public async Task _CreateNewNoCodePromoRewardLines(SaleOrder self)
-        {
-            //Apply new programs that are applicable
-            var programObj = GetService<ISaleCouponProgramService>();
-            var saleLineObj = GetService<ISaleOrderLineService>();
-            var order = self;
-            var programs = await _GetApplicableNoCodePromoProgram(self);
-            programs = programObj._KeepOnlyMostInterestingAutoAppliedGlobalDiscountProgram(programs);
-            var line_product_ids = self.OrderLines.Select(x => x.ProductId).ToList();
-            foreach (var program in programs)
-            {
-                var error_status = await programObj._CheckPromoCode(program, order, "");
-                if (string.IsNullOrEmpty(error_status.Error))
-                {
-                    if (program.PromoApplicability == "on_next_order")
-                        await _CreateRewardCoupon(order, program);
-                    else if (!line_product_ids.Contains(program.DiscountLineProductId))
-                    {
-                        var values = _GetRewardLineValues(self, program);
-                        foreach (var value in values)
-                            value.Order = self;
+        //public async Task _CreateNewNoCodePromoRewardLines(SaleOrder self)
+        //{
+        //    //Apply new programs that are applicable
+        //    var programObj = GetService<ISaleCouponProgramService>();
+        //    var saleLineObj = GetService<ISaleOrderLineService>();
+        //    var order = self;
+        //    var programs = await _GetApplicableNoCodePromoProgram(self);
+        //    programs = programObj._KeepOnlyMostInterestingAutoAppliedGlobalDiscountProgram(programs);
+        //    var line_product_ids = self.OrderLines.Select(x => x.ProductId).ToList();
+        //    foreach (var program in programs)
+        //    {
+        //        var error_status = await programObj._CheckPromoCode(program, order, "");
+        //        if (string.IsNullOrEmpty(error_status.Error))
+        //        {
+        //            if (program.PromoApplicability == "on_next_order")
+        //                await _CreateRewardCoupon(order, program);
+        //            else if (!line_product_ids.Contains(program.DiscountLineProductId))
+        //            {
+        //                var values = _GetRewardLineValues(self, program);
+        //                foreach (var value in values)
+        //                    value.Order = self;
 
-                        saleLineObj.UpdateProps(values);
-                        saleLineObj.ComputeAmount(values);
-                        foreach (var value in values)
-                        {
-                            self.OrderLines.Add(value);
-                        }
-                    }
+        //                saleLineObj.UpdateProps(values);
+        //                saleLineObj.ComputeAmount(values);
+        //                foreach (var value in values)
+        //                {
+        //                    self.OrderLines.Add(value);
+        //                }
+        //            }
 
-                    order.NoCodePromoPrograms.Add(new SaleOrderNoCodePromoProgram { ProgramId = program.Id });
-                }
-            }
+        //            order.NoCodePromoPrograms.Add(new SaleOrderNoCodePromoProgram { ProgramId = program.Id });
+        //        }
+        //    }
 
-            _AmountAll(order);
-            await UpdateAsync(order);
-        }
+        //    _AmountAll(order);
+        //    await UpdateAsync(order);
+        //}
 
-        public async Task _UpdateExistingRewardLines(SaleOrder self)
-        {
-            void UpdateLine(SaleOrder o, IEnumerable<SaleOrderLine> lines, SaleOrderLine value)
-            {
-                if (value != null && value.PriceUnit != 0 && value.ProductUOMQty != 0)
-                {
-                    foreach (var line in lines)
-                    {
-                        line.PriceUnit = value.PriceUnit;
-                        line.ProductUOMQty = value.ProductUOMQty;
-                    }
-                }
-            }
+        //public async Task _UpdateExistingRewardLines(SaleOrder self)
+        //{
+        //    void UpdateLine(SaleOrder o, IEnumerable<SaleOrderLine> lines, SaleOrderLine value)
+        //    {
+        //        if (value != null && value.PriceUnit != 0 && value.ProductUOMQty != 0)
+        //        {
+        //            foreach (var line in lines)
+        //            {
+        //                line.PriceUnit = value.PriceUnit;
+        //                line.ProductUOMQty = value.ProductUOMQty;
+        //            }
+        //        }
+        //    }
 
-            //Update values for already applied rewards
-            var saleLineObj = GetService<ISaleOrderLineService>();
-            var order = self;
-            var applied_programs = _GetAppliedProgramsWithRewardsOnCurrentOrder(self);
-            foreach (var program in applied_programs)
-            {
-                var values = _GetRewardLineValues(order, program);
-                var lines = order.OrderLines.Where(x => x.ProductId == program.DiscountLineProductId);
-                if (program.RewardType == "discount" && program.DiscountType == "percentage")
-                {
-                    foreach (var value in values)
-                    {
-                        foreach (var line in lines)
-                        {
-                            UpdateLine(order, new List<SaleOrderLine>() { line }, value);
-                        }
-                    }
-                }
-                else
-                {
-                    UpdateLine(order, lines, values.FirstOrDefault());
-                }
+        //    //Update values for already applied rewards
+        //    var saleLineObj = GetService<ISaleOrderLineService>();
+        //    var order = self;
+        //    var applied_programs = _GetAppliedProgramsWithRewardsOnCurrentOrder(self);
+        //    foreach (var program in applied_programs)
+        //    {
+        //        var values = _GetRewardLineValues(order, program);
+        //        var lines = order.OrderLines.Where(x => x.ProductId == program.DiscountLineProductId);
+        //        if (program.RewardType == "discount" && program.DiscountType == "percentage")
+        //        {
+        //            foreach (var value in values)
+        //            {
+        //                foreach (var line in lines)
+        //                {
+        //                    UpdateLine(order, new List<SaleOrderLine>() { line }, value);
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            UpdateLine(order, lines, values.FirstOrDefault());
+        //        }
 
-                saleLineObj.ComputeAmount(lines);
-                await saleLineObj.UpdateAsync(lines);
-            }
+        //        saleLineObj.ComputeAmount(lines);
+        //        await saleLineObj.UpdateAsync(lines);
+        //    }
 
-            _AmountAll(order);
-            _ComputeResidual(new List<SaleOrder>() { order });
-            await UpdateAsync(order);
-        }
+        //    _AmountAll(order);
+        //    _ComputeResidual(new List<SaleOrder>() { order });
+        //    await UpdateAsync(order);
+        //}
 
         private async Task<SaleCoupon> _CreateRewardCoupon(SaleOrder self, SaleCouponProgram program)
         {
@@ -1970,25 +2111,11 @@ namespace Infrastructure.Services
         {
             foreach (var order in self)
             {
-                //var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels)
-                //    .Select(x => x.InvoiceLine).Select(x => x.Move).Distinct().ToList();
                 decimal? residual = 0M;
-
-                //if (invoices.Any())
-                //{
-                //    foreach (var line in order.OrderLines)
-                //    {
-                //        residual += line.AmountToInvoice;
-                //    }
-                //}
-                //else
-                //{
-
-                //}
 
                 foreach (var line in order.OrderLines)
                 {
-                    residual += line.AmountToInvoice;
+                    residual += line.PriceSubTotal - (line.AmountInvoiced ?? 0);
                 }
 
 
@@ -2062,7 +2189,7 @@ namespace Infrastructure.Services
 
                     if (line.QtyToInvoice == 0 && line.AmountToInvoice == 0)
                         continue;
-                    if ((line.QtyToInvoice > 0 && line.AmountToInvoice > 0) || (line.QtyToInvoice < 0 && final) || (line.QtyToInvoice <= 0 && line.AmountToInvoice > 0))
+                    if ((line.QtyToInvoice > 0 && line.AmountToInvoice > 0) || (line.QtyToInvoice < 0 && final))
                     {
                         invoice_vals.InvoiceLines.Add(saleLineObj._PrepareInvoiceLine(line));
                     }
@@ -2155,10 +2282,10 @@ namespace Infrastructure.Services
                         Id = x.Id,
                         Name = x.Name,
                         PriceTotal = x.PriceTotal,
-                        AmountPaid = x.AmountPaid,
-                        AmountResidual = x.AmountResidual,
+                        AmountPaid = x.AmountInvoiced,
+                        AmountResidual = x.PriceTotal - x.AmountInvoiced,
                     }
-                }).ToListAsync();           
+                }).ToListAsync();
 
             var rec = new RegisterSaleOrderPayment
             {
@@ -2196,61 +2323,177 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderSave val)
         {
+            var programObj = GetService<ISaleCouponProgramService>();
+            var saleLineService = GetService<ISaleOrderLineService>();
             var res = new SaleOrderSave();
             res.CompanyId = val.CompanyId;
             res.DateOrder = val.DateOrder;
             res.Note = val.Note;
-            res.OrderLines = val.OrderLines;
             res.PartnerId = val.PartnerId;
             res.PricelistId = val.PricelistId;
             res.IsFast = true;
-            res.JournalId = val.JournalId;
 
             var order = _mapper.Map<SaleOrder>(res);
-
-            //tạo sale order
-            if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
-            {
-                var sequenceService = GetService<IIRSequenceService>();
-                if (order.IsQuotation == true)
-                {
-                    order.Name = await sequenceService.NextByCode("sale.quotation");
-                    if (string.IsNullOrEmpty(order.Name))
-                    {
-                        await InsertSaleQuotationSequence();
-                        order.Name = await sequenceService.NextByCode("sale.quotation");
-                    }
-                }
-                else
-                    order.Name = await sequenceService.NextByCode("sale.order");
-            }
+            await CreateAsync(order);
 
             var lines = new List<SaleOrderLine>();
             var sequence = 0;
-            foreach (var item in val.OrderLines)
+            foreach (var line in val.OrderLines)
             {
-                var saleLine = _mapper.Map<SaleOrderLine>(item);
+                var saleLine = _mapper.Map<SaleOrderLine>(line);
                 saleLine.Order = order;
                 saleLine.Sequence = sequence++;
                 saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
-                foreach (var toothId in item.ToothIds)
+
+                if (line.ToothType == "manual")
                 {
-                    saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                    foreach (var toothId in line.ToothIds)
                     {
-                        ToothId = toothId
-                    });
+                        saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                        {
+                            ToothId = toothId
+                        });
+                    }
                 }
 
-                lines.Add(saleLine);
+                await saleLineService.CreateAsync(saleLine);
+
+                if (line.Promotions.Any())
+                {
+                    foreach (var item in line.Promotions)
+                    {
+                        var discount_amount = 0M;
+                        if (item.Type == "discount")
+                        {
+                            var price_reduce = item.DiscountType == "percentage" ? line.PriceUnit * (1 - (item.DiscountPercent ?? 0) / 100) : (line.PriceUnit - item.DiscountFixed ?? 0);
+                            discount_amount = (saleLine.PriceUnit - price_reduce) * line.ProductUOMQty;
+                            var promotion = new SaleOrderPromotion();
+
+                            promotion.Name = "Giảm tiền";
+                            promotion.Amount = discount_amount;
+                            promotion.DiscountType = item.DiscountType;
+                            promotion.DiscountFixed = item.DiscountFixed;
+                            promotion.DiscountPercent = item.DiscountPercent;
+                            promotion.SaleOrderLine = saleLine;
+                            promotion.SaleOrderId = saleLine.OrderId;
+                            promotion.Type = item.Type;
+
+                            promotion.Lines.Add(new SaleOrderPromotionLine
+                            {
+                                SaleOrderLine = saleLine,
+                                Amount = promotion.Amount,
+                                PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
+                            });
+
+                            saleLine.Promotions.Add(promotion);
+                        }
+                        else if (item.Type == "code_usage_program" || item.Type == "promotion_program")
+                        {
+                            var program = await programObj.SearchQuery(x => x.Id == item.SaleCouponProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+                            if (program != null)
+                            {
+                                var error_status = await programObj._CheckPromotionApplySaleLine(program, saleLine);
+                                if (string.IsNullOrEmpty(error_status.Error))
+                                {
+                                    saleLine.Promotions.Add(saleLineService._GetRewardLineValues(saleLine, program));
+                                }
+                                else
+                                    throw new Exception(error_status.Error);
+                            }
+                        }
+
+                    }
+                }
+
             }
 
-            var saleLineObj = GetService<ISaleOrderLineService>();
-            await saleLineObj.CreateAsync(lines);
+            _AmountAll(order);
+            await UpdateAsync(order);
+
+
+            ///xử lý ưu đãi chi order
+            if (val.Promotions.Any())
+            {
+                foreach (var promotion in val.Promotions)
+                {
+                    var total = order.OrderLines.Sum(x => x.PriceUnit * x.ProductUOMQty);
+                    var discount_amount = 0M;
+                    if (promotion.Type == "discount")
+                    {
+                        discount_amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
+                        var reward = new SaleOrderPromotion();
+                        reward.Name = "Giảm tiền";
+                        reward.Amount = discount_amount;
+                        reward.DiscountType = promotion.DiscountType;
+                        reward.DiscountFixed = promotion.DiscountFixed;
+                        reward.DiscountPercent = promotion.DiscountPercent;
+                        reward.SaleOrderId = order.Id;
+                        reward.Type = promotion.Type;
+
+                        if (order.OrderLines.Any())
+                        {
+                            foreach (var line in order.OrderLines)
+                            {
+                                var amount = (((line.ProductUOMQty * line.PriceUnit) / total) * promotion.Amount);
+                                reward.Lines.Add(new SaleOrderPromotionLine
+                                {
+                                    SaleOrderLineId = line.Id,
+                                    Amount = promotion.Amount,
+                                    PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
+                                });
+                            }
+                        }
+
+                        order.Promotions.Add(reward);
+                    }
+                    else if (promotion.Type == "code_usage_program" || promotion.Type == "promotion_program")
+                    {
+                        var error_status = new CheckPromoCodeMessage();
+                        var program = await programObj.SearchQuery(x => x.Id == promotion.SaleCouponProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+                        if (program != null)
+                        {
+                            if (program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode))
+                                error_status = await programObj._CheckPromoCode(program, order, program.PromoCode);
+                            else
+                                error_status = await programObj._CheckPromotion(program, order);
+
+
+                            if (string.IsNullOrEmpty(error_status.Error))
+                            {
+                                order.Promotions.Add(_GetRewardLineValues(order, program));
+                            }
+                            else
+                                throw new Exception(error_status.Error);
+                        }
+                    }
+
+
+                }
+            }
+
+
+            saleLineService.UpdateOrderInfo(order.OrderLines, order);
+            saleLineService.ComputeAmount(order.OrderLines);
+            saleLineService._GetInvoiceQty(order.OrderLines);
+            saleLineService._GetToInvoiceQty(order.OrderLines);
+            saleLineService._GetInvoiceAmount(order.OrderLines);
+            saleLineService._GetToInvoiceAmount(order.OrderLines);
+            saleLineService._ComputeInvoiceStatus(order.OrderLines);
+            saleLineService._ComputeLinePaymentRels(order.OrderLines);
+            await UpdateAsync(order);
+
+            //tính lại tổng tiền ưu đãi saleorderlines
+            saleLineService._ComputeAmountDiscountTotal(order.OrderLines);
+            saleLineService.ComputeAmount(order.OrderLines);
 
             _AmountAll(order);
-
+            _GetInvoiced(new List<SaleOrder>() { order });
+            _ComputeResidual(new List<SaleOrder>() { order });
             await UpdateAsync(order);
-            //confirm sale order       
+
+
+
+            //done sale order       
             order.State = "done";
             order.DateDone = DateTime.Now;
             foreach (var line in order.OrderLines)
@@ -2261,43 +2504,42 @@ namespace Infrastructure.Services
                 line.State = "done";
             }
 
-            saleLineObj._GetToInvoiceQty(order.OrderLines);
-            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
-
-            await saleLineObj.RecomputeCommissions(order.OrderLines);
-
-
-            var invoices = await _CreateInvoices(new List<SaleOrder>() { order }, final: true);
-            var moveObj = GetService<IAccountMoveService>();
-            await moveObj.ActionPost(invoices);
-            saleLineObj._GetInvoiceQty(order.OrderLines);
-            saleLineObj._GetToInvoiceQty(order.OrderLines);
-            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
-            saleLineObj._ComputeLinePaymentRels(order.OrderLines);
-
-
-            _GetInvoiced(new List<SaleOrder>() { order });
-            _ComputeResidual(new List<SaleOrder>() { order });
             await UpdateAsync(new List<SaleOrder>() { order });
 
-            //thanh toan
+            //tạo thanh toán phiếu điều trị nhanh
             var amountTotal = order.AmountTotal ?? 0;
-            var payment = new AccountPayment()
+            var salePayment = new SaleOrderPayment()
             {
                 Amount = amountTotal,
-                JournalId = val.JournalId,
-                PaymentType = amountTotal > 0 ? "inbound" : "outbound",
-                PartnerId = order.PartnerId,
-                PartnerType = "customer",
+                Date = order.DateOrder,
+                OrderId = order.Id,
                 CompanyId = order.CompanyId
             };
 
-            payment.SaleOrderPaymentRels.Add(new SaleOrderPaymentRel { SaleOrderId = order.Id });
-            foreach (var orderLine in order.OrderLines)
-                payment.SaleOrderLinePaymentRels.Add(new SaleOrderLinePaymentRel { SaleOrderLineId = orderLine.Id, AmountPrepaid = orderLine.PriceTotal });
-            var paymentObj = GetService<IAccountPaymentService>();
-            await paymentObj.CreateAsync(payment);
-            await paymentObj.Post(new List<Guid>() { payment.Id });
+            ///tạo SaleOrderPaymentHistoryLineSave từ orderlines          
+            foreach (var line in order.OrderLines)
+            {
+                salePayment.Lines.Add(new SaleOrderPaymentHistoryLine
+                {
+                    SaleOrderLineId = line.Id,
+                    Amount = line.PriceSubTotal,
+                    SaleOrderPayment = salePayment
+                });
+            }
+
+            var journalObj = GetService<IAccountJournalService>();
+            var journalCash = await journalObj.GetJournalByTypeAndCompany("cash", order.CompanyId);
+            //tạo ra phương thức thanh toán mặc định là tiền mặt
+            salePayment.JournalLines.Add(new SaleOrderPaymentJournalLine()
+            {
+                SaleOrderPayment = salePayment,
+                JournalId = journalCash.Id,
+                Amount = amountTotal
+            });
+
+            var paymentObj = GetService<ISaleOrderPaymentService>();
+            await paymentObj.CreateAsync(salePayment);
+            await paymentObj.ActionPayment(new List<Guid>() { salePayment.Id });
 
             var basic = _mapper.Map<SaleOrderBasic>(order);
             return basic;
@@ -2305,12 +2547,12 @@ namespace Infrastructure.Services
         }
 
         //thêm Orderline chiết khấu tổng vào SaleOrder
-        public async Task ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val)
+        public async Task ApplyDiscountDefault(ApplyDiscountViewModel val)
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
             var product = await CheckProductDiscount(val);
             var reward_string = await GetDisplayName(val);
-            var saleOrder = await SearchQuery(x => x.Id == val.saleOrderId).Include(x => x.OrderLines).FirstOrDefaultAsync();
+            var saleOrder = await SearchQuery(x => x.Id == val.Id).Include(x => x.OrderLines).FirstOrDefaultAsync();
             var total = saleOrder.OrderLines.Where(x => x.ProductId != product.Id).Sum(x => x.PriceSubTotal);
 
             var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
@@ -2351,7 +2593,7 @@ namespace Infrastructure.Services
         }
 
         //kiểm tra product chiết khấu tổng có tồn tại chưa
-        private async Task<Product> CheckProductDiscount(ApplyDiscountSaleOrderViewModel val)
+        private async Task<Product> CheckProductDiscount(ApplyDiscountViewModel val)
         {
             var product = new Product();
             var productObj = GetService<IProductService>();
@@ -2374,7 +2616,7 @@ namespace Infrastructure.Services
         }
 
         //Tạo Product chiết khấu tổng nếu chưa tồn tại
-        private async Task<Product> GetOrCreateDiscountProduct(ApplyDiscountSaleOrderViewModel val)
+        private async Task<Product> GetOrCreateDiscountProduct(ApplyDiscountViewModel val)
         {
             var productObj = GetService<IProductService>();
             var reward_string = await GetDisplayName(val);
@@ -2400,7 +2642,7 @@ namespace Infrastructure.Services
         }
 
         //Tạo tên Orderline cho phần chiết khấu tổng
-        private async Task<string> GetDisplayName(ApplyDiscountSaleOrderViewModel val)
+        private async Task<string> GetDisplayName(ApplyDiscountViewModel val)
         {
             var productObj = GetService<IProductService>();
             var uomObj = GetService<IUoMService>();
@@ -2549,6 +2791,105 @@ namespace Infrastructure.Services
                            State = x.State
                        }).ToListAsync();
             return res;
+        }
+
+        public async Task ApplyDiscountOnOrder(ApplyDiscountViewModel val)
+        {
+            var orderPromotionObj = GetService<ISaleOrderPromotionService>();
+            var orderLineObj = GetService<ISaleOrderLineService>();
+
+            var order = await SearchQuery(x => x.Id == val.Id).Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines).FirstOrDefaultAsync();
+            var total = order.OrderLines.Sum(x => x.PriceUnit * x.ProductUOMQty);
+            var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
+
+            var promotion = order.Promotions.Where(x => x.Type == "discount" && !x.SaleOrderLineId.HasValue).FirstOrDefault();
+            if (promotion != null)
+            {
+                promotion.Amount = (discount_amount ?? 0);
+            }
+            else
+            {
+                promotion = new SaleOrderPromotion
+                {
+                    Name = "Giảm tiền",
+                    Amount = (discount_amount ?? 0),
+                    DiscountType = val.DiscountType,
+                    DiscountPercent = val.DiscountPercent,
+                    DiscountFixed = val.DiscountFixed,
+                    Type = "discount",
+                    SaleOrderId = order.Id
+                };
+
+                await orderPromotionObj.CreateAsync(promotion);
+            }
+
+            if (order.OrderLines.Any())
+            {
+                foreach (var line in order.OrderLines)
+                {
+                    if (line.ProductUOMQty == 0)
+                        continue;
+
+                    var amount = (((line.ProductUOMQty * line.PriceUnit) / total) * promotion.Amount);
+                    if (amount != 0)
+                    {
+                        promotion.Lines.Add(new SaleOrderPromotionLine
+                        {
+                            Amount = amount,
+                            PriceUnit = (double)(line.ProductUOMQty != 0 ? amount / line.ProductUOMQty : 0),
+                            SaleOrderLineId = line.Id,
+                        });
+                    }
+                }
+            }
+
+            await orderPromotionObj.UpdateAsync(promotion);
+
+            //tính lại tổng tiền ưu đãi saleorderlines
+            orderLineObj._ComputeAmountDiscountTotal(order.OrderLines);
+            orderLineObj.ComputeAmount(order.OrderLines);
+
+            _AmountAll(order);
+            await UpdateAsync(order);
+        }
+
+        private async Task<Product> _GetProductDiscount()
+        {
+            var productObj = GetService<IProductService>();
+            var modelDataModel = GetService<IIRModelDataService>();
+            var product = await modelDataModel.GetRef<Product>("sale.product_discount_default");
+            if (product == null)
+            {
+                var categObj = GetService<IProductCategoryService>();
+                var categ = await categObj.DefaultCategory();
+                var uomObj = GetService<IUoMService>();
+                var uom = await uomObj.SearchQuery().FirstOrDefaultAsync();
+
+                product = new Product()
+                {
+                    PurchaseOK = false,
+                    SaleOK = false,
+                    Type = "service",
+                    Name = "Giảm tiền",
+                    UOMId = uom.Id,
+                    UOMPOId = uom.Id,
+                    CategId = categ.Id,
+                    ListPrice = 0,
+                };
+
+                await productObj.CreateAsync(product);
+
+                var modeldata = new IRModelData
+                {
+                    Model = "product.discount",
+                    Module = "sale",
+                    Name = "product_discount_default",
+                    ResId = product.Id.ToString()
+                };
+                await modelDataModel.CreateAsync(modeldata);
+            }
+
+            return product;
         }
     }
 }

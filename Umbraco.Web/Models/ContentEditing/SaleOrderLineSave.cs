@@ -6,6 +6,11 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class SaleOrderLineSave
     {
+        public SaleOrderLineSave()
+        {
+            IsActive = true;
+        }
+
         public Guid Id { get; set; }
 
         public decimal PriceUnit { get; set; }
@@ -27,6 +32,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
 
+
+        /// <summary>
+        /// danh sách chương trình ưu đãi
+        /// </summary>
+        public ICollection<SaleOrderPromotionSave> Promotions { get; set; } = new List<SaleOrderPromotionSave>();
+
         public string State { get; set; }
 
         public string DiscountType { get; set; }
@@ -43,10 +54,21 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? AmountResidual { get; set; }
 
+        /// <summary>
+        /// whole_jaw: nguyên hàm
+        /// upper_jaw : hàm trên
+        /// lower_jaw : hàm dưới
+        /// manually :  thủ công
+        /// </summary>
+        public string ToothType { get; set; }
+
         public Guid? EmployeeId { get; set; }
 
         public Guid? AssistantId { get; set; }
 
         public Guid? CounselorId { get; set; }
+
+        public bool IsActive { get; set; }
+
     }
 }

@@ -127,8 +127,8 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyServiceCards', data);
     }
 
-    applyPromotion(id: string) {
-        return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/ApplyPromotion', {});
+    applyPromotion(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotion', val);
     }
 
     applyDiscountDefault(data: DiscountDefault) {
@@ -205,5 +205,13 @@ export class SaleOrderService {
 
     getSaleOrderPaymentBySaleOrderId(id: string): Observable<RegisterSaleOrderPayment>{
         return this.http.get<RegisterSaleOrderPayment>(this.baseApi + this.apiUrl + '/' + id + '/GetSaleOrderPaymentBySaleOrderId');
+    }
+
+    applyCouponOnOrder(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyCouponOnOrder', val);
+    }
+
+    applyDiscountOnOrder(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnOrder', val);
     }
 }

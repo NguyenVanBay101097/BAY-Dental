@@ -45,6 +45,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateOrderTo);
             }
 
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
 
             var totalItems = await query.CountAsync();
 
@@ -89,6 +91,9 @@ namespace Infrastructure.Services
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
                 query = query.Where(x => x.Date >= val.DateFrom);
             }
+
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
 
             if (val.DateTo.HasValue)
             {

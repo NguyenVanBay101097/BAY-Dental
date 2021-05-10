@@ -75,7 +75,7 @@ namespace Infrastructure.Services
 
         }
 
-        public IEnumerable<CommissionSettlement> ComputeAmount(IEnumerable<CommissionSettlement> val , decimal amountPayment)
+        public IEnumerable<CommissionSettlement> ComputeAmount(IEnumerable<CommissionSettlement> val, decimal amountPayment)
         {
             foreach (var item in val)
             {
@@ -97,13 +97,13 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<CommissionSettlement>> _PrepareCommission(AccountMove res)
         {
-            var commissionSettlements = new List<CommissionSettlement>();      
-            foreach(var moveline in res.InvoiceLines)
+            var commissionSettlements = new List<CommissionSettlement>();
+            foreach (var moveline in res.InvoiceLines)
             {
                 var settlements = await _PrepareCommissionByMoveLine(moveline);
                 commissionSettlements.AddRange(settlements);
             }
-          
+
             return commissionSettlements;
         }
 
@@ -113,7 +113,7 @@ namespace Infrastructure.Services
             var employeeObj = GetService<IEmployeeService>();
             var orderLineObj = GetService<ISaleOrderLineService>();
             var commisstionProductRuleObj = GetService<ICommissionProductRuleService>();
-            var lines = await orderLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s=>s.InvoiceLineId == moveLine.Id)).Include(x=>x.Product).Distinct().ToListAsync();
+            var lines = await orderLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s => s.InvoiceLineId == moveLine.Id)).Include(x => x.Product).Distinct().ToListAsync();
             foreach (var line in lines)
             {
                 var standard_price = GetStandardPrice(line.ProductId.Value, line.CompanyId);
@@ -122,10 +122,10 @@ namespace Infrastructure.Services
                     var employee = await employeeObj.SearchQuery(x => x.Id == line.EmployeeId)
                         .Include(x => x.Commission).FirstOrDefaultAsync();
                     if (employee == null || employee.Commission == null)
-                        return null;
+                        continue;
 
-                    var commisstionProductRule_dict =  await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == employee.CommissionId.Value).ToDictionaryAsync(x => x.ProductId, x => x);
-                
+                    var commisstionProductRule_dict = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == employee.CommissionId.Value).ToDictionaryAsync(x => x.ProductId, x => x);
+
                     commissionSettlements.Add(new CommissionSettlement
                     {
                         Date = moveLine.Date,
@@ -147,7 +147,7 @@ namespace Infrastructure.Services
                     var employee = await employeeObj.SearchQuery(x => x.Id == line.AssistantId)
                         .Include(x => x.Commission).FirstOrDefaultAsync();
                     if (employee == null || employee.Commission == null)
-                        return null;
+                        continue;
 
                     var commisstionProductRule_dict = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == employee.CommissionId.Value).ToDictionaryAsync(x => x.ProductId, x => x);
 
@@ -175,7 +175,7 @@ namespace Infrastructure.Services
                     var employee = await employeeObj.SearchQuery(x => x.Id == line.CounselorId.Value)
                         .Include(x => x.Commission).FirstOrDefaultAsync();
                     if (employee == null || employee.Commission == null)
-                        return null;
+                        continue;
 
                     var commisstionProductRule_dict = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == employee.CommissionId.Value).ToDictionaryAsync(x => x.ProductId, x => x);
 
@@ -195,7 +195,7 @@ namespace Infrastructure.Services
                     });
                 }
 
-           
+
             }
 
             ComputeAmount(commissionSettlements, moveLine.PriceSubtotal.Value);
@@ -224,13 +224,13 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
             {
                 val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.Payment.PaymentDate >= val.DateFrom);
+                query = query.Where(x => x.Date >= val.DateFrom);
             }
 
             if (val.DateTo.HasValue)
             {
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Payment.PaymentDate <= val.DateTo);
+                query = query.Where(x => x.Date <= val.DateTo);
             }
 
             if (val.CompanyId.HasValue)
@@ -267,13 +267,13 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
             {
                 val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.Payment.PaymentDate >= val.DateFrom);
+                query = query.Where(x => x.Date >= val.DateFrom);
             }
 
             if (val.DateTo.HasValue)
             {
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Payment.PaymentDate <= val.DateTo);
+                query = query.Where(x => x.Date <= val.DateTo);
             }
 
             if (val.CompanyId.HasValue)
@@ -282,14 +282,14 @@ namespace Infrastructure.Services
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
 
-            var items = await query.OrderBy(x => x.Payment.PaymentDate).Skip(val.Offset).Take(val.Limit)
+            var items = await query.OrderBy(x => x.Date).Skip(val.Offset).Take(val.Limit)
                 .Select(x => new CommissionSettlementReportDetailOutput
                 {
                     Amount = x.Amount,
                     BaseAmount = x.BaseAmount,
-                    Date = x.Payment.PaymentDate,
+                    Date = x.Date,
                     Percentage = x.Percentage,
-                    ProductName = x.SaleOrderLine.Name
+                    ProductName = x.Product.Name
                 }).ToListAsync();
 
             var totalItems = await query.CountAsync();

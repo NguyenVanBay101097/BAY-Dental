@@ -55,6 +55,9 @@ namespace Infrastructure.TenantData.Migrations
                     b.Property<string>("Hostname")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsProcessUpdateOldSaleOrder")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 

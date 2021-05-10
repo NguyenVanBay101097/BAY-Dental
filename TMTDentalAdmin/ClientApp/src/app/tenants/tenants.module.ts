@@ -12,6 +12,7 @@ import { TrialRegistrationComponent } from './trial-registration/trial-registrat
 import { TenantUpdateInfoDialogComponent } from './tenant-update-info-dialog/tenant-update-info-dialog.component';
 import { TenantExtendHistoryComponent } from './tenant-extend-history/tenant-extend-history.component';
 import { EmployeeAdminService } from 'app/employee-admins/employee-admin.service';
+import { TenantsProcessUpdateComponent } from './tenants-process-update/tenants-process-update.component';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { EmployeeAdminService } from 'app/employee-admins/employee-admin.service
     TenantUpdateExpiredDialogComponent,
     TrialRegistrationComponent,
     TenantUpdateInfoDialogComponent,
-    TenantExtendHistoryComponent
+    TenantExtendHistoryComponent,
+    TenantsProcessUpdateComponent
   ],
   providers: [
     TenantService,

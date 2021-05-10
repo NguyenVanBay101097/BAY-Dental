@@ -19,8 +19,16 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string ProgramType { get; set; }
 
+
         public bool? Active { get; set; }
 
         public IEnumerable<Guid> Ids { get; set; }
+    }
+
+    public class SaleCouponProgramResponse
+    {
+        public bool Success { get; set; }
+        public SaleCouponProgramDisplay SaleCouponProgram { get; set; }
+        public string Error { get; set; }
     }
 }

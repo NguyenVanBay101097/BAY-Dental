@@ -9,7 +9,7 @@ export class PartnerAdvancePaged {
   search: string;
   dateFrom: string;
   dateTo: string;
-
+  partnerId: string;
 }
 
 
@@ -64,6 +64,7 @@ export class PartnerAdvanceSummaryFilter {
   type: string;
   dateFrom: string;
   dateTo: string;
+  partnerId: string;
 }
 
 export class PartnerAdvanceGetSummary {

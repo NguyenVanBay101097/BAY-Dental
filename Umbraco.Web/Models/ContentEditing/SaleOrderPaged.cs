@@ -30,4 +30,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? Id { get; set; }
         public Guid? CompanyId { get; set; }
     }
+
+    public class ApplyDiscountRequest
+    {
+        /// <summary>
+        /// SaleOrderId
+        /// </summary>
+        public Guid Id { get; set; }
+
+        public decimal Amount { get; set; }
+    }
 }

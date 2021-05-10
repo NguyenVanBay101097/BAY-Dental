@@ -38,6 +38,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   advanceAmount: number = 0;
   cashSuggestions: number[] = [];
   partnerCash = 0;
+  returnCash = 0;
   maxAmount: number = 0;
 
   constructor(
@@ -120,19 +121,20 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   loadFilteredJournals() {
     this.searchJournals().subscribe((result) => {
+      console.log(result);
       this.filteredJournals = result;
-      if (this.filteredJournals && this.filteredJournals.length > 1) {
-        this.journalLinesFC.clear();
-        // add default tiền mặt
-        var cashJournal = this.filteredJournals.find((x) => x.type == "cash");
-        var g = this.fb.group({
-          journalId: cashJournal.id,
-          journal: cashJournal,
-          amount: this.maxAmount,
-        });
-        this.journalLinesFC.push(g);
-        this.addCashSuggest();
-      }
+      // if (this.filteredJournals && this.filteredJournals.length > 1) {
+      //   this.journalLinesFC.clear();
+      //   // add default tiền mặt
+      //   var cashJournal = this.filteredJournals.find((x) => x.type == "cash");
+      //   var g = this.fb.group({
+      //     journalId: cashJournal.id,
+      //     journal: cashJournal,
+      //     amount: this.maxAmount,
+      //   });
+      //   this.journalLinesFC.push(g);
+      //   this.addCashSuggest();
+      // }
     });
   }
 
@@ -148,7 +150,21 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     return this.accountJournalService.autocomplete(val);
   }
 
+  isThanhToanDu() {
+    var paymentLines = this.journalLinesFC.value;
+    var totalAmountPaymentLines = paymentLines.reduce((a, b) => {
+      return a + b.amount;
+    }, 0);
+
+    return totalAmountPaymentLines == this.amount;
+  }
+
   save() {
+    if (!this.isThanhToanDu()) {
+      alert('Vui lòng phân bổ đủ số tiền cần thanh toán');
+      return false;
+    }
+
     this.submitted = true;
     if (!this.paymentForm.valid) {
       return;
@@ -175,6 +191,11 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   saveAndPrint() {
+    if (!this.isThanhToanDu()) {
+      alert('Vui lòng phân bổ đủ số tiền cần thanh toán');
+      return false;
+    }
+    
     this.submitted = true;
     if (!this.paymentForm.valid) {
       return;
@@ -265,17 +286,35 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     });
   }
 
-  getReturnOverPaid() {
-    var amount = this.getValueForm("amount");
-    return this.partnerCash - amount > 0 ? this.partnerCash - amount : 0;
+  updateReturnCash() {
+    var returnAmount = this.partnerCash - this.getAmountCashLine();
+    this.returnCash = returnAmount > 0 ? returnAmount : 0;
   }
 
   nextStep() {
     this.step++;
     //gán lại default
-    this.partnerCash = this.getValueForm("amount");
-    this.journalLinesFC.controls[0].get("amount").setValue(this.partnerCash);
-    this.addCashSuggest();
+    //Nếu chưa có dòng phương thức tiền mặt thì add, có thì update tiền mặt mặc định
+    var paymentAmount = this.getValueForm("amount");
+    var cashJournal = this.filteredJournals.find(x => x.type == 'cash');
+    var cashPaymentLine = this.journalLinesFC.controls.find(x => x.get('journalId').value == cashJournal.id);
+    if (cashPaymentLine) {
+      cashPaymentLine.get('amount').setValue(paymentAmount);
+    } else {
+      this.journalLinesFC.push(this.fb.group({
+        journalId: cashJournal.id,
+        journal: cashJournal,
+        amount: paymentAmount,
+      }));
+    }
+
+    this.partnerCash = paymentAmount;
+    this.updateReturnCash();
+    this.cashSuggestions = this.getCalcAmountSuggestions(paymentAmount);
+
+    // this.partnerCash = this.getValueForm("amount");
+    // this.journalLinesFC.controls[0].get("amount").setValue(this.partnerCash);
+    //this.addCashSuggest();
   }
 
   backPreviousStep() {
@@ -303,12 +342,16 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       (x) => x.journalId == journal.id
     );
     if (index == -1) {
+      var soTienConLai = this.amount - this.laySoTienThanhToanExceptCashAndIndex(index);
       var g = this.fb.group({
         journalId: journal.id,
         journal: journal,
-        amount: 0,
+        amount: soTienConLai,
       });
       this.journalLinesFC.push(g);
+
+      this.onChangeJournalLineAmount(soTienConLai, this.journalLinesFC.controls.indexOf(g));
+      this.onBlurJournalLineAmount();
     }
   }
 
@@ -358,6 +401,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   onCashSuggestionClick(amount: number){
     this.partnerCash = amount;
+    this.updateReturnCash();
   }
 
   isJournalActiveClass(item: AccountJournalSimple) {
@@ -367,6 +411,73 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   onDeleteJournalLine(index) {
     this.journalLinesFC.removeAt(index);
     this.onJournalLineAmountChange();
+  }
+
+  onBlurJournalLineAmount() {
+    this.partnerCash = this.getAmountCashLine();
+    this.cashSuggestions = this.getCalcAmountSuggestions(this.partnerCash);
+    this.updateReturnCash();
+  }
+
+  onValuePartnerCashChange(e) {
+    this.updateReturnCash();
+  }
+
+  getAmountCashLine() {
+    var cashLine = this.getCashLineControl();
+    return cashLine.value.amount;
+  }
+
+  laySoTienThanhToanExceptCashAndIndex(index) {
+    var paymentLines = this.journalLinesFC.value;
+    var total = 0;
+    for(var i = 0; i < paymentLines.length; i++) {
+      var line = paymentLines[i];
+      if (i != index && line.journal.type != 'cash') {
+        total += line.amount;
+      }
+    }
+
+    return total;
+  }
+
+  getCashLineControl() {
+    for(var i = 0; i < this.journalLinesFC.controls.length; i++) {
+      var control = this.journalLinesFC.controls[i];
+      var controlValue = control.value;
+      if (controlValue.journal.type == 'cash') {
+        return control;
+      }
+    }
+
+    return null;
+  }
+
+  onChangeJournalLineAmount(e, index) {
+    var soTienThanhToan = this.laySoTienThanhToanExceptCashAndIndex(index);
+    var soTienConLai = this.amount - soTienThanhToan;
+    var currentLine = this.journalLinesFC.controls[index];
+    var currentLineValue = currentLine.value;
+
+    var cashLine = this.getCashLineControl();
+
+    //kiểm tra số tiền của index, nếu là type advance thì ko cho phép vượt quá số tối đa
+    if (currentLineValue.journal.type == 'advance') {
+      if (currentLineValue.amount > this.advanceAmount) {
+        currentLine.get('amount').setValue(this.advanceAmount);
+      } else {
+        currentLine.get('amount').setValue(currentLineValue.amount);
+      }
+      currentLineValue = currentLine.value;
+    }
+
+    if (currentLineValue.amount > soTienConLai) {
+      currentLine.get('amount').setValue(soTienConLai);
+      cashLine.get('amount').setValue(0);
+    } else {
+      var soTienCashConLai = soTienConLai - currentLineValue.amount;
+      cashLine.get('amount').setValue(soTienCashConLai);
+    }
   }
 
   onJournalLineAmountChange(val = null, journalLine = null){

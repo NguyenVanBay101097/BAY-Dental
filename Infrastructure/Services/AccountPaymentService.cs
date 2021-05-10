@@ -848,15 +848,18 @@ namespace Infrastructure.Services
             var orderlineObj = GetService<ISaleOrderLineService>();
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
             var order = await orderObj.SearchQuery(x => x.Id == saleOrderId && x.Residual > 0).Include(x => x.OrderLines).FirstOrDefaultAsync();
-            foreach (var line in order.OrderLines)
+            if (order != null)
             {
-                var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id && x.Payment.State != "draft" && x.Payment.State != "cancel")
-                    .SumAsync(x => x.AmountPrepaid.Value);
-                line.AmountPaid = amountPaid;
-                line.AmountResidual = line.PriceSubTotal - amountPaid;
-            }
+                foreach (var line in order.OrderLines)
+                {
+                    var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id && x.Payment.State != "draft" && x.Payment.State != "cancel")
+                        .SumAsync(x => x.AmountPrepaid.Value);
+                    line.AmountPaid = amountPaid;
+                    line.AmountResidual = line.PriceSubTotal - amountPaid;
+                }
 
-            await orderlineObj.UpdateAsync(order.OrderLines);
+                await orderlineObj.UpdateAsync(order.OrderLines);
+            }
         }
 
         public IDictionary<string, string> MAP_INVOICE_TYPE_PARTNER_TYPE

@@ -4,9 +4,12 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class ApplyDiscountSaleOrderViewModel
+    public class ApplyDiscountViewModel
     {
-        public Guid saleOrderId { get; set; }
+        /// <summary>
+        /// SaleOrderId , SaleOrderLineId
+        /// </summary>
+        public Guid Id { get; set; }
         /// <summary>
         /// percentage : phần trăm
         /// fixed : tiền mặt
@@ -21,4 +24,5 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? DiscountFixed { get; set; }
     }
+
 }
