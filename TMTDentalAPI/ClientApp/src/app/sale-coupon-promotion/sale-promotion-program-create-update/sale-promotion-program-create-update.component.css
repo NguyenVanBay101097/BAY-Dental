@@ -1,0 +1,41 @@
+input[type="radio"].btn-radio {
+    display: none;
+}
+
+table td {
+    min-width: 150px;
+}
+
+.o_form_sheet{
+    max-width: none !important;
+    background: none !important;
+    border: none !important;
+}
+
+.block_left {
+    flex: 1;
+    padding-right: 30px;
+    width: 100%;
+}
+
+.block_right {
+    flex: 0 0 400px;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.block_right .header {
+    background-color: #dee2e6;
+}
+
+.left_header {
+    border-bottom: 1px solid;
+    min-height: 50px;
+}
+
+.left_header .left {
+    min-width: 80%;
+    border-right: 1px solid !important;
+}

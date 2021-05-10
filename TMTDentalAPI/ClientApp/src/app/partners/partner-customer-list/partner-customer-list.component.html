@@ -13,7 +13,7 @@
             <div class="o_form_buttons_view">
                 <button type="button" accesskey="c" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
                 <button type="button" class="btn btn-secondary btn-sm" (click)="importFromExcel()">Import</button>
-                <button *ngIf="canExport()" type="button" class="btn btn-secondary btn-sm" (click)="exportPartnerExcelFile()"><i
+                <button *ngIf="canExport" type="button" class="btn btn-secondary btn-sm" (click)="exportPartnerExcelFile()"><i
                         class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
                 <button type="button" class="btn btn-secondary btn-sm" (click)="updateFromExcel()">Cập nhật
                     Excel</button>
