@@ -169,7 +169,8 @@ namespace Infrastructure.Services
             order.AmountTax = Math.Round(totalAmountTax);
             order.AmountUntaxed = Math.Round(totalAmountUntaxed);
             order.AmountTotal = order.AmountTax + order.AmountUntaxed;
-            order.Residual = order.AmountTotal - totalInvoiced;
+            order.TotalPaid = totalInvoiced;
+            order.Residual = order.AmountTotal - order.TotalPaid;
         }
 
         public async Task<PagedResult<SaleOrder>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "")

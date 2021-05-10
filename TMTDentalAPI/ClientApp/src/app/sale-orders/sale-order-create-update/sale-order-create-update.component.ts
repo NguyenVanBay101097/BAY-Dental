@@ -497,12 +497,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return this.formGroup.get(value);
   }
 
-  get getAmountTotal() {
+  get amountTotal() {
     return this.getFormControl('amountTotal').value;
   }
 
   get getAmountPaidTotal() {
-    return this.getAmountTotal - this.getResidual;
+    return this.amountTotal - this.getResidual;
   }
 
   get getResidual() {
@@ -606,6 +606,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return (this.orderLines.value as any[]).reduce((total, cur) => {
       return total + cur.priceUnit * cur.productUOMQty;
     }, 0);
+  }
+
+  getAmountTotal() {
+    return this.getAmount() - this.getTotalDiscount();
   }
 
   getTotalDiscount() {
