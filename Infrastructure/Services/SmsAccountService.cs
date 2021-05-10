@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,19 @@ namespace Infrastructure.Services
         {
             var smsAccount = await SearchQuery().OrderByDescending(x => x.DateCreated).FirstOrDefaultAsync();
             return _mapper.Map<SmsAccountBasic>(smsAccount);
+        }
+
+        public async Task<PagedResult2<SmsAccountBasic>> GetPaged(SmsAccountPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.BrandName.Contains(val.Search));
+            var totalItems = await query.CountAsync();
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            return new PagedResult2<SmsAccountBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = _mapper.Map<IEnumerable<SmsAccountBasic>>(items)
+            };
         }
     }
 }

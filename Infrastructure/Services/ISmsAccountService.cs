@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,5 +11,6 @@ namespace Infrastructure.Services
     public interface ISmsAccountService : IBaseService<SmsAccount>
     {
         Task<SmsAccountBasic> GetDefault();
+        Task<PagedResult2<SmsAccountBasic>> GetPaged(SmsAccountPaged val);
     }
 }

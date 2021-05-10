@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { SmsAccountListComponent } from './sms-account-list/sms-account-list.component';
 import { SmsAccountSettingComponent } from './sms-account-setting/sms-account-setting.component';
 import { SmsAppointmentFormAutomaticComponent } from './sms-appointment-form-automatic/sms-appointment-form-automatic.component';
 import { SmsAppointmentFormManualComponent } from './sms-appointment-form-manual/sms-appointment-form-manual.component';
@@ -30,7 +31,7 @@ const routes: Routes = [
   },
   { path: 'templates', component: SmsTemplateListComponent },
   { path: 'statistic', component: SmsStatisticComponent },
-  { path: 'accounts', component: SmsAccountSettingComponent },
+  { path: 'accounts', component: SmsAccountListComponent },
 ];
 
 @NgModule({

@@ -1,0 +1,142 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="d-flex">
+                    <div class="btn-group-sm btn-group-toggle " data-toggle="buttons">
+                        <label class="btn-sm btn btn-outline-primary active mr-2" (click)="onItemChange('esms')">
+                            <input type="radio" checked autocomplete="off">E-SMS
+                        </label>
+                        <label class="btn-sm btn btn-outline-success" (click)="onItemChange('fpt')">
+                            <input type="radio" autocomplete="off">FPT
+                        </label>
+                    </div>
+                </div>
+                <div class="o_group">
+                    <div *ngIf="switchBrand">
+                        <ng-template [ngIf]="switchBrand=='fpt'">
+                            <table class="o_group o_inner_group o_group_col_12 modal-body">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Brand Name</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="brandName">
+                                            <span *ngIf="f.brandName.errors" class="text-danger">Nhập Brandname</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Client Id</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control"
+                                                [class.border-outline]="f.clientId.value==''" formControlName="clientId">
+                                            <span *ngIf="f.clientId.value==''" class="text-danger">Nhập Client Id</span>
+                                        </td>
+                                        <span></span>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Client Secret</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control"
+                                                [class.border-outline]="f.clientSecret.value==''"
+                                                formControlName="clientSecret">
+                                            <span *ngIf="f.clientSecret.value==''" class="text-danger">Nhập Client
+                                                Secret</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ng-template>
+
+                        <ng-template [ngIf]="switchBrand=='esms'">
+                            <table class="o_group o_inner_group o_group_col_12 modal-body">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Brand Name</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="brandName">
+                                            <span *ngIf="f.brandName.errors" class="text-danger">Nhập Brandname</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">API Key</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control"
+                                                [class.border-outline]="f.apiKey.value==''" formControlName="apiKey">
+                                            <span *ngIf="f.apiKey.value==''" class="text-danger">Nhập Api Key
+                                                Secret</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Secret Key</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control"
+                                                [class.border-outline]="f.secretkey.value==''" formControlName="secretkey">
+                                            <span *ngIf="f.secretkey.value==''" class="text-danger">Nhập Secret Key
+                                                Secret</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ng-template>
+                        <!-- <ng-template [ngIf]="switchBrand=='vietguys'">
+                            <table class="o_group o_inner_group o_group_col_12 modal-body">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Brand Name</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="brandName">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">UserName</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="userName">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Password</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="password">
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </ng-template> -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

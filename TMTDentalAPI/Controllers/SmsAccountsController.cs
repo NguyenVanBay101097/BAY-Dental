@@ -43,6 +43,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<SmsAccountDisplay>(res));
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetPaged([FromQuery] SmsAccountPaged val)
+        {
+            var res = await _smsAccountService.GetPaged(val);
+            return Ok(res);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsAccountSave val)
         {
@@ -53,6 +60,15 @@ namespace TMTDentalAPI.Controllers
             await _smsAccountService.UpdateAsync(entity);
             var res = _mapper.Map<SmsAccountBasic>(entity);
             return Ok(res);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var entity = await _smsAccountService.GetByIdAsync(id);
+            if (entity == null) return NotFound();
+            await _smsAccountService.DeleteAsync(entity);
+            return NoContent();
         }
     }
 }

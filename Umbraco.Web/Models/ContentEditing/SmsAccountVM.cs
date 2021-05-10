@@ -6,6 +6,8 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class SmsAccountSave
     {
+
+        public string Name { get; set; }
         /// <summary>
         /// fpt, esms, vietguys
         /// </summary>
@@ -32,6 +34,13 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string ApiKey { get; set; }
         public string Secretkey { get; set; }
+    }
+
+    public class SmsAccountPaged
+    {
+        public int Limit { get; set; }
+        public int Offset { get; set; }
+        public string Search { get; set; }
     }
 
     public class SmsAccountBasic
@@ -72,4 +81,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string ApiKey { get; set; }
         public string Secretkey { get; set; }
     }
+
+
 }

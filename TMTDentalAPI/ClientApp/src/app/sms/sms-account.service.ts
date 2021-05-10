@@ -20,6 +20,12 @@ export class SmsAccountBasic {
   secretkey: string;
 }
 
+export class SmsAccountPaged {
+  limit: number;
+  offset: number;
+  search: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -38,5 +44,13 @@ export default class SmsAccountService {
 
   get(provider: string) {
     return this.http.get(this.base_api + this.apiUrl, { params: new HttpParams().set('provider', provider) })
+  }
+
+  getPaged(val: any) {
+    return this.http.get(this.base_api + this.apiUrl + '/GetPaged', { params: val })
+  }
+
+  delete(id: string) {
+    return this.http.delete(this.base_api + this.apiUrl + '/' + id);
   }
 }
