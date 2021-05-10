@@ -13,7 +13,7 @@ namespace Infrastructure.EntityConfigurations
         {
 
             builder.HasOne(x => x.SaleOrderLine)
-                   .WithMany()
+                   .WithMany(x => x.PaymentHistoryLines)
                    .HasForeignKey(x => x.SaleOrderLineId);
 
             builder.HasOne(x => x.SaleOrderPayment)

@@ -46,6 +46,8 @@ namespace ApplicationCore.Entities
 
         public string Address { get; set; }
 
+        public bool IsProcessUpdateOldSaleOrder { get; set; }
+
         //public ICollection<TenantExtendHistory> TenantExtendHistories { get; set; } = new List<TenantExtendHistory>();
     }
 }

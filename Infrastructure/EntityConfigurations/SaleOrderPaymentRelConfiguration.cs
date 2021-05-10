@@ -18,7 +18,7 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.PaymentId);
 
             builder.HasOne(x => x.SaleOrder)
-                .WithMany()
+                .WithMany(x => x.SaleOrderPaymentRels)
                 .HasForeignKey(x => x.SaleOrderId);
         }
     }

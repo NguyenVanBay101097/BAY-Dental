@@ -46,8 +46,37 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
-    public class FastSaleOrderSave: SaleOrderSave
+    public class FastSaleOrderSave
     {
-        public Guid JournalId { get; set; }
+        public FastSaleOrderSave()
+        {
+            IsQuotation = false;
+            IsFast = true;
+        }
+
+        public DateTime DateOrder { get; set; }
+
+        public Guid PartnerId { get; set; }
+        public Guid? EmployeeId { get; set; }
+
+        public string Note { get; set; }
+
+        public IEnumerable<SaleOrderLineSave> OrderLines { get; set; } = new List<SaleOrderLineSave>();
+
+        /// <summary>
+        /// danh sách chương trình ưu đãi
+        /// </summary>
+        public ICollection<SaleOrderPromotionSave> Promotions { get; set; } = new List<SaleOrderPromotionSave>();
+
+        public Guid CompanyId { get; set; }
+
+        public string UserId { get; set; }
+
+        public Guid? PricelistId { get; set; }
+
+        public Guid? QuotationId { get; set; }
+
+        public bool? IsQuotation { get; set; }
+        public bool IsFast { get; set; }
     }
 }
