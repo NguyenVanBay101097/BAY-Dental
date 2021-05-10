@@ -2372,6 +2372,7 @@ namespace Infrastructure.Services
                             promotion.DiscountPercent = item.DiscountPercent;
                             promotion.SaleOrderLine = saleLine;
                             promotion.SaleOrderId = saleLine.OrderId;
+                            promotion.Type = item.Type;
 
                             promotion.Lines.Add(new SaleOrderPromotionLine
                             {
@@ -2423,6 +2424,7 @@ namespace Infrastructure.Services
                         reward.DiscountFixed = promotion.DiscountFixed;
                         reward.DiscountPercent = promotion.DiscountPercent;
                         reward.SaleOrderId = order.Id;
+                        reward.Type = promotion.Type;
 
                         if (order.OrderLines.Any())
                         {
