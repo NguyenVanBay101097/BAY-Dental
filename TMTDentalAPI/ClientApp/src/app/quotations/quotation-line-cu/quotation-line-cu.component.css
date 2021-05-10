@@ -1,3 +1,8 @@
+:host {
+    display: table;
+    width: 100%;
+}
+
 .b-sticky-left {
     position: sticky;
     left: 0;
@@ -15,16 +20,14 @@
 }
 
 .tooth-item-collapsed {
-    width: 50px;
-    height: 50px;
     padding: .25rem .5rem;
     border: 1px solid #ccc;
     display: inline-block;
     cursor: pointer;
-    /* margin-top: .25rem;
-    margin-bottom: .25rem; */
-    border-right: none;
     border-radius: 0;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+    box-shadow: none;
 }
 
 .tooth-wrapper .tooth-item-collapsed:last-child {
@@ -56,6 +59,7 @@
     background-color: #F5FAFF;
     color: #007BFF;
     border-color: #007BFF;
+    border-right: 1px solid #007BFF !important;
 }
 
 .teeth-map td {
@@ -94,20 +98,24 @@
     color: #007BFF !important;
 }
 
+.promotions {
+    background: #F5FAFF !important;
+    border: 1px solid #007BFF !important;
+    box-sizing: border-box;
+    border-radius: 4px;
+    color: #007BFF !important;
+    max-width: 350px;
+}
+
 .btn-radio {
     background: #FFFFFF;
     border: 1px solid #EBEDEF;
     box-sizing: border-box;
     border-radius: 4px;
     color: #828588;
-    height: 50px;
-    /* padding-top: 13px !important; */
-    position: relative;
 }
 
-.btn-radio .btn-radio-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.button_actions .btn {
+    padding: 0.125rem 0.35rem;
+    margin-right: 5px;
 }

@@ -73,7 +73,7 @@ export class QuotationsDisplay {
   userId: string;
   employee: EmployeeSimple;
   employeeId: string;
-  dateQuotation: string;
+  dateQuotation: any;
   dateApplies: number;
   subPrice: number;
   listPrice: number;
@@ -85,6 +85,7 @@ export class QuotationsDisplay {
   payments: any[];
   companyId: string;
   orders: any[];
+  promotions: any[];
 }
 
 export class QuotationsPaged {

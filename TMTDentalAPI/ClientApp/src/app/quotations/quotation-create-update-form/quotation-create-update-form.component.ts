@@ -14,6 +14,7 @@ import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.ser
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { QuotationLineCuComponent } from '../quotation-line-cu/quotation-line-cu.component';
 import { QuotationLinePromotionDialogComponent } from '../quotation-line-promotion-dialog/quotation-line-promotion-dialog.component';
+import { QuotationPromotionDialogComponent } from '../quotation-promotion-dialog/quotation-promotion-dialog.component';
 import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../quotation.service';
 
 @Component({
@@ -56,6 +57,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   defaultToothCate: ToothCategoryBasic;
   filteredEmployees: any[] = [];
   initialListEmployees: any = [];
+  submitted: boolean = false;
   @ViewChildren('lineTemplate') lineVCR: QueryList<QuotationLineCuComponent>;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
 
@@ -84,7 +86,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       note: '',
       dateQuotation: [null, Validators.required],
       dateApplies: [0, Validators.required],
-      dateEndQuotation: '',
+      dateEndQuotation: ({ value: null, disabled: true }),
       companyId: '',
       lines: this.fb.array([
       ]),
@@ -106,7 +108,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         this.filterData = result.items;
         this.empCbx.loading = false;
       });
-    // this.loadEmployees();
   }
 
   routeActive() {
@@ -124,17 +125,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.quotation = result;
           this.partner = result.partner;
           this.partnerId = result.partnerId;
-          // this.employee = result.employee;
+          this.employee = result.employee;
           // this.employeeId = result.employeeId;
           this.saleOrders = result.orders;
-          this.formGroup.get('note').patchValue(result.note);
-          this.formGroup.get('partnerId').patchValue(result.partnerId);
-          this.formGroup.get('employeeId').patchValue(result.employeeId);
-          this.formGroup.get('employee').patchValue(result.employee);
-          this.formGroup.get('dateQuotation').patchValue(new Date(result.dateQuotation));
+          result.dateQuotation = new Date(result.dateQuotation);
+          this.formGroup.patchValue(result);
           this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "MM/dd/yyyy"));
-          this.formGroup.get('dateApplies').patchValue(result.dateApplies);
-          // this.formGroup.get('employeeAdvisory').patchValue(result.employee);
           const control = this.formGroup.get('lines') as FormArray;
           control.clear();
 
@@ -207,8 +203,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       })
     }
   }
-
-
 
   onCreateSaleOrder() {
     if (!this.quotationId) {
@@ -563,7 +557,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.advisoryEmployeeId = val.advisoryEmployeeId;
     line.subPrice = val.subPrice ? val.subPrice : (val.listPrice ? val.listPrice : 0);
     line.name = val.name;
-    line.amount = val.amount;
+    line.amount = line.qty * line.subPrice;
+    line.promotions = val.promotions ? val.promotions : [];
     line.toothType = val.toothType ? val.toothType : "manual";
     line.teeth = this.fb.array([]);
     if (val.teeth) {
@@ -632,18 +627,81 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   onUpdateOpenLinePromotion(line, lineControl, i) {
-    // if (this.lineSelected != null) {
-    //   var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-    //   viewChild.updateLineInfo();
-    // }
-    
+    if (this.lineSelected != null) {
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      viewChild.updateLineInfo();
+    }
+
     this.onOpenLinePromotionDialog(i);
     this.lineSelected = null;
   }
 
-  onOpenLinePromotionDialog(i){
+  onOpenLinePromotionDialog(i) {
     let modalRef = this.modalService.open(QuotationLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.quotationLine = this.linesArray.controls[i].value;
+
+
   }
+
+  onOpenQuotationPromotion() {
+    if (this.lineSelected != null) {
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      viewChild.updateLineInfo();
+    }
+
+    const val = this.getDataFormGroup();
+
+    if (!this.quotationId) {
+      this.submitted = true;
+      if (!this.formGroup.valid) {
+        return false;
+      }
+      this.quotationService.create(val).subscribe((result: any) => {
+        this.quotationId = result.id;
+        this.quotation = result;
+        this.quotation.promotions = [];
+
+        this.router.navigate(["/quotations/form"], {
+          queryParams: { id: result.id },
+        });
+
+        this.openQuotationPromotionDialog();
+      });
+    } else {
+
+      this.quotationService.update(this.quotationId, val).subscribe((result: any) => {
+        this.openQuotationPromotionDialog();
+      });
+    }
+  }
+
+  openQuotationPromotionDialog() {
+    let modalRef = this.modalService.open(QuotationPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.quotation = this.quotation;
+    modalRef.componentInstance.getUpdateSJ().subscribe(res => {
+      // this.saleOrderService.get(this.quotationId).subscribe((result: any) => {
+      //   this.patchValueSaleOrder(result);
+      //   modalRef.componentInstance.saleOrder = this.quotation;
+      // });
+    });
+  }
+
+  getAmount() {
+    // return (this.quotationLine.value as any[]).reduce((total, cur) => {
+    //   return total + cur.subPrice * cur.qty;
+    // }, 0);
+    return 0;
+  }
+
+  getTotalDiscount() {
+    // var res = (this.quotationLine.value as any[]).reduce((total, cur) => {
+    //   return total + (cur.amountDiscountTotal || 0) * cur.qty;
+    // }, 0);
+
+    // return res;
+    return 0;
+  }
+
 
   notify(type, content) {
     this.notificationService.show({
