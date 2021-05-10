@@ -42,5 +42,65 @@ namespace Infrastructure.Services
 
         }
 
+        public decimal _GetRewardValuesDiscountPercentagePerQuotationLine(SaleCouponProgram program, QuotationLine line)
+        {
+            //discount_amount = so luong * don gia da giam * phan tram
+            var price_reduce = ((line.SubPrice ?? 0) * (1 - (program.DiscountPercentage ?? 0) / 100));
+            var discount_amount = ((line.SubPrice ?? 0) - price_reduce) * line.Qty;
+            return discount_amount;
+        }
+
+        public decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, QuotationLine line)
+        {
+            var total = (line.SubPrice ?? 0) * line.Qty;
+            //discount_amount = so luong * don gia da giam * phan tram        
+            var discount_amount = (total  * ((program.DiscountPercentage ?? 0) / 100));
+            return discount_amount;
+        }
+
+        private decimal _GetRewardValuesDiscountFixedAmountLine(QuotationLine self, SaleCouponProgram program)
+        {
+            var price_reduce = (self.SubPrice ?? 0) - (program.DiscountFixedAmount ?? 0);
+            var fixed_amount = ((self.SubPrice ?? 0) - price_reduce) * self.Qty;
+            return fixed_amount;
+        }
+
+        public void RecomputePromotionLine(IEnumerable<QuotationLine> self)
+        {
+            //vong lap
+            foreach (var line in self)
+            {
+                if (line.Promotions.Any())
+                {
+                    foreach (var promotion in line.Promotions)
+                    {
+                        var total = (line.SubPrice ?? 0) * line.Qty;
+                        if (promotion.Type == "discount")
+                        {
+                            var price_reduce = promotion.DiscountType == "percentage" ? (line.SubPrice ?? 0) * (1 - (promotion.DiscountPercent ?? 0) / 100) : (line.SubPrice - promotion.DiscountFixed ?? 0);
+                            var discount_amount = ((line.SubPrice ?? 0) - price_reduce) * line.Qty;
+                            promotion.Amount = discount_amount;
+                        }
+
+                        if (promotion.SaleCouponProgramId.HasValue)
+                        {
+                            if (promotion.SaleCouponProgram.DiscountType == "fixed_amount")
+                                promotion.Amount = promotion.SaleCouponProgram.DiscountFixedAmount ?? 0;
+                            else
+                                promotion.Amount = total * (promotion.SaleCouponProgram.DiscountPercentage ?? 0) / 100;
+                        }
+
+                        foreach (var child in promotion.Lines)
+                        {
+                            child.Amount = promotion.Amount;
+                            child.PriceUnit = (double)(line.Qty != 0 ? (promotion.Amount / line.Qty) : 0);
+                        }
+                    }
+                }
+            }
+
+
+        }
+
     }
 }

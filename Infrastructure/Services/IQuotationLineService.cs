@@ -11,5 +11,9 @@ namespace Infrastructure.Services
     {
         void _ComputeAmountDiscountTotal(IEnumerable<QuotationLine> self);
         void ComputeAmount(IEnumerable<QuotationLine> self);
+
+        decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, QuotationLine line);
+
+        void RecomputePromotionLine(IEnumerable<QuotationLine> self);
     }
 }

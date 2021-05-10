@@ -49,6 +49,73 @@ namespace Infrastructure.Services
             return paged;
         }
 
+        public QuotationPromotion PreparePromotionToQuotation(Quotation self, SaleCouponProgram program, decimal discountAmount)
+        {
+            var promotionLine = new QuotationPromotion
+            {
+                Name = program.Name,
+                SaleCouponProgramId = program.Id,
+                Amount = discountAmount,
+                QuotationId = self.Id,
+            };
+
+            _ComputePromotionType(promotionLine, program);
+
+            var total = self.Lines.Sum(x => (x.SubPrice ?? 0) * x.Qty);
+            foreach (var line in self.Lines)
+            {
+                var subTotal = ((line.SubPrice ?? 0) * line.Qty);
+                if (subTotal == 0)
+                    continue;
+
+                promotionLine.Lines.Add(new QuotationPromotionLine
+                {
+                    Amount = Math.Round(subTotal / total * discountAmount),
+                    PriceUnit = (double)(line.Qty != 0 ? (subTotal / total * discountAmount / line.Qty) : 0),
+                    QuotationLineId = line.Id,
+                });
+            }
+
+            return promotionLine;
+        }
+
+
+        public QuotationPromotion PreparePromotionToQuotationLine(QuotationLine self, SaleCouponProgram program, decimal discountAmount)
+        {
+            var total = (self.SubPrice ?? 0) * self.Qty;
+            var promotionLine = new QuotationPromotion
+            {
+                Name = program.Name,
+                Amount = Math.Round(discountAmount),
+                SaleCouponProgramId = program.Id,
+                QuotationLineId = self.Id,
+                QuotationId = self.QuotationId
+            };
+
+            _ComputePromotionType(promotionLine, program);
+
+            promotionLine.Lines.Add(new QuotationPromotionLine
+            {
+                Amount = promotionLine.Amount,
+                PriceUnit = (double)(promotionLine.Amount / self.Qty),
+                QuotationLineId = self.Id,
+            });
+
+            return promotionLine;
+        }
+
+        public void _ComputePromotionType(QuotationPromotion self, SaleCouponProgram program)
+        {
+            if (program.ProgramType == "coupon_program" || (program.ProgramType == "promotion_program" && program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode)))
+            {
+                self.Type = "code_usage_program";
+            }
+            else
+            {
+                self.Type = "promotion_program";
+            }
+        }
+
         public async Task RemovePromotion(IEnumerable<Guid> ids)
         {
             var quotationObj = GetService<IQuotationService>();

@@ -75,6 +75,39 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyPromotionUsageCode(ApplyPromotionUsageCode val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            var res = await _quotationService.ApplyPromotionUsageCode(val);
+            _unitOfWork.Commit();
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyDiscountOnOrder(ApplyDiscountViewModel val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _quotationService.ApplyDiscountOnQuotation(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyPromotion(ApplyPromotionRequest val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _quotationService.ApplyPromotionOnQuotation(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> CreateSaleOrderByQuotation(Guid id)
         {

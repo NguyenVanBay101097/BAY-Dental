@@ -13,5 +13,8 @@ namespace Infrastructure.Services
         Task<PagedResult2<QuotationPromotionBasic>> GetPagedResultAsync(QuotationPromotionPaged val);
 
         Task RemovePromotion(IEnumerable<Guid> ids);
+
+        QuotationPromotion PreparePromotionToQuotation(Quotation self, SaleCouponProgram program, decimal discountAmount);
+        QuotationPromotion PreparePromotionToQuotationLine(QuotationLine self, SaleCouponProgram program, decimal discountAmount);
     }
 }

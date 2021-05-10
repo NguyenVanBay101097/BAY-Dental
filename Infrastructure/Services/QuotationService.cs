@@ -105,12 +105,56 @@ namespace Infrastructure.Services
 
         public async Task UpdateAsync(Guid id, QuotationSave val)
         {
-            var quotation = await SearchQuery(x => x.Id == id).Include(x => x.Lines).Include(x => x.Payments).FirstOrDefaultAsync();
+            var quotationLineObj = GetService<IQuotationLineService>();
+            var quotation = await SearchQuery(x => x.Id == id).Include(x => x.Payments)
+                .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+                .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+                .Include(x => x.Lines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
+                .Include(x => x.Lines).ThenInclude(x => x.Quotation).ThenInclude(x => x.Lines)
+                .FirstOrDefaultAsync();
+
             _mapper.Map(val, quotation);
             await ComputeQuotationLine(val, quotation);
             await ComputePaymentQuotation(val, quotation);
+
+            quotationLineObj.RecomputePromotionLine(quotation.Lines);
+
+            ReComputePromotionOrder(quotation);
+            await UpdateAsync(quotation);
+
+            quotationLineObj._ComputeAmountDiscountTotal(quotation.Lines);
+            quotationLineObj.ComputeAmount(quotation.Lines);
+
             ComputeAmountAll(quotation);
             await UpdateAsync(quotation);
+        }
+
+        public void ReComputePromotionOrder(Quotation quotation)
+        {
+            foreach (var promotion in quotation.Promotions.Where(x => !x.QuotationLineId.HasValue))
+            {
+                var total = promotion.Lines.Select(x => x.QuotationLine).Sum(x => ((x.SubPrice ?? 0) * x.Qty));
+                if (promotion.Type == "discount")
+                {
+
+                    promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
+                }
+
+                if (promotion.SaleCouponProgramId.HasValue)
+                {
+                    if (promotion.SaleCouponProgram.DiscountType == "fixed_amount")
+                        promotion.Amount = promotion.SaleCouponProgram.DiscountFixedAmount ?? 0;
+                    else
+                        promotion.Amount = total * (promotion.SaleCouponProgram.DiscountPercentage ?? 0) / 100;
+                }
+
+                foreach (var line in promotion.Lines)
+                {
+                    line.Amount = (((line.QuotationLine.SubPrice ?? 0) * line.QuotationLine.Qty) / total) * promotion.Amount;
+                    line.PriceUnit = (double)(line.QuotationLine.Qty != 0 ?
+                       ((line.QuotationLine.SubPrice * line.QuotationLine.Qty) / total) * promotion.Amount / line.QuotationLine.Qty : 0);
+                }
+            }
         }
 
         public async Task<QuotationBasic> CreateAsync(QuotationSave val)
@@ -312,6 +356,7 @@ namespace Infrastructure.Services
             return _mapper.Map<SaleOrderSimple>(saleOrder);
         }
 
+       
         public async Task<QuotationPrintVM> Print(Guid id)
         {
             var quotation = await SearchQuery(x => x.Id == id)
@@ -354,6 +399,213 @@ namespace Infrastructure.Services
             }
 
             await UpdateAsync(quotations);
+        }
+
+        public async Task ApplyDiscountOnQuotation(ApplyDiscountViewModel val)
+        {
+            var quotationPromotionObj = GetService<IQuotationPromotionService>();
+            var quotationLineObj = GetService<IQuotationLineService>();
+
+            var quotation = await SearchQuery(x => x.Id == val.Id).Include(x => x.Lines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines).FirstOrDefaultAsync();
+            var total = quotation.Lines.Sum(x => (x.SubPrice ?? 0) * x.Qty);
+            var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
+
+            var promotion = quotation.Promotions.Where(x => x.Type == "discount" && !x.QuotationLineId.HasValue).FirstOrDefault();
+            if (promotion != null)
+            {
+                promotion.Amount = (discount_amount ?? 0);
+            }
+            else
+            {
+                promotion = new QuotationPromotion
+                {
+                    Name = "Giảm tiền",
+                    Amount = (discount_amount ?? 0),
+                    DiscountType = val.DiscountType,
+                    DiscountPercent = val.DiscountPercent,
+                    DiscountFixed = val.DiscountFixed,
+                    Type = "discount",
+                    QuotationId = quotation.Id
+                };
+
+                await quotationPromotionObj.CreateAsync(promotion);
+            }
+
+            if (quotation.Lines.Any())
+            {
+                foreach (var line in quotation.Lines)
+                {
+                    if (line.Qty == 0)
+                        continue;
+
+                    var amount = (((line.Qty * (line.SubPrice ?? 0)) / total) * promotion.Amount);
+                    if (amount != 0)
+                    {
+                        promotion.Lines.Add(new QuotationPromotionLine
+                        {
+                            Amount = amount,
+                            PriceUnit = (double)(line.Qty != 0 ? amount / line.Qty : 0),
+                            QuotationLineId = line.Id,
+                        });
+                    }
+                }
+            }
+
+            await quotationPromotionObj.UpdateAsync(promotion);
+
+            //tính lại tổng tiền ưu đãi quotaitonlines
+            quotationLineObj._ComputeAmountDiscountTotal(quotation.Lines);
+            quotationLineObj.ComputeAmount(quotation.Lines);
+
+            ComputeAmountAll(quotation);
+            await UpdateAsync(quotation);
+        }
+
+
+        public async Task ApplyPromotionOnQuotation(ApplyPromotionRequest val)
+        {
+            var programObj = GetService<ISaleCouponProgramService>();
+            var couponObj = GetService<ISaleCouponService>();
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var quotation = await SearchQuery(x => x.Id == val.Id)
+              .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+              .Include(x => x.Lines).ThenInclude(x => x.Promotions)
+              .Include("Lines.Product")                  
+              .FirstOrDefaultAsync();
+
+            var soLineObj = GetService<ISaleOrderLineService>();
+            var product_list = new List<ApplyPromotionProductListItem>();
+            var ruleObj = GetService<IPromotionRuleService>();
+            var coupons = new List<SaleCoupon>();
+
+            var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId).FirstOrDefaultAsync();
+            if (program != null)
+            {
+                var error_status = await programObj._CheckQuotationPromotion(program, quotation);
+                if (string.IsNullOrEmpty(error_status.Error))
+                {
+                  
+                        await _CreateRewardLine(quotation, program);
+
+                        await UpdateAsync(quotation);
+                    
+                }
+                else
+                    throw new Exception(error_status.Error);
+            }
+        }
+
+        public async Task<SaleCouponProgramResponse> ApplyPromotionUsageCode(ApplyPromotionUsageCode val)
+        {
+            var couponCode = val.CouponCode;
+            var programObj = GetService<ISaleCouponProgramService>();
+            var couponObj = GetService<ISaleCouponService>();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var quotation = await SearchQuery(x => x.Id == val.Id)
+             .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+             .Include(x => x.Lines).ThenInclude(x => x.Promotions)
+             .Include(x => x.Lines).ThenInclude(x => x.Product)
+             .FirstOrDefaultAsync();
+
+            //Chương trình khuyến mãi sử dụng mã
+            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).FirstOrDefaultAsync();
+            if (program != null)
+            {
+                var error_status = await programObj._CheckQuotationPromoCode(program, quotation, couponCode);
+                if (string.IsNullOrEmpty(error_status.Error))
+                {
+                   
+                        await _CreateRewardLine(quotation, program);
+                        await UpdateAsync(quotation);
+                        return new SaleCouponProgramResponse { Error = null, Success = true, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
+                }
+                else
+                    //throw new Exception(error_status.Error);
+                    return new SaleCouponProgramResponse { Error = error_status.Error, Success = false, SaleCouponProgram = null };
+            }
+            else
+            {
+                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };             
+            }
+        }
+
+        private async Task _CreateRewardLine(Quotation self, SaleCouponProgram program)
+        {
+            var quotationLineObj = GetService<IQuotationLineService>();
+            var quotationPromotionObj = GetService<IQuotationPromotionService>();
+            var promotion = _GetRewardValuesDiscount(self, program);
+            //foreach (var line in lines)
+            //    line.Order = self;
+
+            await quotationPromotionObj.CreateAsync(promotion);
+
+            //tính lại tổng tiền ưu đãi saleorderlines
+            quotationLineObj._ComputeAmountDiscountTotal(self.Lines);
+            quotationLineObj.ComputeAmount(self.Lines);
+
+            ComputeAmountAll(self);
+            await UpdateAsync(self);
+        }
+
+        public QuotationPromotion _GetRewardValuesDiscount(Quotation self, SaleCouponProgram program)
+        {
+            var programObj = GetService<ISaleCouponProgramService>();
+            var quotationLineObj = GetService<IQuotationLineService>();
+            var promotionObj = GetService<IQuotationPromotionService>();
+
+            if (program.DiscountLineProduct == null)
+            {
+                var productObj = GetService<IProductService>();
+                program.DiscountLineProduct = productObj.GetById(program.DiscountLineProductId);
+            }
+
+            if (program.DiscountType == "fixed_amount")
+            {
+
+                var discountAmount = _GetRewardValuesDiscountFixedAmount(self, program);
+                var promotionLine = promotionObj.PreparePromotionToQuotation(self, program, discountAmount);
+
+                return promotionLine;
+            }
+
+
+            var reward = new QuotationPromotion();
+            var lines = self.Lines;
+            if (program.DiscountApplyOn == "specific_products" || program.DiscountApplyOn == "on_order")
+            {
+                if (program.DiscountApplyOn == "specific_products")
+                {
+                    var discount_specific_product_ids = program.DiscountSpecificProducts.Select(x => x.ProductId).ToList();
+                    //We should not exclude reward line that offer this product since we need to offer only the discount on the real paid product (regular product - free product)
+                    var free_product_lines = programObj.SearchQuery(x => x.RewardType == "product" && discount_specific_product_ids.Contains(x.RewardProductId.Value)).Select(x => x.DiscountLineProductId.Value).ToList();
+                    var tmp = discount_specific_product_ids.Union(free_product_lines);
+                    lines = lines.Where(x => tmp.Contains(x.ProductId)).ToList();
+                }
+
+                var total_discount_amount = 0M;
+
+                foreach (var line in lines)
+                {
+                    var discount_line_amount = quotationLineObj._GetRewardValuesDiscountPercentagePerLine(program, line);
+                    if (discount_line_amount > 0)
+                        total_discount_amount += discount_line_amount;
+                }
+
+                reward = promotionObj.PreparePromotionToQuotation(self, program, total_discount_amount);
+
+
+            }
+
+            return reward;
+        }
+
+        private decimal _GetRewardValuesDiscountFixedAmount(Quotation self, SaleCouponProgram program)
+        {
+            var total_amount = self.Lines.Sum(x => (x.SubPrice ?? 0));
+            var fixed_amount = program.DiscountFixedAmount ?? 0;
+            if (total_amount < fixed_amount)
+                return total_amount;
+            return fixed_amount;
         }
     }
 }

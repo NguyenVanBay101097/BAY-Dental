@@ -160,6 +160,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<PaymentQuotationSave> Payments { get; set; } = new List<PaymentQuotationSave>();
 
 
+
     }
 
     public class QuotationPaged
