@@ -47,6 +47,7 @@ export class CashBookCuDialogComponent implements OnInit {
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild("partnerCbx", { static: true }) partnerCbx: ComboBoxComponent;
+  @ViewChild("loaiThuChiCbx", { static: true }) loaiThuChiCbx: ComboBoxComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -89,6 +90,15 @@ export class CashBookCuDialogComponent implements OnInit {
       ).subscribe(result => {
         this.filteredPartners = result.items;
         this.partnerCbx.loading = false;
+      });
+
+      this.loaiThuChiCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.loaiThuChiCbx.loading = true)),
+        switchMap(value => this.searchLoaiThuChis(value))
+      ).subscribe(result => {
+        this.loaiThuChiList = result.items;
+        this.loaiThuChiCbx.loading = false;
       });
     });
   }
@@ -177,6 +187,13 @@ export class CashBookCuDialogComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  searchLoaiThuChis(search?: string) {
+    var val = new loaiThuChiPaged();
+    val.type = this.type;
+    val.search = search || '';
+    return this.loaiThuChiService.getPaged(val);
   }
 
   loadFilteredJournals() {
