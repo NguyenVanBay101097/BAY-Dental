@@ -32,13 +32,17 @@ namespace Infrastructure.Services
                 .Include(x => x.Partner)
                 .Include(x => x.Employee)
                 .Include(x => x.Payments)
+                .Include(x => x.Promotions)
                 .Include(x => x.Orders)
                 .FirstOrDefaultAsync();
 
             var lines = await quotationLineObj.SearchQuery(x => x.QuotationId == id)
                 .Include(x => x.QuotationLineToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.ToothCategory)
-                .Include(x => x.AdvisoryEmployee).ToListAsync();
+                .Include(x => x.AdvisoryEmployee)
+                .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
+                .Include(x => x.Promotions)
+                .ToListAsync();
 
             model.Lines = lines;
             return _mapper.Map<QuotationDisplay>(model);
@@ -85,14 +89,12 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.Employee.Name.Contains(val.Search));
             var totalItem = await query.CountAsync();
-            var items = await query
-                .Include(x => x.Partner)
-                .Include(x => x.Employee)
-                .Include(x => x.Orders)
+            var items = await query.Include(x => x.Partner).Include(x => x.Employee).Include(x => x.Orders)
                 .Skip(val.Offset)
                 .Take(val.Limit)
                 .OrderByDescending(x => x.DateCreated)
                 .ToListAsync();
+
             return new PagedResult2<QuotationBasic>(totalItem, val.Offset, val.Limit)
             {
                 Items = _mapper.Map<IEnumerable<QuotationBasic>>(items)
@@ -105,7 +107,7 @@ namespace Infrastructure.Services
             _mapper.Map(val, quotation);
             await ComputeQuotationLine(val, quotation);
             await ComputePaymentQuotation(val, quotation);
-            await ComputeAmountAll(quotation);
+            ComputeAmountAll(quotation);
             await UpdateAsync(quotation);
         }
 
@@ -115,12 +117,12 @@ namespace Infrastructure.Services
             quotation = await CreateAsync(quotation);
             await ComputeQuotationLine(val, quotation);
             await ComputePaymentQuotation(val, quotation);
-            await ComputeAmountAll(quotation);
+            ComputeAmountAll(quotation);
             await UpdateAsync(quotation);
             return _mapper.Map<QuotationBasic>(quotation);
         }
 
-        public async Task ComputeAmountAll(Quotation quotation)
+        public void ComputeAmountAll(Quotation quotation)
         {
             var totalAmount = 0M;
             foreach (var line in quotation.Lines)
@@ -129,6 +131,7 @@ namespace Infrastructure.Services
             }
             quotation.TotalAmount = totalAmount;
         }
+
 
         public async Task ComputePaymentQuotation(QuotationSave val, Quotation quotation)
         {
@@ -271,8 +274,8 @@ namespace Infrastructure.Services
                     saleLine.AmountPaid = 0;
                     saleLine.Diagnostic = line.Diagnostic;
                     saleLine.DiscountType = line.DiscountType;
-                    saleLine.DiscountFixed = line.DiscountType == "fixed" ? line.Discount : null;
-                    saleLine.Discount = line.DiscountType == "percentage" && line.Discount.HasValue ? line.Discount.Value : 0;
+                    saleLine.DiscountFixed = line.DiscountType == "fixed" ? line.DiscountAmountFixed : null;
+                    saleLine.Discount = line.DiscountType == "percentage" && line.DiscountAmountPercent.HasValue ? line.DiscountAmountPercent.Value : 0;
                     saleLine.Name = line.Name;
                     saleLine.PriceUnit = line.SubPrice.HasValue ? line.SubPrice.Value : 0;
                     saleLine.ProductId = line.ProductId;
@@ -333,6 +336,22 @@ namespace Infrastructure.Services
                 entity.Name = await sequenceService.NextByCode("quotation");
             }
             return await base.CreateAsync(entity);
+        }
+
+        public async Task _ComputeAmountPromotionToQuotation(IEnumerable<Guid> ids)
+        {
+            var quotationLineObj = GetService<IQuotationLineService>();
+            var quotations = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Lines).ThenInclude(x => x.PromotionLines)
+                .ToListAsync();
+            foreach (var quotation in quotations)
+            {
+                quotationLineObj._ComputeAmountDiscountTotal(quotation.Lines);
+                quotationLineObj.ComputeAmount(quotation.Lines);
+                ComputeAmountAll(quotation);
+            }
+
+            await UpdateAsync(quotations);
         }
     }
 }

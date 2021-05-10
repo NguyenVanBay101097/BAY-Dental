@@ -9,5 +9,7 @@ namespace Infrastructure.Services
 {
     public interface IQuotationLineService : IBaseService<QuotationLine>
     {
+        void _ComputeAmountDiscountTotal(IEnumerable<QuotationLine> self);
+        void ComputeAmount(IEnumerable<QuotationLine> self);
     }
 }

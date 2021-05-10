@@ -14,7 +14,10 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<QuotationLine, QuotationLineBasic>();
             CreateMap<QuotationLine, QuotationLineDisplay>()
-                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.QuotationLineToothRels.Select(m => m.Tooth)));
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.QuotationLineToothRels.Select(m => m.Tooth)))
+                .ForMember(x => x.AmountPromotionToOrder, x => x.MapFrom(s => s.PromotionLines.Where(s => !s.Promotion.QuotationLineId.HasValue).Sum(s => s.PriceUnit)))
+                .ForMember(x => x.AmountPromotionToOrderLine, x => x.MapFrom(s => s.PromotionLines.Where(s => s.Promotion.QuotationLineId.HasValue).Sum(s => s.PriceUnit)));
+
             CreateMap<QuotationLineSave, QuotationLine>();
         }
     }

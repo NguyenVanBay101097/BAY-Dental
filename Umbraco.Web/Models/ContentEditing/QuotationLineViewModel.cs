@@ -95,6 +95,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? SubPrice { get; set; }
 
         /// <summary>
+        /// tổng tiền ưu đãi của dịch vụ
+        /// </summary>
+        public decimal? AmountDiscountTotal { get; set; }
+
+        /// <summary>
         /// Chuẩn đoán
         /// </summary>
         public string Diagnostic { get; set; }
@@ -114,6 +119,16 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
 
         public string ToothType { get; set; }
+
+        /// <summary>
+        /// tiền ưu đãi line từ đơn hàng
+        /// </summary>
+        public decimal AmountPromotionToOrder { get; set; }
+
+        /// <summary>
+        /// tiền ưu đãi line
+        /// </summary>
+        public decimal AmountPromotionToOrderLine { get; set; }
 
 
         public IEnumerable<QuotationPromotionBasic> Promotions { get; set; } = new List<QuotationPromotionBasic>();

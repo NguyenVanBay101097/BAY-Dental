@@ -20,9 +20,14 @@ namespace ApplicationCore.Entities
         public int Qty { get; set; }
 
         /// <summary>
-        /// Số tiền Giảm giá , số % giảm giá
+        ///số % giảm giá
         /// </summary>
-        public decimal? Discount { get; set; }
+        public decimal? DiscountAmountPercent { get; set; }
+
+        /// <summary>
+        /// Số tiền Giảm giá 
+        /// </summary>
+        public decimal? DiscountAmountFixed { get; set; }
 
         /// <summary>
         /// Loại giảm giá : percent / cash 
@@ -36,6 +41,10 @@ namespace ApplicationCore.Entities
 
         public decimal? SubPrice { get; set; }
 
+        /// <summary>
+        /// Tổng đơn giá giảm của dịch vụ
+        /// </summary>
+        public double? AmountDiscountTotal { get; set; }
 
 
         /// <summary>
