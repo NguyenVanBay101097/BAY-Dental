@@ -71,10 +71,22 @@ namespace ApplicationCore.Entities
         public Quotation Quotation { get; set; }
 
         /// <summary>
-        /// Nhân viên tư vấn
+        /// Bác sĩ
         /// </summary>
-        public Guid? AdvisoryEmployeeId { get; set; }
-        public Employee AdvisoryEmployee { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public Employee Employee { get; set; }
+
+        /// <summary>
+        /// Phụ tá
+        /// </summary>
+        public Guid? AssistantId { get; set; }
+        public Employee Assistant { get; set; }
+
+        /// <summary>
+        /// người tư vấn
+        /// </summary>
+        public Guid? CounselorId { get; set; }
+        public Employee Counselor { get; set; }
 
         /// <summary>
         /// Tư vấn

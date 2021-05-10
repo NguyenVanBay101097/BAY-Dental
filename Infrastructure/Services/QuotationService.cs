@@ -39,7 +39,9 @@ namespace Infrastructure.Services
             var lines = await quotationLineObj.SearchQuery(x => x.QuotationId == id)
                 .Include(x => x.QuotationLineToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.ToothCategory)
-                .Include(x => x.AdvisoryEmployee)
+                .Include(x => x.Employee)
+                .Include(x => x.Assistant)
+                .Include(x => x.Counselor)
                 .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
                 .Include(x => x.Promotions)
                 .ToListAsync();

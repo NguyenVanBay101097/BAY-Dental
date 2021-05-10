@@ -16,7 +16,8 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
 
-        public QuotationLineService(IMapper mapper, IAsyncRepository<QuotationLine> repository, IHttpContextAccessor httpContextAccessor) : base(repository, httpContextAccessor)
+        public QuotationLineService(IMapper mapper, IAsyncRepository<QuotationLine> repository, IHttpContextAccessor httpContextAccessor) 
+            : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
         }

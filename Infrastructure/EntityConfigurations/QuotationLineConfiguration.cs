@@ -23,9 +23,17 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.ProductId);
 
-            builder.HasOne(x => x.AdvisoryEmployee)
-                .WithMany()
-                .HasForeignKey(x => x.AdvisoryEmployeeId);
+            builder.HasOne(x => x.Employee)
+            .WithMany()
+            .HasForeignKey(x => x.EmployeeId);
+
+            builder.HasOne(x => x.Assistant)
+           .WithMany()
+           .HasForeignKey(x => x.AssistantId);
+
+            builder.HasOne(x => x.Counselor)
+            .WithMany()
+            .HasForeignKey(x => x.CounselorId);
 
             builder.HasOne(x => x.ToothCategory)
                 .WithMany()

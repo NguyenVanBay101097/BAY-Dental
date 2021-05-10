@@ -88,6 +88,8 @@
     <Compile Remove="Data\Migrations\20210405025953_AddCompanyToQuotation.Designer.cs" />
     <Compile Remove="Data\Migrations\20210504085931_thuongEditSaleOrderPromotionRefOrderLine.cs" />
     <Compile Remove="Data\Migrations\20210504085931_thuongEditSaleOrderPromotionRefOrderLine.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210510070607_thuong_CreateQuotationPromotion.cs" />
+    <Compile Remove="Data\Migrations\20210510070607_thuong_CreateQuotationPromotion.Designer.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.Designer.cs" />
     <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.cs" />

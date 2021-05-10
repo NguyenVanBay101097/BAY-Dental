@@ -7,12 +7,34 @@ namespace Infrastructure.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_QuotationLines_Employees_AdvisoryEmployeeId",
+                table: "QuotationLines");
+
+            migrationBuilder.DropIndex(
+                name: "IX_QuotationLines_AdvisoryEmployeeId",
+                table: "QuotationLines");
+
+            migrationBuilder.DropColumn(
+                name: "AdvisoryEmployeeId",
+                table: "QuotationLines");
+
             migrationBuilder.DropColumn(
                 name: "Discount",
                 table: "QuotationLines");
 
             migrationBuilder.AddColumn<double>(
                 name: "AmountDiscountTotal",
+                table: "QuotationLines",
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "AssistantId",
+                table: "QuotationLines",
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "CounselorId",
                 table: "QuotationLines",
                 nullable: true);
 
@@ -23,6 +45,11 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.AddColumn<decimal>(
                 name: "DiscountAmountPercent",
+                table: "QuotationLines",
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "EmployeeId",
                 table: "QuotationLines",
                 nullable: true);
 
@@ -124,6 +151,21 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_QuotationLines_AssistantId",
+                table: "QuotationLines",
+                column: "AssistantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuotationLines_CounselorId",
+                table: "QuotationLines",
+                column: "CounselorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuotationLines_EmployeeId",
+                table: "QuotationLines",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_QuotationPromotionLines_CreatedById",
                 table: "QuotationPromotionLines",
                 column: "CreatedById");
@@ -167,18 +209,74 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_QuotationPromotions_WriteById",
                 table: "QuotationPromotions",
                 column: "WriteById");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_QuotationLines_Employees_AssistantId",
+                table: "QuotationLines",
+                column: "AssistantId",
+                principalTable: "Employees",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_QuotationLines_Employees_CounselorId",
+                table: "QuotationLines",
+                column: "CounselorId",
+                principalTable: "Employees",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_QuotationLines_Employees_EmployeeId",
+                table: "QuotationLines",
+                column: "EmployeeId",
+                principalTable: "Employees",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_QuotationLines_Employees_AssistantId",
+                table: "QuotationLines");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_QuotationLines_Employees_CounselorId",
+                table: "QuotationLines");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_QuotationLines_Employees_EmployeeId",
+                table: "QuotationLines");
+
             migrationBuilder.DropTable(
                 name: "QuotationPromotionLines");
 
             migrationBuilder.DropTable(
                 name: "QuotationPromotions");
 
+            migrationBuilder.DropIndex(
+                name: "IX_QuotationLines_AssistantId",
+                table: "QuotationLines");
+
+            migrationBuilder.DropIndex(
+                name: "IX_QuotationLines_CounselorId",
+                table: "QuotationLines");
+
+            migrationBuilder.DropIndex(
+                name: "IX_QuotationLines_EmployeeId",
+                table: "QuotationLines");
+
             migrationBuilder.DropColumn(
                 name: "AmountDiscountTotal",
+                table: "QuotationLines");
+
+            migrationBuilder.DropColumn(
+                name: "AssistantId",
+                table: "QuotationLines");
+
+            migrationBuilder.DropColumn(
+                name: "CounselorId",
                 table: "QuotationLines");
 
             migrationBuilder.DropColumn(
@@ -189,11 +287,34 @@ namespace Infrastructure.Data.Migrations
                 name: "DiscountAmountPercent",
                 table: "QuotationLines");
 
+            migrationBuilder.DropColumn(
+                name: "EmployeeId",
+                table: "QuotationLines");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "AdvisoryEmployeeId",
+                table: "QuotationLines",
+                type: "uniqueidentifier",
+                nullable: true);
+
             migrationBuilder.AddColumn<decimal>(
                 name: "Discount",
                 table: "QuotationLines",
                 type: "decimal(18,2)",
                 nullable: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuotationLines_AdvisoryEmployeeId",
+                table: "QuotationLines",
+                column: "AdvisoryEmployeeId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_QuotationLines_Employees_AdvisoryEmployeeId",
+                table: "QuotationLines",
+                column: "AdvisoryEmployeeId",
+                principalTable: "Employees",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
     }
 }

@@ -431,7 +431,7 @@ namespace Infrastructure.Services
                     }
                     quotationLine.Diagnostic = string.Join(", ", toothDiagnosisName);
                     quotationLine.AdvisoryId = advisory.Id;
-                    quotationLine.AdvisoryEmployeeId = advisory.EmployeeId;
+                    quotationLine.CounselorId = advisory.EmployeeId;
                     quotationLines.Add(quotationLine);
                 }
             }

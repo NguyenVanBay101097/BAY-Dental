@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20210510070607_thuong_CreateQuotationPromotion")]
+    [Migration("20210510082711_thuong_CreateQuotationPromotion")]
     partial class thuong_CreateQuotationPromotion
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -6434,9 +6434,6 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AdvisoryEmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("AdvisoryId")
                         .HasColumnType("uniqueidentifier");
 
@@ -6445,6 +6442,12 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<double?>("AmountDiscountTotal")
                         .HasColumnType("float");
+
+                    b.Property<Guid?>("AssistantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CounselorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
@@ -6463,6 +6466,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("DiscountType")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
@@ -6493,11 +6499,15 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdvisoryEmployeeId");
-
                     b.HasIndex("AdvisoryId");
 
+                    b.HasIndex("AssistantId");
+
+                    b.HasIndex("CounselorId");
+
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("ProductId");
 
@@ -13336,17 +13346,25 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.QuotationLine", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.Employee", "AdvisoryEmployee")
-                        .WithMany()
-                        .HasForeignKey("AdvisoryEmployeeId");
-
                     b.HasOne("ApplicationCore.Entities.Advisory", "Advisory")
                         .WithMany("QuotationLines")
                         .HasForeignKey("AdvisoryId");
 
+                    b.HasOne("ApplicationCore.Entities.Employee", "Assistant")
+                        .WithMany()
+                        .HasForeignKey("AssistantId");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Counselor")
+                        .WithMany()
+                        .HasForeignKey("CounselorId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
                         .WithMany()

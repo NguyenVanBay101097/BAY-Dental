@@ -107,8 +107,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? AdvisoryId { get; set; }
         public AdvisorySimple Advisory { get; set; }
 
-        public Guid? AdvisoryEmployeeId { get; set; }
-        public EmployeeSimple AdvisoryEmployee { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+        public EmployeeBasic Employee { get; set; }
+
+        public Guid? AssistantId { get; set; }
+        public EmployeeBasic Assistant { get; set; }
+
+        public Guid? CounselorId { get; set; }
+        public EmployeeSimple Counselor { get; set; }
 
         /// <summary>
         /// Loại răng: răng sữa, răng vĩnh viễn !!!
@@ -177,10 +184,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid? AdvisoryId { get; set; }
 
-        /// <summary>
-        /// Người tư vấn
-        /// </summary>
-        public Guid? AdvisoryEmployeeId { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+
+        public Guid? AssistantId { get; set; }
+
+        public Guid? CounselorId { get; set; }
 
         /// <summary>
         /// Chuẩn đoán
