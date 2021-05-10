@@ -2074,6 +2074,11 @@ namespace Infrastructure.Services
             return partnerList;
             //return _mapper.Map<IEnumerable<PartnerBasic>>(apList);
         }
+
+        public async Task<IEnumerable<Guid>> GetPartnerForTCare(PartnerForTCarePaged val)
+        {
+            throw new NotImplementedException();
+        }
     }
    
     public class PartnerCreditDebitItem
