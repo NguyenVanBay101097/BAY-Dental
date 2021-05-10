@@ -314,8 +314,25 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   onOpenPromotion() {
-    this.isEditting = false;
-    this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
+    if (this.isEditting) {
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ đang chỉnh sửa');
+      return false;
+    }
+
+    if (!this.line.id) {
+      this.notify('error', 'Vui lòng lưu phiếu điều trị trước khi áp dụng ưu đãi dịch vụ');
+      return false;
+    }
+    
+    let modalRef = this.modalService.open(SaleOrderLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.saleOrderLine = this.line;
+    modalRef.componentInstance.getUpdateSJ().subscribe(res => {
+      this.onUpdateOpenPromotionEvent.emit(null);
+      // modalRef.componentInstance.saleOrderLine = this.line;
+    });
+
+    // this.isEditting = false;
+    // this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
   }
 
   // onOpenPromotionDialog() {

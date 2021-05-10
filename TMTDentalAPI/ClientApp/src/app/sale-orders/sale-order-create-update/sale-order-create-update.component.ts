@@ -640,35 +640,44 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onOpenSaleOrderPromotion() {
-     //update line trước khi lưu
-     if (this.lineSelected != null) {
-      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      viewChild.updateLineInfo();
-    }
-    const val = this.getFormDataSave();
-
     if (!this.saleOrderId) {
-      this.submitted = true;
-      if (!this.formGroup.valid) {
-        return false;
-      }
-      this.saleOrderService.create(val).subscribe((result: any) => {
-        this.saleOrderId = result.id;
-        this.saleOrder = result;
-        this.saleOrder.promotions = [];
-
-        this.router.navigate(["/sale-orders/form"], {
-          queryParams: { id: result.id },
-        });
-
-        this.openSaleOrderPromotionDialog();
-      });
-    } else {
-
-      this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
-        this.openSaleOrderPromotionDialog();
-      });
+      this.notify('error', 'Vui lòng lưu phiếu điều trị trước khi áp dụng ưu đãi');
+      return false;
     }
+
+    this.openSaleOrderPromotionDialog();
+
+    //update line trước khi lưu
+    // if (this.lineSelected != null) {
+    //   var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+    //   viewChild.updateLineInfo();
+    // }
+    // const val = this.getFormDataSave();
+
+    // if (!this.saleOrderId) {
+    //   this.submitted = true;
+    //   if (!this.formGroup.valid) {
+    //     return false;
+    //   }
+    //   this.saleOrderService.create(val).subscribe((result: any) => {
+    //     this.saleOrderId = result.id;
+    //     this.saleOrder = result;
+    //     this.saleOrder.promotions = [];
+
+    //     this.router.navigate(["/sale-orders/form"], {
+    //       queryParams: { id: result.id },
+    //     });
+
+
+
+    //     this.openSaleOrderPromotionDialog();
+    //   });
+    // } else {
+
+    //   this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
+    //     this.openSaleOrderPromotionDialog();
+    //   });
+    // }
   }
 
   onEditLine(line) {
@@ -694,7 +703,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return 0;
   }
 
-  onOpenLinePromotionDialog(i){
+  onOpenLinePromotionDialog(i) {
     let modalRef = this.modalService.open(SaleOrderLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
     modalRef.componentInstance.getUpdateSJ().subscribe(res => {
@@ -707,40 +716,52 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onUpdateOpenLinePromotion(line, lineControl, i) {
-     //update line trước khi lưu
-     if (this.lineSelected != null) {
-      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      viewChild.updateLineInfo();
-    }
-    // this.updateLineInfo(line, lineControl);// lưu ở client
-    const val = this.getFormDataSave();
-    if (!this.saleOrderId) {
-      this.submitted = true;
-      if (!this.formGroup.valid) {
-        return false;
-      }
+    this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+      this.patchValueSaleOrder(result);
+    });
 
-      this.saleOrderService.create(val).subscribe((result: any) => {
-        this.saleOrderId = result.id;
-        this.router.navigate(["/sale-orders/form"], {
-          queryParams: { id: result.id },
-        });
-        this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
-          this.patchValueSaleOrder(result);
-          this.onOpenLinePromotionDialog(i);
 
-        });
-      })
-    } else {
+    // if (!this.saleOrderId) {
+    //   this.notify('error', 'Vui lòng lưu phiếu điều trị trước khi áp dụng ưu đãi');
+    //   return false;
+    // }
 
-      this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
-        this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
-          this.patchValueSaleOrder(result);
-          this.onOpenLinePromotionDialog(i);
+    // this.onOpenLinePromotionDialog(i);
 
-        });
-      });
-    }
+    //  //update line trước khi lưu
+    //  if (this.lineSelected != null) {
+    //   var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+    //   viewChild.updateLineInfo();
+    // }
+    // // this.updateLineInfo(line, lineControl);// lưu ở client
+    // const val = this.getFormDataSave();
+    // if (!this.saleOrderId) {
+    //   this.submitted = true;
+    //   if (!this.formGroup.valid) {
+    //     return false;
+    //   }
+
+    //   this.saleOrderService.create(val).subscribe((result: any) => {
+    //     this.saleOrderId = result.id;
+    //     this.router.navigate(["/sale-orders/form"], {
+    //       queryParams: { id: result.id },
+    //     });
+    //     this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+    //       this.patchValueSaleOrder(result);
+    //       this.onOpenLinePromotionDialog(i);
+
+    //     });
+    //   })
+    // } else {
+
+    //   this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
+    //     this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+    //       this.patchValueSaleOrder(result);
+    //       this.onOpenLinePromotionDialog(i);
+
+    //     });
+    //   });
+    // }
   }
 
 }
