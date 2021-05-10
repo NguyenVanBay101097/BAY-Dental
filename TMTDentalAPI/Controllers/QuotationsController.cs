@@ -87,7 +87,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ApplyDiscountOnOrder(ApplyDiscountViewModel val)
+        public async Task<IActionResult> ApplyDiscountOnQuotation(ApplyDiscountViewModel val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
