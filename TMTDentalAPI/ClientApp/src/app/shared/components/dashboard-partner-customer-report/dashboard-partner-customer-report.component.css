@@ -1,0 +1,13 @@
+.t_card_right {
+    flex: 1 1 348px;
+    margin: 5px;
+}
+
+.t_card_right .card-body {
+    padding: 15px;
+}
+
+.t_report_item {
+    flex: 1;
+    text-align: center;
+}

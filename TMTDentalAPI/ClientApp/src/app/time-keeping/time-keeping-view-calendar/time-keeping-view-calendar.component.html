@@ -30,7 +30,9 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <kendo-combobox [placeholder]="'Lọc theo nhân viên'" class="btn-sm w-50" [data]="listEmployeies" [textField]="'name'" [filterable]="true" #empCbx (selectionChange)="empChange($event)" [valueField]="'id'">
+            <kendo-combobox *ngIf="canEmployeeRead" [placeholder]="'Lọc theo nhân viên'" class="btn-sm w-50" 
+                [data]="listEmployeies" [textField]="'name'" [filterable]="true" #empCbx 
+                (selectionChange)="empChange($event)" [valueField]="'id'">
             </kendo-combobox>
         </div>
     </div>

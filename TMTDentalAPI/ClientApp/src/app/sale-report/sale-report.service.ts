@@ -105,11 +105,7 @@ export class SaleReportService {
         private checkPermissionService: CheckPermissionService) { }
 
     getReport(val: SaleReportSearch): Observable<SaleReportItem[]> {
-        if (this.checkPermissionService.check('Basic.SaleOrder.Report')) {
-            return this.http.post<SaleReportItem[]>(this.baseApi + this.apiUrl + "/GetReport", val);
-        } else {
-            return;
-        }
+        return this.http.post<SaleReportItem[]>(this.baseApi + this.apiUrl + "/GetReport", val);
     }
 
     getReportService(val: SaleReportSearch): Observable<SaleOrderLineDisplay[]> {

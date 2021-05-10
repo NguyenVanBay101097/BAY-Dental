@@ -52,47 +52,50 @@ namespace Infrastructure.Services
             //get list permission from DB
             var permissionList = (await GetPermission()).Permission;
             // tách functions to dict, example: dict["abc.cde.efg"] = ["abc","abc.cde","abc.cde.efg"]
-            var functionDics = new Dictionary<string, List<string>>();
-            foreach (var func in functions)
-            {
-                functionDics.Add(func, new List<string>());
-                var index = 0;
-                if (func.Length <= 1) { functionDics[func].Add(func); continue; }
-                while (index >= 0)
-                {
-                    index = func.IndexOf(".", index + 1);
-                    if (index <= 0)
-                    {
-                        functionDics[func].Add(func); break;
-                    }
-                    var a = func.Substring(0, index);
-                    functionDics[func].Add(a);
-                }
-            }
+            //var functionDics = new Dictionary<string, List<string>>();
+            //foreach (var func in functions)
+            //{
+            //    functionDics.Add(func, new List<string>());
+            //    var index = 0;
+            //    if (func.Length <= 1) { functionDics[func].Add(func); continue; }
+            //    while (index >= 0)
+            //    {
+            //        index = func.IndexOf(".", index + 1);
+            //        if (index <= 0)
+            //        {
+            //            functionDics[func].Add(func); break;
+            //        }
+            //        var a = func.Substring(0, index);
+            //        functionDics[func].Add(a);
+            //    }
+            //}
             //check, sử dụng ==, with all functions: any item in DB == any value of functionsDict => ok 
-            var access = functionDics.All(x => permissionList.Any(s => x.Value.Any(xs => xs == s)));
+            //var access = functionDics.All(x => permissionList.Any(s => x.Value.Any(xs => xs == s)));
+            var access = functions.Any(x => permissionList.Contains(x));
             var errors = new List<string>();
             if (!access)
             {
-                var functions_2 = functionDics.Where(x => !permissionList.Any(s => x.Value.Any(xs => xs == s)));
-                var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\features.json");
-                using (var reader = new StreamReader(filePath))
-                {
-                    var fileContent = reader.ReadToEnd();
-                    var features = JsonConvert.DeserializeObject<List<PermissionTreeViewModel>>(fileContent);
+                //var functions_2 = functionDics.Where(x => !permissionList.Any(s => x.Value.Any(xs => xs == s)));
+                //var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\features.json");
+                //using (var reader = new StreamReader(filePath))
+                //{
+                //    var fileContent = reader.ReadToEnd();
+                //    var features = JsonConvert.DeserializeObject<List<PermissionTreeViewModel>>(fileContent);
 
-                    foreach (var func in functions_2)
-                    {
-                        var function = features.SelectMany(x => x.Children).FirstOrDefault(x => func.Key.IndexOf(x.Permission) != -1);
-                        if (function == null)
-                            continue;
+                //    foreach (var func in functions_2)
+                //    {
+                //        var function = features.SelectMany(x => x.Children).FirstOrDefault(x => func.Key.IndexOf(x.Permission) != -1);
+                //        if (function == null)
+                //            continue;
 
-                        var op = function.Children.FirstOrDefault(x => x.Permission == func.Key);
-                        var msg = $"Bạn không có quyền {(op != null ? op.Name.ToLower() : "xem")} {function.Name}";
-                        errors.Add(msg);
-                    }
-                }
-                if (errors.Count == 0) errors.Add("Bạn không có quyền thao tác!");
+                //        var op = function.Children.FirstOrDefault(x => x.Permission == func.Key);
+                //        var msg = $"Bạn không có quyền {(op != null ? op.Name.ToLower() : "xem")} {function.Name}";
+                //        errors.Add(msg);
+                //    }
+                //}
+
+                if (errors.Count == 0)
+                    errors.Add("Bạn không có quyền thao tác!");
             }
 
             return new ApplicationRoleFunctionHasAccessResult() { Access = access, Error = string.Join(", ", errors) };

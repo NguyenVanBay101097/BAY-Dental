@@ -56,7 +56,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "System.ApplicationRole.Read")]
         public async Task<IActionResult> Get([FromQuery]ApplicationRolePaged val)
         {
-            var query = _roleManager.Roles;
+            var query = _roleManager.Roles.Where(x => x.Hidden == false);
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NormalizedName.Contains(val.Search));
             query = query.OrderBy(x => x.Name);
@@ -91,14 +91,37 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
             var role = _mapper.Map<ApplicationRole>(val);
-           
-            foreach(var function in val.Functions)
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\additionalFeatures.json");
+            using (var reader = new StreamReader(filePath))
             {
-                role.Functions.Add(new ApplicationRoleFunction()
+                var fileContent = reader.ReadToEnd();
+                var additionalFeatures = JsonConvert.DeserializeObject<List<AdditionalPermissionViewModel>>(fileContent);
+
+                foreach (var function in val.Functions)
                 {
-                    Func = function
-                });
+                    role.Functions.Add(new ApplicationRoleFunction()
+                    {
+                        Func = function
+                    });
+                    foreach (var feature in additionalFeatures)
+                    {
+                        if(feature.Permissions.Contains(function))
+                        {
+                            foreach (var item in feature.Additionals)
+                            {
+                                role.Functions.Add(new ApplicationRoleFunction()
+                                {
+                                    Func = item
+                                });
+                            }
+                        }
+                    }
+                    
+                }
+
+
             }
+            
 
             try
             {
