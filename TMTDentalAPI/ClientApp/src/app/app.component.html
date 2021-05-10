@@ -1,11 +1,2 @@
 <!-- <app-header></app-header> -->
-<app-layout-header></app-layout-header>
-
-<div class="o_action_manager">
-    <app-layout-sidebar *ngIf="authService.isAuthenticated()"></app-layout-sidebar>
-    <div fxFlex fxLayout="column" style="overflow-x: auto;">
-        <router-outlet></router-outlet>
-    </div>
-</div>
-
-<app-loading></app-loading>
+<router-outlet></router-outlet>
