@@ -21,6 +21,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool? Active { get; set; }
 
+        public string Status { get; set; }
+
         public IEnumerable<Guid> Ids { get; set; }
     }
 }

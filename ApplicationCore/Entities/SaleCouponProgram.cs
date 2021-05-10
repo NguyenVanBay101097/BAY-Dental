@@ -27,6 +27,14 @@ namespace ApplicationCore.Entities
         public bool Active { get; set; }
 
         /// <summary>
+        /// waiting: chưa chạy
+        /// running: đang chạy
+        /// paused: tạm ngừng
+        /// expired: hết hạn
+        /// </summary>
+        public string Status { get; set; }
+
+        /// <summary>
         /// Coupon program will be applied based on given sequence if multiple programs are
         /// defined on same condition(For minimum amount)
         /// </summary>
