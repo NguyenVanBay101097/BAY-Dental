@@ -14,13 +14,14 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm
+                    <button *ngIf="canSaleCouponProgramCreate" type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">
+                        Thêm
                     </button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
                 <div class="btn-group">
-                    <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
+                    <div class="btn-group o_dropdown" *ngIf="selectedIds.length && canSaleCouponProgramUpdate">
                         <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                             Thao tác
@@ -79,16 +80,18 @@
                     <input type="checkbox" class="custom-control-input" [checked]="dataItem.active" disabled>
                     <label class="custom-control-label">​</label></div>
             </ng-template>
-        </kendo-grid-column> -->
-        <kendo-grid-column field="id">
+        </kendo-grid-column>
+        <kendo-grid-column field="id" *ngIf="canSaleCouponProgramUpdate || canSaleCouponProgramDelete">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
-                    <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
-                    <span class="far fa-trash-alt"></span></button>
+                <button *ngIf="canSaleCouponProgramUpdate" class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                    <span class="far fa-edit"></span>
+                </button>
+                <button *ngIf="canSaleCouponProgramDelete" class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                    <span class="far fa-trash-alt"></span>
+                </button>
             </ng-template>
         </kendo-grid-column>
     </kendo-grid>

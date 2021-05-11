@@ -31,7 +31,7 @@
     </kendo-grid-column>
     <kendo-grid-column title="Phiếu điều trị" width="100">
         <ng-template kendoGridCellTemplate let-dataItem let-column="column">
-            <a class="text-primary" (click)="getFormSaleOrder(dataItem.orderId)">{{dataItem.orderName}}</a>
+            <a class="text-primary" *ngFor="let order of dataItem.orders" (click)="getFormSaleOrder(order.id)">{{order.name}}</a>
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column title="Số tiền" class="text-right" width="135">

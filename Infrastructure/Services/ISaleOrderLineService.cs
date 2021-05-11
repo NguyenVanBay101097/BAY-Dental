@@ -49,5 +49,21 @@ namespace Infrastructure.Services
         void ComputeResidual(IEnumerable<SaleOrderLine> self);
 
         Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids);
+
+        void _ComputeAmountDiscountTotal(IEnumerable<SaleOrderLine> self);
+
+        void RecomputePromotionLine(IEnumerable<SaleOrderLine> self);
+
+        SaleOrderPromotion _GetRewardLineValues(SaleOrderLine self, SaleCouponProgram program);
+
+        SaleOrderPromotion _GetRewardValuesDiscount(SaleOrderLine self, SaleCouponProgram program);
+
+        Task ApplyDiscountOnOrderLine(ApplyDiscountViewModel val);
+
+        Task<SaleCouponProgramResponse> ApplyPromotionUsageCodeOnOrderLine(ApplyPromotionUsageCode val);
+
+        Task<SaleCouponProgramResponse> ApplyPromotionOnOrderLine(ApplyPromotionRequest val);
+
+        decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line);
     }
 }

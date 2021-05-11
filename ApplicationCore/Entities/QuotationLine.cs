@@ -68,5 +68,10 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? AdvisoryId { get; set; }
         public Advisory Advisory { get; set; }
+
+        /// <summary>
+        /// Loại răng: nguyên hàm, hàm trên hàm dưới
+        /// </summary>
+        public string ToothType { get; set; }
     }
 }

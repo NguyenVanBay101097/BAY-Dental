@@ -14,7 +14,9 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm
+                    <button *ngIf="canServiceCardTypeCreate" type="button" class="btn btn-primary btn-sm" 
+                        (click)="createItem()" accesskey="c">
+                        Thêm
                     </button>
                 </div>
             </div>
@@ -31,14 +33,14 @@
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="name" title="Tên">
         </kendo-grid-column>
-        <kendo-grid-column field="id">
+        <kendo-grid-column field="id" *ngIf="canServiceCardTypeUpdate || canServiceCardTypeDelete">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                <button *ngIf="canServiceCardTypeUpdate" class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                <button *ngIf="canServiceCardTypeDelete" class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
                     <span class="far fa-trash-alt"></span></button>
             </ng-template>
         </kendo-grid-column>

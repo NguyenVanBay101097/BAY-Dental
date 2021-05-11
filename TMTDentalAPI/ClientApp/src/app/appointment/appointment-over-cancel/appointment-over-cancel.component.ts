@@ -10,6 +10,7 @@ import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/op
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { AppointmentPaged } from '../appointment';
 import { AppointmentService } from '../appointment.service';
 
@@ -41,14 +42,18 @@ export class AppointmentOverCancelComponent implements OnInit {
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate())).toDateString());
 
-
+  // permission
+  canAppointmentEdit = this.checkPermissionService.check(["Basic.Appointment.Edit"]);
+  canEmployeeRead = this.checkPermissionService.check(["Catalog.Employee.Read"]);
+  canCustomerLink = this.checkPermissionService.check(["Basic.Partner.Read"]);
 
   constructor(
     private appointmentService: AppointmentService,
     private intlService: IntlService,
     private modalService: NgbModal,
     private notificationService: NotificationService,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService, 
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -66,18 +71,19 @@ export class AppointmentOverCancelComponent implements OnInit {
 
     this.loadListEmployees();
     this.getCountState();
-    this.employeeCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => this.employeeCbx.loading = true),
-      switchMap(val => this.searchEmployees(val))
-    ).subscribe(
-      rs => {
-        this.listEmployees = rs.items;
-        this.employeeCbx.loading = false;
-      }
-    )
 
-
+    if (this.employeeCbx) {
+      this.employeeCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => this.employeeCbx.loading = true),
+        switchMap(val => this.searchEmployees(val))
+      ).subscribe(
+        rs => {
+          this.listEmployees = rs.items;
+          this.employeeCbx.loading = false;
+        }
+      )
+    }
   }
 
   getCountState() {
@@ -145,7 +151,7 @@ export class AppointmentOverCancelComponent implements OnInit {
   }
 
   editAppointment(appointment: any) {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = appointment.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();

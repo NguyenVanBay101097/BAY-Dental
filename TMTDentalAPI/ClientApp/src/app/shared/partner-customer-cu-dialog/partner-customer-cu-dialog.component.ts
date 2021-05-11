@@ -24,6 +24,8 @@ import { PartnerTitle, PartnerTitlePaged, PartnerTitleService } from 'src/app/pa
 import { PartnerTitleCuDialogComponent } from '../partner-title-cu-dialog/partner-title-cu-dialog.component';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { PermissionService } from '../permission.service';
+import { CheckPermissionService } from '../check-permission.service';
 
 @Component({
   selector: "app-partner-customer-cu-dialog",
@@ -97,6 +99,13 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   submitted = false;
 
+  showPartnerSource = false;
+  showPartnerHistories = false;
+  showPartnerTitles = false;
+  showConsultant = false;
+  showPartnerCategories = false;
+  canCreateTitle = false;
+
   get f() { return this.formGroup.controls; }
 
   constructor(
@@ -111,7 +120,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     private intlService: IntlService,
     private userService: UserService,
     private partnerTitleService: PartnerTitleService,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -146,6 +156,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     });
 
     setTimeout(() => {
+      this.checkRole();
       if (this.id) {
         this.partnerService.getPartner(this.id).subscribe((result) => {
           this.formGroup.patchValue(result);
@@ -215,12 +226,22 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       this.monthList = _.range(1, 13);
       this.yearList = _.range(new Date().getFullYear(), 1900, -1);
       this.loadSourceCities();
-      this.loadCategoriesList();
-      this.loadHistoriesList();
-      this.loadSourceList();
+      if(this.showPartnerCategories){
+        this.loadCategoriesList();
+      }
+      if(this.showPartnerHistories){
+        this.loadHistoriesList();
+      }
+      if(this.showPartnerSource){
+        this.loadSourceList();
+      }
       // this.loadReferralUserList();
-      this.loadTitleList();
-      this.loadConsultantList();
+      if(this.showPartnerTitles){
+        this.loadTitleList();
+      }
+      if(this.showConsultant){
+        this.loadConsultantList();
+      }
 
 
       this.sourceCbx.filterChange
@@ -563,5 +584,14 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   onAvatarUploaded(data) {
     this.f.avatar.setValue(data ? data.fileUrl : null);
+  }
+
+  checkRole(){
+    this.showConsultant = this.checkPermissionService.check(["Catalog.Employee.Read"]);
+    this.showPartnerCategories = this.checkPermissionService.check(["Catalog.PartnerCategory.Read"]);
+    this.showPartnerTitles = this.checkPermissionService.check(["Catalog.PartnerTitle.Read"]);
+    this.showPartnerSource = this.checkPermissionService.check(["Catalog.PartnerSource.Read"]);
+    this.showPartnerHistories = this.checkPermissionService.check(["Catalog.History.Read"]);
+    this.canCreateTitle = this.checkPermissionService.check(["Catalog.PartnerTitle.Create"]);
   }
 }

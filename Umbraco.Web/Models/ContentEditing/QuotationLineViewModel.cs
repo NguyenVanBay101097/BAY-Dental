@@ -52,6 +52,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? AdvisoryEmployeeId { get; set; }
         public EmployeeSimple AdvisoryEmployee { get; set; }
+
+        public string ToothType { get; set; }
+
     }
 
     public class QuotationLineDisplay
@@ -109,6 +112,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid ToothCategoryId { get; set; }
 
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
+
+        public string ToothType { get; set; }
+
     }
 
     public class QuotationLineSimple
@@ -170,5 +176,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ToothCategoryId { get; set; }
 
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
+
+        public string ToothType { get; set; }
     }
 }

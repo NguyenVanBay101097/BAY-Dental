@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ServiceCardCardService } from '../service-card-card.service';
 import { ServiceCardCardPaged } from '../service-card-card-paged';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-service-card-card-list',
@@ -26,8 +27,13 @@ export class ServiceCardCardListComponent implements OnInit {
   title = 'Thẻ tiền mặt';
   orderId: string;
 
+  // permission 
+  canServiceCardCardUpdate = this.checkPermissionService.check(["ServiceCard.Card.Update"]);
+
   constructor(private cardCardService: ServiceCardCardService,
-    private modalService: NgbModal, private route: ActivatedRoute) { }
+    private modalService: NgbModal, private route: ActivatedRoute, 
+    private checkPermissionService: CheckPermissionService
+  ) { }
 
   ngOnInit() {
     this.route.queryParamMap.subscribe((param: ParamMap) => {

@@ -3,7 +3,7 @@
         <div class="t_fast_access">
             <h4 class="header-title">TRUY CẬP NHANH</h4>
             <div class="t_kanban">
-                <a [routerLink]="['/appointments/kanban']" class="card bg-primary t_card">
+                <a *ngIf="canAppointmentLink" [routerLink]="['/appointments/kanban']" class="card bg-primary t_card">
                     <div class="card-body">
                         <div class="d-flex">
                             <img class="image-custom" src="./assets/images/icons-tdental/calendar.png" alt="Lịch hẹn">
@@ -11,7 +11,7 @@
                         </div>
                     </div>
                 </a>
-                <a [routerLink]="['/partners/customers']" class="card bg-primary t_card">
+                <a *ngIf="canCustomerLink" [routerLink]="['/partners/customers']" class="card bg-primary t_card">
                     <div class="card-body">
                         <div class="d-flex">
                             <img class="image-custom" src="./assets/images/icons-tdental/KH.png" alt="Lịch hẹn">
@@ -19,7 +19,7 @@
                         </div>
                     </div>
                 </a>
-                <a [routerLink]="['/purchase/orders/create']" [queryParams]="{type: 'order'}"
+                <a *ngIf="canPurchaseOrderLink" [routerLink]="['/purchase/orders/create']" [queryParams]="{type: 'order'}"
                     class="card bg-primary t_card">
                     <div class="card-body">
                         <div class="d-flex">
@@ -28,7 +28,7 @@
                         </div>
                     </div>
                 </a>
-                <a [routerLink]="['/partners/treatment-paymentfast/from']" class="card bg-primary t_card">
+                <a *ngIf="canTreatmentPaymentFastLink" [routerLink]="['/partners/treatment-paymentfast/from']" class="card bg-primary t_card">
                     <div class="card-body">
                         <div class="d-flex">
                             <img class="image-custom" src="./assets/images/icons-tdental/pdt-n.png"
@@ -45,196 +45,33 @@
             <h4 class="header-title">BÁO CÁO HÔM NAY</h4>
             <div class="t_report_today_detail">
                 <div class="t_kanban_left">
-                    <div class="card t_card_right border-secondary">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div class="t_report_item">
-                                    <span class="font-weight-bold">DOANH THU</span>
-                                    <h4 class="text-primary">{{(saleReport ? saleReport.priceTotal : 0) | number}}</h4>
-                                </div>
-                                <div class="t_report_item">
-                                    <span class="font-weight-bold">DỊCH VỤ</span>
-                                    <h4 class="text-primary">{{(saleReport?.productUOMQty || 0) | number}}</h4>
-                                </div>
-                            </div>
-                        </div>
+                    <div *ngIf="canSaleReport" class="card t_card_right border-secondary">
+                        <app-dashboard-sale-report></app-dashboard-sale-report>
                     </div>
-                    <div class="card t_card_right border-secondary">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div class="t_report_item">
-                                    <span class="font-weight-bold">TIỀN MẶT</span>
-                                    <h4 class="text-primary">
-                                        {{(reportValueCash ? reportValueCash : 0) | number}}
-                                    </h4>
-                                </div>
-                                <div class="t_report_item">
-                                    <span class="font-weight-bold">NGÂN HÀNG</span>
-                                    <h4 class="text-primary">
-                                        {{(reportValueBank ? reportValueBank : 0) | number}}
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
+                    <div *ngIf="canCashBankReport" class="card t_card_right border-secondary">
+                        <app-dashboard-cash-bank-report></app-dashboard-cash-bank-report>
                     </div>
-                    <div class="card t_card_right border-secondary">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div class="t_report_item">
-                                    <span class="font-weight-bold">KHÁCH HÀNG MỚI</span>
-                                    <h4 class="text-primary">
-                                        {{partnerOldNewReport ? partnerOldNewReport.totalNewPartner : 0}}
-                                    </h4>
-                                </div>
-                                <div class="t_report_item">
-                                    <span class="font-weight-bold">KHÁCH HÀNG CŨ</span>
-                                    <h4 class="text-primary">
-                                        {{partnerOldNewReport ? partnerOldNewReport.totalOldPartner : 0}}
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
+                    <div *ngIf="canPartnerCustomerReport" class="card t_card_right border-secondary">
+                        <app-dashboard-partner-customer-report></app-dashboard-partner-customer-report>
                     </div>
-                    <div class="card t_card_right border-secondary">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div class="t_report_item" *ngFor="let state of laboOrderStates">
-                                    <span class="font-weight-bold">{{state.text}}</span>
-                                    <h4 class="text-primary">
-                                        {{laboOrderStateCount[state.value] || 0}}
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
+                    <div *ngIf="canLaboOrderReport" class="card t_card_right border-secondary">
+                        <app-dashboard-labo-order-report></app-dashboard-labo-order-report>
                     </div>
                     <div class="t_card_right t_card_ghost"></div>
                     <div class="t_card_right t_card_ghost"></div>
                 </div>
                 <div class="t_kanban_right">
-                    <div class="card border-secondary">
-                        <div class="card-body">
-                            <table class="table border-none mb-0">
-                                <thead>
-                                    <tr class="text-center">
-                                        <td colspan="2">
-                                            <span class="font-weight-bold">THU TRONG NGÀY</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span class="font-weight-bold">TIỀN MẶT</span>
-                                        </td>
-                                        <td class="text-right">
-                                            <h5 class="text-primary">
-                                                {{(reportValueCashByDate ? reportValueCashByDate : 0) | number}}
-                                            </h5>
-                                        </td>
-                                    </tr>
-                                    <tr class="border_bottom">
-                                        <td>
-                                            <span class="font-weight-bold">NGÂN HÀNG</span>
-                                        </td>
-                                        <td class="text-right">
-                                            <h5 class="text-primary">
-                                                {{(reportValueBankByDate ? reportValueBankByDate : 0) | number}}
-                                            </h5>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span class="font-weight-bold">TỔNG THU</span>
-                                        </td>
-                                        <td class="text-right">
-                                            <h5 class="text-primary">
-                                                {{((reportValueCashByDate ? reportValueCashByDate : 0) +
-                                                (reportValueBankByDate ? reportValueBankByDate : 0)) | number}}
-                                            </h5>
-                                        </td>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
+                    <div *ngIf="canCashBankReport" class="card border-secondary">
+                        <app-dashboard-cash-bank-report [getToday]="true"></app-dashboard-cash-bank-report>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div>
-        <app-appointment-list-today (valueChange)="onAppointmentTodayChange()"></app-appointment-list-today>
+        <app-appointment-list-today *ngIf="canAppointment"></app-appointment-list-today>
     </div>
-    <div class="mr-2">
-        <div class="header-title pb-3">DỊCH VỤ TRONG NGÀY</div>
-        <kendo-grid [height]="500" [resizable]="true" [kendoGridBinding]="gridView" [sortable]="true"
-            (dataStateChange)="dataStateChange($event)">
-            <ng-template kendoGridToolbarTemplate>
-                <div class="d-flex">
-                    <div class="input-group w-50">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
-                        </div>
-                        <input type="text" class="form-control" kendoTextBox (input)="onFilter($event.target.value)"
-                            placeholder="Tìm kiếm nhanh" aria-label="Username" aria-describedby="basic-addon1">
-                    </div>
-                    <button (click)="exportServiceExcelFile()" type="button"
-                        class="ml-3 btn float-right btn-primary btn-sm"><i class="far fa-file-excel"></i> Xuất
-                        Excel</button>
-                </div>
-            </ng-template>
-            <kendo-grid-column [headerClass]="{'text-center font-weight-bold':true}" field="order.name"
-                title="Phiếu điều trị" class="text-center" width="150">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    <a class="text-primary cursor-pointer" title="Chuyển đến phiếu điều trị {{dataItem.order.name}}"
-                        (click)="redirectSaleOrder(dataItem.order)">{{dataItem.order.name}}</a>
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="orderPartner.displayName"
-                title="Khách hàng" width="150">
-            </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employee.name" title="Bác sĩ"
-                width="150">
-            </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="teeth" title="Răng" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{getTeethDisplay(dataItem.teeth)}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="diagnostic" title="Chuẩn đoán"
-                width="150">
-            </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}"  class="text-right" field="productUOMQty" title="Số lượng"
-                width="100">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.productUOMQty | number}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="name" title="Dịch vụ" width="150">
-            </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="priceSubTotal" class="text-right"
-                title="Thành tiền" width="150">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.priceSubTotal | number}}
-                </ng-template>
-
-            </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="amount" class="text-right"
-                title="Thanh toán" width="150">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{(dataItem.priceSubTotal - dataItem.amountResidual) | number}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" class="text-right" field="amountResidual"
-                title="Còn lại" width="150">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.amountResidual | number}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column class="text-center" [headerClass]="{'text-center font-weight-bold':true}"
-                field="order.state" title="Trạng thái" width="150">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{getStateDisplay(dataItem.state)}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-excel fileName="Danh_sach_dich_vu.xlsx"></kendo-grid-excel>
-        </kendo-grid>
+    <div>
+        <app-dashboard-service-today-report *ngIf="canSaleReport"></app-dashboard-service-today-report>
     </div>
 </div>

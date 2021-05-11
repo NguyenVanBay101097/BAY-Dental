@@ -11,6 +11,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { SalaryPaymentPaged, SalaryPaymentService } from '../salary-payment.service';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-salary-payment-list',
@@ -26,10 +27,15 @@ export class SalaryPaymentListComponent implements OnInit {
   skip = 0;
   loading = false;
 
+  // permission
+  canSalaryPaymentCreate = this.checkPermissionService.check(["Salary.SalaryPayment.Create"]);
+  canSalaryPaymentDelete = this.checkPermissionService.check(["Salary.SalaryPayment.Delete"]);
+
   constructor(
     private modalService: NgbModal,
     private salaryPaymentService: SalaryPaymentService,
-    private printService: PrintService
+    private printService: PrintService, 
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {

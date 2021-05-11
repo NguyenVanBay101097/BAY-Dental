@@ -109,7 +109,7 @@
                                                 <div class="d-flex">
                                                     <kendo-combobox formControlName="title" [filterable]="true" [placeholder]="'ví dụ ông, bà, anh, chị...'" [data]="filteredTitles" [valueField]="'id'" #titleCbx [textField]="'name'">
                                                     </kendo-combobox>
-                                                    <a class="btn btn-sm btn-light" (click)="quickCreateTitle()">
+                                                    <a *ngIf="canCreateTitle" class="btn btn-sm btn-light" (click)="quickCreateTitle()">
                                                         <span class="k-icon k-i-plus"></span>
                                                     </a>
                                                 </div>

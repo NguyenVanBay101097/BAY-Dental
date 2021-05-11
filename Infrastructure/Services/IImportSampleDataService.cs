@@ -10,5 +10,7 @@ namespace Infrastructure.Services
     {
         Task ImportSampleData();
         Task DeleteSampleData();
+
+        Task OldSaleOrderPaymentProcessUpdate();
     }
 }

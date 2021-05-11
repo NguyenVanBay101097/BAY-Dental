@@ -53,23 +53,21 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<SaleOrderPaymentHistoryAdvance>> GetPagedResultHistoryAdvanceAsync(HistoryAdvancePaymentFilter val)
         {
             var journalObj = GetService<IAccountJournalService>();
-            var historyAdvances = new List<SaleOrderPaymentHistoryAdvance>();
+            var paymentObj = GetService<IAccountPaymentService>();
             var journalAdvance = await journalObj.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "advance" && x.Active).FirstOrDefaultAsync();
 
-            var query = SearchQuery(x => x.PaymentRels.Any(s => s.Payment.JournalId == journalAdvance.Id) && x.State != "cancel");
-
+            var query = paymentObj.SearchQuery(x => x.Journal.Type == "advance" && x.State == "posted");
             if (val.PartnerId.HasValue)
-                query = query.Where(x => x.Order.PartnerId == val.PartnerId.Value);
+                query = query.Where(x => x.PartnerId == val.PartnerId.Value);
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateFrom);
+                query = query.Where(x => x.PaymentDate >= val.DateFrom);
 
             if (val.DateTo.HasValue)
             {
                 var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Date <= dateOrderTo);
+                query = query.Where(x => x.PaymentDate <= dateOrderTo);
             }
-
 
             var totalItems = await query.CountAsync();
 
@@ -78,22 +76,20 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.Include(x => x.Order).Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync();
-            foreach (var item in items)
+            var items = await query.Select(x => new SaleOrderPaymentHistoryAdvance
             {
-                historyAdvances.AddRange(item.PaymentRels.Select(x => new SaleOrderPaymentHistoryAdvance
-                {
-                    PaymentName = x.Payment.Name,
-                    PaymentDate = x.Payment.PaymentDate,
-                    PaymentAmount = x.Payment.Amount,
-                    OrderId = x.SaleOrderPayment.OrderId,
-                    OrderName = x.SaleOrderPayment.Order.Name
-                }).ToList());
-            }
+                PaymentName = x.Name,
+                PaymentDate = x.PaymentDate,
+                PaymentAmount = x.Amount,
+                Orders = x.SaleOrderPaymentAccountPaymentRels.Select(s => new SaleOrderBasic { 
+                    Id = s.SaleOrderPayment.OrderId,
+                    Name = s.SaleOrderPayment.Order.Name
+                })
+            }).ToListAsync();
 
             var paged = new PagedResult2<SaleOrderPaymentHistoryAdvance>(totalItems, val.Offset, val.Limit)
             {
-                Items = historyAdvances
+                Items = items
             };
 
             return paged;
@@ -400,6 +396,7 @@ namespace Infrastructure.Services
 
             orderObj._GetInvoiced(new List<SaleOrder>() { order });
             orderObj._ComputeResidual(new List<SaleOrder>() { order });
+            orderObj._AmountAll(order);
             await orderObj.UpdateAsync(order);
         }
 

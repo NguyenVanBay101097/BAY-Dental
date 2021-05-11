@@ -9,37 +9,37 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="['draft'].indexOf(card.state) !== -1"
+                    <button type="button" class="btn btn-primary btn-sm" *ngIf="['draft'].indexOf(card.state) !== -1 && canConfirm"
                         (click)="buttonConfirm()">
                         Xác nhận
                     </button>
                     <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['draft', 'confirmed'].indexOf(card.state) !== -1" (click)="buttonActive()">
+                        *ngIf="['draft', 'confirmed'].indexOf(card.state) !== -1 && canActive" (click)="buttonActive()">
                         Cấp thẻ
                     </button>
                     <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['draft', 'confirmed'].indexOf(card.state) !== -1 && id" (click)="buttonCancel()">
+                        *ngIf="['draft', 'confirmed'].indexOf(card.state) !== -1 && id && canCancel" (click)="buttonCancel()">
                         Hủy bỏ
                     </button>
                     <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['cancelled'].indexOf(card.state) !== -1 && id" (click)="buttonReset()">
+                        *ngIf="['cancelled'].indexOf(card.state) !== -1 && id && canReset" (click)="buttonReset()">
                         Reset
                     </button>
                     <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['in_use'].indexOf(card.state) !== -1 && id && card.isExpired == true"
+                        *ngIf="['in_use'].indexOf(card.state) !== -1 && id && card.isExpired == true && canRenew"
                         (click)="buttonRenew()">
                         Cấp thẻ lại
                     </button>
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="card.upgradeTypeId && id"
+                    <button type="button" class="btn btn-primary btn-sm" *ngIf="card.upgradeTypeId && id && canUpgrade"
                         (click)="buttonUpgrade()">
                         Nâng cấp
                     </button>
                     <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['in_use'].indexOf(card.state) !== -1 && id" (click)="buttonLock()">
+                        *ngIf="['in_use'].indexOf(card.state) !== -1 && id && canLock" (click)="buttonLock()">
                         Khóa thẻ
                     </button>
                     <button type="button" class="btn btn-primary btn-sm"
-                        *ngIf="['locked'].indexOf(card.state) !== -1 && id" (click)="buttonUnlock()">
+                        *ngIf="['locked'].indexOf(card.state) !== -1 && id && canUnLock" (click)="buttonUnlock()">
                         Mở khóa
                     </button>
                 </div>

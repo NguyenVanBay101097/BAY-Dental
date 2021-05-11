@@ -56,7 +56,6 @@
       <field name="padding">4</field>
     </record>
     
-   <!-- Quotation -->
      <record id="sequence_payment_customer_invoice" model="ir.sequence">
       <field name="name">Payments customer invoices sequence</field>
       <field name="code">account.payment.customer.invoice</field>
@@ -66,7 +65,8 @@
       <field eval="False" name="company_id"/>
       <field name="padding">4</field>
     </record>
-
+    
+    <!-- Quotation -->
     <record id="quotation" model="ir.sequence">
       <field name="name">Quotation</field>
       <field name="code">quotation</field>

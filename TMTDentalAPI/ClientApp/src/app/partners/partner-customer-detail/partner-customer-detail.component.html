@@ -19,13 +19,13 @@
                         <a routerLink="advisories" class="nav-link px-3 py-1" routerLinkActive="active">Tư vấn</a>
                     </li>
                     <li class="nav-item">
-                        <a routerLink="labo-orders" class="nav-link px-3 py-1" routerLinkActive="active">Labo</a>
+                        <a *ngIf="labo_orders" routerLink="labo-orders" class="nav-link px-3 py-1" routerLinkActive="active">Labo</a>
                     </li>
                     <li class="nav-item">
-                        <a routerLink="treatment" class="nav-link px-3 py-1" routerLinkActive="active">Phiếu điều trị</a>
+                        <a *ngIf="treatment" routerLink="treatment" class="nav-link px-3 py-1" routerLinkActive="active">Phiếu điều trị</a>
                     </li>
                     <li class="nav-item">
-                        <a routerLink="advances" class="nav-link px-3 py-1" routerLinkActive="active">Tạm ứng</a>
+                        <a *ngIf="advances" routerLink="advances" class="nav-link px-3 py-1" routerLinkActive="active">Tạm ứng</a>
                     </li>
                     <!-- <li class="nav-item">
                         <a routerLink="advances" class="nav-link px-3 py-1" routerLinkActive="active">Tạm ứng</a>

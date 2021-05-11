@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleCouponProgramService, SaleCouponProgramPaged, SaleCouponProgramBasic } from '../sale-coupon-program.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 
 @Component({
@@ -34,8 +35,15 @@ export class SalePromotionProgramListComponent implements OnInit {
   listFilterStatus = this.listStatus;
   selectedStatus = null;
 
-  constructor(private programService: SaleCouponProgramService, private route: ActivatedRoute,
-    private router: Router, private modalService: NgbModal) { }
+  // permission
+  canSaleCouponProgramCreate = this.checkPermissionService.check(["SaleCoupon.SaleCouponProgram.Create"]);
+  canSaleCouponProgramUpdate = this.checkPermissionService.check(["SaleCoupon.SaleCouponProgram.Update"]);
+  canSaleCouponProgramDelete = this.checkPermissionService.check(["SaleCoupon.SaleCouponProgram.Delete"]);
+
+  constructor(private programService: SaleCouponProgramService, private route: ActivatedRoute, 
+    private router: Router, private modalService: NgbModal, 
+    private checkPermissionService: CheckPermissionService 
+  ) { }
 
   ngOnInit() {
     this.loadDataFromApi();

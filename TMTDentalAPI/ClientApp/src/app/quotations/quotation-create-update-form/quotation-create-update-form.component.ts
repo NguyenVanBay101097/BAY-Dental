@@ -1,24 +1,19 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { result } from 'lodash';
-import { from } from 'rxjs';
 import { debounceTime, delay, map, switchMap, tap } from 'rxjs/operators';
-import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { EmployeeBasic, EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-// import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
-// import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import { PrintService } from 'src/app/shared/services/print.service';
-import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-// import { UserSimple } from 'src/app/users/user-simple';
-import { UserBasic, UserPaged, UserService } from 'src/app/users/user.service';
+import { QuotationLineCuComponent } from '../quotation-line-cu/quotation-line-cu.component';
+import { QuotationLinePromotionDialogComponent } from '../quotation-line-promotion-dialog/quotation-line-promotion-dialog.component';
 import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../quotation.service';
 
 @Component({
@@ -34,13 +29,13 @@ import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../qu
   styleUrls: ['./quotation-create-update-form.component.css']
 })
 export class QuotationCreateUpdateFormComponent implements OnInit {
-  
+
   @ViewChild("empCbx", { static: true }) empCbx: ComboBoxComponent;
   formGroup: FormGroup;
   formGroupInfo: FormGroup;
   partner: any;
-  // user: any;
   employee: any;
+  // employeeId: string;
   saleOrders: any;
   dateFrom: Date;
   dateTo: Date;
@@ -56,6 +51,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   filteredAdvisoryEmployees: EmployeeSimple[] = [];
   search: string = '';
   filterData: EmployeeBasic[] = [];
+  isEditing: boolean = true;
+  lineSelected = null;
+  defaultToothCate: ToothCategoryBasic;
+  filteredEmployees: any[] = [];
+  initialListEmployees: any = [];
+  @ViewChildren('lineTemplate') lineVCR: QueryList<QuotationLineCuComponent>;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
 
 
@@ -69,14 +70,17 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     private intlService: IntlService,
     private router: Router,
     private printService: PrintService,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
+    private modalService: NgbModal,
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       partnerId: ['', Validators.required],
-      employeeId: null,
-      employeeAdvisory: null,
+      // employeeId: null,
+      // employeeAdvisory: null,
+      employeeId: ['', Validators.required],
+      employee: [null, Validators.required],
       note: '',
       dateQuotation: [null, Validators.required],
       dateApplies: [0, Validators.required],
@@ -98,10 +102,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         tap(() => (this.empCbx.loading = true)),
         switchMap((value) => this.searchEmployees(value))
       )
-      .subscribe((result) => {
+      .subscribe((result: any) => {
         this.filterData = result.items;
         this.empCbx.loading = false;
       });
+    // this.loadEmployees();
   }
 
   routeActive() {
@@ -119,21 +124,22 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.quotation = result;
           this.partner = result.partner;
           this.partnerId = result.partnerId;
-          this.employee = result.employee;
+          // this.employee = result.employee;
+          // this.employeeId = result.employeeId;
           this.saleOrders = result.orders;
           this.formGroup.get('note').patchValue(result.note);
           this.formGroup.get('partnerId').patchValue(result.partnerId);
           this.formGroup.get('employeeId').patchValue(result.employeeId);
+          this.formGroup.get('employee').patchValue(result.employee);
           this.formGroup.get('dateQuotation').patchValue(new Date(result.dateQuotation));
           this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "MM/dd/yyyy"));
           this.formGroup.get('dateApplies').patchValue(result.dateApplies);
-           this.formGroup.get('employeeAdvisory').patchValue(result.employee);
+          // this.formGroup.get('employeeAdvisory').patchValue(result.employee);
           const control = this.formGroup.get('lines') as FormArray;
           control.clear();
 
           result.lines.forEach(line => {
-            // this.addLineFromApi(line);
-            this.addLineFromProduct(line);
+            this.addLine(line, false);
           });
 
           const paymentcontrol = this.formGroup.get('payments') as FormArray;
@@ -149,8 +155,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         }
       )
   }
+  get f() { return this.formGroup.controls; }
 
-  searchEmployees(q?:string){
+  searchEmployees(q?: string) {
     var val = new EmployeePaged();
     val.limit = 10;
     val.offset = 0;
@@ -158,7 +165,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     return this.employeeService.getEmployeePaged(val);
   }
 
-  loadEmployees(){
+  loadEmployees() {
     this.searchEmployees().subscribe(result => {
       this.filterData = result.items;
     })
@@ -287,11 +294,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     }
   }
 
-  deleteLine(index: number) {
-    this.linesArray.removeAt(index);
-    this.getAmountTotal();
-    this.linesArray.markAsDirty();
-  }
+  // deleteLine(index: number) {
+  //   this.linesArray.removeAt(index);
+  //   this.getAmountTotal();
+  //   this.linesArray.markAsDirty();
+  // }
 
   createFormInfo(data: any) {
     this.formGroupInfo = this.fb.group({
@@ -307,20 +314,22 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     }
   }
 
-  updateLineInfo(lineControl) {
-    var line = this.formGroupInfo.value;
-    line.teeth = this.teethSelected;
-    // line.advisoryUserId = line.advisoryUser ? line.advisoryUser.id : null;
-    line.advisoryEmployeeId = line.advisoryEmployee ? line.advisoryEmployee.id : null;
-    line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
-    lineControl.patchValue(line);
-    lineControl.get('teeth').clear();
-    line.teeth.forEach(teeth => {
-      let g = this.fb.group(teeth);
-      lineControl.get('teeth').push(g);
-    });
-    this.onChangeQuantity(lineControl);
-  }
+  // updateLineInfo(lineControl) {
+  //   var line = this.formGroupInfo.value;
+  //   line.teeth = this.teethSelected;
+  //   // line.advisoryUserId = line.advisoryUser ? line.advisoryUser.id : null;
+  //   line.advisoryEmployeeId = line.advisoryEmployee ? line.advisoryEmployee.id : null;
+  //   line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
+  //   lineControl.patchValue(line);
+  //   lineControl.get('teeth').clear();
+  //   line.teeth.forEach(teeth => {
+  //     let g = this.fb.group(teeth);
+  //     lineControl.get('teeth').push(g);
+  //   });
+  //   this.onChangeQuantity(lineControl);
+  // }
+
+
 
   // load teeth 
   loadTeethMap(categ: ToothCategoryBasic) {
@@ -428,13 +437,15 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   // Luu
   getDataFormGroup() {
-    debugger;
     var value = this.formGroup.value;
-    if(value.employeeAdvisory){
-      value.employeeId = value.employeeAdvisory.id;
-    }
+    // if (value.employeeAdvisory) {
+    //   value.employeeId = value.employeeAdvisory.id;
+    // }
     value.dateQuotation = this.intlService.formatDate(value.dateQuotation, "yyyy-MM-dd");
     value.companyId = this.quotation.companyId;
+    value.employeeId = value.employee.id;
+    value.totalAmount = this.getAmountTotal();
+    delete value.employee;
     if (this.quotationId) {
       value.Id = this.quotationId;
     }
@@ -495,7 +506,154 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.patchValue(line.value);
   }
 
+  // loadEmployee(search?: string) {
+  //   this.search = search || '';
+  //   this.searchEmployees(this.search).subscribe(
+  //     result => {
+  //       this.filteredAdvisoryEmployees = result;
+  //     }
+  //   )
+  // }
 
+
+  // searchEmployees(search: string) {
+  //   var val = new EmployeePaged();
+  //   val.search = search;
+  //   // val.hasRoot = false;
+  //   return this.employeeService.getEmployeeSimpleList(val)
+  // }
+  // loadEmployees() {
+  //   var val = new EmployeePaged();
+  //   val.limit = 20;
+  //   val.offset = 0;
+  //   val.isDoctor = true;
+  //   val.active = true;
+
+  //   this.employeeService
+  //     .getEmployeeSimpleList(val)
+  //     .subscribe((result: any[]) => {
+  //       this.initialListEmployees = result;
+  //       this.filteredEmployees = this.initialListEmployees.slice(0, 20);
+  //     });
+  // }
+
+  // onEmployeeFilter(value) {
+  //   this.filteredEmployees = this.initialListEmployees
+  //     .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
+  //     .slice(0, 20);
+  // }
+
+  addLine(val, addNew) {
+    if (addNew && this.lineSelected) {
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để thêm dịch vụ khác');
+      return;
+    }
+
+    var line = new QuotationLineDisplay();
+    if (this.quotationId && val.id) {
+      line.id = val.id;
+    }
+    line.diagnostic = val.diagnostic;
+    line.discount = val.discount ? val.discount : 0;
+    line.discountType = val.discountType ? val.discountType : 'percentage';
+    line.productId = val.productId ? val.productId : val.id;
+    line.qty = val.qty ? val.qty : 1;
+    line.advisoryId = val.advisoryId;
+    line.advisoryEmployee = val.advisoryEmployee;
+    line.advisoryEmployeeId = val.advisoryEmployeeId;
+    line.subPrice = val.subPrice ? val.subPrice : (val.listPrice ? val.listPrice : 0);
+    line.name = val.name;
+    line.amount = val.amount;
+    line.toothType = val.toothType ? val.toothType : "manual";
+    line.teeth = this.fb.array([]);
+    if (val.teeth) {
+      val.teeth.forEach(item => {
+        line.teeth.push(this.fb.group(item))
+      })
+    }
+
+    line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
+    line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
+
+    var res = this.fb.group(line);
+    this.linesArray.push(res);
+    this.linesArray.markAsDirty();
+    this.createFormInfo(line);
+
+    if (addNew) {
+      this.lineSelected = res.value;
+      // mặc định là trạng thái sửa
+      setTimeout(() => {
+        var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+        viewChild.onEditLine();
+      }, 0);
+    }
+  }
+
+  onEditLine(line) {
+    if (this.lineSelected != null) {
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để chỉnh sửa dịch vụ khác');
+    } else {
+      this.lineSelected = line;
+      var viewChild = this.lineVCR.find(x => x.line == line);
+      viewChild.onEditLine();
+    }
+  }
+
+  updateLineInfo(line, lineControl) {
+    line.toothCategoryId = line.toothCategory.id;
+    line.employeeId = line.employee ? line.employee.id : null;
+    line.advisoryEmployeeId = line.advisoryEmployee ? line.advisoryEmployee.id : null;
+    line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
+    lineControl.patchValue(line);
+
+    lineControl.get('teeth').clear();
+    line.teeth.forEach(teeth => {
+      let g = this.fb.group(teeth);
+      lineControl.get('teeth').push(g);
+    });
+
+    lineControl.updateValueAndValidity();
+    //// this.onChangeQuantity(lineControl);
+    // this.computeAmountTotal();
+
+    this.lineSelected = null;
+  }
+
+  onDeleteLine(index) {
+    this.linesArray.removeAt(index);
+    this.getAmountTotal();
+    this.linesArray.markAsDirty();
+    this.lineSelected = null;
+  }
+
+  onCancelEditLine(line) {
+    this.lineSelected = null;
+  }
+
+  onUpdateOpenLinePromotion(line, lineControl, i) {
+    // if (this.lineSelected != null) {
+    //   var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+    //   viewChild.updateLineInfo();
+    // }
+    
+    this.onOpenLinePromotionDialog(i);
+    this.lineSelected = null;
+  }
+
+  onOpenLinePromotionDialog(i){
+    let modalRef = this.modalService.open(QuotationLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+  }
+
+  notify(type, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: type, icon: true }
+    });
+  }
 }
 
 

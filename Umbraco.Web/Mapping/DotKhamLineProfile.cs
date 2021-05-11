@@ -12,7 +12,8 @@ namespace Umbraco.Web.Mapping
     {
         public DotKhamLineProfile()
         {
-            CreateMap<DotKhamLine, DotKhamLineBasic>();
+            CreateMap<DotKhamLine, DotKhamLineBasic>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(z => z.ToothRels.Select(i => i.Tooth)));
             CreateMap<DotKhamLine, DotKhamLineDisplay>()
                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.ToothRels.Select(m => m.Tooth)));
 

@@ -51,9 +51,12 @@
                                         Người báo giá
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;" class=".o_td_control_left">
-                                    <kendo-combobox formControlName="employeeAdvisory" [filterable]="true" #empCbx class="kendo-combobox-sm mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox formControlName="employee" [filterable]="true" #empCbx class="kendo-combobox-sm mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
                                     </kendo-combobox>
+                                    <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty)" class="text-danger">
+                                        <div *ngIf="f.employee.errors.required">Chọn người báo giá</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr *ngIf="saleOrders && saleOrders.length > 0">
@@ -118,125 +121,42 @@
 
 
             </div>
-            <div class="w-100 h-100 d-flex">
-                <div class="w-25 h-100 mr-2">
-                    <app-product-list-share (newEventEmiter)="addLineFromProduct($event)"></app-product-list-share>
-                </div>
-                <div class="w-75 d-flex flex-column">
-                    <!-- Component Form Service Payment -->
 
-                    <div class="overflow-auto">
-                        <table class="table table-bordered table-tbody-ver-align-middle table-sm mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-center"><b>*</b></th>
-                                    <th style="min-width: 200px;">Dịch vụ</th>
-                                    <th style="min-width: 80px;" class="text-left">SL</th>
-                                    <th style="min-width: 120px;" class="text-left">Đơn giá</th>
-                                    <th style="min-width: 100px;" class="text-left">Giảm</th>
-                                    <th style="min-width: 100px;" class="text-left">Thành tiền</th>
-                                    <th style="min-width: 50px;" class="text-center">#</th>
-                                </tr>
-                            </thead>
-                            <tbody formArrayName="lines">
-                                <ng-container *ngFor="let line of linesArray.controls; let i=index">
-                                    <tr [formGroupName]="i">
-                                        <td class="text-center">
-                                            <a (click)="selectedLine = selectedLine === line ? null : line; createFormInfo(line.value)">
-                                                <i class="fas text-primary" [ngClass]="selectedLine !== line ? 'fa-plus': 'fa-minus'"></i></a>
-                                        </td>
-                                        <td>
-                                            <span class="mb-0">
-                                                {{line.get('name').value }}</span>
-                                        </td>
-                                        <td class="text-right" style="width:100px">
-                                            <kendo-numerictextbox style="width:100px" [min]="1" [format]="'n0'" [autoCorrect]="true" formControlName="qty">
-                                            </kendo-numerictextbox>
-                                        </td>
-                                        <td class="text-right" style="width:120px">
-                                            <kendo-numerictextbox style="width:120px" [min]="0" [spinners]="false" [autoCorrect]="true" [format]="'n0'" formControlName="subPrice">
-                                            </kendo-numerictextbox>
-                                        </td>
-                                        <td class="text-center" style="width:120px">
-                                            <app-discount-popover-share [line]="line.value" (lineDiscountEvent)="onChangeDiscount($event,line)">
-                                            </app-discount-popover-share>
-                                        </td>
-                                        <td class="text-right" style="width:100px;">
-                                            <span class="mb-0 mt-2">{{computeTotalPrice(line) | number}}</span>
-                                            <!-- <span>{{line.get('amount') ? line.get('amount').value : 0}}</span> -->
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="mt-2">
-                                                <i class="fas fa-trash" (click)="deleteLine(i)"></i>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <ng-container *ngIf="selectedLine === line">
-                                        <tr [@detailExpand]="line == selectedLine ? 'expanded' : 'collapsed'">
-                                        </tr>
-                                        <td></td>
-                                        <td colspan="7">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <span>Thông tin bổ sung</span>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div>
-                                                        <form [formGroup]="formGroupInfo">
-                                                            <div class="form-group row">
-                                                                <label class="col-sm-2 col-form-label">
-                                                                    Người tư vấn
-                                                                </label>
-                                                                <div class="col-sm-10">
-                                                                    <kendo-combobox formControlName="advisoryEmployee" [filterable]="true" [data]="filteredAdvisoryEmployees" (filterChange)="loadEmployee($event)" [valueField]="'id'" [textField]="'name'">
-                                                                    </kendo-combobox>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group row">
-                                                                <label class="col-sm-2 col-form-label">
-                                                                    Chuẩn đoán
-                                                                </label>
-                                                                <div class="col-sm-10">
-                                                                    <textarea formControlName="diagnostic" class="form-control"></textarea>
-                                                                </div>
-                                                            </div>
-                                                            <div class="d-inline-flex w-100">
-                                                                <div *ngFor="let item of filteredToothCategories; let i = index" class="form-check form-check-inline" style="vertical-align: -webkit-baseline-middle;">
-                                                                    <input class="form-check-input" type="radio" formControlName="toothCategory" [checked]="item.id == line.get('toothCategoryId').value" (change)="onChangeToothCategory(item)" [id]="'toothCategory' + i" name="toothCategory" [value]="item">
-                                                                    <label class="form-check-label" [for]="'toothCategory' + i">{{item.name}}</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="teeth-map">
-                                                                <table class="table">
-                                                                    <tr *ngFor="let ham of hamList | keyvalue">
-                                                                        <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
-                                                                            <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
-                                                                                {{rang.name}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                            <div class="popover-footer">
-                                                                <button (click)="selectedLine = null;updateLineInfo(line)" class="btn btn-sm btn-primary ml-auto">Cập
-                                                                    nhật</button>
-                                                                <button (click)="selectedLine = null" class="btn btn-sm btn-danger ml-2">Hủy</button>
-                                                            </div>
-                                                        </form>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </td>
-
+            <div class="tab-content flex-1-1-100 overflow-hidden w-100">
+                <div class="tab-pane active h-100" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class=" d-flex flex-column">
+                        <!-- && isEditting -->
+                        <div class="w-25 mb-2">
+                            <app-service-list-search-dropdown (onSelectService)="addLine($event, true)"></app-service-list-search-dropdown>
+                        </div>
+                        <div class="overflow-auto w-75">
+                            <div class=" d-flex flex-column">
+                                <div class="overflow-auto ">
+                                    <div class="div-table w-100">
+                                        <div class="d-flex">
+                                            <div style="width: 490px;" class="div-cell text-cell py-1 pl-2">Dịch vụ</div>
+                                            <div style="width: 250px;" class="div-cell text-cell py-1 text-right pr-2">Đơn giá</div>
+                                            <div style="width: 200px;" class="div-cell text-cell py-1 text-right pr-2">Số lượng</div>
+                                            <div style="width: 200px;" class="div-cell text-cell py-1 text-right pr-2">Thành tiền</div>
+                                            <div style="width: 150px;" class="div-last-cell text-cell py-1 text-center">Thao tác</div>
+                                        </div>
+                                    </div>
+                                    <ng-container *ngFor="let line of linesArray.controls; let i=index">
+                                        <app-quotation-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)" [line]="line.value" (onCancelEvent)="onCancelEditLine($event)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)"
+                                            (onDeleteEvent)="onDeleteLine(i)">
+                                        </app-quotation-line-cu>
                                     </ng-container>
-                                </ng-container>
-
-                            </tbody>
-                        </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="justify-content-between mt-3">
+                </div>
+            </div>
+
+            <div class="w-100 h-100">
+
+                <div class="d-flex overflow-auto w-100">
+                    <div class="mt-3">
                         <div class="float-right">
                             <table class="table-border table-text-right mr-4 table-payment-result">
                                 <tr>

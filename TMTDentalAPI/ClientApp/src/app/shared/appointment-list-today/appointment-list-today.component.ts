@@ -42,8 +42,6 @@ export class AppointmentListTodayComponent implements OnInit {
     { value: 'cancel', text: 'Hủy hẹn'}
   ]
 
-  @Output() valueChange = new EventEmitter<any>();
-
   constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal,
     private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService) { }
@@ -167,7 +165,6 @@ export class AppointmentListTodayComponent implements OnInit {
 
       item.state = val.state;
       this.loadStateCount();
-      this.valueChange.emit(null);
     });
 
   }

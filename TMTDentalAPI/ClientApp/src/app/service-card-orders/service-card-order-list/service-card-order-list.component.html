@@ -57,14 +57,14 @@
                 {{stateGet(dataItem.state)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="id" width="120">
+        <kendo-grid-column field="id" width="120" *ngIf="canServiceCardOrderUpdate || canServiceCardOrderDelete">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                <button *ngIf="canServiceCardOrderUpdate" class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                <button *ngIf="canServiceCardOrderDelete" class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
                     <span class="far fa-trash-alt"></span></button>
             </ng-template>
         </kendo-grid-column>

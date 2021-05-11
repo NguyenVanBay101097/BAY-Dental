@@ -4,18 +4,17 @@
     </ol>
     <div class="o_cp_searchview">
         <div class="o_searchview">
-            <input type="text" class="o_searchview_input" placeholder="Theo mã, tên hoặc số điện thoại"
-                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+            <input type="text" class="o_searchview_input" placeholder="Theo mã, tên hoặc số điện thoại" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
         </div>
     </div>
     <div class="o_cp_left">
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
-                <button type="button" accesskey="c" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
-                <button type="button" class="btn btn-secondary btn-sm" (click)="importFromExcel()">Import</button>
+                <button *ngIf="canAdd" type="button" accesskey="c" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
+                <button *ngIf="canImport" type="button" class="btn btn-secondary btn-sm" (click)="importFromExcel()">Import</button>
                 <button *ngIf="canExport" type="button" class="btn btn-secondary btn-sm" (click)="exportPartnerExcelFile()"><i
                         class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
-                <button type="button" class="btn btn-secondary btn-sm" (click)="updateFromExcel()">Cập nhật
+                <button *ngIf="canUpdateExcel" type="button" class="btn btn-secondary btn-sm" (click)="updateFromExcel()">Cập nhật
                     Excel</button>
             </div>
         </div>
@@ -24,7 +23,7 @@
     </div>
     <div class="o_cp_right">
         <div class="d-flex align-items-center">
-            <div class="mr-1">
+            <div class="mr-1" *ngIf="canFilterPartnerCategory">
                 <kendo-multiselect style="min-width: 400px;max-width: 400px;" [data]="filteredCategs"
                     [valueField]="'id'" [textField]="'name'" [(ngModel)]="searchCategs" [placeholder]="'Lọc theo nhãn'"
                     [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
@@ -47,8 +46,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid partnersBinding [resizable]="true" [sort]="gridSort" [advanceFilter]="advanceFilter" [skip]="skip"
-        [filter]="gridFilter" #grid [pageable]="true" [pageSize]="limit">
+    <kendo-grid partnersBinding [resizable]="true" [sort]="gridSort" [advanceFilter]="advanceFilter" [skip]="skip" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="limit">
         <kendo-grid-column field="Id" width="100" [locked]="true">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
@@ -65,8 +63,7 @@
         <kendo-grid-column field="Name" title="Họ tên" width="200" [locked]="true">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng"
-                        [routerLink]="['/partners/customer/' + dataItem.Id]">
+                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.Id]">
                         <span *ngIf="dataItem.ref">[{{dataItem.Ref}}] </span> {{dataItem.Name}}
                     </a>
                 </div>
@@ -83,8 +80,7 @@
         <kendo-grid-column field="Address" title="Địa chỉ" width="300"></kendo-grid-column>
         <kendo-grid-column title="Nhãn" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <app-partner-category-popover [tags]="dataItem.Tags" (onSave)="dataItem.Tags = $event"
-                    [rowPartnerId]="dataItem.Id">
+                <app-partner-category-popover [tags]="dataItem.Tags" (onSave)="dataItem.Tags = $event" [rowPartnerId]="dataItem.Id">
                 </app-partner-category-popover>
             </ng-template>
         </kendo-grid-column>
@@ -142,7 +138,7 @@
     </kendo-grid>
     <app-partner-profile-print></app-partner-profile-print>
 
-    <ng-template #popContent let-dataItem="dataItem">
+    <!-- <ng-template #popContent let-dataItem="dataItem">
         <div>
             <kendo-multiselect class="mr-1" [data]="dataItem.Tags" [filterable]="true"
                 (filterChange)="handleFilterCategoryPopOver($event); this.searchUpdatePopOver.next($event)"
@@ -160,5 +156,5 @@
             <span>Nhãn khách hàng</span>
             <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
         </div>
-    </ng-template>
+    </ng-template> -->
 </div>

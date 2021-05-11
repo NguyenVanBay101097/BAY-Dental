@@ -13,6 +13,7 @@ export class AdvisorySave {
   user: any;
   date: Date;
   toothCategoryId: string;
+  toothType: string;
   teeth: ToothDisplay[];
   toothDiagnosis: any;
   product: any;
@@ -46,6 +47,7 @@ export class AdvisoryDisplay {
   date: Date;
   toothCategoryId: string;
   toothCategory: ToothCategoryBasic;
+  toothType: string;
   teeth: ToothDisplay[];
   toothDiagnosis: any;
   product: any;

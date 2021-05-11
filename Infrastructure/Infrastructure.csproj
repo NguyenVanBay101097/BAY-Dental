@@ -102,6 +102,8 @@
     <Compile Remove="Data\Migrations\20210507095300_luan_addColumnIntoSaleCouponProgram.Designer.cs" />
     <Compile Remove="Data\Migrations\20210507100315_luan_addColumnIntoSaleCouponProgram.cs" />
     <Compile Remove="Data\Migrations\20210507100315_luan_addColumnIntoSaleCouponProgram.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210504085931_thuongEditSaleOrderPromotionRefOrderLine.cs" />
+    <Compile Remove="Data\Migrations\20210504085931_thuongEditSaleOrderPromotionRefOrderLine.Designer.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.Designer.cs" />
     <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.cs" />
