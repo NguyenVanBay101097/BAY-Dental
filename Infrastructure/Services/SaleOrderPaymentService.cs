@@ -396,6 +396,7 @@ namespace Infrastructure.Services
 
             orderObj._GetInvoiced(new List<SaleOrder>() { order });
             orderObj._ComputeResidual(new List<SaleOrder>() { order });
+            orderObj._AmountAll(order);
             await orderObj.UpdateAsync(order);
         }
 

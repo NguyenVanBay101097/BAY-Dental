@@ -33,7 +33,7 @@ export class PromotionDiscountComponent implements OnInit {
     }
   }
 
-  onChangeDiscountType(value) {
+  onChangeDiscountType() {
     this.form.discountFixed = 0;
     this.form.discountPercent = 0;
   }
