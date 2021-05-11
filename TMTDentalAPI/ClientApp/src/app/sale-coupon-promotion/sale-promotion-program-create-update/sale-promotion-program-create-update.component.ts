@@ -38,6 +38,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   days: any[] = [];
   startDate = new Date();
   endDate = new Date();
+  codeNeed = false;
+  discountFixed = true;
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
   listProducts: ProductSimple[];
@@ -88,7 +90,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
         this.formGroup = this.fb.group({
           name: [null, Validators.required],
           ruleMinimumAmount: 0,
-          discountType: 'percentage',
+          discountType: 'fixed_amount',
           discountPercentage: [0, Validators.required],
           discountFixedAmount: 0,
           validityDuration: 1,
@@ -119,14 +121,14 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     });
 
     
-    this.productCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.productCbx.loading = true)),
-      switchMap(value => this.searchProducts(value))
-    ).subscribe(result => {
-      this.filteredProducts = result;
-      this.productCbx.loading = false;
-    });
+    // this.productCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.productCbx.loading = true)),
+    //   switchMap(value => this.searchProducts(value))
+    // ).subscribe(result => {
+    //   this.filteredProducts = result;
+    //   this.productCbx.loading = false;
+    // });
 
     this.loadFilteredProducts();
 
@@ -231,6 +233,10 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   onChangePromoCodeUsage() {
     if (this.promoCodeUsage == 'no_code_needed') {
       this.formGroup.get('promoCode').setValue(null);
+      this.codeNeed = false;
+    }
+    else{
+      this.codeNeed = true;
     }
   }
 
@@ -456,6 +462,16 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.f.discountSpecificProducts.updateValueAndValidity();
       this.f.discountSpecificProductCategories.setValidators(Validators.required);
       this.f.discountSpecificProductCategories.updateValueAndValidity();
+    }
+  }
+
+  onChangeDiscountType(){
+    var type = this.f.discountType.value;
+    if (type == "percentage"){
+      this.discountFixed = false;
+    }
+    else{
+      this.discountFixed = true;
     }
   }
 
