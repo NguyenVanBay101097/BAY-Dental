@@ -58,81 +58,66 @@
                     <div class="border bg-white">
                         <div class="left_header d-flex">
                             <div class="left border"></div>
-                            <div class="right"></div>
-                        </div>
-                        <div class="p-2">
-                            <div class="oe_title">
-                                <label class="o_form_label oe_edit_only">Tên chương trình khuyến mãi</label>
-                                <h1>
-                                    <input type="text" class="form-control" required formControlName="name" />
-                                </h1>
-                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger mb-1">
-                                    <div *ngIf="f.name.errors.required">Nhập tên chương trình khuyến mãi</div>
+                            <div class="right d-flex">
+                                <div class="d-flex align-items-center mr-2"><i class="fas fa-dollar-sign"></i></div>
+                                <div style="cursor: pointer;" (click)="showDiscountPrice()">
+                                    <div>Giá trị khuyến mãi</div>
+                                    <div class="d-flex justify-content-center">0</div>
                                 </div>
                             </div>
-                            <table>
-                                <tbody>
-                                    <!-- <tr>
-                                        <td colspan="2" style="width: 100%;">
-                                            <div class="o_horizontal_separator">Điều kiện</div>
-                                        </td>
-                                    </tr> -->
-                                    <!-- <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help">
-                                                Số lượng
-                                                <i class="fas fa-question-circle text-primary" placement="bottom"
-                                                    triggers="mouseenter:mouseleave"
-                                                    ngbPopover="Số lượng mua tối thiểu để được phần thưởng"
-                                                    popoverTitle="Số lượng tối thiểu"></i>
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="ruleMinQuantity">
-                                            </kendo-numerictextbox>
-                                        </td>
-                                    </tr> -->
-                                    <!-- <tr>
-        
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help">
-                                                Tiền mua tối thiểu
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="ruleMinimumAmount">
-                                            </kendo-numerictextbox>
-                                        </td>
-                                    </tr> -->
-                                    <tr>
-                                        <td class="pr-3">Hình thức khuyến mãi</td>
-                                        <td>
-                                                <input class="btn-radio" type="radio" (change)="onChangePromoCodeUsage()" formControlName="promoCodeUsage"
-                                                    value="no_code_needed" id="radio686_no_code_needed">
-                                                <label class="btn btn-primary btn-sm" [ngClass]="{'btn-success': !codeNeed}" for="radio686_no_code_needed">Tự động</label>
-                                                <input class="btn-radio" type="radio" (change)="onChangePromoCodeUsage()" formControlName="promoCodeUsage"
-                                                    value="code_needed" id="radio686_code_needed">
-                                                <label class="btn btn-primary btn-sm" [ngClass]="{'btn-success': codeNeed}" for="radio686_code_needed">Mã khuyến mãi</label>
-                                        </td>
-                                    </tr>
-                                    <tr [class.d-none]="promoCodeUsage != 'code_needed'">
-                                        <td></td>
-                                        <td>Mã khuyến mãi</td>
-                                        <td>
-                                            <input type="text" class="form-control" formControlName="promoCode">
-                                        </td>
-                                    </tr>
-                                    <tr [class.d-none]="promoCodeUsage != 'code_needed'">
-                                        <td></td>
-                                        <td>Số lần áp dụng</td>
-                                        <td>
-                                            <input type="text" class="form-control" formControlName="maximumUseNumber">
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        </div>
+                        <div class="p-2">
+                            <div style="width:100%" class="d-flex">
+                                <div style="width:80%" class="oe_title">
+                                    <label class="o_form_label oe_edit_only">Tên chương trình khuyến mãi</label>
+                                    <h1>
+                                        <input type="text" class="form-control" required formControlName="name" />
+                                    </h1>
+                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger mb-1">
+                                        <div *ngIf="f.name.errors.required">Nhập tên chương trình khuyến mãi</div>
+                                    </div>
+                                </div>
+                                <div>Tình trạng <span><b>{{showStatus()}}</b></span></div>
+                            </div>
                             <table class="o_group o_inner_group o_group_col_6">
                                 <tbody>
+                                    <tr>
+                                        <td>Hình thức khuyến mãi</td>
+                                        <td>
+                                                <input class="btn-radio mr-1" type="radio" (change)="onChangePromoCodeUsage()" formControlName="promoCodeUsage"
+                                                    value="no_code_needed" id="radio686_no_code_needed">
+                                                <label class="btn btn-primary btn-sm button-radio" [ngClass]="{'btn-success': !codeNeed}" for="radio686_no_code_needed">Tự động</label>
+                                                <input class="btn-radio" type="radio" (change)="onChangePromoCodeUsage()" formControlName="promoCodeUsage"
+                                                    value="code_needed" id="radio686_code_needed">
+                                                <label class="btn btn-primary btn-sm button-radio" [ngClass]="{'btn-success': codeNeed}" for="radio686_code_needed">Mã khuyến mãi</label>
+                                        </td>
+                                    </tr>
+                                    <tr [class.d-none]="promoCodeUsage != 'code_needed'">
+                                        <td></td>
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Mã khuyến mãi</td>
+                                                        <td><input type="text" class="form-control" formControlName="promoCode"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr [class.d-none]="promoCodeUsage != 'code_needed'">
+                                        <td></td>
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Số lần áp dụng</td>
+                                                        <td><input type="text" class="form-control" formControlName="maximumUseNumber"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
                                     <!-- <tr [class.d-none]="['discount', 'free_shipping'].indexOf(rewardType) !== -1">
                                         <td class="o_td_label">
                                             <label class="o_form_label o_required_modifier">Dịch vụ miễn phí</label>
@@ -143,7 +128,7 @@
                                             </kendo-combobox>
                                         </td>
                                     </tr> -->
-                                    <tr
+                                    <!-- <tr
                                         [class.d-none]="['discount', 'free_shipping'].indexOf(rewardType) !== -1 || rewardProduct == null">
                                         <td class=" o_td_label">
                                             <label class="o_form_label">Số lượng</label>
@@ -153,17 +138,17 @@
                                                 formControlName="rewardProductQuantity">
                                             </kendo-numerictextbox>
                                         </td>
-                                    </tr>
-                                    <tr [class.d-none]="['product', 'free_shipping'].indexOf(rewardType) !== -1">
-                                        <td class="pr-3">Loại khuyến mãi</td>
+                                    </tr> -->
+                                    <tr>
+                                        <td>Loại khuyến mãi</td>
                                         <td>
                                             <input class="btn-radio" type="radio" (change)="onChangeDiscountType()" formControlName="discountType"
                                                 value="fixed_amount" id="radioDiscountFixed">
-                                            <label class="btn btn-primary btn-sm" [ngClass]="{'btn-success': discountFixed}" for="radioDiscountFixed">Số tiền</label>
+                                            <label class="btn btn-primary btn-sm button-radio" [ngClass]="{'btn-success': discountFixed}" for="radioDiscountFixed">Số tiền</label>
                                             <input class="btn-radio" type="radio" (change)="onChangeDiscountType()" formControlName="discountType"
                                                 value="percentage" id="radioDiscountPercent">
-                                            <label class="btn btn-primary btn-sm" [ngClass]="{'btn-success': !discountFixed}" for="radioDiscountPercent">Phần trăm</label>
-                                    </td>
+                                            <label class="btn btn-primary btn-sm button-radio" [ngClass]="{'btn-success': !discountFixed}" for="radioDiscountPercent">Phần trăm</label>
+                                        </td>
                                     </tr>
                                     <!-- <tr [class.d-none]="['product', 'free_shipping'].indexOf(rewardType) !== -1">
                                         <td colspan="1" class="o_td_label">
@@ -184,54 +169,63 @@
                                         </td>
                                     </tr> -->
                                     <tr [class.d-none]="rewardType != 'discount' || discountType != 'percentage'">
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help">
-                                                Phần trăm giảm giá
-                                            </label>
+                                        <td></td>
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Phần trăm giảm giá</td>
+                                                        <td><kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                            formControlName="discountPercentage">
+                                                        </kendo-numerictextbox>
+                                                        <div *ngIf="f.discountPercentage.errors && (f.discountPercentage.touched || f.discountPercentage.dirty || submitted)" class="text-danger mb-1">
+                                                            <div *ngIf="f.discountPercentage.errors.required">Nhập phần trăm giảm giá</div>
+                                                        </div></td>
+                                                        <td [class.d-none]="discountType != 'percentage'">%</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                formControlName="discountPercentage">
-                                            </kendo-numerictextbox>
-                                            <div *ngIf="f.discountPercentage.errors && (f.discountPercentage.touched || f.discountPercentage.dirty || submitted)" class="text-danger mb-1">
-                                                <div *ngIf="f.discountPercentage.errors.required">Nhập phần trăm giảm giá</div>
-                                            </div>
-                                        </td>
-                                        <td [class.d-none]="discountType != 'percentage'">%</td>
                                     </tr>
                                     <tr [class.d-none]="rewardType != 'discount' || discountType != 'percentage'">
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help">
-                                                Mức giảm tối đa
-                                            </label>
+                                        <td></td>
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Mức giảm tối đa</td>
+                                                        <td><kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                            formControlName="discountMaxAmount">
+                                                        </kendo-numerictextbox></td>
+                                                        <td [class.d-none]="discountType != 'percentage'">VNĐ</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                formControlName="discountMaxAmount">
-                                            </kendo-numerictextbox>
-                                        </td>
-                                        <td [class.d-none]="discountType != 'percentage'">VNĐ</td>
                                     </tr>
                                     <tr [class.d-none]="rewardType != 'discount' || discountType != 'fixed_amount'">
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help">
-                                                Tiền giảm
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                formControlName="discountFixedAmount">
-                                            </kendo-numerictextbox>
-                                            <div *ngIf="f.discountFixedAmount.errors && (f.discountFixedAmount.touched || f.discountFixedAmount.dirty || submitted)" class="text-danger mb-1">
-                                                <div *ngIf="f.discountFixedAmount.errors.required">Nhập số tiền giảm</div>
-                                            </div>
+                                        <td></td>
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Số tiền giảm</td>
+                                                        <td><kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                            formControlName="discountFixedAmount">
+                                                        </kendo-numerictextbox>
+                                                        <div *ngIf="f.discountFixedAmount.errors && (f.discountFixedAmount.touched || f.discountFixedAmount.dirty || submitted)" class="text-danger mb-1">
+                                                            <div *ngIf="f.discountFixedAmount.errors.required">Nhập số tiền giảm</div>
+                                                        </div></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </td>
                                     </tr>
                                     <tr
-                                        [class.d-none]="['product', 'free_shipping'].indexOf(rewardType) !== -1 || discountType != 'percentage'">
-                                        <td class="o_td_label">
-                                            <label class="o_form_label">Chiết khấu trên</label></td>
-                                        <td style="width: 100%;">
+                                        [class.d-none]="['product', 'free_shipping'].indexOf(rewardType) !== -1">
+                                        <td>Áp dụng cho</td>
+                                        <td>
                                             <div class="o_field_radio o_vertical o_field_widget">
                                                 <div class="custom-control custom-radio o_radio_item">
                                                     <input type="radio" formControlName="discountApplyOn"
@@ -239,17 +233,50 @@
                                                         value="on_order"
                                                         (change)="onChangeOption($event)">
                                                     <label class="custom-control-label o_form_label"
-                                                        for="radio151_on_order">Trên đơn hàng</label>
+                                                        for="radio151_on_order">Phiếu điều trị</label>
                                                 </div>
-        
+                                                <table>
+                                                    <tbody>
+                                                        <tr [class.d-none]="discountApplyOn != 'on_order'">
+                                                            <td>
+                                                                <label>Trị giá PĐT tối thiểu</label>
+                                                            </td>
+                                                            <td>
+                                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                                        formControlName="ruleMinimumAmount">
+                                                                </kendo-numerictextbox>
+                                                                <div *ngIf="f.ruleMinimumAmount.errors && (f.ruleMinimumAmount.touched || f.ruleMinimumAmount.dirty || submitted)" class="text-danger mb-1">
+                                                                    <div *ngIf="f.ruleMinimumAmount.errors.required">Nhập trị giá tối thiểu</div>
+                                                                </div>
+                                                            </td>
+                                                            <td>VNĐ</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                                 <div class="custom-control custom-radio o_radio_item">
                                                     <input type="radio" formControlName="discountApplyOn"
                                                         class="custom-control-input o_radio_input" value="specific_product_categories"
                                                         id="radio151_specific_product_categories"
                                                         (change)="onChangeOption($event)">
                                                     <label class="custom-control-label o_form_label"
-                                                        for="radio151_specific_product_categories">Trên vài nhóm dịch vụ cụ thể</label>
+                                                        for="radio151_specific_product_categories">Nhóm dịch vụ</label>
                                                 </div>
+                                               <table>
+                                                   <tbody>
+                                                    <tr
+                                                    [class.d-none]="discountApplyOn != 'specific_product_categories'">
+                                                    <td>
+                                                        <kendo-multiselect class="cus-kendo-multiselect" [data]="listProductCategories" [filterable]="true" #productCategoriesMultiSelect
+                                                            [textField]="'name'" [valueField]="'id'"
+                                                            formControlName="discountSpecificProductCategories">
+                                                        </kendo-multiselect>
+                                                        <div *ngIf="f.discountSpecificProductCategories.errors && (f.discountSpecificProductCategories.touched || f.discountSpecificProductCategories.dirty || submitted)" class="text-danger mb-1">
+                                                            <div *ngIf="f.discountSpecificProductCategories.errors.required">Chọn nhóm dịch vụ</div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                   </tbody>
+                                               </table>
         
                                                 <div class="custom-control custom-radio o_radio_item">
                                                     <input type="radio" formControlName="discountApplyOn"
@@ -257,52 +284,23 @@
                                                         id="radio151_specific_products"
                                                         (change)="onChangeOption($event)">
                                                     <label class="custom-control-label o_form_label"
-                                                        for="radio151_specific_products">Trên vài dịch vụ cụ thể</label>
+                                                        for="radio151_specific_products">Dịch vụ</label>
                                                 </div>
+                                                <table>
+                                                    <tr [class.d-none]="discountApplyOn != 'specific_products' || ['product', 'free_shipping'].indexOf(rewardType) !== -1">
+                                                        <td>
+                                                            <kendo-multiselect class="cus-kendo-multiselect" [data]="listProducts" [filterable]="true" #productMultiSelect
+                                                                [textField]="'name'" [valueField]="'id'"
+                                                                formControlName="discountSpecificProducts">
+                                                            </kendo-multiselect>
+                                                            <div *ngIf="f.discountSpecificProducts.errors && (f.discountSpecificProducts.touched || f.discountSpecificProducts.dirty || submitted)" class="text-danger mb-1">
+                                                                <div *ngIf="f.discountSpecificProducts.errors.required">Chọn dịch vụ</div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </div>
                                         </td>
-                                    </tr>
-                                    <tr
-                                        [class.d-none]="discountApplyOn != 'specific_products' || discountType != 'percentage' || ['product', 'free_shipping'].indexOf(rewardType) !== -1">
-                                        <td class="o_td_label">
-                                            <label class="o_form_label">Dịch vụ</label></td>
-                                        <td style="width: 100%;">
-                                            <kendo-multiselect [data]="listProducts" [filterable]="true" #productMultiSelect
-                                                [textField]="'name'" [valueField]="'id'"
-                                                formControlName="discountSpecificProducts">
-                                            </kendo-multiselect>
-                                            <div *ngIf="f.discountSpecificProducts.errors && (f.discountSpecificProducts.touched || f.discountSpecificProducts.dirty || submitted)" class="text-danger mb-1">
-                                                <div *ngIf="f.discountSpecificProducts.errors.required">Chọn dịch vụ</div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr
-                                        [class.d-none]="discountApplyOn != 'specific_product_categories' || discountType != 'percentage'">
-                                        <td class="o_td_label">
-                                            <label class="o_form_label">Nhóm dịch vụ</label></td>
-                                        <td style="width: 100%;">
-                                            <kendo-multiselect [data]="listProductCategories" [filterable]="true" #productCategoriesMultiSelect
-                                                [textField]="'name'" [valueField]="'id'"
-                                                formControlName="discountSpecificProductCategories">
-                                            </kendo-multiselect>
-                                            <div *ngIf="f.discountSpecificProductCategories.errors && (f.discountSpecificProductCategories.touched || f.discountSpecificProductCategories.dirty || submitted)" class="text-danger mb-1">
-                                                <div *ngIf="f.discountSpecificProductCategories.errors.required">Chọn nhóm dịch vụ</div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr
-                                        [class.d-none]="discountApplyOn != 'on_order' || discountType != 'percentage'">
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">Trị giá PĐT tối thiểu</label></td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                    formControlName="ruleMinimumAmount">
-                                            </kendo-numerictextbox>
-                                            <div *ngIf="f.ruleMinimumAmount.errors && (f.ruleMinimumAmount.touched || f.ruleMinimumAmount.dirty || submitted)" class="text-danger mb-1">
-                                                <div *ngIf="f.ruleMinimumAmount.errors.required">Nhập trị giá tối thiểu</div>
-                                            </div>
-                                        </td>
-                                        <td>VNĐ</td>
                                     </tr>
                                 </tbody>
                             </table>

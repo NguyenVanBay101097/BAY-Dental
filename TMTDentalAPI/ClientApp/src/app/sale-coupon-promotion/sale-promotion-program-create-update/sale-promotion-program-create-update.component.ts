@@ -18,6 +18,7 @@ import { ProductCategoryBasic, ProductCategoryFilter, ProductCategoryPaged, Prod
 import { element } from 'protractor';
 import { result } from 'lodash';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { DiscountPricePopoverComponent } from './discount-price-popover/discount-price-popover.component';
 
 @Component({
   selector: 'app-sale-promotion-program-create-update',
@@ -59,7 +60,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       ruleMinimumAmount: 0,
       discountType: 'percentage',
       discountPercentage: [0, Validators.required],
-      discountFixedAmount: 0,
+      discountFixedAmount:[0, Validators.required],
       validityDuration: 1,
       programType: 'promotion_program',
       rewardProduct: null,
@@ -81,6 +82,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       promoCode: null,
       daysSelected: null,
       isSelectDay: true,
+      status: 'waitting'
     });
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get("id");
@@ -114,6 +116,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
           promoCode: null,
           daysSelected: null,
           isSelectDay: true,
+          status: 'waitting'
         });
 
         this.program = new SaleCouponProgramDisplay();
@@ -218,6 +221,10 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     return this.formGroup.get('active').value;
   }
 
+  get status(){
+    return this.formGroup.get('status').value;
+  }
+
   getDataFromBody(){
     var value = this.formGroup.value;
     value.rewardProductId = value.rewardProduct ? value.rewardProduct.id : null;
@@ -290,6 +297,23 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
   }
 
+  showStatus(){
+    switch(this.status){
+      case 'waitting':
+        return 'Chưa chạy';
+      case 'running':
+        return 'Đang chạy';
+      case 'paused':
+        return 'Tạm dừng'
+      case 'expired':
+        return 'Hết hạn';
+    }
+  }
+
+  showDiscountPrice(){
+    let modalRef = this.modalService.open(DiscountPricePopoverComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Giá trị khuyến mãi';
+  }
 
   loadRecord() {
     this.programService.get(this.id).subscribe(result => {

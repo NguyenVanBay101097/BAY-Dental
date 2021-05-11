@@ -39,3 +39,15 @@ table td {
     min-width: 80%;
     border-right: 1px solid !important;
 }
+
+.o_field_radio.o_vertical.o_field_widget {
+    width: 100%;
+}
+
+.cus-kendo-multiselect {
+    min-height: 100px;
+}
+
+.button-radio {
+    min-width: 150px;
+}
