@@ -38,6 +38,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Boms, x => x.Ignore());
 
             CreateMap<Product, ProductBasic2>();
+
+            CreateMap<Product, ProductDotKhamLineSimple>();
         }
     }
 }

@@ -4,7 +4,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { RoutingSimple, RoutingService, RoutingPaged } from 'src/app/routings/routing.service';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { DotKhamLineService, DotKhamLineChangeRouting } from 'src/app/dot-khams/dot-kham-line.service';
+import { DotKhamLineService, DotKhamLineChangeRouting } from 'src/app/dot-kham-lines/dot-kham-line.service';
 
 @Component({
   selector: 'app-dot-kham-line-change-routing-dialog',
