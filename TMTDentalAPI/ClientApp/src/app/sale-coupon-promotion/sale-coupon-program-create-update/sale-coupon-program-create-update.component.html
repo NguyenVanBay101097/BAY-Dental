@@ -15,9 +15,11 @@
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
                     <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
-                        Lưu</button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
-                        Thêm mới</button>
+                        Lưu
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id && canSaleCouponProgramCreate">
+                        Thêm mới
+                    </button>
                 </div>
             </div>
         </div>
@@ -31,7 +33,7 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" name="315" class="btn btn-secondary btn-sm" (click)="generateCoupons()">
+                    <button *ngIf="canSaleCouponsCreate" type="button" name="315" class="btn btn-secondary btn-sm" (click)="generateCoupons()">
                         <span>Khởi tạo Coupon</span>
                     </button>
                 </div>

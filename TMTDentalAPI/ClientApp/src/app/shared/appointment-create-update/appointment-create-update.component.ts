@@ -7,7 +7,7 @@ import { PartnerBasic, PartnerDisplay, PartnerSimple, PartnerPaged, PartnerCateg
 import * as _ from 'lodash';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { EmployeePaged, EmployeeSimple, EmployeeBasic } from 'src/app/employees/employee';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -19,6 +19,8 @@ import { UserSimple } from 'src/app/users/user-simple';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnersService } from '../services/partners.service';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductPaged, ProductService } from 'src/app/products/product.service';
 
 @Component({
   selector: 'app-appointment-create-update',
@@ -29,10 +31,38 @@ import { PartnersService } from '../services/partners.service';
 export class AppointmentCreateUpdateComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
+  @ViewChild('serviceMultiSelect', { static: true }) serviceMultiSelect: MultiSelectComponent
   customerSimpleFilter: PartnerSimple[] = [];
   userSimpleFilter: UserSimple[] = [];
+  filteredServices: ProductSimple[] = [];
   filteredEmployees: EmployeeBasic[] = [];
   appointId: string;
+  timeExpecteds: any[] = [
+    {
+      name: '0 phút', value: 0
+    },
+    {
+      name: '30 phút', value: 30
+    },
+    {
+      name: '45 phút', value: 45
+    },
+    {
+      name: '60 phút', value: 60
+    },
+    {
+      name: '75 phút', value: 75
+    },
+    {
+      name: '90 phút', value: 90
+    },
+    {
+      name: '105 phút', value: 105
+    },
+    {
+      name: '120 phút', value: 120
+    },
+  ]
   defaultVal: any;
   formGroup: FormGroup;
   dotKhamId: any;
@@ -56,6 +86,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     private modalService: NgbModal,
     private errorService: AppSharedShowErrorService,
     private odataPartnerService: PartnersService,
+    private productService: ProductService,
     private employeeService: EmployeeService) { }
 
   ngOnInit() {
@@ -71,9 +102,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       note: null,
       companyId: null,
       doctor: null,
+      timeExpected: '30',
       state: 'confirmed',
       reason: null,
-      saleOrderId: null
+      saleOrderId: null,
+      services: []
     })
 
     setTimeout(() => {
@@ -91,13 +124,46 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       this.loadEmployees();
       this.getCustomerList();
       this.filterChangeCombobox();
+      this.filterChangeMultiselect();
+      this.loadService();
     });
+  }
+
+  filterChangeMultiselect() {
+    this.serviceMultiSelect.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.serviceMultiSelect.loading = true)),
+        switchMap((value) => this.searchService(value))
+      )
+      .subscribe((result) => {
+        this.filteredServices = result;
+        this.serviceMultiSelect.loading = false;
+      });
   }
 
   loadEmployees() {
     this.searchEmployees().subscribe(result => {
       this.filteredEmployees = _.unionBy(this.filteredEmployees, result.items, 'id');
     });
+  }
+
+  loadService() {
+    this.searchService().subscribe(
+      result => {
+        this.filteredServices = result;
+      }
+    )
+  }
+
+  searchService(q?: string) {
+    var val = new ProductPaged();
+    val.limit = 20;
+    val.offset = 0
+    val.search = q || '';
+    val.type = "service";
+    return this.productService.autocomplete2(val);
   }
 
   TimeInit() {
@@ -116,6 +182,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
 
+
+
   searchEmployees(filter?: string) {
     var val = new EmployeePaged();
     val.search = filter || '';
@@ -125,7 +193,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-    
+
     if (!this.formGroup.valid) {
       return false;
     }
@@ -134,9 +202,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
     var apptDate = this.intlService.formatDate(appoint.apptDate, 'yyyy-MM-dd');
-    var appTime = appoint.appTime;    
+    var appTime = appoint.appTime;
     appoint.date = `${apptDate}T00:00:00`;
     appoint.time = appTime;
+    appoint.timeExpected = Number.parseInt(appoint.timeExpected);
     if (this.state != 'cancel') {
       appoint.reason = null;
     }
@@ -294,15 +363,15 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     return this.formGroup.get('partner').value;
   }
 
-  get partnerAge(){
+  get partnerAge() {
     return this.formGroup.get('partnerAge').value;
   }
 
-  get partnerPhone(){
+  get partnerPhone() {
     return this.formGroup.get('partnerPhone').value;
   }
 
-  get state(){
+  get state() {
     return this.formGroup.get('state').value;
   }
 
@@ -343,7 +412,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.formGroup.get('partnerPhone').patchValue(rs.Phone);
         this.tags.clear();
         rs.Tags.forEach(tag => {
-          var g = this.fb.group(tag);        
+          var g = this.fb.group(tag);
           this.tags.push(g);
         });
       });
@@ -371,6 +440,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         let date = new Date(rs.date);
         this.formGroup.get('apptDate').patchValue(date);
         this.formGroup.get('appTime').patchValue('07:00');
+        this.formGroup.get('timeExpected').patchValue('30');
 
         if (rs.partner) {
           this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');

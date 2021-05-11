@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using TMTDentalAPI.Middlewares.ProcessUpdateHandlers;
 
@@ -34,18 +35,16 @@ namespace TMTDentalAPI.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var tenantContext = context.GetTenantContext<AppTenant>();
-            var tenant = tenantContext?.Tenant;
-            if (tenant != null)
+            //neeus url cua request ma == 'ProcessUpdate'
+            if (context.Request.Path.Equals(new PathString("/ProcessUpdate")))
             {
-                if (tenant.Version != _appSettings.Version)
+                var tenantContext = context.GetTenantContext<AppTenant>();
+                var tenant = tenantContext?.Tenant;
+                if (tenant != null)
                 {
-                    var key = AppConstants.GetLockRequestKey(context.Request.Host.Host, "__process_update");
-                    var lockObj = LockUtils.Get(key);
                     try
                     {
-                        await lockObj.WaitAsync();
-                        await _mediator.Publish(new ProcessUpdateNotification());
+                        await _mediator.Publish(new ProcessUpdateNotification(context));
 
                         var tenantDbContext = (TenantDbContext)context.RequestServices.GetService(typeof(TenantDbContext));
                         var tnt = tenantDbContext.Tenants.Where(x => x.Hostname == tenant.Hostname).FirstOrDefault();
@@ -56,21 +55,15 @@ namespace TMTDentalAPI.Middlewares
                         tenant.Version = _appSettings.Version;
 
                         context.SetTenantContext(tenantContext);
+
+                        context.Response.StatusCode = (int)HttpStatusCode.NoContent;
+                        context.Response.Headers.Add("Pragma", new[] { "no-cache" });
+                        context.Response.Headers.Add("Cache-Control", new[] { "no-cache,no-store" });
                     }
                     catch (Exception e)
                     {
                         _logger.LogError(e.Message);
                     }
-                    finally
-                    {
-                        lockObj.Release();
-                    }
-
-                    await _next.Invoke(context);
-                }
-                else
-                {
-                    await _next(context);
                 }
             }
             else

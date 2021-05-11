@@ -27,8 +27,17 @@ namespace Infrastructure.Services
         Task ActionDone(IEnumerable<Guid> ids);
         IEnumerable<Guid> DefaultGetInvoice(List<Guid> ids);
         void _ComputeResidual(IEnumerable<AccountInvoice> invoices);
-        Task ApplyCoupon(SaleOrderApplyCoupon val);
+        void _ComputeResidual(IEnumerable<SaleOrder> self);
+
+        Task _ComputeAmountPromotionToOrder(IEnumerable<Guid> ids);
+
+        //Task ApplyCoupon(SaleOrderApplyCoupon val);
+        Task<SaleCouponProgramResponse> ApplyCoupon(ApplyPromotionUsageCode val);
         Task ApplyPromotion(Guid id);
+
+        Task ApplyPromotionOnOrder(ApplyPromotionRequest val);
+
+        Task ApplyDiscountOnOrder(ApplyDiscountViewModel val);
 
         Task<SaleOrder> ActionConvertToOrder(Guid id);
         Task<IEnumerable<AccountMove>> ActionInvoiceCreateV2(Guid id);
@@ -36,7 +45,7 @@ namespace Infrastructure.Services
         bool _IsRewardInOrderLines(SaleOrder self, SaleCouponProgram program);
         IEnumerable<SaleOrderLine> _GetRewardLines(SaleOrder self);
         Task<IEnumerable<SaleCouponProgram>> _GetApplicablePrograms(SaleOrder self);
-        Task RecomputeCouponLines(IEnumerable<Guid> ids);
+        //Task RecomputeCouponLines(IEnumerable<Guid> ids);
         Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id);
         Task RecomputeResidual(IEnumerable<Guid> ids);
         Task<bool> CheckHasPromotionCanApply(Guid id);
@@ -45,12 +54,14 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleOrderLineDisplay>> GetServiceBySaleOrderId(Guid id);
         Task<IEnumerable<DotKhamDisplay>> GetTreatmentBySaleOrderId(Guid id);
         Task<IEnumerable<LaboOrderDisplay>> GetLaboBySaleOrderId(Guid id);
-        Task ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val);
+
+        Task<RegisterSaleOrderPayment> GetSaleOrderPaymentBySaleOrderId(Guid id);
+        Task ApplyDiscountDefault(ApplyDiscountViewModel val);
         void _AmountAll(SaleOrder order);
 
         //Task CancelSaleOrderLine(ActionCancelSaleOrderLineViewModel val);
 
-        Task<SaleOrderDisplay> GetDisplayAsync(Guid id);
+        //Task<SaleOrderDisplay> GetDisplayAsync(Guid id);
 
         Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid id);
 

@@ -53,6 +53,10 @@ namespace Infrastructure.EntityConfigurations
                .WithMany()
                .HasForeignKey(x => x.CardId);
 
+            builder.HasOne(x => x.Quotation)
+                .WithMany(x => x.Orders)
+                .HasForeignKey(x => x.QuotationId);
+
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
             .HasForeignKey(x => x.CreatedById);

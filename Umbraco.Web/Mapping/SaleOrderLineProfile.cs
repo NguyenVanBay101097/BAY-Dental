@@ -15,7 +15,9 @@ namespace Umbraco.Web.Mapping
             //CreateMap<SaleOrderLine, SaleOrderLineBasic>().ReverseMap();
 
             CreateMap<SaleOrderLine, SaleOrderLineDisplay>()
-                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)));
+                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)))
+                 .ForMember(x => x.AmountPromotionToOrder, x => x.MapFrom(s => s.PromotionLines.Where(s => !s.Promotion.SaleOrderLineId.HasValue).Sum(s => s.PriceUnit)))
+                 .ForMember(x => x.AmountPromotionToOrderLine, x => x.MapFrom(s => s.PromotionLines.Where(s => s.Promotion.SaleOrderLineId.HasValue).Sum(s => s.PriceUnit)));
 
 
             CreateMap<SaleOrderLineDisplay, SaleOrderLine>()
@@ -43,7 +45,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.PriceUnit, x => x.Condition(s => s.State == "draft"))
                 .ForMember(x => x.Discount, x => x.Condition(s => s.State == "draft"))
-                .ForMember(x => x.ProductId, x => x.Condition(s => s.State == "draft"));
+                .ForMember(x => x.ProductId, x => x.Condition(s => s.State == "draft"))
+                .ForMember(x => x.Promotions, x => x.Ignore());
 
             CreateMap<SaleOrderLine, SaleOrderLinePrintVM>();
 
@@ -62,6 +65,10 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrderLine, SaleOrderLineForProductRequest>();
             CreateMap<SaleOrderLine, SaleOrderLineSimple>();
             CreateMap<SaleOrderLineSimple, SaleOrderLine>();
+
+            CreateMap<SaleOrderLine, SaleOrderLineIsActivePatch>();
+            CreateMap<SaleOrderLineIsActivePatch, SaleOrderLine>()
+                .ForMember(x => x.Id, x => x.Ignore());
         }
     }
 }

@@ -17,6 +17,7 @@ import { PartnerCategoryPopoverComponent } from './partner-category-popover/part
 import { PartnersBindingDirective } from 'src/app/shared/directives/partners-binding.directive';
 import { PartnerCustomerAutoGenerateCodeDialogComponent } from '../partner-customer-auto-generate-code-dialog/partner-customer-auto-generate-code-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -56,10 +57,18 @@ export class PartnerCustomerListComponent implements OnInit {
     params: {}
   };
 
+  canExport = false;
+  canAdd = false;
+  canImport = false;
+  canFilterPartnerCategory = false;
+  canUpdateExcel = false;
+
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
-    private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService) { }
+    private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
+    private checkPermissionService: CheckPermissionService) { }
 
   ngOnInit() {
+    this.checkRole();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -70,7 +79,8 @@ export class PartnerCustomerListComponent implements OnInit {
         this.skip = 0;
       });
 
-    this.categMst.filterChange
+    if (this.canFilterPartnerCategory && this.categMst) {
+      this.categMst.filterChange
       .asObservable()
       .pipe(
         debounceTime(300),
@@ -81,8 +91,11 @@ export class PartnerCustomerListComponent implements OnInit {
         this.filteredCategs = result;
         this.categMst.loading = false;
       });
+    }
 
-    this.loadFilteredCategs();
+    if(this.canFilterPartnerCategory){
+      this.loadFilteredCategs();
+    }
   }
 
   updateFilter() {
@@ -90,6 +103,7 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   refreshData() {
+    debugger
     this.dataBinding.rebind();
   }
 
@@ -243,5 +257,13 @@ export class PartnerCustomerListComponent implements OnInit {
       });
     }, () => {
     });
+  }
+
+  checkRole(){
+    this.canExport = this.checkPermissionService.check(['Basic.Partner.Export']);
+    this.canAdd = this.checkPermissionService.check(['Basic.Partner.Create']);
+    this.canImport = this.checkPermissionService.check(['Basic.Partner.Import']);
+    this.canFilterPartnerCategory = this.checkPermissionService.check(["Catalog.PartnerCategory.Read"])
+    this.canUpdateExcel = this.checkPermissionService.check(["Basic.Partner.UpdateExcel"]);
   }
 }

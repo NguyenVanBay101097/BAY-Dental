@@ -28,7 +28,7 @@ namespace Infrastructure.Data
         private readonly AppTenant _tenant;
         private readonly IConfiguration _configuration;
         public CatalogDbContext(DbContextOptions<CatalogDbContext> options, AppTenant tenant, IConfiguration configuration)
-            :base(options)
+            : base(options)
         {
             _tenant = tenant;
             _configuration = configuration;
@@ -237,11 +237,35 @@ namespace Infrastructure.Data
         public DbSet<ProductRequest> ProductRequests { get; set; }
         public DbSet<ProductRequestLine> ProductRequestLines { get; set; }
         public DbSet<SaleOrderLineProductRequested> SaleOrderLineProductRequesteds { get; set; }
-
+        public DbSet<ProductAppointmentRel> ProductAppointmentRels { get; set; }
         //public DbSet<StockInventory> StockInventories { get; set; }
         //public DbSet<StockInventoryLine> StockInventoryLines { get; set; }
         public DbSet<StockInventoryCriteria> StockInventoryCriterias { get; set; }
         public DbSet<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; }
+        public DbSet<Quotation> Quotations { get; set; }
+        public DbSet<QuotationLine> QuotationLines { get; set; }
+        public DbSet<QuotationLineToothRel> QuotationLineToothRels { get; set; }
+        public DbSet<PaymentQuotation> PaymentQuotations { get; set; }
+
+
+        public DbSet<Advisory> Advisory { get; set; }
+        public DbSet<AdvisoryToothRel> AdvisoryToothRels { get; set; }
+        public DbSet<AdvisoryToothDiagnosisRel> AdvisoryToothDiagnosisRels { get; set; }
+        public DbSet<AdvisoryProductRel> AdvisoryProductRels { get; set; }
+        public DbSet<ToothDiagnosis> ToothDiagnosis { get; set; }
+        public DbSet<ToothDiagnosisProductRel> ToothDiagnosisProductRels { get; set; }
+
+
+        public DbSet<PartnerAdvance> PartnerAdvances { get; set; }
+
+        public DbSet<SaleOrderPayment> SaleOrderPayments { get; set; }
+        public DbSet<SaleOrderPaymentHistoryLine> SaleOrderPaymentHistoryLines { get; set; }
+        public DbSet<SaleOrderPaymentJournalLine> SaleOrderPaymentJournalLines { get; set; }
+
+        public DbSet<SaleOrderPaymentAccountPaymentRel> SaleOrderPaymentAccountPaymentRels { get; set; }
+
+        public DbSet<SaleOrderPromotion> SaleOrderPromotions { get; set; }
+        public DbSet<SaleOrderPromotionLine> SaleOrderPromotionLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -257,6 +281,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new UoMConfiguration());
             builder.ApplyConfiguration(new UoMCategoryConfiguration());
             builder.ApplyConfiguration(new SaleOrderConfiguration());
+            builder.ApplyConfiguration(new ProductAppointmentRelConfiguration());
             builder.ApplyConfiguration(new SaleOrderLineConfiguration());
             builder.ApplyConfiguration(new IRSequenceConfiguration());
             builder.ApplyConfiguration(new AccountInvoiceConfiguration());
@@ -437,6 +462,25 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ProductBomConfiguration());
             builder.ApplyConfiguration(new ProductRequestConfiguration());
             builder.ApplyConfiguration(new ProductRequestLineConfiguration());
+            builder.ApplyConfiguration(new QuotationConfiguration());
+            builder.ApplyConfiguration(new QuotationLineConfiguration());
+            builder.ApplyConfiguration(new QuotationLineToothRelConfiguration());
+            builder.ApplyConfiguration(new PaymentQuotationConfiguration());
+
+            builder.ApplyConfiguration(new AdvisoryConfiguration());
+            builder.ApplyConfiguration(new AdvisoryToothRelConfiguration());
+            builder.ApplyConfiguration(new AdvisoryToothDiagnosisRelConfiguration());
+            builder.ApplyConfiguration(new AdvisoryProductRelConfiguration());
+            builder.ApplyConfiguration(new ToothDiagnosisConfiguration());
+            builder.ApplyConfiguration(new ToothDiagnosisProductRelConfiguration());
+            builder.ApplyConfiguration(new PartnerAdvanceConfiguration());
+
+            builder.ApplyConfiguration(new SaleOrderPaymentConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPaymentHistoryLineConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPaymentJournalLineConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPaymentAccountPaymentRelConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPromotionConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPromotionLineConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

@@ -98,6 +98,18 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [AllowAnonymous]
+        [HttpGet("[action]")]
+        public async Task<IActionResult> OldSaleOrderPaymentProcessUpdate()
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _importSampleDataService.OldSaleOrderPaymentProcessUpdate();
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+
 
         [HttpPost("[action]")]
         public async Task<IActionResult> BinaryUploadAttachment([FromForm]UploadAttachmentViewModel val)

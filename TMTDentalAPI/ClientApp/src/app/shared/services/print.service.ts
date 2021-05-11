@@ -44,7 +44,7 @@ export class PrintService {
     this.renderer.appendChild(body, iframe);
     iframe.onload = function () {
       iframe.contentWindow.print();
-      setTimeout(function() { iframe.remove(); }, 0);
+      setTimeout(function () { iframe.remove(); }, 0);
     };
     var doc = iframe.contentWindow.document.open("text/html", "replace");
     doc.write(html);

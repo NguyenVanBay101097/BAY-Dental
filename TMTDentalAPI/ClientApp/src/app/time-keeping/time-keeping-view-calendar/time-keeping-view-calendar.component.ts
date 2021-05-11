@@ -19,6 +19,7 @@ import { PopupCloseEvent } from '@progress/kendo-angular-grid';
 import { TimeKeepingForallDialogComponent } from '../time-keeping-forall-dialog/time-keeping-forall-dialog.component';
 import { FormBuilder } from '@angular/forms';
 import { guid } from '@progress/kendo-angular-common';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-time-keeping-view-calendar',
@@ -39,6 +40,8 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   search: string;
   date: Date;
 
+  // permission
+  canEmployeeRead = this.checkPermissionService.check(["Catalog.Employee.Read"]);
 
   public today: Date = new Date(new Date().toDateString());
   public filterMonth: Date = new Date(this.today);
@@ -55,7 +58,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     private fb: FormBuilder,
     config: NgbPopoverConfig,
     private notificationService: NotificationService,
-
+    private checkPermissionService: CheckPermissionService
   ) {
     config.placement = 'bottom';
     config.triggers = 'hover';
@@ -64,17 +67,19 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   ngOnInit() {
     this.getDateMonthList();
-    this.empCbx.filterChange.asObservable().pipe(
-      switchMap(value => from([this.sourceEmployees]).pipe(
-        tap(() => this.empCbx.loading = true),
-        debounceTime(300),
-        map((data) => this.sourceEmployees.filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1).slice(0, 20))
-      ))
-    )
-      .subscribe(x => {
+
+    if (this.empCbx) {
+      this.empCbx.filterChange.asObservable().pipe(
+        switchMap(value => from([this.sourceEmployees]).pipe(
+          tap(() => this.empCbx.loading = true),
+          debounceTime(300),
+          map((data) => this.sourceEmployees.filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1).slice(0, 20))
+        ))
+      ).subscribe(x => {
         this.listEmployeies = x;
         this.empCbx.loading = false;
       });
+    }
   }
 
   searchEmployee(search?: string) {

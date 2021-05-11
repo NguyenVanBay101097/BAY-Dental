@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,7 +19,9 @@ namespace Infrastructure.Services
         Task<PagedResult2<AppointmentBasic>> SearchReadByDate(AppointmentSearchByDate val);
         Task<AppointmentBasic> GetBasic(Guid id);
         Task<long> GetCount(AppointmentGetCountVM val);
-
+        Task<Appointment> CreateAsync(AppointmentDisplay val);
+        Task UpdateAsync(Guid id,AppointmentDisplay val);
         Task<IEnumerable<AppointmentBasic>> GetExcelData(AppointmentPaged val);
+        void ComputeDataExcel(ExcelWorksheet worksheet, IEnumerable<AppointmentBasic> data, Dictionary<string, string> stateDict);
     }
 }

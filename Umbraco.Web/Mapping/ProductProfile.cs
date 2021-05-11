@@ -37,6 +37,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<ProductSave, Product>()
                 .ForMember(x => x.Boms, x => x.Ignore());
 
+            CreateMap<Product, ProductBasic2>();
+
             CreateMap<Product, ProductDotKhamLineSimple>();
         }
     }

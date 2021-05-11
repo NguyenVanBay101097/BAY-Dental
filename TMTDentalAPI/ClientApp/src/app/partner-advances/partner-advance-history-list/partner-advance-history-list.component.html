@@ -1,0 +1,42 @@
+<div class="o_control_panel">
+    <div class="o_cp_t_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <div class="d-flex">
+                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
+                        (searchChange)="onSearchDateChange($event)">
+                    </app-tai-date-range-filter-dropdown>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+
+        </div>
+    </div>
+    <div class="o_cp_t_right">
+        <!-- <input class="o_searchview_input o_searchview"
+            placeholder="Tìm kiếm theo số phiếu tạm ứng" type="text" [(ngModel)]="search"
+            (ngModelChange)="this.searchUpdate.next($event)"> -->
+    </div>
+</div>
+
+<kendo-grid [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
+    [loading]="loading" (pageChange)="pageChange($event)" [navigable]="true">
+    <kendo-grid-column field="paymentName" title="Mã thanh toán" width="120">
+    </kendo-grid-column>
+    <kendo-grid-column title="Ngày thanh toán" width="135">
+        <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+            {{dataItem.paymentDate | date:'shortDate'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Phiếu điều trị" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+            <a class="text-primary" *ngFor="let order of dataItem.orders" (click)="getFormSaleOrder(order.id)">{{order.name}}</a>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Số tiền" class="text-right" width="135">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.paymentAmount | number}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

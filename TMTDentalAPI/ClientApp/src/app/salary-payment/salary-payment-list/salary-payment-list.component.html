@@ -13,7 +13,7 @@
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">
+                <button *ngIf="canSalaryPaymentCreate" type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">
                     Tạm ứng lương
                 </button>
             </div>
@@ -66,10 +66,10 @@
                 {{stateGet(dataItem.state)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="#"
-            width="40">
+        <kendo-grid-column *ngIf="canSalaryPaymentDelete"
+            [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="#" width="40">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <button type="button" class="btn btn-icon btn-sm btn-danger" (click)="deleteItem(dataItem)">
+                <button *ngIf="canSalaryPaymentDelete" type="button" class="btn btn-icon btn-sm btn-danger" (click)="deleteItem(dataItem)">
                     <span class="k-icon k-i-delete"></span>
                 </button>
             </ng-template>

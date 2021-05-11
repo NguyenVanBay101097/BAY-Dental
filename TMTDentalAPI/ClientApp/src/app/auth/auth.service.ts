@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 
 import { Observable, of, ReplaySubject, BehaviorSubject } from 'rxjs';
-import { tap, delay, catchError, retry, switchMap, map } from 'rxjs/operators';
+import { tap, delay, catchError, retry, switchMap, map, mergeMap } from 'rxjs/operators';
 import { AuthResource, LoginTokenResult, LoginUserInfo, LoginViewModel, LoggedInViewModel, ForgotPasswordViewModel, RefreshViewModel, RefreshResponseViewModel, UserViewModel } from './auth.resource';
 import { LoginForm } from './login-form';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
@@ -43,19 +43,18 @@ export class AuthService {
         return this.authResource
             .performLogin(val)
             .pipe(
-                map((result: LoggedInViewModel) => {
+                mergeMap((result: LoggedInViewModel) => {
                     if (result.succeeded) {
                         localStorage.setItem('access_token', result.token);
                         localStorage.setItem('user_info', JSON.stringify(result.user));
                         localStorage.setItem('refresh_token', result.refreshToken);
                         this.isLoggedIn = true;
                         this.currentUserSubject.next(result.user);
+                        return this.authResource.getPermission();
                         // get permission
-                        this.authResource.getPermission().pipe(map((res: any) => {
-                            localStorage.setItem('user_permission', JSON.stringify(res));
-                        })).subscribe();
+                    } else {
+                        return of(result);
                     }
-                    return result;
                 })
             );
     }

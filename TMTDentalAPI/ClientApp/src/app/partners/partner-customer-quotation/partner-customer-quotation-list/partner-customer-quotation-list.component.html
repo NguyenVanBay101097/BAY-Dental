@@ -1,0 +1,79 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <div class="breadcrumb">
+            <div class="d-flex">
+                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                </app-tai-date-range-filter-dropdown>
+                <button type="button" (click)="createQuotation()" class="ml-2 btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Thêm báo giá</button>
+            </div>
+        </div>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo số báo giá, và người báo giá" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+
+        </div>
+    </div>
+</div>
+<div>
+    <div class="o_content">
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+            <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" field="name" title="Số báo giá" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <a class="text-primary" (click)="editQuotation(dataItem)">
+                            {{dataItem.name}}
+                        </a>
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" field="dateQuotation" title="Ngày báo giá" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.dateQuotation | date : 'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" field="dateEndQuotation" title="Ngày hết hạn" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.dateEndQuotation | date : 'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <!-- <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" field="employee" title="Người báo giá" width="150">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.employee.name}}
+                </ng-template>
+            </kendo-grid-column> -->
+            <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" field="totalAmount" title="Tổng tiền" class="text-right" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.totalAmount | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" title="Phiếu điều trị" class="text-right" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <a *ngFor="let order of dataItem.orders; let i = index" class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: order.id}">
+                            {{order.name}}<span *ngIf="i < dataItem.orders.length -1">, </span>
+                        </a>
+                </ng-template>
+            </kendo-grid-column>
+            <!-- <kendo-grid-column field="state" title="Tình trạng" width="100">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <span *ngIf="dataItem.state == 'expired'">Còn hạn</span>
+                        <span *ngIf="dataItem.state == 'unexpired'">Hết hạn</span>
+                    </ng-template>
+                </kendo-grid-column> -->
+            <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" title="Thao tác" field="id" width="50" class="text-center">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteQuotation(dataItem)">
+                            <span class="far fa-trash-alt"></span></button>
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>

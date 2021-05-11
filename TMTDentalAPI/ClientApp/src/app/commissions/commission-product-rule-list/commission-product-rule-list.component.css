@@ -1,0 +1,44 @@
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control:focus {
+    box-shadow: none !important;
+}
+
+.has-search .form-control-icon {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: calc(1.5em + .75rem + 2px);;
+    line-height: 2.5;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+.has-search-sm .form-control-sm {
+    padding-left: 2rem;
+}
+
+.has-search-sm .form-control-icon {
+    width: 2rem;
+    height: calc(1.5em + .5rem + 2px);
+    font-size: .875rem;
+}
+.t-sticky-thead thead tr th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: white;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    border-style: none;
+    padding: 0;
+    outline: none;
+}

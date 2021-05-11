@@ -47,6 +47,12 @@ namespace Infrastructure.Services
             return await SearchQuery(x => x.Code == "334" && x.CompanyId == companyId).FirstOrDefaultAsync();
         }
 
+        public async Task<AccountAccount> GetAccountAdvanceCurrentCompany()
+        {
+            var companyId = CompanyId;
+            return await SearchQuery(x => x.Code == "KHTU" && x.CompanyId == companyId).FirstOrDefaultAsync();
+        }
+
         public override ISpecification<AccountAccount> RuleDomainGet(IRRule rule)
         {
             var userObj = GetService<IUserService>();

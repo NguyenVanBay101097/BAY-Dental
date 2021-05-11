@@ -5,66 +5,72 @@
                 <a [routerLink]="['/partners/customer/' + customerId + '/treatment']">Phiếu điều trị</a>
             </li>
             <li class="active">
-                <span *ngIf="saleOrderId">{{saleOrder.Name}}</span>
+                <span *ngIf="saleOrderId">{{saleOrder.name}}</span>
                 <span *ngIf="!saleOrderId">Mới</span>
             </li>
         </ol>
         <!-- <div class="o_cp_left">
-            <div class="o_cp_buttons">
-                <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
-                        *ngIf="id">
-                        Thêm mới</button>
-                </div>
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
+                    *ngIf="id">
+                    Thêm mới</button>
             </div>
         </div>
-        <div class="o_cp_right">
-        </div> -->
+    </div>
+    <div class="o_cp_right">
+    </div> -->
     </div>
 </div>
 
-<div class="o_content">
+<div class="o_content h-100 overflow-hidden">
     <form class="o_form_view h-100" [formGroup]="formGroup">
         <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
             <div class="flex-0-0-auto">
                 <div class="d-flex">
                     <div class="btns">
-                        <a [routerLink]="['/partners/customer/' + customerId + '/overview']" class="btn btn-secondary btn-sm">
+                        <a [routerLink]="['/partners/customer/' + customerId + '/treatment']" class="btn btn-secondary btn-sm">
                             Trở lại
                         </a>
-                        <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder.State == 'draft' || saleOrder.State == 'sale'" (click)="onSave()">
+                        <!-- <button type="button" *ngIf="saleOrder.state == 'sale' && !isEditting" class="btn btn-secondary btn-sm" (click)="actionEdit()">
+                            Sửa dịch vụ
+                        </button> -->
+                        <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder.state != 'done'" (click)="onSave()">
                             Lưu
                         </button>
-                        <button type="button" accesskey="1" *ngIf="saleOrder.State == 'draft'" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
+                        <button type="button" accesskey="1" *ngIf="saleOrder.state == 'draft'" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
                             Lưu và xác nhận
                         </button>
-                        <button *ngIf="['sale', 'done'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
+                        <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
                             Thanh toán
                         </button>
                         <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
                             In phiếu
                         </button>
-                        <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
-                            Cập nhật công nợ
-                        </button>
-                        <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
+                        <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
+                Cập nhật công nợ
+            </button> -->
+                        <!-- <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
                             Hủy phiếu
-                        </button>
-                        <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
-                                Hoàn thành
-                            </button>
-                        <button *ngIf="['done'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
-                                Chưa hoàn thành
-                            </button>
-                        <!-- <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
-                            In phiếu
                         </button> -->
+                        <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
+                            Hoàn thành
+                        </button>
+                        <button *ngIf="['done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
+                            Chưa hoàn thành
+                        </button>
+                        <!-- <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
+                In phiếu
+            </button> -->
                     </div>
-                    <div *ngIf="['sale'].indexOf(saleOrder.State) !== -1" class="ml-auto">
+                    <div *ngIf="['sale'].indexOf(saleOrder.state) !== -1" class="ml-auto">
                         <button (click)="createProductToaThuoc()" type="button" class="btn btn-sm btn-primary ml-auto mr-1">
-                            Tạo đơn thuốc</button>
-                        <button type="button" (click)="dialogAppointment()" class="btn btn-sm btn-primary">Tạo lịch
-                            hẹn</button>
+                            Tạo đơn thuốc
+                        </button>
+                        <button type="button" (click)="dialogAppointment()" class="btn btn-sm btn-primary">
+                            Tạo lịch
+                            hẹn
+                        </button>
                     </div>
                 </div>
                 <div class="o_group">
@@ -77,9 +83,18 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="partner" [routerLink]="['/partners/customer/' + partner.Id]">{{partner.DisplayName}}</a>
+                                    <a *ngIf="partner" [routerLink]="['/partners/customer/' + partner.id]">{{partner.displayName}}</a>
                                 </td>
                             </tr>
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Báo giá
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                </td>
+                            </tr> -->
                             <tr *ngIf="saleOrder.Quote">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -87,7 +102,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="saleOrder.Quote" [routerLink]="['/sale-quotations/form']" [queryParams]="{id: saleOrder.Quote.Id}">{{saleOrder.Quote.Name}}</a>
+                                    <a *ngIf="saleOrder.Quote" [routerLink]="['/sale-quotations/form']" [queryParams]="{id: saleOrder.quote.Id}">{{saleOrder.quote.name}}</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -101,12 +116,17 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker [class.d-none]="saleOrder.State != 'draft'" formControlName="dateOrderObj">
+                                    <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'" formControlName="dateOrderObj">
                                     </kendo-datetimepicker>
                                     <div *ngIf="f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày lập phiếu</div>
                                     </div>
-                                    <span [class.d-none]="saleOrder.State == 'draft'">{{saleOrder.DateOrder | date: 'short'}}</span>
+                                    <span [class.d-none]="saleOrder.state == 'draft'">
+                                        {{
+                                        saleOrder.dateOrder | date:
+                                        'short'
+                                        }}
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
@@ -130,16 +150,16 @@
                     <li class="nav-item">
                         <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Dịch vụ</a>
                     </li>
-                    <li class="nav-item" *ngIf="saleOrder.State != 'draft'">
+                    <li class="nav-item" *ngIf="saleOrder.state != 'draft'">
                         <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Đợt khám</a>
                     </li>
-                    <li class="nav-item" *ngIf="saleOrder.State != 'draft'">
+                    <li class="nav-item" *ngIf="saleOrder.state != 'draft'">
                         <a class="nav-link" id="payment-tab" data-toggle="tab" href="#toathuoc" role="tab" aria-controls="payment" aria-selected="false">Đơn thuốc</a>
                     </li>
-                    <li class="nav-item" *ngIf="saleOrder.State != 'draft'">
+                    <li class="nav-item" *ngIf="saleOrder.state != 'draft'">
                         <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment" role="tab" aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
                     </li>
-                    <li class="nav-item" *ngIf="saleOrder.State != 'draft'">
+                    <li class="nav-item" *ngIf="saleOrder.state != 'draft'">
                         <a class="nav-link" id="product-tab" data-toggle="tab" href="#product" role="tab" aria-controls="product" aria-selected="false">Yêu cầu vật tư</a>
                     </li>
                 </ul>
@@ -147,184 +167,95 @@
                 <!-- Tab panes -->
                 <div class="tab-content flex-1-1-100 overflow-hidden">
                     <div class="tab-pane active h-100" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <div class="w-100 h-100 d-flex">
-                            <div *ngIf="stateControl.value === 'draft'" class="w-25 h-100 mr-2">
-                                <app-sale-order-list-service (newEventEmiter)="addLine($event)">
-                                </app-sale-order-list-service>
+                        <div class="w-100 h-100 d-flex flex-column">
+                            <!-- && isEditting -->
+                            <div *ngIf="isEditSate()" class="mb-2">
+                                <app-service-list-search-dropdown (onSelectService)="addLine($event)"></app-service-list-search-dropdown>
                             </div>
-                            <div [ngClass]="{'w-100':stateControl.value !== 'draft'}" class="w-75 d-flex flex-column">
-                                <!-- Component Form Service Payment -->
+                            <div class="d-flex overflow-hidden w-100">
+                                <div class="w-75 d-flex flex-column">
+                                    <!-- saleorderline -->
 
-                                <div class="overflow-auto">
-                                    <table class="table b-table-border table-sm mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th class="b-sticky-left" style="min-width: 200px;">Dịch vụ</th>
-                                                <th style="min-width: 200px;">Thông tin bổ sung</th>
-                                                <th style="min-width: 200px;">Bác sĩ</th>
-                                                <th style="min-width: 80px;" class="text-right">SL</th>
-                                                <th style="min-width: 120px;" class="text-right">Đơn giá</th>
-                                                <th style="min-width: 60px;" class="text-right">Giảm</th>
-                                                <th style="min-width: 100px;" class="text-right">Thành tiền</th>
-                                                <th style="min-width: 100px;" class="text-right">Thanh toán</th>
-                                                <th style="min-width: 100px;" class="text-right">Còn lại</th>
-                                                <th style="min-width: 50px;" class="text-center b-sticky-right">#</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody formArrayName="OrderLines">
-                                            <ng-container *ngFor="let line of orderLines.controls; let i=index">
-                                                <tr [formGroupName]="i">
-                                                    <td class="b-sticky-left">{{line.get('Name').value }}</td>
-                                                    <td>
-                                                        <app-sale-order-teeth-popover *ngIf="filteredToothCategories && initialListTeeths" [saleOrderState]="stateControl.value" [initialListTeeths]="initialListTeeths" [filteredToothCategories]="filteredToothCategories" [line]="line.value" (eventTeeth)="updateTeeth($event, line)">
-                                                        </app-sale-order-teeth-popover>
-                                                    </td>
-                                                    <td>
-                                                        <span *ngIf="stateControl.value !== 'draft'">{{line.get('Employee').value?.Name }}</span>
-                                                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="stateControl.value === 'draft'" style="width:100%;" [data]="filteredEmployees" [textField]="'Name'" #employeeCbx formControlName="Employee" [valueField]="'Id'">
-                                                        </kendo-combobox>
-                                                    </td>
-                                                    <td class="text-right">
-                                                        <span *ngIf="stateControl.value !== 'draft'">{{line.get('ProductUOMQty').value | number }}</span>
-                                                        <input type="number" min="1" *ngIf="stateControl.value === 'draft'" style="width:100%;" class="form-control" formControlName="ProductUOMQty" (change)="onChangeQuantity(line)" (keyup)="onChangeQuantity(line)">
-                                                    </td>
-                                                    <td class="text-right">
-                                                        <span *ngIf="stateControl.value !== 'draft'">{{ line.get('PriceUnit').value | number }}</span>
-                                                        <kendo-numerictextbox *ngIf="stateControl.value === 'draft'" style="width:100%;" [format]="'n0'" [spinners]="false" formControlName="PriceUnit" (change)="onChangeQuantity(line)" (keyup)="onChangeQuantity(line)">
-                                                        </kendo-numerictextbox>
-                                                    </td>
-                                                    <td class="text-right">
-                                                        <span *ngIf="stateControl.value !== 'draft'">
-                                                            {{ getDiscountNumber(line) | number }}{{getDiscountTypeDisplay(line)}}
-                                                        </span>
-                                                        <span *ngIf="stateControl.value === 'draft'">
-                                                            <app-sale-order-line-discount-odata-popover
-                                                                [line]="line.value"
-                                                                (lineDiscountEvent)="onChangeDiscount($event,line)">
-                                                            </app-sale-order-line-discount-odata-popover>
-                                                        </span>
-                                                    </td>
-                                                    <td class="text-right">
-                                                        {{line.get('PriceSubTotal').value | number}}
-                                                    </td>
-                                                    <td class="text-right">
-                                                        {{ line.get('AmountPaid').value | number }}
-                                                    </td>
-                                                    <td class="text-right">
-                                                        {{ line.get('AmountResidual').value | number }}
-                                                    </td>
-                                                    <td class="text-center b-sticky-right">
-                                                        <button *ngIf="stateControl.value == 'draft'" type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteLine(i)">
-                                                            <span class="k-icon k-i-delete"></span>
-                                                        </button>
-                                                        <button *ngIf="stateControl.value == 'sale' && isLaboLine(line)" type="button" class="btn btn-icon btn-sm btn-light" title="Quản lý phiếu labo" (click)="showLaboList(line.get('Id').value)">
-                                                            <i class="fas fa-tooth"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </ng-container>
-
-                                        </tbody>
-
-                                    </table>
-                                </div>
-                                <div class="d-flex justify-content-between mt-3">
-                                    <div class="">
-                                        <app-sale-order-apply-discount-default-dialog (discountFormGroup)="onApplyDiscount($event)" *ngIf="['draft', 'sent'].indexOf(saleOrder.State) !== -1">
-                                        </app-sale-order-apply-discount-default-dialog>
-                                        <button type="button" hasGroups [groups]="'sale.group_service_card'" class="btn btn-outline-primary btn-sm mx-1" (click)="showApplyCardDialog()" *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.State) !== -1">
-                                            <span>Thẻ tiền mặt</span>
-                                        </button>
-                                        <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'" class="btn btn-outline-primary btn-sm mx-1" (click)="showApplyCouponDialog()" *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.State) !== -1">
-                                            <span>Coupon, mã khuyến mãi</span>
-                                        </button>
-                                        <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'" name="recompute_coupon_lines" placement="bottom" triggers="mouseenter:mouseleave" ngbPopover="Khi nhấn, phiếu điều trị sẽ kiểm tra và áp dụng những chương trình khuyến mãi có thể áp dụng."
-                                            popoverTitle="Khuyến mãi" class="btn btn-outline-primary btn-sm mx-1" *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.State) !== -1" (click)="applyPromotion()">
-                                            <span>Khuyến mãi</span>
-                                        </button>
+                                    <div class="div-table w-100 flex-0-0-auto overflow-auto">
+                                        <div class="div-row bg-primary text-white">
+                                            <div style="width: 200px;" class="div-cell py-1 pl-2">Dịch vụ</div>
+                                            <div style="width: 130px;" class="div-cell py-1 text-right">Đơn giá</div>
+                                            <div style="width: 100px;" class="div-cell py-1 text-right">Số lượng</div>
+                                            <div style="width: 100px;" class="div-cell py-1 text-right">Thành tiền</div>
+                                            <div style="width: 100px;" class="div-cell py-1 text-right">Thanh toán</div>
+                                            <div style="width: 100px;" class="div-cell py-1 text-right">Còn lại</div>
+                                            <div style="width: 100px;" class="div-cell py-1 text-center" *ngIf="stateControl.value != 'done'">Thao tác</div>
+                                        </div>
                                     </div>
-                                    <table class="table-borderless table-text-right mr-4 table-payment-result">
-                                        <!-- <tr>
-                                            <td>Thành tiền</td>
-                                            <td>{{getAmountTotal | number}}</td>
-                                        </tr> -->
-                                        <tr>
-                                            <td>Tổng tiền</td>
-                                            <td>{{getAmountTotal | number}}</td>
-                                        </tr>
-                                        <tr *ngIf="formGroup.get('State').value !== 'draft'">
-                                            <td>Thanh toán</td>
-                                            <td>{{getAmountPaidTotal | number}}</td>
-                                        </tr>
-                                        <tr *ngIf="formGroup.get('State').value !== 'draft'">
-                                            <td>Còn lại</td>
-                                            <td>{{saleOrder.Residual | number}}</td>
-                                        </tr>
-                                    </table>
+                                    <div class="flex-1-1-100 overflow-auto">
+                                        <ng-container *ngFor="let line of orderLines.controls; let i=index">
+                                            <app-sale-order-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)" [line]="line.value" (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)"></app-sale-order-line-cu>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                                <div class="w-25 pl-3">
+                                    <!-- ưu đãi -->
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">Ưu đãi phiếu điều trị
+                                            <img *ngIf="stateControl.value != 'done'" class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
+                                            <span class="ml-auto">{{sumPromotionSaleOrder() | number}}</span>
+                                        </div>
+                                        <div class="card-body px-3 py-2">
+                                            <div *ngIf="this.saleOrder.promotions?.length" class="d-flex justify-content-between mb-1">
+                                                <span class="font-weight-600">Ưu đãi</span>
+                                                <span class="font-weight-600">Số tiền giảm</span>
+                                            </div>
+                                            <div *ngFor="let item of saleOrder.promotions" class="d-flex justify-content-between mb-1">
+                                                <span>{{item.name}}</span>
+                                                <span>{{item.amount | number}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-primary text-white px-3 py-1">Thanh toán</div>
+                                        <div class="card-body px-3 py-2">
+                                            <p class="d-flex justify-content-between mb-0">
+                                                <label class="font-weight-600">Thành tiền</label>
+                                                <label class="font-weight-600">{{getAmount() | number}}</label>
+                                            </p>
+                                            <p class="d-flex justify-content-between mb-0">
+                                                <label class="font-weight-600">Tổng giảm giá</label>
+                                                <label class="font-weight-600">{{getTotalDiscount() | number : '1.0-0'}}</label>
+                                            </p>
+                                            <p class="d-flex justify-content-between mb-0">
+                                                <label class="font-weight-600">Tổng tiền</label>
+                                                <label class="font-weight-600">{{getAmountTotal() | number}}</label>
+                                            </p>
+                                            <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'" class="d-flex justify-content-between mb-0">
+                                                <label class="font-weight-600">Thanh toán</label>
+                                                <label class="font-weight-600">{{saleOrder.totalPaid | number}}</label>
+                                            </p>
+                                            <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'" class="d-flex justify-content-between mb-0">
+                                                <label class="font-weight-600">Còn lại</label>
+                                                <label class="font-weight-600">{{getAmountTotal() - saleOrder.totalPaid | number}}</label>
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="tab-pane h-100" *ngIf="saleOrder.State != 'draft'" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="tab-pane h-100" *ngIf="saleOrder.state != 'draft'" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                         <app-treatment-process-service-list></app-treatment-process-service-list>
-                        <!-- <app-sale-order-dotkham-list *ngIf="saleOrder && saleOrder.Id" [saleOrder]="saleOrder">
-                        </app-sale-order-dotkham-list> -->
                     </div>
-
-                    <!-- <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="labo" role="tabpanel"
-                            aria-labelledby="labo-tab">
-                            <div class="mb-2">
-                                <button type="button" class="btn btn-secondary btn-sm"
-                                    *ngIf="['sale'].indexOf(saleOrder.state) !== -1" (click)="actionLabo()">
-                                    Tạo phiếu labo
-                                </button>
-                            </div>
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Số phiếu</th>
-                                        <th>Labo</th>
-                                        <th>Ngày gửi</th>
-                                        <th>Ngày nhận</th>
-                                        <th>Tổng tiền</th>
-                                        <th>Trạng thái</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let lb of laboOrders">
-                                        <td (click)="actionLabo(lb)" style="cursor: pointer; color: #007bff;">
-                                            {{lb.name}}</td>
-                                        <td>{{lb.partnerName }}</td>
-                                        <td>{{lb.dateOrder | date: 'short' }}</td>
-                                        <td>{{lb.datePlanned | date: 'short' }}</td>
-                                        <td>{{lb.amountTotal | number }}</td>
-                                        <td>
-                                            <span *ngIf="lb.state==='purchase'">Đơn hàng</span>
-                                            <span *ngIf="lb.state==='draft'">Nháp</span>
-                                        </td>
-                                        <td>
-                                            <a title="Xóa" (click)="deleteDotKham(dk)">
-                                                <span class="far fa-trash-alt"></span></a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div> -->
-
-                    <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="payment" role="tabpanel" aria-labelledby="payment-tab">
+                    <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="payment" role="tabpanel" aria-labelledby="payment-tab">
                         <app-sale-order-payment-list *ngIf="saleOrderId" (paymentOutput)="paymentOutput($event)" #paymentComp [saleOrderId]="saleOrderId">
                         </app-sale-order-payment-list>
                     </div>
 
-                    <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="toathuoc" role="tabpanel" aria-labelledby="payment-tab">
+                    <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="toathuoc" role="tabpanel" aria-labelledby="payment-tab">
                         <app-partner-customer-toathuoc-list #toathuocComp [saleOrderId]="saleOrderId">
                         </app-partner-customer-toathuoc-list>
                     </div>
 
-                    <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="product" role="tabpanel" aria-labelledby="product-tab">
-                        <app-sale-order-product-request-list [saleOrderId]="saleOrderId" [saleOrderState]="saleOrder.State">
+                    <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="product" role="tabpanel" aria-labelledby="product-tab">
+                        <app-sale-order-product-request-list [saleOrderId]="saleOrderId" [saleOrderState]="saleOrder.state">
                         </app-sale-order-product-request-list>
                     </div>
                 </div>

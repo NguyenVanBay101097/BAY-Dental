@@ -9,6 +9,7 @@ import { LaboOrderPaged, LaboOrderService, LaboOrderBasic } from '../labo-order.
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { SaleOrderLineService, SaleOrderLinesLaboPaged, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-labo-order-list',
@@ -47,18 +48,20 @@ export class LaboOrderListComponent implements OnInit {
   laboStatusFilter: boolean;
   filterPaged: SaleOrderLinesLaboPaged = new SaleOrderLinesLaboPaged();
 
-
+  canUpdateSaleOrder: boolean = false;
 
   constructor(private laboOrderService: LaboOrderService,
     private router: Router,
     private saleOrderLineService: SaleOrderLineService,
-    private modalService: NgbModal, private intlService: IntlService) { }
+    private modalService: NgbModal, private intlService: IntlService,
+    private checkPermissionService: CheckPermissionService
+    ) { }
 
   ngOnInit() {
     this.filterPaged.limit = this.limit;
     this.filterPaged.offset = this.skip;
     this.loadDataFromApi();
-
+    this.checkRole();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -201,5 +204,9 @@ export class LaboOrderListComponent implements OnInit {
         this.loadDataFromApi();
       });
     });
+  }
+
+  checkRole(){
+    this.canUpdateSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Update']);
   }
 }

@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
+    /// <summary>
+    /// Lưu lại những chương trình khuyến mãi tự động áp dụng cho SaleOrder
+    /// </summary>
     public class SaleOrderNoCodePromoProgram
     {
         public Guid OrderId { get; set; }
