@@ -9,6 +9,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, delay, map, switchMap, tap } from 'rxjs/operators';
 import { EmployeeBasic, EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
@@ -74,6 +75,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     private printService: PrintService,
     private employeeService: EmployeeService,
     private modalService: NgbModal,
+    private notifyService: NotifyService
   ) { }
 
   ngOnInit() {
@@ -86,7 +88,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       note: '',
       dateQuotation: [null, Validators.required],
       dateApplies: [0, Validators.required],
-      dateEndQuotation: ({ value: null, disabled: true }),
+      dateEndQuotation: '',
       companyId: '',
       lines: this.fb.array([
       ]),
@@ -167,34 +169,34 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     })
   }
 
-  addLineFromProduct(val) {
-    var line = new QuotationLineDisplay();
-    if (val.id) {
-      line.id = val.id;
-    }
-    line.diagnostic = val.diagnostic;
-    line.discount = val.discount ? val.discount : 0;
-    line.discountType = val.discountType ? val.discountType : 'percentage';
-    line.productId = val.productId;
-    line.qty = val.qty ? val.qty : 1;
-    line.advisoryId = val.advisoryId;
-    line.advisoryEmployee = val.advisoryEmployee;
-    line.advisoryEmployeeId = val.advisoryEmployeeId;
-    line.subPrice = val.subPrice ? val.subPrice : 0;
-    line.name = val.name;
-    line.amount = val.amount;
-    line.teeth = this.fb.array([]);
-    if (val.teeth) {
-      val.teeth.forEach(item => {
-        line.teeth.push(this.fb.group(item))
-      })
-    }
-    line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
-    line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
-    var res = this.fb.group(line);
-    this.linesArray.push(res);
-    this.linesArray.markAsDirty();
-  }
+  // addLineFromProduct(val) {
+  //   var line = new QuotationLineDisplay();
+  //   if (val.id) {
+  //     line.id = val.id;
+  //   }
+  //   line.diagnostic = val.diagnostic;
+  //   line.discount = val.discount ? val.discount : 0;
+  //   line.discountType = val.discountType ? val.discountType : 'percentage';
+  //   line.productId = val.productId;
+  //   line.qty = val.qty ? val.qty : 1;
+  //   line.advisoryId = val.advisoryId;
+  //   line.advisoryEmployee = val.advisoryEmployee;
+  //   line.advisoryEmployeeId = val.advisoryEmployeeId;
+  //   line.subPrice = val.subPrice ? val.subPrice : 0;
+  //   line.name = val.name;
+  //   line.amount = val.amount;
+  //   line.teeth = this.fb.array([]);
+  //   if (val.teeth) {
+  //     val.teeth.forEach(item => {
+  //       line.teeth.push(this.fb.group(item))
+  //     })
+  //   }
+  //   line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
+  //   line.toothCategoryId = val.toothCategoryId ? val.toothCategoryId : (this.filteredToothCategories && this.filteredToothCategories[0] ? this.filteredToothCategories[0].id : null);
+  //   var res = this.fb.group(line);
+  //   this.linesArray.push(res);
+  //   this.linesArray.markAsDirty();
+  // }
 
   printQuotation() {
     if (this.quotationId) {
@@ -271,7 +273,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   getDate(dateQuotation: Date, dateApplies: number) {
     var dateEnd = new Date(dateQuotation.getFullYear(), dateQuotation.getMonth(), dateQuotation.getDate() + dateApplies);
-    this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(dateEnd, "dd/MM/yyyy"));
+    this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(dateEnd), "MM/dd/yyyy"));
   }
 
   onDateChange(date: Date) {
@@ -299,8 +301,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       toothCategory: data ? data.toothCategory : null,
       toothCategoryId: data ? data.toothCategoryId : '',
       diagnostic: data ? data.diagnostic : '',
-      advisoryEmployeeId: data.advisoryEmployeeId ? data.advisoryEmployeeId : '',
-      advisoryEmployee: data.advisoryEmployee ? data.advisoryEmployee : null
+      counselorId: data.counselorId ? data.counselorId : '',
+      counselor: data.counselor ? data.counselor : null
     })
     this.loadTeethMap(data.toothCategory);
     if (data.teeth) {
@@ -322,8 +324,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   //   });
   //   this.onChangeQuantity(lineControl);
   // }
-
-
 
   // load teeth 
   loadTeethMap(categ: ToothCategoryBasic) {
@@ -436,6 +436,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     //   value.employeeId = value.employeeAdvisory.id;
     // }
     value.dateQuotation = this.intlService.formatDate(value.dateQuotation, "yyyy-MM-dd");
+    value.dateEndQuotation = this.intlService.formatDate(value.dateEndQuotation, "yyyy-MM-dd");
     value.companyId = this.quotation.companyId;
     value.employeeId = value.employee.id;
     value.totalAmount = this.getAmountTotal();
@@ -465,26 +466,16 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       this.quotationService.update(this.quotationId, val).subscribe(
         () => {
           this.routeActive();
-          this.notificationService.show({
-            content: 'Cập nhật thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
+          this.notifyService.notify("success", "Cập nhật thành công");
+          this.lineSelected = null;
         }
       );
     } else {
       this.quotationService.create(val).subscribe(
         (result: any) => {
           this.router.navigate(['quotations/form'], { queryParams: { id: result.id } });
-          this.notificationService.show({
-            content: 'Lưu thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
+          this.notifyService.notify("success", "Lưu thành công");
+          this.lineSelected = null;
         }
       );
     }
@@ -544,27 +535,36 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     }
 
     var line = new QuotationLineDisplay();
-    if (this.quotationId && val.id) {
+    var id;
+    if (!addNew) {
       line.id = val.id;
+    }
+    else {
+      id = val.id;
     }
     line.diagnostic = val.diagnostic;
     line.discount = val.discount ? val.discount : 0;
     line.discountType = val.discountType ? val.discountType : 'percentage';
-    line.productId = val.productId ? val.productId : val.id;
+    line.productId = val.productId ? val.productId : id;
     line.qty = val.qty ? val.qty : 1;
     line.advisoryId = val.advisoryId;
-    line.advisoryEmployee = val.advisoryEmployee;
-    line.advisoryEmployeeId = val.advisoryEmployeeId;
+    line.counselor = val.counselor;
+    line.counselorId = val.counselorId;
     line.subPrice = val.subPrice ? val.subPrice : (val.listPrice ? val.listPrice : 0);
     line.name = val.name;
     line.amount = line.qty * line.subPrice;
-    line.promotions = val.promotions ? val.promotions : [];
+    line.promotions = this.fb.array([]);
     line.toothType = val.toothType ? val.toothType : "manual";
     line.teeth = this.fb.array([]);
     if (val.teeth) {
       val.teeth.forEach(item => {
         line.teeth.push(this.fb.group(item))
       })
+    }
+    if(val.promotions){
+      val.promotions.forEach(item => {
+        line.promotions.push(this.fb.group(item))
+      });
     }
 
     line.toothCategory = val.toothCategory ? val.toothCategory : (this.filteredToothCategories ? this.filteredToothCategories[0] : null);
@@ -598,8 +598,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   updateLineInfo(line, lineControl) {
     line.toothCategoryId = line.toothCategory.id;
     line.employeeId = line.employee ? line.employee.id : null;
-    line.advisoryEmployeeId = line.advisoryEmployee ? line.advisoryEmployee.id : null;
-    line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : 1;
+    line.counselorId = line.counselor ? line.counselor.id : null;
+    line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : line.qty;
     lineControl.patchValue(line);
 
     lineControl.get('teeth').clear();
@@ -668,7 +668,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         this.openQuotationPromotionDialog();
       });
     } else {
-
       this.quotationService.update(this.quotationId, val).subscribe((result: any) => {
         this.openQuotationPromotionDialog();
       });
@@ -678,12 +677,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   openQuotationPromotionDialog() {
     let modalRef = this.modalService.open(QuotationPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.quotation = this.quotation;
-    modalRef.componentInstance.getUpdateSJ().subscribe(res => {
-      // this.saleOrderService.get(this.quotationId).subscribe((result: any) => {
-      //   this.patchValueSaleOrder(result);
-      //   modalRef.componentInstance.saleOrder = this.quotation;
-      // });
-    });
+    // modalRef.componentInstance.getUpdateSJ().subscribe(res => {
+    //   this.saleOrderService.get(this.quotationId).subscribe((result: any) => {
+    //     this.patchValueSaleOrder(result);
+    //     modalRef.componentInstance.saleOrder = this.quotation;
+    //   });
+    // });
   }
 
   getAmount() {

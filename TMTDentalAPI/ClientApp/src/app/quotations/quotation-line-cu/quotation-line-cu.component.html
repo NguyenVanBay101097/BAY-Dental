@@ -92,8 +92,8 @@
                 <div class="row mx-0">
                     <label class="col-sm-4 font-weight-600 pl-0 col-form-label">Người tư vấn</label>
                     <div class="col-sm-8">
-                        <span class="form-control-plaintext p-0" *ngIf="!isEditting">{{line.advisoryEmployee?.name}}</span>
-                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="isEditting" style="width:100%;" [data]="filteredEmployees" [textField]="'name'" formControlName="advisoryEmployee" [valueField]="'id'">
+                        <span class="form-control-plaintext p-0" *ngIf="!isEditting">{{line.counselor?.name}}</span>
+                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="isEditting" style="width:100%;" [data]="filteredEmployees" [textField]="'name'" formControlName="counselor" [valueField]="'id'">
                         </kendo-combobox>
                     </div>
                 </div>

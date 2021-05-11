@@ -27,8 +27,6 @@ export class QuotationLinePromotionDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log("da vao");
-    
     setTimeout(() => {
       this.loadDefaultPromotion();
     }, 300);

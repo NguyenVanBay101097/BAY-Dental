@@ -46,9 +46,7 @@
                             <img src="../../../assets/icons/promotion.svg" alt="">
                             {{item.name}}</label>
                         <ng-container *ngIf="!getApplied(item); else elseTemplateBtnApply">
-                            <button type="button" class="btn btn-sm btn-primary" (click)="applyPromotion(item)">
-                        Chọn
-                    </button>
+                            <button type="button" class="btn btn-sm btn-primary" (click)="applyPromotion(item)">Chọn</button>
                         </ng-container>
                         <ng-template #elseTemplateBtnApply>
                             <label>Đã áp dụng</label>

@@ -22,8 +22,10 @@ export class QuotationLineDisplay {
   toothCategoryId: string;
   // advisoryUserId: string;
   // advisoryUser: any;
-  advisoryEmployee: any;
-  advisoryEmployeeId: string;
+  // advisoryEmployee: any;
+  // advisoryEmployeeId: string;
+  counselor: any;
+  counselorId: string;
   advisoryId: string;
   toothCategory: any;
   toothIds: any[];
@@ -31,7 +33,7 @@ export class QuotationLineDisplay {
   amount: number;
   teeth: any;
   toothType: string;
-  promotions: any[];
+  promotions: any;
 }
 export class QuotationLineSave {
   productId: string;
