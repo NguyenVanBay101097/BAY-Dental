@@ -289,22 +289,26 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderSimple> CreateSaleOrderByQuotation(Guid id)
         {
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var saleLineService = GetService<ISaleOrderLineService>();
+
+            var today = DateTime.Today;
             var quotation = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Lines)
+                .Include(x => x.Lines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
+                .Include(x => x.Lines).ThenInclude(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+                .Include(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include("Lines.QuotationLineToothRels")
                 .FirstOrDefaultAsync();
-            var saleOrderDefaultGet = new SaleOrderDefaultGet()
-            {
-                PartnerId = quotation.PartnerId
-            };
-            var saleOrderObj = GetService<ISaleOrderService>();
-            var saleOrderDisplay = await saleOrderObj.DefaultGet(saleOrderDefaultGet);
+
+            if (quotation.Promotions.Any() && !quotation.Promotions.Any(x => x.SaleCouponProgram.RuleDateFrom >= today && today <= x.SaleCouponProgram.RuleDateTo))
+                throw new Exception("CTKM đã hết hạn. Vui lòng xóa các CTKM đã hết hạn để tiếp tục tạo phiếu điều trị");
+
             var saleOrder = new SaleOrder();
 
-            saleOrder.CompanyId = saleOrderDisplay.CompanyId;
-            saleOrder.DateOrder = saleOrderDisplay.DateOrder;
-            saleOrder.State = saleOrderDisplay.State;
-            saleOrder.PartnerId = saleOrderDisplay.PartnerId;
+            saleOrder.CompanyId = quotation.CompanyId;
+            saleOrder.DateOrder = today;
+            saleOrder.State = "draft";
+            saleOrder.PartnerId = quotation.PartnerId;
             saleOrder.QuotationId = quotation.Id;
 
             saleOrder = await saleOrderObj.CreateAsync(saleOrder);
@@ -317,11 +321,10 @@ namespace Infrastructure.Services
                 {
                     var saleLine = new SaleOrderLine();
                     saleLine.State = "draft";
-                    saleLine.AmountPaid = 0;
                     saleLine.Diagnostic = line.Diagnostic;
                     saleLine.DiscountType = line.DiscountType;
-                    saleLine.DiscountFixed = line.DiscountType == "fixed" ? line.DiscountAmountFixed : null;
-                    saleLine.Discount = line.DiscountType == "percentage" && line.DiscountAmountPercent.HasValue ? line.DiscountAmountPercent.Value : 0;
+                    saleLine.DiscountFixed = line.DiscountAmountFixed.HasValue ? line.DiscountAmountFixed : null;
+                    saleLine.Discount = line.DiscountAmountPercent.HasValue ? line.DiscountAmountPercent.Value : 0;
                     saleLine.Name = line.Name;
                     saleLine.PriceUnit = line.SubPrice.HasValue ? line.SubPrice.Value : 0;
                     saleLine.ProductId = line.ProductId;
@@ -329,7 +332,6 @@ namespace Infrastructure.Services
                     saleLine.Order = saleOrder;
                     saleLine.Sequence = sequence++;
                     saleLine.ToothCategoryId = line.ToothCategoryId;
-                    saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
                     if (line.QuotationLineToothRels.Any())
                     {
                         var toothIds = line.QuotationLineToothRels.Select(x => x.ToothId);
@@ -341,22 +343,85 @@ namespace Infrastructure.Services
                             });
                         }
                     }
-                    SaleOrderLines.Add(saleLine);
+
+                    await saleLineService.CreateAsync(saleLine);
+
+                    if (line.Promotions.Any())
+                    {
+                        foreach(var promotion in line.Promotions)
+                        {
+                            var saleLinePromotion = new SaleOrderPromotion();
+                            saleLinePromotion.Amount = promotion.Amount;
+                            saleLinePromotion.SaleOrderLineId = saleLine.Id;
+                            saleLinePromotion.SaleOrderId = saleLine.OrderId;
+                            saleLinePromotion.Type = promotion.Type;
+                            if (promotion.Type == "discount")
+                            {
+                                saleLinePromotion.DiscountType = promotion.DiscountType;
+                                saleLinePromotion.DiscountFixed = promotion.DiscountFixed;
+                                saleLinePromotion.DiscountPercent = promotion.DiscountPercent;
+                            }
+
+                            if (promotion.Lines.Any())
+                            {
+                                foreach(var item in promotion.Lines)
+                                {
+                                    saleLinePromotion.Lines.Add(new SaleOrderPromotionLine { 
+                                       SaleOrderLine = saleLine,
+                                       Amount = item.Amount,
+                                       PriceUnit = item.PriceUnit,
+                                                                          
+                                    });
+                                }
+                            }
+
+                           saleLine.Promotions.Add(saleLinePromotion);
+                        }
+                    }
+                }
+             
+              
+
+                if (quotation.Promotions.Any())
+                {
+                    foreach (var promotion in quotation.Promotions)
+                    {
+                        var total = saleOrder.OrderLines.Sum(x => x.PriceUnit * x.ProductUOMQty);
+                        var orderPromotion = new SaleOrderPromotion();
+                        orderPromotion.Amount = promotion.Amount;
+                        orderPromotion.SaleOrder = saleOrder;
+                        orderPromotion.Type = promotion.Type;
+                        if (promotion.Type == "discount")
+                        {
+                            orderPromotion.DiscountType = promotion.DiscountType;
+                            orderPromotion.DiscountFixed = promotion.DiscountFixed;
+                            orderPromotion.DiscountPercent = promotion.DiscountPercent;
+                        }
+
+                        foreach (var line in saleOrder.OrderLines)
+                        {
+                            var amount = (((line.ProductUOMQty * line.PriceUnit) / total) * promotion.Amount);
+                            orderPromotion.Lines.Add(new SaleOrderPromotionLine
+                            {
+                                SaleOrderLineId = line.Id,
+                                Amount = promotion.Amount,
+                                PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
+                            });
+                        }
+
+                        saleOrder.Promotions.Add(orderPromotion);
+                    }
                 }
 
-
-                var saleLineService = GetService<ISaleOrderLineService>();
-                await saleLineService.CreateAsync(SaleOrderLines);
-
-                saleOrderObj._AmountAll(saleOrder);
-                await saleOrderObj.UpdateAsync(saleOrder);
+                           
+                await saleOrderObj._ComputeAmountPromotionToOrder(new List<Guid>() { saleOrder.Id });
 
             }
 
             return _mapper.Map<SaleOrderSimple>(saleOrder);
         }
 
-       
+
         public async Task<QuotationPrintVM> Print(Guid id)
         {
             var quotation = await SearchQuery(x => x.Id == id)
@@ -453,7 +518,7 @@ namespace Infrastructure.Services
 
             await quotationPromotionObj.UpdateAsync(promotion);
 
-            //tính lại tổng tiền ưu đãi quotaitonlines
+            //tính lại tổng tiền ưu đãi quotationlines
             quotationLineObj._ComputeAmountDiscountTotal(quotation.Lines);
             quotationLineObj.ComputeAmount(quotation.Lines);
 
@@ -470,7 +535,7 @@ namespace Infrastructure.Services
             var quotation = await SearchQuery(x => x.Id == val.Id)
               .Include(x => x.Promotions).ThenInclude(x => x.Lines)
               .Include(x => x.Lines).ThenInclude(x => x.Promotions)
-              .Include("Lines.Product")                  
+              .Include("Lines.Product")
               .FirstOrDefaultAsync();
 
             var soLineObj = GetService<ISaleOrderLineService>();
@@ -484,11 +549,11 @@ namespace Infrastructure.Services
                 var error_status = await programObj._CheckQuotationPromotion(program, quotation);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
-                  
-                        await _CreateRewardLine(quotation, program);
 
-                        await UpdateAsync(quotation);
-                    
+                    await _CreateRewardLine(quotation, program);
+
+                    await UpdateAsync(quotation);
+
                 }
                 else
                     throw new Exception(error_status.Error);
@@ -514,10 +579,10 @@ namespace Infrastructure.Services
                 var error_status = await programObj._CheckQuotationPromoCode(program, quotation, couponCode);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
-                   
-                        await _CreateRewardLine(quotation, program);
-                        await UpdateAsync(quotation);
-                        return new SaleCouponProgramResponse { Error = null, Success = true, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
+
+                    await _CreateRewardLine(quotation, program);
+                    await UpdateAsync(quotation);
+                    return new SaleCouponProgramResponse { Error = null, Success = true, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
                 }
                 else
                     //throw new Exception(error_status.Error);
@@ -525,7 +590,7 @@ namespace Infrastructure.Services
             }
             else
             {
-                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };             
+                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };
             }
         }
 
