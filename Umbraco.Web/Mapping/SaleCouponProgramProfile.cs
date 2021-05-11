@@ -13,6 +13,7 @@ namespace Umbraco.Web.Mapping
         public SaleCouponProgramProfile()
         {
             CreateMap<SaleCouponProgram, SaleCouponProgramBasic>();
+            CreateMap<SaleCouponProgram, SaleCouponProgramSimple>();
             CreateMap<SaleCouponProgramSave, SaleCouponProgram>();
             CreateMap<SaleCouponProgram, SaleCouponProgramDisplay>()
                 .ForMember(x => x.DiscountSpecificProducts, x => x.MapFrom(s => s.DiscountSpecificProducts.Select(m => m.Product)))

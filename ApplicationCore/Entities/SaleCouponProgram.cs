@@ -27,10 +27,10 @@ namespace ApplicationCore.Entities
         public bool Active { get; set; }
 
         /// <summary>
-        /// waiting: chưa chạy
-        /// running: đang chạy
-        /// paused: tạm ngừng
-        /// expired: hết hạn
+        /// waiting: Chưa chạy
+        /// running: Đang chạy
+        /// paused: Tạm ngừng
+        /// expired: Hết hạn
         /// </summary>
         public string Status { get; set; }
 

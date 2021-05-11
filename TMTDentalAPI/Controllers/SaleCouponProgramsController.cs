@@ -58,7 +58,7 @@ namespace TMTDentalAPI.Controllers
             var program = await _programService.CreateProgram(val);
             _unitOfWork.Commit();
 
-            var basic = _mapper.Map<SaleCouponProgramBasic>(program);
+            var basic = _mapper.Map<SaleCouponProgramSimple>(program);
             return Ok(basic);
         }
 

@@ -1,0 +1,11 @@
+.btn-check {
+    position: absolute;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+
+.filter-active {
+    padding-top: 10px;
+    padding-right: 16px;
+    padding-left: 16px;
+}
