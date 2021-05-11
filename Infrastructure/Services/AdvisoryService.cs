@@ -58,7 +58,7 @@ namespace Infrastructure.Services
                 var inSua = val.ToothIds.Any(s => listIdsRangTrenSua.Contains(s)) ||
                     val.ToothIds.Any(s => listIdsRangDuoiSua.Contains(s));
 
-                query = query.Where(x => 
+                query = query.Where(x =>
                 (x.ToothType == "whole_jaw" && inVinhVien && x.ToothCategory.Sequence == 1) ||
                 (x.ToothType == "whole_jaw" && inSua && x.ToothCategory.Sequence == 2) ||
                 (x.ToothType == "upper_jaw" && inUpperVinhVien && x.ToothCategory.Sequence == 1) ||
@@ -312,7 +312,7 @@ namespace Infrastructure.Services
             var saleOrderDisplay = await saleOrderObj.DefaultGet(saleOrderDefaultGet);
 
             var saleOrder = new SaleOrder();
-            saleOrder.DateOrder = saleOrderDisplay.DateOrder;
+            saleOrder.DateOrder = DateTime.Now;
             saleOrder.PartnerId = saleOrderDisplay.PartnerId;
             saleOrder.State = saleOrderDisplay.State;
             saleOrder.CompanyId = saleOrderDisplay.CompanyId;
@@ -360,6 +360,7 @@ namespace Infrastructure.Services
                     saleOrderLine.Diagnostic = string.Join(", ", toothDiagnosisName);
                     saleOrderLine.CounselorId = advisory.EmployeeId;
                     saleOrderLine.AdvisoryId = advisory.Id;
+                    saleOrderLine.ToothType = "manual";
                     saleOrderLines.Add(saleOrderLine);
                 }
             }

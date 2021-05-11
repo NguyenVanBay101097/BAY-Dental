@@ -662,7 +662,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
 
     //nếu data không change thì mở dialog luôn
-    console.log(this.isChanged);
     if (!this.isChanged) {
       this.openSaleOrderPromotionDialog();
       return;
