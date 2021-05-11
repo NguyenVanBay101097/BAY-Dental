@@ -144,6 +144,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     });
     this.routeActive();
     this.loadToothCateDefault();
+
+    this.formGroup.valueChanges.subscribe(res => {
+      this.isChanged = true;
+    });
   }
 
   get f() {
@@ -163,17 +167,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
               return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
             }
           })).subscribe((result: any) => {
-            this.isChanged = false;
             this.patchValueSaleOrder(result);
-            setTimeout(() => {
-              this.formGroup.valueChanges.subscribe(res => {
-                {
-                  console.log('change nè');
-                  
-                  this.isChanged = true;
-                }
-              });
-            }, 0);
+            this.isChanged = false;
           });
       }
     )
@@ -667,6 +662,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
 
     //nếu data không change thì mở dialog luôn
+    console.log(this.isChanged);
     if (!this.isChanged) {
       this.openSaleOrderPromotionDialog();
       return;
@@ -684,9 +680,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.saleOrder = result;
         this.saleOrder.promotions = [];
 
-      //  this.router.navigate(["/sale-orders/form"], {
-      //     queryParams: { id: result.id },
-      //   });
+        this.router.navigate(["/sale-orders/form"], {
+          queryParams: { id: result.id },
+        });
 
         await this.loadRecord();
         this.openSaleOrderPromotionDialog();
@@ -732,7 +728,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
       // });
       var r = await this.loadRecord();
-      modalRef.componentInstance.saleOrder = r;
+      modalRef.componentInstance.saleOrderLine = this.orderLines.controls[i].value;
     });
   }
 
