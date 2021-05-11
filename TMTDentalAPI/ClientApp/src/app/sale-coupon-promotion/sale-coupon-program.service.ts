@@ -12,6 +12,7 @@ export class SaleCouponProgramPaged {
     search: string;
     programType: string;
     active: boolean;
+    status: string;
     ids: string[];
 }
 

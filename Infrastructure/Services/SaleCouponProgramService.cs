@@ -92,7 +92,16 @@ namespace Infrastructure.Services
                 val.PromoCode = code;
                
             }
+
             var program = _mapper.Map<SaleCouponProgram>(val);
+
+            program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
+            program.RuleDateTo = program.RuleDateTo.Value.AbsoluteEndOfDate();
+            if (program.RuleDateFrom >= program.RuleDateTo)
+            {
+                throw new Exception("Ngày kết thúc đang nhỏ hơn ngày bắt đầu!");
+            }
+
             if (!program.CompanyId.HasValue)
                 program.CompanyId = CompanyId;
 
@@ -131,6 +140,14 @@ namespace Infrastructure.Services
                 .Include(x => x.Coupons).Include(x => x.DiscountLineProduct)
                 .Include(x => x.DiscountSpecificProducts).Include("DiscountSpecificProducts.Product").FirstOrDefaultAsync();
             program = _mapper.Map(val, program);
+
+            program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
+            program.RuleDateTo = program.RuleDateTo.Value.AbsoluteEndOfDate();
+            if (program.RuleDateFrom >= program.RuleDateTo)
+            {
+                throw new Exception("Ngày kết thúc đang nhỏ hơn ngày bắt đầu!");
+            }
+
             if (!program.DiscountLineProductId.HasValue)
             {
                 var discountProduct = await GetOrCreateDiscountProduct(program);
@@ -393,8 +410,6 @@ namespace Infrastructure.Services
             return product;
         }
 
-
-
         public async Task Unlink(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
@@ -428,8 +443,10 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             foreach (var program in self)
             {
-                if (program.Active == true)
-                    program.Active = false;
+                if (program.Status == "waiting" || program.Status == "running")
+                {
+                    program.Status = "paused";
+                }
             }
 
             await UpdateAsync(self);
@@ -437,11 +454,46 @@ namespace Infrastructure.Services
 
         public async Task ActionUnArchive(IEnumerable<Guid> ids)
         {
+            DateTime today = DateTime.UtcNow.Date;
+
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             foreach (var program in self)
             {
                 if (program.Active == false)
+                {
                     program.Active = true;
+
+                    if (today < program.RuleDateFrom)
+                    {
+                        program.Status = "waiting";
+                    }
+                    if (program.RuleDateFrom <= today && today < program.RuleDateTo)
+                    {
+                        program.Status = "running";
+                    }
+                    if (program.RuleDateTo < today)
+                    {
+                        program.Status = "expired";
+                    }
+                } else
+                {
+                    if (program.Status == "paused")
+                    {
+                        if (today < program.RuleDateFrom)
+                        {
+                            program.Status = "waiting";
+                        }
+                        if (program.RuleDateFrom <= today && today < program.RuleDateTo)
+                        {
+                            program.Status = "running";
+                        }
+                        if (program.RuleDateTo < today)
+                        {
+                            program.Status = "expired";
+                        }
+                    }
+                }
+
             }
 
             await UpdateAsync(self);
