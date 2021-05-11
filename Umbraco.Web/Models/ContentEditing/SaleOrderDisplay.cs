@@ -70,6 +70,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? JournalId { get; set; }
         public AccountJournalSimple Journal { get; set; }
 
+        public Guid? QuotationId { get; set; }
+        public QuotationSimple Quotation { get; set; }
+
         public bool? IsQuotation { get; set; }
         public bool? IsFast { get; set; }
 
