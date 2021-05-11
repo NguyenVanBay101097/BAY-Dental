@@ -276,6 +276,13 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       return;
     }
 
+    //update line trước khi lưu
+    if (this.lineSelected != null) {
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      viewChild.updateLineInfo();
+    }
+
+   
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = this.getPartner.id;
@@ -349,7 +356,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       if (line.teeth) {
         line.toothIds = line.teeth.map(x => x.id);
       }
-     
+
       line.priceSubTotal = Math.round(line.productUOMQty * (line.priceUnit - line.amountDiscountTotal))
     });
     return val;
@@ -597,7 +604,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         this.onChangePartner(result.partner);
       }
     }
-    
+
     this.formGroup.setControl('promotions', this.fb.array(result.promotions));
 
     let control = this.formGroup.get('orderLines') as FormArray;
@@ -610,8 +617,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     });
 
     this.formGroup.markAsPristine();
-    if(computePromotion) {
-    this.onComputePromotion();
+    if (computePromotion) {
+      this.onComputePromotion();
     }
   }
 
@@ -643,14 +650,14 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     var total = line.priceUnit * line.productUOMQty;
     switch (promotion.type) {
       case 'discount':
-        var price_reduce = promotion.discountType == 'percentage'  ? line.priceUnit * (1 -promotion.discountPercent / 100) : line.priceUnit -  promotion.discountFixed;
-        amount = (line.priceUnit - price_reduce) *line.productUOMQty;
+        var price_reduce = promotion.discountType == 'percentage' ? line.priceUnit * (1 - promotion.discountPercent / 100) : line.priceUnit - promotion.discountFixed;
+        amount = (line.priceUnit - price_reduce) * line.productUOMQty;
         break;
       case 'code_usage_program':
-          amount = promotion.discountType == 'percentage' ? promotion.discountPercent * total / 100 : promotion.discountFixed;
+        amount = promotion.discountType == 'percentage' ? promotion.discountPercent * total / 100 : promotion.discountFixed;
         break;
       case 'promotion_program':
-          amount =promotion.discountType == 'percentage' ? promotion.discountPercent * total/ 100 :  promotion.discountFixed;
+        amount = promotion.discountType == 'percentage' ? promotion.discountPercent * total / 100 : promotion.discountFixed;
         break;
       default:
         break;
@@ -717,11 +724,11 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   sumPromotionSaleOrder() {
-    if(this.saleOrder && this.saleOrder.promotions)
+    if (this.saleOrder && this.saleOrder.promotions)
       return (this.saleOrder.promotions as any[]).reduce((total, cur) => {
         return total + cur.amount;
       }, 0);
-      return 0;
+    return 0;
   }
 
 
