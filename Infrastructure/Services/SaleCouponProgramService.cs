@@ -424,6 +424,31 @@ namespace Infrastructure.Services
             return message;
         }
 
+        public async Task<CheckPromoCodeMessage> _CheckPromotionApplyQuotationLine(SaleCouponProgram self, QuotationLine line)
+        {
+            var message = new CheckPromoCodeMessage();
+            var saleObj = GetService<ISaleOrderService>();
+            //var applicable_programs = await saleObj._GetApplicablePrograms(order);
+            var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
+            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > line.Quotation.DateQuotation) || (self.RuleDateTo.HasValue && self.RuleDateTo < line.Quotation.DateQuotation))
+                message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
+            else if (!self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId))
+                message.Error = "Khuyến mãi Không áp dụng cho dịch vụ này";
+            else if (line.Quotation.Promotions.Where(x => x.QuotationId.HasValue && !x.QuotationLineId.HasValue).Any(x => x.SaleCouponProgramId == self.Id))
+                message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
+            else if (line.Promotions.Any(x => x.SaleCouponProgramId == self.Id))
+                message.Error = "Chương trình khuyến mãi đã được áp dụng cho dịch vụ này";
+            else if (!self.Active)
+                message.Error = "Chương trình khuyến mãi không có giá trị";
+          
+            else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" &&  !line.Quotation.Lines.Where(x => x.ProductId == self.RewardProductId &&
+            x.Qty >= self.RewardProductQuantity).Any())
+                message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
+           
+
+            return message;
+        }
+
         public async Task<CheckPromoCodeMessage> _CheckQuotationPromotion(SaleCouponProgram self, Quotation quotation)
         {
             var message = new CheckPromoCodeMessage();
