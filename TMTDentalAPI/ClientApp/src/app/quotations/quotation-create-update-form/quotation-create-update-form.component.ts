@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -49,7 +49,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   hamList: { [key: string]: {} };
   teethSelected: any[] = [];
   filteredToothCategories: any[] = [];
-  quotation: QuotationsDisplay;
+  quotation: any = new QuotationsDisplay();
   filteredAdvisoryEmployees: EmployeeSimple[] = [];
   search: string = '';
   filterData: EmployeeBasic[] = [];
@@ -88,7 +88,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       note: '',
       dateQuotation: [null, Validators.required],
       dateApplies: [0, Validators.required],
-      dateEndQuotation: '',
+      dateEndQuotation:[{value: '', disabled: true}, Validators.required],
       companyId: '',
       lines: this.fb.array([
       ]),
@@ -561,7 +561,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         line.teeth.push(this.fb.group(item))
       })
     }
-    if(val.promotions){
+    if (val.promotions) {
       val.promotions.forEach(item => {
         line.promotions.push(this.fb.group(item))
       });
@@ -599,7 +599,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.toothCategoryId = line.toothCategory.id;
     line.employeeId = line.employee ? line.employee.id : null;
     line.counselorId = line.counselor ? line.counselor.id : null;
-    line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : line.qty;
+    // line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : line.qty;
     lineControl.patchValue(line);
 
     lineControl.get('teeth').clear();
@@ -652,10 +652,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     const val = this.getDataFormGroup();
 
     if (!this.quotationId) {
+      debugger
       this.submitted = true;
-      if (!this.formGroup.valid) {
-        return false;
-      }
+      // if (!this.formGroup.valid) {
+      //   return false;
+      // }
       this.quotationService.create(val).subscribe((result: any) => {
         this.quotationId = result.id;
         this.quotation = result;
@@ -677,12 +678,14 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   openQuotationPromotionDialog() {
     let modalRef = this.modalService.open(QuotationPromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.quotation = this.quotation;
-    // modalRef.componentInstance.getUpdateSJ().subscribe(res => {
-    //   this.saleOrderService.get(this.quotationId).subscribe((result: any) => {
-    //     this.patchValueSaleOrder(result);
-    //     modalRef.componentInstance.saleOrder = this.quotation;
-    //   });
-    // });
+    modalRef.componentInstance.getUpdateSJ().subscribe(res => {
+      this.quotationService.get(this.quotationId).subscribe((result: any) => {
+        // this.patchValueSaleOrder(result);
+        // console.log(result);
+        // this.addLine(result, false);
+        // modalRef.componentInstance.quotation = this.quotation;
+      });
+    });
   }
 
   getAmount() {

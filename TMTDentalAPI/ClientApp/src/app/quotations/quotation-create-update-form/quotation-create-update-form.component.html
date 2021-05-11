@@ -112,7 +112,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName='dateEndQuotation' disabled>
+                                    <input type="text" class="form-control" formControlName='dateEndQuotation'>
                                 </td>
                             </tr>
                         </tbody>
@@ -155,7 +155,7 @@
                                     <img class="ml-1 pointer" (click)="onOpenQuotationPromotion()" src="../../../assets/icons/promotion.svg" alt="">
                                     <!-- <span class="ml-auto">{{onOpenQuotationPromotion() | number}}</span> -->
                                 </div>
-                                <!-- <div class="card-body px-3 py-2">
+                                <div class="card-body px-3 py-2">
                                     <div *ngIf="this.quotation.promotions?.length" class="d-flex justify-content-between mb-1">
                                         <span class="font-weight-600">Ưu đãi</span>
                                         <span class="font-weight-600">Số tiền giảm</span>
@@ -164,7 +164,7 @@
                                         <span>{{item.name}}</span>
                                         <span>{{item.amount | number}}</span>
                                     </div>
-                                </div> -->
+                                </div>
                             </div>
 
                             <div class="card mb-3">

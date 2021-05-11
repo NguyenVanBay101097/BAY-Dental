@@ -136,4 +136,12 @@ export class QuotationService {
   createSaleOrderByQuotation(id: string) {
     return this.http.get(`${this.baseApi + this.apiUrl}/${id}/CreateSaleOrderByQuotation`);
   }
+
+  applyDiscountOnQuotation(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnQuotation', val);
+  }
+
+  applyDiscountOnQuotationLine(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnQuotationLine', val);
+  }
 }

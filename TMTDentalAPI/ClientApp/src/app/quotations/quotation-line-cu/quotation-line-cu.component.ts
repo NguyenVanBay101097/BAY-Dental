@@ -47,12 +47,13 @@ export class QuotationLineCuComponent implements OnInit {
   ngOnInit() {
     this.formGroupInfo = this.fb.group(this.line);
     // this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
-    this.formGroupInfo.setControl("teeth", this.fb.array([]));
-    if (this.line.teeth) {
-      this.line.teeth.forEach((tooth) => {
-        this.TeethFA.push(this.fb.group(tooth));
-      });
-    }
+    this.formGroupInfo.setControl("teeth", this.fb.array(this.line.teeth));
+    this.formGroupInfo.setControl("promotions", this.fb.array(this.line.promotions));
+    // if (this.line.teeth) {
+    //   this.line.teeth.forEach((tooth) => {
+    //     this.TeethFA.push(this.fb.group(tooth));
+    //   });
+    // }
 
     this.loadEmployees();
     this.loadToothCategories();
@@ -247,6 +248,7 @@ export class QuotationLineCuComponent implements OnInit {
     this.formGroupInfo = this.fb.group(this.line);
     // this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
     this.formGroupInfo.setControl("teeth", this.fb.array(this.line.teeth));
+    this.formGroupInfo.setControl("promotions", this.fb.array(this.line.promotions));
   
   }
 
