@@ -28,13 +28,13 @@
             <div class="mb-2">
                 <label for="" class="font-weight-600">Mã khuyến mãi</label>
                 <app-quotation-line-apply-coupon [lineId]="quotationLine.id" (applySuccess)="onApplyCouponSuccess()"></app-quotation-line-apply-coupon>
-                <!-- <div class="">
+                <div class="">
                     <div *ngFor="let item of getListPromotion('code_usage_program'); let i = index" class="d-flex justify-content-between mt-2">
                         <label class="mb-0" for="">  <img src="../../../assets/icons/promotion.svg" alt=""> {{item.name}}</label>
                         <i title="Xóa giảm tiền" class="fa fa-trash-alt bg-danger text-white btn-icon" (click)="onDeletePromotion(item)"></i>
 
                     </div>
-                </div> -->
+                </div>
             </div>
 
             <!-- mã tự động -->

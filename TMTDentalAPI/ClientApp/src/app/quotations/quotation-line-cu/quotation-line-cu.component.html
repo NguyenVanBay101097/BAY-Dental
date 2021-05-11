@@ -56,10 +56,10 @@
             <div style="width: 250px;" class="div-cell text-right">
                 <div>
                     <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
-                        {{line.amount | number}}
+                        {{getPriceUnitLinePromotion(line) | number}}
                     </ng-container>
                     <ng-template #elseTemplatePriceSub>
-                        {{formInfoControl('amount').value | number}}
+                        {{getPriceUnitLinePromotion(formGroupInfo.value) | number}}
                     </ng-template>
                 </div>
                 <div>
@@ -172,14 +172,12 @@
             <div class="card-body px-3 py-2">
                 <div class="d-flex">
                     <span>Ưu đãi phiếu điều trị</span>
-                    <!-- <span class="ml-auto">100.000{{formInfoControl('amountPromotionToOrder').value | number}}</span> -->
-                    <span class="ml-auto">100.000</span>
+                    <span class="ml-auto">{{formInfoControl('amountPromotionToOrder').value | number}}</span>
                 </div>
                 <div class="d-flex">
                     <span>Ưu đãi dịch vụ</span>
                     <img (click)="onOpenPromotion()" class="ml-2 pointer" src="../../../assets/icons/promotion-bg-primary.svg" alt="">
-                    <!-- <span class="ml-auto">100.000{{formInfoControl('amountPromotionToOrderLine').value | number}}</span> -->
-                    <span class="ml-auto">100.000</span>
+                    <span class="ml-auto">{{formInfoControl('amountPromotionToOrderLine').value | number}}</span>
                 </div>
             </div>
         </div>

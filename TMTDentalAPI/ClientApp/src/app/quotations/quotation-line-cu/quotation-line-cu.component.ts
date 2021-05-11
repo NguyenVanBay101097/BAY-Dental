@@ -68,9 +68,11 @@ export class QuotationLineCuComponent implements OnInit {
   formInfoControl(value: string) {
     return this.formGroupInfo.get(value);
   }
+
   getPriceUnitLinePromotion(line) {
-    return line.subPrice - (line.discount || 0);
+    return line.subPrice - (line.amountDiscountTotal || 0);
   }
+
   getInitialSubTotalLine(line) {
     return line.subPrice * line.qty;
   }

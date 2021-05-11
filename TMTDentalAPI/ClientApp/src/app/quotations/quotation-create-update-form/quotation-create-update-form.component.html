@@ -153,7 +153,7 @@
                             <div class="card mb-3">
                                 <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">Ưu đãi phiếu điều trị
                                     <img class="ml-1 pointer" (click)="onOpenQuotationPromotion()" src="../../../assets/icons/promotion.svg" alt="">
-                                    <!-- <span class="ml-auto">{{onOpenQuotationPromotion() | number}}</span> -->
+                                    <span class="ml-auto">{{sumPromotionQuotation() | number}}</span>
                                 </div>
                                 <div class="card-body px-3 py-2">
                                     <div *ngIf="this.quotation.promotions?.length" class="d-flex justify-content-between mb-1">

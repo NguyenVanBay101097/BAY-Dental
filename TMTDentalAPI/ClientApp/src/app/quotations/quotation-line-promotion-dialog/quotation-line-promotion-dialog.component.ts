@@ -4,6 +4,8 @@ import { Subject } from 'rxjs';
 import { SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { QuotationLineService } from '../quotation-line.service';
+import { QuotationPromotionService } from '../quotation-promotion.service';
 import { QuotationLineDisplay } from '../quotation.service';
 
 @Component({
@@ -23,7 +25,9 @@ export class QuotationLinePromotionDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private notificationService: NotifyService,
     private modelService: NgbModal,
-    private promotionService: SaleCouponProgramService
+    private promotionService: SaleCouponProgramService,
+    private quotationLineService: QuotationLineService,
+    private quotationPromotionService: QuotationPromotionService
   ) { }
 
   ngOnInit() {
@@ -34,6 +38,10 @@ export class QuotationLinePromotionDialogComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.updateSubject.unsubscribe();
+  }
+
+  getUpdateSJ() {
+    return this.updateSubject.asObservable();
   }
 
   loadDefaultPromotion() {
@@ -71,29 +79,29 @@ export class QuotationLinePromotionDialogComponent implements OnInit {
     var val = {
       id: this.quotationLine.id,
       discountType: value.discountType,
-      discount: value.discount,
+      discountPercent: value.discountPercent,
+      discountFixed: value.discountFixed,
     };
-    // var apply$ = this.saleOrderLineService.applyDiscountOnOrderLine(val);
-    // apply$.subscribe((res) => {
-    //   this.notificationService.notify('success', 'Thành công!');
-    //   this.isChange = true;
-    //   this.updateSubject.next(true);
-    // });
+    var apply$ = this.quotationLineService.applyDiscountOnQuotationLine(val);
+    apply$.subscribe((res) => {
+      this.notificationService.notify('success', 'Thành công!');
+      this.isChange = true;
+      this.updateSubject.next(true);
+    });
   }
 
   onDeletePromotion(item) {
     let modalRef = this.modelService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.title = "Xóa ưu đãi";
     modalRef.componentInstance.body = `Bạn có muốn xóa ưu đãi ${item.name}?`
-    // modalRef.result.then(() => {
-    //   this.saleOrderPromotionService.removePromotion([item.id]).subscribe(res => {
-    //     this.notificationService.notify('success', 'Thành công!');
-    //     this.updateSubject.next(true);
-    //     this.isChange = true;
-
-    //   })
-    // }, () => {
-    // });
+    modalRef.result.then(() => {
+      this.quotationPromotionService.removePromotion([item.id]).subscribe(res => {
+        this.notificationService.notify('success', 'Thành công!');
+        this.updateSubject.next(true);
+        this.isChange = true;
+      })
+    }, () => {
+    });
   }
 
   getListPromotion(type): any[] {
