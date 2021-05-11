@@ -716,17 +716,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onUpdateOpenLinePromotion(line, lineControl, i) {
-    this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
-      this.patchValueSaleOrder(result);
-    });
+    if (!this.saleOrderId) {
+      this.notify('error', 'Vui lòng lưu phiếu điều trị trước khi áp dụng ưu đãi');
+      return false;
+    }
 
-
-    // if (!this.saleOrderId) {
-    //   this.notify('error', 'Vui lòng lưu phiếu điều trị trước khi áp dụng ưu đãi');
-    //   return false;
-    // }
-
-    // this.onOpenLinePromotionDialog(i);
+    this.onOpenLinePromotionDialog(i);
 
     //  //update line trước khi lưu
     //  if (this.lineSelected != null) {
