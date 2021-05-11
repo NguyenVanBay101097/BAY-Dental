@@ -1,0 +1,50 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Lịch sử điều trị</li>
+        </ol>
+        <div class="o_cp_searchview">
+
+        </div>
+        <div class="o_cp_left">
+            <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Ngày" [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
+            </app-tai-date-range-filter-dropdown>
+        </div>
+        <div class="o_cp_right">
+            <div class="o_cp_searchview">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo khách hàng" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="pageSize" [skip]="skip" [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column [width]="110" title="Ngày khám">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.dotKhamDate | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column [width]="130" field="dotKhamName" title="Mã đợt khám"></kendo-grid-column>
+        <kendo-grid-column [width]="90" title="Số phiếu">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <a class="text-primary" *ngIf="dataItem.dotKhamSaleOrder" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.dotKhamSaleOrder.id}">{{dataItem.dotKhamSaleOrder.name}}</a>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column [width]="150" title="Khách hàng">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <a class="text-primary" *ngIf="dataItem.dotKhamPartner" [routerLink]="['/partners/customer/' + dataItem.dotKhamPartner.id]">{{dataItem.dotKhamPartner.name}}</a>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column [width]="250" field="productName" title="Dịch vụ"></kendo-grid-column>
+        <kendo-grid-column [width]="180" field="dotKhamDoctorName" title="Bác sĩ"></kendo-grid-column>
+        <kendo-grid-column [width]="150" field="nameStep" title="Công đoạn"></kendo-grid-column>
+        <kendo-grid-column [width]="200" field="dotKhamDoctorName" title="Răng, Chi tiết điều trị">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{getTeethDisplay(dataItem.teeth)}} {{dataItem.note}}
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>
