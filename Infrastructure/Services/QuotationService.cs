@@ -310,6 +310,7 @@ namespace Infrastructure.Services
             saleOrder.State = "draft";
             saleOrder.PartnerId = quotation.PartnerId;
             saleOrder.QuotationId = quotation.Id;
+            saleOrder.DateOrder = DateTime.Now;
 
             saleOrder = await saleOrderObj.CreateAsync(saleOrder);
             if (quotation.Lines.Any())
@@ -332,6 +333,11 @@ namespace Infrastructure.Services
                     saleLine.Order = saleOrder;
                     saleLine.Sequence = sequence++;
                     saleLine.ToothCategoryId = line.ToothCategoryId;
+                    saleLine.ToothType = line.ToothType;
+                    saleLine.EmployeeId = line.EmployeeId;
+                    saleLine.AssistantId = line.AssistantId;
+                    saleLine.CounselorId = line.CounselorId;
+
                     if (line.QuotationLineToothRels.Any())
                     {
                         var toothIds = line.QuotationLineToothRels.Select(x => x.ToothId);
@@ -348,7 +354,7 @@ namespace Infrastructure.Services
 
                     if (line.Promotions.Any())
                     {
-                        foreach(var promotion in line.Promotions)
+                        foreach (var promotion in line.Promotions)
                         {
                             var saleLinePromotion = new SaleOrderPromotion();
                             saleLinePromotion.Amount = promotion.Amount;
@@ -364,23 +370,24 @@ namespace Infrastructure.Services
 
                             if (promotion.Lines.Any())
                             {
-                                foreach(var item in promotion.Lines)
+                                foreach (var item in promotion.Lines)
                                 {
-                                    saleLinePromotion.Lines.Add(new SaleOrderPromotionLine { 
-                                       SaleOrderLine = saleLine,
-                                       Amount = item.Amount,
-                                       PriceUnit = item.PriceUnit,
-                                                                          
+                                    saleLinePromotion.Lines.Add(new SaleOrderPromotionLine
+                                    {
+                                        SaleOrderLine = saleLine,
+                                        Amount = item.Amount,
+                                        PriceUnit = item.PriceUnit,
+
                                     });
                                 }
                             }
 
-                           saleLine.Promotions.Add(saleLinePromotion);
+                            saleLine.Promotions.Add(saleLinePromotion);
                         }
                     }
                 }
-             
-              
+
+
 
                 if (quotation.Promotions.Any())
                 {
@@ -413,7 +420,7 @@ namespace Infrastructure.Services
                     }
                 }
 
-                           
+
                 await saleOrderObj._ComputeAmountPromotionToOrder(new List<Guid>() { saleOrder.Id });
 
             }
@@ -442,12 +449,29 @@ namespace Infrastructure.Services
 
         public async override Task<Quotation> CreateAsync(Quotation entity)
         {
+            var sequenceService = GetService<IIRSequenceService>();
+            entity.Name = await sequenceService.NextByCode("quotation");
             if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
             {
-                var sequenceService = GetService<IIRSequenceService>();
+                await _InsertQuotationSequence();
                 entity.Name = await sequenceService.NextByCode("quotation");
             }
-            return await base.CreateAsync(entity);
+
+            await base.CreateAsync(entity);
+
+            return entity;
+        }
+
+        private async Task _InsertQuotationSequence()
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            await seqObj.CreateAsync(new IRSequence
+            {
+                Name = "Phiếu báo giá",
+                Code = "quotation",
+                Prefix = "BG",
+                Padding = 5
+            });
         }
 
         public async Task _ComputeAmountPromotionToQuotation(IEnumerable<Guid> ids)

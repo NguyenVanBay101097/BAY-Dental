@@ -9,6 +9,7 @@ import { ProductSimple } from '../products/product-simple';
 import { ToothDisplay } from '../teeth/tooth.service';
 import { ToothCategoryBasic } from '../tooth-categories/tooth-category.service';
 import { SaleOrderLineDisplay } from './sale-order-line-display';
+import { QuotationSimple } from '../quotations/quotation.service';
 
 export class SaleOrderDisplay {
     id: string;
@@ -34,6 +35,8 @@ export class SaleOrderDisplay {
     order: SaleOrderBasic;
     invoiceCount: number;
     paidTotal: number;
+    quotationId: string;
+    quotation: QuotationSimple;
     promotions: any[];
 }
 

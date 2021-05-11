@@ -93,6 +93,11 @@ export class QuotationsDisplay {
   promotions: any[];
 }
 
+export class QuotationSimple{
+  id: string;
+  name: string;
+}
+
 export class QuotationsPaged {
   dateFrom: string;
   dateTo: string;
