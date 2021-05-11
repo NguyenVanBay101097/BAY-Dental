@@ -163,10 +163,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
               return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
             }
           })).subscribe((result: any) => {
+            this.isChanged = false;
             this.patchValueSaleOrder(result);
             setTimeout(() => {
               this.formGroup.valueChanges.subscribe(res => {
                 {
+                  console.log('change nè');
+                  
                   this.isChanged = true;
                 }
               });
@@ -676,17 +679,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       if (!this.formGroup.valid) {
         return false;
       }
-      this.saleOrderService.create(val).subscribe((result: any) => {
+      this.saleOrderService.create(val).subscribe(async (result: any) => {
         this.saleOrderId = result.id;
         this.saleOrder = result;
         this.saleOrder.promotions = [];
 
-        this.router.navigate(["/sale-orders/form"], {
-          queryParams: { id: result.id },
-        });
+      //  this.router.navigate(["/sale-orders/form"], {
+      //     queryParams: { id: result.id },
+      //   });
 
-
-
+        await this.loadRecord();
         this.openSaleOrderPromotionDialog();
       });
     } else {
@@ -753,25 +755,29 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         return false;
       }
 
-      this.saleOrderService.create(val).subscribe((result: any) => {
+      this.saleOrderService.create(val).subscribe(async (result: any) => {
         this.saleOrderId = result.id;
         this.router.navigate(["/sale-orders/form"], {
           queryParams: { id: result.id },
         });
-        this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
-          this.patchValueSaleOrder(result);
-          this.onOpenLinePromotionDialog(i);
+        // this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+        //   this.patchValueSaleOrder(result);
+        //   this.onOpenLinePromotionDialog(i);
 
-        });
+        // });
+        await this.loadRecord();
+        this.onOpenLinePromotionDialog(i);
       })
     } else {
 
-      this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
-        this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
-          this.patchValueSaleOrder(result);
-          this.onOpenLinePromotionDialog(i);
+      this.saleOrderService.update(this.saleOrderId, val).subscribe(async (result: any) => {
+        // this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+        //   this.patchValueSaleOrder(result);
+        //   this.onOpenLinePromotionDialog(i);
 
-        });
+        // });
+        await this.loadRecord();
+        this.onOpenLinePromotionDialog(i);
       });
     }
   }
