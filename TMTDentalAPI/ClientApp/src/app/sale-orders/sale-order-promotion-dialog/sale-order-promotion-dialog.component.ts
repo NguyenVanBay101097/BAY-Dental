@@ -47,9 +47,10 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    setTimeout(() => {
-      this.loadDefaultPromotion();
-    }, 0);
+    // setTimeout(() => {
+    //   this.loadDefaultPromotion();
+    // }, 0);
+    this.loadDefaultPromotion();
   }
 
 
