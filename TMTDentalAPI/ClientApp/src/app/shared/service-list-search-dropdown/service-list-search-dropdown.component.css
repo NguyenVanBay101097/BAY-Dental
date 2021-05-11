@@ -1,4 +1,4 @@
-.dropdown-menu {
+/* .dropdown-menu {
     max-width: 410px;
     width: 100%;
     min-width: 300px;
@@ -6,7 +6,7 @@
 
 .dropdown-menu .dropdown-item {
     padding: 0 !important;
-}
+} */
 
 .search-icon {
     position: absolute;
@@ -26,4 +26,12 @@
 
 ._wrapper .input-search {
     box-shadow: none;
+}
+
+._wrapper .dropdown-menu {
+    width: 100%;
+}
+
+._wrapper .dropdown-menu .service-name {
+    white-space: normal;
 }
