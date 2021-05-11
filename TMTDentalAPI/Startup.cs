@@ -137,7 +137,7 @@ namespace TMTDentalAPI
             services.AddScoped<IDbContext>(sp => sp.GetRequiredService<CatalogDbContext>());
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
-            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductService, ProductService>();  
             services.AddScoped<IPartnerService, PartnerService>();
             services.AddScoped<IPartnerCategoryService, PartnerCategoryService>();
 

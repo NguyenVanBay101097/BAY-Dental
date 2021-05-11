@@ -22,6 +22,10 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.Partner)
                .WithMany()
                .HasForeignKey(x => x.PartnerId);
+
+            builder.HasOne(x => x.SmsMessage)
+                .WithMany()
+                .HasForeignKey(x => x.SmsMessageId);
         }
     }
 }

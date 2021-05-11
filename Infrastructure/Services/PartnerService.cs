@@ -2075,12 +2075,37 @@ namespace Infrastructure.Services
             //return _mapper.Map<IEnumerable<PartnerBasic>>(apList);
         }
 
+        private IQueryable<Partner> GetQueryable(PartnerForTCarePaged val)
+        {
+            var query = SearchQuery(x => x.Customer == true);
+            if (val.BirthDay.HasValue)
+                query = query.Where(x => x.BirthDay.HasValue && x.BirthDay.Value == val.BirthDay.Value);
+
+            if (val.BirthMonth.HasValue)
+                query = query.Where(x => x.BirthMonth.HasValue && x.BirthMonth.Value == val.BirthMonth.Value);
+
+            if (!string.IsNullOrEmpty(val.Op) && val.PartnerCategoryId.HasValue)
+            {
+                if (val.Op == "not_contains")
+                {
+                    query = query.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.CategoryId == val.PartnerCategoryId));
+                }
+                else
+                {
+                    query = query.Where(x => !x.PartnerPartnerCategoryRels.Any(s => s.CategoryId == val.PartnerCategoryId));
+                }
+            }
+            return query;
+        }
+
         public async Task<IEnumerable<Guid>> GetPartnerForTCare(PartnerForTCarePaged val)
         {
-            throw new NotImplementedException();
+            var query = GetQueryable(val);
+            var partnerIds = await query.Select(x => x.Id).ToListAsync();
+            return partnerIds;
         }
     }
-   
+
     public class PartnerCreditDebitItem
     {
         public decimal Credit { get; set; }

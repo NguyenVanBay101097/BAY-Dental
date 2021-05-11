@@ -11,14 +11,9 @@ namespace ApplicationCore.Entities
 
         public bool IsBirthdayAutomation { get; set; }
 
-        public Guid? BirthdayTemplateId { get; set; }
-        public SmsTemplate BirthdayTemplate { get; set; }
-
         public bool IsAppointmentAutomation { get; set; }
 
-        public Guid? AppointmentTemplateId { get; set; }
-        public SmsTemplate AppointmentTemplate { get; set; }
-
-        public string JobId { get; set; }
+        public Guid? TemplateId { get; set; }
+        public SmsTemplate Template { get; set; }
     }
 }

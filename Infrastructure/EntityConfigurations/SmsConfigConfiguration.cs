@@ -23,13 +23,9 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.CompanyId);
 
-            builder.HasOne(x => x.BirthdayTemplate)
-               .WithMany()
-               .HasForeignKey(x => x.BirthdayTemplateId);
-
-            builder.HasOne(x => x.AppointmentTemplate)
+            builder.HasOne(x => x.Template)
               .WithMany()
-              .HasForeignKey(x => x.AppointmentTemplateId);
+              .HasForeignKey(x => x.TemplateId);
         }
     }
 }

@@ -17,7 +17,7 @@ using System.Xml;
 
 namespace Infrastructure.HangfireJobService
 {
-    public class SmsJobService : ISmsJobService
+    public class SmsJobService :  ISmsJobService
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -36,11 +36,9 @@ namespace Infrastructure.HangfireJobService
             try
             {
                 var smsConfig = await context.SmsConfigs.Where(x => x.Id == configId).AsQueryable().FirstOrDefaultAsync();
-                if (smsConfig.AppointmentTemplateId.HasValue)
-                    smsConfig.AppointmentTemplate = await context.SmsTemplates.Where(x => x.Id == smsConfig.AppointmentTemplateId.Value).FirstOrDefaultAsync();
 
-                if (smsConfig.BirthdayTemplateId.HasValue)
-                    smsConfig.BirthdayTemplate = await context.SmsTemplates.Where(x => x.Id == smsConfig.BirthdayTemplateId.Value).FirstOrDefaultAsync();
+                if (smsConfig.TemplateId.HasValue)
+                    smsConfig.Template = await context.SmsTemplates.Where(x => x.Id == smsConfig.TemplateId.Value).FirstOrDefaultAsync();
 
                 if (smsConfig.IsAppointmentAutomation)
                     await RunAppointmentAutomatic(context, smsConfig);
@@ -70,8 +68,8 @@ namespace Infrastructure.HangfireJobService
                 smsComposer.Id = GuidComb.GenerateComb();
                 smsComposer.ResModel = "res.appointment";
                 smsComposer.ResIds = string.Join(",", listAppointments.Select(x => x.Id));
-                smsComposer.TemplateId = config.AppointmentTemplateId;
-                smsComposer.Body = config.AppointmentTemplate.Body;
+                smsComposer.TemplateId = config.TemplateId;
+                smsComposer.Body = config.Template.Body;
                 context.SmsComposers.Add(smsComposer);
                 await context.SaveChangesAsync();
                 await _smsSendMessageService.CreateSmsSms(context, smsComposer, partnerIds, config.CompanyId);
@@ -99,8 +97,8 @@ namespace Infrastructure.HangfireJobService
                 smsComposer.Id = GuidComb.GenerateComb();
                 smsComposer.ResModel = "res.partners";
                 smsComposer.ResIds = string.Join(",", partners.Select(x => x.Id));
-                smsComposer.TemplateId = config.BirthdayTemplateId;
-                smsComposer.Body = config.BirthdayTemplate.Body;
+                smsComposer.TemplateId = config.TemplateId;
+                smsComposer.Body = config.Template.Body;
                 context.SmsComposers.Add(smsComposer);
                 context.SaveChanges();
                 await _smsSendMessageService.CreateSmsSms(context, smsComposer, partners.Select(x => x.Id), config.CompanyId);

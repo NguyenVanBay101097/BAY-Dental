@@ -10,25 +10,34 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool IsBirthdayAutomation { get; set; }
 
-        public Guid? BirthdayTemplateId { get; set; }
-
         public bool IsAppointmentAutomation { get; set; }
 
-        public Guid? AppointmentTemplateId { get; set; }
+        public Guid? TemplateId { get; set; }
+
+        public Guid? SmsAccountId { get; set; }
+
+        public DateTime? ThoiDiem { get; set; }
+        public int ThoiGian { get; set; }
+
+        public string Body { get; set; }
+
     }
 
     public class SmsConfigBasic
     {
         public Guid Id { get; set; }
-      
+
         public bool IsBirthdayAutomation { get; set; }
-
-        public Guid? BirthdayTemplateId { get; set; }
-        public SmsTemplateBasic BirthdayTemplate { get; set; }
-
         public bool IsAppointmentAutomation { get; set; }
 
-        public Guid? AppointmentTemplateId { get; set; }
-        public SmsTemplateBasic AppointmentTemplate { get; set; }
+        public Guid? TemplateId { get; set; }
+        public SmsTemplateBasic Template { get; set; }
+
+        public Guid? SmsAccountId { get; set; }
+        public SmsAccountBasic SmsAccount { get; set; }
+
+        public DateTime? ThoiDiem { get; set; }
+        public int ThoiGian { get; set; }
+        public string Body { get; set; }
     }
 }

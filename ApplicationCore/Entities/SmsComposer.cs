@@ -16,7 +16,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string CompositionMode { get; set; }
         /// <summary>
-        /// res.partner, appointment,
+        /// res.partner, appointment, campaign
         /// </summary>
         public string ResModel { get; set; }
 
@@ -32,5 +32,6 @@ namespace ApplicationCore.Entities
 
         public Guid? TemplateId { get; set; }
         public SmsTemplate Template { get; set; }
+
     }
 }

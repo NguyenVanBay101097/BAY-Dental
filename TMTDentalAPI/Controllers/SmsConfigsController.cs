@@ -31,8 +31,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetDefault()
         {
             var res = await _smsConfigService.SearchQuery(x => x.CompanyId == CompanyId)
-                .Include(x => x.AppointmentTemplate)
-                .Include(x => x.BirthdayTemplate)
+                .Include(x => x.Template)
                 .FirstOrDefaultAsync();
             return Ok(_mapper.Map<SmsConfigBasic>(res));
         }

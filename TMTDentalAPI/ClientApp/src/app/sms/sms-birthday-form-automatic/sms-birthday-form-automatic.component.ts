@@ -2,8 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { validator } from 'fast-json-patch';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import SmsAccountService, { SmsAccountPaged } from '../sms-account.service';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService } from '../sms-template.service';
@@ -16,14 +19,22 @@ import { SmsTemplateService } from '../sms-template.service';
 export class SmsBirthdayFormAutomaticComponent implements OnInit {
 
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
+  @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent
 
   formGroup: FormGroup;
   filteredConfigSMS: any[];
+  filteredSmsAccount: any[];
   skip: number = 0;
   id: string;
   limit: number = 20;
   type: string;
   filteredTemplate: any[];
+  textareaLimit: number = 200;
+  template: any =
+    {
+      text: '',
+      templateType: 'text'
+    };
   public today: Date = new Date;
   public timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
   public timeRunJob: Date = new Date();
@@ -32,19 +43,22 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     private modalService: NgbModal,
     private smsTemplateService: SmsTemplateService,
     private smsConfigService: SmsConfigService,
+    private intlService: IntlService,
+    private smsAccountService: SmsAccountService,
     private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      birthdayTemplate: [null, Validators.required],
+      template: [null, Validators.required],
+      smsAccount: [null, Validators.required],
       isBirthdayAutomation: false,
-      appointmentTemplateId: null,
-      isAppointmentAutomation: false
+      thoiDiem: new Date(),
+      thoiGian: 0,
     })
     this.loadDataFormApi();
     this.loadSmsTemplate();
-
+    this.loadAccount();
     this.smsTemplateCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.smsTemplateCbx.loading = true)),
@@ -52,6 +66,15 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     ).subscribe((result: any) => {
       this.filteredTemplate = result;
       this.smsTemplateCbx.loading = false;
+    });
+
+    this.smsAccountCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.smsAccountCbx.loading = true)),
+      switchMap(value => this.searchAccount(value))
+    ).subscribe((result: any) => {
+      this.filteredSmsAccount = result;
+      this.smsAccountCbx.loading = false;
     });
   }
 
@@ -61,11 +84,32 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
         if (res) {
           this.id = res.id;
           this.formGroup.patchValue(res);
+          if (res.template) {
+            this.template = JSON.parse(res.template.body);
+          }
         } else {
           this.id = null;
         }
       }
     )
+  }
+
+  loadAccount() {
+    this.searchAccount().subscribe(
+      (result: any) => {
+        if (result && result.items) {
+          this.filteredSmsAccount = result.items
+        }
+      }
+    )
+  }
+
+  searchAccount(q?: string) {
+    var val = new SmsAccountPaged();
+    val.limit = 20;
+    val.offset = 0;
+    val.search = q || '';
+    return this.smsAccountService.getPaged(val);
   }
 
   loadSmsTemplate() {
@@ -76,6 +120,17 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     )
   }
 
+  onChangeTemplate(event) {
+    if (event && event.body) {
+      this.template = JSON.parse(event.body);
+    } else {
+      this.template = {
+        text: '',
+        templateType: 'text'
+      }
+    }
+  }
+
   searchSmsTemplate(q?: string) {
     return this.smsTemplateService.getAutoComplete(q);
   }
@@ -83,7 +138,13 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   onSave() {
     if (this.formGroup.invalid) return;
     var val = this.formGroup.value;
-    val.birthdayTemplateId = val.birthdayTemplate ? val.birthdayTemplate.id : null;
+    val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
+    val.thoiDiem = this.intlService.formatDate(val.thoiDiem, "yyyy-MM-ddTHH:mm");
+    val.thoiGian = Number.parseInt(val.thoiGian);
+    val.templateId = val.template ? val.template.id : null;
+    val.body = this.template ? JSON.stringify(this.template) : '';
+    console.log(val);
+    return
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(
         res => {

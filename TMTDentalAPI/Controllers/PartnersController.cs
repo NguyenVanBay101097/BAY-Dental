@@ -733,13 +733,8 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> GetPartnerForTCare(PartnerForTCarePaged val)
         {
-            var today = DateTime.Today;
-            var partners = await _partnerService.SearchQuery(
-                x => x.BirthDay.HasValue &&
-                x.BirthDay == today.Day &&
-                x.BirthMonth.HasValue &&
-                x.BirthMonth == today.Month).ToListAsync();
-            return Ok(_mapper.Map<IEnumerable<PartnerSimple>>(partners));
+            var res =await _partnerService.GetPartnerForTCare(val);
+            return Ok(res);
         }
     }
 }
