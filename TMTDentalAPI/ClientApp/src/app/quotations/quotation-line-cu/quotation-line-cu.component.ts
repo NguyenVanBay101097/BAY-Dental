@@ -80,7 +80,6 @@ export class QuotationLineCuComponent implements OnInit {
       : 1;
     var priceUnit = this.getPriceUnitLinePromotion(this.formGroupInfo.value);
     this.formInfoControl("amount").setValue(priceUnit * getquanTity);
-    return priceUnit * getquanTity;
   }
 
   loadEmployees() {
@@ -242,16 +241,13 @@ export class QuotationLineCuComponent implements OnInit {
       return this.toothTypeDict.find(x => x.value == toothType).name;
     }
   }
+
   onEditLine() {
     this.isEditting = true;
     this.formGroupInfo = this.fb.group(this.line);
     // this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
-    this.formGroupInfo.setControl("teeth", this.fb.array([]));
-    if (this.line.teeth) {
-      this.line.teeth.forEach((tooth) => {
-        this.TeethFA.push(this.fb.group(tooth));
-      });
-    }
+    this.formGroupInfo.setControl("teeth", this.fb.array(this.line.teeth));
+  
   }
 
   notify(type, content) {

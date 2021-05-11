@@ -6,13 +6,14 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
   styleUrls: ['./promotion-discount.component.css']
 })
 export class PromotionDiscountComponent implements OnInit {
+  
   form = {
     discountFixed: 0,
     discountPercent: 0,
     discountType: "percentage", //percentage
     // code: null,
   };
-
+    
   discountTypeDict = {
     VNĐ: "fixed",
     "%": "percentage",
@@ -38,6 +39,6 @@ export class PromotionDiscountComponent implements OnInit {
   }
 
   applyDiscount() {
-    this.applyEvent.emit(this.form);
+this.applyEvent.emit(this.form);
   }
 }
