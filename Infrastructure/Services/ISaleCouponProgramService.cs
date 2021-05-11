@@ -12,7 +12,7 @@ namespace Infrastructure.Services
     {
         Task Apply(SaleCouponProgram rule, SaleOrder order, decimal total_amount, decimal total_qty, SaleCoupon coupon = null);
         Task<PagedResult2<SaleCouponProgramBasic>> GetPagedResultAsync(SaleCouponProgramPaged val);
-
+        Task<IEnumerable<HistoryPromotionReponse>> GetHistoryApplyPromotion(Guid id);
         Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrder();
         Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrderLine(Guid productId);
         Task<SaleCouponProgram> CreateProgram(SaleCouponProgramSave val);

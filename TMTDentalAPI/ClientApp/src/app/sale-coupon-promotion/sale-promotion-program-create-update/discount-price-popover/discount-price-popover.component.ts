@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { result } from 'lodash';
 import { Subject } from 'rxjs';
+import { SaleCouponProgramService } from '../../sale-coupon-program.service';
 
 @Component({
   selector: 'app-discount-price-popover',
@@ -9,6 +11,7 @@ import { Subject } from 'rxjs';
 })
 export class DiscountPricePopoverComponent implements OnInit {
 
+  id: string;
   title: string;
   search: string;
   searchUpdate = new Subject<string>();
@@ -18,7 +21,7 @@ export class DiscountPricePopoverComponent implements OnInit {
   dateTo: Date;
   skip = 0;
   loading = false;
-  constructor(public activeModal: NgbActiveModal,) { }
+  constructor(public activeModal: NgbActiveModal,private saleCouponProgramService: SaleCouponProgramService) { }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -41,7 +44,10 @@ export class DiscountPricePopoverComponent implements OnInit {
   }
 
   loadGridData(){
-
+    this.saleCouponProgramService.getHistoryApplyPromotion(this.id).subscribe(result=>{
+      console.log(result);
+      
+    })
   }
 
   exportExcelFile(){

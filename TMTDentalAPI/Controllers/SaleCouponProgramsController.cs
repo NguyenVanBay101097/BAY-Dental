@@ -47,6 +47,18 @@ namespace TMTDentalAPI.Controllers
             return Ok(display);
         }
 
+        [HttpGet("[action]/{id}")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
+        public async Task<IActionResult> GetHistoryApplyPromotion(Guid id)
+        {
+            var programHistories = await _programService.GetHistoryApplyPromotion(id);
+            if (programHistories == null)
+                return NotFound();
+
+            return Ok(programHistories);
+        }
+
+
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
         public async Task<IActionResult> GetPromotionBySaleOrder()
