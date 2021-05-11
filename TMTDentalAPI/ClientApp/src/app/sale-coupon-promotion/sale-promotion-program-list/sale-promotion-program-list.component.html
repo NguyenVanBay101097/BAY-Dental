@@ -40,8 +40,6 @@
                 [data]="listFilterStatus" [valueField]="'value'" [textField]="'text'"
                 (valueChange)="valueChangeStatus($event)" (filterChange)="filterChangeStatus($event)">
             </kendo-combobox>
-            <!-- <app-sale-coupon-program-filter-active [value]="filterActive" (valueChange)="filterActiveChange($event)">
-            </app-sale-coupon-program-filter-active> -->
         </div>
     </div>
 </div>
@@ -59,6 +57,9 @@
         <kendo-grid-column field="name" title="Chương trình">
         </kendo-grid-column>
         <kendo-grid-column title="Số lượng KM">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.maximumUseNumber ? (dataItem.maximumUseNumber == 0 ? "Không giới hạn" : dataItem.maximumUseNumber) : ""}}
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Thời gian áp dụng">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -72,13 +73,6 @@
                 <span [class]="getColorStatus(dataItem.status)">
                     {{dataItem.active ? (dataItem.status ? getStatus(dataItem.status) : "") : "Lưu nháp"}}
                 </span>
-            </ng-template>
-        </kendo-grid-column>
-        <!-- <kendo-grid-column field="active" title="Hoạt động">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" [checked]="dataItem.active" disabled>
-                    <label class="custom-control-label">​</label></div>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="id" *ngIf="canSaleCouponProgramUpdate || canSaleCouponProgramDelete">
