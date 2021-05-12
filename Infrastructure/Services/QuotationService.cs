@@ -311,10 +311,12 @@ namespace Infrastructure.Services
                 .Include(x => x.Lines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.Lines).ThenInclude(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
                 .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+                .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
                 .Include("Lines.QuotationLineToothRels")
                 .FirstOrDefaultAsync();
 
-            if (quotation.Promotions.Any() && !quotation.Promotions.Any(x => x.SaleCouponProgramId.HasValue && ( x.SaleCouponProgram.RuleDateFrom >= today && today <= x.SaleCouponProgram.RuleDateTo)))
+            var promotions = quotation.Promotions.Where(x => x.SaleCouponProgramId.HasValue).ToList();
+            if (promotions.Any() && promotions.Any(x => (x.SaleCouponProgram.RuleDateFrom.HasValue && x.SaleCouponProgram.RuleDateFrom > today) || (x.SaleCouponProgram.RuleDateTo.HasValue && x.SaleCouponProgram.RuleDateTo < today)))
                 throw new Exception("CTKM đã hết hạn. Vui lòng xóa các CTKM đã hết hạn để tiếp tục tạo phiếu điều trị");
 
             var saleOrder = new SaleOrder();
@@ -408,11 +410,13 @@ namespace Infrastructure.Services
                     {
                         var total = saleOrder.OrderLines.Sum(x => x.PriceUnit * x.ProductUOMQty);
                         var orderPromotion = new SaleOrderPromotion();
+                        orderPromotion.Name = promotion.Name;
                         orderPromotion.Amount = promotion.Amount;
                         orderPromotion.SaleOrder = saleOrder;
                         orderPromotion.Type = promotion.Type;
                         if (promotion.Type == "discount")
                         {
+                            orderPromotion.Name = "Giảm giá";
                             orderPromotion.DiscountType = promotion.DiscountType;
                             orderPromotion.DiscountFixed = promotion.DiscountFixed;
                             orderPromotion.DiscountPercent = promotion.DiscountPercent;
@@ -424,8 +428,8 @@ namespace Infrastructure.Services
                             orderPromotion.Lines.Add(new SaleOrderPromotionLine
                             {
                                 SaleOrderLineId = line.Id,
-                                Amount = promotion.Amount,
-                                PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
+                                Amount = amount,
+                                PriceUnit = (double)(line.ProductUOMQty != 0 ? (amount / line.ProductUOMQty) : 0),
                             });
                         }
 
@@ -433,7 +437,7 @@ namespace Infrastructure.Services
                     }
                 }
 
-
+                await saleOrderObj.UpdateAsync(saleOrder);
                 await saleOrderObj._ComputeAmountPromotionToOrder(new List<Guid>() { saleOrder.Id });
 
             }
