@@ -52,6 +52,14 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
+        public async Task<IActionResult> GetListPaged([FromQuery] SaleOrderProgramGetListPagedRequest val)
+        {
+            var result = await _programService.GetListPaged(val);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
         public async Task<IActionResult> GetPromotionBySaleOrder()
         {
             var result = await _programService.GetPromotionBySaleOrder();

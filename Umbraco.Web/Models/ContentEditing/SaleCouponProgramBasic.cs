@@ -16,10 +16,29 @@ namespace Umbraco.Web.Models.ContentEditing
         public ProductSimple DiscountLineProduct { get; set; }
 
         public bool Active { get; set; }
-        public string Status { get; set; }
         public DateTime? RuleDateFrom { get; set; }
         public DateTime? RuleDateTo { get; set; }
         public int? MaximumUseNumber { get; set; }
+
+        public bool IsPaused { get; set; }
+
+        public string StatusDisplay
+        {
+            get
+            {
+                if (!Active)
+                    return "Lưu nháp";
+                var now = DateTime.Today;
+                if (now > RuleDateTo)
+                    return "Hết hạn";
+                if (IsPaused)
+                    return "Tạm ngừng";
+                if (now >= RuleDateFrom && now <= RuleDateTo)
+                    return "Đang chạy";
+              
+                return "Chưa chạy";
+            }
+        }
     }
 
 }

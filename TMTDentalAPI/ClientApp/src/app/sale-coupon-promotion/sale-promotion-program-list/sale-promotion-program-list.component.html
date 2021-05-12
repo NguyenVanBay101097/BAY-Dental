@@ -58,7 +58,7 @@
         </kendo-grid-column>
         <kendo-grid-column title="Số lượng KM">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.maximumUseNumber ? (dataItem.maximumUseNumber == 0 ? "Không giới hạn" : dataItem.maximumUseNumber) : ""}}
+                {{dataItem.maximumUseNumber ? dataItem.maximumUseNumber : "Không giới hạn"}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Thời gian áp dụng">
@@ -70,8 +70,8 @@
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <span [class]="getColorStatus(dataItem.status)">
-                    {{dataItem.active ? (dataItem.status ? getStatus(dataItem.status) : "") : "Lưu nháp"}}
+                <span [class]="getColorStatus(dataItem.statusDisplay)">
+                    {{dataItem.statusDisplay}}
                 </span>
             </ng-template>
         </kendo-grid-column>
