@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210512022020_UpdateSms_2")]
+    partial class UpdateSms_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8107,9 +8109,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateSend")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("IsAppointmentAutomation")
                         .HasColumnType("bit");
 
@@ -8119,20 +8118,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("SmsAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SmsCampaignId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("TemplateId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("TimeBeforSend")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
@@ -8142,10 +8129,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("SmsAccountId");
-
-                    b.HasIndex("SmsCampaignId");
 
                     b.HasIndex("TemplateId");
 
@@ -8175,9 +8158,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("SmsAccountId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("SmsCampaignId")
                         .HasColumnType("uniqueidentifier");
 
@@ -8196,8 +8176,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("SmsAccountId");
 
                     b.HasIndex("SmsCampaignId");
 
@@ -13707,14 +13685,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("ApplicationCore.Entities.SmsAccount", "SmsAccount")
-                        .WithMany()
-                        .HasForeignKey("SmsAccountId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsCampaign", "SmsCampaign")
-                        .WithMany()
-                        .HasForeignKey("SmsCampaignId");
-
                     b.HasOne("ApplicationCore.Entities.SmsTemplate", "Template")
                         .WithMany()
                         .HasForeignKey("TemplateId");
@@ -13729,10 +13699,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.SmsAccount", "SmsAccount")
-                        .WithMany()
-                        .HasForeignKey("SmsAccountId");
 
                     b.HasOne("ApplicationCore.Entities.SmsCampaign", "SmsCampaign")
                         .WithMany()

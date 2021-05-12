@@ -6,9 +6,9 @@ namespace ApplicationCore.Entities
 {
     public class SmsMessagePartnerRel
     {
-        public SmsMessagePartner SmsMessagePartner { get; set; }
-        public Guid SmsMessagePartnerId { get; set; }
         public Guid PartnerId { get; set; }
         public Partner Partner { get; set; }
+        public Guid SmsMessageId { get; set; }
+        public SmsMessage SmsMessage { get; set; }
     }
 }

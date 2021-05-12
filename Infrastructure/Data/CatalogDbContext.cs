@@ -255,6 +255,8 @@ namespace Infrastructure.Data
         public DbSet<SmsConfig> SmsConfigs { get; set; }
         public DbSet<SmsSms> SmsSmss { get; set; }
         public DbSet<SmsTemplate> SmsTemplates { get; set; }
+        public DbSet<SmsMessage> SmsMessages { get; set; }
+        public DbSet<SmsMessagePartnerRel> SmsMessagePartnerRels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -459,6 +461,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SmsComposerConfiguration());
             builder.ApplyConfiguration(new SmsSmsConfiguration());
             builder.ApplyConfiguration(new SmsTemplateConfiguration());
+            builder.ApplyConfiguration(new SmsMessagePartnerRelConfiguration());
+            builder.ApplyConfiguration(new SmsMessageConfiguration());
 
 
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());

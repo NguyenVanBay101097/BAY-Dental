@@ -137,7 +137,7 @@ namespace TMTDentalAPI
             services.AddScoped<IDbContext>(sp => sp.GetRequiredService<CatalogDbContext>());
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
-            services.AddScoped<IProductService, ProductService>();  
+            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IPartnerService, PartnerService>();
             services.AddScoped<IPartnerCategoryService, PartnerCategoryService>();
 
@@ -335,6 +335,8 @@ namespace TMTDentalAPI
             services.AddScoped<ISmsTemplateService, SmsTemplateService>();
             services.AddScoped<ISmsJobService, SmsJobService>();
             services.AddScoped<ISmsSendMessageService, SmsSendMessageService>();
+            services.AddScoped<ISmsMessageService, SmsMessageService>();
+            services.AddScoped<ISmsCampaignService, SmsCampaignService>();
 
             services.AddMemoryCache();
 
@@ -492,6 +494,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SmsConfigProfile());
                 mc.AddProfile(new SmsSmsProfile());
                 mc.AddProfile(new SmsComposerProfile());
+                mc.AddProfile(new SmsCampaignProfile());
+                mc.AddProfile(new SmsMessageProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

@@ -10,10 +10,15 @@ namespace ApplicationCore.Entities
         public Guid? SmsCampaignId { get; set; }
         public SmsCampaign SmsCampaign { get; set; }
         public DateTime? Date { get; set; }
-        public Guid?  SmsTemplateId { get; set; }
+        /// <summary>
+        /// Send now, reminder
+        /// </summary>
+        public string TypeSend { get; set; }
+        public Guid? SmsTemplateId { get; set; }
         public SmsTemplate SmsTemplate { get; set; }
+        public Guid? SmsAccountId { get; set; }
+        public SmsAccount SmsAccount { get; set; }
         public string State { get; set; }
-        public Guid SmsMessagePartnerId { get; set; }
-        public SmsMessagePartner SmsMessagePartner { get; set; }
+        public ICollection<SmsMessagePartnerRel> Partners { get; set; } = new List<SmsMessagePartnerRel>();
     }
 }

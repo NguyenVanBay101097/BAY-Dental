@@ -53,8 +53,9 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
       template: [null, Validators.required],
       smsAccount: [null, Validators.required],
       isBirthdayAutomation: false,
-      thoiDiem: new Date(),
-      thoiGian: 0,
+      dateTimeSend: new Date(),
+      timeBeforSend: 0,
+      type: 'birthday',
     })
     this.loadDataFormApi();
     this.loadSmsTemplate();
@@ -79,13 +80,17 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   }
 
   loadDataFormApi() {
-    this.smsConfigService.getConfigByCompany().subscribe(
+    var type = "birthday"
+    this.smsConfigService.getConfigByCompany(type).subscribe(
       (res: any) => {
         if (res) {
           this.id = res.id;
           this.formGroup.patchValue(res);
           if (res.template) {
             this.template = JSON.parse(res.template.body);
+          }
+          if (res.dateSend) {
+            this.formGroup.get('dateTimeSend').patchValue(new Date(res.dateSend))
           }
         } else {
           this.id = null;
@@ -139,12 +144,10 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     if (this.formGroup.invalid) return;
     var val = this.formGroup.value;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
-    val.thoiDiem = this.intlService.formatDate(val.thoiDiem, "yyyy-MM-ddTHH:mm");
-    val.thoiGian = Number.parseInt(val.thoiGian);
+    val.dateSend = this.intlService.formatDate(val.dateTimeSend, "yyyy-MM-ddTHH:mm");
+    val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.templateId = val.template ? val.template.id : null;
     val.body = this.template ? JSON.stringify(this.template) : '';
-    console.log(val);
-    return
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(
         res => {

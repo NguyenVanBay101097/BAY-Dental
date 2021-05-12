@@ -78,6 +78,8 @@
     <Compile Remove="Data\Migrations\20210511035919_Update_SMS_1.Designer.cs" />
     <Compile Remove="Data\Migrations\20210511081934_Update_SMS_2.cs" />
     <Compile Remove="Data\Migrations\20210511081934_Update_SMS_2.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210512044230_UpdateSms_3.cs" />
+    <Compile Remove="Data\Migrations\20210512044230_UpdateSms_3.Designer.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.Designer.cs" />
     <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.cs" />

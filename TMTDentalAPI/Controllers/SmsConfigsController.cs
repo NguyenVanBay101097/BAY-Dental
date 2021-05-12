@@ -27,11 +27,21 @@ namespace TMTDentalAPI.Controllers
             _unitOfWorkAsync = unitOfWorkAsync;
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> GetDefault()
+        //{
+        //    var res = await _smsConfigService.SearchQuery(x => x.CompanyId == CompanyId)
+        //        .Include(x => x.Template)
+        //        .FirstOrDefaultAsync();
+        //    return Ok(_mapper.Map<SmsConfigBasic>(res));
+        //}
+
         [HttpGet]
-        public async Task<IActionResult> GetDefault()
+        public async Task<IActionResult> Get(string type)
         {
-            var res = await _smsConfigService.SearchQuery(x => x.CompanyId == CompanyId)
+            var res = await _smsConfigService.SearchQuery(x => x.CompanyId == CompanyId && x.Type == type)
                 .Include(x => x.Template)
+                .Include(x => x.SmsAccount)
                 .FirstOrDefaultAsync();
             return Ok(_mapper.Map<SmsConfigBasic>(res));
         }

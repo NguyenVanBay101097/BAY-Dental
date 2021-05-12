@@ -20,15 +20,27 @@ namespace Infrastructure.Services
         }
         public override async Task<SmsConfig> CreateAsync(SmsConfig entity)
         {
+            if (!entity.SmsCampaignId.HasValue)
+            {
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultCampaignBirthday();
+                entity.SmsCampaignId = campaign.Id;
+            }
             entity = await base.CreateAsync(entity);
             ActionRunJob(entity);
             return entity;
         }
 
-        public override Task UpdateAsync(SmsConfig entity)
+        public override async Task UpdateAsync(SmsConfig entity)
         {
             ActionRunJob(entity);
-            return base.UpdateAsync(entity);
+            if (!entity.SmsCampaignId.HasValue)
+            {
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultCampaignBirthday();
+                entity.SmsCampaignId = campaign.Id;
+            }
+            await base.UpdateAsync(entity);
         }
 
         public void ActionRunJob(SmsConfig model)

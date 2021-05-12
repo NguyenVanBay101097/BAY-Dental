@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 
 @Injectable({
@@ -17,7 +17,7 @@ export class SmsConfigService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
-  getConfigByCompany() {
-    return this.http.get(this.base_api + this.apiUrl);
+  getConfigByCompany(type: string) {
+    return this.http.get(this.base_api + this.apiUrl, { params: new HttpParams().set('type', type) });
   }
 }
