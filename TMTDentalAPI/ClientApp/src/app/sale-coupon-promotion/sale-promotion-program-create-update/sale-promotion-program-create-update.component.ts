@@ -314,6 +314,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     let modalRef = this.modalService.open(DiscountPricePopoverComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Giá trị khuyến mãi';
     modalRef.componentInstance.id = this.id;
+    modalRef.componentInstance.typeApply = this.discountApplyOn;
   }
 
   loadRecord() {

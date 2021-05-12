@@ -19,6 +19,18 @@
             (searchChange)="searchChangeDate($event)">
         </app-tai-date-range-filter-dropdown>
     </div>
+    <div class="o_content">
+        <kendo-grid #grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="datePromotion" title="Ngày sử dụng" width="100"></kendo-grid-column>
+            <kendo-grid-column field="partnerName" title="Khách hàng" width="100"></kendo-grid-column>
+            <kendo-grid-column field="saleOrderName" title="Số phiếu" width="100"></kendo-grid-column>
+            <!-- <kendo-grid-column *ngIf="typeApply != 'on_order'" field="saleOrderLineName" title="Dịch vụ" width="100"></kendo-grid-column>
+            <kendo-grid-column *ngIf="typeApply != 'on_order'" field="amount" title="Tiền dịch vụ" width="100"></kendo-grid-column>
+            <kendo-grid-column *ngIf="typeApply == 'on_order'" field="amount" title="Tiền điều trị" width="100"></kendo-grid-column> -->
+            <kendo-grid-column field="amountPromotion" title="Giá trị khuyến mãi" width="100"></kendo-grid-column>
+        </kendo-grid>
+    </div>
 </div>
 
 <div class="modal-footer">

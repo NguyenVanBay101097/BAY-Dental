@@ -53,13 +53,14 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<HistoryPromotionReponse>> GetHistoryPromotionResult(HistoryPromotionRequest val)
         {
+            
             var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.SearchOrder))
                 query = query.Where(x => val.SearchOrder.Contains(x.SaleOrder.Name));
 
-            if (!string.IsNullOrEmpty(val.SearchOrderLine))
-                query = query.Where(x => val.SearchOrderLine.Contains(x.SaleOrderLine.Name));
+            //if (!string.IsNullOrEmpty(val.SearchOrderLine))
+            //    query = query.Where(x => val.SearchOrderLine.Contains(x.SaleOrderLine.Name));
 
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateCreated >= val.DateFrom);
@@ -73,26 +74,43 @@ namespace Infrastructure.Services
             if (val.SaleCouponProgramId.HasValue)
                 query = query.Where(x => x.SaleCouponProgramId.HasValue && x.SaleCouponProgramId == val.SaleCouponProgramId);
 
+            var query2 = query.GroupBy(x => new
+            {
+                Date = x.DateCreated,
+                SaleOrderId = x.SaleOrderId
+            }).Select(x => new
+            {
+                SaleOrderId = x.Key.SaleOrderId,
+                Date = x.Key.Date,
+                AmountPromotion = x.Sum(x => x.Amount)
+            });
 
-            var totalItems = await query.CountAsync();
+            var totalItems = await query2.CountAsync();
+            var items = await query2.OrderByDescending(x => x.Date)
+                .Skip(val.Offset).Take(val.Limit).ToListAsync();
 
-            query = query.OrderByDescending(x => x.DateCreated);
+            var orderObj = GetService<ISaleOrderService>();
+            var saleOrderIds = items.Select(x => x.SaleOrderId).ToList();
+            IList<SaleOrder> saleOrders = await orderObj.SearchQuery(x=> saleOrderIds.Contains(x.Id)).Include(x=>x.Partner).ToListAsync();
+            var saleOrderDict = saleOrders.ToDictionary(x => x.Id, x => x);
 
-            if (val.Limit > 0)
-                query = query.Skip(val.Offset).Take(val.Limit);
+            //query = query.OrderByDescending(x => x.DateCreated);
 
-            var items = await query.Include(x => x.SaleCouponProgram).Include(x => x.SaleOrder).ThenInclude(x => x.Partner).Include(x => x.SaleOrderLine).ToListAsync();
+            //if (val.Limit > 0)
+            //    query = query.Skip(val.Offset).Take(val.Limit);
+
+           
 
             var paged = new PagedResult2<HistoryPromotionReponse>(totalItems, val.Offset, val.Limit)
             {
                 Items = items.Select(x => new HistoryPromotionReponse
                 {
-                    Amount = x.SaleCouponProgram.DiscountApplyOn == "on_order" ? (x.SaleOrder.AmountTotal ?? 0) : (x.SaleOrderLine.PriceUnit * x.SaleOrderLine.ProductUOMQty),
-                    AmountPromotion = x.Amount,
-                    DatePromotion = x.DateCreated,
-                    PartnerName = x.SaleOrder.Partner.Name,
-                    SaleOrderName = x.SaleOrder.Name,
-                    SaleOrderLineName = x.SaleCouponProgram.DiscountApplyOn != "on_order" ? x.SaleOrderLine.Name : null
+                    Amount = saleOrderDict[x.SaleOrderId.Value].AmountTotal ?? 0,
+                    AmountPromotion = x.AmountPromotion,
+                    DatePromotion = x.Date,
+                    PartnerName = saleOrderDict[x.SaleOrderId.Value].Partner.Name,
+                    SaleOrderName = saleOrderDict[x.SaleOrderId.Value].Name, 
+                    SaleOrderId = saleOrderDict[x.SaleOrderId.Value].Id,
                 })
             };
 
