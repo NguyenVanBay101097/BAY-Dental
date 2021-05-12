@@ -145,7 +145,7 @@ namespace Infrastructure.Services
                 }
                 while (promoCodes.Contains(code));
                 val.PromoCode = code;
-               
+
             }
 
             var program = _mapper.Map<SaleCouponProgram>(val);
@@ -171,7 +171,7 @@ namespace Infrastructure.Services
             _CheckDiscountPercentage(program);
             _CheckRuleMinimumAmount(program);
             _CheckRuleMinQuantity(program);
-           // await _CheckPromoCodeConstraint(program);
+            // await _CheckPromoCodeConstraint(program);
             return await CreateAsync(program);
         }
 
@@ -188,6 +188,8 @@ namespace Infrastructure.Services
             res.OrderCount = await _GetOrderCountAsync(id);
             return res;
         }
+
+       
 
         public async Task UpdateProgram(Guid id, SaleCouponProgramSave val)
         {
@@ -525,6 +527,16 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+        public async Task<decimal> GetAmountTotal(Guid id)
+        {
+            ///lay tu moveline journal amount advance used
+            var promotionObj = GetService<ISaleOrderPromotionService>();          
+            var amounAdvance = await promotionObj.SearchQuery(x => x.SaleCouponProgramId == id).Select(x => x.Amount).SumAsync();
+            return Math.Round(amounAdvance);
+        }
+
+    
 
         public bool _IsGlobalDiscountProgram(SaleCouponProgram self)
         {

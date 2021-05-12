@@ -72,4 +72,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ProductSimple> DiscountSpecificProducts { get; set; } = new List<ProductSimple>();
         public IEnumerable<ProductCategorySimple> DiscountSpecificProductCategories { get; set; } = new List<ProductCategorySimple>();
     }
+
+   
 }

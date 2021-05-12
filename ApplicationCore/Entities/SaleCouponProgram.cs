@@ -126,7 +126,11 @@ namespace ApplicationCore.Entities
         public DateTime? RuleDateTo { get; set; }
 
         public string RewardDescription { get; set; }
-
+        /// <summary>
+        /// on_order : phiếu điều trị
+        /// specific_product_categories: nhóm dịch vụ
+        /// specific_products: dịch vụ
+        /// </summary>
         public string DiscountApplyOn { get; set; }
         public string Days { get; set; }
     }
