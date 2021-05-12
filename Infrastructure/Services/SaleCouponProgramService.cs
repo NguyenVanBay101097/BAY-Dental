@@ -33,7 +33,40 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SaleOrderProgramGetListPagedResponse>> GetListPaged(SaleOrderProgramGetListPagedRequest val)
         {
-            IList<SaleOrderProgramGetListPagedResponse> items = null;
+            ISpecification<SaleCouponProgram> spec = new InitialSpecification<SaleCouponProgram>(x => true);
+            if (!string.IsNullOrEmpty(val.Search))
+                spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.Name.Contains(val.Search)));
+            if (!string.IsNullOrEmpty(val.ProgramType))
+                spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.ProgramType == val.ProgramType));
+            if (val.Active.HasValue)
+                spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.Active == val.Active));
+            if (!string.IsNullOrEmpty(val.Status))
+            {
+                var now = DateTime.Today;
+                if (val.Status == "waiting")
+                    spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.RuleDateFrom > now));
+                if (val.Status == "paused")
+                    spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => now <= x.RuleDateTo && x.IsPaused));
+                if (val.Status == "running")
+                    spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => now >= x.RuleDateFrom && now <= x.RuleDateTo && !x.IsPaused));
+                if (val.Status == "expired")
+                    spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => now > x.RuleDateTo));
+            }
+
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Sequence).ThenBy(s => s.RewardType));
+            if (val.Limit > 0)
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            }
+            var items = await _mapper.ProjectTo<SaleOrderProgramGetListPagedResponse>(query).ToListAsync();
+
+            var programIds = await query.Select(x => x.Id).ToListAsync();
+
+            var totalItems = await query.CountAsync();
+            return new PagedResult2<SaleOrderProgramGetListPagedResponse>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
             //10 id
             return null;
 

@@ -4,7 +4,7 @@ import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/op
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SaleCouponProgramService, SaleCouponProgramPaged, SaleCouponProgramBasic } from '../sale-coupon-program.service';
+import { SaleCouponProgramService, SaleCouponProgramPaged, SaleCouponProgramBasic, SaleOrderProgramGetListPagedRequest } from '../sale-coupon-program.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -96,7 +96,7 @@ export class SalePromotionProgramListComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var val = new SaleCouponProgramPaged();
+    var val = new SaleOrderProgramGetListPagedRequest();
     val.programType = 'promotion_program';
     val.limit = this.limit;
     val.offset = this.skip;
@@ -106,7 +106,7 @@ export class SalePromotionProgramListComponent implements OnInit {
       val.status = this.selectedStatus.value;
     }
 
-    this.programService.getPaged(val).pipe(
+    this.programService.getListPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
