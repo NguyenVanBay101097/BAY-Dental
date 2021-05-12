@@ -53,5 +53,9 @@ export class SaleOrderPromotionService {
 
   GetHistoryPromotionByCouponProgram(val):Observable<PagedResult2<any>>{
     return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + "/GetHistoryPromotionByCouponProgram",{params: new HttpParams({fromObject: val})});
-}
+  }
+
+  ExportExcelFile(val){
+    return this.http.post(this.baseApi + this.apiUrl + '/ExportExcelFile', val, { responseType: "blob" } );
+  }
 }

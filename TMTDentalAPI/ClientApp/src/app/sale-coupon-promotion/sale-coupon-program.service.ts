@@ -104,4 +104,8 @@ export class SaleCouponProgramService {
     getPromotionBySaleOrderLine(id) {
         return this.http.get(this.baseApi + this.apiUrl + "/GetPromotionBySaleOrderLine?productId=" + id);
     }
+
+    getAmountTotalUsagePromotion(id){
+        return this.http.get(this.baseApi + this.apiUrl +'/'+id+ "/GetAmountTotalUsagePromotion");
+    }
 }

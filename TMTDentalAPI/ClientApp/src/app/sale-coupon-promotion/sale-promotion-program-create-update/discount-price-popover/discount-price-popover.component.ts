@@ -4,7 +4,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { result } from 'lodash';
 import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { HistoryPromotionRequest, SaleOrderPromotionService } from 'src/app/sale-orders/sale-order-promotion.service';
 import { SaleCouponProgramService } from '../../sale-coupon-program.service';
 
@@ -27,23 +27,31 @@ export class DiscountPricePopoverComponent implements OnInit {
   dateTo: Date;
   skip = 0;
   pageSize = 20;
-  constructor(public activeModal: NgbActiveModal,private saleOrderPromotionService: SaleOrderPromotionService,private intlService: IntlService) { }
+  amountTotal: number;
+  constructor(public activeModal: NgbActiveModal,private saleOrderPromotionService: SaleOrderPromotionService,private intlService: IntlService,
+  ) { }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
     this.loadGridData();
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.skip = 0;
+        this.loadGridData();
+      });
   }
 
-  onExportExcel(){
-
-  }
 
   onCancel(){
-
+    this.activeModal.dismiss();
   }
 
   searchChangeDate(value) {
+    console.log(value);
+    
     this.dateFrom = value.dateFrom;
     this.dateTo = value.dateTo;
     this.skip = 0;
@@ -52,10 +60,10 @@ export class DiscountPricePopoverComponent implements OnInit {
 
   loadGridData(){
     var val = new HistoryPromotionRequest();
-    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
-    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
     val.offSet = this.skip;
-    this.typeApply == 'on_order' ? val.searchOrder = this.search : val.searchOrderLine = this.search;
+    val.searchOrder = this.search || '';
     val.saleCouponProgramId = this.id;
     this.saleOrderPromotionService.GetHistoryPromotionByCouponProgram(val).pipe(
       map(rs1 => (<GridDataResult>{
@@ -69,11 +77,28 @@ export class DiscountPricePopoverComponent implements OnInit {
     })
   }
 
-  exportExcelFile(){
-    
+  onExportExcel(){
+    var val = new HistoryPromotionRequest();
+    val.limit = 0;
+    this.saleOrderPromotionService.ExportExcelFile(val).subscribe((rs) => {
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
   
   pageChange(event: PageChangeEvent){
-
+    this.skip = event.skip;
+    this.loadGridData();
   }
 }

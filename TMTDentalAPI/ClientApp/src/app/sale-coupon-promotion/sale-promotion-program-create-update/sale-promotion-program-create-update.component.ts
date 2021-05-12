@@ -41,6 +41,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   endDate = new Date();
   codeNeed = false;
   discountFixed = true;
+  amountTotal: number = 0;
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
   listProducts: ProductSimple[];
@@ -138,6 +139,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     this.loadListProducts();
     this.loadListProductCategories();
     this.loadListDay();
+    this.getAmountTotal();
     this.productMultiSelect.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.productMultiSelect.loading = true)),
@@ -237,6 +239,12 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     return value;
   }
 
+  getAmountTotal(){
+    this.programService.getAmountTotalUsagePromotion(this.id).subscribe(result=>{
+      this.amountTotal = <number>result;
+    })
+  }
+
   onChangePromoCodeUsage() {
     if (this.promoCodeUsage == 'no_code_needed') {
       this.formGroup.get('promoCode').setValue(null);
@@ -315,6 +323,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.title = 'Giá trị khuyến mãi';
     modalRef.componentInstance.id = this.id;
     modalRef.componentInstance.typeApply = this.discountApplyOn;
+    modalRef.componentInstance.amountTotal = this.amountTotal;
   }
 
   loadRecord() {
@@ -429,17 +438,20 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       modalRef.componentInstance.title = 'Kích hoạt chương trình khuyến mãi';
       modalRef.componentInstance.body = 'Bạn có muốn kích hoạt chương trình khuyến mãi?';
       modalRef.result.then(()=>{
-        if (this.id){
-          this.programService.actionUnArchive([this.id]).subscribe(()=>{
-            this.notify('Đã kích hoạt CTKM thành công');
-            this.loadRecord();
-          });
+        if (this.id) {
+          this.programService.update(this.id,value).subscribe(result => {
+            this.programService.actionUnArchive([this.id]).subscribe(()=>{
+              this.notify('Đã kích hoạt CTKM thành công');
+              this.loadRecord();
+            });
+          })
         }
         else {
           var value = this.getDataFromBody();
           this.programService.create(value).subscribe(result => {
             this.programService.actionUnArchive([result.id]).subscribe(()=>{
               this.notify('Đã kích hoạt CTKM thành công');
+              this.id = result.id;
               this.loadRecord();
             });
           });
