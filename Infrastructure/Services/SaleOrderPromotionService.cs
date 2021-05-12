@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -50,7 +51,56 @@ namespace Infrastructure.Services
             return paged;
         }
 
-     
+        public async Task<PagedResult2<HistoryPromotionReponse>> GetHistoryPromotionResult(HistoryPromotionRequest val)
+        {
+            var query = SearchQuery();
+
+            if (!string.IsNullOrEmpty(val.SearchOrder))
+                query = query.Where(x => val.SearchOrder.Contains(x.SaleOrder.Name));
+
+            if (!string.IsNullOrEmpty(val.SearchOrderLine))
+                query = query.Where(x => val.SearchOrderLine.Contains(x.SaleOrderLine.Name));
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateCreated >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+            {
+                var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateCreated <= dateOrderTo);
+            }
+
+            if (val.SaleCouponProgramId.HasValue)
+                query = query.Where(x => x.SaleCouponProgramId.HasValue && x.SaleCouponProgramId == val.SaleCouponProgramId);
+
+
+            var totalItems = await query.CountAsync();
+
+            query = query.OrderByDescending(x => x.DateCreated);
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await query.Include(x => x.SaleCouponProgram).Include(x => x.SaleOrder).ThenInclude(x => x.Partner).Include(x => x.SaleOrderLine).ToListAsync();
+
+            var paged = new PagedResult2<HistoryPromotionReponse>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items.Select(x => new HistoryPromotionReponse
+                {
+                    Amount = x.SaleCouponProgram.DiscountApplyOn == "on_order" ? (x.SaleOrder.AmountTotal ?? 0) : (x.SaleOrderLine.PriceUnit * x.SaleOrderLine.ProductUOMQty),
+                    AmountPromotion = x.Amount,
+                    DatePromotion = x.DateCreated,
+                    PartnerName = x.SaleOrder.Partner.Name,
+                    SaleOrderName = x.SaleOrder.Name,
+                    SaleOrderLineName = x.SaleCouponProgram.DiscountApplyOn != "on_order" ? x.SaleOrderLine.Name : null
+                })
+            };
+
+            return paged;
+
+
+        }
+
         public SaleOrderPromotion PreparePromotionToOrder(SaleOrder self, SaleCouponProgram program, decimal discountAmount)
         {
             var promotionLine = new SaleOrderPromotion

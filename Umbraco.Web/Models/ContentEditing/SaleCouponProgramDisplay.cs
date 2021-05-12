@@ -73,13 +73,5 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ProductCategorySimple> DiscountSpecificProductCategories { get; set; } = new List<ProductCategorySimple>();
     }
 
-    public class HistoryPromotionReponse
-    {
-        public DateTime? DatePromotion { get; set; }
-        public string PartnerName { get; set; }
-        public string SaleOrderName { get; set; }
-        public string SaleOrderLineName { get; set; }
-        public decimal Amount { get; set; }
-        public double AmountPromotion { get; set; }
-    }
+   
 }

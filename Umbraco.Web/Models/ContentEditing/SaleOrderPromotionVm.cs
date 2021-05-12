@@ -26,7 +26,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string Name { get; set; }
 
-        public Guid? SaleCouponProgramId {get;set;}
+        public Guid? SaleCouponProgramId { get; set; }
 
         public decimal Amount { get; set; }
 
@@ -103,6 +103,36 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string Type { get; set; }
 
+    }
+
+    public class HistoryPromotionRequest
+    {
+        public HistoryPromotionRequest()
+        {
+            Limit = 20;
+        }
+
+        public int Offset { get; set; }
+
+        public int Limit { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+
+        public string SearchOrder { get; set; }
+        public string SearchOrderLine { get; set; }
+
+        public Guid? SaleCouponProgramId { get; set; }
+    }
+
+    public class HistoryPromotionReponse
+    {
+        public decimal Amount { get; set; }
+        public decimal AmountPromotion { get; set; }
+        public DateTime? DatePromotion { get; set; }
+        public string PartnerName { get; set; }
+        public string SaleOrderName { get; set; }
+        public string SaleOrderLineName { get; set; }
     }
 
 }

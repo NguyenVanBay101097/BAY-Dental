@@ -33,6 +33,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetHistoryPromotionByCouponProgram([FromQuery] HistoryPromotionRequest val)
+        {
+            var result = await _orderPromotionService.GetHistoryPromotionResult(val);
+            return Ok(result);
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> RemovePromotion(IEnumerable<Guid> ids)
         {
