@@ -67,9 +67,6 @@ namespace Infrastructure.Services
             {
                 Items = items
             };
-            //10 id
-            return null;
-
         }
 
         //public IDictionary<Guid, decimal> GetAmountPromotionDict(IEnumerable<Guid> ids)
