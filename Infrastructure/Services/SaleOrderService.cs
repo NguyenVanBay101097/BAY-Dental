@@ -1850,7 +1850,8 @@ namespace Infrastructure.Services
             }).ToListAsync();
             //order.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);        
             order.DotKhams = await _GetListDotkhamInfo(order.Id);
-            order.HistoryPayments = await _GetPaymentInfoPrint(order.Id);
+            var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
+            order.HistoryPayments = _mapper.Map<IEnumerable<SaleOrderPaymentBasic>>(await saleOrderPaymentObj.SearchQuery(x => x.OrderId == id).Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync());
             //get currentuser
             order.User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId));
             return order;

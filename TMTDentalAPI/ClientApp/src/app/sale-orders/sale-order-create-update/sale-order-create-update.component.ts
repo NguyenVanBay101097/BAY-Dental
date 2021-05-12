@@ -55,7 +55,7 @@ import { SaleOrderPromotionDialogComponent } from '../sale-order-promotion-dialo
 import { SaleOrderLineCuComponent } from '../sale-order-line-cu/sale-order-line-cu.component';
 import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 import { SaleOrderLinePromotionDialogComponent } from '../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component';
-
+import {Location} from '@angular/common'; 
 declare var $: any;
 
 @Component({
@@ -126,7 +126,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private printService: PrintService,
     private accountPaymentOdataService: AccountPaymentsOdataService,
     private toothCategoryService: ToothCategoryService,
-
+    private location:Location
   ) {
   }
 
@@ -679,9 +679,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.saleOrder = result;
         this.saleOrder.promotions = [];
 
-        this.router.navigate(["/sale-orders/form"], {
-          queryParams: { id: result.id },
-        });
+        const url = this.router.createUrlTree([], { queryParams: {id: result.id}}).toString()
+        this.location.go(url);
 
         await this.loadRecord();
         this.openSaleOrderPromotionDialog();
@@ -752,9 +751,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
       this.saleOrderService.create(val).subscribe(async (result: any) => {
         this.saleOrderId = result.id;
-        this.router.navigate(["/sale-orders/form"], {
-          queryParams: { id: result.id },
-        });
+        const url = this.router.createUrlTree([], { queryParams: {id: result.id}}).toString()
+        this.location.go(url);
         // this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
         //   this.patchValueSaleOrder(result);
         //   this.onOpenLinePromotionDialog(i);

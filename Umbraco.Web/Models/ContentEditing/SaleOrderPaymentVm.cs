@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -133,5 +134,19 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal PaymentAmount { get; set; }
 
         public IEnumerable<SaleOrderBasic> Orders { get; set; }
+    }
+
+    public class SaleOrderPaymentPrintVM
+    {
+        public Guid Id { get; set; }
+        public CompanyPrintVM Company { get; set; }
+        public PartnerPrintVM OrderPartner { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime Date { get; set; }
+
+        public IEnumerable<SaleOrderPaymentJournalLineDisplay> JournalLines { get; set; } = new List<SaleOrderPaymentJournalLineDisplay>();
+
+        public string Note { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

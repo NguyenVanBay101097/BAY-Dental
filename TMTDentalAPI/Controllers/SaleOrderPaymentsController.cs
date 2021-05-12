@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
@@ -18,12 +19,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly ISaleOrderPaymentService _saleOrderPaymentService;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IViewRenderService _viewRenderService;
 
-        public SaleOrderPaymentsController(IMapper mapper, ISaleOrderPaymentService saleOrderPaymentService, IUnitOfWorkAsync unitOfWork)
+        public SaleOrderPaymentsController(IMapper mapper, ISaleOrderPaymentService saleOrderPaymentService, IUnitOfWorkAsync unitOfWork, IViewRenderService viewRenderService)
         {
             _mapper = mapper;
             _saleOrderPaymentService = saleOrderPaymentService;
             _unitOfWork = unitOfWork;
+            _viewRenderService = viewRenderService;
         }
 
         [HttpGet]
@@ -48,7 +51,7 @@ namespace TMTDentalAPI.Controllers
             var saleOrderPayment = _saleOrderPaymentService.GetDisplay(id);
 
             _unitOfWork.Commit();
-         
+
             return Ok(saleOrderPayment);
         }
 
@@ -76,6 +79,16 @@ namespace TMTDentalAPI.Controllers
             await _saleOrderPaymentService.ActionCancel(ids);
             _unitOfWork.Commit();
             return NoContent();
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            var res = await _saleOrderPaymentService.GetPrint(id);
+            if (res == null) return NotFound();
+            var html = _viewRenderService.Render("SaleOrderPayment/Print", res);
+
+            return Ok(new PrintData() { html = html });
         }
     }
 }

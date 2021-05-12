@@ -122,4 +122,8 @@ export class SaleOrderPaymentService {
     return this.http.post(this.baseApi + this.apiUrl + "/ActionPayment", val);
   }
 
+  getPrint(id) {
+    return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint', )
+  }
+
 }

@@ -27,7 +27,7 @@
         </div>
     </div>
     <div class="text-center">
-        <div class="text-3xl font-semibold">HỒ SƠ ĐIỀU TRỊ</div>
+        <div class="text-3xl font-semibold">Phiếu ĐIỀU TRỊ</div>
         <div>Ngày @Model.DateOrder.Day tháng @Model.DateOrder.Month năm @Model.DateOrder.Year </div>
         <div class="font-semibold">Số: @Model.Name</div>
     </div>
@@ -157,23 +157,29 @@
             <table class="table table-sm table-bordered">
                 <thead>
                     <tr>
-                        <th>Số phiếu</th>
-                        <th>Ngày</th>
+                        <th>Mã thanh toán</th>
+                        <th>Ngày thanh toán</th>
+                        <th>Số tiền</th>
                         <th>Phương thức</th>
-                        <th>Nội dung</th>
                         <th class="text-right">Thanh toán</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var payment in Model.HistoryPayments)
                     {
-                        <tr>
-                            <td>@payment.AccountPaymentName</td>
-                            <td>@payment.Date.Value.ToString("dd/MM/yyyy")</td>
-                            <td>@payment.JournalName</td>
-                            <td>@payment.Communication</td>
-                            <td class="text-right">@string.Format(culture, "{0:0,0}", payment.Amount)</td>
-                        </tr>
+                        @foreach (var item in payment.Payments)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                @if (item.Id == payment.Payments.FirstOrDefault().Id)
+                                {
+                                    <td rowspan="@payment.Payments.Count()">@item.PaymentDate.ToString("dd/MM/yyyy")</td>
+                                    <td rowspan="@payment.Payments.Count()">@string.Format(culture, "{0:0,0}", payment.Amount)</td>
+                                }
+                                <td>@item.JournalName</td>
+                                <td class="text-right">@string.Format(culture, "{0:0,0}", item.Amount)</td>
+                            </tr>
+                        }
                     }
 
                 </tbody>
@@ -214,8 +220,8 @@
                                     <td class="align-middle" style="vertical-align: top" rowspan="@dotkham.Lines.Count()">@dotkham.Reason</td>
                                 }
 
-                                <td  style="vertical-align: top">@line.Product.Name</td>
-                                <td  style="vertical-align: top">@line.NameStep</td>
+                                <td style="vertical-align: top">@line.Product.Name</td>
+                                <td style="vertical-align: top">@line.NameStep</td>
                                 <td class="text-left" style="vertical-align: top">
                                     <span>@String.Join(", ", line.Teeth.Select(x => x.Name).ToArray())</span>
                                     <p>@line.Note</p>

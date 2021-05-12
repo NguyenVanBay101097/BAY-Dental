@@ -18,6 +18,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrderPayment, SaleOrderPaymentSave>();
 
             CreateMap<SaleOrderPayment, SaleOrderPaymentDisplay>();
+            CreateMap<SaleOrderPayment, SaleOrderPaymentPrintVM>();
 
             CreateMap<SaleOrderPaymentSave, SaleOrderPayment>()
                 .ForMember(x => x.Id, x => x.Ignore())

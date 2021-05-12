@@ -23,9 +23,9 @@ export class LayoutSidebarComponent implements OnInit {
       link: '/partners/customers',
       permissions: ['Basic.Partner.Read']
     },
-    {
-      name: 'Lịch sử điều trị', icon: 'fa fa-history', children: [], link: '/treatment-lines/history'
-    },
+    // {
+    //   name: 'Lịch sử điều trị', icon: 'fa fa-history', children: [], link: '/treatment-lines/history'
+    // },
     {
       name: 'Quản lý lịch hẹn',
       icon: 'fas fa-calendar-alt',

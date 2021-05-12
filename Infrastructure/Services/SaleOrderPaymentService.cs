@@ -81,7 +81,8 @@ namespace Infrastructure.Services
                 PaymentName = x.Name,
                 PaymentDate = x.PaymentDate,
                 PaymentAmount = x.Amount,
-                Orders = x.SaleOrderPaymentAccountPaymentRels.Select(s => new SaleOrderBasic { 
+                Orders = x.SaleOrderPaymentAccountPaymentRels.Select(s => new SaleOrderBasic
+                {
                     Id = s.SaleOrderPayment.OrderId,
                     Name = s.SaleOrderPayment.Order.Name
                 })
@@ -411,6 +412,22 @@ namespace Infrastructure.Services
                 default:
                     return null;
             }
+        }
+
+        public async Task<SaleOrderPaymentPrintVM> GetPrint(Guid id)
+        {
+            var result = _mapper.Map<SaleOrderPaymentPrintVM>(await (SearchQuery(x => x.Id == id).Include(x => x.Company.Partner)
+                .Include(x => x.Order.Partner)
+                .Include(x => x.JournalLines).ThenInclude(x => x.Journal)
+                ).FirstOrDefaultAsync());
+            if (result == null) return null;
+
+            var userObj = GetService<IUserService>();
+
+            result.User = await userObj.GetCurrentUser();
+
+            return result;
+
         }
     }
 }
