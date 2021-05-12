@@ -310,6 +310,8 @@ namespace Infrastructure.Services
                 message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (string.IsNullOrEmpty(self.PromoCode) && order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
                 message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";
+            else if (self.DiscountApplyOn != "on_order")
+                message.Error = "Mã khuyến mãi không áp dụng trên đơn hàng";
             else if (!self.Active)
                 message.Error = "Mã khuyến mãi không có giá trị";
             else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > order.DateOrder) ||
@@ -341,7 +343,9 @@ namespace Infrastructure.Services
             else if (self.RuleMinimumAmount > quotation.TotalAmount)
                 message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
             else if (!string.IsNullOrEmpty(self.PromoCode) && (quotation.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
-                message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";          
+                message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";     
+            else if(self.DiscountApplyOn != "on_order")
+                message.Error = "Mã khuyến mãi không áp dụng trên báo giá";
             else if (!self.Active)
                 message.Error = "Mã khuyến mãi không có giá trị";
             else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > quotation.DateQuotation) ||
