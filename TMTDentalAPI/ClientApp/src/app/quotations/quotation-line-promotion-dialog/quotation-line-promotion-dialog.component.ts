@@ -66,13 +66,12 @@ export class QuotationLinePromotionDialogComponent implements OnInit {
       saleProgramId: item.id,
     };
 
-    // var apply$ = this.saleOrderLineService.applyPromotion(val);
-    // apply$.subscribe((res) => {
-    //   this.notificationService.notify('success', 'Thành công!');
-    //   this.updateSubject.next(true);
-    //   this.isChange = true;
-
-    // });
+    var apply$ = this.quotationLineService.applyPromotion(val);
+    apply$.subscribe((res) => {
+      this.notificationService.notify('success', 'Thành công!');
+      this.updateSubject.next(true);
+      this.isChange = true;
+    });
   }
 
   applyDiscount(value) {

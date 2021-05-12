@@ -93,7 +93,7 @@ export class QuotationsDisplay {
   promotions: any[];
 }
 
-export class QuotationSimple{
+export class QuotationSimple {
   id: string;
   name: string;
 }
@@ -151,5 +151,13 @@ export class QuotationService {
 
   applyDiscountOnQuotationLine(val: any) {
     return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnQuotationLine', val);
+  }
+
+  applyCouponOnQuotation(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotionUsageCode', val);
+  }
+
+  applyPromotion(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotion', val);
   }
 }

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { QuotationService } from '../quotation.service';
 
 @Component({
   selector: 'app-quotation-apply-coupon',
@@ -11,8 +12,9 @@ export class QuotationApplyCouponComponent implements OnInit {
   formGroup: FormGroup;
   errorMsg: string;
   @Output() applySuccess = new EventEmitter<any>();
-  constructor(private fb: FormBuilder,
-    //  private saleOrderService: SaleOrderService
+  constructor(
+    private fb: FormBuilder,
+    private quotationService: QuotationService
   ) { }
 
   ngOnInit() {
@@ -32,14 +34,14 @@ export class QuotationApplyCouponComponent implements OnInit {
     }
     var val = this.formGroup.value;
     val.id = this.quotationId;
-    // this.saleOrderService.applyCouponOnOrder(val).subscribe((res: any) => {
-    //   if (res.success) {
-    //     this.errorMsg = '';
-    //     this.applySuccess.emit(null);
-    //   } else {
-    //     this.errorMsg = res.error;
-    //   }
-    // });
+    this.quotationService.applyCouponOnQuotation(val).subscribe((res: any) => {
+      if (res.success) {
+        this.errorMsg = '';
+        this.applySuccess.emit(null);
+      } else {
+        this.errorMsg = res.error;
+      }
+    });
   }
 
 }

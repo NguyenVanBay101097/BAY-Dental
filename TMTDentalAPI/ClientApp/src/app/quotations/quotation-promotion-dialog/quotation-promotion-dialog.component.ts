@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { QuotationLineService } from '../quotation-line.service';
 import { QuotationPromotionService } from '../quotation-promotion.service';
 import { QuotationsDisplay, QuotationService } from '../quotation.service';
 
@@ -25,7 +26,8 @@ export class QuotationPromotionDialogComponent implements OnInit {
     private modelService: NgbModal,
     private promotionService: SaleCouponProgramService,
     private quotationService: QuotationService,
-    private quotationPromotionService: QuotationPromotionService
+    private quotationPromotionService: QuotationPromotionService,
+    private quotationLineService: QuotationLineService
   ) { }
   ngOnInit() {
     setTimeout(() => {
@@ -95,13 +97,12 @@ export class QuotationPromotionDialogComponent implements OnInit {
       saleProgramId: item.id,
     };
 
-    // var apply$ = this.quotation ? this.quotationSevice.applyPromotion(val) : this.quotationLineService.applyPromotion(val);
-    // apply$.subscribe((res) => {
-    //   this.notificationService.notify('success', 'Thành công!');
-    //   this.updateSubject.next(true);
-    //   this.isChange = true;
-
-    // });
+    var apply$ = this.quotation ? this.quotationService.applyPromotion(val) : this.quotationLineService.applyPromotion(val);
+    apply$.subscribe((res) => {
+      this.notificationService.notify('success', 'Thành công!');
+      this.updateSubject.next(true);
+      this.isChange = true;
+    });
   }
 
   onApplyCouponSuccess() {

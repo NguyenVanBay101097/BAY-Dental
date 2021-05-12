@@ -458,7 +458,7 @@ namespace Infrastructure.Services
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if (self.ProgramType != "promotion_program" || self.PromoCodeUsage == "code_needed" || self.DiscountApplyOn != "on_order")
                 message.Error = "Khuyến mãi Không áp dụng cho đơn hàng";
-            else if (self.RuleMinimumAmount <= quotation.TotalAmount)
+            else if (self.RuleMinimumAmount >= quotation.TotalAmount)
                 message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
             else if ((quotation.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho báo giá này";
