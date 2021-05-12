@@ -93,13 +93,7 @@ namespace Infrastructure.Services
             var saleOrderIds = items.Select(x => x.SaleOrderId).ToList();
             IList<SaleOrder> saleOrders = await orderObj.SearchQuery(x=> saleOrderIds.Contains(x.Id)).Include(x=>x.Partner).ToListAsync();
             var saleOrderDict = saleOrders.ToDictionary(x => x.Id, x => x);
-
-            //query = query.OrderByDescending(x => x.DateCreated);
-
-            //if (val.Limit > 0)
-            //    query = query.Skip(val.Offset).Take(val.Limit);
-
-           
+          
 
             var paged = new PagedResult2<HistoryPromotionReponse>(totalItems, val.Offset, val.Limit)
             {

@@ -506,54 +506,7 @@ namespace Infrastructure.Services
             return Math.Round(amounAdvance);
         }
 
-
-
-        public async Task<IEnumerable<HistoryPromotionReponse>> GetExcel(HistoryPromotionRequest val)
-        {
-            var promotionObj = GetService<ISaleOrderPromotionService>();
-            var query = promotionObj.SearchQuery();
-
-            if (!string.IsNullOrEmpty(val.SearchOrder))
-                query = query.Where(x => val.SearchOrder.Contains(x.SaleOrder.Name));
-
-            if (!string.IsNullOrEmpty(val.SearchOrderLine))
-                query = query.Where(x => val.SearchOrderLine.Contains(x.SaleOrderLine.Name));
-
-            if (val.DateFrom.HasValue)
-                query = query.Where(x => x.DateCreated >= val.DateFrom);
-
-            if (val.DateTo.HasValue)
-            {
-                var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.DateCreated <= dateOrderTo);
-            }
-
-            if (val.SaleCouponProgramId.HasValue)
-                query = query.Where(x => x.SaleCouponProgramId.HasValue && x.SaleCouponProgramId == val.SaleCouponProgramId);
-
-
-            var totalItems = await query.CountAsync();
-
-            query = query.OrderByDescending(x => x.DateCreated);
-
-            if (val.Limit > 0)
-                query = query.Skip(val.Offset).Take(val.Limit);
-
-            var items = await query.Include(x => x.SaleCouponProgram).Include(x => x.SaleOrder).ThenInclude(x => x.Partner).Include(x => x.SaleOrderLine).ToListAsync();
-
-            var res = items.Select(x => new HistoryPromotionReponse
-            {
-                Amount = x.SaleCouponProgram.DiscountApplyOn == "on_order" ? (x.SaleOrder.AmountTotal ?? 0) : (x.SaleOrderLine.PriceUnit * x.SaleOrderLine.ProductUOMQty),
-                AmountPromotion = x.Amount,
-                DatePromotion = x.DateCreated,
-                PartnerName = x.SaleOrder.Partner.Name,
-                SaleOrderName = x.SaleOrder.Name,
-                SaleOrderLineName = x.SaleCouponProgram.DiscountApplyOn != "on_order" ? x.SaleOrderLine.Name : null
-
-            }).ToList();
-
-            return res;
-        }
+    
 
         public bool _IsGlobalDiscountProgram(SaleCouponProgram self)
         {

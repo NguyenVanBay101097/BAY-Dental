@@ -16,7 +16,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrderLine(Guid productId);
 
         Task<decimal> GetAmountTotal(Guid id);
-        Task<IEnumerable<HistoryPromotionReponse>> GetExcel(HistoryPromotionRequest val);
         Task<SaleCouponProgram> CreateProgram(SaleCouponProgramSave val);
         Task UpdateProgram(Guid id, SaleCouponProgramSave val);
         Task<SaleCouponProgramDisplay> GetDisplay(Guid id);
