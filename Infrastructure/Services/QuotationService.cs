@@ -306,7 +306,6 @@ namespace Infrastructure.Services
             var saleOrder = new SaleOrder();
 
             saleOrder.CompanyId = quotation.CompanyId;
-            saleOrder.DateOrder = today;
             saleOrder.State = "draft";
             saleOrder.PartnerId = quotation.PartnerId;
             saleOrder.QuotationId = quotation.Id;
