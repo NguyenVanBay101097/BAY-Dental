@@ -86,9 +86,10 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       employeeId: ['', Validators.required],
       employee: [null, Validators.required],
       note: '',
-      dateQuotation: [null, Validators.required],
+      dateQuotationObj: [null, Validators.required],
       dateApplies: [0, Validators.required],
-      dateEndQuotation: [{ value: '' }, Validators.required],
+      // dateEndQuotation: [{ value: '' }, Validators.required],
+      dateEndQuotationObj: [null, Validators.required],
       companyId: '',
       lines: this.fb.array([
       ]),
@@ -141,9 +142,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.employee = result.employee;
     // this.employeeId = result.employeeId;
     this.saleOrders = result.orders;
-    result.dateQuotation = new Date(result.dateQuotation);
     this.formGroup.patchValue(result);
-    this.formGroup.get('dateEndQuotation').setValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "dd/MM/yyyy"));
+    this.formGroup.get('dateEndQuotationObj').patchValue(new Date(result.dateEndQuotation));
+    this.formGroup.get('dateQuotationObj').patchValue(new Date(result.dateQuotation));
     const control = this.formGroup.get('lines') as FormArray;
     control.clear();
 
@@ -252,7 +253,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   getDate(dateQuotation: Date, dateApplies: number) {
     var dateEnd = new Date(dateQuotation.getFullYear(), dateQuotation.getMonth(), dateQuotation.getDate() + dateApplies);
-    this.formGroup.get('dateEndQuotation').patchValue(this.intlService.formatDate(new Date(dateEnd), "MM/dd/yyyy"));
+    this.formGroup.get('dateEndQuotationObj').patchValue((new Date(dateEnd)));
   }
 
   onDateChange(date: Date) {
@@ -263,7 +264,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   onDateAppliesChange(dateApplies) {
-    let dateQuotation = this.formGroup.get('dateQuotation') ? this.formGroup.get('dateQuotation').value : null;
+    let dateQuotation = this.formGroup.get('dateQuotationObj') ? this.formGroup.get('dateQuotationObj').value : null;
     if (dateQuotation && dateApplies) {
       this.getDate(dateQuotation, dateApplies);
     }
@@ -388,8 +389,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   // Luu
   getDataFormGroup() {
     var value = this.formGroup.value;
-    value.dateQuotation = this.intlService.formatDate(value.dateQuotation, "yyyy-MM-dd");
-    value.dateEndQuotation = this.intlService.formatDate(value.dateEndQuotation, "yyyy-MM-dd");
+    value.dateQuotation = this.intlService.formatDate(value.dateQuotationObj, 'yyyy-MM-ddTHH:mm:ss');
+    value.dateEndQuotation = this.intlService.formatDate(value.dateEndQuotationObj, 'yyyy-MM-ddTHH:mm:ss');
     value.companyId = this.quotation.companyId;
     value.employeeId = value.employee ? value.employee.id : value.employeeId;
     value.totalAmount = this.getAmountTotal();
@@ -421,12 +422,15 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
     this.submitted = true;
 
-    if (!this.formGroup.valid) {
-      return false;
-    }
+    // if (!this.formGroup.valid) {
+    //   return false;
+    // }
 
     var val = this.getDataFormGroup();
+    val.dateQuotation = this.intlService.formatDate(val.dateQuotationObj, 'yyyy-MM-ddTHH:mm:ss');
+    val.dateEndQuotation = this.intlService.formatDate(val.dateEndQuotationObj, 'yyyy-MM-ddTHH:mm:ss');
     if (this.quotationId) {
+      
       this.quotationService.update(this.quotationId, val).subscribe(
         () => {
           this.routeActive();
@@ -479,7 +483,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.counselorId = val.counselorId;
     line.subPrice = val.subPrice ? val.subPrice : (val.listPrice ? val.listPrice : 0);
     line.name = val.name;
-    line.amount = line.qty * line.subPrice;
+    line.amount = val.amount ? val.amount : (line.subPrice * line.qty);
     line.promotions = this.fb.array([]);
     line.toothType = val.toothType ? val.toothType : "manual";
     line.amountDiscountTotal = val.amountDiscountTotal ? val.amountDiscountTotal : 0;

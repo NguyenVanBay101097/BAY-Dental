@@ -55,12 +55,13 @@
             <!-- thành tiền -->
             <div style="width: 250px;" class="div-cell text-right">
                 <div>
-                    <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
-                        {{getPriceUnitLinePromotion(line) | number}}
+                    <!-- <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
+                        {{line.amount | number}}
                     </ng-container>
                     <ng-template #elseTemplatePriceSub>
-                        {{getPriceUnitLinePromotion(formGroupInfo.value) | number}}
-                    </ng-template>
+                        {{line.amount | number}}
+                    </ng-template> -->
+                    {{line.amount|number}}
                 </div>
                 <div>
                     <ng-container *ngIf="!isEditting; else elseTemplateSubTotal">

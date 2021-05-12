@@ -90,7 +90,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName='dateQuotation' (valueChange)="onDateChange($event)">
+                                    <kendo-datepicker formControlName='dateQuotationObj' (valueChange)="onDateChange($event)">
                                     </kendo-datepicker>
                                 </td>
                             </tr>
@@ -112,7 +112,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName='dateEndQuotation' disabled>
+                                    <!-- <input type="text" class="form-control" formControlName='dateEndQuotation' disabled> -->
+                                    <kendo-datepicker formControlName='dateEndQuotationObj' [disabled]="true">
+                                    </kendo-datepicker>
                                 </td>
                             </tr>
                         </tbody>

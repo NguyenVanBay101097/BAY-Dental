@@ -406,7 +406,7 @@ namespace Infrastructure.Services
 
                 if (quotation.Promotions.Any())
                 {
-                    foreach (var promotion in quotation.Promotions)
+                    foreach (var promotion in quotation.Promotions.Where(x => !x.QuotationLineId.HasValue))
                     {
                         var total = saleOrder.OrderLines.Sum(x => x.PriceUnit * x.ProductUOMQty);
                         var orderPromotion = new SaleOrderPromotion();
