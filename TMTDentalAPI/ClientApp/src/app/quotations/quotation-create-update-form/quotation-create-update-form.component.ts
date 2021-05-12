@@ -239,23 +239,23 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       res.patchValue(line.value);
     }
   }
-  computeTotalPrice(line: FormGroup) {
-    let price = line.get('subPrice') ? line.get('subPrice').value : 0;
-    let qty = line.get('qty') ? line.get('qty').value : 1;
-    let discount = 0;
-    let discountType = line.get('discountType') ? line.get('discountType').value : '';
-    discount = line.get('discount') ? line.get('discount').value : 0;
-    let totalPrice = 0;
-    if (discountType == "percentage" && discountType != '') {
-      totalPrice = price * qty * (1 - discount / 100);
-    } else if (discountType == "fixed" && discountType != '') {
-      totalPrice = price * qty - discount;
-    }
-    if (line.get('amount')) {
-      line.get('amount').patchValue(totalPrice);
-    };
-    return totalPrice;
-  }
+  // computeTotalPrice(line: FormGroup) {
+  //   let price = line.get('subPrice') ? line.get('subPrice').value : 0;
+  //   let qty = line.get('qty') ? line.get('qty').value : 1;
+  //   let discount = 0;
+  //   let discountType = line.get('discountType') ? line.get('discountType').value : '';
+  //   discount = line.get('discount') ? line.get('discount').value : 0;
+  //   let totalPrice = 0;
+  //   if (discountType == "percentage" && discountType != '') {
+  //     totalPrice = price * qty * (1 - discount / 100);
+  //   } else if (discountType == "fixed" && discountType != '') {
+  //     totalPrice = price * qty - discount;
+  //   }
+  //   if (line.get('amount')) {
+  //     line.get('amount').patchValue(totalPrice);
+  //   };
+  //   return totalPrice;
+  // }
 
   getAmountTotal() {
     let totalAmount = 0;
@@ -496,43 +496,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.patchValue(line.value);
   }
 
-  // loadEmployee(search?: string) {
-  //   this.search = search || '';
-  //   this.searchEmployees(this.search).subscribe(
-  //     result => {
-  //       this.filteredAdvisoryEmployees = result;
-  //     }
-  //   )
-  // }
-
-
-  // searchEmployees(search: string) {
-  //   var val = new EmployeePaged();
-  //   val.search = search;
-  //   // val.hasRoot = false;
-  //   return this.employeeService.getEmployeeSimpleList(val)
-  // }
-  // loadEmployees() {
-  //   var val = new EmployeePaged();
-  //   val.limit = 20;
-  //   val.offset = 0;
-  //   val.isDoctor = true;
-  //   val.active = true;
-
-  //   this.employeeService
-  //     .getEmployeeSimpleList(val)
-  //     .subscribe((result: any[]) => {
-  //       this.initialListEmployees = result;
-  //       this.filteredEmployees = this.initialListEmployees.slice(0, 20);
-  //     });
-  // }
-
-  // onEmployeeFilter(value) {
-  //   this.filteredEmployees = this.initialListEmployees
-  //     .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
-  //     .slice(0, 20);
-  // }
-
   addLine(val, addNew) {
     if (addNew && this.lineSelected) {
       this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để thêm dịch vụ khác');
@@ -562,7 +525,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.toothType = val.toothType ? val.toothType : "manual";
     line.amountDiscountTotal = val.amountDiscountTotal ? val.amountDiscountTotal : 0;
     line.amountPromotionToOrder = val.amountPromotionToOrder ? val.amountPromotionToOrder : 0;
-    line.amountPromotionToOrderLine = val.amountPromotionToOrder ? val.amountPromotionToOrderLine : 0;
+    line.amountPromotionToOrderLine = val.amountPromotionToOrderLine ? val.amountPromotionToOrderLine : 0;
     line.teeth = this.fb.array([]);
     if (val.teeth) {
       val.teeth.forEach(item => {
@@ -675,7 +638,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     modalRef.componentInstance.quotationLine = this.linesArray.controls[i].value;
     modalRef.componentInstance.getUpdateSJ().subscribe(async res => {
       var r = await this.loadRecord();
-      modalRef.componentInstance.quotation = this.linesArray.controls[i].value;
+      modalRef.componentInstance.quotationLine = this.linesArray.controls[i].value;
     });
 
   }

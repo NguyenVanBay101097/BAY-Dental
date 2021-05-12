@@ -28,7 +28,7 @@ namespace Infrastructure.Services
         public async Task<QuotationDisplay> GetDisplay(Guid id)
         {
             var quotationLineObj = GetService<IQuotationLineService>();
-            var model = await SearchQuery(x => x.Id == id)
+            var model = await SearchQuery(x => x.Id == id && x.Promotions.Any(s => !s.QuotationLineId.HasValue))
                 .Include(x => x.Partner)
                 .Include(x => x.Employee)
                 .Include(x => x.Payments)
