@@ -84,10 +84,13 @@ namespace Infrastructure.Services
                 Date = x.Key.Date,
                 AmountPromotion = x.Sum(x => x.Amount)
             });
+       
+            if (val.Limit > 0)
+                query2 = query2.Skip(val.Offset).Take(val.Limit);
+
+            var items = await query2.OrderByDescending(x => x.Date).ToListAsync();
 
             var totalItems = await query2.CountAsync();
-            var items = await query2.OrderByDescending(x => x.Date)
-                .Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var orderObj = GetService<ISaleOrderService>();
             var saleOrderIds = items.Select(x => x.SaleOrderId).ToList();
