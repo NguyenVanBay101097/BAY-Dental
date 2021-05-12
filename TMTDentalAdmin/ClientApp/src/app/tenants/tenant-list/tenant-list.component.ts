@@ -8,6 +8,7 @@ import { TenantUpdateExpiredDialogComponent } from '../tenant-update-expired-dia
 import { Subject } from 'rxjs';
 import { TenantUpdateInfoDialogComponent } from '../tenant-update-info-dialog/tenant-update-info-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { TenantUpdateExpiredV2DialogComponent } from '../tenant-update-expired-v2-dialog/tenant-update-expired-v2-dialog.component';
 
 @Component({
   selector: 'app-tenant-list',
@@ -81,6 +82,22 @@ export class TenantListComponent implements OnInit {
     modalRef.result.then(() => {
       this.notificationService.show({
         content: 'Gia hạn thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+      this.loadDataFromApi();
+    });
+  }
+
+  quickUpdateExpired(dataItem) {
+    let modalRef = this.modalService.open(TenantUpdateExpiredV2DialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.item = dataItem;
+    modalRef.componentInstance.title = `Gia hạn nhanh: ${dataItem.hostname}`;
+    modalRef.result.then(() => {
+      this.notificationService.show({
+        content: 'Gia hạn nhanh thành công',
         hideAfter: 3000,
         position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },

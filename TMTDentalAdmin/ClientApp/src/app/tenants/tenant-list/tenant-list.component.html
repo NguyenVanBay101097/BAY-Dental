@@ -36,11 +36,11 @@
     </kendo-grid-column>
     <kendo-grid-column field="name" title="Khách hàng" width="150">
     </kendo-grid-column>
-    <kendo-grid-column field="phone" title="Điện thoại" width="120">
+    <kendo-grid-column field="phone" title="Điện thoại" width="150">
     </kendo-grid-column>
     <kendo-grid-column field="companyName" title="Tên phòng khám" width="150">
     </kendo-grid-column>
-    <kendo-grid-column field="hostname" title="Hostname" width="100">
+    <kendo-grid-column field="hostname" title="Tên miền" width="200">
     </kendo-grid-column>
     <kendo-grid-column field="activeCompaniesNbr" class="text-right" title="Số chi nhánh" width="120">
     </kendo-grid-column>
@@ -56,12 +56,15 @@
         {{dataItem.employeeAdmin ? dataItem.employeeAdmin.name:''}}
       </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="id" width="140">
+    <kendo-grid-column field="id" width="270">
       <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
         Thao tác
       </ng-template>
       <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-        <button class="btn btn-success btn-sm mr-2" (click)="updateExpired(dataItem)">
+        <button class="btn btn-primary btn-sm mr-2" (click)="quickUpdateExpired(dataItem)">
+          Gia hạn nhanh
+        </button>
+        <button class="btn btn-secondary btn-sm mr-2" (click)="updateExpired(dataItem)">
           Gia hạn
         </button>
         <button class="btn btn-success btn-sm" (click)="editItem(dataItem)">
