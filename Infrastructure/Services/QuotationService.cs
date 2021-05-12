@@ -28,6 +28,8 @@ namespace Infrastructure.Services
         public async Task<QuotationDisplay> GetDisplay(Guid id)
         {
             var quotationLineObj = GetService<IQuotationLineService>();
+            var promotionObj = GetService<IQuotationPromotionService>();
+
             var model = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
                 .Include(x => x.Employee)
@@ -47,7 +49,19 @@ namespace Infrastructure.Services
                 .ToListAsync();
 
             model.Lines = lines;
-            return _mapper.Map<QuotationDisplay>(model);
+
+            var display = _mapper.Map<QuotationDisplay>(model);
+
+            display.Promotions = await promotionObj.SearchQuery(x => x.QuotationId.HasValue && x.QuotationId == display.Id && !x.QuotationLineId.HasValue).Select(x => new QuotationPromotionBasic
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Amount = x.Amount,
+                SaleCouponProgramId = x.SaleCouponProgramId,
+                Type = x.Type
+            }).ToListAsync();
+
+            return display;
         }
 
         public async Task<QuotationDisplay> GetDefault(Guid partnerId)
