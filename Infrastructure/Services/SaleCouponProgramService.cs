@@ -159,72 +159,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<IEnumerable<HistoryPromotionReponse>> GetHistoryApplyPromotion(Guid id)
-        {
-            var promotionObj = GetService<ISaleOrderPromotionService>();
-            var promotionLineObj = GetService<ISaleOrderPromotionLineService>();
-            var productObj = GetService<IProductService>();
-            var program = await SearchQuery(x => x.Id == id).Include(x => x.DiscountSpecificProductCategories).Include(x => x.DiscountSpecificProducts).FirstOrDefaultAsync();
-            if (program == null)
-                throw new Exception("Chương trình khuyến mãi không tồn tại");
-
-            var histories = new List<HistoryPromotionReponse>();
-            var promotion = new List<SaleOrderPromotion>();
-            var productIds = new List<Guid>();
-
-            if (program.DiscountApplyOn == "on_order")
-            {
-                promotion = await promotionObj.SearchQuery(x => x.SaleCouponProgramId == program.Id && !x.SaleOrderLineId.HasValue)
-                   .Include(x => x.SaleOrder).ThenInclude(x => x.Partner)
-                   .Include(x => x.SaleOrderLine)
-                   .Include(x => x.Lines)
-                   .ToListAsync();
-
-                histories = promotion.Select(x => new HistoryPromotionReponse
-                {
-                    Amount = (x.SaleOrder.AmountTotal ?? 0),
-                    DatePromotion = x.DateCreated.Value,
-                    AmountPromotion = (double)x.Amount,
-                    PartnerName = x.SaleOrder.Partner.Name,
-
-                    SaleOrderName = x.SaleOrder.Name
-                }).ToList();
-
-            }
-            else
-            {
-                if (program.DiscountApplyOn == "specific_product_categories")
-                {
-                    var categIds = program.DiscountSpecificProductCategories.Select(x => x.ProductCategoryId).ToList();
-                    productIds = productObj.SearchQuery(x => categIds.Contains(x.Id)).Select(x => x.Id).ToList();
-                }
-                else if (program.DiscountApplyOn == "specific_products")
-                {
-                    var ids = program.DiscountSpecificProducts.Select(x => x.ProductId).ToList();
-                    productIds = productObj.SearchQuery(x => ids.Contains(x.Id)).Select(x => x.Id).ToList();
-                }
-
-                var promotionLine = await promotionLineObj.SearchQuery(x => x.Promotion.SaleCouponProgramId == program.Id && productIds.Contains(x.SaleOrderLine.ProductId.Value))
-               .Include(x => x.SaleOrderLine).ThenInclude(x => x.Order).ThenInclude(s => s.Partner)
-               .Include(x => x.Promotion)
-               .ToListAsync();
-
-                histories = promotionLine.Select(x => new HistoryPromotionReponse
-                {
-                    Amount = (x.SaleOrderLine.PriceUnit * x.SaleOrderLine.ProductUOMQty),
-                    DatePromotion = x.DateCreated.Value,
-                    AmountPromotion = x.PriceUnit,
-                    PartnerName = x.SaleOrderLine.Order.Partner.Name,
-                    SaleOrderLineName = x.SaleOrderLine.Name,
-                    SaleOrderName = x.SaleOrderLine.Order.Name
-                }).ToList();
-            }
-
-
-
-
-            return histories;
-        }
+       
 
         public async Task UpdateProgram(Guid id, SaleCouponProgramSave val)
         {
@@ -561,6 +496,14 @@ namespace Infrastructure.Services
 
 
             return res;
+        }
+
+        public async Task<decimal> GetAmountTotal(Guid id)
+        {
+            ///lay tu moveline journal amount advance used
+            var promotionObj = GetService<ISaleOrderPromotionService>();          
+            var amounAdvance = await promotionObj.SearchQuery(x => x.SaleCouponProgramId == id).Select(x => x.Amount).SumAsync();
+            return Math.Round(amounAdvance);
         }
 
         public bool _IsGlobalDiscountProgram(SaleCouponProgram self)
