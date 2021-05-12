@@ -4,8 +4,10 @@ using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +20,15 @@ namespace Infrastructure.Services
     public class SaleCouponProgramService : BaseService<SaleCouponProgram>, ISaleCouponProgramService
     {
         private readonly IMapper _mapper;
-        public SaleCouponProgramService(IAsyncRepository<SaleCouponProgram> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+        private readonly AppTenant _tenant;
+        public SaleCouponProgramService(IAsyncRepository<SaleCouponProgram> repository, 
+            IHttpContextAccessor httpContextAccessor,
+            IMapper mapper,
+            AppTenant tenant)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _tenant = tenant;
         }
 
         public async Task<PagedResult2<SaleCouponProgramBasic>> GetPagedResultAsync(SaleCouponProgramPaged val)
@@ -34,8 +40,19 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.ProgramType == val.ProgramType));
             if (val.Active.HasValue)
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.Active == val.Active));
-            if (val.Status != null)
-                spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.Status == val.Status));
+            if (!string.IsNullOrEmpty(val.Status))
+            {
+                var now = DateTime.Today;
+                if (val.Status == "waiting")
+                    spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.RuleDateFrom > now));
+                if (val.Status == "paused")
+                    spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => now <= x.RuleDateTo && x.IsPaused));
+                if (val.Status == "running")
+                    spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => now >= x.RuleDateFrom && now <= x.RuleDateTo && !x.IsPaused));
+                if (val.Status == "expired")
+                    spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => now > x.RuleDateTo));
+            }
+           
             if (val.Ids != null)
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => val.Ids.Contains(x.Id)));
 
@@ -571,15 +588,17 @@ namespace Infrastructure.Services
         public async Task ActionArchive(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var now = DateTime.Today;
             foreach (var program in self)
             {
-                if (program.Status == "waiting" || program.Status == "running")
+                if (program.RuleDateTo >= now)
                 {
-                    program.Status = "paused";
+                    program.IsPaused = true;
                 }
             }
 
             await UpdateAsync(self);
+            await CheckSaleCouponProgramStatus();
         }
 
         public async Task ActionUnArchive(IEnumerable<Guid> ids)
@@ -589,41 +608,8 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             foreach (var program in self)
             {
-                if (program.Active == false)
-                {
-                    program.Active = true;
-
-                    if (today < program.RuleDateFrom)
-                    {
-                        program.Status = "waiting";
-                    }
-                    if (program.RuleDateFrom <= today && today < program.RuleDateTo)
-                    {
-                        program.Status = "running";
-                    }
-                    if (program.RuleDateTo < today)
-                    {
-                        program.Status = "expired";
-                    }
-                } else
-                {
-                    if (program.Status == "paused")
-                    {
-                        if (today < program.RuleDateFrom)
-                        {
-                            program.Status = "waiting";
-                        }
-                        if (program.RuleDateFrom <= today && today < program.RuleDateTo)
-                        {
-                            program.Status = "running";
-                        }
-                        if (program.RuleDateTo < today)
-                        {
-                            program.Status = "expired";
-                        }
-                    }
-                }
-
+                program.Active = true;
+                program.IsPaused = false;
             }
 
             await UpdateAsync(self);
@@ -796,6 +782,16 @@ namespace Infrastructure.Services
               .Select(s => s[_random.Next(s.Length)]).ToArray()) + month + year;
             return code;
         }
+
+        public async Task CheckSaleCouponProgramStatus()
+        {
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobId = $"{tenant}-sale-coupon-program-job";
+            RecurringJob.RemoveIfExists(jobId);
+            RecurringJob.AddOrUpdate<SaleCouponProgramJobService>(jobId, x => x.Run(tenant), $"0 0 * * *", TimeZoneInfo.Local);
+        }
+
+
     }
 
     public class ApplyPromotionProductListItem

@@ -32,7 +32,9 @@ namespace ApplicationCore.Entities
         /// paused: Tạm ngừng
         /// expired: Hết hạn
         /// </summary>
-        public string Status { get; set; }
+        //public string Status { get; set; }
+
+        public bool IsPaused { get; set; }
 
         /// <summary>
         /// Coupon program will be applied based on given sequence if multiple programs are
