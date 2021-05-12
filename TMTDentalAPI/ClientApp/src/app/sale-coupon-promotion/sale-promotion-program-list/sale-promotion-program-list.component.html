@@ -70,8 +70,8 @@
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <span [class]="getColorStatus(dataItem.status)">
-                    {{dataItem.active ? (dataItem.status ? getStatus(dataItem.status) : "") : "Lưu nháp"}}
+                <span [class]="getColorStatus(dataItem.statusDisplay)">
+                    {{dataItem.statusDisplay}}
                 </span>
             </ng-template>
         </kendo-grid-column>

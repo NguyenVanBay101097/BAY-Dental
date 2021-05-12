@@ -34,5 +34,6 @@ namespace Infrastructure.Services
         Task ActionUnArchive(IEnumerable<Guid> ids);
 
         Task<SaleCouponProgramResponse> GetPromotionDisplayUsageCode(string code, Guid? productId);
+        Task<PagedResult2<SaleOrderProgramGetListPagedResponse>> GetListPaged(SaleOrderProgramGetListPagedRequest val);
     }
 }

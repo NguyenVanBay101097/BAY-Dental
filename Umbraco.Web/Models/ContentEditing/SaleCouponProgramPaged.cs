@@ -39,4 +39,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public SaleCouponProgramDisplay SaleCouponProgram { get; set; }
         public string Error { get; set; }
     }
+
+    public class SaleOrderProgramGetListPagedRequest
+    {
+
+    }
+
+    public class SaleOrderProgramGetListPagedResponse
+    {
+
+    }
 }

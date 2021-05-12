@@ -31,6 +31,19 @@ namespace Infrastructure.Services
             _tenant = tenant;
         }
 
+        public async Task<PagedResult2<SaleOrderProgramGetListPagedResponse>> GetListPaged(SaleOrderProgramGetListPagedRequest val)
+        {
+            IList<SaleOrderProgramGetListPagedResponse> items = null;
+            //10 id
+            return null;
+
+        }
+
+        //public IDictionary<Guid, decimal> GetAmountPromotionDict(IEnumerable<Guid> ids)
+        //{
+
+        //}
+
         public async Task<PagedResult2<SaleCouponProgramBasic>> GetPagedResultAsync(SaleCouponProgramPaged val)
         {
             ISpecification<SaleCouponProgram> spec = new InitialSpecification<SaleCouponProgram>(x => true);
@@ -138,8 +151,8 @@ namespace Infrastructure.Services
             var program = _mapper.Map<SaleCouponProgram>(val);
 
             program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
-            program.RuleDateTo = program.RuleDateTo.Value.AbsoluteEndOfDate();
-            if (program.RuleDateFrom >= program.RuleDateTo)
+            program.RuleDateTo = program.RuleDateTo.Value.AbsoluteBeginOfDate();
+            if (program.RuleDateFrom > program.RuleDateTo)
             {
                 throw new Exception("Ngày kết thúc đang nhỏ hơn ngày bắt đầu!");
             }
@@ -184,8 +197,8 @@ namespace Infrastructure.Services
             program = _mapper.Map(val, program);
 
             program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
-            program.RuleDateTo = program.RuleDateTo.Value.AbsoluteEndOfDate();
-            if (program.RuleDateFrom >= program.RuleDateTo)
+            program.RuleDateTo = program.RuleDateTo.Value.AbsoluteBeginOfDate();
+            if (program.RuleDateFrom > program.RuleDateTo)
             {
                 throw new Exception("Ngày kết thúc đang nhỏ hơn ngày bắt đầu!");
             }
@@ -598,7 +611,6 @@ namespace Infrastructure.Services
             }
 
             await UpdateAsync(self);
-            await CheckSaleCouponProgramStatus();
         }
 
         public async Task ActionUnArchive(IEnumerable<Guid> ids)
@@ -782,15 +794,6 @@ namespace Infrastructure.Services
               .Select(s => s[_random.Next(s.Length)]).ToArray()) + month + year;
             return code;
         }
-
-        public async Task CheckSaleCouponProgramStatus()
-        {
-            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            var jobId = $"{tenant}-sale-coupon-program-job";
-            RecurringJob.RemoveIfExists(jobId);
-            RecurringJob.AddOrUpdate<SaleCouponProgramJobService>(jobId, x => x.Run(tenant), $"0 0 * * *", TimeZoneInfo.Local);
-        }
-
 
     }
 

@@ -89,7 +89,6 @@ namespace TMTDentalAPI
             services.AddSingleton(new TCareMessageJobService(Configuration));
             services.AddSingleton(new TCareMessagingJobService(Configuration));
             services.AddSingleton(new FacebookWebhookJobService(Configuration));
-            services.AddSingleton(new SaleCouponProgramJobService(Configuration));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
             {

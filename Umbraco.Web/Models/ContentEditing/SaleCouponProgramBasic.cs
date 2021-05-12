@@ -16,14 +16,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public ProductSimple DiscountLineProduct { get; set; }
 
         public bool Active { get; set; }
-        public string Status { get; set; }
         public DateTime? RuleDateFrom { get; set; }
         public DateTime? RuleDateTo { get; set; }
         public int? MaximumUseNumber { get; set; }
 
         public bool IsPaused { get; set; }
 
-        public string StateDisplay
+        public string StatusDisplay
         {
             get
             {

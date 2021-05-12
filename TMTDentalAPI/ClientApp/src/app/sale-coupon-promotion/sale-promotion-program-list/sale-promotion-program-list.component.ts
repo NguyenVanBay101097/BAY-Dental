@@ -81,13 +81,13 @@ export class SalePromotionProgramListComponent implements OnInit {
 
   getColorStatus(status) {
     switch (status) {
-      case "waiting":
+      case "Chưa chạy":
         return "text-dark";
-      case "running":
+      case "Đang chạy":
         return "text-success";
-      case "paused":
+      case "Tạm ngừng":
         return "text-warning";
-      case "expired":
+      case "Hết hạn":
         return "text-danger";
       default:
         return "text-dark";
