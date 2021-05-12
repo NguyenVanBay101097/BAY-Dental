@@ -143,7 +143,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.saleOrders = result.orders;
     result.dateQuotation = new Date(result.dateQuotation);
     this.formGroup.patchValue(result);
-    this.formGroup.get('dateEndQuotation').setValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "MM/dd/yyyy"));
+    this.formGroup.get('dateEndQuotation').setValue(this.intlService.formatDate(new Date(result.dateEndQuotation), "dd/MM/yyyy"));
     const control = this.formGroup.get('lines') as FormArray;
     control.clear();
 
@@ -268,12 +268,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       this.getDate(dateQuotation, dateApplies);
     }
   }
-
-  // deleteLine(index: number) {
-  //   this.linesArray.removeAt(index);
-  //   this.getAmountTotal();
-  //   this.linesArray.markAsDirty();
-  // }
 
   createFormInfo(data: any) {
     this.formGroupInfo = this.fb.group({

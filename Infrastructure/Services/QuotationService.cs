@@ -314,7 +314,7 @@ namespace Infrastructure.Services
                 .Include("Lines.QuotationLineToothRels")
                 .FirstOrDefaultAsync();
 
-            if (quotation.Promotions.Any() && !quotation.Promotions.Any(x => x.SaleCouponProgram.RuleDateFrom >= today && today <= x.SaleCouponProgram.RuleDateTo))
+            if (quotation.Promotions.Any() && !quotation.Promotions.Any(x => x.SaleCouponProgramId.HasValue && ( x.SaleCouponProgram.RuleDateFrom >= today && today <= x.SaleCouponProgram.RuleDateTo)))
                 throw new Exception("CTKM đã hết hạn. Vui lòng xóa các CTKM đã hết hạn để tiếp tục tạo phiếu điều trị");
 
             var saleOrder = new SaleOrder();
