@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
         alert(data.message);
       } else {
         localStorage.setItem('user_permission', JSON.stringify(data));
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl('/app/dashboard');
       }
     }, error => {
       console.log('error login', error);

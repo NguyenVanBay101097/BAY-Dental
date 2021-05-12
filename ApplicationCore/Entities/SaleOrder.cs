@@ -154,5 +154,10 @@ namespace ApplicationCore.Entities
 
         public Guid? QuotationId { get; set; }
         public Quotation Quotation { get; set; }
+
+        /// <summary>
+        /// Tổng thanh toán
+        /// </summary>
+        public decimal? TotalPaid { get; set; }
     }
 }

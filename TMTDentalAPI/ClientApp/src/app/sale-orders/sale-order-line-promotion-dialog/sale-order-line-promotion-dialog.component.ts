@@ -39,7 +39,7 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit , OnDestroy
   ngOnInit() {
     setTimeout(() => {
       this.loadDefaultPromotion();
-    }, 300);
+    }, 0);
   }
 
   ngOnDestroy(): void {

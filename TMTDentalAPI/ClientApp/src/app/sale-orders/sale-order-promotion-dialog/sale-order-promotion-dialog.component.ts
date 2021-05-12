@@ -28,15 +28,11 @@ import {
 })
 export class SaleOrderPromotionDialogComponent implements OnInit {
 
- title = "Ưu đãi phiếu điều trị";
-  saleOrder: SaleOrderDisplay = null;//input
-
-
-// input
+  title = "Ưu đãi phiếu điều trị";
+  saleOrder: SaleOrderDisplay;//input
+  // input
   autoPromotions = [];
-
   private updateSubject = new Subject<any>();
-
   isChange = false;
 
 
@@ -52,9 +48,8 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
 
   ngOnInit() {
     setTimeout(() => {
-
       this.loadDefaultPromotion();
-    }, 300);
+    }, 0);
   }
 
 
@@ -74,7 +69,7 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
       return this.saleOrder.orderLines.reduce((total, cur) => {
         return total + cur.priceUnit * cur.productUOMQty;
       }, 0);
-    } 
+    }
     return 0;
   }
 
@@ -116,56 +111,56 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
   }
 
   applyPromotion(item) {
-      var val = {
-        id:this.saleOrder.id,
-        saleProgramId: item.id,
-      };
+    var val = {
+      id: this.saleOrder.id,
+      saleProgramId: item.id,
+    };
 
-      var apply$ = this.saleOrder ? this.saleOrderSevice.applyPromotion(val) : this.saleOrderLineService.applyPromotion(val);
-      apply$.subscribe((res) => {
-        this.notificationService.notify('success', 'Thành công!');
-        this.updateSubject.next(true);
-        this.isChange = true;
+    var apply$ = this.saleOrder ? this.saleOrderSevice.applyPromotion(val) : this.saleOrderLineService.applyPromotion(val);
+    apply$.subscribe((res) => {
+      this.notificationService.notify('success', 'Thành công!');
+      this.updateSubject.next(true);
+      this.isChange = true;
 
-      });
+    });
   }
 
   applyDiscount(value) {
-      var val = {
-        id: this.saleOrder.id,
-        discountType: value.discountType,
-        discountPercent: value.discountPercent,
-        discountFixed: value.discountFixed,
-      };
-      var apply$ = this.saleOrder ? this.saleOrderSevice.applyDiscountOnOrder(val) : this.saleOrderLineService.applyDiscountOnOrderLine(val);
-      apply$.subscribe((res) => {
-        this.notificationService.notify('success', 'Thành công!');
-        this.isChange = true;
-        this.updateSubject.next(true);
-      });
+    var val = {
+      id: this.saleOrder.id,
+      discountType: value.discountType,
+      discountPercent: value.discountPercent,
+      discountFixed: value.discountFixed,
+    };
+    var apply$ = this.saleOrder ? this.saleOrderSevice.applyDiscountOnOrder(val) : this.saleOrderLineService.applyDiscountOnOrderLine(val);
+    apply$.subscribe((res) => {
+      this.notificationService.notify('success', 'Thành công!');
+      this.isChange = true;
+      this.updateSubject.next(true);
+    });
   }
 
   onDeletePromotion(item) {
 
-      let modalRef = this.modelService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-      modalRef.componentInstance.title = "Xóa ưu đãi";
-      modalRef.componentInstance.body = `Bạn có muốn xóa ưu đãi ${item.name}?`
-      modalRef.result.then(() => {
-        this.saleOrderPromotionService.removePromotion([item.id]).subscribe(res => {
-          this.notificationService.notify('success', 'Thành công!');
-          this.updateSubject.next(true);
-          this.isChange = true;
+    let modalRef = this.modelService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.title = "Xóa ưu đãi";
+    modalRef.componentInstance.body = `Bạn có muốn xóa ưu đãi ${item.name}?`
+    modalRef.result.then(() => {
+      this.saleOrderPromotionService.removePromotion([item.id]).subscribe(res => {
+        this.notificationService.notify('success', 'Thành công!');
+        this.updateSubject.next(true);
+        this.isChange = true;
 
-        })
-      }, () => {
-      });
+      })
+    }, () => {
+    });
   }
 
 
 
   onClose() {
-   
-      this.activeModal.close(this.isChange ? true : false);
+
+    this.activeModal.close(this.isChange ? true : false);
   }
 
   sumPromotion() {
@@ -178,7 +173,7 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
 
   getApplied(item) {// item is salecouponprogram
     var index = this.saleOrder.promotions.findIndex(x => x.saleCouponProgramId == item.id);
-    return  this.saleOrder.promotions[index];
+    return this.saleOrder.promotions[index];
   }
 
 }

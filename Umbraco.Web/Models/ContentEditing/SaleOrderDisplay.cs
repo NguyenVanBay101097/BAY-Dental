@@ -31,14 +31,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? AmountUntaxed { get; set; }
 
         public decimal? AmountTotal { get; set; }
-        public decimal? PaidTotal
-        {
-            get
-            {
-                return (this.AmountTotal ?? 0) - (this.Residual ?? 0);
-            }
-            set { }
-        }
 
         public string Note { get; set; }
 
@@ -83,6 +75,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string InvoiceStatus { get; set; }
 
         public int InvoiceCount { get; set; }
+
+        public decimal? TotalPaid { get; set; }
     }
 
     public class SaleOrderDisplayVm
