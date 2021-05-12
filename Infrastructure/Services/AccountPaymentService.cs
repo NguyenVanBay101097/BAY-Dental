@@ -282,6 +282,7 @@ namespace Infrastructure.Services
                     Journal = payment.Journal,
                     PartnerId = payment.PartnerId,
                     CompanyId = payment.CompanyId,
+                    InvoiceOrigin = payment.Name
                 };
 
                 var lines = new List<AccountMoveLine>()
