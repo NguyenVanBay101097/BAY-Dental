@@ -120,7 +120,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
         public string SearchOrder { get; set; }
-        public string SearchOrderLine { get; set; }
+        //public string SearchOrderLine { get; set; }
 
         public Guid? SaleCouponProgramId { get; set; }
     }
@@ -132,7 +132,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DatePromotion { get; set; }
         public string PartnerName { get; set; }
         public string SaleOrderName { get; set; }
-        public string SaleOrderLineName { get; set; }
+        public Guid? SaleOrderId { get; set; }
     }
 
 }
