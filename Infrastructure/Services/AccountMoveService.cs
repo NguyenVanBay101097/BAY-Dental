@@ -249,12 +249,12 @@ namespace Infrastructure.Services
                 move.State = "posted";
 
                 //Compute 'ref' for 'out_invoice'.
-                if (move.Type == "out_invoice" && string.IsNullOrEmpty(move.InvoicePaymentRef))
-                {
-                    var invoice_payment_ref = _GetInvoiceComputedReference(move);
-                    foreach (var line in move.Lines.Where(x => x.Account.InternalType == "receivable" || x.Account.InternalType == "payable"))
-                        line.Name = invoice_payment_ref;
-                }
+                //if (move.Type == "out_invoice" && string.IsNullOrEmpty(move.InvoicePaymentRef))
+                //{
+                //    var invoice_payment_ref = _GetInvoiceComputedReference(move);
+                //    foreach (var line in move.Lines.Where(x => x.Account.InternalType == "receivable" || x.Account.InternalType == "payable"))
+                //        line.Name = invoice_payment_ref;
+                //}
             }
 
             await UpdateAsync(self);
