@@ -105,8 +105,7 @@ export class QuotationLinePromotionDialogComponent implements OnInit {
   }
 
   getListPromotion(type): any[] {
-    // return this.quotationLine.promotions.filter(x => x.type == type);
-    return [];
+    return this.quotationLine.promotions.filter(x => x.type == type);
   }
 
   onClose() {
