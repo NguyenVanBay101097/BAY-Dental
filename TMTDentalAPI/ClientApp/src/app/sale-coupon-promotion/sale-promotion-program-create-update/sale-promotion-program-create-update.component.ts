@@ -34,7 +34,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   program: SaleCouponProgramDisplay = new SaleCouponProgramDisplay();
   submitted = false;
   filteredProducts: ProductSimple[];
-  isSelectedDay = true;
+  isSelectedDay = false;
   listDay: any[] = [];
   days: any[] = [];
   startDate = new Date();
@@ -58,7 +58,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
    this.endDate.setHours(23,59,59,999);
     this.formGroup = this.fb.group({
       name: [null, Validators.required],
-      ruleMinimumAmount: 0,
+      ruleMinimumAmount: [0, Validators.required],
       discountType: 'percentage',
       discountPercentage: [0, Validators.required],
       discountFixedAmount:[0, Validators.required],
@@ -71,19 +71,19 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       discountSpecificProducts: [null],
       discountSpecificProductCategories: [null],
       active: false,
-      notIncremental: true,
+      notIncremental: false,
       companyId: null,
-      discountMaxAmount: 0,
+      discountMaxAmount: null,
       rewardProductQuantity: 1,
       promoApplicability: 'on_current_order',
       promoCodeUsage: 'no_code_needed',
-      ruleDateToObj: [this.endDate],
-      ruleDateFromObj: [this.startDate],
+      ruleDateToObj: [this.endDate,Validators.required],
+      ruleDateFromObj: [this.startDate,Validators.required],
       maximumUseNumber: 0,
       promoCode: null,
       daysSelected: null,
-      isSelectDay: true,
-      statusDisplay: 'Chưa chạy'
+      isSelectDay: false,
+      statusDisplay: 'Lưu nháp'
     });
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get("id");
@@ -92,10 +92,10 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       } else {
         this.formGroup = this.fb.group({
           name: [null, Validators.required],
-          ruleMinimumAmount: 0,
+          ruleMinimumAmount: [0, Validators.required],
           discountType: 'fixed_amount',
           discountPercentage: [0, Validators.required],
-          discountFixedAmount: 0,
+          discountFixedAmount: [0, Validators.required],
           validityDuration: 1,
           programType: 'promotion_program',
           rewardProduct: null,
@@ -106,18 +106,18 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
           discountSpecificProductCategories: [null],
           companyId: null,
           active: false,
-          discountMaxAmount: 0,
-          notIncremental: true,
+          discountMaxAmount: null,
+          notIncremental: false,
           rewardProductQuantity: 1,
           promoApplicability: 'on_current_order',
           promoCodeUsage: 'no_code_needed',
-          ruleDateToObj: [this.endDate],
-          ruleDateFromObj: [this.startDate],
+          ruleDateToObj: [this.endDate,Validators.required],
+          ruleDateFromObj: [this.startDate,Validators.required],
           maximumUseNumber: 0,
           promoCode: null,
           daysSelected: null,
-          isSelectDay: true,
-          statusDisplay: 'Chưa chạy'
+          isSelectDay: false,
+          statusDisplay: 'Lưu nháp'
         });
 
         this.program = new SaleCouponProgramDisplay();
@@ -240,9 +240,11 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   getAmountTotal(){
-    this.programService.getAmountTotalUsagePromotion(this.id).subscribe(result=>{
-      this.amountTotal = <number>result;
-    })
+    if(this.id){
+      this.programService.getAmountTotalUsagePromotion(this.id).subscribe(result=>{
+        this.amountTotal = <number>result;
+      })
+    }
   }
 
   onChangePromoCodeUsage() {
@@ -256,6 +258,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   onChangeDate(){
+    if(this.f.ruleDateToObj.value == null)
+      return
     var start = new Date(this.f.ruleDateFromObj.value);
     var end = new Date(this.f.ruleDateToObj.value);
     if (end<start){
@@ -265,6 +269,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.f.daysSelected.reset();
       this.loadListDay();
       this.f.ruleDateToObj.clearValidators();
+      this.f.ruleDateToObj.setValidators(Validators.required);
       this.f.ruleDateToObj.updateValueAndValidity();
     }
     
@@ -416,8 +421,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     }
   }
 
-  onActive(){
-    debugger
+  onSaveActive(){
     this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
@@ -426,19 +430,19 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       modalRef.componentInstance.title = 'Kích hoạt chương trình khuyến mãi';
       modalRef.componentInstance.body = 'Bạn có muốn kích hoạt chương trình khuyến mãi?';
       modalRef.result.then(()=>{
+        var value = this.getDataFromBody();
         if (this.id) {
           this.programService.update(this.id,value).subscribe(result => {
             this.programService.actionUnArchive([this.id]).subscribe(()=>{
-              this.notify('Đã kích hoạt CTKM thành công');
+              this.notify('CTKM đã kích hoạt thành công');
               this.loadRecord();
             });
           })
         }
         else {
-          var value = this.getDataFromBody();
           this.programService.create(value).subscribe(result => {
             this.programService.actionUnArchive([result.id]).subscribe(()=>{
-              this.notify('Đã kích hoạt CTKM thành công');
+              this.notify('CTKM đã kích hoạt thành công');
               this.id = result.id;
               this.loadRecord();
             });
@@ -446,6 +450,30 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
         }
       })
       
+  }
+
+  onPause(){
+    let modalRef =this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+      modalRef.componentInstance.title = 'Tạm ngừng chương trình khuyến mãi';
+      modalRef.componentInstance.body = 'Bạn có muốn tạm ngừng chương trình khuyến mãi?';
+      modalRef.result.then(()=>{
+        this.programService.actionArchive([this.id]).subscribe(()=>{
+          this.notify('CTKM đã tạm ngừng thành công');
+          this.loadRecord();
+        });
+      })
+  }
+
+  onActive(){
+    let modalRef =this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+      modalRef.componentInstance.title = 'Kích hoạt chương trình khuyến mãi';
+      modalRef.componentInstance.body = 'Bạn có muốn kích hoạt chương trình khuyến mãi?';
+      modalRef.result.then(()=>{
+        this.programService.actionUnArchive([this.id]).subscribe(()=>{
+          this.notify('CTKM đã kích hoạt thành công');
+          this.loadRecord();
+        });
+      })
   }
 
   onChangeSelect(value){

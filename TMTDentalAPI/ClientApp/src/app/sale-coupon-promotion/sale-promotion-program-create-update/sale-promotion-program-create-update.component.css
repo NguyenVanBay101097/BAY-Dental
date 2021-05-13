@@ -33,6 +33,7 @@ table td {
 .left_header {
     border-bottom: 1px solid;
     min-height: 50px;
+    width: 100%;
 }
 
 .left_header .left {
@@ -50,4 +51,16 @@ table td {
 
 .button-radio {
     min-width: 150px;
+}
+
+.btn-check {
+    position: absolute;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+
+.btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show, .btn-outline-primary:active {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
 }
