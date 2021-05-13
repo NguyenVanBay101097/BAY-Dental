@@ -358,18 +358,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       {id:6,name:'Thứ 7'},
     ]
 
-    var start = new Date(this.f.ruleDateFromObj.value);
-    var end = new Date(this.f.ruleDateToObj.value);
-    var list = [];
-      for (var i = start; i <= end ; i.setDate(i.getDate() + 1)) {
-          if(!list.includes(i.getDay())){
-            list.push(i.getDay());
-          }
-          
-      }
-      this.listDay = this.days.filter(x => {
-        return list.includes(x.id);
-      });
+    this.listDay = this.days;
   }
 
   disabled(){
@@ -537,6 +526,21 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: 'success', icon: true }
     });
+  }
+
+  getColorStatus(status) {
+    switch (status) {
+      case "Chưa chạy":
+        return "text-dark";
+      case "Đang chạy":
+        return "text-success";
+      case "Tạm ngừng":
+        return "text-warning";
+      case "Hết hạn":
+        return "text-danger";
+      default:
+        return "text-dark";
+    }
   }
 
 }

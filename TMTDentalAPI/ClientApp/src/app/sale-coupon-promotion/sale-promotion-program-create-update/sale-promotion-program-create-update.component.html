@@ -66,12 +66,12 @@
                     <div class="border bg-white">
                         <div class="left_header d-flex">
                             <div class="left border"></div>
-                            <div class="right d-flex">
-                                <div class="d-flex justify-content-center">
+                            <div class="right px-2 w-100">
+                                <div class="d-flex justify-content-center m-auto">
                                     <div class="d-flex align-items-center mr-2"><i class="fas fa-dollar-sign"></i></div>
                                     <div style="cursor: pointer;" (click)="showHistoryApplyPromotion()">
                                         <div>Giá trị khuyến mãi</div>
-                                        <div class="d-flex justify-content-center">{{amountTotal | number}}</div>
+                                        <div class="d-flex justify-content-center text-success">{{amountTotal | number}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -87,7 +87,7 @@
                                         <div *ngIf="f.name.errors.required">Nhập tên chương trình khuyến mãi</div>
                                     </div>
                                 </div>
-                                <div>Tình trạng <span><b>{{f.statusDisplay.value}}</b></span></div>
+                                <div>Tình trạng <span class="ml-3" [ngClass]="getColorStatus(f.statusDisplay.value)">{{f.statusDisplay.value}}</span></div>
                             </div>
                             <table class="o_group o_inner_group o_group_col_6">
                                 <tbody>
@@ -333,7 +333,7 @@
                         <div class="p-2">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" (change)="changeCheckbox($event.target.checked)" formControlName="notIncremental" id="notIncremental">
-                                <label class="form-check-label" for="notIncremental">Không áp dụng cộng dồn khuyến mãi</label>
+                                <label class="form-check-label" for="notIncremental">Không áp dụng dùng chung với khuyến mãi khác</label>
                             </div>
                         </div>
                     </div>
@@ -352,7 +352,7 @@
                                 <kendo-datepicker  class="form-control" id="endDate" formControlName="ruleDateToObj" (valueChange)="onChangeDate($event)">
                                 </kendo-datepicker>
                                 <div *ngIf="f.ruleDateToObj.errors" class="text-danger mb-1">
-                                    <div *ngIf="f.ruleDateToObj.errors.dateIncorrect">Chọn lại ngày kết thúc</div>
+                                    <div *ngIf="f.ruleDateToObj.errors.dateIncorrect">Chọn ngày kết thúc</div>
                                 </div>
                             </div>
                             <div class="form-check">
