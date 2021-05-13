@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,7 +59,7 @@ namespace TMTDentalAPI.Controllers
             var stream = new MemoryStream();
             var data = await _orderPromotionService.GetHistoryPromotionResult(val);
             byte[] fileContent;
-     
+
 
             using (var package = new ExcelPackage(stream))
             {
@@ -80,9 +81,9 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 2].Value = item.PartnerName;
                     worksheet.Cells[row, 3].Value = item.SaleOrderName;
                     worksheet.Cells[row, 4].Value = item.Amount;
-                    worksheet.Cells[row, 4].Style.Numberformat.Format = "#.#";
+                    worksheet.Cells[row, 4].Style.Numberformat.Format = "#,###";
                     worksheet.Cells[row, 5].Value = item.AmountPromotion;
-                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#.#";
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#,###";
                     row++;
                 }
 
