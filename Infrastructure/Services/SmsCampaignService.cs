@@ -44,7 +44,7 @@ namespace Infrastructure.Services
         public async Task<SmsCampaign> GetDefaultCampaignBirthday()
         {
             var modelDataObj = GetService<IIRModelDataService>();
-            var campaign = await modelDataObj.GetRef<SmsCampaign>("account.data_account_type_thu");
+            var campaign = await modelDataObj.GetRef<SmsCampaign>("base.sms_campaign_birthday");
             if (campaign == null)
             {
                 campaign = new SmsCampaign

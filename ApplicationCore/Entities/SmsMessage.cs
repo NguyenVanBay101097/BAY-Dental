@@ -16,8 +16,15 @@ namespace ApplicationCore.Entities
         public string TypeSend { get; set; }
         public Guid? SmsTemplateId { get; set; }
         public SmsTemplate SmsTemplate { get; set; }
+        public string Body { get; set; }
         public Guid? SmsAccountId { get; set; }
         public SmsAccount SmsAccount { get; set; }
+        /// <summary>
+        /// waiting : Chờ gửi
+        /// sending: Đang gửi
+        /// fails: Thất bại
+        /// success: Thành công
+        /// </summary>
         public string State { get; set; }
         public ICollection<SmsMessagePartnerRel> Partners { get; set; } = new List<SmsMessagePartnerRel>();
     }

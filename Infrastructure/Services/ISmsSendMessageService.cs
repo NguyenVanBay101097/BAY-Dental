@@ -4,11 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using static Infrastructure.Services.SmsSendMessageService;
 
 namespace Infrastructure.Services
 {
     public interface ISmsSendMessageService
     {
-        Task CreateSmsSms(CatalogDbContext context, SmsComposer composer, IEnumerable<Guid> ids, Guid companyId);
+        Task CreateSmsMessageDetail(CatalogDbContext context, SmsMessage composer, IEnumerable<Guid> ids, Guid companyId);
     }
 }

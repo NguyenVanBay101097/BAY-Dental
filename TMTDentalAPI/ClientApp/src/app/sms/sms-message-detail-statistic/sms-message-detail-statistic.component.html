@@ -1,0 +1,44 @@
+<form class="o_form_view h-100">
+    <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
+        <div class="flex-0-0-auto">
+            <div class="d-flex">
+                <div class="btns">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onResend()">Gửi lại tin</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<kendo-grid [data]="gridData" [selectable]="true" [resizable]="true" (pageChange)="pageChange($event)" [skip]="skip"
+    [pageable]="true" [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+    <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
+    <kendo-grid-column title="Khách hàng" width="200">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.partner ? dataItem.partner.displayName :''}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="number" title="Số điện thoại" width="120"></kendo-grid-column>
+    <kendo-grid-column title="Thời gian gửi" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.dateCreated | date:'shortDate'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Brandname" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.smsAccount ? dataItem.smsAccount.brandName :''}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Nguyên nhân" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{stranslateCodeResponse(dataItem.errorCode)}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Trạng thái" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <span *ngIf="dataItem.state=='fails'">Thất bại</span>
+            <span *ngIf="dataItem.state=='sending'">Đang gửi</span>
+            <span *ngIf="dataItem.state=='success'">Thành công</span>
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

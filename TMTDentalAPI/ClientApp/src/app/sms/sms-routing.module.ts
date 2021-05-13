@@ -8,6 +8,8 @@ import { SmsAppointmentFormComponent } from './sms-appointment-form/sms-appointm
 import { SmsBirthdayFormAutomaticComponent } from './sms-birthday-form-automatic/sms-birthday-form-automatic.component';
 import { SmsBirthdayFormManualComponent } from './sms-birthday-form-manual/sms-birthday-form-manual.component';
 import { SmsBirthdayFormComponent } from './sms-birthday-form/sms-birthday-form.component';
+import { SmsMessageDetailStatisticComponent } from './sms-message-detail-statistic/sms-message-detail-statistic.component';
+import { SmsMessageStatisticComponent } from './sms-message-statistic/sms-message-statistic.component';
 import { SmsStatisticComponent } from './sms-statistic/sms-statistic.component';
 import { SmsTemplateListComponent } from './sms-template-list/sms-template-list.component';
 
@@ -18,7 +20,8 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'manually', pathMatch: 'full' },
       { path: 'auto', component: SmsBirthdayFormAutomaticComponent },
-      { path: 'manually', component: SmsBirthdayFormManualComponent }
+      { path: 'manually', component: SmsBirthdayFormManualComponent },
+      { path: 'statistic', component: SmsMessageDetailStatisticComponent }
     ]
   },
   {
@@ -26,7 +29,7 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'manually', pathMatch: 'full' },
       { path: 'auto', component: SmsAppointmentFormAutomaticComponent },
-      { path: 'manually', component: SmsAppointmentFormManualComponent }
+      { path: 'manually', component: SmsAppointmentFormManualComponent },
     ]
   },
   { path: 'templates', component: SmsTemplateListComponent },

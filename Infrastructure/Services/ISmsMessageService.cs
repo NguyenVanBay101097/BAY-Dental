@@ -11,5 +11,7 @@ namespace Infrastructure.Services
     public interface ISmsMessageService : IBaseService<SmsMessage>
     {
         Task<PagedResult2<SmsMessageBasic>> GetPaged(SmsMessagePaged val);
+        Task<SmsMessageBasic> CreateAsync(SmsMessageSave val);
+        Task ActionSendSMS(SmsMessage message);
     }
 }

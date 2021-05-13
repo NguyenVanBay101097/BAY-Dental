@@ -21,11 +21,13 @@ import { SmsManualDialogComponent } from './sms-manual-dialog/sms-manual-dialog.
 import { SmsAccountListComponent } from './sms-account-list/sms-account-list.component';
 import { SmsAccountSettingDialogComponent } from './sms-account-setting-dialog/sms-account-setting-dialog.component';
 import { SmsMessageDialogComponent } from './sms-message-dialog/sms-message-dialog.component';
+import { SmsMessageStatisticComponent } from './sms-message-statistic/sms-message-statistic.component';
+import { SmsMessageDetailStatisticComponent } from './sms-message-detail-statistic/sms-message-detail-statistic.component';
 
 @NgModule({
   declarations: [SmsTemplateListComponent, SmsTemplateCrUpComponent, SmsTemplateContentComponent,
     SmsAccountSettingComponent,
-    SmsBirthdayFormComponent, SmsBirthdayFormManualComponent, SmsBirthdayFormAutomaticComponent, SmsAppointmentFormAutomaticComponent, SmsAppointmentFormManualComponent, SmsAppointmentFormComponent, SmsStatisticComponent, SmsManualDialogComponent, SmsAccountListComponent, SmsAccountSettingDialogComponent, SmsMessageDialogComponent],
+    SmsBirthdayFormComponent, SmsBirthdayFormManualComponent, SmsBirthdayFormAutomaticComponent, SmsAppointmentFormAutomaticComponent, SmsAppointmentFormManualComponent, SmsAppointmentFormComponent, SmsStatisticComponent, SmsManualDialogComponent, SmsAccountListComponent, SmsAccountSettingDialogComponent, SmsMessageDialogComponent, SmsMessageStatisticComponent, SmsMessageDetailStatisticComponent],
   imports: [
     CommonModule,
     SmsRoutingModule,

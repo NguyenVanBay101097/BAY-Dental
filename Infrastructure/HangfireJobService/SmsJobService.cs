@@ -17,7 +17,7 @@ using System.Xml;
 
 namespace Infrastructure.HangfireJobService
 {
-    public class SmsJobService :  ISmsJobService
+    public class SmsJobService : ISmsJobService
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -72,7 +72,7 @@ namespace Infrastructure.HangfireJobService
                 smsComposer.Body = config.Template.Body;
                 context.SmsComposers.Add(smsComposer);
                 await context.SaveChangesAsync();
-                await _smsSendMessageService.CreateSmsSms(context, smsComposer, partnerIds, config.CompanyId);
+                //await _smsSendMessageService.CreateSmsSms(context, smsComposer, partnerIds, config.CompanyId);
                 foreach (var appointment in listAppointments)
                 {
                     appointment.DateAppointmentReminder = now;
@@ -84,24 +84,39 @@ namespace Infrastructure.HangfireJobService
 
         public async Task RunBirthdayAutomatic(CatalogDbContext context, SmsConfig config)
         {
-            var dayNow = DateTime.Today.Day;
+            var dayNow = DateTime.Today.AddDays(-config.TimeBeforSend).Day;
             var MonthNow = DateTime.Today.Month;
-            var query = context.Partners.AsQueryable();
-            var partners = await query.Where(x =>
+            var queryPartner = context.Partners.AsQueryable();
+            var partners = await queryPartner.Where(x =>
             x.BirthMonth.HasValue && x.BirthMonth.Value == MonthNow &&
             x.BirthDay.HasValue && x.BirthDay.Value == dayNow
             ).ToListAsync();
             if (partners.Any())
             {
-                var smsComposer = new SmsComposer();
-                smsComposer.Id = GuidComb.GenerateComb();
-                smsComposer.ResModel = "res.partners";
-                smsComposer.ResIds = string.Join(",", partners.Select(x => x.Id));
-                smsComposer.TemplateId = config.TemplateId;
-                smsComposer.Body = config.Template.Body;
-                context.SmsComposers.Add(smsComposer);
-                context.SaveChanges();
-                await _smsSendMessageService.CreateSmsSms(context, smsComposer, partners.Select(x => x.Id), config.CompanyId);
+                var smsMessage = new SmsMessage();
+                smsMessage.SmsAccountId = config.SmsAccountId;
+                smsMessage.SmsCampaignId = config.SmsCampaignId;
+                smsMessage.Id = GuidComb.GenerateComb();
+                smsMessage.Name = $"Chúc mừng sinh nhật ngày {DateTime.Today.ToString("dd-MM-yyyy")}";
+                smsMessage.SmsTemplateId = config.TemplateId;
+                smsMessage.Body = config.Body;
+                smsMessage.State = "waiting";
+                smsMessage.TypeSend = "automatic";
+                smsMessage.Date = config.DateSend;
+
+                context.SmsMessages.Add(smsMessage);
+                await context.SaveChangesAsync();
+                foreach (var item in partners)
+                {
+                    var rel = new SmsMessagePartnerRel()
+                    {
+                        PartnerId = item.Id,
+                        SmsMessageId = smsMessage.Id
+                    };
+                    smsMessage.Partners.Add(rel);
+                }
+                context.SmsMessagePartnerRels.AddRange(smsMessage.Partners);
+                await context.SaveChangesAsync();
             }
         }
 

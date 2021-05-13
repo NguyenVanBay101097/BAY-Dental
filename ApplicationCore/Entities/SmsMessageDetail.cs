@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class SmsSms : BaseEntity
+    public class SmsMessageDetail : BaseEntity
     {
         public string Body { get; set; }
         public string Number { get; set; }

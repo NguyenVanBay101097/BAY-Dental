@@ -2,9 +2,12 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import SmsAccountService, { SmsAccountPaged } from '../sms-account.service';
 import { SmsComposerService } from '../sms-composer.service';
+import { SmsMessageService } from '../sms-message.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService } from '../sms-template.service';
 
@@ -15,9 +18,11 @@ import { SmsTemplateService } from '../sms-template.service';
 })
 export class SmsManualDialogComponent implements OnInit {
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
+  @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent
 
   title: string;
   filteredTemplate: any[];
+  filteredSmsAccount: any[];
   formGroup: FormGroup;
   ids: string[] = [];
   submitted = false;
@@ -26,25 +31,29 @@ export class SmsManualDialogComponent implements OnInit {
     templateType: 'text',
     text: ''
   }
-  textareaLimit: number = 600;
+  textareaLimit: number = 459;
 
   constructor(
     public activeModal: NgbActiveModal,
     private smsTemplateService: SmsTemplateService,
-    private smsComposerService: SmsComposerService,
+    private smsMessageService: SmsMessageService,
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private notificationService: NotificationService
+    private smsAccountService: SmsAccountService,
+    private notificationService: NotificationService,
+    private intlService: IntlService
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: null,
-      body: [this.template, Validators.required]
+      template: [null, Validators.required],
+      smsAccount: [null, Validators.required],
+      typeSend: 'manual',
+      name: ['', Validators.required],
     })
 
     this.loadSmsTemplate();
-
+    this.loadAccount();
     this.smsTemplateCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.smsTemplateCbx.loading = true)),
@@ -53,6 +62,16 @@ export class SmsManualDialogComponent implements OnInit {
       this.filteredTemplate = result;
       this.smsTemplateCbx.loading = false;
     });
+
+    this.smsAccountCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.smsAccountCbx.loading = true)),
+      switchMap(value => this.searchAccount(value))
+    ).subscribe((result: any) => {
+      this.filteredSmsAccount = result;
+      this.smsAccountCbx.loading = false;
+    });
+
   }
 
   searchSmsTemplate(q?: string) {
@@ -71,22 +90,21 @@ export class SmsManualDialogComponent implements OnInit {
     this.searchSmsTemplate().subscribe(
       (res: any) => {
         this.filteredTemplate = res;
+
       }
     )
   }
   get f() { return this.formGroup.controls; }
 
-  valueChange(val) {
-    if (val) {
-      this.template = JSON.parse(val.body);
-    }
-    else {
+  onChangeTemplate(event) {
+    if (event && event.body) {
+      this.template = JSON.parse(event.body);
+    } else {
       this.template = {
-        templateType: 'text',
-        text: ''
+        text: '',
+        templateType: 'text'
       }
     }
-    this.formGroup.controls['body'].setValue(this.template);
   }
 
   getLimitText() {
@@ -98,20 +116,41 @@ export class SmsManualDialogComponent implements OnInit {
     }
   }
 
+  loadAccount() {
+    this.searchAccount().subscribe(
+      (result: any) => {
+        if (result && result.items) {
+          this.filteredSmsAccount = result.items
+          if (result.items[0]) {
+            this.formGroup.get('smsAccount').patchValue(result.items[0]);
+          }
+        }
+      }
+    )
+  }
+
+  searchAccount(q?: string) {
+    var val = new SmsAccountPaged();
+    val.limit = 20;
+    val.offset = 0;
+    val.search = q || '';
+    return this.smsAccountService.getPaged(val);
+  }
+
+
   onSave() {
     this.submitted = true;
     if (this.formGroup.invalid) return false;
-
     var val = this.formGroup.value;
-    val.body = JSON.stringify(val.body);
-    val.resIds = this.ids ? this.ids.join(',') : '';
-    val.resModel = this.provider;
-    if (val.template) {
-      val.templateId = val.template.id;
-    }
-    this.smsComposerService.create(val).subscribe(
+    val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
+    val.smsTemplateId = val.template ? val.template.id : null;
+    val.date = this.intlService.formatDate(new Date(), "yyyy-MM-ddTHH:mm");
+    val.partnerIds = this.ids;
+    val.body = JSON.stringify(this.template);
+    val.IsBirthDayManual = true;
+    this.smsMessageService.create(val).subscribe(
       (res: any) => {
-        this.smsComposerService.actionSendSms(res.id).subscribe(
+        this.smsMessageService.actionSendSms(res.id).subscribe(
           () => {
             this.notify("gửi tin thành công", true);
             this.activeModal.close(res);

@@ -7,11 +7,11 @@ using System.Text;
 
 namespace Umbraco.Web.Mapping
 {
-    public class SmsSmsProfile: Profile
+    public class SmsMessageDetailProfile: Profile
     {
-        public SmsSmsProfile()
+        public SmsMessageDetailProfile()
         {
-            CreateMap<SmsSms, SmsSmsBasic>();
+            CreateMap<SmsMessageDetail, SmsMessageDetailBasic>();
         }
     }
 }

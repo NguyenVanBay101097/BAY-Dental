@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210513022044_UpdateSms_4")]
+    partial class UpdateSms_4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8092,9 +8094,6 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Body")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
@@ -8119,9 +8118,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("SmsAccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("SmsCampaignId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("TemplateId")
                         .HasColumnType("uniqueidentifier");
 
@@ -8142,8 +8138,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("SmsAccountId");
 
-                    b.HasIndex("SmsCampaignId");
-
                     b.HasIndex("TemplateId");
 
                     b.HasIndex("WriteById");
@@ -8156,9 +8150,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Body")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
@@ -13710,10 +13701,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.SmsAccount", "SmsAccount")
                         .WithMany()
                         .HasForeignKey("SmsAccountId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsCampaign", "SmsCampaign")
-                        .WithMany()
-                        .HasForeignKey("SmsCampaignId");
 
                     b.HasOne("ApplicationCore.Entities.SmsTemplate", "Template")
                         .WithMany()

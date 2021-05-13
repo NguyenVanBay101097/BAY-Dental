@@ -253,7 +253,7 @@ namespace Infrastructure.Data
         public DbSet<SmsAccount> SmsAccounts { get; set; }
         public DbSet<SmsComposer> SmsComposers { get; set; }
         public DbSet<SmsConfig> SmsConfigs { get; set; }
-        public DbSet<SmsSms> SmsSmss { get; set; }
+        public DbSet<SmsMessageDetail> SmsMessageDetails { get; set; }
         public DbSet<SmsTemplate> SmsTemplates { get; set; }
         public DbSet<SmsMessage> SmsMessages { get; set; }
         public DbSet<SmsMessagePartnerRel> SmsMessagePartnerRels { get; set; }
@@ -459,7 +459,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SmsAccountConfiguration());
             builder.ApplyConfiguration(new SmsConfigConfiguration());
             builder.ApplyConfiguration(new SmsComposerConfiguration());
-            builder.ApplyConfiguration(new SmsSmsConfiguration());
+            builder.ApplyConfiguration(new SmsMessageDetailConfiguration());
             builder.ApplyConfiguration(new SmsTemplateConfiguration());
             builder.ApplyConfiguration(new SmsMessagePartnerRelConfiguration());
             builder.ApplyConfiguration(new SmsMessageConfiguration());

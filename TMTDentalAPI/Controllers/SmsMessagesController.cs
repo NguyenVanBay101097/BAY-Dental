@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,28 +19,42 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ISmsMessageService _smsMessageService;
+        private readonly IUnitOfWorkAsync _unitOfWorkAsync;
 
-        public SmsMessagesController(IMapper mapper, ISmsMessageService smsMessageService)
+        public SmsMessagesController(IUnitOfWorkAsync unitOfWorkAsync, IMapper mapper, ISmsMessageService smsMessageService)
         {
             _smsMessageService = smsMessageService;
             _mapper = mapper;
+            _unitOfWorkAsync = unitOfWorkAsync;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync(SmsMessageSave val)
         {
             if (!ModelState.IsValid || val == null) return BadRequest();
-            var entity = _mapper.Map<SmsMessage>(val);
-            entity = await _smsMessageService.CreateAsync(entity);
-            var res = _mapper.Map<SmsAccountBasic>(entity);
+            await _unitOfWorkAsync.BeginTransactionAsync();
+
+            var res = await _smsMessageService.CreateAsync(val);
+            _unitOfWorkAsync.Commit();
             return Ok(res);
+        }
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> ActionSendSms(Guid id)
+        {
+            var entity = await _smsMessageService.SearchQuery(x => x.Id == id).Include(x => x.SmsAccount).Include(x => x.Partners).FirstOrDefaultAsync();
+            if (entity == null) return NotFound();
+            await _unitOfWorkAsync.BeginTransactionAsync();
+            await _smsMessageService.ActionSendSMS(entity);
+            _unitOfWorkAsync.Commit();
+            return NoContent();
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _smsMessageService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            return Ok(_mapper.Map<SmsAccountDisplay>(res));
+            return Ok(_mapper.Map<SmsMessageBasic>(res));
         }
 
         [HttpGet("[action]")]
@@ -56,7 +71,7 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid || entity == null) return BadRequest();
             entity = _mapper.Map(val, entity);
             await _smsMessageService.UpdateAsync(entity);
-            var res = _mapper.Map<SmsAccountBasic>(entity);
+            var res = _mapper.Map<SmsMessageBasic>(entity);
             return Ok(res);
         }
 

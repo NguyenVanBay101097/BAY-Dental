@@ -331,9 +331,10 @@ namespace TMTDentalAPI
             services.AddScoped<ISmsAccountService, SmsAccountService>();
             services.AddScoped<ISmsComposerService, SmsComposerService>();
             services.AddScoped<ISmsConfigService, SmsConfigService>();
-            services.AddScoped<ISmsSmsService, SmsSmsService>();
+            services.AddScoped<ISmsMessageDetailService, SmsMessageDetailService>();
             services.AddScoped<ISmsTemplateService, SmsTemplateService>();
             services.AddScoped<ISmsJobService, SmsJobService>();
+            services.AddScoped<ISmsMessageJobService, SmsMessageJobService>();
             services.AddScoped<ISmsSendMessageService, SmsSendMessageService>();
             services.AddScoped<ISmsMessageService, SmsMessageService>();
             services.AddScoped<ISmsCampaignService, SmsCampaignService>();
@@ -492,7 +493,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SmsAccountProfile());
                 mc.AddProfile(new SmsTemplateProfile());
                 mc.AddProfile(new SmsConfigProfile());
-                mc.AddProfile(new SmsSmsProfile());
+                mc.AddProfile(new SmsMessageDetailProfile());
                 mc.AddProfile(new SmsComposerProfile());
                 mc.AddProfile(new SmsCampaignProfile());
                 mc.AddProfile(new SmsMessageProfile());

@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    public class SmsSmsConfiguration : IEntityTypeConfiguration<SmsSms>
+    public class SmsMessageDetailConfiguration : IEntityTypeConfiguration<SmsMessageDetail>
     {
-        public void Configure(EntityTypeBuilder<SmsSms> builder)
+        public void Configure(EntityTypeBuilder<SmsMessageDetail> builder)
         {
             builder.HasOne(x => x.CreatedBy)
                  .WithMany()

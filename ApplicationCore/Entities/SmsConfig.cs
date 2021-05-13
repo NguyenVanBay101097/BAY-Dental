@@ -17,6 +17,8 @@ namespace ApplicationCore.Entities
 
         public DateTime? DateSend { get; set; }
 
+        public string Body { get; set; }
+
         public int TimeBeforSend { get; set; }
 
         public bool IsBirthdayAutomation { get; set; }

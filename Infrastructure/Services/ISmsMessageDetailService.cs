@@ -8,8 +8,9 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface ISmsSmsService : IBaseService<SmsSms>
+    public interface ISmsMessageDetailService : IBaseService<SmsMessageDetail>
     {
-        Task<PagedResult2<SmsSmsBasic>> GetPaged(SmsSmsPaged val);
+        Task<PagedResult2<SmsMessageDetailBasic>> GetPaged(SmsMessageDetailPaged val);
+        Task RunJobSendSms();
     }
 }

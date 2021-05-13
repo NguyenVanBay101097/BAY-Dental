@@ -16,38 +16,47 @@ namespace Infrastructure.Services
 {
     public class SmsSendMessageService : ISmsSendMessageService
     {
-        public async Task CreateSmsSms(CatalogDbContext context, SmsComposer composer, IEnumerable<Guid> ids, Guid companyId)
+        public async Task CreateSmsMessageDetail(CatalogDbContext context, SmsMessage smsMessage, IEnumerable<Guid> ids, Guid companyId)
         {
-            var listSms = new List<SmsSms>();
+            var listSms = new List<SmsMessageDetail>();
             var partners = await context.Partners.Where(x => ids.Contains(x.Id)).Include(x => x.Title).ToListAsync();
             var company = await context.Companies.Where(x => x.Id == companyId).FirstOrDefaultAsync();
             foreach (var partner in partners)
             {
-                var content = await PersonalizedContent(context, composer.Body, partner, company);
-                var sms = new SmsSms();
+                var content = await PersonalizedContent(context, smsMessage.Body, partner, company);
+                var sms = new SmsMessageDetail();
                 sms.Id = GuidComb.GenerateComb();
                 sms.Body = content;
                 sms.Number = !string.IsNullOrEmpty(partner.Phone) ? partner.Phone : "";
                 sms.PartnerId = partner.Id;
                 sms.State = "sending";
+                sms.SmsAccountId = smsMessage.SmsAccountId.Value;
+                sms.SmsMessageId = smsMessage.Id;
                 listSms.Add(sms);
             }
 
-            await context.SmsSmss.AddRangeAsync(listSms);
+            await context.SmsMessageDetails.AddRangeAsync(listSms);
             await context.SaveChangesAsync();
 
-            var dict = await SendSMS(listSms, context);
+            var dict = await SendSMS(listSms, smsMessage.SmsAccount, context);
             foreach (var item in listSms)
             {
                 if (dict.ContainsKey(item.Id))
                 {
-                    item.State = dict[item.Id];
+                    item.State = dict[item.Id].Message;
+                    item.ErrorCode = dict[item.Id].CodeResult;
                     context.Entry(item).State = EntityState.Modified;
                 }
             }
-
+            var messError = dict.Values.Where(x => x.CodeResult != "100");
+            if (messError == null || !messError.Any())
+            {
+                smsMessage.State = "success";
+                context.Entry(smsMessage).State = EntityState.Modified;
+            }
             await context.SaveChangesAsync();
         }
+       
 
         private async Task<string> PersonalizedContent(CatalogDbContext context, string body, Partner partner, Company company)
         {
@@ -60,10 +69,9 @@ namespace Infrastructure.Services
             return messageContent;
         }
 
-        public async Task<Dictionary<Guid, string>> SendSMS(IEnumerable<SmsSms> lines, CatalogDbContext context)
+        public async Task<Dictionary<Guid, ESMSSendMessageResponseModel>> SendSMS(IEnumerable<SmsMessageDetail> lines, SmsAccount account, CatalogDbContext context)
         {
-            var dict = new Dictionary<Guid, string>();
-            var account = await context.SmsAccounts.OrderByDescending(x => x.DateCreated).FirstOrDefaultAsync();
+            var dict = new Dictionary<Guid, ESMSSendMessageResponseModel>();
             if (account == null) throw new Exception("Bạn chưa cài đặt Brand Name");
             if (account.Provider == "fpt")
             {
@@ -74,7 +82,7 @@ namespace Infrastructure.Services
                     var fpt = new FPTSendSMSRequestModel();
                     fpt.Phone = line.Partner.Phone;
                     fpt.access_token = modelToken.access_token;
-                    fpt.BrandName = account.BrandName;
+                    fpt.BrandName = line.SmsAccount.BrandName;
                     fpt.Message = line.Body;
                     fpt.session_id = "789dC48b88e54f58ece5939f14a";
                     requestFpt.Add(fpt);
@@ -86,7 +94,7 @@ namespace Infrastructure.Services
                     {
                         if (res.SmsId.HasValue)
                         {
-                            dict.Add(res.SmsId.Value, res.Message);
+                            //dict.Add(res.SmsId.Value, res);
                         }
                     }
                 }
@@ -101,7 +109,7 @@ namespace Infrastructure.Services
                     esms.SmsId = line.Id;
                     esms.ApiKey = account.ApiKey;
                     esms.SecretKey = account.Secretkey;
-                    esms.Brandname = account.BrandName;
+                    esms.Brandname = line.SmsAccount.BrandName;
                     esms.Content = line.Body;
                     esms.SmsType = "2";
                     esms.IsUnicode = 1;
@@ -114,35 +122,7 @@ namespace Infrastructure.Services
                     {
                         if (res.SmsSmsId.HasValue)
                         {
-                            dict.Add(res.SmsSmsId.Value, res.Message);
-                        }
-                    }
-                }
-            }
-            else if (account.Provider == "vietguys")
-            {
-                var requestVietguys = new List<VietguysSendMessageRequest>();
-                foreach (var line in lines)
-                {
-                    var vietguys = new VietguysSendMessageRequest();
-                    vietguys.phone = line.Partner.Phone;
-                    vietguys.LineId = line.Id;
-                    vietguys.u = account.UserName;
-                    vietguys.pwd = account.Password;
-                    vietguys.from = account.BrandName;
-                    vietguys.sms = line.Body;
-                    vietguys.type = 8;
-                    vietguys.json = "1";
-                    requestVietguys.Add(vietguys);
-                }
-                var responses = await VietguysSendSMS(requestVietguys);
-                if (responses != null && responses.Any())
-                {
-                    foreach (var res in responses)
-                    {
-                        if (res.SmsId.HasValue)
-                        {
-                            dict.Add(res.SmsId.Value, res.Message);
+                            dict.Add(res.SmsSmsId.Value, res);
                         }
                     }
                 }

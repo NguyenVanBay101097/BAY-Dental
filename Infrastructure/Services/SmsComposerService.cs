@@ -39,7 +39,7 @@ namespace Infrastructure.Services
                     {
                         partnerIds.Add(Guid.Parse(id));
                     }
-                    await _smsSendMessageService.CreateSmsSms(context, entity, partnerIds, companyId);
+                    //await _smsSendMessageService.CreateSmsSms(context, entity, partnerIds, companyId);
                 }
             }
             catch (Exception ex)

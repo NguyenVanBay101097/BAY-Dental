@@ -1,35 +1,101 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="container o_form_view h-100" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_12">
                         <tbody>
                             <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Tin nhắn mẫu
+                                <td colspan="2" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help font-weight-bolder">
+                                        Điều kiện gửi tin
                                     </label>
+                                    <table class="ml-5">
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label o_form_label_help">
+                                                    Tên tin nhắn
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 80%;">
+                                                <input type="text" class="form-control" required formControlName="name">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label o_form_label_help">
+                                                    Chọn brandname
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 80%;">
+                                                <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
+                                                    [textField]="'name'" formControlName="smsAccount"
+                                                    [filterable]="true" #smsAccountCbx [valueField]="'id'">
+                                                </kendo-combobox>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </td>
-                                <td colspan="1" class="d-flex" style="width: 100%;">
-                                    <kendo-combobox class="form-control" [data]="filteredTemplate" formControlName="template" ngbAutofocus [textField]="'name'" (valueChange)="valueChange($event)" [filterable]="true" #smsTemplateCbx [valueField]="'id'">
-                                    </kendo-combobox>
-                                    <a class="btn btn-sm btn-light" (click)="addTemplate()">
-                                        <span class="k-icon k-i-plus"></span>
-                                    </a>
+
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="o_td_lable">
+                                    <label class="o_form_label o_form_label_help font-weight-bolder">
+                                        Người nhận
+                                    </label>
+                                    <table class="ml-5">
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Số lượng khách hàng</label>
+                                            </td>
+                                            <td colspan="1" style="width: 80%;">
+                                                <span>{{ids ? ids.length : 0}}</span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Nội dung</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <app-sms-template-content [textareaLength]="textareaLimit" [template]="template">
-                                    </app-sms-template-content>
+                                <td colspan="2" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help font-weight-bolder">
+                                        Nội dung tin nhắn
+                                    </label>
+                                    <table class="ml-5">
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label o_form_label_help">
+                                                    Tin nhắn mẫu
+                                                </label>
+                                            </td>
+                                            <td colspan="1" class="d-flex" style="width: 80%;">
+                                                <kendo-combobox [data]="filteredTemplate" ngbAutofocus
+                                                    [textField]="'name'" formControlName="template" [filterable]="true"
+                                                    #smsTemplateCbx (valueChange)="onChangeTemplate($event)"
+                                                    [valueField]="'id'">
+                                                </kendo-combobox>
+                                                <a class="btn btn-sm btn-light" (click)="addTemplate()">
+                                                    <span class="k-icon k-i-plus"></span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Nội dung</label>
+                                            </td>
+                                            <td colspan="1" style="width: 80%;">
+                                                <app-sms-template-content [textareaLength]="textareaLimit"
+                                                    [template]="template">
+                                                </app-sms-template-content>
+                                                <p class="color-custom">(Note: Không nhập ký tự đặc biệt hoặc các từ
+                                                    khóa quảng cáo)</p>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </td>
                             </tr>
                         </tbody>
@@ -41,5 +107,6 @@
 </div>
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Gửi</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
 </footer>

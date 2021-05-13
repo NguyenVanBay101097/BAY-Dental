@@ -25,13 +25,6 @@ namespace ApplicationCore.Entities
         public string ClientSecret { get; set; }
 
         /// <summary>
-        /// Vietguys
-        /// </summary>
-        public string UserName { get; set; }
-
-        public string Password { get; set; }
-
-        /// <summary>
         /// Config of E-SMS
         /// </summary>
         public string ApiKey { get; set; }
