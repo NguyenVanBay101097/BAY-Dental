@@ -52,9 +52,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox formControlName="employee" [filterable]="true" #empCbx class="kendo-combobox-sm mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
+                                    <kendo-combobox formControlName="employee" [filterable]="true" #empCbx class="mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty)" class="text-danger">
+                                    <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.employee.errors.required">Chọn người báo giá</div>
                                     </div>
                                 </td>
@@ -121,33 +121,33 @@
                     </table>
                 </div>
 
-
             </div>
 
-            <div class="tab-content flex-1-1-100 w-100">
-                <div class=" d-flex flex-column">
+            <div class="flex-1-1-100 overflow-hidden">
+                <div class="w-100 h-100 d-flex flex-column">
                     <!-- && isEditting -->
                     <div class="w-25 mb-2">
                         <app-service-list-search-dropdown (onSelectService)="addLine($event, true)"></app-service-list-search-dropdown>
                     </div>
-                    <div class="d-flex overflow-auto w-100">
+                    <div class="d-flex overflow-hidden w-100">
                         <div class="w-75 d-flex flex-column">
-                            <div class="overflow-auto ">
-                                <div class="div-table w-100">
-                                    <div class="d-flex bg-primary text-white">
-                                        <div style="width: -webkit-fill-available;" class="div-cell py-1 pl-2">Dịch vụ</div>
-                                        <div style="width: 300px;" class="div-cell py-1 text-right">Đơn giá</div>
-                                        <div style="width: 200px;" class="div-cell py-1 text-right">Số lượng</div>
-                                        <div style="width: 250px;" class="div-cell py-1 text-right">Thành tiền</div>
-                                        <div style="width: 150px;" class="div-cell py-1 text-center">Thao tác</div>
-                                    </div>
+                            <div class="div-table w-100 flex-0-0-auto overflow-auto">
+                                <div class=" bg-primary text-white">
+                                    <div style="width: 425px" class="div-cell py-1 pl-2">Dịch vụ</div>
+                                    <div style="width: 250px;" class="div-cell py-1 text-right">Đơn giá</div>
+                                    <div style="width: 200px;" class="div-cell py-1 text-right">Số lượng</div>
+                                    <div style="width: 250px;" class="div-cell py-1 text-right">Thành tiền</div>
+                                    <div style="width: 150px;" class="div-cell py-1 text-center">Thao tác</div>
                                 </div>
+                            </div>
+                            <div class="flex-1-1-100 overflow-auto">
                                 <ng-container *ngFor="let line of linesArray.controls; let i=index">
                                     <app-quotation-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)" [line]="line.value" (onCancelEvent)="onCancelEditLine($event)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)"
                                         (onDeleteEvent)="onDeleteLine(i)">
                                     </app-quotation-line-cu>
                                 </ng-container>
                             </div>
+
                         </div>
 
                         <div class="w-25 pl-3">
@@ -188,7 +188,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
             <!-- 

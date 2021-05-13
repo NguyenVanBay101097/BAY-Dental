@@ -131,4 +131,16 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
     this.skip = 0;
     this.loadDataFromApi();
   }
+
+  GetState(dateEndQuotation ) {
+    var dateTo = new Date(dateEndQuotation);
+    var today = new Date();
+    if ( today <= dateTo) {
+      return "Còn hạn";
+    }   
+    else {
+      return "Hết hạn";
+    }
+
+  }
 }

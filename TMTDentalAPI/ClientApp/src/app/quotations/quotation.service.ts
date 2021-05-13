@@ -24,6 +24,10 @@ export class QuotationLineDisplay {
   // advisoryUser: any;
   // advisoryEmployee: any;
   // advisoryEmployeeId: string;
+  employee: any;
+  employeeId: string;
+  assistant: any;
+  assistantId: string;
   counselor: any;
   counselorId: string;
   advisoryId: string;

@@ -23,7 +23,10 @@ export class QuotationLineCuComponent implements OnInit {
 
 
   isEditting: boolean = false;
-  filteredEmployees: any[] = [];
+  filteredEmployeesDoctor: any[] = [];
+  filteredEmployeesAssistant: any[] = [];
+  filteredEmployeesCounselor: any[] = [];
+
   initialListEmployees: any = [];
   filteredToothCategories: any[];
   hamList: { [key: string]: {} };
@@ -96,16 +99,26 @@ export class QuotationLineCuComponent implements OnInit {
       .getEmployeeSimpleList(val)
       .subscribe((result: any[]) => {
         this.initialListEmployees = result;
-        this.filteredEmployees = this.initialListEmployees.slice(0, 20);
+        this.filteredEmployeesDoctor = this.initialListEmployees.slice();
+        this.filteredEmployeesAssistant = this.initialListEmployees.slice();
+        this.filteredEmployeesCounselor = this.initialListEmployees.slice();
       });
   }
 
-  onEmployeeFilter(value) {
-     this.filteredEmployees = this.initialListEmployees
+  onEmployeeDoctor(value) {
+    this.filteredEmployeesDoctor = this.initialListEmployees
       .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
       .slice(0, 20);
   }
+  onEmployeeAssistant(value) {
+    this.filteredEmployeesAssistant = this.initialListEmployees
+      .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
 
+  onEmployeeCounselor(value) {
+    this.filteredEmployeesCounselor = this.initialListEmployees
+      .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
   getToothCateLine() {
     var res =
       this.isEditting
@@ -115,7 +128,7 @@ export class QuotationLineCuComponent implements OnInit {
   }
   onChangeToothCategory(value: any) {
     if (value.id) {
-      // this.TeethFA.clear();
+      this.TeethFA.clear();
       this.loadTeethMap(value);
       this.formGroupInfo.get("toothCategory").setValue(value);
     }
@@ -206,9 +219,9 @@ export class QuotationLineCuComponent implements OnInit {
   }
 
   onChangeQuantity(val) {
-    if (!val) {
-      this.formInfoControl("qty").patchValue(1);
-    }
+    // if (!val) {
+    //   this.formInfoControl("qty").patchValue(1);
+    // }
     this.computeAmount();
   }
 
@@ -219,15 +232,15 @@ export class QuotationLineCuComponent implements OnInit {
     this.onDeleteEvent.emit();
   }
 
-  onOpenPromotion() { 
+  onOpenPromotion() {
     this.isEditting = false;
     this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
   }
 
   updateLineInfo() {
-      this.isEditting = false;
-      var value = this.formGroupInfo.value;
-      this.onUpdateEvent.emit(value);
+    this.isEditting = false;
+    var value = this.formGroupInfo.value;
+    this.onUpdateEvent.emit(value);
   }
 
   onCancel() {
@@ -251,7 +264,7 @@ export class QuotationLineCuComponent implements OnInit {
     // this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
     this.formGroupInfo.setControl("teeth", this.fb.array(this.line.teeth));
     this.formGroupInfo.setControl("promotions", this.fb.array(this.line.promotions));
-  
+
   }
 
   notify(type, content) {

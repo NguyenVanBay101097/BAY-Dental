@@ -83,12 +83,10 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.formGroup = this.fb.group({
       partnerId: ['', Validators.required],
       // employeeId: null,
-      employeeId: ['', Validators.required],
       employee: [null, Validators.required],
       note: '',
       dateQuotationObj: [null, Validators.required],
       dateApplies: [0, Validators.required],
-      // dateEndQuotation: [{ value: '' }, Validators.required],
       dateEndQuotationObj: [null, Validators.required],
       companyId: '',
       lines: this.fb.array([
@@ -214,23 +212,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       res.patchValue(line.value);
     }
   }
-  // computeTotalPrice(line: FormGroup) {
-  //   let price = line.get('subPrice') ? line.get('subPrice').value : 0;
-  //   let qty = line.get('qty') ? line.get('qty').value : 1;
-  //   let discount = 0;
-  //   let discountType = line.get('discountType') ? line.get('discountType').value : '';
-  //   discount = line.get('discount') ? line.get('discount').value : 0;
-  //   let totalPrice = 0;
-  //   if (discountType == "percentage" && discountType != '') {
-  //     totalPrice = price * qty * (1 - discount / 100);
-  //   } else if (discountType == "fixed" && discountType != '') {
-  //     totalPrice = price * qty - discount;
-  //   }
-  //   if (line.get('amount')) {
-  //     line.get('amount').patchValue(totalPrice);
-  //   };
-  //   return totalPrice;
-  // }
 
   getAmountTotal() {
     let totalAmount = 0;
@@ -275,6 +256,10 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       toothCategory: data ? data.toothCategory : null,
       toothCategoryId: data ? data.toothCategoryId : '',
       diagnostic: data ? data.diagnostic : '',
+      employeeId: data.employeeId ? data.employeeId : '',
+      employee: data.employee ? data.employee : null,
+      assistantId: data.assistantId ? data.assistantId : '',
+      assistant: data.assistant ? data.assistant : null,
       counselorId: data.counselorId ? data.counselorId : '',
       counselor: data.counselor ? data.counselor : null
     })
@@ -422,9 +407,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
     this.submitted = true;
 
-    // if (!this.formGroup.valid) {
-    //   return false;
-    // }
+    if (!this.formGroup.valid) {
+      return false;
+    }
 
     var val = this.getDataFormGroup();
     val.dateQuotation = this.intlService.formatDate(val.dateQuotationObj, 'yyyy-MM-ddTHH:mm:ss');
@@ -434,10 +419,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       this.quotationService.update(this.quotationId, val).subscribe(
         () => {
           this.routeActive();
+          // this.loadRecord();
           this.notifyService.notify("success", "Cập nhật thành công");
           this.lineSelected = null;
-        }
-      );
+        },(error)=>{
+          this.loadRecord();
+        });
     } else {
       this.quotationService.create(val).subscribe(
         (result: any) => {
@@ -479,6 +466,10 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.productId = val.productId ? val.productId : id;
     line.qty = val.qty ? val.qty : 1;
     line.advisoryId = val.advisoryId;
+    line.employee = val.employee;
+    line.employeeId = val.employeeId;
+    line.assistant = val.assistant;
+    line.assistantId = val.assistantId;
     line.counselor = val.counselor;
     line.counselorId = val.counselorId;
     line.subPrice = val.subPrice ? val.subPrice : (val.listPrice ? val.listPrice : 0);
@@ -532,6 +523,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   updateLineInfo(line, lineControl) {
     line.toothCategoryId = line.toothCategory.id;
     line.employeeId = line.employee ? line.employee.id : null;
+    line.assistantId = line.assistant ? line.assistant.id : null;
     line.counselorId = line.counselor ? line.counselor.id : null;
     // line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : line.qty;
     lineControl.patchValue(line);
@@ -573,9 +565,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     const val = this.getDataFormGroup();
     if (!this.quotationId) {
       this.submitted = true;
-      // if (!this.formGroup.valid) {
-      //   return false;
-      // }
+      if (!this.formGroup.valid) {
+        return false;
+      }
 
       this.quotationService.create(val).subscribe(async (result: any) => {
         this.quotationId = result.id;
@@ -591,9 +583,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         this.onOpenLinePromotionDialog(i);
       });
     }
-
-    // this.onOpenLinePromotionDialog(i);
-    // this.lineSelected = null;
   }
 
   async onOpenLinePromotionDialog(i) {
@@ -621,9 +610,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
     if (!this.quotationId) {
       this.submitted = true;
-      // if (!this.formGroup.valid) {
-      //   return false;
-      // }
+      if (!this.formGroup.valid) {
+        return false;
+      }
       this.quotationService.create(val).subscribe((result: any) => {
         this.quotationId = result.id;
         this.quotation = result;

@@ -146,26 +146,18 @@
                     <th>Dịch vụ</th>
                     <th class="text-left">Số lượng</th>
                     <th class="text-left">Đơn giá</th>
-                    <th class="text-left">Giảm tiền</th>
                     <th class="text-left">Thành tiền</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var line in Model.Lines)
                 {
-    <tr *ngFor="let line of Lines; let i=index">
-        <td>@line.Name</td>
-        <td class="text-right">@string.Format(culture, "{0:0}", @line.Qty)</td>
-        <td class="text-right">@string.Format(culture, "{0:0}", @line.SubPrice)</td>
-
-        @if (line.DiscountType == "percentage")
-        {
-<td class="text-right">@string.Format(culture, "{0:0}", line.Discount)%</td> }
-                else if (line.DiscountType == "fixed")
-                {
-<td class="text-right">@string.Format(culture, "{0:0}", line.Discount)</td>}
-        <td class="text-right">@string.Format(culture, "{0:0,0}", line.Amount)</td>
-    </tr>}
+                <tr *ngFor="let line of Lines; let i=index">
+                    <td>@line.Name</td>
+                    <td class="text-right">@string.Format(culture, "{0:0}", @line.Qty)</td>
+                    <td class="text-right">@string.Format(culture, "{0:0}", (@line.SubPrice - line.AmountDiscountTotal))</td>
+                    <td class="text-right">@string.Format(culture, "{0:0,0}", line.Amount)</td>
+                </tr>}
 
             </tbody>
         </table>
@@ -206,7 +198,7 @@
 <tr>
     <td>@payment.Sequence</td>
     <td class="text-right">
-        <span>@(payment.DiscountPercentType == "percent" ? (string.Format(culture, "{0:0,0}", payment.Payment) + "%") : (string.Format(culture, "{0:0,0}", payment.Payment) + " VNĐ"))</span>
+        <span>@(payment.DiscountPercentType == "percent" ? (string.Format(culture, "{0:0,0}", payment.Payment) + "%") : (string.Format(culture, "{0:0,0}", payment.Payment)))</span>
     </td>
     @if (payment.Date.HasValue)
     {
