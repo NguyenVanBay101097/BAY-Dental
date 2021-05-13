@@ -150,7 +150,7 @@ namespace Infrastructure.Services
             var promotions = await SearchQuery(x => x.Active && !x.IsPaused && x.ProgramType == "promotion_program"
             && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order"
             && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
-            && (!string.IsNullOrEmpty(x.Days) && x.Days.Contains(today.DayOfWeek.ToString()))
+            && (string.IsNullOrEmpty(x.Days) || x.Days.Contains(((int)today.DayOfWeek).ToString()))
             ).ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
@@ -166,7 +166,7 @@ namespace Infrastructure.Services
             && x.PromoCodeUsage == "no_code_needed" && (x.DiscountApplyOn == "specific_products" || x.DiscountApplyOn == "specific_product_categories")
             && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
             && (x.DiscountSpecificProducts.Any(s => s.ProductId == product.Id) || x.DiscountSpecificProductCategories.Any(s => s.ProductCategoryId == product.CategId))
-             && (!string.IsNullOrEmpty(x.Days) && x.Days.Contains(today.DayOfWeek.ToString())))
+            && (string.IsNullOrEmpty(x.Days) || x.Days.Contains(((int)today.DayOfWeek).ToString())))
             .ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
