@@ -35,12 +35,14 @@ namespace TMTDentalAdmin.Controllers
         private readonly AdminAppSettings _appSettings;
         private readonly IConfiguration _configuration;
         private readonly ITenantExtendHistoryService _tenantExtendHistoryService;
+        private readonly ITenantOldSaleOrderProcessUpdateService _tenantOldSaleOrderProcessUpdateService;
         public TenantsController(ITenantService tenantService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork,
             UserManager<ApplicationAdminUser> userManager,
             IConfiguration configuration,
             IOptions<AdminAppSettings> appSettings,
-            ITenantExtendHistoryService tenantExtendHistoryService
+            ITenantExtendHistoryService tenantExtendHistoryService,
+            ITenantOldSaleOrderProcessUpdateService tenantOldSaleOrderProcessUpdateService
             )
         {
             _tenantService = tenantService;
@@ -50,6 +52,7 @@ namespace TMTDentalAdmin.Controllers
             _userManager = userManager;
             _appSettings = appSettings?.Value;
             _configuration = configuration;
+            _tenantOldSaleOrderProcessUpdateService = tenantOldSaleOrderProcessUpdateService;
         }
 
         [HttpGet]
@@ -219,6 +222,24 @@ namespace TMTDentalAdmin.Controllers
             tenant = _mapper.Map(val, tenant);
             await _tenantService.UpdateAsync(tenant);
 
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ProcessUpdateOldSaleOrder(IEnumerable<Guid> ids)
+        {
+            if (ids == null || ids.Count() == 0)
+                return BadRequest();
+            var notSuccessUpdates = await _tenantOldSaleOrderProcessUpdateService.SearchQuery(x => ids.Contains(x.TenantId) && (x.State == "draft" || x.State == "exception")).ToListAsync();
+            var successUpdates = await _tenantOldSaleOrderProcessUpdateService.SearchQuery(x => ids.Contains(x.TenantId) && x.State == "done").ToListAsync();
+            var toCreateUpdateIds = ids.Except(successUpdates.Select(x => x.TenantId).Except(notSuccessUpdates.Select(x => x.TenantId).ToList()).ToList());
+
+            var createUpdates = new List<TenantOldSaleOrderProcessUpdate>();
+            foreach (var id in toCreateUpdateIds)
+                createUpdates.Add(new TenantOldSaleOrderProcessUpdate { TenantId = id });
+
+            await _tenantOldSaleOrderProcessUpdateService.CreateAsync(createUpdates);
+            var processIds = (createUpdates.Concat(notSuccessUpdates)).Select(x => x.Id).Distinct().ToList();
             return NoContent();
         }
     }

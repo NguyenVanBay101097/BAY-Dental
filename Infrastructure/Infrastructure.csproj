@@ -98,6 +98,8 @@
     <Compile Remove="Data\Migrations\20210127102711_add_modun_survey.Designer.cs" />
     <Compile Remove="Data\Migrations\20210128013515_bayds.cs" />
     <Compile Remove="Data\Migrations\20210128013515_bayds.Designer.cs" />
+    <Compile Remove="TenantData\Migrations\20210513073025_AddTenantOldSaleOrderProcessUpdateTable.cs" />
+    <Compile Remove="TenantData\Migrations\20210513073025_AddTenantOldSaleOrderProcessUpdateTable.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -420,9 +420,10 @@ namespace Infrastructure.Services
             //lấy các phiếu điều trị đã xác nhận và thanh toán
             var orders = await orderObj.SearchQuery(x => x.State != "draft")
                 .Include(x => x.SaleOrderPaymentRels)
-                .Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLinePaymentRels).ThenInclude(x => x.Payment)
-                .Include(x => x.OrderLines).ThenInclude(x => x.PartnerCommissions)
-                .Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLineInvoice2Rels).ThenInclude(x => x.InvoiceLine)
+                .Include(x => x.OrderLines)
+                //.ThenInclude(x => x.SaleOrderLinePaymentRels).ThenInclude(x => x.Payment)
+                //.Include(x => x.OrderLines).ThenInclude(x => x.PartnerCommissions)
+                //.Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLineInvoice2Rels).ThenInclude(x => x.InvoiceLine)
                 .ToListAsync();
 
             //vòng lặp các phiếu điều trị xóa các hóa đơn 
@@ -434,7 +435,9 @@ namespace Infrastructure.Services
                     paymentIds = paymentIds.Union(order.SaleOrderPaymentRels.Select(x => x.PaymentId));
 
                 //danh sách account move hóa đơn liên kết với phiếu điều trị
-                var invoiceIds = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels).Select(x => x.InvoiceLine.MoveId).Distinct().ToList();
+                var orderLineIds = order.OrderLines.Select(x => x.Id).ToList();
+                var invoiceIds = amlObj.SearchQuery(x => x.SaleLineRels.Any(s => orderLineIds.Contains(s.OrderLineId))).Select(x => x.MoveId).Distinct().ToList();
+                //var invoiceIds = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels).Select(x => x.InvoiceLine.MoveId).Distinct().ToList();
                 var invoicePaymentIds = await accPaymentObj.SearchQuery(x => x.AccountMovePaymentRels.Any(s => invoiceIds.Contains(s.MoveId))).Select(x => x.Id).ToListAsync();
                 if (invoicePaymentIds.Any())
                     paymentIds = paymentIds.Union(invoicePaymentIds);
@@ -451,7 +454,6 @@ namespace Infrastructure.Services
                 }
 
                 //xóa hết commission
-                var orderLineIds = order.OrderLines.Select(x => x.Id).ToList();
                 var commissionSettlements = await commissionSettlementObj.SearchQuery(x => orderLineIds.Contains(x.SaleOrderLineId.Value)).ToListAsync();
                 await commissionSettlementObj.DeleteAsync(commissionSettlements);
 
@@ -498,61 +500,61 @@ namespace Infrastructure.Services
                             await orderPaymentObj.CreateAsync(salePayment);
                             await orderPaymentObj.ActionPayment(new List<Guid>() { salePayment.Id });
                         }
-                        else
-                        {
-                            var salePayment = new SaleOrderPayment()
-                            {
-                                Amount = payment.Amount,
-                                Date = payment.PaymentDate,
-                                OrderId = order.Id,
-                                CompanyId = order.CompanyId
-                            };
+                        //else
+                        //{
+                        //    var salePayment = new SaleOrderPayment()
+                        //    {
+                        //        Amount = payment.Amount,
+                        //        Date = payment.PaymentDate,
+                        //        OrderId = order.Id,
+                        //        CompanyId = order.CompanyId
+                        //    };
 
-                            var paymentAmount = payment.Amount;
-                            foreach (var line in order.OrderLines)
-                            {
-                                if (paymentAmount <= 0)
-                                    continue;
+                        //    var paymentAmount = payment.Amount;
+                        //    foreach (var line in order.OrderLines)
+                        //    {
+                        //        if (paymentAmount <= 0)
+                        //            continue;
 
-                                var amountInvoiced = line.AmountInvoiced ?? 0;
-                                var amountResidual = line.PriceSubTotal - amountInvoiced;
-                                decimal amount = 0;
-                                if (paymentAmount > amountResidual)
-                                {
-                                    amount = amountResidual;
-                                    paymentAmount -= amountResidual;
-                                }
-                                else
-                                {
-                                    amount = paymentAmount;
-                                    paymentAmount = 0;
-                                }
+                        //        var amountInvoiced = line.AmountInvoiced ?? 0;
+                        //        var amountResidual = line.PriceSubTotal - amountInvoiced;
+                        //        decimal amount = 0;
+                        //        if (paymentAmount > amountResidual)
+                        //        {
+                        //            amount = amountResidual;
+                        //            paymentAmount -= amountResidual;
+                        //        }
+                        //        else
+                        //        {
+                        //            amount = paymentAmount;
+                        //            paymentAmount = 0;
+                        //        }
 
-                                salePayment.Lines.Add(new SaleOrderPaymentHistoryLine
-                                {
-                                    SaleOrderLineId = line.Id,
-                                    Amount = amount,
-                                    SaleOrderPayment = salePayment
-                                });
-                            }
+                        //        salePayment.Lines.Add(new SaleOrderPaymentHistoryLine
+                        //        {
+                        //            SaleOrderLineId = line.Id,
+                        //            Amount = amount,
+                        //            SaleOrderPayment = salePayment
+                        //        });
+                        //    }
 
-                            salePayment.Lines = salePayment.Lines.Where(x => x.Amount != 0).ToList();
-                            if (salePayment.Lines.Any())
-                            {
-                                salePayment.Amount = salePayment.Lines.Sum(x => x.Amount);
+                        //    salePayment.Lines = salePayment.Lines.Where(x => x.Amount != 0).ToList();
+                        //    if (salePayment.Lines.Any())
+                        //    {
+                        //        salePayment.Amount = salePayment.Lines.Sum(x => x.Amount);
 
-                                //tạo ra phương thức thanh toán 
-                                salePayment.JournalLines.Add(new SaleOrderPaymentJournalLine()
-                                {
-                                    SaleOrderPayment = salePayment,
-                                    JournalId = payment.JournalId,
-                                    Amount = payment.Amount
-                                });
+                        //        //tạo ra phương thức thanh toán 
+                        //        salePayment.JournalLines.Add(new SaleOrderPaymentJournalLine()
+                        //        {
+                        //            SaleOrderPayment = salePayment,
+                        //            JournalId = payment.JournalId,
+                        //            Amount = payment.Amount
+                        //        });
 
-                                await orderPaymentObj.CreateAsync(salePayment);
-                                await orderPaymentObj.ActionPayment(new List<Guid>() { salePayment.Id });
-                            }
-                        }
+                        //        await orderPaymentObj.CreateAsync(salePayment);
+                        //        await orderPaymentObj.ActionPayment(new List<Guid>() { salePayment.Id });
+                        //    }
+                        //}
                     }
 
                     await accPaymentObj.DeleteAsync(payments);
