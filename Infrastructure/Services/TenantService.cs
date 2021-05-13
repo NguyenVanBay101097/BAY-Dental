@@ -95,7 +95,7 @@ namespace Infrastructure.Services
             if (val.DateCreatedTo.HasValue)
             {
                 var dateCreatedTo = val.DateCreatedTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.DateCreated <= val.DateCreatedFrom);
+                query = query.Where(x => x.DateCreated <= dateCreatedTo);
             }
 
             return query;
