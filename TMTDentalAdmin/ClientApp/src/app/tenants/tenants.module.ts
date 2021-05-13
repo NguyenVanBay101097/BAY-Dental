@@ -12,6 +12,8 @@ import { TrialRegistrationComponent } from './trial-registration/trial-registrat
 import { TenantUpdateInfoDialogComponent } from './tenant-update-info-dialog/tenant-update-info-dialog.component';
 import { TenantExtendHistoryComponent } from './tenant-extend-history/tenant-extend-history.component';
 import { EmployeeAdminService } from 'app/employee-admins/employee-admin.service';
+import { TenantUpdateExpiredV2DialogComponent } from './tenant-update-expired-v2-dialog/tenant-update-expired-v2-dialog.component';
+import { SharedModule } from '@shared/shared.module';
 
 @NgModule({
   imports: [
@@ -19,7 +21,8 @@ import { EmployeeAdminService } from 'app/employee-admins/employee-admin.service
     TenantsRoutingModule,
     ReactiveFormsModule,
     MyCustomKendoModule,
-    FormsModule
+    FormsModule,
+    SharedModule
   ],
   declarations: [
     TenantRegisterComponent,
@@ -27,7 +30,8 @@ import { EmployeeAdminService } from 'app/employee-admins/employee-admin.service
     TenantUpdateExpiredDialogComponent,
     TrialRegistrationComponent,
     TenantUpdateInfoDialogComponent,
-    TenantExtendHistoryComponent
+    TenantExtendHistoryComponent,
+    TenantUpdateExpiredV2DialogComponent
   ],
   providers: [
     TenantService,
@@ -35,7 +39,8 @@ import { EmployeeAdminService } from 'app/employee-admins/employee-admin.service
   ],
   entryComponents: [
     TenantUpdateExpiredDialogComponent,
-    TenantUpdateInfoDialogComponent
+    TenantUpdateInfoDialogComponent,
+    TenantUpdateExpiredV2DialogComponent
   ]
 })
 export class TenantsModule { }
