@@ -34,7 +34,9 @@ export class DiscountPricePopoverComponent implements OnInit {
   ngOnInit() {
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
-    this.loadGridData();
+    if(this.id){
+      this.loadGridData();
+    }
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())

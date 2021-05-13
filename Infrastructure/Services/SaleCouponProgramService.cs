@@ -164,57 +164,68 @@ namespace Infrastructure.Services
 
         public async Task<SaleCouponProgram> CreateProgram(SaleCouponProgramSave val)
         {
-            if (val.PromoCode.IsNullEmpty())
+            var program = _mapper.Map<SaleCouponProgram>(val);
+
+            if (program.PromoCodeUsage == "code_needed" && string.IsNullOrEmpty(program.PromoCode))
             {
-                var saleCouponProgramObj = GetService<ISaleCouponProgramService>();
-                var code = "";
-                var promoCodes = saleCouponProgramObj.SearchQuery().Select(x => x.PromoCode).ToList();
+                SaleCouponProgram checkExist = null;
                 do
                 {
-                    code = GeneratePromoCode();
-                }
-                while (promoCodes.Contains(code));
-                val.PromoCode = code;
-
+                    program.PromoCode = GeneratePromoCode();
+                    checkExist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == program.PromoCode).FirstOrDefaultAsync();
+                } while (checkExist != null);
             }
-
-            var program = _mapper.Map<SaleCouponProgram>(val);
 
             program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
             program.RuleDateTo = program.RuleDateTo.Value.AbsoluteBeginOfDate();
-            if (program.RuleDateFrom > program.RuleDateTo)
-            {
-                throw new Exception("Ngày kết thúc đang nhỏ hơn ngày bắt đầu!");
-            }
 
             if (!program.CompanyId.HasValue)
-                program.CompanyId = CompanyId;
+            program.CompanyId = CompanyId;
+
             if (program.DiscountApplyOn == "specific_product_categories")
             {
-                await SaveDiscountSpecificProductCategories(program, val);
+                SaveDiscountSpecificProductCategories(program, val);
             }
+            else
+            {
+                program.DiscountSpecificProductCategories.Clear();
+            }
+
             if (program.DiscountApplyOn == "specific_products")
             {
-                await SaveDiscountSpecificProducts(program, val);
+                SaveDiscountSpecificProducts(program, val);
             }
-      
+            else
+            {
+                program.DiscountSpecificProducts.Clear();
+            }
+
             //if (!program.DiscountLineProductId.HasValue)
             //{
             //    var discountProduct = await GetOrCreateDiscountProduct(program);
             //    program.DiscountLineProductId = discountProduct.Id;
             //}
 
+            _CheckRuleDate(program);
             _CheckDiscountPercentage(program);
             _CheckRuleMinimumAmount(program);
             _CheckRuleMinQuantity(program);
-            // await _CheckPromoCodeConstraint(program);
-            return await CreateAsync(program);
+          
+            await CreateAsync(program);
+            await _CheckPromoCodeConstraint(program);
+            return program;
         }
 
         public void _CheckDiscountPercentage(SaleCouponProgram self)
         {
             if (self.DiscountType == "percentage" && (self.DiscountPercentage < 0 || self.DiscountPercentage > 100))
                 throw new Exception("Chiết khấu phần trăm phải từ 0-100");
+        }
+
+        public void _CheckRuleDate(SaleCouponProgram self)
+        {
+            if (self.RuleDateFrom > self.RuleDateTo)
+                throw new Exception("Ngày kết thúc đang nhỏ hơn ngày bắt đầu!");
         }
 
         public async Task<SaleCouponProgramDisplay> GetDisplay(Guid id)
@@ -225,48 +236,73 @@ namespace Infrastructure.Services
             return res;
         }
 
-       
-
         public async Task UpdateProgram(Guid id, SaleCouponProgramSave val)
         {
             var program = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Coupons).Include(x => x.DiscountLineProduct)
-                .Include(x => x.DiscountSpecificProducts).Include("DiscountSpecificProducts.Product").FirstOrDefaultAsync();
+                .Include(x => x.DiscountSpecificProducts)
+                .Include(x => x.DiscountSpecificProductCategories)
+                .FirstOrDefaultAsync();
+
             program = _mapper.Map(val, program);
+
+            if (program.PromoCodeUsage == "code_needed" && string.IsNullOrEmpty(program.PromoCode))
+            {
+                SaleCouponProgram checkExist = null;
+                do
+                {
+                    program.PromoCode = GeneratePromoCode();
+                    checkExist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == program.PromoCode).FirstOrDefaultAsync();
+                } while (checkExist != null);
+            }
 
             program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
             program.RuleDateTo = program.RuleDateTo.Value.AbsoluteBeginOfDate();
-            if (program.RuleDateFrom > program.RuleDateTo)
-            {
-                throw new Exception("Ngày kết thúc đang nhỏ hơn ngày bắt đầu!");
-            }
 
-            if (!program.DiscountLineProductId.HasValue)
-            {
-                var discountProduct = await GetOrCreateDiscountProduct(program);
-                program.DiscountLineProduct = discountProduct;
-                program.DiscountLineProductId = discountProduct.Id;
-            }
+            //if (!program.DiscountLineProductId.HasValue)
+            //{
+            //    var discountProduct = await GetOrCreateDiscountProduct(program);
+            //    program.DiscountLineProduct = discountProduct;
+            //    program.DiscountLineProductId = discountProduct.Id;
+            //}
 
             if (!program.CompanyId.HasValue)
                 program.CompanyId = CompanyId;
 
-            await SaveDiscountSpecificProducts(program, val);
-
-            var reward_name = await GetRewardDisplayName(program);
-            if (program.DiscountLineProduct != null)
+            if (program.DiscountApplyOn == "specific_product_categories")
             {
-                var productObj = GetService<IProductService>();
-                program.DiscountLineProduct.Name = reward_name;
-                program.DiscountLineProduct.NameNoSign = StringUtils.RemoveSignVietnameseV2(reward_name);
-                await productObj.UpdateAsync(program.DiscountLineProduct);
+                SaveDiscountSpecificProductCategories(program, val);
+            } 
+            else
+            {
+                program.DiscountSpecificProductCategories.Clear();
             }
 
+            if (program.DiscountApplyOn == "specific_products")
+            {
+                SaveDiscountSpecificProducts(program, val);
+            }
+            else
+            {
+                program.DiscountSpecificProducts.Clear();
+            }
+
+            //var reward_name = await GetRewardDisplayName(program);
+            //if (program.DiscountLineProduct != null)
+            //{
+            //    var productObj = GetService<IProductService>();
+            //    program.DiscountLineProduct.Name = reward_name;
+            //    program.DiscountLineProduct.NameNoSign = StringUtils.RemoveSignVietnameseV2(reward_name);
+            //    await productObj.UpdateAsync(program.DiscountLineProduct);
+            //}
+
+            _CheckRuleDate(program);
             _CheckDiscountPercentage(program);
             _CheckRuleMinimumAmount(program);
             _CheckRuleMinQuantity(program);
-            await _CheckPromoCodeConstraint(program);
+           
             await UpdateAsync(program);
+            await _CheckPromoCodeConstraint(program);
 
             if (program.Coupons.Any())
             {
@@ -280,7 +316,7 @@ namespace Infrastructure.Services
             return self.Where(x => x.PromoCodeUsage == "code_needed" && x.PromoCode != promo_code);
         }
 
-        private async Task SaveDiscountSpecificProducts(SaleCouponProgram program, SaleCouponProgramSave val)
+        private void SaveDiscountSpecificProducts(SaleCouponProgram program, SaleCouponProgramSave val)
         {
             var productObj = GetService<IProductService>();
             var to_remove = program.DiscountSpecificProducts.Where(x => !val.DiscountSpecificProductIds.Contains(x.ProductId)).ToList();
@@ -290,12 +326,11 @@ namespace Infrastructure.Services
             var to_add = val.DiscountSpecificProductIds.Where(x => !program.DiscountSpecificProducts.Any(s => s.ProductId == x)).ToList();
             foreach (var productId in to_add)
             {
-                var product = await productObj.GetByIdAsync(productId);
-                program.DiscountSpecificProducts.Add(new SaleCouponProgramProductRel { ProductId = productId, Product = product });
+                program.DiscountSpecificProducts.Add(new SaleCouponProgramProductRel { ProductId = productId });
             }
         }
 
-        private async Task SaveDiscountSpecificProductCategories(SaleCouponProgram program, SaleCouponProgramSave val)
+        private void SaveDiscountSpecificProductCategories(SaleCouponProgram program, SaleCouponProgramSave val)
         {
             var productCategoryObj = GetService<IProductCategoryService>();
             var to_remove = program.DiscountSpecificProductCategories.Where(x => !val.DiscountSpecificProductCategoryIds.Contains(x.ProductCategoryId)).ToList();
@@ -304,8 +339,7 @@ namespace Infrastructure.Services
             var to_add = val.DiscountSpecificProductCategoryIds.Where(x => !program.DiscountSpecificProductCategories.Any(s => s.ProductCategoryId == x)).ToList();
             foreach (var productCategoryId in to_add)
             {
-                var productCategory = await productCategoryObj.GetByIdAsync(productCategoryId);
-                program.DiscountSpecificProductCategories.Add(new SaleCouponProgramProductCategoryRel { ProductCategoryId = productCategoryId, ProductCategory = productCategory });
+                program.DiscountSpecificProductCategories.Add(new SaleCouponProgramProductCategoryRel { ProductCategoryId = productCategoryId });
             }
         }
 
@@ -313,8 +347,8 @@ namespace Infrastructure.Services
         {
             if (self.PromoCodeUsage == "code_needed" && string.IsNullOrEmpty(self.PromoCode))
                 throw new Exception("Vui lòng nhập mã khuyến mãi!");
-            var exist = await SearchQuery(x => x.Id != self.Id && x.PromoCodeUsage == "code_needed" && x.PromoCode == self.PromoCode).FirstOrDefaultAsync();
-            if (exist != null)
+            var exist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == self.PromoCode).CountAsync();
+            if (exist > 1)
                 throw new Exception("Mã khuyến mãi phải là duy nhất!");
         }
 
