@@ -53,6 +53,7 @@ namespace Infrastructure.Services
             return await SearchQuery(x => x.Code == "KHTU" && x.CompanyId == companyId).FirstOrDefaultAsync();
         }
 
+
         public override ISpecification<AccountAccount> RuleDomainGet(IRRule rule)
         {
             var userObj = GetService<IUserService>();
