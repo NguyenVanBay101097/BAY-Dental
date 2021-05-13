@@ -58,11 +58,13 @@
                     <div class="border bg-white">
                         <div class="left_header d-flex">
                             <div class="left border"></div>
-                            <div class="right d-flex">
-                                <div class="d-flex align-items-center mr-2"><i class="fas fa-dollar-sign"></i></div>
-                                <div style="cursor: pointer;" (click)="showHistoryApplyPromotion()">
-                                    <div>Giá trị khuyến mãi</div>
-                                    <div class="d-flex justify-content-center">{{amountTotal | number}}</div>
+                            <div class="right d-flex justify-content-center">
+                                <div class="d-flex">
+                                    <div class="d-flex align-items-center mr-2"><i class="fas fa-dollar-sign"></i></div>
+                                    <div style="cursor: pointer;" (click)="showHistoryApplyPromotion()">
+                                        <div>Giá trị khuyến mãi</div>
+                                        <div class="d-flex justify-content-center">{{amountTotal | number}}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -77,7 +79,7 @@
                                         <div *ngIf="f.name.errors.required">Nhập tên chương trình khuyến mãi</div>
                                     </div>
                                 </div>
-                                <div>Tình trạng <span><b>{{showStatus()}}</b></span></div>
+                                <div>Tình trạng <span><b>{{f.statusDisplay.value}}</b></span></div>
                             </div>
                             <table class="o_group o_inner_group o_group_col_6">
                                 <tbody>

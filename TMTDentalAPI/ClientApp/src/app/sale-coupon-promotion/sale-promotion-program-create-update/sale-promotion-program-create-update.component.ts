@@ -83,7 +83,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       promoCode: null,
       daysSelected: null,
       isSelectDay: true,
-      status: 'waitting'
+      statusDisplay: 'Chưa chạy'
     });
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get("id");
@@ -117,7 +117,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
           promoCode: null,
           daysSelected: null,
           isSelectDay: true,
-          status: 'waitting'
+          statusDisplay: 'Chưa chạy'
         });
 
         this.program = new SaleCouponProgramDisplay();
@@ -223,8 +223,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     return this.formGroup.get('active').value;
   }
 
-  get status(){
-    return this.formGroup.get('status').value;
+  get statusDisplay(){
+    return this.formGroup.get('statusDisplay').value;
   }
 
   getDataFromBody(){
@@ -303,19 +303,6 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       });
     }
 
-  }
-
-  showStatus(){
-    switch(this.status){
-      case 'waitting':
-        return 'Chưa chạy';
-      case 'running':
-        return 'Đang chạy';
-      case 'paused':
-        return 'Tạm dừng'
-      case 'expired':
-        return 'Hết hạn';
-    }
   }
 
   showHistoryApplyPromotion(){
@@ -430,6 +417,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   onActive(){
+    debugger
     this.submitted = true;
     if (!this.formGroup.valid) {
       return false;

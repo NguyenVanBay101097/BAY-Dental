@@ -31,7 +31,7 @@ namespace Infrastructure.Services
             _tenant = tenant;
         }
 
-        public async Task<PagedResult2<SaleOrderProgramGetListPagedResponse>> GetListPaged(SaleOrderProgramGetListPagedRequest val)
+        public async Task<PagedResult2<SaleCouponProgramGetListPagedResponse>> GetListPaged(SaleCouponProgramGetListPagedRequest val)
         {
             ISpecification<SaleCouponProgram> spec = new InitialSpecification<SaleCouponProgram>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
@@ -58,21 +58,27 @@ namespace Infrastructure.Services
             {
                 query = query.Skip(val.Offset).Take(val.Limit);
             }
-            var items = await _mapper.ProjectTo<SaleOrderProgramGetListPagedResponse>(query).ToListAsync();
-
-            var programIds = await query.Select(x => x.Id).ToListAsync();
+            var items = await _mapper.ProjectTo<SaleCouponProgramGetListPagedResponse>(query).ToListAsync();
 
             var totalItems = await query.CountAsync();
-            return new PagedResult2<SaleOrderProgramGetListPagedResponse>(totalItems, val.Offset, val.Limit)
+
+            var programIds = await query.Select(x => x.Id).ToListAsync();
+            await GetAmountPromotionDictAsync(programIds);
+
+            return new PagedResult2<SaleCouponProgramGetListPagedResponse>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };
         }
 
-        //public IDictionary<Guid, decimal> GetAmountPromotionDict(IEnumerable<Guid> ids)
-        //{
+        public async Task<IDictionary<Guid, decimal>> GetAmountPromotionDictAsync(IEnumerable<Guid> ids)
+        {
+            var promotionObj = GetService<ISaleOrderPromotionService>();
+            var amounAdvance = await promotionObj.SearchQuery(x => ids.Contains(x.SaleCouponProgramId.Value)).Select(y => y.Amount).ToListAsync();
 
-        //}
+            var saleProgram = new Dictionary<Guid, decimal> { };
+            return saleProgram;
+        }
 
         public async Task<PagedResult2<SaleCouponProgramBasic>> GetPagedResultAsync(SaleCouponProgramPaged val)
         {
@@ -189,14 +195,20 @@ namespace Infrastructure.Services
 
             if (!program.CompanyId.HasValue)
                 program.CompanyId = CompanyId;
-
-            await SaveDiscountSpecificProducts(program, val);
-            await SaveDiscountSpecificProductCategories(program, val);
-            if (!program.DiscountLineProductId.HasValue)
+            if (program.DiscountApplyOn == "specific_product_categories")
             {
-                var discountProduct = await GetOrCreateDiscountProduct(program);
-                program.DiscountLineProductId = discountProduct.Id;
+                await SaveDiscountSpecificProductCategories(program, val);
             }
+            if (program.DiscountApplyOn == "specific_products")
+            {
+                await SaveDiscountSpecificProducts(program, val);
+            }
+      
+            //if (!program.DiscountLineProductId.HasValue)
+            //{
+            //    var discountProduct = await GetOrCreateDiscountProduct(program);
+            //    program.DiscountLineProductId = discountProduct.Id;
+            //}
 
             _CheckDiscountPercentage(program);
             _CheckRuleMinimumAmount(program);
@@ -444,7 +456,7 @@ namespace Infrastructure.Services
             var saleObj = GetService<ISaleOrderService>();
             var applicable_programs = await saleObj._GetApplicablePrograms(order);
             var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
-            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo < order.DateOrder))
+            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom >= order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo <= order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if (self.ProgramType != "promotion_program" || self.PromoCodeUsage == "code_needed" || self.DiscountApplyOn != "on_order")
                 message.Error = "Khuyến mãi Không áp dụng cho đơn hàng";
