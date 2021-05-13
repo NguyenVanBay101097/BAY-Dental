@@ -69,10 +69,12 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? DiscountLineProductId { get; set; }
         public Product DiscountLineProduct { get; set; }
+
         /// <summary>
         /// Thời gian hiệu lực khi coupon đc tạo ra: ngày
         /// </summary>
         public int? ValidityDuration { get; set; }
+
         /// <summary>
         /// Không áp dụng cộng dồn khuyến mãi
         /// </summary>
@@ -114,6 +116,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string PromoApplicability { get; set; }
 
+        /// <summary>
+        /// Mức giảm tối đa
+        /// </summary>
         public decimal? DiscountMaxAmount { get; set; }
 
         public Guid? RewardProductId { get; set; }
@@ -121,17 +126,28 @@ namespace ApplicationCore.Entities
 
         public int? RewardProductQuantity { get; set; }
 
+        /// <summary>
+        /// Ngày bắt đầu
+        /// </summary>
         public DateTime? RuleDateFrom { get; set; }
 
+        /// <summary>
+        /// Ngày kết thúc
+        /// </summary>
         public DateTime? RuleDateTo { get; set; }
 
         public string RewardDescription { get; set; }
+
         /// <summary>
         /// on_order : phiếu điều trị
         /// specific_product_categories: nhóm dịch vụ
         /// specific_products: dịch vụ
         /// </summary>
         public string DiscountApplyOn { get; set; }
+
+        /// <summary>
+        /// Chọn các thứ trong tuần
+        /// </summary>
         public string Days { get; set; }
     }
 }

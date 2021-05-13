@@ -45,6 +45,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
 
         public Guid? PartnerId { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class PartnerAdvanceSummaryFilter
@@ -55,6 +56,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 
     public class PartnerAdvanceGetSummary

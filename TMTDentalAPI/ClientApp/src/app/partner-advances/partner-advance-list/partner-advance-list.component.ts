@@ -85,6 +85,7 @@ export class PartnerAdvanceListComponent implements OnInit {
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
     paged.partnerId = this.partnerId;
+    paged.companyId = this.authService.userInfo.companyId;
 
     this.partnerAdvanceService.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
@@ -109,6 +110,7 @@ export class PartnerAdvanceListComponent implements OnInit {
       var val = new PartnerAdvanceSummaryFilter();
       val.type = x.value;
       val.partnerId = this.partnerId;
+      val.companyId = this.authService.userInfo.companyId;
       return this.partnerAdvanceService.getSumary(val).pipe(
         switchMap(amount => of({ type: x.value, amount: amount }))
       );
