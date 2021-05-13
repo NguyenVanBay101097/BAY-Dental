@@ -40,9 +40,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Error { get; set; }
     }
 
-    public class SaleOrderProgramGetListPagedRequest
+    public class SaleCouponProgramGetListPagedRequest
     {
-        public SaleOrderProgramGetListPagedRequest()
+        public SaleCouponProgramGetListPagedRequest()
         {
             Limit = 20;
         }
@@ -66,7 +66,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Status { get; set; }
     }
 
-    public class SaleOrderProgramGetListPagedResponse
+    public class SaleCouponProgramGetListPagedResponse
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
