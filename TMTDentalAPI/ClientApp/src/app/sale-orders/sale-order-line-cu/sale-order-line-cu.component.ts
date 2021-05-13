@@ -26,6 +26,7 @@ import { SaleOrderLinePromotionDialogComponent } from "../sale-order-line-promot
 
 export class SaleOrderLineCuComponent implements OnInit {
   @Input() line: SaleOrderLineDisplay;
+  @Input() isFast = false;
 
   @Output() onUpdateEvent = new EventEmitter<any>();
   @Output() onUpdateOpenPromotionEvent = new EventEmitter<any>();
@@ -34,6 +35,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Output() onCancelEvent = new EventEmitter<any>();
 
   isEditting: boolean = false;
+  isItSeff = false;
   // canEdit = true;
 
   filteredEmployeesDoctor: any[] = [];
@@ -261,13 +263,30 @@ export class SaleOrderLineCuComponent implements OnInit {
     });
   }
 
-  updateLineInfo() {
+  updateLineInfo(isItseft = false) {
+    if(this.formGroupInfo.invalid) {
+      return false;
+    }
+
+    if(this.formInfoControl('toothType').value == 'manual' && this.formInfoControl('teeth').value.length == 0) {
+      this.notify('error', 'Chọn răng');
+      return false;
+    }
+
     this.isEditting = false;
     this.onUpdateEvent.emit(this.formGroupInfo.value);
 
+    this.isItSeff = this.isItSeff;
+    if(isItseft) {
+      this.notify('success', 'Cập nhật thành công');
+    }
+    return true;
   }
 
   onChangeQuantity() {
+    if(this.formGroupInfo.invalid) {
+      return;
+    }
     this.computeAmount();
   }
 

@@ -155,7 +155,7 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
 
   onApplyCoupon() {
     if (this.form.code.trim() == '') {
-      this.errorMsg = 'Vui lòng nhập mã khuyến mãi';
+      this.errorMsg = 'Nhập mã khuyến mãi';
       return;
     }
     this.pushPromotion('code_usage_program');

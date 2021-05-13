@@ -116,7 +116,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService,
     private authService: AuthService,
-    private odataPartnerService: PartnersService,
     private printService: PrintService,
     private notifyService: NotifyService,
     private toothCategoryService: ToothCategoryService
@@ -215,10 +214,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     return control ? control.value : null;
   }
 
-  get partnerAge() {
-    return this.formGroup.get('partnerAge').value;
-  }
-
   get partnerPhone() {
     return this.formGroup.get('partnerPhone').value;
   }
@@ -279,7 +274,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     //update line trước khi lưu
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      viewChild.updateLineInfo();
+      let rs = viewChild.updateLineInfo();
+      if(!rs) return;
     }
 
    
@@ -364,11 +360,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   onChangePartner(value) {
     if (this.partner) {
-      this.odataPartnerService.get(this.partner.id, null).subscribe(rs => {
-        this.formGroup.get('partnerAge').patchValue(rs.Age);
-        this.formGroup.get('partnerPhone').patchValue(rs.Phone);
-        this.formGroup.get('partnerAddress').patchValue(rs.Address);
-
+      this.partnerService.getPartner(this.partner.id).subscribe(rs => {
+        this.formGroup.get('partner').patchValue(rs);
       });
     }
   }
@@ -716,7 +709,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     //update line trước khi lưu
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      viewChild.updateLineInfo();
+     var rs =  viewChild.updateLineInfo();
+     if(!rs) return;
     }
     this.saleOrder = this.getFormDataToReload();
     this.openSaleOrderPromotionDialog();
@@ -749,7 +743,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     //update line trước khi mở popup promotion
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      viewChild.updateLineInfo();
+      var rs = viewChild.updateLineInfo();
+      if(!rs) return;
     }
 
     this.saleOrder = this.getFormDataToReload();

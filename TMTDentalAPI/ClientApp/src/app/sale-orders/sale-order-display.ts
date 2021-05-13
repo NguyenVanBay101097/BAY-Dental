@@ -35,6 +35,7 @@ export class SaleOrderDisplay {
     invoiceCount: number;
     paidTotal: number;
     promotions: any[];
+    totalPaid: number;
 }
 
 export class SaleOrderDisplayVm {

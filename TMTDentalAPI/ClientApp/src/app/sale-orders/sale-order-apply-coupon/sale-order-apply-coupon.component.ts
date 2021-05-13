@@ -26,7 +26,7 @@ export class SaleOrderApplyCouponComponent implements OnInit {
     // }
 
     if(this.formGroup.value.couponCode.trim() == '') {
-      this.errorMsg = 'Vui lòng nhập mã khuyến mãi';
+      this.errorMsg = 'Nhập mã khuyến mãi';
       return;
     }
     var val = this.formGroup.value;

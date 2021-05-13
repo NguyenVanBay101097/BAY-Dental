@@ -30,6 +30,8 @@
 
 ._wrapper .dropdown-menu {
     width: 100%;
+    overflow: auto;
+    max-height: 400px;
 }
 
 ._wrapper .dropdown-menu .service-name {

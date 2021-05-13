@@ -416,7 +416,7 @@ namespace Infrastructure.Services
             //Chương trình khuyến mãi sử dụng mã
             var program = await SearchQuery(x => x.PromoCode == code).Include(x => x.DiscountSpecificProducts).FirstOrDefaultAsync();
             if (program == null)
-                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
+                return new SaleCouponProgramResponse { Error = "Mã khuyến mãi không chính xác", Success = false, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
 
             var res = new SaleCouponProgramResponse();
             res.SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program);

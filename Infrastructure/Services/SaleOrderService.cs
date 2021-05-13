@@ -2325,6 +2325,11 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderSave val)
         {
+            if (val.OrderLines.Count() == 0)
+            {
+                throw new Exception("Không có dịch vụ để thanh toán");
+            }
+
             var programObj = GetService<ISaleCouponProgramService>();
             var saleLineService = GetService<ISaleOrderLineService>();
             var res = new SaleOrderSave();

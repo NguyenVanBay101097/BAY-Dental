@@ -311,7 +311,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     //update line trước khi lưu
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      viewChild.updateLineInfo();
+      var rs = viewChild.updateLineInfo();
+      if(!rs) return;
     }
 
     this.submitted = true;
@@ -354,7 +355,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     //update line trước khi lưu
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      viewChild.updateLineInfo();
+      var rs = viewChild.updateLineInfo();
+      if(!rs) return;
     }
 
     this.submitted = true;
@@ -658,7 +660,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     //update line trước khi lưu
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      viewChild.updateLineInfo();
+      var rs  = viewChild.updateLineInfo();
+      if(!rs) return;
     }
 
     //nếu data không change thì mở dialog luôn
@@ -734,7 +737,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     //update line trước khi lưu
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      viewChild.updateLineInfo();
+      var rs = viewChild.updateLineInfo();
+      if(!rs) return;
     }
     //nếu data không change thì mở dialog luôn
     if (!this.isChanged) {

@@ -12,8 +12,8 @@
                 </ng-template>
             </div>
             <!-- giá -->
-            <div style="width: 130px;" class="div-cell text-right">
-                <div>
+            <div style="width: 130px;" class="div-cell text-right ">
+                <div [class.text-danger]="formInfoControl('priceUnit').errors">
                     <ng-container *ngIf="!isEditting; else elseTemplatePriceUnitPro">
                         {{getPriceUnitLinePromotion(line) | number}}
                     </ng-container>
@@ -29,15 +29,13 @@
                     </ng-container>
                     <ng-template #elseTemplatePriceUnit>
                         <span class="font-weight-lighter"> 
-                                Giá gốc: {{formInfoControl('priceUnit').value | number}}
-                                <i _ngcontent-sgd-c6="" class="far fa-edit text-success pointer"
-                                [ngbPopover]="popContent" [popoverTitle]="popTitle" [autoClose]="'outside'"
-                                ></i>
-                            </span>
+                                Giá gốc: <span class="mr-1"  [class.text-danger]="formInfoControl('priceUnit').errors">{{formInfoControl('priceUnit').value | number}}</span>
+                        <i _ngcontent-sgd-c6="" class="far fa-edit text-success pointer" [ngbPopover]="popContent" [popoverTitle]="popTitle" [autoClose]="'outside'"></i>
+                        </span>
                     </ng-template>
 
                     <ng-template #popContent let-greeting="greeting">
-                        <kendo-numerictextbox style="width:100%;" [format]="'n0'" [spinners]="false" formControlName="priceUnit" (valueChange)="onChangeQuantity()">
+                        <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'" [spinners]="false" formControlName="priceUnit" (valueChange)="onChangeQuantity()">
                         </kendo-numerictextbox>
                     </ng-template>
                     <ng-template #popTitle let-language="language">Giá gốc</ng-template>
@@ -49,7 +47,7 @@
                     {{line.productUOMQty | number}}
                 </ng-container>
                 <ng-template #elseTemplateQty>
-                    <kendo-numerictextbox style="width:100%;" [format]="'n0'" [min]="0" [spinners]="false" formControlName="productUOMQty" (valueChange)="onChangeQuantity()">
+                    <kendo-numerictextbox required style="width:100%;" [format]="'n0'" [min]="0" [spinners]="false" formControlName="productUOMQty" (valueChange)="onChangeQuantity()">
                     </kendo-numerictextbox>
                     <!-- <input (change)="onChangeQuantity()" type="number" min="0" style="width:100%;" class="form-control" formControlName="productUOMQty"> -->
                 </ng-template>
@@ -76,11 +74,11 @@
                 </div>
             </div>
             <!-- thanh toán -->
-            <div style="width: 100px;" class="div-cell text-right">
+            <div *ngIf="!isFast" style="width: 100px;" class="div-cell text-right">
                 {{line.amountInvoiced | number}}
             </div>
             <!-- còn lại -->
-            <div style="width: 100px;" class="div-cell text-right">
+            <div *ngIf="!isFast" style="width: 100px;" class="div-cell text-right">
                 {{(line.priceSubTotal - line.amountInvoiced) | number}}
             </div>
             <!-- thao tác -->
@@ -226,7 +224,7 @@
         </div>
 
         <div *ngIf="isEditting" class="popover-footer d-flex justify-content-end mt-2">
-            <button (click)="updateLineInfo()" class="btn btn-sm btn-primary">Cập nhật
+            <button (click)="updateLineInfo(true)" class="btn btn-sm btn-primary">Cập nhật
                         </button>
             <button (click)="onCancel()" class="btn btn-sm btn-danger ml-2">Hủy</button>
         </div>
