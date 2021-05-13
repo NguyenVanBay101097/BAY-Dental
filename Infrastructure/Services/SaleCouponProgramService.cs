@@ -487,7 +487,7 @@ namespace Infrastructure.Services
             var countApplied = await _GetCountAppliedAsync(self);
             if (self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Mã khuyến mãi {coupon_code} vượt quá hạn mức áp dụng.";
-            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom >= order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo <= order.DateOrder))
+            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value.AbsoluteBeginOfDate() >= order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() <= order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if (!_FilterOnMinimumAmount(new List<SaleCouponProgram>() { self }, order).Any() && self.DiscountApplyOn == "on_order")
                 message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
@@ -497,10 +497,7 @@ namespace Infrastructure.Services
                 message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (!self.Active)
                 message.Error = "Mã khuyến mãi không có giá trị";
-            else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > order.DateOrder) ||
-                (self.RuleDateTo.HasValue && self.RuleDateTo < order.DateOrder))
-                message.Error = "Mã khuyến mãi đã hết hạn";
-            else if (order.CodePromoProgram != null && !string.IsNullOrEmpty(order.CodePromoProgram.PromoCode) && self.PromoCodeUsage == "code_needed")
+            else if ((self.NotIncremental.HasValue && self.NotIncremental.Value) && order.Promotions.Where(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgramId.HasValue).Any() || saleObj._IsGlobalDiscountAlreadyApplied(order))
                 message.Error = "Mã khuyến mãi không thể cộng dồn.";
             //else if (_IsGlobalDiscountProgram(self) && saleObj._IsGlobalDiscountAlreadyApplied(order))
             //    message.Error = "Chiết khấu tổng không thể cộng dồn";
@@ -523,7 +520,7 @@ namespace Infrastructure.Services
             var countApplied = await _GetCountAppliedAsync(self);
             if (self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Chương trình khuyến mãi vượt quá hạn mức áp dụng.";
-            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom >= order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo <= order.DateOrder))
+            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value.AbsoluteBeginOfDate() >= order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() <= order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if (self.ProgramType != "promotion_program" || self.PromoCodeUsage == "code_needed" || self.DiscountApplyOn != "on_order")
                 message.Error = "Khuyến mãi Không áp dụng cho đơn hàng";
@@ -535,7 +532,7 @@ namespace Infrastructure.Services
                 message.Error = "Chương trình khuyến mãi đang tạm ngừng";
             else if (!self.Active)
                 message.Error = "Chương trình khuyến mãi không có giá trị";
-            else if (self.NotIncremental.HasValue && self.NotIncremental.Value && saleObj._IsGlobalDiscountAlreadyApplied(order))
+            else if ((self.NotIncremental.HasValue && self.NotIncremental.Value) && order.Promotions.Where(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgramId.HasValue).Any() || saleObj._IsGlobalDiscountAlreadyApplied(order))
                 message.Error = "Chiết khấu tổng không thể cộng dồn";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !saleObj._IsRewardInOrderLines(order, self))
                 message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
@@ -556,9 +553,9 @@ namespace Infrastructure.Services
             var countApplied = await _GetCountAppliedAsync(self);
             if (self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Chương trình khuyến mãi vượt quá hạn mức áp dụng.";
-            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > line.Order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo < line.Order.DateOrder))
+            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value.AbsoluteBeginOfDate() >= line.Order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() <= line.Order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
-            else if (!self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId))                                                                                                                                                                                
+            else if ((self.DiscountSpecificProducts.Any() && !self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId)))                                                                                                                                                                                
                 message.Error = "Khuyến mãi Không áp dụng cho dịch vụ này";
             else if (line.Order.Promotions.Where(x => x.SaleOrderId.HasValue && !x.SaleOrderLineId.HasValue).Any(x => x.SaleCouponProgramId == self.Id))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
@@ -570,7 +567,7 @@ namespace Infrastructure.Services
                 message.Error = "Chương trình khuyến mãi đang tạm ngừng";
             else if (!self.Active)
                 message.Error = "Chương trình khuyến mãi không có giá trị";
-            else if (self.NotIncremental.HasValue && self.NotIncremental.Value && line.Promotions.Where(x => x.SaleOrderId.HasValue && x.SaleCouponProgramId.HasValue).Any())
+            else if ((self.NotIncremental.HasValue && self.NotIncremental.Value && line.Promotions.Where(x => x.SaleOrderId.HasValue && x.SaleCouponProgramId.HasValue).Any()) || line.Promotions.Where(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgramId.HasValue && x.SaleCouponProgram.NotIncremental.Value).Any())
                 message.Error = "Chiết khấu tổng không thể cộng dồn";
             //else
             //{
