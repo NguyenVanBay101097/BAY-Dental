@@ -92,5 +92,6 @@ namespace Umbraco.Web.Models.ContentEditing
                 return "Chưa chạy";
             }
         }
+        public decimal AmountTotal { get; set; }
     }
 }

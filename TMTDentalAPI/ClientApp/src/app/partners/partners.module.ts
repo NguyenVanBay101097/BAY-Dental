@@ -30,7 +30,6 @@ import { PartnerCustomerAppointmentComponent } from './partner-customer-appointm
 import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-customer-treatment-payment-detail/partner-customer-treatment-payment-detail.component';
 import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-product-toa-thuoc-list/partner-customer-product-toa-thuoc-list.component';
 import { PartnerCustomerTreatmentPaymentChildComponent } from './partner-customer-treatment-payment-child/partner-customer-treatment-payment-child.component';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { PartnerCustomerCategoriesComponent } from './partner-customer-categories/partner-customer-categories.component';
 import { PartnerCustomerUploadImageComponent } from './partner-customer-upload-image/partner-customer-upload-image.component';
 import { PartnerCustomerQuotationsComponent } from './partner-customer-quotations/partner-customer-quotations.component';
@@ -177,7 +176,6 @@ import { PartnerCustomerTreatmentLineFastPromotionComponent } from './partner-cu
     ReactiveFormsModule,
     FormsModule,
     SharedModule,
-    FlexLayoutModule,
     NgbModule,
     AccountCommonPartnerReportsModule,
     SaleOrdersModule,

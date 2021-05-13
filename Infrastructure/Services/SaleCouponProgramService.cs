@@ -33,51 +33,75 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SaleCouponProgramGetListPagedResponse>> GetListPaged(SaleCouponProgramGetListPagedRequest val)
         {
-            ISpecification<SaleCouponProgram> spec = new InitialSpecification<SaleCouponProgram>(x => true);
+            var query = SearchQuery();
+
             if (!string.IsNullOrEmpty(val.Search))
-                spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.Name.Contains(val.Search)));
+            {
+                query = query.Where(x => x.Name.Contains(val.Search));
+            }
             if (!string.IsNullOrEmpty(val.ProgramType))
-                spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.ProgramType == val.ProgramType));
+            {
+                query = query.Where(x => x.ProgramType == val.ProgramType);
+            }
             if (val.Active.HasValue)
-                spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.Active == val.Active));
+            {
+                query = query.Where(x => x.Active == val.Active);
+            }
             if (!string.IsNullOrEmpty(val.Status))
             {
                 var now = DateTime.Today;
                 if (val.Status == "waiting")
-                    spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.RuleDateFrom > now));
+                {
+                    query = query.Where(x => x.RuleDateFrom > now);
+                }
                 if (val.Status == "paused")
-                    spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => now <= x.RuleDateTo && x.IsPaused));
+                {
+                    query = query.Where(x => now <= x.RuleDateTo && x.IsPaused);
+                }
                 if (val.Status == "running")
-                    spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => now >= x.RuleDateFrom && now <= x.RuleDateTo && !x.IsPaused));
+                {
+                    query = query.Where(x => now >= x.RuleDateFrom && now <= x.RuleDateTo && !x.IsPaused);
+                }
                 if (val.Status == "expired")
-                    spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => now > x.RuleDateTo));
+                {
+                    query = query.Where(x => now > x.RuleDateTo);
+                }
             }
 
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Sequence).ThenBy(s => s.RewardType));
-            if (val.Limit > 0)
-            {
-                query = query.Skip(val.Offset).Take(val.Limit);
-            }
-            var items = await _mapper.ProjectTo<SaleCouponProgramGetListPagedResponse>(query).ToListAsync();
+            query = query.OrderByDescending(x => x.DateCreated);
+
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var totalItems = await query.CountAsync();
 
             var programIds = await query.Select(x => x.Id).ToListAsync();
-            await GetAmountPromotionDictAsync(programIds);
+            var saleProgramAmountDict = await GetAmountPromotionDictAsync(programIds);
 
-            return new PagedResult2<SaleCouponProgramGetListPagedResponse>(totalItems, val.Offset, val.Limit)
+            var itemsResponse = _mapper.Map<List<SaleCouponProgramGetListPagedResponse>>(items);
+            itemsResponse.ForEach(x => {
+                if (saleProgramAmountDict.ContainsKey(x.Id))
+                {
+                    x.AmountTotal = saleProgramAmountDict[x.Id];
+                }
+            });
+
+            var paged = new PagedResult2<SaleCouponProgramGetListPagedResponse>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = itemsResponse
             };
+
+            return paged;
         }
 
         public async Task<IDictionary<Guid, decimal>> GetAmountPromotionDictAsync(IEnumerable<Guid> ids)
         {
             var promotionObj = GetService<ISaleOrderPromotionService>();
-            var amounAdvance = await promotionObj.SearchQuery(x => ids.Contains(x.SaleCouponProgramId.Value)).Select(y => y.Amount).ToListAsync();
+            var saleProgramAmountDict = await promotionObj.SearchQuery(x => ids.Contains(x.SaleCouponProgramId.Value))
+                .GroupBy(x => x.SaleCouponProgramId)
+                .Select(x => new { SaleCouponProgramId = x.Key, Amount = x.Sum(y => y.Amount) })
+                .ToDictionaryAsync(x => x.SaleCouponProgramId.Value, x => x.Amount);
 
-            var saleProgram = new Dictionary<Guid, decimal> { };
-            return saleProgram;
+            return (IDictionary<Guid, decimal>)saleProgramAmountDict;
         }
 
         public async Task<PagedResult2<SaleCouponProgramBasic>> GetPagedResultAsync(SaleCouponProgramPaged val)
