@@ -13,7 +13,7 @@ namespace Umbraco.Web.Mapping
         public SaleCouponProgramProfile()
         {
             CreateMap<SaleCouponProgram, SaleCouponProgramBasic>();
-            CreateMap<SaleCouponProgram, SaleOrderProgramGetListPagedResponse>();
+            CreateMap<SaleCouponProgram, SaleCouponProgramGetListPagedResponse>();
             CreateMap<SaleCouponProgram, SaleCouponProgramSimple>();
             CreateMap<SaleCouponProgramSave, SaleCouponProgram>();
             CreateMap<SaleCouponProgram, SaleCouponProgramDisplay>()

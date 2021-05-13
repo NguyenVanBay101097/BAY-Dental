@@ -48,7 +48,7 @@ export class SaleCouponProgramSave {
     name: string;
 }
 
-export class SaleOrderProgramGetListPagedRequest {
+export class SaleCouponProgramGetListPagedRequest {
     limit: number;
     offset: number;
     search: string;
@@ -57,7 +57,7 @@ export class SaleOrderProgramGetListPagedRequest {
     status: string;
 }
 
-export class SaleOrderProgramGetListPagedResponse {
+export class SaleCouponProgramGetListPagedResponse {
     id: string;
     name: string;
     ruleDateFrom: string;
@@ -73,8 +73,8 @@ export class SaleCouponProgramService {
     apiUrl = 'api/SaleCouponPrograms';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-    getListPaged(val: any): Observable<PagedResult2<SaleOrderProgramGetListPagedResponse>> {
-        return this.http.get<PagedResult2<SaleOrderProgramGetListPagedResponse>>(this.baseApi + this.apiUrl + "/GetListPaged", { params: new HttpParams({ fromObject: val }) });
+    getListPaged(val: any): Observable<PagedResult2<SaleCouponProgramGetListPagedResponse>> {
+        return this.http.get<PagedResult2<SaleCouponProgramGetListPagedResponse>>(this.baseApi + this.apiUrl + "/GetListPaged", { params: new HttpParams({ fromObject: val }) });
     }
 
     getPaged(val: any): Observable<PagedResult2<SaleCouponProgramBasic>> {

@@ -1,6 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { RouterModule } from '@angular/router';
 import { ChangePasswordDialogComponent } from './change-password-dialog/change-password-dialog.component';
@@ -247,7 +246,6 @@ import { SaleOrderLineCuComponent } from '../sale-orders/sale-order-line-cu/sale
     imports: [
         NgbModule,
         CommonModule,
-        FlexLayoutModule,
         RouterModule,
         ReactiveFormsModule,
         MyCustomKendoModule,
