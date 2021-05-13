@@ -35,6 +35,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeAdminDisplay EmployeeAdmin { get; set; }
 
         public string Email { get; set; }
+
+        public string Address { get; set; }
     }
 
     public class TenantDisplay
