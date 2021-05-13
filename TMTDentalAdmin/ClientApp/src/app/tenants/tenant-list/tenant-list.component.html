@@ -13,14 +13,21 @@
     </div>
     <div class="o_cp_left">
       <div class="o_cp_buttons">
-        <a routerLink="register" class="btn btn-primary btn-sm" accesskey="c">
-          Thêm
-        </a>
+        <div class="o_form_buttons_view">
+          <a routerLink="register" class="btn btn-primary btn-sm mr-2" accesskey="c">
+            Thêm
+          </a>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="exportExcelFile()"><i
+            class="fas fa-download"></i>&nbsp;Xuất excel</button>
+      </div>
       </div>
       <div class="o_cp_sidebar">
       </div>
     </div>
     <div class="o_cp_right">
+      <app-date-range-filter-dropdown title="Ngày tạo" [dateFrom]="filterDateCreatedFrom" [dateTo]="filterDateCreatedTo"
+        (searchChange)="onDateCreatedSearchChange($event)">
+      </app-date-range-filter-dropdown>
     </div>
   </div>
 </div>

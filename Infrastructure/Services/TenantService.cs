@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Umbraco.Web.Models.ContentEditing;
+using ApplicationCore.Utilities;
 
 namespace Infrastructure.Services
 {
@@ -89,6 +90,13 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.Phone.Contains(val.Search) ||
                 x.Hostname.Contains(val.Search));
+            if (val.DateCreatedFrom.HasValue)
+                query = query.Where(x => x.DateCreated >= val.DateCreatedFrom);
+            if (val.DateCreatedTo.HasValue)
+            {
+                var dateCreatedTo = val.DateCreatedTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateCreated <= val.DateCreatedFrom);
+            }
 
             return query;
         }

@@ -13,6 +13,7 @@ import { AppLoadingService } from './app-loading.service';
 import { LoadingComponent } from './loading/loading.component';
 import { MyCustomKendoModule } from '../my-custom-kendo.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { DateRangeFilterDropdownComponent } from './date-range-filter-dropdown/date-range-filter-dropdown.component';
 
 @NgModule({
   declarations: [
@@ -22,17 +23,18 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     LayoutHeaderComponent,
     DisableControlDirective,
     LoadingComponent,
+    DateRangeFilterDropdownComponent,
   ],
   exports: [
     ConfirmDialogComponent,
     LayoutSidebarComponent,
     LayoutHeaderComponent,
     DisableControlDirective,
-    LoadingComponent
+    LoadingComponent,
+    DateRangeFilterDropdownComponent
   ],
   imports: [
     CommonModule,
-    BrowserAnimationsModule,
     FlexLayoutModule,
     RouterModule,
     ReactiveFormsModule,

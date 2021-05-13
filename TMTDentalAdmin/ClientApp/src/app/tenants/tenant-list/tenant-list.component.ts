@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { TenantUpdateInfoDialogComponent } from '../tenant-update-info-dialog/tenant-update-info-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { TenantUpdateExpiredV2DialogComponent } from '../tenant-update-expired-v2-dialog/tenant-update-expired-v2-dialog.component';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-tenant-list',
@@ -25,11 +26,14 @@ export class TenantListComponent implements OnInit {
 
   search: string;
   searchUpdate = new Subject<string>();
+  filterDateCreatedFrom: Date;
+  filterDateCreatedTo: Date;
 
   constructor(
     private tenantService: TenantService,
     private notificationService: NotificationService,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal,
+    private intlService: IntlService) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -42,12 +46,20 @@ export class TenantListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  onDateCreatedSearchChange(data) {
+    this.filterDateCreatedFrom = data.dateFrom;
+    this.filterDateCreatedTo = data.dateTo;
+    this.loadDataFromApi();
+  }
+
   loadDataFromApi() {
     this.loading = true;
     var val = new TenantPaged();
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
+    val.dateCreatedFrom = this.filterDateCreatedFrom ? this.intlService.formatDate(this.filterDateCreatedFrom, 'yyyy-MM-ddTHH:mm:ss') : '';
+    val.dateCreatedTo = this.filterDateCreatedTo ? this.intlService.formatDate(this.filterDateCreatedTo, 'yyyy-MM-ddTHH:mm:ss') : '';
 
     this.tenantService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -63,6 +75,34 @@ export class TenantListComponent implements OnInit {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  exportExcelFile() {
+    var val = new TenantPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.dateCreatedFrom = this.filterDateCreatedFrom ? this.intlService.formatDate(this.filterDateCreatedFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.dateCreatedTo = this.filterDateCreatedTo ? this.intlService.formatDate(this.filterDateCreatedTo, 'yyyy-MM-ddTHH:mm:ss') : null;
+
+    // paged.categoryId = this.searchCateg ? this.searchCateg.id : null;
+    this.tenantService.exportExcel(val).subscribe((rs) => {
+      let filename = "danh_sach_dang_ky";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   pageChange(event: PageChangeEvent): void {
