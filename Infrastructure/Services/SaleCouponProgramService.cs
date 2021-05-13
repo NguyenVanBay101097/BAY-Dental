@@ -21,7 +21,7 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly AppTenant _tenant;
-        public SaleCouponProgramService(IAsyncRepository<SaleCouponProgram> repository, 
+        public SaleCouponProgramService(IAsyncRepository<SaleCouponProgram> repository,
             IHttpContextAccessor httpContextAccessor,
             IMapper mapper,
             AppTenant tenant)
@@ -101,7 +101,7 @@ namespace Infrastructure.Services
                 if (val.Status == "expired")
                     spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => now > x.RuleDateTo));
             }
-           
+
             if (val.Ids != null)
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => val.Ids.Contains(x.Id)));
 
@@ -123,9 +123,11 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrder()
         {
             var today = DateTime.Today;
-            var promotions = await SearchQuery(x => x.Active && x.ProgramType == "promotion_program"
+            var promotions = await SearchQuery(x => x.Active && !x.IsPaused && x.ProgramType == "promotion_program"
             && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order"
-            && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)).ToListAsync();
+            && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
+            && (!string.IsNullOrEmpty(x.Days) && x.Days.Contains(today.DayOfWeek.ToString()))
+            ).ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
             return basics;
@@ -134,11 +136,14 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrderLine(Guid productId)
         {
             var today = DateTime.Today;
-
-            var promotions = await SearchQuery(x => x.Active && x.ProgramType == "promotion_program"
-            && x.PromoCodeUsage == "no_code_needed"
+            var productObj = GetService<IProductService>();
+            var product = await productObj.SearchQuery(x => x.Id == productId).FirstOrDefaultAsync();
+            var promotions = await SearchQuery(x => x.Active && !x.IsPaused && x.ProgramType == "promotion_program"
+            && x.PromoCodeUsage == "no_code_needed" && (x.DiscountApplyOn == "specific_products" || x.DiscountApplyOn == "specific_product_categories")
             && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
-            && x.DiscountApplyOn == "specific_products" && x.DiscountSpecificProducts.Any(s => s.ProductId == productId)).ToListAsync();
+            && (x.DiscountSpecificProducts.Any(s => s.ProductId == product.Id) || x.DiscountSpecificProductCategories.Any(s => s.ProductCategoryId == product.CategId))
+             && (!string.IsNullOrEmpty(x.Days) && x.Days.Contains(today.DayOfWeek.ToString())))
+            .ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
             return basics;
@@ -203,7 +208,7 @@ namespace Infrastructure.Services
             {
                 await SaveDiscountSpecificProducts(program, val);
             }
-      
+
             //if (!program.DiscountLineProductId.HasValue)
             //{
             //    var discountProduct = await GetOrCreateDiscountProduct(program);
@@ -231,7 +236,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-       
+
 
         public async Task UpdateProgram(Guid id, SaleCouponProgramSave val)
         {
@@ -421,10 +426,12 @@ namespace Infrastructure.Services
 
             var saleObj = GetService<ISaleOrderService>();
             var applicable_programs = await saleObj._GetApplicablePrograms(order);
-            var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
-            if (self.MaximumUseNumber != 0 && order_count >= self.MaximumUseNumber)
-                message.Error = $"Mã khuyến mãi {coupon_code} đã hết hạn.";
-            else if (!_FilterOnMinimumAmount(new List<SaleCouponProgram>() { self }, order).Any())
+            var countApplied = await _GetCountAppliedAsync(self);
+            if (self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
+                message.Error = $"Mã khuyến mãi {coupon_code} vượt quá hạn mức áp dụng.";
+            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom >= order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo <= order.DateOrder))
+                message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
+            else if (!_FilterOnMinimumAmount(new List<SaleCouponProgram>() { self }, order).Any() && self.DiscountApplyOn == "on_order")
                 message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
             else if (!string.IsNullOrEmpty(self.PromoCode) && (order.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
                 message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";
@@ -455,23 +462,23 @@ namespace Infrastructure.Services
             var message = new CheckPromoCodeMessage();
             var saleObj = GetService<ISaleOrderService>();
             var applicable_programs = await saleObj._GetApplicablePrograms(order);
-            var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
+            var countApplied = await _GetCountAppliedAsync(self);
+            if (self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
+                message.Error = $"Chương trình khuyến mãi vượt quá hạn mức áp dụng.";
             if ((self.RuleDateFrom.HasValue && self.RuleDateFrom >= order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo <= order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if (self.ProgramType != "promotion_program" || self.PromoCodeUsage == "code_needed" || self.DiscountApplyOn != "on_order")
                 message.Error = "Khuyến mãi Không áp dụng cho đơn hàng";
-            else if (!_FilterOnMinimumAmount(new List<SaleCouponProgram>() { self }, order).Any())
+            else if (!_FilterOnMinimumAmount(new List<SaleCouponProgram>() { self }, order).Any() && self.DiscountApplyOn == "on_order")
                 message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
             else if ((order.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
-            else if (order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
-                message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";
+            else if (self.IsPaused)
+                message.Error = "Chương trình khuyến mãi đang tạm ngừng";
             else if (!self.Active)
                 message.Error = "Chương trình khuyến mãi không có giá trị";
-            //else if (order.CodePromoProgram != null && !string.IsNullOrEmpty(order.CodePromoProgram.PromoCode) && self.PromoCodeUsage == "code_needed")
-            //    message.Error = "Mã khuyến mãi không thể cộng dồn.";
-            //else if (_IsGlobalDiscountProgram(self) && saleObj._IsGlobalDiscountAlreadyApplied(order))
-            //    message.Error = "Chiết khấu tổng không thể cộng dồn";
+            else if (self.NotIncremental.HasValue && self.NotIncremental.Value && saleObj._IsGlobalDiscountAlreadyApplied(order))
+                message.Error = "Chiết khấu tổng không thể cộng dồn";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !saleObj._IsRewardInOrderLines(order, self))
                 message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
             else
@@ -486,12 +493,14 @@ namespace Infrastructure.Services
         public async Task<CheckPromoCodeMessage> _CheckPromotionApplySaleLine(SaleCouponProgram self, SaleOrderLine line)
         {
             var message = new CheckPromoCodeMessage();
-            var saleObj = GetService<ISaleOrderService>();
+            var saleLineObj = GetService<ISaleOrderLineService>();
             //var applicable_programs = await saleObj._GetApplicablePrograms(order);
-            var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
+            var countApplied = await _GetCountAppliedAsync(self);
+            if (self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
+                message.Error = $"Chương trình khuyến mãi vượt quá hạn mức áp dụng.";
             if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > line.Order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo < line.Order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
-            else if (!self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId))
+            else if (!self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId))                                                                                                                                                                                
                 message.Error = "Khuyến mãi Không áp dụng cho dịch vụ này";
             else if (line.Order.Promotions.Where(x => x.SaleOrderId.HasValue && !x.SaleOrderLineId.HasValue).Any(x => x.SaleCouponProgramId == self.Id))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
@@ -499,14 +508,12 @@ namespace Infrastructure.Services
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho dịch vụ này";
             else if (line.Order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
                 message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";
+            else if (self.IsPaused)
+                message.Error = "Chương trình khuyến mãi đang tạm ngừng";
             else if (!self.Active)
                 message.Error = "Chương trình khuyến mãi không có giá trị";
-            //else if (order.CodePromoProgram != null && !string.IsNullOrEmpty(order.CodePromoProgram.PromoCode) && self.PromoCodeUsage == "code_needed")
-            //    message.Error = "Mã khuyến mãi không thể cộng dồn.";
-            //else if (_IsGlobalDiscountProgram(self) && saleObj._IsGlobalDiscountAlreadyApplied(order))
-            //    message.Error = "Chiết khấu tổng không thể cộng dồn";
-            else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !saleObj._IsRewardInOrderLines(line.Order, self))
-                message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
+            else if (self.NotIncremental.HasValue && self.NotIncremental.Value && line.Promotions.Where(x => x.SaleOrderId.HasValue && x.SaleCouponProgramId.HasValue).Any())
+                message.Error = "Chiết khấu tổng không thể cộng dồn";
             //else
             //{
             //    if (!applicable_programs.Contains(self) && self.PromoApplicability == "on_current_order")
@@ -573,12 +580,12 @@ namespace Infrastructure.Services
         public async Task<decimal> GetAmountTotal(Guid id)
         {
             ///lay tu moveline journal amount advance used
-            var promotionObj = GetService<ISaleOrderPromotionService>();          
+            var promotionObj = GetService<ISaleOrderPromotionService>();
             var amounAdvance = await promotionObj.SearchQuery(x => x.SaleCouponProgramId == id).Select(x => x.Amount).SumAsync();
             return Math.Round(amounAdvance);
         }
 
-    
+
 
         public bool _IsGlobalDiscountProgram(SaleCouponProgram self)
         {
@@ -770,24 +777,25 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<IDictionary<Guid, int>> _GetOrderCountDictAsync(IEnumerable<SaleCouponProgram> self)
+        public async Task<int> _GetCountAppliedAsync(SaleCouponProgram self)
         {
-            var saleLineObj = GetService<ISaleOrderLineService>();
-            var discountLineProductIds = self.Where(x => x.DiscountLineProductId.HasValue).Select(x => x.DiscountLineProductId.Value).ToList();
-            var mapped_data = await saleLineObj.SearchQuery(x => x.ProductId.HasValue && discountLineProductIds.Contains(x.ProductId.Value)).GroupBy(x => x.ProductId.Value)
-                .Select(x => new
-                {
-                    ProductId = x.Key,
-                    ProductIdCount = x.Count()
-                }).ToDictionaryAsync(x => x.ProductId, x => x.ProductIdCount);
-            var dict = self.ToDictionary(x => x.Id, x => 0);
-            foreach (var program in self)
-            {
-                if (program.DiscountLineProductId.HasValue)
-                    dict[program.Id] = mapped_data.ContainsKey(program.DiscountLineProductId.Value) ?
-                        mapped_data[program.DiscountLineProductId.Value] : 0;
-            }
-            return dict;
+            var orderPromotionObj = GetService<ISaleOrderPromotionService>();
+            var countApplied = await orderPromotionObj.SearchQuery(x => x.SaleCouponProgramId.HasValue && x.SaleCouponProgramId == self.Id).CountAsync();
+            //var discountLineProductIds = self.Where(x => x.DiscountLineProductId.HasValue).Select(x => x.DiscountLineProductId.Value).ToList();
+            //var mapped_data = await saleLineObj.SearchQuery(x => x.ProductId.HasValue && discountLineProductIds.Contains(x.ProductId.Value)).GroupBy(x => x.ProductId.Value)
+            //    .Select(x => new
+            //    {
+            //        ProductId = x.Key,
+            //        ProductIdCount = x.Count()
+            //    }).ToDictionaryAsync(x => x.ProductId, x => x.ProductIdCount);
+            //var dict = self.ToDictionary(x => x.Id, x => 0);
+            //foreach (var program in self)
+            //{
+            //    if (program.DiscountLineProductId.HasValue)
+            //        dict[program.Id] = mapped_data.ContainsKey(program.DiscountLineProductId.Value) ?
+            //            mapped_data[program.DiscountLineProductId.Value] : 0;
+            //}
+            return countApplied;
         }
 
         public async Task<int> _GetOrderCountAsync(Guid id)

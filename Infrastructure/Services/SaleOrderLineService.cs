@@ -212,6 +212,8 @@ namespace Infrastructure.Services
             }
         }
 
+
+
         public void _GetInvoiceAmount(IEnumerable<SaleOrderLine> self)
         {
             var amlObj = GetService<IAccountMoveLineService>();
@@ -857,6 +859,13 @@ namespace Infrastructure.Services
             var price_reduce = (line.PriceUnit * (1 - line.Discount / 100)) *
                 (1 - (program.DiscountPercentage ?? 0) / 100);
             var discount_amount = (line.PriceUnit - price_reduce) * line.ProductUOMQty;
+
+            if (program.DiscountMaxAmount.HasValue)
+            {
+                if (discount_amount >= program.DiscountMaxAmount)
+                    discount_amount = program.DiscountMaxAmount.Value;
+            }
+
             return discount_amount;
         }
 
@@ -865,7 +874,8 @@ namespace Infrastructure.Services
             var total = line.PriceUnit * line.ProductUOMQty;
             //discount_amount = so luong * don gia da giam * phan tram        
             var discount_amount = (total * (1 - line.Discount / 100)) *
-                ((program.DiscountPercentage ?? 0) / 100);
+                ((program.DiscountPercentage ?? 0) / 100);         
+
             return discount_amount;
         }
 
