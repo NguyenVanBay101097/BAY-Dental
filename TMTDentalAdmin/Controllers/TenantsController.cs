@@ -272,7 +272,8 @@ namespace TMTDentalAdmin.Controllers
                     worksheet.Cells[row, 7].Style.Numberformat.Format = "d/m/yyyy";
                     worksheet.Cells[row, 8].Value = item.ActiveCompaniesNbr;
                     worksheet.Cells[row, 9].Value = item.CustomerSource;
-                    worksheet.Cells[row, 10].Value = item.EmployeeAdmin != null ? item.EmployeeAdmin.Name : "";
+                    worksheet.Cells[row, 10].Value = item.Address;
+                    worksheet.Cells[row, 11].Value = item.EmployeeAdmin != null ? item.EmployeeAdmin.Name : "";
 
                     row++;
                 }
