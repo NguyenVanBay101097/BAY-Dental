@@ -56,7 +56,7 @@ namespace Infrastructure.Services
             }
             await context.SaveChangesAsync();
         }
-       
+
 
         private async Task<string> PersonalizedContent(CatalogDbContext context, string body, Partner partner, Company company)
         {
@@ -82,7 +82,7 @@ namespace Infrastructure.Services
                     var fpt = new FPTSendSMSRequestModel();
                     fpt.Phone = line.Partner.Phone;
                     fpt.access_token = modelToken.access_token;
-                    fpt.BrandName = line.SmsAccount.BrandName;
+                    fpt.BrandName = account.BrandName;
                     fpt.Message = line.Body;
                     fpt.session_id = "789dC48b88e54f58ece5939f14a";
                     requestFpt.Add(fpt);
@@ -109,7 +109,7 @@ namespace Infrastructure.Services
                     esms.SmsId = line.Id;
                     esms.ApiKey = account.ApiKey;
                     esms.SecretKey = account.Secretkey;
-                    esms.Brandname = line.SmsAccount.BrandName;
+                    esms.Brandname = account.BrandName;
                     esms.Content = line.Body;
                     esms.SmsType = "2";
                     esms.IsUnicode = 1;

@@ -26,7 +26,8 @@ export class SmsManualDialogComponent implements OnInit {
   formGroup: FormGroup;
   ids: string[] = [];
   submitted = false;
-  provider: string;
+  isBirthDayManual: false;
+  isAppointmentReminder: false;
   template: any = {
     templateType: 'text',
     text: ''
@@ -147,7 +148,8 @@ export class SmsManualDialogComponent implements OnInit {
     val.date = this.intlService.formatDate(new Date(), "yyyy-MM-ddTHH:mm");
     val.partnerIds = this.ids;
     val.body = JSON.stringify(this.template);
-    val.IsBirthDayManual = true;
+    val.isBirthDayManual = this.isBirthDayManual;
+    val.isAppointmentReminder = this.isAppointmentReminder;
     this.smsMessageService.create(val).subscribe(
       (res: any) => {
         this.smsMessageService.actionSendSms(res.id).subscribe(

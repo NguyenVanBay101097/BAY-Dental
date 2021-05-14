@@ -30,6 +30,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'manually', pathMatch: 'full' },
       { path: 'auto', component: SmsAppointmentFormAutomaticComponent },
       { path: 'manually', component: SmsAppointmentFormManualComponent },
+      { path: 'statistic', component: SmsMessageDetailStatisticComponent }
     ]
   },
   { path: 'templates', component: SmsTemplateListComponent },

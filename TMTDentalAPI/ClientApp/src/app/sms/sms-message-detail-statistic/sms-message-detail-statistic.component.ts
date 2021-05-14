@@ -102,6 +102,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     }
 
   }
+  
   notify(title, isSuccess = true) {
     this.notificationService.show({
       content: title,

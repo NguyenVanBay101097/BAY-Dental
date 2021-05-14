@@ -60,20 +60,20 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   }
 
   onSend() {
-    if(this.selectedIds.length == 0){
+    if (this.selectedIds.length == 0) {
       this.notify("chưa chọn khách hàng", false);
     }
-    else{
-    var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
-    modalRef.componentInstance.title = "Tạo tin gửi";
-    modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
-    modalRef.componentInstance.provider = 'res.partner';
-    modalRef.result.then(
-      result => {
+    else {
+      var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
+      modalRef.componentInstance.title = "Tạo tin gửi";
+      modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
+      modalRef.componentInstance.isBirthDayManual = true;
+      modalRef.result.then(
+        result => {
 
-      }
-    )
-  }
+        }
+      )
+    }
 
   }
   notify(title, isSuccess = true) {
