@@ -1,9 +1,11 @@
 ﻿using ApplicationCore.Constants;
 using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
+using Infrastructure.Data;
 using Infrastructure.TenantData;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -44,6 +46,11 @@ namespace TMTDentalAPI.Middlewares
                 {
                     try
                     {
+                        var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
+                        var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+                        if (pendingMigrations.Any())
+                            await dbContext.Database.MigrateAsync();
+
                         await _mediator.Publish(new ProcessUpdateNotification(context));
 
                         var tenantDbContext = (TenantDbContext)context.RequestServices.GetService(typeof(TenantDbContext));

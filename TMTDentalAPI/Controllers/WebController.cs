@@ -103,8 +103,16 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> OldSaleOrderPaymentProcessUpdate()
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _importSampleDataService.OldSaleOrderPaymentProcessUpdate();
-            _unitOfWork.Commit();
+            try
+            {
+                await _importSampleDataService.OldSaleOrderPaymentProcessUpdate();
+                _unitOfWork.Commit();
+            }
+            catch(Exception e)
+            {
+                _unitOfWork.Rollback();
+                throw e;
+            }
 
             return NoContent();
         }
