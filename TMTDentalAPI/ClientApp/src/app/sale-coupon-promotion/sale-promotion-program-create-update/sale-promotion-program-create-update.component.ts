@@ -42,6 +42,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   codeNeed = false;
   discountFixed = true;
   amountTotal: number = 0;
+
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
   listProducts: ProductSimple[];
@@ -92,7 +93,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       } else {
         this.formGroup = this.fb.group({
           name: [null, Validators.required],
-          ruleMinimumAmount: [0, Validators.required],
+          ruleMinimumAmount: [0,Validators.required],
           discountType: 'fixed_amount',
           discountPercentage: [0, Validators.required],
           discountFixedAmount: [0, Validators.required],
@@ -316,12 +317,16 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.id = this.id;
     modalRef.componentInstance.typeApply = this.discountApplyOn;
     modalRef.componentInstance.amountTotal = this.amountTotal;
+    modalRef.componentInstance.name = this.f.name.value;
   }
 
   loadRecord() {
     this.programService.get(this.id).subscribe(result => {
       this.program = result;
       var dayIds = result.days ? result.days.split(",") : [];
+      if(dayIds.length>0){
+        this.isSelectedDay = true;
+      }
       this.f.daysSelected.setValue(dayIds.map(Number));
       
       this.formGroup.patchValue(result);
