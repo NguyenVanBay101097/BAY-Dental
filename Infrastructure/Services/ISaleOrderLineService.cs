@@ -62,7 +62,7 @@ namespace Infrastructure.Services
 
         Task<SaleCouponProgramResponse> ApplyPromotionUsageCodeOnOrderLine(ApplyPromotionUsageCode val);
 
-        Task<SaleCouponProgramResponse> ApplyPromotionOnOrderLine(ApplyPromotionRequest val);
+        Task ApplyPromotionOnOrderLine(ApplyPromotionRequest val);
 
         decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line);
     }

@@ -863,7 +863,7 @@ namespace Infrastructure.Services
                         total_discount_amount += discount_line_amount;
                 }
 
-                if (program.DiscountMaxAmount.HasValue)
+                if (program.DiscountMaxAmount.HasValue && program.DiscountMaxAmount.Value > 0)
                 {
                     if (total_discount_amount >= program.DiscountMaxAmount)
                         total_discount_amount = program.DiscountMaxAmount.Value;

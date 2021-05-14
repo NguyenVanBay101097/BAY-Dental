@@ -176,7 +176,7 @@ namespace Infrastructure.Services
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var paymentObj = GetService<IAccountPaymentService>();
-            /// truy vấn đủ dữ liệu của saleorder payment
+            /// truy vấn đủ dữ liệu của saleorder payment`
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move)
                 .Include(x => x.Order).ThenInclude(s => s.OrderLines).ThenInclude(c => c.Product)
@@ -188,6 +188,10 @@ namespace Infrastructure.Services
             {
                 ///ghi sổ doang thu , công nợ lines               
                 var invoice = await _CreateInvoices(saleOrderPayment, final: true);
+
+                //Lấy những settle đã lưu trong database, compute amount lại
+                var settlements = invoice.InvoiceLines.SelectMany(x => x.CommissionSettlements);
+
                 await moveObj.ActionPost(new List<AccountMove>() { invoice });
 
                 ///tạo hoa hồng cho bác sĩ , phụ tá , tư vấn
@@ -293,6 +297,7 @@ namespace Infrastructure.Services
                 //SalesmanId = self.SalesmanId
             };
 
+            //add settlement
             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
 
