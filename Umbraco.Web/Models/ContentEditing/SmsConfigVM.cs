@@ -19,6 +19,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateSend { get; set; }
         public int TimeBeforSend { get; set; }
 
+        public string TypeTimeBeforSend { get; set; }
+
         public string Body { get; set; }
     }
 
@@ -37,6 +39,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? DateSend { get; set; }
         public int TimeBeforSend { get; set; }
+        public string TypeTimeBeforSend { get; set; }
         public string Body { get; set; }
     }
 }

@@ -20,10 +20,16 @@ namespace Infrastructure.Services
         }
         public override async Task<SmsConfig> CreateAsync(SmsConfig entity)
         {
-            if (!entity.SmsCampaignId.HasValue)
+            if (!entity.SmsCampaignId.HasValue && entity.Type == "birthday")
             {
                 var smsCampaignObj = GetService<ISmsCampaignService>();
                 var campaign = await smsCampaignObj.GetDefaultCampaignBirthday();
+                entity.SmsCampaignId = campaign.Id;
+            }
+            else if (!entity.SmsCampaignId.HasValue && entity.Type == "appointment")
+            {
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultCampaignAppointmentReminder();
                 entity.SmsCampaignId = campaign.Id;
             }
             entity = await base.CreateAsync(entity);
@@ -34,10 +40,16 @@ namespace Infrastructure.Services
         public override async Task UpdateAsync(SmsConfig entity)
         {
             ActionRunJob(entity);
-            if (!entity.SmsCampaignId.HasValue)
+            if (!entity.SmsCampaignId.HasValue && entity.Type == "birthday")
             {
                 var smsCampaignObj = GetService<ISmsCampaignService>();
                 var campaign = await smsCampaignObj.GetDefaultCampaignBirthday();
+                entity.SmsCampaignId = campaign.Id;
+            }
+            else if (!entity.SmsCampaignId.HasValue && entity.Type == "appointment")
+            {
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultCampaignAppointmentReminder();
                 entity.SmsCampaignId = campaign.Id;
             }
             await base.UpdateAsync(entity);
@@ -49,22 +61,28 @@ namespace Infrastructure.Services
             var jobIdApp = $"{hostName}_Sms_AppointmentAutomaticReminder";
             var jobIdBir = $"{hostName}_Sms_BirthdayAutomaticReminder";
 
-            if (model.IsAppointmentAutomation)
+            if (model.Type == "appointment")
             {
-                RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
-            }
-            else
-            {
-                ActionStopJob(jobIdApp);
+                if (model.IsAppointmentAutomation)
+                {
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
+                }
+                else
+                {
+                    ActionStopJob(jobIdApp);
+                }
             }
 
-            if (model.IsBirthdayAutomation)
+            if (model.Type == "birthday")
             {
-                RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunJob(hostName, model.Id), $"0 8 * * *", TimeZoneInfo.Local);
-            }
-            else
-            {
-                ActionStopJob(jobIdBir);
+                if (model.IsBirthdayAutomation)
+                {
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunJob(hostName, model.Id), $"0 8 * * *", TimeZoneInfo.Local);
+                }
+                else
+                {
+                    ActionStopJob(jobIdBir);
+                }
             }
         }
 

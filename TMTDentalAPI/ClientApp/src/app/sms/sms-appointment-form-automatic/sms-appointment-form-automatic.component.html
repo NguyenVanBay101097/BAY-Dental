@@ -1,41 +1,130 @@
 <form class="container o_form_view h-100" [formGroup]="formGroup">
-    <div class="o_form_sheet bg-white mt-0 border-top-0 d-flex flex-column p-3 h-100">
-        <div class="flex-0-0-auto">
-            <div class="d-flex">
-                <div class="btns">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">Xác nhận</button>
-                </div>
-            </div>
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
             <div class="o_group">
-                <table class="o_group o_inner_group o_group_col_6">
+                <table class="o_group o_inner_group o_group_col_12">
                     <tbody>
                         <tr>
-                            <td colspan="1" class="o_td_label d-flex mb-2">
-                                <div class="form-check mr-2">
-                                    <input class="form-check-input" type="checkbox" id="check" formControlName="isAppointmentAutomation" />
-                                    <label class="form-check-label o_form_label" for="check">
-                                        Automatic
-                                    </label>
-                                </div>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bolder">
+                                    Kích hoạt chương trình
+                                </label>
+                            </td>
+                            <td colspan="1" class="o_td_label" style="width: 80%;">
+                                <label class="switch">
+                                    <input type="checkbox" formControlName="isAppointmentAutomation">
+                                    <span class="slider round"></span>
+                                </label>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Tin nhắn mẫu
+                            <td colspan="2" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bolder">
+                                    Điều kiện gửi tin
                                 </label>
+                                <table class="ml-5">
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help">
+                                                Chọn brandname
+                                            </label>
+                                        </td>
+                                        <td colspan="1">
+                                            <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
+                                                [textField]="'brandName'" formControlName="smsAccount"
+                                                [filterable]="true" #smsAccountCbx [valueField]="'id'">
+                                                <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                                    <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
+                                                </ng-template>
+                                            </kendo-combobox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help">
+                                                Thời gian gửi tin
+                                            </label>
+                                        </td>
+                                        <td colspan="1" class="d-flex">
+                                            <kendo-numerictextbox [min]="0" formControlName="timeBeforSend"
+                                                [autoCorrect]="autoCorrect" [spinners]="false" format="n0">
+                                            </kendo-numerictextbox>
+                                            <select formControlName="TypeTimeBeforSend" class="form-control ml-2">
+                                                <option class="form-control" value="minute">Phút
+                                                </option>
+                                                <option class="form-control" value="hour">Giờ
+                                                </option>
+                                                <option class="form-control" value="day">Ngày
+                                                </option>
+                                            </select>
+                                            <span class="ml-2 text-span">trước thời gian hẹn</span>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
-                            <td colspan="1" class="d-flex" style="width: 100%;">
-                                <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'" formControlName="appointmentTemplate" [filterable]="true" #smsTemplateCbx [valueField]="'id'">
-                                </kendo-combobox>
-                                <a class="btn btn-sm btn-light" (click)="addTemplate()">
-                                    <span class="k-icon k-i-plus"></span>
-                                </a>
+
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bolder">
+                                    Nội dung tin nhắn
+                                </label>
+                                <table class="ml-5">
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help">
+                                                Tin nhắn mẫu
+                                            </label>
+                                        </td>
+                                        <td colspan="1" class="d-flex" style="width: 80%;">
+                                            <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
+                                                formControlName="template" [filterable]="true" #smsTemplateCbx
+                                                (valueChange)="onChangeTemplate($event)" [valueField]="'id'">
+                                            </kendo-combobox>
+                                            <a class="btn btn-sm btn-light" (click)="addTemplate()">
+                                                <span class="k-icon k-i-plus"></span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Nội dung</label>
+                                        </td>
+                                        <td colspan="1" style="width: 80%;">
+                                            <app-sms-template-content [textareaLength]="textareaLimit"
+                                                [template]="template">
+                                            </app-sms-template-content>
+                                            <p class="color-custom">(Note: Không nhập ký tự đặc biệt hoặc các từ khóa
+                                                quảng cáo)</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckChecked" (change)="checkedTemplateCopy($event)">
+                                                <label class="form-check-label" for="flexCheckChecked">
+                                                    Lưu làm tin mẫu
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
+                                            <input type="text" class="form-control" formControlName="templateName">
+                                            <span class="text-danger" *ngIf="formGroup.controls.templateName.value==''">
+                                                Nhập tiêu đề tin nhắn mẫu
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
-
                     </tbody>
                 </table>
+            </div>
+            <div>
+                <div class="btns">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">Lưu</button>
+                </div>
             </div>
         </div>
     </div>

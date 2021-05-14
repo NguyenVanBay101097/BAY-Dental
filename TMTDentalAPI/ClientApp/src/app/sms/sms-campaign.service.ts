@@ -29,7 +29,7 @@ export class SmsAccountPaged {
 @Injectable({
     providedIn: 'root'
 })
-export default class SmsAccountService {
+export default class SmsCampaignService {
 
     apiUrl: string = 'api/SmsCampaigns';
     constructor(@Inject('BASE_API') private base_api: string, private http: HttpClient) { }
@@ -42,8 +42,12 @@ export default class SmsAccountService {
         return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
     }
 
-    get(provider: string) {
-        return this.http.get(this.base_api + this.apiUrl, { params: new HttpParams().set('provider', provider) })
+    getDefaultCampaignAppointmentReminder() {
+        return this.http.get(this.base_api + this.apiUrl +'/GetDefaultCampaignAppointmentReminder')
+    }
+
+    getDefaultCampaignBirthday() {
+        return this.http.get(this.base_api + this.apiUrl +'/GetDefaultCampaignBirthday')
     }
 
     getPaged(val: any) {

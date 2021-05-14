@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
@@ -20,7 +22,8 @@ export class SmsAppointmentFormManualComponent implements OnInit {
   isRowSelected: any[];
   search: string = '';
   selectedIds: string[] = [];
-
+  searchUpdate = new Subject<string>();
+  
   constructor(
     private modalService: NgbModal,
     private partnerService: PartnerService,
@@ -29,6 +32,14 @@ export class SmsAppointmentFormManualComponent implements OnInit {
 
   ngOnInit() {
     this.loadDataFromApi();
+
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe((value) => {
+        this.skip = 0;
+        this.loadDataFromApi();
+      });
   }
 
   loadDataFromApi() {
