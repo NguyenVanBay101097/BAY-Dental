@@ -130,8 +130,15 @@
                                             <table>
                                                 <tbody>
                                                     <tr>
-                                                        <td>Số lần áp dụng</td>
-                                                        <td><input type="text" class="form-control" formControlName="maximumUseNumber"></td>
+                                                        <td>
+                                                            Số lần áp dụng
+                                                            <span class="text-primary" placement="right" ngbTooltip="Số lượng phiếu điều trị được áp dụng mã khuyễn mãi. 0 thì áp dụng không giới hạn">
+                                                            <i class="fas fa-exclamation-circle"></i>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control" formControlName="maximumUseNumber">
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -213,7 +220,12 @@
                                             <table>
                                                 <tbody>
                                                     <tr>
-                                                        <td>Mức giảm tối đa</td>
+                                                        <td>
+                                                            Mức giảm tối đa
+                                                            <span class="text-primary" placement="right" ngbTooltip="Số tiền tối đa có thể giảm">
+                                                                <i class="fas fa-exclamation-circle"></i>
+                                                            </span>
+                                                        </td>
                                                         <td><kendo-numerictextbox [min]="0" [format]="'n0'"
                                                             formControlName="discountMaxAmount">
                                                         </kendo-numerictextbox></td>
@@ -253,13 +265,23 @@
                                                         value="on_order"
                                                         (change)="onChangeOption($event)">
                                                     <label class="custom-control-label o_form_label"
-                                                        for="radio151_on_order">Phiếu điều trị</label>
+                                                        for="radio151_on_order">
+                                                        Phiếu điều trị
+                                                        <span class="text-primary" placement="right" ngbTooltip="KM giảm trên thành tiền phiếu điều trị">
+                                                            <i class="fas fa-exclamation-circle"></i>
+                                                        </span>
+                                                    </label>
                                                 </div>
                                                 <table>
                                                     <tbody>
                                                         <tr [class.d-none]="discountApplyOn != 'on_order'">
                                                             <td>
-                                                                <label>Giá trị phiếu điều trị tối thiểu</label>
+                                                                <label>
+                                                                    Giá trị phiếu điều trị tối thiểu
+                                                                    <span class="text-primary" placement="right" ngbTooltip="Tổng tiền của phiếu điều trị phải đạt giá trị tối thiểu mới được áp dụng khuyến mãi">
+                                                                        <i class="fas fa-exclamation-circle"></i>
+                                                                    </span>
+                                                                </label>
                                                             </td>
                                                             <td>
                                                                 <kendo-numerictextbox [min]="0" [format]="'n0'"
@@ -279,7 +301,12 @@
                                                         id="radio151_specific_product_categories"
                                                         (change)="onChangeOption($event)">
                                                     <label class="custom-control-label o_form_label"
-                                                        for="radio151_specific_product_categories">Nhóm dịch vụ</label>
+                                                        for="radio151_specific_product_categories">
+                                                        Nhóm dịch vụ
+                                                        <span class="text-primary" placement="right" ngbTooltip="KM giảm trên đơn giá nhóm dịch vụ">
+                                                            <i class="fas fa-exclamation-circle"></i>
+                                                        </span>
+                                                    </label>
                                                 </div>
                                                <table>
                                                    <tbody>
@@ -304,7 +331,12 @@
                                                         id="radio151_specific_products"
                                                         (change)="onChangeOption($event)">
                                                     <label class="custom-control-label o_form_label"
-                                                        for="radio151_specific_products">Dịch vụ</label>
+                                                        for="radio151_specific_products">
+                                                        Dịch vụ
+                                                        <span class="text-primary" placement="right" ngbTooltip="KM giảm trên đơn giá dịch vụ">
+                                                            <i class="fas fa-exclamation-circle"></i>
+                                                        </span>
+                                                    </label>
                                                 </div>
                                                 <table>
                                                     <tr [class.d-none]="discountApplyOn != 'specific_products' || ['product', 'free_shipping'].indexOf(rewardType) !== -1">
