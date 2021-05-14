@@ -17,6 +17,7 @@ export class DiscountPricePopoverComponent implements OnInit {
 
   id: string;
   title: string;
+  name: string;
   typeApply: string;
   search: string ='';
   searchUpdate = new Subject<string>();
@@ -52,8 +53,6 @@ export class DiscountPricePopoverComponent implements OnInit {
   }
 
   searchChangeDate(value) {
-    console.log(value);
-    
     this.dateFrom = value.dateFrom;
     this.dateTo = value.dateTo;
     this.skip = 0;
@@ -85,16 +84,17 @@ export class DiscountPricePopoverComponent implements OnInit {
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
     val.searchOrder = this.search || '';
+    val.saleCouponProgramId = this.id;
     this.saleOrderPromotionService.ExportExcelFile(val).subscribe((rs) => {
       let newBlob = new Blob([rs], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      let filename = "danh_sach_khuyen_mai";
+      
       let data = window.URL.createObjectURL(newBlob);
       let link = document.createElement("a");
       link.href = data;
-      link.download = filename;
+      link.download = this.name;
       link.click();
       setTimeout(() => {
         // For Firefox it is necessary to delay revoking the ObjectURL

@@ -96,10 +96,12 @@
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                                                 <input type="radio" class="btn-check" formControlName="promoCodeUsage" id="radio686_no_code_needed" value="no_code_needed" autocomplete="off">
-                                                <label class="btn btn-sm btn-outline-primary button-radio rounded-left" for="radio686_no_code_needed">Tự động</label>
+                                                <label class="btn btn-sm btn-outline-primary button-radio rounded-left" [class.disabled]="active"
+                                                    for="radio686_no_code_needed">Tự động</label>
                                               
                                                 <input type="radio" class="btn-check" formControlName="promoCodeUsage" id="radio686_code_needed" value="code_needed" autocomplete="off">
-                                                <label class="btn btn-sm btn-outline-primary button-radio" for="radio686_code_needed">Mã khuyến mãi</label>
+                                                <label class="btn btn-sm btn-outline-primary button-radio" [class.disabled]="active"
+                                                    for="radio686_code_needed">Mã khuyến mãi</label>
                                             </div>
                                                 <!-- <input class="btn-radio mr-1" type="radio" (change)="onChangePromoCodeUsage()" formControlName="promoCodeUsage"
                                                     value="no_code_needed" id="radio686_no_code_needed">
@@ -161,10 +163,10 @@
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                                                 <input type="radio" class="btn-check" formControlName="discountType" id="radioDiscountFixed" value="fixed_amount" autocomplete="off">
-                                                <label class="btn btn-sm btn-outline-primary button-radio rounded-left" for="radioDiscountFixed">Số tiền</label>
+                                                <label class="btn btn-sm btn-outline-primary button-radio rounded-left" [class.disabled]="active" for="radioDiscountFixed">Số tiền</label>
                                               
                                                 <input type="radio" class="btn-check" formControlName="discountType" id="radioDiscountPercent" value="percentage" autocomplete="off">
-                                                <label class="btn btn-sm btn-outline-primary button-radio" for="radioDiscountPercent">Phần trăm</label>
+                                                <label class="btn btn-sm btn-outline-primary button-radio" for="radioDiscountPercent" [class.disabled]="active">Phần trăm</label>
                                             </div>
                                         </td>
                                     </tr>
