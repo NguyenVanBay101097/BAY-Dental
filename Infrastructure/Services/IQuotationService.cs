@@ -25,5 +25,6 @@ namespace Infrastructure.Services
 
         Task _ComputeAmountPromotionToQuotation(IEnumerable<Guid> ids);
         Task<QuotationPrintVM> Print(Guid id);
+        Task Unlink(IEnumerable<Guid> ids);
     }
 }

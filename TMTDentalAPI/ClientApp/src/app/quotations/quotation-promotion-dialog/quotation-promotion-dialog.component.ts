@@ -77,18 +77,11 @@ export class QuotationPromotionDialogComponent implements OnInit {
   }
 
   onDeletePromotion(item) {
-    let modalRef = this.modelService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-    modalRef.componentInstance.title = "Xóa ưu đãi";
-    modalRef.componentInstance.body = `Bạn có muốn xóa ưu đãi ${item.name}?`
-    modalRef.result.then(() => {
-      this.quotationPromotionService.removePromotion([item.id]).subscribe(res => {
-        this.notificationService.notify('success', 'Thành công!');
-        this.updateSubject.next(true);
-        this.isChange = true;
-
-      })
-    }, () => {
-    });
+    this.quotationPromotionService.removePromotion([item.id]).subscribe(res => {
+      this.notificationService.notify('success', 'Thành công!');
+      this.updateSubject.next(true);
+      this.isChange = true;
+    })
   }
 
   applyPromotion(item) {
@@ -110,7 +103,7 @@ export class QuotationPromotionDialogComponent implements OnInit {
     this.updateSubject.next(true);
     this.isChange = true;
   }
-  getApplied(item) {// item is salecouponprogram
+  getApplied(item) {
     var index = this.quotation.promotions.findIndex(x => x.saleCouponProgramId == item.id);
     return index >= 0 ? this.quotation.promotions[index] : null;
   }

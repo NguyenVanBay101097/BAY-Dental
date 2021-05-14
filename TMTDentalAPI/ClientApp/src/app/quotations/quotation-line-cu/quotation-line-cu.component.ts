@@ -21,7 +21,7 @@ export class QuotationLineCuComponent implements OnInit {
   @Output() onCancelEvent = new EventEmitter<any>();
   @Output() onUpdateOpenPromotionEvent = new EventEmitter<any>();
 
-
+  submitted: boolean = false;
   isEditting: boolean = false;
   filteredEmployeesDoctor: any[] = [];
   filteredEmployeesAssistant: any[] = [];
@@ -49,14 +49,12 @@ export class QuotationLineCuComponent implements OnInit {
 
   ngOnInit() {
     this.formGroupInfo = this.fb.group(this.line);
-    // this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
     this.formGroupInfo.setControl("teeth", this.fb.array(this.line.teeth));
     this.formGroupInfo.setControl("promotions", this.fb.array(this.line.promotions));
-    // if (this.line.teeth) {
-    //   this.line.teeth.forEach((tooth) => {
-    //     this.TeethFA.push(this.fb.group(tooth));
-    //   });
-    // }
+    this.formGroupInfo.get("qty").setValidators(Validators.required);
+    this.formGroupInfo.updateValueAndValidity();
+    this.formGroupInfo.get("subPrice").setValidators(Validators.required);
+    this.formGroupInfo.updateValueAndValidity();
 
     this.loadEmployees();
     this.loadToothCategories();
@@ -70,6 +68,10 @@ export class QuotationLineCuComponent implements OnInit {
 
   formInfoControl(value: string) {
     return this.formGroupInfo.get(value);
+  }
+
+  getValueFormControl(key) {
+    return this.formGroupInfo.get(key).value;
   }
 
   getPriceUnitLinePromotion(line) {
@@ -233,14 +235,48 @@ export class QuotationLineCuComponent implements OnInit {
   }
 
   onOpenPromotion() {
+    // if (!this.checkValidFormGroup())
+    //   return;
+    // else {
+    //   this.isEditting = false;
+    //   this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
+    // }
+
     this.isEditting = false;
     this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
   }
 
+  // checkValidFormGroup() {
+  //   if (this.formGroupInfo.invalid)
+  //     return false;
+  //   if (this.formInfoControl("toothType").value == "manual" && !this.formInfoControl("teeth").value.length) {
+  //     this.notify("error", "Vui lòng chọn răng");
+  //     return false;
+  //   }
+  //   return true;
+  // }
+
   updateLineInfo() {
-    this.isEditting = false;
-    var value = this.formGroupInfo.value;
-    this.onUpdateEvent.emit(value);
+    this.submitted = true;
+
+    // if (!this.checkValidFormGroup())
+    //   return;
+    // else {
+    //   this.isEditting = false;
+    //   var value = this.formGroupInfo.value;
+    //   this.onUpdateEvent.emit(value);
+    // }
+    if (this.formInfoControl("toothType").value == "manual" && !this.formInfoControl("teeth").value.length) {
+      this.notify("error", "Vui lòng chọn răng");
+      this.isEditting = true;
+      return;
+    }
+    else {
+      this.isEditting = false;
+      var value = this.formGroupInfo.value;
+      this.onUpdateEvent.emit(value);
+    }
+    
   }
 
   onCancel() {
@@ -261,10 +297,12 @@ export class QuotationLineCuComponent implements OnInit {
   onEditLine() {
     this.isEditting = true;
     this.formGroupInfo = this.fb.group(this.line);
-    // this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
     this.formGroupInfo.setControl("teeth", this.fb.array(this.line.teeth));
     this.formGroupInfo.setControl("promotions", this.fb.array(this.line.promotions));
-
+    this.formGroupInfo.get("qty").setValidators(Validators.required);
+    this.formGroupInfo.updateValueAndValidity();
+    this.formGroupInfo.get("subPrice").setValidators(Validators.required);
+    this.formGroupInfo.updateValueAndValidity();
   }
 
   notify(type, content) {

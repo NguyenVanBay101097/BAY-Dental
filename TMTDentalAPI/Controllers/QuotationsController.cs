@@ -119,13 +119,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpPost("[action]")]     
+        public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
-            var model = await _quotationService.GetByIdAsync(id);
-            if (model == null)
-                return NotFound();
-            await _quotationService.DeleteAsync(model);
+            if (ids == null || !ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _quotationService.Unlink(ids);
+            _unitOfWork.Commit();
             return NoContent();
         }
 

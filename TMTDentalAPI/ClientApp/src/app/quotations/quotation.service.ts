@@ -141,8 +141,8 @@ export class QuotationService {
     return this.http.get<QuotationsDisplay>(this.baseApi + this.apiUrl + '/GetDefault/' + partnerId);
   }
 
-  delete(id: string) {
-    return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
+  delete(ids: string[]) {
+    return this.http.post(this.baseApi + this.apiUrl + '/Unlink', ids);
   }
 
   createSaleOrderByQuotation(id: string) {

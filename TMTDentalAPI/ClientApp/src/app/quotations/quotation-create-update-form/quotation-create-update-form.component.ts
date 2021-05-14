@@ -63,6 +63,15 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
 
   isChanged: boolean = false;
+  isPercentType: boolean = false;
+
+  get linesArray() {
+    return this.formGroup.get('lines') as FormArray;
+  }
+
+  get paymentsArray() {
+    return this.formGroup.get('payments') as FormArray;
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -154,7 +163,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     paymentcontrol.clear();
 
     result.payments.forEach(payment => {
-      payment.date = new Date(payment.date);
+      payment.dateObj = new Date(payment.date);
       var g = this.fb.group(payment);
       paymentcontrol.push(g);
     });
@@ -222,14 +231,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       });
     }
     return totalAmount;
-  }
-
-  get linesArray() {
-    return this.formGroup.get('lines') as FormArray;
-  }
-
-  get paymentsArray() {
-    return this.formGroup.get('payments') as FormArray;
   }
 
   getDate(dateQuotation: Date, dateApplies: number) {
@@ -345,7 +346,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       discountPercentType: 'cash',
       amount: 0,
       sequence: 1,
-      date: new Date()
+      dateObj: new Date()
     }
     var paymentGroup = this.fb.group(payment);
     this.paymentsArray.push(paymentGroup);
@@ -354,20 +355,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   deletePayment(index) {
     this.paymentsArray.removeAt(index);
     this.paymentsArray.markAsDirty();
-  }
-
-  computeAmount(payment: FormGroup) {
-    let amount = 0;
-    if (payment.get('discountPercentType').value === 'cash') {
-      amount = payment.get('payment') ? payment.get('payment').value : 0;
-    }
-    else {
-      var percent = payment.get('payment') ? payment.get('payment').value : 0;
-      amount = this.getAmountTotal() * (percent / 100);
-      /////
-    }
-    payment.get('amount').patchValue(amount);
-    return amount;
   }
   //end payment
 
@@ -393,7 +380,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     }
     if (value.payments) {
       value.payments.forEach(pm => {
-        pm.date = this.intlService.formatDate(pm.date, "yyyy-MM-dd");
+        pm.dateObj = this.intlService.formatDate(pm.dateObj, "yyyy-MM-dd");
       });
     }
     return value;
@@ -414,15 +401,20 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     var val = this.getDataFormGroup();
     val.dateQuotation = this.intlService.formatDate(val.dateQuotationObj, 'yyyy-MM-ddTHH:mm:ss');
     val.dateEndQuotation = this.intlService.formatDate(val.dateEndQuotationObj, 'yyyy-MM-ddTHH:mm:ss');
+
+    val.payments.forEach(payment => {
+      payment.date = this.intlService.formatDate(payment.dateObj, 'yyyy-MM-ddTHH:mm:ss');
+    });
+
     if (this.quotationId) {
-      
+
       this.quotationService.update(this.quotationId, val).subscribe(
         () => {
-          this.routeActive();
-          // this.loadRecord();
+          // this.routeActive();
+          this.loadRecord();
           this.notifyService.notify("success", "Cập nhật thành công");
           this.lineSelected = null;
-        },(error)=>{
+        }, (error) => {
           this.loadRecord();
         });
     } else {
@@ -525,7 +517,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     line.employeeId = line.employee ? line.employee.id : null;
     line.assistantId = line.assistant ? line.assistant.id : null;
     line.counselorId = line.counselor ? line.counselor.id : null;
-    // line.qty = (line.teeth && line.teeth.length > 0) ? line.teeth.length : line.qty;
     lineControl.patchValue(line);
 
     lineControl.get('teeth').clear();
@@ -535,9 +526,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     });
 
     lineControl.updateValueAndValidity();
-    //// this.onChangeQuantity(lineControl);
-    // this.computeAmountTotal();
-
     this.lineSelected = null;
   }
 
@@ -553,8 +541,17 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   onUpdateOpenLinePromotion(line, lineControl, i) {
+    // if(line.teeth.length == 0){
+    //   var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+    //   viewChild.updateLineInfo();
+    //   return;
+    // }
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      // var checkValidChild = viewChild.checkValidFormGroup();
+      // if (!checkValidChild)
+      //   return;
+      // else
       viewChild.updateLineInfo();
     }
     if (!this.isChanged) {
@@ -598,22 +595,26 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   onOpenQuotationPromotion() {
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      // var checkValidChild = viewChild.checkValidFormGroup();
+      // if (!checkValidChild)
+      //   return;
+      // else
       viewChild.updateLineInfo();
     }
-
+    
     if (!this.isChanged) {
       this.openQuotationPromotionDialog();
       return;
     }
-
+    
     const val = this.getDataFormGroup();
-
+    
     if (!this.quotationId) {
       this.submitted = true;
       if (!this.formGroup.valid) {
         return false;
       }
-      this.quotationService.create(val).subscribe((result: any) => {
+      this.quotationService.create(val).subscribe(async (result: any) => {
         this.quotationId = result.id;
         this.quotation = result;
         this.quotation.promotions = [];
@@ -621,11 +622,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         this.router.navigate(["/quotations/form"], {
           queryParams: { id: result.id },
         });
-
+        await this.loadRecord();
         this.openQuotationPromotionDialog();
       });
     } else {
-      this.quotationService.update(this.quotationId, val).subscribe((result: any) => {
+      this.quotationService.update(this.quotationId, val).subscribe(async (result: any) => {
+        await this.loadRecord();
         this.openQuotationPromotionDialog();
       });
     }
@@ -680,6 +682,27 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: type, icon: true }
     });
+  }
+
+  onBlurPaymentInput(payment: FormGroup) {
+    this.computeAmount(payment);
+  }
+
+  computeAmount(payment: FormGroup) {
+    let amount = 0;
+    if (payment.get('discountPercentType').value === 'cash') {
+      amount = payment.get('payment') ? payment.get('payment').value : 0;
+    }
+    else {
+      var percent = payment.get('payment') ? payment.get('payment').value : 0;
+      amount = this.getAmountTotal() * (percent / 100);
+
+    }
+    payment.get('amount').patchValue(amount);
+  }
+
+  getValueFormPaymentArray(key, i) {
+    return this.paymentsArray.at(i).get(key).value;
   }
 }
 

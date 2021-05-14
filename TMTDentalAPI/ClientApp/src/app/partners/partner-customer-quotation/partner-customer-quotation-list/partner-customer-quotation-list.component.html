@@ -50,12 +50,12 @@
                     {{dataItem.employee.name}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" field="totalAmount" title="Tổng tiền" width="120">
+            <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" field="totalAmount" class="text-right" title="Tổng tiền" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.totalAmount | number}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" title="Phiếu điều trị" class="text-right" width="120">
+            <kendo-grid-column [headerStyle]="{'color':'black', 'font-weight':'600', 'line-height':'1em'}" title="Phiếu điều trị" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     <a *ngFor="let order of dataItem.orders; let i = index" class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: order.id}">
                             {{order.name}}<span *ngIf="i < dataItem.orders.length -1">, </span>

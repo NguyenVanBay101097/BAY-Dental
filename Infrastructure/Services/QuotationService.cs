@@ -713,5 +713,19 @@ namespace Infrastructure.Services
                 return total_amount;
             return fixed_amount;
         }
+
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+              .Include(x => x.Lines)
+              .Include(x => x.Promotions).ToListAsync();      
+
+            var promotionObj = GetService<IQuotationPromotionService>();
+            var promotionIds = await promotionObj.SearchQuery(x => ids.Contains(x.QuotationId.Value)).Select(x => x.Id).ToListAsync();
+            if (promotionIds.Any())
+                await promotionObj.RemovePromotion(promotionIds);
+
+            await DeleteAsync(self);
+        }
     }
 }

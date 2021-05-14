@@ -97,7 +97,7 @@ export class PartnerCustomerQuotationListComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa báo giá?';
     modalRef.result.then(() => {
       if (item.orders.length == 0) {
-        this.quotationService.delete(item.id).subscribe(
+        this.quotationService.delete([item.id]).subscribe(
           () => {
             this.notify("success", "Xóa thành công");
             this.loadDataFromApi();

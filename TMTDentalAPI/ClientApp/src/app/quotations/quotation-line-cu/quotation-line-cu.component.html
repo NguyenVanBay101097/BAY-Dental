@@ -33,11 +33,17 @@
                                 [ngbPopover]="popContent" [popoverTitle]="popTitle" [autoClose]="'outside'"
                                 ></i>
                             </span>
+                        <div *ngIf="f.subPrice.errors && (f.subPrice.touched || f.subPrice.dirty || submitted)" class="text-danger">
+                            <div *ngIf="f.subPrice.errors.required">Nhập giá</div>
+                        </div>
                     </ng-template>
 
                     <ng-template #popContent let-greeting="greeting">
                         <kendo-numerictextbox style="width:100%;" [format]="'n0'" [spinners]="false" formControlName="subPrice" (valueChange)="onChangeQuantity()">
                         </kendo-numerictextbox>
+                        <!-- <div *ngIf="f.subPrice.errors && (f.subPrice.touched || f.subPrice.dirty || submitted)" class="text-danger">
+                            <div *ngIf="f.subPrice.errors.required">Nhập giá</div>
+                        </div> -->
                     </ng-template>
                     <ng-template #popTitle let-language="language">Giá gốc</ng-template>
                 </div>
@@ -50,6 +56,9 @@
                 <ng-template #elseTemplateQty>
                     <kendo-numerictextbox style="width: 100px;" [format]="'n0'" [min]="0" [spinners]="false" formControlName="qty" (valueChange)="onChangeQuantity($event)">
                     </kendo-numerictextbox>
+                    <div *ngIf="f.qty.errors && (f.qty.touched || f.qty.dirty || submitted)" class="text-danger">
+                        <div *ngIf="f.qty.errors.required">Nhập số lượng</div>
+                    </div>
                 </ng-template>
             </div>
             <!-- thành tiền -->

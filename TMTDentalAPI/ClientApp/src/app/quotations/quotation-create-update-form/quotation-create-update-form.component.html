@@ -112,7 +112,6 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <!-- <input type="text" class="form-control" formControlName='dateEndQuotation' disabled> -->
                                     <kendo-datepicker formControlName='dateEndQuotationObj' [disabled]="true">
                                     </kendo-datepicker>
                                 </td>
@@ -190,22 +189,6 @@
                     </div>
                 </div>
             </div>
-            <!-- 
-            <div class="w-100 h-100">
-
-                <div class="d-flex overflow-auto w-100">
-                    <div class="mt-3">
-                        <div class="float-right">
-                            <table class="table-border table-text-right mr-4 table-payment-result">
-                                <tr>
-                                    <td>Tổng tiền</td>
-                                    <td>{{getAmountTotal() | number}}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
             <div class="w-100 mt-2">
                 <h5>TIẾN ĐỘ THANH TOÁN</h5>
                 <table class="table table-sm mt-2 table-bordered table-striped  table-tbody-ver-align-middle border-bottom">
@@ -213,34 +196,38 @@
                         <tr>
                             <th>Tiến độ</th>
                             <th>Thanh toán</th>
-                            <th>Hình thức thanh toán</th>
                             <th>Ngày thanh toán</th>
                             <th>Số tiền thanh toán</th>
                             <th class="text-center">#</th>
                         </tr>
                     </thead>
                     <tbody formArrayName="payments" *ngIf="paymentsArray">
-                        <ng-container *ngFor="let payment of paymentsArray.controls; let i = index;">
+                        <ng-container *ngFor="let payment_item of paymentsArray.controls; let i = index;">
                             <tr [formGroupName]="i">
                                 <td class="text-right">
                                     {{i + 1}}
                                 </td>
-                                <td>
-                                    <kendo-numerictextbox class="form-control" [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="payment">
+                                <td class="d-flex">
+                                    <kendo-numerictextbox class="form-control" [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="payment" (valueChange)="onBlurPaymentInput(payment_item)">
                                     </kendo-numerictextbox>
+                                    <div class="mt-1 ml-2 d-flex">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" [hidden]="true" type="radio" formControlName="discountPercentType" (change)="computeAmount(payment_item)" [id]="'cash-' + i" value="cash">
+                                            <label class="form-check-label btn btn-outline-primary" [class.active]="getValueFormPaymentArray('discountPercentType', i) == 'cash'" [for]="'cash-' + i">VNĐ</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" [hidden]="true" type="radio" formControlName="discountPercentType" (change)="computeAmount(payment_item)" [id]="'percent-' + i" value="percent">
+                                            <label class="form-check-label btn btn-outline-primary" [class.active]="getValueFormPaymentArray('discountPercentType', i) == 'percent'" [for]="'percent-' + i">%</label>
+                                        </div>
+                                    </div>
                                 </td>
+
                                 <td>
-                                    <select formControlName="discountPercentType" class="form-control">
-                                        <option value="cash">Tiền mặt</option>
-                                        <option value="percent">Phần trăm</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <kendo-datepicker class="form-control" formControlName='date'>
+                                    <kendo-datepicker class="form-control" formControlName='dateObj'>
                                     </kendo-datepicker>
                                 </td>
                                 <td>
-                                    <span class="float-right">{{computeAmount(payment)|number}}</span>
+                                    <span class="float-right">{{getValueFormPaymentArray('amount', i) | number}}</span>
                                 </td>
                                 <td class="text-center">
                                     <i class="fas fa-trash" (click)="deletePayment(i)"></i>
