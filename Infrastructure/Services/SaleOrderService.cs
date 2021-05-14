@@ -109,7 +109,6 @@ namespace Infrastructure.Services
                     }
                 }
 
-
                 lines.Add(saleLine);
             }
 

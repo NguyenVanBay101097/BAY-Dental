@@ -453,10 +453,6 @@ namespace Infrastructure.Services
                     await moveObj.Unlink(invoiceIds);
                 }
 
-                //xóa hết commission
-                var commissionSettlements = await commissionSettlementObj.SearchQuery(x => orderLineIds.Contains(x.SaleOrderLineId.Value)).ToListAsync();
-                await commissionSettlementObj.DeleteAsync(commissionSettlements);
-
                 //recompute lại phiếu điều trị
                 saleLineObj._GetInvoiceAmount(order.OrderLines);
                 orderObj._AmountAll(order);

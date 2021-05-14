@@ -53,22 +53,16 @@ namespace Infrastructure.Services
                 return null;
 
             var partnerCommissionObj = GetService<ISaleOrderLinePartnerCommissionService>();
-            var partnerCommission = await partnerCommissionObj.SearchQuery(x => x.SaleOrderLineId == linePaymentRel.SaleOrderLineId && x.CommissionId == employee.CommissionId && x.PartnerId == user.PartnerId).FirstOrDefaultAsync();
+            var partnerCommission = await partnerCommissionObj.SearchQuery(x => x.SaleOrderLineId == linePaymentRel.SaleOrderLineId && x.CommissionId == employee.CommissionId).FirstOrDefaultAsync();
             if (partnerCommission == null)
                 return null;
 
             var res = new CommissionSettlement
             {
-                Partner = user.Partner,
-                PartnerId = user.PartnerId,
+
                 Employee = employee,
                 EmployeeId = employee.Id,
-                SaleOrderLine = linePaymentRel.SaleOrderLine,
-                SaleOrderLineId = linePaymentRel.SaleOrderLineId,
-                Payment = linePaymentRel.Payment,
-                PaymentId = linePaymentRel.PaymentId,
                 BaseAmount = linePaymentRel.AmountPrepaid,
-                Percentage = partnerCommission.Percentage
             };
 
             return res;
@@ -133,11 +127,9 @@ namespace Infrastructure.Services
                         EmployeeId = employee.Id,
                         TotalAmount = line.AmountResidual,
                         BaseAmount = (line.Product.ListPrice - standard_price),
-                        Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentDoctor,
+                        Percentage = commisstionProductRule_dict[moveLine.ProductId].Percent,
                         MoveLineId = moveLine.Id,
-                        Type = "doctor",
                         ProductId = line.ProductId,
-                        SaleOrderId = line.OrderId,
                         CommissionId = employee.CommissionId
                     });
                 }
@@ -158,11 +150,8 @@ namespace Infrastructure.Services
                         EmployeeId = employee.Id,
                         TotalAmount = line.AmountResidual,
                         BaseAmount = (line.Product.ListPrice - standard_price),
-                        Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentAssistant,
                         MoveLineId = moveLine.Id,
-                        Type = "assistant",
                         ProductId = line.ProductId,
-                        SaleOrderId = line.OrderId,
                         CommissionId = employee.CommissionId
                     });
                 }
@@ -186,11 +175,9 @@ namespace Infrastructure.Services
                         EmployeeId = employee.Id,
                         TotalAmount = line.AmountResidual,
                         BaseAmount = (line.Product.ListPrice - standard_price),
-                        Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentAdvisory,
+                        //Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentAdvisory,
                         MoveLineId = moveLine.Id,
-                        Type = "advisory",
                         ProductId = line.ProductId,
-                        SaleOrderId = line.OrderId,
                         CommissionId = employee.CommissionId
                     });
                 }
@@ -232,9 +219,7 @@ namespace Infrastructure.Services
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
                 query = query.Where(x => x.Date <= val.DateTo);
             }
-
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.SaleOrderLine.CompanyId == val.CompanyId);
+       
 
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
@@ -276,8 +261,6 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= val.DateTo);
             }
 
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.SaleOrderLine.CompanyId == val.CompanyId);
 
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);

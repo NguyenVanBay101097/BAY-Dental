@@ -713,6 +713,8 @@ namespace Infrastructure.Services
             await requestedObj.CreateAsync(toCreateRequested);
         }
 
+
+
         public async Task ApplyDiscountOnOrderLine(ApplyDiscountViewModel val)
         {
             var orderPromotionObj = GetService<ISaleOrderPromotionService>();

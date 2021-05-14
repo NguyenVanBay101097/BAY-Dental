@@ -66,7 +66,7 @@ namespace Infrastructure.Services
 
             var list = await paymentRels.Select(x => x.SaleOrderLineId).ToListAsync();
 
-            var lines = await saleOrderlinePartnerObj.SearchQuery(x => list.Contains(x.SaleOrderLineId)).Include(x => x.Partner).Include(x => x.Commission)
+            var lines = await saleOrderlinePartnerObj.SearchQuery(x => list.Contains(x.SaleOrderLineId)).Include(x => x.Commission)
                 .Include(x => x.SaleOrderLine)
                 .Include("SaleOrderLine.Salesman")
                 .Include("SaleOrderLine.Product")
@@ -81,9 +81,6 @@ namespace Infrastructure.Services
                 ProductName = x.SaleOrderLine.Product.Name,
                 AmountTotal = x.SaleOrderLine.PriceTotal,
                 PrepaidTotal = x.SaleOrderLine.SaleOrderLinePaymentRels.Sum(s => s.AmountPrepaid),
-                PercentCommission = x.Percentage,
-                EstimateTotal = x.Amount ?? 0,
-                CommissionTotal = (x.SaleOrderLine.AmountPaid * x.Percentage) / 100
             }).ToList();
 
             var res2 = res.GroupBy(x => new
@@ -127,7 +124,7 @@ namespace Infrastructure.Services
 
             var list = await paymentRels.Select(x => x.SaleOrderLineId).ToListAsync();
 
-            var lines = await saleOrderlinePartnerObj.SearchQuery(x => list.Contains(x.SaleOrderLineId) && x.SaleOrderLine.SalesmanId == val.UserId).Include(x => x.Partner).Include(x => x.Commission)
+            var lines = await saleOrderlinePartnerObj.SearchQuery(x => list.Contains(x.SaleOrderLineId) && x.SaleOrderLine.SalesmanId == val.UserId).Include(x => x.Commission)
               .Include(x => x.SaleOrderLine)
               .Include("SaleOrderLine.Salesman")
               .Include("SaleOrderLine.Product")
@@ -143,9 +140,6 @@ namespace Infrastructure.Services
                 Date = x.LastUpdated,
                 AmountTotal = x.SaleOrderLine.PriceTotal,
                 PrepaidTotal = x.SaleOrderLine.AmountPaid,
-                PercentCommission = x.Percentage,
-                EstimateTotal = x.Amount ?? 0,
-                CommissionTotal = (x.SaleOrderLine.AmountPaid * x.Percentage) /100, 
             }).OrderByDescending(x => x.Date).ToList();
 
           

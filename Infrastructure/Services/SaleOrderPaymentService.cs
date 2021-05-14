@@ -180,9 +180,12 @@ namespace Infrastructure.Services
             /// truy vấn đủ dữ liệu của saleorder payment
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move)
-                .Include(x => x.Order).ThenInclude(s => s.OrderLines).ThenInclude(c => c.Product)
-                .Include(x => x.Lines).ThenInclude(s => s.SaleOrderLine)
-                .Include(x => x.JournalLines).ThenInclude(s => s.Journal).ThenInclude(s => s.DefaultDebitAccount)
+                .Include(x => x.Order)
+                //.ThenInclude(s => s.OrderLines).ThenInclude(c => c.Product)
+                .Include(x => x.Lines)
+                //.ThenInclude(s => s.SaleOrderLine)
+                .Include(x => x.JournalLines)
+                //.ThenInclude(s => s.Journal).ThenInclude(s => s.DefaultDebitAccount)
                 .ToListAsync();
 
             foreach (var saleOrderPayment in saleOrderPayments)
@@ -220,9 +223,14 @@ namespace Infrastructure.Services
         {
             //param final: if True, refunds will be generated if necessary
             var saleLineObj = GetService<ISaleOrderLineService>();
+            var paymentLineObj = GetService<ISaleOrderPaymentHistoryLineService>();
             // Invoice values.
             var invoice_vals = await _PrepareInvoice(self);
-            foreach (var line in self.Lines)
+            var lines = await paymentLineObj.SearchQuery(x => x.SaleOrderPaymentId == self.Id)
+                .Include(x => x.SaleOrderLine)
+                .ToListAsync();
+
+            foreach (var line in lines)
             {
                 if (line.Amount == 0)
                     continue;
@@ -294,6 +302,16 @@ namespace Infrastructure.Services
                 //SalesmanId = self.SalesmanId
             };
 
+            var saleOrderLine = self.SaleOrderLine;
+            foreach(var agent in saleOrderLine.PartnerCommissions)
+            {
+                res.CommissionSettlements.Add(new CommissionSettlement
+                {
+                    EmployeeId = agent.EmployeeId,
+                    CommissionId = agent.CommissionId
+                });
+            }
+          
             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
 

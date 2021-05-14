@@ -67,6 +67,18 @@ namespace ApplicationCore.Entities
         public Commission Commission { get; set; }
 
         /// <summary>
+        /// kết nối hoa hồng
+        /// </summary>
+        public Guid? AssistantCommissionId { get; set; }
+        public Commission AssistantCommission { get; set; }
+
+        /// <summary>
+        /// kết nối hoa hồng
+        /// </summary>
+        public Guid? CounselorCommissionId { get; set; }
+        public Commission CounselorCommission { get; set; }
+
+        /// <summary>
         /// kết nối người dùng
         /// </summary>
         public string UserId { get; set; }
