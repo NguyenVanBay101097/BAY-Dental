@@ -940,7 +940,7 @@ namespace Infrastructure.Services
 
         public void RecomputePromotionLine(IEnumerable<SaleOrderLine> self)
         {
-            //vong lap
+            //vong lap chi tiet dieu tri
             foreach (var line in self)
             {
                 if (line.Promotions.Any())
@@ -972,9 +972,6 @@ namespace Infrastructure.Services
                 }
             }
 
-            //lay ra nhung uu dai dang ap dung
-
-            //tinh lai so tien promotion
 
 
         }

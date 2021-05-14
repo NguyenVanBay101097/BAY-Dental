@@ -248,7 +248,11 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
                 .Include(x => x.DotKhams)
-                .Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLinePaymentRels).ThenInclude(x => x.Payment)
+                .Include(x => x.OrderLines)
+                .ThenInclude(x => x.PaymentHistoryLines)
+                .Include(x => x.OrderLines)
+                .ThenInclude(x => x.SaleOrderLinePaymentRels)
+                .ThenInclude(x => x.Payment)
                 .ToListAsync();
 
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
@@ -294,7 +298,7 @@ namespace Infrastructure.Services
             {
                 foreach (var line in sale.OrderLines)
                 {
-                    if (line.SaleOrderLinePaymentRels.Any(x => x.Payment.State != "draft" && x.Payment.State != "cancel"))
+                    if (line.PaymentHistoryLines.Any())
                         throw new Exception("Có dịch vụ đã thanh toán, cần hủy những thanh toán trước khi hủy phiếu");
 
                     if (line.State == "cancel")
@@ -313,8 +317,15 @@ namespace Infrastructure.Services
                 saleLineObj._GetToInvoiceAmount(sale.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(sale.OrderLines);
                 await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x => x.Id).ToList());
+                saleLineObj.RecomputePromotionLine(sale.OrderLines);
+                ReComputePromotionOrder(sale);
                 sale.State = "draft";
                 sale.Residual = 0;
+                await UpdateAsync(sale);
+
+                //tính lại tổng tiền ưu đãi saleorderlines
+                saleLineObj._ComputeAmountDiscountTotal(sale.OrderLines);
+                saleLineObj.ComputeAmount(sale.OrderLines);
             }
 
             _GetInvoiced(self);
