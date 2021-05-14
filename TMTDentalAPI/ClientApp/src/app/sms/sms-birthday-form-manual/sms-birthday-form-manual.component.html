@@ -7,6 +7,7 @@
                 </div>
                 <div>
                     <select name="" id="" (change)="selectMonthChange($event)" class="form-control btn-sm">
+                        <option selected><i class="fas fa-filter"></i> Tháng sinh</option>
                         <option [value]="item.value" *ngFor="let item of months">{{item.name}}</option>
                     </select>
                 </div>
