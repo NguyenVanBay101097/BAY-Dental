@@ -370,23 +370,10 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   onActive(active) {
-    if (!active) {
-      const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Ngừng dịch vụ';
-      modalRef.componentInstance.body = 'Bạn chắc chắn muốn ngừng dịch vụ này?';
-      modalRef.result.then(() => {
-        this.saleOrderLineService.patchIsActive(this.line.id, active).subscribe(() => {
-          this.line.isActive = active;
-          this.notify('success', 'Thành công');
-        });
-      });
-    } else {
-
-      this.saleOrderLineService.patchIsActive(this.line.id, active).subscribe(() => {
-        this.line.isActive = active;
-        this.notify('success', 'Thành công');
-      });
-    }
+    this.saleOrderLineService.patchIsActive(this.line.id, active).subscribe(() => {
+      this.line.isActive = active;
+      this.notify('success', 'Thành công');
+    });
 
   }
 

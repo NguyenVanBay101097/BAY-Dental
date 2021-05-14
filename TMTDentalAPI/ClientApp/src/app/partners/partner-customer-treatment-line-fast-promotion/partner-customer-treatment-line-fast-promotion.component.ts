@@ -6,7 +6,6 @@ import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleCouponProgramDisplay, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import { SaleOrderPromotionSave, SaleOrderPromotionService } from 'src/app/sale-orders/sale-order-promotion.service';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
@@ -170,14 +169,8 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
   }
 
   onDeletePromotion(item) {
+    this.popPromotion(item);
 
-    let modalRef = this.modelService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-    modalRef.componentInstance.title = "Xóa ưu đãi";
-    modalRef.componentInstance.body = `Bạn có muốn xóa ưu đãi ${item.name}?`
-    modalRef.result.then(() => {
-      this.popPromotion(item);
-    }, () => {
-    });
   }
 
   onClose() {
