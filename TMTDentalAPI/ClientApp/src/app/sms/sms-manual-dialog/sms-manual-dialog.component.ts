@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import SmsAccountService, { SmsAccountPaged } from '../sms-account.service';
+import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
 import { SmsComposerService } from '../sms-composer.service';
 import { SmsMessageService } from '../sms-message.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
@@ -28,6 +29,7 @@ export class SmsManualDialogComponent implements OnInit {
   submitted = false;
   isBirthDayManual: false;
   isAppointmentReminder: false;
+  isTemplateCopy = false;
   template: any = {
     templateType: 'text',
     text: ''
@@ -51,6 +53,7 @@ export class SmsManualDialogComponent implements OnInit {
       smsAccount: [null, Validators.required],
       typeSend: 'manual',
       name: ['', Validators.required],
+      templateName: ''
     })
 
     this.loadSmsTemplate();
@@ -64,6 +67,8 @@ export class SmsManualDialogComponent implements OnInit {
       this.smsTemplateCbx.loading = false;
     });
 
+
+
     this.smsAccountCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.smsAccountCbx.loading = true)),
@@ -72,6 +77,16 @@ export class SmsManualDialogComponent implements OnInit {
       this.filteredSmsAccount = result;
       this.smsAccountCbx.loading = false;
     });
+
+  }
+
+  checkedTemplateCopy(event) {
+    var check = event.target.checked
+    if (check) {
+      this.isTemplateCopy = true;
+    } else {
+      this.isTemplateCopy = false;
+    }
 
   }
 
@@ -91,7 +106,6 @@ export class SmsManualDialogComponent implements OnInit {
     this.searchSmsTemplate().subscribe(
       (res: any) => {
         this.filteredTemplate = res;
-
       }
     )
   }
@@ -138,11 +152,15 @@ export class SmsManualDialogComponent implements OnInit {
     return this.smsAccountService.getPaged(val);
   }
 
-
   onSave() {
     this.submitted = true;
-    if (this.formGroup.invalid) return false;
+    if (this.formGroup.invalid) {
+      return false
+    };
     var val = this.formGroup.value;
+    if (this.isTemplateCopy && val.templateName == '') {
+      return false
+    };
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.smsTemplateId = val.template ? val.template.id : null;
     val.date = this.intlService.formatDate(new Date(), "yyyy-MM-ddTHH:mm");
@@ -150,16 +168,36 @@ export class SmsManualDialogComponent implements OnInit {
     val.body = JSON.stringify(this.template);
     val.isBirthDayManual = this.isBirthDayManual;
     val.isAppointmentReminder = this.isAppointmentReminder;
-    this.smsMessageService.create(val).subscribe(
-      (res: any) => {
-        this.smsMessageService.actionSendSms(res.id).subscribe(
-          () => {
-            this.notify("gửi tin thành công", true);
-            this.activeModal.close(res);
+
+    const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
+    modalRef.componentInstance.brandName = val.smsAccount.brandName;
+    modalRef.componentInstance.timeSendSms = "Gửi ngay";
+    modalRef.componentInstance.body = this.template ? this.template.text : '';
+    modalRef.componentInstance.numberSms = this.ids ? this.ids.length : 0;
+    modalRef.result.then(() => {
+      this.smsMessageService.create(val).subscribe(
+        (res: any) => {
+          this.smsMessageService.actionSendSms(res.id).subscribe(
+            () => {
+              this.notify("gửi tin thành công", true);
+              this.activeModal.close(res);
+            }
+          )
+          if (this.isTemplateCopy && val.templateName != '') {
+            var valueTemplate = {
+              name: val.templateName,
+              body: val.body
+            }
+            this.smsTemplateService.create(valueTemplate).subscribe(
+              () => {
+                this.loadSmsTemplate();
+              }
+            )
           }
-        )
-      }
-    )
+        }
+      )
+    });
   }
 
   notify(title, isSuccess = true) {

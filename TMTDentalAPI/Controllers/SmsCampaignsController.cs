@@ -50,6 +50,20 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDefaultCampaignBirthday()
+        {
+            var res = await _smsCampaignService.GetDefaultCampaignBirthday();
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDefaultCampaignAppointmentReminder()
+        {
+            var res = await _smsCampaignService.GetDefaultCampaignAppointmentReminder();
+            return Ok(res);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsAccountSave val)
         {

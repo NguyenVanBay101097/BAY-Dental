@@ -36,6 +36,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Number.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State.Equals(val.State));
+            if (val.SmsCampaignId.HasValue)
+                query = query.Where(x => x.SmsMessage.SmsCampaignId.HasValue && x.SmsMessage.SmsCampaignId == val.SmsCampaignId.Value);
             var totalItems = await query.CountAsync();
             var items = await query.Include(x => x.SmsAccount).Include(x => x.Partner).OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).ToListAsync();
             return new PagedResult2<SmsMessageDetailBasic>(totalItems: totalItems, limit: val.Limit, offset: val.Offset)

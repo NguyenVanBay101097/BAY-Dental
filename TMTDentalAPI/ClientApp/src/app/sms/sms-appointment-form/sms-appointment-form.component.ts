@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import SmsCampaignService from '../sms-campaign.service';
 
 @Component({
   selector: 'app-sms-appointment-form',
@@ -7,9 +8,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SmsAppointmentFormComponent implements OnInit {
 
-  constructor() { }
+  campaign: any;
+  constructor(
+    private smsCampaignService: SmsCampaignService
+  ) { }
 
   ngOnInit() {
+    this.loadCampaignBirthday();
   }
 
+  loadCampaignBirthday() {
+    this.smsCampaignService.getDefaultCampaignAppointmentReminder().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
+      }
+    );
+  }
 }

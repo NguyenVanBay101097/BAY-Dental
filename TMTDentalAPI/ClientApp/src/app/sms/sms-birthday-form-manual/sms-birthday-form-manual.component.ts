@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
@@ -21,7 +23,22 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   isRowSelected: any[];
   search: string = '';
   selectedIds: string[] = [];
-
+  month: number;
+  searchUpdate = new Subject<string>();
+  months = [
+    { name: 'Tháng 1', value: 1 },
+    { name: 'Tháng 2', value: 2 },
+    { name: 'Tháng 3', value: 3 },
+    { name: 'Tháng 4', value: 4 },
+    { name: 'Tháng 5', value: 5 },
+    { name: 'Tháng 6', value: 6 },
+    { name: 'Tháng 7', value: 7 },
+    { name: 'Tháng 8', value: 8 },
+    { name: 'Tháng 9', value: 9 },
+    { name: 'Tháng 10', value: 10 },
+    { name: 'Tháng 11', value: 11 },
+    { name: 'Tháng 12', value: 12 },
+  ]
   constructor(
     private partnerService: PartnerService,
     private smsTemplateService: SmsTemplateService,
@@ -31,6 +48,14 @@ export class SmsBirthdayFormManualComponent implements OnInit {
 
   ngOnInit() {
     this.loadDataFromApi();
+
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe((value) => {
+        this.skip = 0;
+        this.loadDataFromApi();
+      });
   }
 
   loadDataFromApi() {
@@ -40,6 +65,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     val.search = this.search || '';
     val.customer = true;
     val.supplier = false;
+    val.month = this.month;
     val.isBirthday = true;
     this.partnerService.getCustomerBirthDay(val)
       .subscribe((res: any[]) => {
@@ -86,4 +112,9 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     });
   }
 
+  selectMonthChange(event) {
+    this.month = event.target.value;
+    this.skip = 0;
+    this.loadDataFromApi();
+  }
 }

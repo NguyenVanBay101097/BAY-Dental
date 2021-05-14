@@ -1998,10 +1998,18 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<PartnerBasic>> GetCustomerBirthDay(PartnerPaged val)
         {
+            var accountMoveLineObj = GetService<IAccountMoveLineService>();
+            var orderLineObj = GetService<ISaleOrderLineService>();
             var query = SearchQuery();
 
             if (val.Customer.HasValue && val.Customer.Value)
                 query = query.Where(x => x.Customer == val.Customer);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Phone.Contains(val.Search));
+
+            if (val.Month.HasValue)
+                query = query.Where(x => x.BirthMonth.HasValue && x.BirthMonth.Value == val.Month.Value);
 
             if (val.IsBirthday.HasValue && val.IsBirthday.Value)
             {
@@ -2009,8 +2017,15 @@ namespace Infrastructure.Services
                 var currentMonth = DateTime.Today.Month;
                 query = query.Where(x => x.BirthDay.HasValue && x.BirthDay.Value == currentDay && x.BirthMonth.HasValue && x.BirthMonth.Value == currentMonth);
             }
+            var partnerIds = await query.Select(x => x.Id).ToListAsync();
+            var dictRevenuePartner = await accountMoveLineObj
+                .SearchQuery(x => x.PartnerId.HasValue && partnerIds.Contains(x.PartnerId.Value))
+                .GroupBy(x => x.PartnerId.Value).Select(x => new RevenueReportResultDetail
+                {
+                    PartnerId = x.Key,
+                    Debit = x.Sum(k => k.Debit),
+                }).ToDictionaryAsync(x => x.PartnerId, x => x.Debit);
 
-            var orderLineObj = GetService<ISaleOrderLineService>();
             var dictPartner = await orderLineObj
                 .SearchQuery(x => x.OrderPartnerId.HasValue)
                 .GroupBy(x => x.OrderPartnerId.Value)
@@ -2033,7 +2048,8 @@ namespace Infrastructure.Services
                 Phone = x.Phone,
                 Address = x.GetAddress(),
                 Gender = x.GetGender(),
-                CountLine = dictPartner.ContainsKey(x.Id) ? dictPartner[x.Id] : 0
+                CountLine = dictPartner.ContainsKey(x.Id) ? dictPartner[x.Id] : 0,
+                Debit = dictRevenuePartner.ContainsKey(x.Id) ? dictRevenuePartner[x.Id] : 0
             }).ToListAsync();
 
             return listPartner;

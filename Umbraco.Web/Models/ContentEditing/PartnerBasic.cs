@@ -77,6 +77,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal Credit { get; set; }
 
+        public decimal? Balance { get; set; }
         public string CompanyName { get; set; }
         public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
         public DateTime? DateCreated { get; set; }
@@ -125,7 +126,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> TagIds { get; set; } = new List<Guid>();
 
         public bool ComputeCreditDebit { get; set; }
-
+        public int? Month { get; set; }
         public bool? Active { get; set; }
         public bool? isBoth { get; set; } // get both customer and supplier
     }

@@ -30,6 +30,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   type: string;
   filteredTemplate: any[];
   textareaLimit: number = 200;
+  isTemplateCopy = false;
   template: any =
     {
       text: '',
@@ -55,6 +56,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
       isBirthdayAutomation: false,
       dateTimeSend: new Date(),
       timeBeforSend: 0,
+      templateName: '',
       type: 'birthday',
     })
     this.loadDataFormApi();
@@ -97,6 +99,16 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
         }
       }
     )
+  }
+
+  checkedTemplateCopy(event) {
+    var check = event.target.checked
+    if (check) {
+      this.isTemplateCopy = true;
+    } else {
+      this.isTemplateCopy = false;
+    }
+
   }
 
   loadAccount() {
@@ -163,7 +175,17 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
         }
       )
     }
-
+    if (this.isTemplateCopy && val.templateName != '') {
+      var valueTemplate = {
+        name: val.templateName,
+        body: val.body
+      }
+      this.smsTemplateService.create(valueTemplate).subscribe(
+        () => {
+          this.loadSmsTemplate();
+        }
+      )
+    }
   }
 
   addTemplate() {

@@ -92,6 +92,7 @@ export class PartnerPaged {
     employee: boolean;
     companyId: string;
     supplier: boolean;
+    month: number;
     active: any = true;
     search: string;
     categoryId: string;

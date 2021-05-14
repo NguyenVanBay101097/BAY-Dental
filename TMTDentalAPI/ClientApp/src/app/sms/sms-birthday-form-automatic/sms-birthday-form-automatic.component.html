@@ -31,8 +31,11 @@
                                         </td>
                                         <td colspan="1" style="width: 80%;">
                                             <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
-                                                [textField]="'name'" formControlName="smsAccount" [filterable]="true"
-                                                #smsAccountCbx [valueField]="'id'">
+                                                [textField]="'brandName'" formControlName="smsAccount"
+                                                [filterable]="true" #smsAccountCbx [valueField]="'id'">
+                                                <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                                    <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
+                                                </ng-template>
                                             </kendo-combobox>
                                         </td>
                                     </tr>
@@ -103,7 +106,25 @@
                                             <app-sms-template-content [textareaLength]="textareaLimit"
                                                 [template]="template">
                                             </app-sms-template-content>
-                                            <p class="color-custom">(Note: Không nhập ký tự đặc biệt hoặc các từ khóa quảng cáo)</p>
+                                            <p class="color-custom">(Note: Không nhập ký tự đặc biệt hoặc các từ khóa
+                                                quảng cáo)</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckChecked" (change)="checkedTemplateCopy($event)">
+                                                <label class="form-check-label" for="flexCheckChecked">
+                                                    Lưu làm tin mẫu
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
+                                            <input type="text" class="form-control" formControlName="templateName">
+                                            <span class="text-danger" *ngIf="formGroup.controls.templateName.value==''">
+                                                Nhập tiêu đề tin nhắn mẫu
+                                            </span>
                                         </td>
                                     </tr>
                                 </table>

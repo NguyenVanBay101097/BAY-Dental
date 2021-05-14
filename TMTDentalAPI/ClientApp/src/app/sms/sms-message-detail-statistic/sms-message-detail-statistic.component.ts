@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -15,11 +16,12 @@ import { SmsTemplateService } from '../sms-template.service';
   styleUrls: ['./sms-message-detail-statistic.component.css']
 })
 export class SmsMessageDetailStatisticComponent implements OnInit {
-
+  title: string;
   gridData: any;
   filteredSMSAccount: any[];
   filteredTemplate: any[];
   skip: number = 0;
+  smsCamapignId: string;
   limit: number = 20;
   isRowSelected: any[];
   search: string = '';
@@ -29,10 +31,12 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     private partnerService: PartnerService,
     private smsMessageDetailService: SmsMessageDetailService,
     private modalService: NgbModal,
+    private activatedRoute: ActivatedRoute,
     private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
+    this.smsCamapignId = this.activatedRoute.snapshot.queryParams.id;
     this.loadDataFromApi();
   }
 
@@ -42,6 +46,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
+    val.smsCampaignId = this.smsCamapignId;
     this.smsMessageDetailService.getPaged(val).pipe(
       map((response: any) =>
       (<GridDataResult>{
@@ -102,7 +107,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     }
 
   }
-  
+
   notify(title, isSuccess = true) {
     this.notificationService.show({
       content: title,
