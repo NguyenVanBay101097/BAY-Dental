@@ -779,7 +779,11 @@ namespace Infrastructure.Services
               .Include(x => x.PromotionLines)
               .Include(x => x.SaleOrderLineInvoice2Rels)
               .FirstOrDefaultAsync();
-            var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+            var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId)
+                .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
+                .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
+                .FirstOrDefaultAsync();
+
             if (program != null)
             {
                 var error_status = await programObj._CheckPromotionApplySaleLine(program, orderLine);
@@ -814,7 +818,10 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
 
             //Chương trình khuyến mãi sử dụng mã
-            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).Include(x => x.DiscountSpecificProducts).FirstOrDefaultAsync();
+            var program = await programObj.SearchQuery(x => x.PromoCode == val.CouponCode)
+                .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
+                .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
+                .FirstOrDefaultAsync();
             if (program != null)
             {
                 var error_status = await programObj._CheckPromotionApplySaleLine(program, orderLine);
@@ -874,7 +881,7 @@ namespace Infrastructure.Services
             var total = line.PriceUnit * line.ProductUOMQty;
             //discount_amount = so luong * don gia da giam * phan tram        
             var discount_amount = (total * (1 - line.Discount / 100)) *
-                ((program.DiscountPercentage ?? 0) / 100);         
+                ((program.DiscountPercentage ?? 0) / 100);
 
             return discount_amount;
         }
@@ -898,12 +905,13 @@ namespace Infrastructure.Services
         {
             var promotionObj = GetService<ISaleOrderPromotionService>();
             var programObj = GetService<ISaleCouponProgramService>();
+            var productObj = GetService<IProductService>();
 
-            if (program.DiscountLineProduct == null)
-            {
-                var productObj = GetService<IProductService>();
-                program.DiscountLineProduct = productObj.GetById(program.DiscountLineProductId);
-            }
+            //if (program.DiscountLineProduct == null)
+            //{
+            //    var productObj = GetService<IProductService>();
+            //    program.DiscountLineProduct = productObj.GetById(program.DiscountLineProductId);
+            //}
 
             if (program.DiscountType == "fixed_amount")
             {
@@ -932,6 +940,15 @@ namespace Infrastructure.Services
 
                     return promotionLine;
                 }
+            }
+            if (program.DiscountApplyOn == "specific_product_categories")
+            {
+                var discount_specific_categ_ids = program.DiscountSpecificProductCategories.Select(x => x.ProductCategoryId).ToList();
+                var tmp = productObj.SearchQuery(x => discount_specific_categ_ids.Contains(x.CategId.Value)).Select(x => x.Id).ToList();
+                var discount_amount = _GetRewardValuesDiscountPercentagePerOrderLine(program, self);
+                var promotionLine = promotionObj.PreparePromotionToOrderLine(self, program, discount_amount);
+
+                return promotionLine;
             }
 
             return new SaleOrderPromotion();
