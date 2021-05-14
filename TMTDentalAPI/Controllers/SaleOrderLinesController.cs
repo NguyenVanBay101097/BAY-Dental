@@ -93,15 +93,15 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPost("[action]")]     
+        [HttpPost("[action]")]
         public async Task<IActionResult> ApplyPromotion(ApplyPromotionRequest val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-           var res =  await _saleLineService.ApplyPromotionOnOrderLine(val);
+            await _saleLineService.ApplyPromotionOnOrderLine(val);
             _unitOfWork.Commit();
-            return Ok(res);
+            return NoContent();
         }
 
         [HttpPatch("{id}/[action]")]
@@ -145,9 +145,9 @@ namespace TMTDentalAPI.Controllers
 
             if (val.HasAnyLabo.HasValue)
             {
-                 if (!val.HasAnyLabo.Value)
+                if (!val.HasAnyLabo.Value)
                     query = query.Where(x => !x.Labos.Any());
-                 else
+                else
                     query = query.Where(x => x.Labos.Any());
             }
 

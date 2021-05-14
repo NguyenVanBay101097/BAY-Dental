@@ -86,6 +86,36 @@ namespace Infrastructure.Services
 
         }
 
+
+        //public override Task<IEnumerable<CommissionSettlement>> CreateAsync(IEnumerable<CommissionSettlement> entities)
+        //{
+        //    // tạo (AccountMove -> AccountMoveLine -> add Settlement), lấy ra list sett
+        //    ComputeAmount(entities);
+        //    return base.CreateAsync(entities);
+        //}
+
+        //public IEnumerable<CommissionSettlement> ComputeAmount(IEnumerable<CommissionSettlement> self)
+        //{
+        //    foreach (var item in self)
+        //    {
+        //        //Lấy ra số tiền thanh toán dựa trên AccountMoveLine
+
+        //        //Lấy ra tổng tiền vốn = số lượng * giá vốn SaleOrderLine
+
+        //        //Tính tổng thanh toán của các lần thanh toán trước dựa vào SaleOrderLine có list AccountMoveLines
+        //        //Tính tổng lợi nhuận từ các lần thanh toán trước
+
+        //        //Tính ra số tiền lợi nhuận = số tiền thanh toán + tổng thanh toán các lần trước - tổng tiền vốn - tổng lợi nhuận của các lần thanh toán trước
+
+
+        //        //item.Amount = ???;
+        //        //var amount = item.BaseAmount * amountPayment / item.TotalAmount;
+        //        //item.Amount = Math.Abs((decimal)((amount * item.Percentage.Value) / 100));
+        //    }
+        //    return self;
+
+        //}
+
         public async Task Unlink(IEnumerable<Guid> moveLineIds)
         {
             var res = await SearchQuery(x => moveLineIds.Contains(x.MoveLineId.Value)).ToListAsync();

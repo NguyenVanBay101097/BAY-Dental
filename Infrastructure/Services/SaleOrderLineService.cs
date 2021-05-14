@@ -767,7 +767,7 @@ namespace Infrastructure.Services
             await orderObj.UpdateAsync(orderLine.Order);
         }
 
-        public async Task<SaleCouponProgramResponse> ApplyPromotionOnOrderLine(ApplyPromotionRequest val)
+        public async Task ApplyPromotionOnOrderLine(ApplyPromotionRequest val)
         {
             var programObj = GetService<ISaleCouponProgramService>();
             var couponObj = GetService<ISaleCouponService>();
@@ -790,15 +790,14 @@ namespace Infrastructure.Services
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
                     await _CreateRewardLine(orderLine, program);
-                    return new SaleCouponProgramResponse { Error = null, Success = true, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
+                    
                 }
                 else
-                    return new SaleCouponProgramResponse { Error = error_status.Error, Success = false, SaleCouponProgram = null };
+                    throw new Exception(error_status.Error);
             }
             else
-            {
-                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };
-
+            {          
+                throw new Exception("Mã chương trình khuyến mãi không tồn tại");
             }
         }
 
@@ -867,7 +866,7 @@ namespace Infrastructure.Services
                 (1 - (program.DiscountPercentage ?? 0) / 100);
             var discount_amount = (line.PriceUnit - price_reduce) * line.ProductUOMQty;
 
-            if (program.DiscountMaxAmount.HasValue)
+            if (program.DiscountMaxAmount.HasValue && program.DiscountMaxAmount.Value > 0)
             {
                 if (discount_amount >= program.DiscountMaxAmount)
                     discount_amount = program.DiscountMaxAmount.Value;
@@ -957,7 +956,7 @@ namespace Infrastructure.Services
 
         public void RecomputePromotionLine(IEnumerable<SaleOrderLine> self)
         {
-            //vong lap
+            //vong lap chi tiet dieu tri
             foreach (var line in self)
             {
                 if (line.Promotions.Any())
@@ -989,9 +988,6 @@ namespace Infrastructure.Services
                 }
             }
 
-            //lay ra nhung uu dai dang ap dung
-
-            //tinh lai so tien promotion
 
 
         }
