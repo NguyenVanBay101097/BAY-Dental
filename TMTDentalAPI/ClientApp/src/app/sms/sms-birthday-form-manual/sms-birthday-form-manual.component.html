@@ -2,14 +2,14 @@
     <div class="o_control_panel">
         <div class="o_cp_left">
             <div class="o_cp_buttons d-flex">
-                <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSend()">Gửi tin</button>
-                </div>
                 <div>
                     <select name="" id="" (change)="selectMonthChange($event)" class="form-control btn-sm">
                         <option selected><i class="fas fa-filter"></i> Tháng sinh</option>
                         <option [value]="item.value" *ngFor="let item of months">{{item.name}}</option>
                     </select>
+                </div>
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm ml-2" (click)="onSend()">Gửi tin</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -17,23 +17,20 @@
         </div>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên" [(ngModel)]="search"
-                    (ngModelChange)="this.searchUpdate.next($event)" />
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
             </div>
         </div>
     </div>
 </div>
 
 
-<kendo-grid [data]="gridData" [selectable]="true" [resizable]="true" (pageChange)="pageChange($event)" [skip]="skip"
-    [pageable]="true" [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+<kendo-grid [data]="gridData" [selectable]="true" [resizable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true" [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
     <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
     <kendo-grid-column field="name" title="Họ tên" width="200"></kendo-grid-column>
     <kendo-grid-column field="phone" title="Điện thoại" width="120"></kendo-grid-column>
     <kendo-grid-column field="dateOfBirth" title="Ngày sinh" width="120"></kendo-grid-column>
     <kendo-grid-column field="age" title="Tuổi" width="60"></kendo-grid-column>
     <kendo-grid-column field="gender" title="Giới tính" width="120"></kendo-grid-column>
-    <kendo-grid-column field="address" title="Địa chỉ" width="300"></kendo-grid-column>
     <kendo-grid-column field="countLine" title="Số dịch vụ" width="120"></kendo-grid-column>
     <kendo-grid-column title="Doanh thu" class="text-right" width="120">
         <ng-template kendoGridCellTemplate let-dataItem>

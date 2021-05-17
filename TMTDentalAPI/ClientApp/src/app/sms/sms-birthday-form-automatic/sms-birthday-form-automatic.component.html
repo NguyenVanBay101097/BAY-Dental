@@ -30,9 +30,7 @@
                                             </label>
                                         </td>
                                         <td colspan="1" style="width: 80%;">
-                                            <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
-                                                [textField]="'brandName'" formControlName="smsAccount"
-                                                [filterable]="true" #smsAccountCbx [valueField]="'id'">
+                                            <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus [textField]="'brandName'" formControlName="smsAccount" [filterable]="true" #smsAccountCbx [valueField]="'id'">
                                                 <ng-template kendoComboBoxItemTemplate let-dataItem>
                                                     <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
                                                 </ng-template>
@@ -42,20 +40,10 @@
                                     <tr>
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label o_form_label_help">
-                                                Thời điểm gửi tin
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 80%;">
-                                            <kendo-timepicker formControlName="dateTimeSend"></kendo-timepicker>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help">
                                                 Thời gian gửi tin
                                             </label>
                                         </td>
-                                        <td colspan="1" class="d-flex tr-send" style="width: 80%;">
+                                        <td colspan="1" class="d-flex tr-send" style="width: 100%;">
                                             <select formControlName="timeBeforSend" class="form-control">
                                                 <option class="form-control" value="0">0 Ngày trước ngày sinh nhật
                                                 </option>
@@ -70,6 +58,16 @@
                                                 <option class="form-control" value="5">5 Ngày trước ngày sinh nhật
                                                 </option>
                                             </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help">
+                                                Thời điểm gửi tin
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <kendo-timepicker formControlName="dateTimeSend"></kendo-timepicker>
                                         </td>
                                     </tr>
                                 </table>
@@ -89,9 +87,7 @@
                                             </label>
                                         </td>
                                         <td colspan="1" class="d-flex" style="width: 80%;">
-                                            <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
-                                                formControlName="template" [filterable]="true" #smsTemplateCbx
-                                                (valueChange)="onChangeTemplate($event)" [valueField]="'id'">
+                                            <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'" formControlName="template" [filterable]="true" #smsTemplateCbx (valueChange)="onChangeTemplate($event)" [valueField]="'id'">
                                             </kendo-combobox>
                                             <a class="btn btn-sm btn-light" (click)="addTemplate()">
                                                 <span class="k-icon k-i-plus"></span>
@@ -103,18 +99,15 @@
                                             <label class="o_form_label">Nội dung</label>
                                         </td>
                                         <td colspan="1" style="width: 80%;">
-                                            <app-sms-template-content [textareaLength]="textareaLimit"
-                                                [template]="template">
+                                            <app-sms-template-content [textareaLength]="textareaLimit" [template]="template">
                                             </app-sms-template-content>
-                                            <p class="color-custom">(Note: Không nhập ký tự đặc biệt hoặc các từ khóa
-                                                quảng cáo)</p>
+                                            <p class="color-custom">(Note: Không nhập ký tự đặc biệt hoặc các từ khóa quảng cáo)</p>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value=""
-                                                    id="flexCheckChecked" (change)="checkedTemplateCopy($event)">
+                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" (change)="checkedTemplateCopy($event)">
                                                 <label class="form-check-label" for="flexCheckChecked">
                                                     Lưu làm tin mẫu
                                                 </label>

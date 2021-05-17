@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import SmsCampaignService from '../sms-campaign.service';
+import {SmsCampaignService} from '../sms-campaign.service';
 
 @Component({
   selector: 'app-sms-appointment-form',
