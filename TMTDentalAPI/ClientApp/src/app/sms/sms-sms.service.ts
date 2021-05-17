@@ -6,6 +6,8 @@ export class SmsSmsPaged {
   offset: number;
   search: string;
   state: string;
+  dateFrom: string;
+  dateTo: string;
 }
 
 @Injectable({
@@ -19,6 +21,6 @@ export class SmsSmsService {
   ) { }
 
   getPaged(val) {
-    return this.http.get(this.base_api + this.apiUrl, { params: new HttpParams({fromObject: val}) });
+    return this.http.get(this.base_api + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
 }

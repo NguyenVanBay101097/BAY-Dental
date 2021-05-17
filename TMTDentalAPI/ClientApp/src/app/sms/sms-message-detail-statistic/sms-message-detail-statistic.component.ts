@@ -33,7 +33,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
   loading = false;
   filterStatus = [
     { name: "Thành công", value: "success" },
-    { name: "Thất bại", value: "failure" },
+    { name: "Thất bại", value: "fails" },
   ];
   searchUpdate = new Subject<string>();
   dateFrom: Date;
@@ -44,7 +44,6 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
 
 
   constructor(
-    private partnerService: PartnerService,
     private smsMessageDetailService: SmsMessageDetailService,
     private modalService: NgbModal,
     private activatedRoute: ActivatedRoute,
@@ -160,7 +159,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
 
   onStatusChange(event) {
     this.skip = 0;
-    this.state = event;
+    this.state = event.value;
     this.loadDataFromApi();
   }
 

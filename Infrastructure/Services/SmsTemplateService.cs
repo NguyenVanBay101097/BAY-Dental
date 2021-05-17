@@ -4,6 +4,7 @@ using ApplicationCore.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,13 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
             var totalItems = await query.CountAsync();
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SmsTemplateBasic
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Body = JsonConvert.DeserializeObject<SmsTemplateBody>(x.Body).Text,
+                DateCreated = (DateTime)x.DateCreated
+            }).ToListAsync();
             return new PagedResult2<SmsTemplateBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = _mapper.Map<IEnumerable<SmsTemplateBasic>>(items)
@@ -49,5 +56,6 @@ namespace Infrastructure.Services
 
             return _mapper.Map<IEnumerable<SmsTemplateBasic>>(res);
         }
+
     }
 }

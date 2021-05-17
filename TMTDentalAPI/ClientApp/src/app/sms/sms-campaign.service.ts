@@ -21,7 +21,7 @@ export class SmsCampaignPaged {
 @Injectable({
     providedIn: 'root'
 })
-export default class SmsCampaignService {
+export class SmsCampaignService {
 
     apiUrl: string = 'api/SmsCampaigns';
     constructor(@Inject('BASE_API') private base_api: string, private http: HttpClient) { }

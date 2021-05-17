@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import SmsCampaignService from '../sms-campaign.service';
+import { SmsCampaignService } from '../sms-campaign.service';
 
 @Component({
   selector: 'app-sms-campaign-cr-up',
