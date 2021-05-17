@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { PartnerPaged } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AppointmentPaged } from 'src/app/appointment/appointment';
+import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 
 @Component({
@@ -23,14 +25,21 @@ export class SmsAppointmentFormManualComponent implements OnInit {
   search: string = '';
   selectedIds: string[] = [];
   searchUpdate = new Subject<string>();
-  
+  dateFrom: Date;
+  dateTo: Date;
+  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+
   constructor(
     private modalService: NgbModal,
-    private partnerService: PartnerService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private intlService: IntlService,
+    private appointmentService: AppointmentService
   ) { }
 
   ngOnInit() {
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(
@@ -43,23 +52,36 @@ export class SmsAppointmentFormManualComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    var val = new PartnerPaged();
+    var val = new AppointmentPaged();
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.customer = true;
-    val.supplier = false;
-    this.partnerService.getCustomerAppointments(val)
-      .subscribe((res: any[]) => {
-        this.gridData = res;
-      }, err => {
-        console.log(err);
-      }
-      )
+    val.dateTimeFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    val.dateTimeTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
+
+    this.appointmentService.getPaged(val).pipe(
+      map((response: any) =>
+      (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe((res) => {
+      this.gridData = res;
+    }, err => {
+      console.log(err);
+    }
+    )
   }
 
   pageChange(event) {
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onSearchDateChange(data) {
+    this.dateFrom = data.dateFrom;
+    this.dateTo = data.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 

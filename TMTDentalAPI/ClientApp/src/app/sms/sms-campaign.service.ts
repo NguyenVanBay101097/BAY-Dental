@@ -1,29 +1,21 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 
-export class SmsAccountBasic {
-    constructor() {
-        this.apiKey = '';
-        this.clientId = '';
-        this.clientSecret = '';
-        this.password = '';
-        this.secretkey = '';
-        this.userName = '';
-    }
-    provider: string;
-    brandName: string;
-    clientId: string;
-    clientSecret: string;
-    userName: string;
-    password: string;
-    apiKey: string;
-    secretkey: string;
+export class SmsCampaignBasic {
+    id: string;
+    name: string;
+    typeDate: string;
+    dateStart: string;
+    dateEnd: string;
+    state: string;
+    limitMessage: string;
 }
 
-export class SmsAccountPaged {
+export class SmsCampaignPaged {
     limit: number;
     offset: number;
     search: string;
+    state: string;
 }
 
 @Injectable({
@@ -43,11 +35,11 @@ export default class SmsCampaignService {
     }
 
     getDefaultCampaignAppointmentReminder() {
-        return this.http.get(this.base_api + this.apiUrl +'/GetDefaultCampaignAppointmentReminder')
+        return this.http.get(this.base_api + this.apiUrl + '/GetDefaultCampaignAppointmentReminder')
     }
 
     getDefaultCampaignBirthday() {
-        return this.http.get(this.base_api + this.apiUrl +'/GetDefaultCampaignBirthday')
+        return this.http.get(this.base_api + this.apiUrl + '/GetDefaultCampaignBirthday')
     }
 
     getPaged(val: any) {

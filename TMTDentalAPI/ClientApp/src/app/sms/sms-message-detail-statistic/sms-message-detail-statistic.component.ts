@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { map } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
@@ -29,17 +31,40 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
   search: string = '';
   selectedIds: string[] = [];
   loading = false;
+  filterStatus = [
+    { name: "Thành công", value: "success" },
+    { name: "Thất bại", value: "failure" },
+  ];
+  searchUpdate = new Subject<string>();
+  dateFrom: Date;
+  dateTo: Date;
+  state: string;
+  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+
+
   constructor(
     private partnerService: PartnerService,
     private smsMessageDetailService: SmsMessageDetailService,
     private modalService: NgbModal,
     private activatedRoute: ActivatedRoute,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private intlService: IntlService,
   ) { }
 
   ngOnInit() {
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
     this.smsCamapignId = this.activatedRoute.snapshot.queryParams.id;
     this.loadDataFromApi();
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe((value) => {
+        this.search = value || '';
+        this.skip = 0;
+        this.loadDataFromApi();
+      });
   }
 
   loadDataFromApi() {
@@ -49,6 +74,9 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.smsCampaignId = this.smsCamapignId;
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
+    val.state = this.state ? this.state : '';
     this.smsMessageDetailService.getPaged(val).pipe(
       map((response: any) =>
       (<GridDataResult>{
@@ -93,6 +121,13 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  onSearchDateChange(data) {
+    this.dateFrom = data.dateFrom;
+    this.dateTo = data.dateTo;
+    this.skip = 0;
+    this.loadDataFromApi();
+  }
+
   onSend() {
     if (this.selectedIds.length == 0) {
       this.notify("chưa chọn khách hàng", false);
@@ -123,6 +158,11 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
 
   }
 
+  onStatusChange(event) {
+    this.skip = 0;
+    this.state = event;
+    this.loadDataFromApi();
+  }
 
   notify(title, isSuccess = true) {
     this.notificationService.show({

@@ -11,6 +11,8 @@ namespace Infrastructure.Services
     public interface ISmsCampaignService : IBaseService<SmsCampaign>
     {
         Task<PagedResult2<SmsCampaignBasic>> GetPaged(SmsCampaignPaged val);
+        Task<SmsCampaignBasic> CreateAsync(SmsCampaignSave val);
+        Task UpdateAsync(Guid id, SmsCampaignSave val);
         Task<SmsCampaign> GetDefaultCampaignBirthday();
         Task<SmsCampaign> GetDefaultCampaignAppointmentReminder();
     }
