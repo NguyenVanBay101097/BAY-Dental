@@ -44,9 +44,9 @@ import { SmsComfirmDialogComponent } from './sms-comfirm-dialog/sms-comfirm-dial
     SmsMessageStatisticComponent, 
     SmsMessageDetailStatisticComponent, 
     SmsCampaignListComponent, 
-    SmsCampaignCrUpComponent
+    SmsCampaignCrUpComponent, 
+    SmsComfirmDialogComponent
   ],
-    SmsBirthdayFormComponent, SmsBirthdayFormManualComponent, SmsBirthdayFormAutomaticComponent, SmsAppointmentFormAutomaticComponent, SmsAppointmentFormManualComponent, SmsAppointmentFormComponent, SmsStatisticComponent, SmsManualDialogComponent, SmsAccountListComponent, SmsAccountSettingDialogComponent, SmsMessageDialogComponent, SmsMessageStatisticComponent, SmsMessageDetailStatisticComponent, SmsComfirmDialogComponent],
   imports: [
     CommonModule,
     SmsRoutingModule,
@@ -62,8 +62,7 @@ import { SmsComfirmDialogComponent } from './sms-comfirm-dialog/sms-comfirm-dial
     SmsMessageDialogComponent,
     SmsManualDialogComponent,
     SmsAccountSettingDialogComponent, 
-    SmsCampaignCrUpComponent
-    SmsAccountSettingDialogComponent,
+    SmsCampaignCrUpComponent, 
     SmsComfirmDialogComponent
   ]
 })
