@@ -4,8 +4,10 @@ using ApplicationCore.Models;
 using AutoMapper;
 using Hangfire;
 using Infrastructure.HangfireJobService;
+using Infrastructure.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
@@ -20,10 +22,12 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly AppTenant _tenant;
+        private readonly IConfiguration _configuration;
 
-        public SmsMessageDetailService(ITenant<AppTenant> tenant, IAsyncRepository<SmsMessageDetail> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper) : base(repository, httpContextAccessor)
+        public SmsMessageDetailService(IConfiguration configuration, ITenant<AppTenant> tenant, IAsyncRepository<SmsMessageDetail> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper) : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _configuration = configuration;
             _tenant = tenant?.Value;
         }
 
@@ -49,6 +53,43 @@ namespace Infrastructure.Services
             {
                 Items = _mapper.Map<IEnumerable<SmsMessageDetailBasic>>(items)
             };
+        }
+
+        public async Task ReSendSms(IEnumerable<SmsMessageDetail> details)
+        {
+            var smsSendMessageObj = GetService<ISmsSendMessageService>();
+            var smsAccountObj = GetService<ISmsAccountService>();
+            var hostName = _tenant != null ? _tenant.Hostname : "localhost";
+            await using var context = DbContextHelper.GetCatalogDbContext(hostName, _configuration);
+            await using var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                var dictSmsAccount = await smsAccountObj.SearchQuery().ToDictionaryAsync(x => x.Id, x => x);
+                var smsMessageDetailGroup = details.GroupBy(x => x.SmsAccountId).ToDictionary(x => x.Key, x => x.ToList());
+                foreach (var key in smsMessageDetailGroup.Keys)
+                {
+                    if (dictSmsAccount.ContainsKey(key))
+                    {
+                        var dict = await smsSendMessageObj.SendSMS(smsMessageDetailGroup[key], dictSmsAccount[key], context);
+                        foreach (var item in smsMessageDetailGroup[key])
+                        {
+                            if (dict.ContainsKey(item.Id))
+                            {
+                                item.State = dict[item.Id].Message;
+                                item.ErrorCode = dict[item.Id].CodeResult;
+                                context.Entry(item).State = EntityState.Modified;
+                            }
+                        }
+                        await context.SaveChangesAsync();
+                    }
+                }
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task RunJobSendSms()

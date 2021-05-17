@@ -11,5 +11,6 @@ namespace Infrastructure.Services
     public interface ISmsSendMessageService
     {
         Task CreateSmsMessageDetail(CatalogDbContext context, SmsMessage composer, IEnumerable<Guid> ids, Guid companyId);
+        Task<Dictionary<Guid, ESMSSendMessageResponseModel>> SendSMS(IEnumerable<SmsMessageDetail> lines, SmsAccount account, CatalogDbContext context);
     }
 }

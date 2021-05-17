@@ -25,7 +25,7 @@ export class SmsMessageDetailService {
         return this.http.get(this.base_api + this.apiUrl, { params: val });
     }
 
-    ReSend(id: string) {
-        return this.http.get(this.base_api + this.apiUrl + '/ReSend/' + id);
+    ReSend(ids) {
+        return this.http.post(this.base_api + this.apiUrl + '/ReSend', ids);
     }
 }

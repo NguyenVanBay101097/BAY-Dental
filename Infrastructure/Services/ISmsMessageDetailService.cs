@@ -12,5 +12,6 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<SmsMessageDetailBasic>> GetPaged(SmsMessageDetailPaged val);
         Task RunJobSendSms();
+        Task ReSendSms(IEnumerable<SmsMessageDetail> details);
     }
 }

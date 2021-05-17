@@ -13,6 +13,8 @@ export class SmsComfirmDialogComponent implements OnInit {
   body: string;
   timeSendSms: string;
   numberSms: number;
+  bodyContent: string;
+  bodyNote: string;
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
