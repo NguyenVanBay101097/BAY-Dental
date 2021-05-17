@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -203,12 +204,13 @@ namespace Infrastructure.Services
 
             if (program.PromoCodeUsage == "code_needed" && string.IsNullOrEmpty(program.PromoCode))
             {
-                SaleCouponProgram checkExist = null;
-                do
-                {
-                    program.PromoCode = GeneratePromoCode();
-                    checkExist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == program.PromoCode).FirstOrDefaultAsync();
-                } while (checkExist != null);
+                //SaleCouponProgram checkExist = null;
+                //do
+                //{
+                //    program.PromoCode = GeneratePromoCode();
+                //    checkExist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == program.PromoCode).FirstOrDefaultAsync();
+                //} while (checkExist != null);
+                program.PromoCode = await GeneratePromoCodeIfEmpty();
             }
 
             program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
@@ -245,7 +247,11 @@ namespace Infrastructure.Services
             _CheckDiscountPercentage(program);
             _CheckRuleMinimumAmount(program);
             _CheckRuleMinQuantity(program);
-          
+
+            if (program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode))
+            {
+                await CheckAndUpdatePromoCode(program.PromoCode);
+            }
             await CreateAsync(program);
             await _CheckPromoCodeConstraint(program);
             return program;
@@ -283,12 +289,13 @@ namespace Infrastructure.Services
 
             if (program.PromoCodeUsage == "code_needed" && string.IsNullOrEmpty(program.PromoCode))
             {
-                SaleCouponProgram checkExist = null;
-                do
-                {
-                    program.PromoCode = GeneratePromoCode();
-                    checkExist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == program.PromoCode).FirstOrDefaultAsync();
-                } while (checkExist != null);
+                //SaleCouponProgram checkExist = null;
+                //do
+                //{
+                //    program.PromoCode = GeneratePromoCode();
+                //    checkExist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == program.PromoCode).FirstOrDefaultAsync();
+                //} while (checkExist != null);
+                await GeneratePromoCodeIfEmpty();
             }
 
             program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
@@ -335,7 +342,10 @@ namespace Infrastructure.Services
             _CheckDiscountPercentage(program);
             _CheckRuleMinimumAmount(program);
             _CheckRuleMinQuantity(program);
-           
+            if (program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode))
+            {
+                await CheckAndUpdatePromoCode(program.PromoCode);
+            }
             await UpdateAsync(program);
             await _CheckPromoCodeConstraint(program);
 
@@ -380,8 +390,8 @@ namespace Infrastructure.Services
 
         public async Task _CheckPromoCodeConstraint(SaleCouponProgram self)
         {
-            if (self.PromoCodeUsage == "code_needed" && string.IsNullOrEmpty(self.PromoCode))
-                throw new Exception("Vui lòng nhập mã khuyến mãi!");
+            //if (self.PromoCodeUsage == "code_needed" && string.IsNullOrEmpty(self.PromoCode))
+            //    throw new Exception("Vui lòng nhập mã khuyến mãi!");
             var exist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == self.PromoCode).CountAsync();
             if (exist > 1)
                 throw new Exception("Mã khuyến mãi phải là duy nhất!");
@@ -910,6 +920,35 @@ namespace Infrastructure.Services
             var code = new string(Enumerable.Repeat(chars, 4)
               .Select(s => s[_random.Next(s.Length)]).ToArray()) + month + year;
             return code;
+        }
+
+        private async Task<string> GeneratePromoCodeIfEmpty(string type = "saleCouponPromoCode")
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            return await seqObj.NextByCode(type);
+        }
+
+        private async Task CheckAndUpdatePromoCode(string code)
+        {
+            string pattern = @"^CTKM\d{4}$";
+            Regex rg = new Regex(pattern, RegexOptions.IgnoreCase);
+            Regex rgx = new Regex(@"CTKM");
+            var isMatching = rg.IsMatch(code);
+            if (isMatching)
+            {
+                var m = rg.Match(code);
+                var result = rgx.Split(code, 2, m.Index);
+                var numberCode = result[1];
+                int number = Int32.Parse(numberCode.ToString());
+                var sequenceObj =  GetService<IIRSequenceService>();
+                var sequence = await sequenceObj.SearchQuery(domain: x => x.Code == "saleCouponPromoCode").FirstOrDefaultAsync();
+                if(number > sequence.NumberNext)
+                {
+                    sequence.NumberNext = number + sequence.NumberIncrement;
+                    await sequenceObj.UpdateAsync(sequence);
+                }
+            }
+            
         }
 
     }
