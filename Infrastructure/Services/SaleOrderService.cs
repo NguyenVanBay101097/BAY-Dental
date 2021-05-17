@@ -1182,7 +1182,18 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid id)
         {
             var lineObj = GetService<ISaleOrderLineService>();
-            var res = await _mapper.ProjectTo<SaleOrderLineDisplay>(lineObj.SearchQuery(x => x.OrderId == id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+            var lines = await lineObj.SearchQuery(x => x.OrderId == id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))
+             .Include(x => x.Advisory)
+             .Include(x => x.Assistant)
+             .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
+             .Include(x => x.Product)
+             .Include(x => x.ToothCategory)
+             .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
+             .Include(x => x.Employee)
+             .Include(x => x.Counselor)
+             .Include(x => x.OrderPartner).ToListAsync();
+
+            var res = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
             return res;
         }
 
