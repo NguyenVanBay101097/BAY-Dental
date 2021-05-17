@@ -2,30 +2,42 @@
     <div class="o_control_panel">
         <div class="o_cp_left">
             <div class="o_cp_buttons d-flex">
+                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                </app-tai-date-range-filter-dropdown>
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onSend()">Gửi tin</button>
+                    <button type="button" class="btn btn-primary btn-sm ml-2" (click)="onSend()">Tạo tin nhắn</button>
                 </div>
-                
+
             </div>
             <div class="o_cp_sidebar">
             </div>
         </div>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên" [(ngModel)]="search"
-                    (ngModelChange)="this.searchUpdate.next($event)" />
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
             </div>
         </div>
     </div>
 </div>
 
 
-<kendo-grid [data]="gridData" [selectable]="true" [resizable]="true" (pageChange)="pageChange($event)" [skip]="skip"
-    [pageable]="true" [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+<kendo-grid [data]="gridData" [selectable]="true" [resizable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true" [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
     <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
-    <kendo-grid-column field="name" title="Họ tên" width="300"></kendo-grid-column>
-    <kendo-grid-column field="phone" title="Điện thoại" width="120"></kendo-grid-column>
-    <kendo-grid-column field="appointmnetName" title="Mã lịch hẹn" width="200"></kendo-grid-column>
-    <kendo-grid-column field="time" title="Thời gian" width="120"></kendo-grid-column>
-    <kendo-grid-column field="date" title="Ngày hẹn" width="300"></kendo-grid-column>
+    <kendo-grid-column field="partnerName" title="Khách hàng" width="300"></kendo-grid-column>
+    <kendo-grid-column field="partnerPhone" title="Số Điện thoại" width="120"></kendo-grid-column>
+    <kendo-grid-column title="Giờ hẹn" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <span>{{dataItem.time}}</span>
+            <span>, {{dataItem.date | date:'shortDate'}}</span>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="doctorName" title="Bác sĩ" width="120"></kendo-grid-column>
+    <kendo-grid-column title="Dịch vụ" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <span *ngFor="let service of dataItem.services; let i = index">
+                    {{service.name}}<span *ngIf="i < dataItem.services.length -1">, </span>
+            </span>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="note" title="Nội dung" width="300"></kendo-grid-column>
 </kendo-grid>
