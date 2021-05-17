@@ -34,4 +34,5 @@ export class SaleOrderLineDisplay {
     isActive: boolean;
     promotions: any[];
     amountInvoiced: number;
+    amountDiscountTotal: number;
 }

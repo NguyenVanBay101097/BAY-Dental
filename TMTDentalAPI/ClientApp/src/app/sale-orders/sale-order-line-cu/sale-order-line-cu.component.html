@@ -4,21 +4,17 @@
         <div class="div-row border-left border-right border-top">
             <!-- tên -->
             <div style="width: 200px;" class="div-cell font-weight-600 pl-2">
-                <ng-container *ngIf="!isEditting; else elseTemplateName">
-                    {{line.name}}
-                </ng-container>
-                <ng-template #elseTemplateName>
-                    {{formInfoControl('name').value}}
-                </ng-template>
+                {{line.name}}
             </div>
             <!-- giá -->
             <div style="width: 130px;" class="div-cell text-right ">
-                <div [class.text-danger]="formInfoControl('priceUnit').errors">
+                <div>
                     <ng-container *ngIf="!isEditting; else elseTemplatePriceUnitPro">
                         {{getPriceUnitLinePromotion(line) | number}}
                     </ng-container>
                     <ng-template #elseTemplatePriceUnitPro>
-                        {{getPriceUnitLinePromotion(formGroupInfo.value) | number}}
+                        {{(formInfoControl('priceUnit').value - (line.amountDiscountTotal || 0)) | number}}
+                        <!-- {{getPriceUnitLinePromotion(formGroupInfo.value) | number}} -->
                     </ng-template>
                 </div>
                 <div>
@@ -35,7 +31,7 @@
                     </ng-template>
 
                     <ng-template #popContent let-greeting="greeting">
-                        <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'" [spinners]="false" formControlName="priceUnit" (valueChange)="onChangeQuantity()">
+                        <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'" [spinners]="false" formControlName="priceUnit">
                         </kendo-numerictextbox>
                     </ng-template>
                     <ng-template #popTitle let-language="language">Giá gốc</ng-template>
@@ -47,7 +43,7 @@
                     {{line.productUOMQty | number}}
                 </ng-container>
                 <ng-template #elseTemplateQty>
-                    <kendo-numerictextbox required style="width:100%;" [format]="'n0'" [min]="0" [spinners]="false" formControlName="productUOMQty" (valueChange)="onChangeQuantity()">
+                    <kendo-numerictextbox required style="width:100%;" [format]="'n0'" [min]="0" [spinners]="false" formControlName="productUOMQty">
                     </kendo-numerictextbox>
                     <!-- <input (change)="onChangeQuantity()" type="number" min="0" style="width:100%;" class="form-control" formControlName="productUOMQty"> -->
                 </ng-template>
@@ -56,10 +52,11 @@
             <div style="width: 100px;" class="div-cell text-right">
                 <div>
                     <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
-                        {{line.priceSubTotal | number: '1.0-0'}}
+                        {{line.priceUnit * line.productUOMQty | number: '1.0-0'}}
                     </ng-container>
                     <ng-template #elseTemplatePriceSub>
-                        {{formInfoControl('priceSubTotal').value | number: '1.0-0'}}
+                        {{getPriceSubTotalFormGroup() | number}}
+                        <!-- {{formInfoControl('priceSubTotal').value | number: '1.0-0'}} -->
                     </ng-template>
                 </div>
                 <div>
@@ -235,12 +232,12 @@
             <div class="card-body px-3 py-2">
                 <div class="d-flex">
                     <span>Ưu đãi phiếu điều trị</span>
-                    <span class="ml-auto">{{formInfoControl('amountPromotionToOrder').value | number}}</span>
+                    <span class="ml-auto">{{line.amountPromotionToOrder | number}}</span>
                 </div>
                 <div class="d-flex">
                     <span>Ưu đãi dịch vụ</span>
                     <img *ngIf="line.state != 'done'" (click)="onOpenPromotion()" class="ml-2 pointer" src="../../../assets/icons/promotion-bg-primary.svg" alt="">
-                    <span class="ml-auto">{{formInfoControl('amountPromotionToOrderLine').value | number}}</span>
+                    <span class="ml-auto">{{line.amountPromotionToOrderLine | number}}</span>
                 </div>
             </div>
         </div>

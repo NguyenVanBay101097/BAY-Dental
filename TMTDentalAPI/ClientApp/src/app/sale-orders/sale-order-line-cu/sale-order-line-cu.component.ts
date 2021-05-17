@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { FormArray, FormBuilder, FormGroup } from "@angular/forms";
+import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { EmployeePaged } from "src/app/employees/employee";
 import { EmployeeService } from "src/app/employees/employee.service";
 import { SaleOrderLineDisplay } from "../sale-order-line-display";
@@ -52,6 +52,7 @@ export class SaleOrderLineCuComponent implements OnInit {
     { name: "Chọn răng", value: "manual" },
   ];
   formGroupInfo: FormGroup;
+  submitted = false;
 
   constructor(
     private fb: FormBuilder,
@@ -64,12 +65,12 @@ export class SaleOrderLineCuComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.formGroupInfo = this.fb.group(this.line);
+    this.formGroupInfo = this.fb.group({});
 
-    this.formGroupInfo.setControl('teeth', this.fb.array(this.line.teeth));
-    this.formGroupInfo.setControl('promotions', this.fb.array(this.line.promotions));
+    // this.formGroupInfo.setControl('teeth', this.fb.array(this.line.teeth));
+    // this.formGroupInfo.setControl('promotions', this.fb.array(this.line.promotions));
 
-    this.computeAmount();
+    // this.computeAmount();
 
     this.loadEmployees();
     this.loadToothCategories();
@@ -82,6 +83,13 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   getPriceUnitLinePromotion(line) {
     return line.priceUnit - (line.amountDiscountTotal || 0);
+  }
+
+  getPriceSubTotalFormGroup() {
+    var quantity = this.formGroupInfo.get('productUOMQty').value;
+    var priceUnit = this.formGroupInfo.get('priceUnit').value;
+    var priceReduce = priceUnit - (this.line.amountDiscountTotal || 0);
+    return quantity * priceReduce;
   }
 
   formInfoControl(value: string) {
@@ -99,10 +107,18 @@ export class SaleOrderLineCuComponent implements OnInit {
   onEditLine() {
     this.isEditting = true;
     // this.canEdit = true;
-    this.formGroupInfo = this.fb.group(this.line);
-    this.formGroupInfo.setControl("teeth", this.fb.array(this.line.teeth));
-    this.formGroupInfo.setControl("promotions", this.fb.array(this.line.promotions));
-
+    this.formGroupInfo = this.fb.group({
+      productUOMQty: [this.line.productUOMQty, Validators.required],
+      priceUnit: [this.line.priceUnit, Validators.required],
+      teeth: this.fb.array(this.line.teeth),
+      promotions: this.fb.array(this.line.promotions),
+      toothType: this.line.toothType,
+      toothCategory: this.line.toothCategory,
+      assistant: this.line.assistant,
+      employee: this.line.employee,
+      counselor: this.line.counselor,
+      diagnostic: this.line.diagnostic
+    });
   }
 
   onEmployeeFilter(value) {
@@ -193,7 +209,7 @@ export class SaleOrderLineCuComponent implements OnInit {
       this.formInfoControl("productUOMQty").setValue(quantity);
     }
 
-    this.onChangeQuantity();
+    // this.onChangeQuantity();
   }
 
   onSelected(tooth: ToothDisplay) {
@@ -263,23 +279,23 @@ export class SaleOrderLineCuComponent implements OnInit {
     });
   }
 
-  updateLineInfo(isItseft = false) {
+  updateLineInfo() {
     if(this.formGroupInfo.invalid) {
       return false;
     }
 
-    if(this.formInfoControl('toothType').value == 'manual' && this.formInfoControl('teeth').value.length == 0) {
-      this.notify('error', 'Chọn răng');
-      return false;
-    }
+    // if(this.formInfoControl('toothType').value == 'manual' && this.formInfoControl('teeth').value.length == 0) {
+    //   this.notify('error', 'Chọn răng');
+    //   return false;
+    // }
 
     this.isEditting = false;
     this.onUpdateEvent.emit(this.formGroupInfo.value);
 
-    this.isItSeff = this.isItSeff;
-    if(isItseft) {
-      this.notify('success', 'Cập nhật thành công');
-    }
+    // this.isItSeff = this.isItSeff;
+    // if(isItseft) {
+    //   this.notify('success', 'Cập nhật thành công');
+    // }
     return true;
   }
 

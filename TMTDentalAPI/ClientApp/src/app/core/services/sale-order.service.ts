@@ -67,11 +67,11 @@ export class SaleOrderService {
     }
 
 
-    create(val: SaleOrderDisplay): Observable<SaleOrderDisplay> {
+    create(val: any): Observable<SaleOrderDisplay> {
         return this.http.post<SaleOrderDisplay>(this.baseApi + this.apiUrl, val);
     }
 
-    update(id: string, val: SaleOrderDisplay) {
+    update(id: string, val: any) {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 

@@ -5,7 +5,7 @@
                 <a [routerLink]="['/partners/customer/' + customerId + '/treatment']">Phiếu điều trị</a>
             </li>
             <li class="active">
-                <span *ngIf="saleOrderId">{{saleOrder.name}}</span>
+                <span *ngIf="saleOrderId">{{saleOrder?.name}}</span>
                 <span *ngIf="!saleOrderId">Mới</span>
             </li>
         </ol>
@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<div class="o_content h-100 overflow-hidden">
+<div class="o_content h-100 overflow-hidden" *ngIf="saleOrder">
     <form class="o_form_view h-100" [formGroup]="formGroup">
         <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
             <div class="flex-0-0-auto">
@@ -83,7 +83,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="partner" [routerLink]="['/partners/customer/' + partner.id]">{{partner.displayName}}</a>
+                                    <a *ngIf="saleOrder.partner" [routerLink]="['/partners/customer/' + saleOrder.partner.id]">{{saleOrder.partner.displayName}}</a>
                                 </td>
                             </tr>
                             <!-- <tr>
@@ -184,12 +184,12 @@
                                             <div style="width: 100px;" class="div-cell py-1 text-right">Thành tiền</div>
                                             <div style="width: 100px;" class="div-cell py-1 text-right">Thanh toán</div>
                                             <div style="width: 100px;" class="div-cell py-1 text-right">Còn lại</div>
-                                            <div style="width: 100px;" class="div-cell py-1 text-center" *ngIf="stateControl.value != 'done'">Thao tác</div>
+                                            <div style="width: 100px;" class="div-cell py-1 text-center" *ngIf="saleOrder.state != 'done'">Thao tác</div>
                                         </div>
                                     </div>
                                     <div class="flex-1-1-100 overflow-auto">
-                                        <ng-container *ngFor="let line of orderLines.controls; let i=index">
-                                            <app-sale-order-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)" [line]="line.value" (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)"></app-sale-order-line-cu>
+                                        <ng-container *ngFor="let line of saleOrder.orderLines; let i=index">
+                                            <app-sale-order-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)" [line]="line" (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)"></app-sale-order-line-cu>
                                         </ng-container>
                                     </div>
                                 </div>
@@ -197,7 +197,7 @@
                                     <!-- ưu đãi -->
                                     <div class="card mb-3">
                                         <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">Ưu đãi phiếu điều trị
-                                            <img *ngIf="stateControl.value != 'done'" class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
+                                            <img *ngIf="saleOrder.state != 'done'" class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
                                             <span class="ml-auto">{{sumPromotionSaleOrder() | number}}</span>
                                         </div>
                                         <div class="card-body px-3 py-2">
@@ -216,7 +216,7 @@
                                         <div class="card-body px-3 py-2">
                                             <p class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Thành tiền</label>
-                                                <label class="font-weight-600">{{getAmount() | number}}</label>
+                                                <label class="font-weight-600">{{getAmountSubTotal() | number}}</label>
                                             </p>
                                             <p class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Tổng giảm giá</label>
@@ -224,7 +224,7 @@
                                             </p>
                                             <p class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Tổng tiền</label>
-                                                <label class="font-weight-600">{{getAmountTotal() | number}}</label>
+                                                <label class="font-weight-600">{{getAmountSubTotal() - getTotalDiscount() | number}}</label>
                                             </p>
                                             <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'" class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Thanh toán</label>
