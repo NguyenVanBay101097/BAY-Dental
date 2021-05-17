@@ -29,6 +29,9 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<Commission>(x => x.Name.Contains(val.Search)));
 
+            if(!string.IsNullOrEmpty(val.Type))
+                spec = spec.And(new InitialSpecification<Commission>(x => x.Type == val.Type));
+
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
             var items = await _mapper.ProjectTo<CommissionBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();

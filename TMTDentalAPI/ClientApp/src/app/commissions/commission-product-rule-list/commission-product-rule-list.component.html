@@ -20,9 +20,9 @@
                 <thead>
                     <tr>
                         <th>Tên dịch vụ</th>
-                        <th>Hoa hồng tư vấn</th>
-                        <th>Hoa hồng bác sĩ</th>
-                        <th>Hoa hồng phụ tá</th>
+                        <th>Hoa hồng </th>
+                        <!-- <th>Hoa hồng bác sĩ</th>
+                        <th>Hoa hồng phụ tá</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -31,7 +31,8 @@
                             <td colspan="4" class="font-weight-bold">
                                 <div class="d-flex justify-content-between">
                                     <span>{{ commissionProductRule.categName }}</span>
-                                    <button class="btn btn-sm btn-primary ml-2" (click)="setCommissionCategRule(commissionProductRule)">
+                                    <button class="btn btn-sm btn-primary ml-2"
+                                        (click)="setCommissionCategRule(commissionProductRule)">
                                         Áp dụng cho cả nhóm
                                     </button>
                                 </div>
@@ -45,14 +46,16 @@
                             <td>
                                 <div class="d-flex">
                                     <div class="w-100 mr-2">
-                                        <kendo-numerictextbox class="w-100" #percentAdvisory (blur)="setNumberic(item, 'percentAdvisory',percentAdvisory.value)" 
-                                            [value]="item.percentAdvisory" [format]="'n0'" [min]="0" [max]="100" [autoCorrect]="true" required>
+                                        <kendo-numerictextbox class="w-100" #percent
+                                            (blur)="setNumberic(item,percent.value)"
+                                            [value]="item.percent" [format]="'n0'" [min]="0" [max]="100"
+                                            [autoCorrect]="true" required>
                                         </kendo-numerictextbox>
                                     </div>
                                     <span>%</span>
                                 </div>
                             </td>
-                            <td>
+                            <!-- <td>
                                 <div class="d-flex">
                                     <div class="w-100 mr-2">
                                         <kendo-numerictextbox class="w-100" #percentDoctor (blur)="setNumberic(item, 'percentDoctor', percentDoctor.value)" 
@@ -71,7 +74,7 @@
                                     </div>
                                     <span>%</span>
                                 </div>
-                            </td>
+                            </td> -->
                         </tr>
                     </ng-container>
                 </tbody>

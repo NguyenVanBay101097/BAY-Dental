@@ -9,6 +9,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public string Name { get; set; }
+
+        public string Type { get; set; }
+
         public IEnumerable<CommissionProductRuleDisplay> CommissionProductRules { get; set; } = new List<CommissionProductRuleDisplay>();
 
     }

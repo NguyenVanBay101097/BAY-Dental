@@ -80,6 +80,29 @@ namespace Infrastructure.Services
 
         }
 
+        public override async Task UpdateAsync(IEnumerable<CommissionSettlement> entities)
+        {
+            await ComputeAmount(entities);
+            await base.UpdateAsync(entities);
+        }
+
+        public async Task ComputeAmount(IEnumerable<CommissionSettlement> val)
+        {
+            var commisstionProductRuleObj = GetService<ICommissionProductRuleService>();
+            foreach (var settlement in val)
+            {
+                var percent = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == settlement.CommissionId && x.ProductId == settlement.ProductId).Select(x => x.Percent).FirstOrDefaultAsync();
+                if (percent <= 0)
+                    continue;
+
+                var total = settlement.MoveLine.PriceSubtotal;              
+                settlement.TotalAmount = total;
+                settlement.BaseAmount = total;
+                settlement.Percentage = percent ?? 0;
+                settlement.Amount = ((total * (percent ?? 0)) / 100);
+            }         
+        }
+
         public async Task Unlink(IEnumerable<Guid> moveLineIds)
         {
             var res = await SearchQuery(x => moveLineIds.Contains(x.MoveLineId.Value)).ToListAsync();

@@ -13,6 +13,9 @@
         <li class="nav-item">
             <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-salary" role="tab" aria-controls="pills-contact" aria-selected="false" *appPermission="['Catalog.Employee.Salary.Update']">Thông tin tính lương</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-commission-tab" data-toggle="pill" href="#pills-commission" role="tab" aria-controls="pills-commission" aria-selected="false" *appPermission="['Catalog.Employee.Commission.Update']">Cấu hình hoa hồng</a>
+        </li>
     </ul>
     <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
         <div class="tab-content" id="pills-tabContent">
@@ -317,17 +320,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">
-                                                Bảng hoa hồng
-                                            </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <kendo-combobox [filterable]="true" [data]="listCommissions" [textField]="'name'" #commissionCbx formControlName="commission" [valueField]="'id'">
-                                        </kendo-combobox>
-                                    </td>
-                                </tr>
+                              
                             </tbody>
                         </table>
                         <table class="o_group o_inner_group o_group_col_6 mt-0">
@@ -390,6 +383,55 @@
                                     </td>
                                 </tr>
                             </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="pills-commission" role="tabpanel" aria-labelledby="pills-commission-tab">
+            <div class="o_form_sheet_bg">
+                <div class="o_form_sheet">
+                    <div *appPermission="['Catalog.Employee.Commission.Update']" class="o_group mt-0">
+                        <table class="o_group o_inner_group o_group_col_6 mt-0">
+                            <tbody>                              
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                                 Hoa hồng bác sĩ
+                                            </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-combobox [filterable]="true" [data]="listCommissions" [textField]="'name'" #commissionCbx formControlName="commission" [valueField]="'id'">
+                                        </kendo-combobox>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                                Hoa hồng phụ tá
+                                            </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-combobox [filterable]="true" [data]="listAssistantCommissions" [textField]="'name'" #assistantCommissionCbx formControlName="assistantCommission" [valueField]="'id'">
+                                        </kendo-combobox>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                                Hoa hồng tư vấn
+                                            </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-combobox [filterable]="true" [data]="listCounselorCommissions" [textField]="'name'" #counselorCommissionCbx formControlName="counselorCommission" [valueField]="'id'">
+                                        </kendo-combobox>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group o_group_col_6 mt-0">
+                         
                         </table>
                     </div>
 

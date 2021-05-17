@@ -181,22 +181,20 @@ namespace Infrastructure.Services
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move)
                 .Include(x => x.Order)
-                //.ThenInclude(s => s.OrderLines).ThenInclude(c => c.Product)
                 .Include(x => x.Lines)
-                //.ThenInclude(s => s.SaleOrderLine)
                 .Include(x => x.JournalLines)
-                //.ThenInclude(s => s.Journal).ThenInclude(s => s.DefaultDebitAccount)
                 .ToListAsync();
 
             foreach (var saleOrderPayment in saleOrderPayments)
             {
                 ///ghi sổ doang thu , công nợ lines               
                 var invoice = await _CreateInvoices(saleOrderPayment, final: true);
-                await moveObj.ActionPost(new List<AccountMove>() { invoice });
 
-                ///tạo hoa hồng cho bác sĩ , phụ tá , tư vấn
-                var commissions = await commissionSettlementObj._PrepareCommission(invoice);
-                await commissionSettlementObj.CreateAsync(commissions);
+                ///cập nhật amount hoa hồng cho bác sĩ , phụ tá , tư vấn
+                var settlements = invoice.Lines.SelectMany(x => x.CommissionSettlements).ToList();
+                await commissionSettlementObj.UpdateAsync(settlements);
+
+                await moveObj.ActionPost(new List<AccountMove>() { invoice });
 
                 //tính lại paid , residual saleorder , lines
                 await _ComputeSaleOrder(saleOrderPayment.OrderId);
@@ -227,14 +225,14 @@ namespace Infrastructure.Services
             // Invoice values.
             var invoice_vals = await _PrepareInvoice(self);
             var lines = await paymentLineObj.SearchQuery(x => x.SaleOrderPaymentId == self.Id)
-                .Include(x => x.SaleOrderLine)
+                .Include(x => x.SaleOrderLine).ThenInclude(x => x.Employee)
                 .ToListAsync();
 
             foreach (var line in lines)
             {
                 if (line.Amount == 0)
                     continue;
-                var moveline = _PrepareInvoiceLineAsync(line);
+                var moveline = await _PrepareInvoiceLineAsync(line);
                 invoice_vals.InvoiceLines.Add(moveline);
             }
 
@@ -290,7 +288,7 @@ namespace Infrastructure.Services
             return invoice_vals;
         }
 
-        private AccountMoveLine _PrepareInvoiceLineAsync(SaleOrderPaymentHistoryLine self)
+        private async Task<AccountMoveLine> _PrepareInvoiceLineAsync(SaleOrderPaymentHistoryLine self)
         {
             var res = new AccountMoveLine
             {
@@ -302,16 +300,48 @@ namespace Infrastructure.Services
                 //SalesmanId = self.SalesmanId
             };
 
-            var saleOrderLine = self.SaleOrderLine;
-            foreach(var agent in saleOrderLine.PartnerCommissions)
+            var lineObj = GetService<ISaleOrderLineService>();
+            var saleOrderLine = await lineObj.SearchQuery(x => x.Id == self.SaleOrderLineId).Include(x => x.Employee).Include(x => x.Assistant).Include(x => x.Counselor).FirstOrDefaultAsync();
+
+            var today = DateTime.Today;
+            //add hoa hồng bác sĩ
+            if (saleOrderLine.EmployeeId.HasValue && saleOrderLine.Employee.CommissionId.HasValue)
+            {
+
+                res.CommissionSettlements.Add(new CommissionSettlement
+                {
+                    EmployeeId = saleOrderLine.EmployeeId,
+                    CommissionId = saleOrderLine.Employee.CommissionId,
+                    ProductId = saleOrderLine.ProductId,
+                    Date = today
+                });
+            }
+
+            //add hoa hồng phụ tá
+            if (saleOrderLine.AssistantId.HasValue && saleOrderLine.Assistant.AssistantCommissionId.HasValue)
+            {
+
+                res.CommissionSettlements.Add(new CommissionSettlement
+                {
+                    EmployeeId = saleOrderLine.AssistantId,
+                    CommissionId = saleOrderLine.Assistant.AssistantCommissionId,
+                    ProductId = saleOrderLine.ProductId,
+                    Date = today
+                });
+            }
+
+            //add hoa hồng tư vấn
+            if (saleOrderLine.CounselorId.HasValue && saleOrderLine.Counselor.CounselorCommissionId.HasValue)
             {
                 res.CommissionSettlements.Add(new CommissionSettlement
                 {
-                    EmployeeId = agent.EmployeeId,
-                    CommissionId = agent.CommissionId
+                    EmployeeId = saleOrderLine.CounselorId,
+                    CommissionId = saleOrderLine.Counselor.CounselorCommissionId,
+                    ProductId = saleOrderLine.ProductId,
+                    Date = today
                 });
             }
-          
+
             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
 
@@ -333,7 +363,7 @@ namespace Infrastructure.Services
                     PartnerType = "customer",
                     PaymentDate = self.Date,
                     PaymentType = "inbound",
-                    CompanyId = line.Journal.CompanyId,
+                    CompanyId = self.Order.CompanyId,
                 };
 
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = moveId });
@@ -356,7 +386,7 @@ namespace Infrastructure.Services
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id) && x.State != "cancel")
                 .Include(x => x.Move).ThenInclude(s => s.Lines)
-                .Include(x => x.Order).ThenInclude(s => s.OrderLines)
+                .Include(x => x.Order)
                 .Include(x => x.PaymentRels).ThenInclude(s => s.Payment)
                 .ToListAsync();
 

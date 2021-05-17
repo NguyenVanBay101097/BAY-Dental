@@ -14,24 +14,24 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Hoa hồng tư vấn
+                                        Hoa hồng
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
                                         <div class="w-100 mr-2">
-                                            <kendo-numerictextbox class="form-control" formControlName="percentAdvisory" [format]="'n0'" [min]="0" [autoCorrect]="true" required>
+                                            <kendo-numerictextbox class="form-control" formControlName="percent" [format]="'n0'" [min]="0" [autoCorrect]="true" required>
                                             </kendo-numerictextbox>
-                                            <div *ngIf="f.percentAdvisory.errors && (f.percentAdvisory.touched || f.percentAdvisory.dirty || submitted)"
+                                            <div *ngIf="f.percent.errors && (f.percent.touched || f.percent.dirty || submitted)"
                                                 class="text-danger">
-                                                <div *ngIf="f.percentAdvisory.errors.required">Nhập hoa hồng tư vấn</div>
+                                                <div *ngIf="f.percent.errors.required">Nhập hoa hồng</div>
                                             </div>
                                         </div>
                                         <b>%</b>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Hoa hồng bác sĩ
@@ -70,7 +70,7 @@
                                         <b>%</b>
                                     </div>
                                 </td>
-                            </tr>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>

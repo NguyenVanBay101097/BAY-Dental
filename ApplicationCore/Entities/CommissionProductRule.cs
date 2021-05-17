@@ -29,7 +29,7 @@ namespace ApplicationCore.Entities
         public ProductCategory Categ { get; set; }
 
         /// <summary>
-        /// % hoa hồng bác sĩ
+        /// % hoa hồng 
         /// </summary>
         public decimal? Percent { get; set; }
 

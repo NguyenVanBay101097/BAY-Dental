@@ -587,6 +587,10 @@
             "Permission": "Catalog.Employee.Salary.Update"
           },
           {
+            "Name": "Cấu hình hoa hồng",
+            "Permission": "Catalog.Employee.Commission.Update"
+          },
+          {
             "Name": "Xem",
             "Permission": "Catalog.Employee.Read"
           },

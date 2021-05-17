@@ -114,15 +114,11 @@ export class CommissionProductRuleListComponent implements OnChanges, OnInit {
     modalRef.result.then(res => {
       var items = this.commissionProductRules.filter(x => x.categId === commissionProductRule.categId);
       items.map(function(x) { 
-        x.percentAdvisory = res.percentAdvisory;
-        x.percentAssistant = res.percentAssistant;
-        x.percentDoctor = res.percentDoctor;
+        x.percent = res.percent;       
         return x;
       });
       commissionProductRule.values.forEach(el => {
-        el.percentAdvisory = res.percentAdvisory;
-        el.percentAssistant = res.percentAssistant;
-        el.percentDoctor = res.percentDoctor;
+        el.percent = res.percent;
       });
     }, () => {
     });
@@ -133,9 +129,7 @@ export class CommissionProductRuleListComponent implements OnChanges, OnInit {
     modalRef.componentInstance.title = 'Áp dụng hoa hồng cho tất cả dịch vụ';
     modalRef.result.then(res => {
       this.commissionProductRules.map(function(x) { 
-        x.percentAdvisory = res.percentAdvisory;
-        x.percentAssistant = res.percentAssistant;
-        x.percentDoctor = res.percentDoctor;
+        x.percent = res.percent;
         return x;
       });
       this.commissionProductRules_group = this.group(this.commissionProductRules);
@@ -143,18 +137,19 @@ export class CommissionProductRuleListComponent implements OnChanges, OnInit {
     });
   }
 
-  setNumberic(item, typePercent, percent) {
+  setNumberic(item, percent) {
     var items = this.commissionProductRules.find(x => 
       x.id == item.id && 
       x.categId == item.categId && 
       x.productId == item.productId
     );
-    if (typePercent == "percentAdvisory") {
-      items.percentAdvisory = percent;
-    } else if (typePercent == "percentDoctor") {
-      items.percentDoctor = percent;
-    } else if (typePercent == "percentAssistant") {
-      items.percentAssistant = percent;
-    }
+    items.percent = percent;
+    // if (typePercent == "percentAdvisory") {
+    //   items.percentAdvisory = percent;
+    // } else if (typePercent == "percentDoctor") {
+    //   items.percentDoctor = percent;
+    // } else if (typePercent == "percentAssistant") {
+    //   items.percentAssistant = percent;
+    // }
   }
 }
