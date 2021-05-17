@@ -101,7 +101,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
       var smsMessageDetailIds = [];
       this.selectedIds.forEach(id => {
         var item = this.listMessageDetails.find(x => x.id == id);
-        if (item && item.state == 'fails') {
+        if (item && item.state != 'success') {
           smsMessageDetailIds.push(id);
         }
       });

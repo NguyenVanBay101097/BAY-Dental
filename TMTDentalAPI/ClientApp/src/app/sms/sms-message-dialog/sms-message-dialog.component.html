@@ -5,14 +5,91 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="container o_form_view h-100" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_12">
                         <tbody>
                             <tr>
-                                <td colspan="1" class="o_td_label d-flex mb-2">
+                                <td colspan="2" class="o_td_label">
+                                    <label class="font-weight-bold">Điều kiện gửi tin</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label pl-4">
+                                    <label>Tên tin nhắn</label>
+                                </td>
+                                <td class="w-100">
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label pl-4">
+                                    <label>Chọn chiến dịch</label>
+                                </td>
+                                <td class="w-100">
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label  pl-4">
+                                    <label>Chọn brandname</label>
+                                </td>
+                                <td class="w-100">
+                                    <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus [textField]="'name'"
+                                        formControlName="smsAccount" [filterable]="true" #smsAccountCbx
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label  pl-4">
+                                    <label>Thời gian gửi tin</label>
+                                </td>
+                                <td class="w-100">
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="o_td_label">
+                                    <label class="font-weight-bold">Người nhận</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label pl-4">
+                                    <label>Nội dung tin nhắn</label>
+                                </td>
+                                <td class="w-100">
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="o_td_label">
+                                    <label class="font-weight-bold">Nội dung tin nhắn</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label pl-4">
+                                    <label>Chọn tin nhắn mẫu</label>
+                                </td>
+                                <td class="w-100">
+                                    <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
+                                        formControlName="template" [filterable]="true" #smsTemplateCbx
+                                        (valueChange)="onChangeTemplate($event)" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="o_td_label pl-4">
+                                    <app-sms-template-content [textareaLength]="textareaLimit" [template]="template">
+                                    </app-sms-template-content>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="o_td_label d-flex mb-2">
                                     <div class="form-check mr-2">
                                         <input class="form-check-input" type="checkbox" id="check"
                                             formControlName="isBirthdayAutomation" />

@@ -13,10 +13,10 @@
                     <table class="o_group o_inner_group o_group_col_12">
                         <tbody>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td class="o_td_label">
                                     <label class="o_form_label">Tên chiến dịch</label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">
+                                <td class="w-100">
                                     <input class="form-control" formControlName="name"/>
                                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tên chiến dịch</div>
@@ -24,30 +24,30 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td class="o_td_label">
                                     <label class="o_form_label">Thời gian chạy</label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">
+                                <td class="w-100">
                                     <div>
                                         <input type="radio" class="btn-check" id="unlimited" value="unlimited" formControlName="typeDate" (change)="changeTypeDate()">
                                         <label for="unlimited" class="btn btn-sm rounded-right-0" [ngClass]="getValueFormControl('typeDate') == 'unlimited' ? 'btn-primary' : 'btn-outline-primary'">Vô thời hạn</label>
                                         <input type="radio" class="btn-check" id="period" value="period" formControlName="typeDate" (change)="changeTypeDate()">
                                         <label for="period" class="btn btn-sm rounded-left-0" [ngClass]="getValueFormControl('typeDate') == 'period' ? 'btn-primary' : 'btn-outline-primary'">Khoảng thời gian</label>
                                     </div>
-                                    <div *ngIf="getValueFormControl('typeDate') == 'period'">
+                                    <div class="d-flex align-items-center" *ngIf="getValueFormControl('typeDate') == 'period'">
                                         <kendo-datepicker class="w-fit-content" formControlName="startDateObj">
                                         </kendo-datepicker>
-                                        <span> đến </span>
+                                        <div class="mx-2">đến</div>
                                         <kendo-datepicker class="w-fit-content" formControlName="endDateObj">
                                         </kendo-datepicker>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td class="o_td_label">
                                     <label class="o_form_label">Hạn mức gửi tin</label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">
+                                <td class="w-100">
                                     <div class="d-flex align-items-center">
                                         <kendo-numerictextbox class="w-fit-content" [min]="0" [format]="'n0'"
                                             formControlName="limitMessages">
