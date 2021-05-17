@@ -6,6 +6,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { map } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 import { SmsMessageDetailPaged, SmsMessageDetailService } from '../sms-message-detail.service';
 import { SmsTemplateService } from '../sms-template.service';
@@ -21,6 +22,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
   filteredSMSAccount: any[];
   filteredTemplate: any[];
   skip: number = 0;
+  listMessageDetails: any[];
   smsCamapignId: string;
   limit: number = 20;
   isRowSelected: any[];
@@ -54,10 +56,11 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe((res) => {
-      console.log(res);
-
       this.gridData = res;
       this.loading = false;
+      if (res.data) {
+        this.listMessageDetails = res.data;
+      }
     }, err => {
       console.log(err);
     }
@@ -81,7 +84,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
       case "118":
         return "Loại tin nhắn không hợp lệ";
       default:
-        break;
+        return "Lý do khác";
     }
   }
 
@@ -90,23 +93,36 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  onReSend() {
+  onSend() {
     if (this.selectedIds.length == 0) {
       this.notify("chưa chọn khách hàng", false);
     }
     else {
-      var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
-      modalRef.componentInstance.title = "Tạo tin gửi";
-      modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
-      modalRef.componentInstance.provider = 'res.partner';
+      var smsMessageDetailIds = [];
+      this.selectedIds.forEach(id => {
+        var item = this.listMessageDetails.find(x => x.id == id);
+        if (item && item.state == 'fails') {
+          smsMessageDetailIds.push(id);
+        }
+      });
+      var modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
+      modalRef.componentInstance.title = "Xác nhận gửi lại tin nhắn";
+      modalRef.componentInstance.bodyContent = 'Bạn chắc chắn muốn gửi lại tin nhắn chúc mừng sinh nhật?';
+      modalRef.componentInstance.bodyNote = 'Lưu ý: Hệ thống chỉ gửi lại những tin nhắn đã thất bại';
       modalRef.result.then(
         result => {
-
+          this.smsMessageDetailService.ReSend(smsMessageDetailIds).subscribe(
+            () => {
+              this.loadDataFromApi();
+              this.notify("Gửi tin nhắn thành công", true);
+            }
+          )
         }
       )
     }
 
   }
+
 
   notify(title, isSuccess = true) {
     this.notificationService.show({

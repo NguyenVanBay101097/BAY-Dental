@@ -2,6 +2,7 @@
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,11 +30,20 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ReSend(IEnumerable<Guid> ids)
+        {
+            var details = await _smsMessageDetailService.SearchQuery(x => ids.Contains(x.Id)).Include(x => x.SmsAccount).ToListAsync();
+            if (details != null && details.Any())
+                await _smsMessageDetailService.ReSendSms(details);
+            return NoContent();
+        }
+
         [HttpPost]
         public async Task<IActionResult> RunJobSendSms()
         {
             await _smsMessageDetailService.RunJobSendSms();
-            return Ok(); 
+            return Ok();
         }
     }
 }

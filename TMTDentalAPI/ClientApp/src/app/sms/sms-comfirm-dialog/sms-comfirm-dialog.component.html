@@ -5,6 +5,8 @@
 </header>
 
 <div class="modal-body">
+    <div *ngIf="bodyContent">{{bodyContent}}</div>
+    <div *ngIf="bodyNote">{{bodyNote}}</div>
     <table class="o_group o_inner_group o_group_col_12">
         <tbody>
             <tr *ngIf="campaign">
@@ -62,7 +64,8 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm" (click)="onConfirm()" accesskey="s"><span>Gửi ngay</span></button>
+    <button type="button" class="btn btn-primary btn-sm" (click)="onConfirm()" accesskey="s"><span>Gửi
+            ngay</span></button>
     <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="onCancel()"
         accesskey="q"><span>Đóng</span></button>
 </footer>

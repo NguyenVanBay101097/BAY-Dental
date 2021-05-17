@@ -26,6 +26,7 @@ export class SmsManualDialogComponent implements OnInit {
   filteredSmsAccount: any[];
   formGroup: FormGroup;
   ids: string[] = [];
+  smsMessageDetail: any
   submitted = false;
   isBirthDayManual: false;
   isAppointmentReminder: false;
