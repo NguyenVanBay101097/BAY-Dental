@@ -29,10 +29,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> CreateAsync(SmsCampaignSave val)
         {
             if (!ModelState.IsValid || val == null) return BadRequest();
-            var entity = _mapper.Map<SmsCampaign>(val);
-            entity.CompanyId = CompanyId;
-            entity = await _smsCampaignService.CreateAsync(entity);
-            var res = _mapper.Map<SmsAccountBasic>(entity);
+            var res = await _smsCampaignService.CreateAsync(val);
             return Ok(res);
         }
 
@@ -65,15 +62,12 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(Guid id, SmsAccountSave val)
+        public async Task<IActionResult> UpdateAsync(Guid id, SmsCampaignSave val)
         {
             var entity = await _smsCampaignService.GetByIdAsync(id);
-            if (!ModelState.IsValid || entity == null) return BadRequest();
-            entity = _mapper.Map(val, entity);
-            entity.CompanyId = CompanyId;
-            await _smsCampaignService.UpdateAsync(entity);
-            var res = _mapper.Map<SmsAccountBasic>(entity);
-            return Ok(res);
+            if (entity == null) return NotFound();
+            await _smsCampaignService.UpdateAsync(id, val);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
