@@ -34,10 +34,10 @@
         </kendo-grid-column>
         <kendo-grid-column title="Thời gian" width="230">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <span *ngIf="dataItem.typeDate=='period'">
+                <span *ngIf="dataItem.typeDate == 'period'">
                     {{dataItem.dateStart | date:'dd/MM/yyyy'}} - {{dataItem.dateEnd | date:'dd/MM/yyyy'}}
                 </span>
-                <span *ngIf="dataItem.typeDate=='unlimited'">
+                <span *ngIf="dataItem.typeDate == 'unlimited'">
                     Vô thời hạn
                 </span>
             </ng-template>
@@ -45,15 +45,12 @@
         <kendo-grid-column field="limitMessage" title="Hạn mức tin nhắn">
         </kendo-grid-column>
         <kendo-grid-column field="totalMessages" title="Tổng tin nhắn">
-            <ng-template kendoGridCellTemplate let-dataItem>
-
-            </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="TotalSuccessfulMessages" title="Thành công">
+        <kendo-grid-column field="totalSuccessfulMessages" title="Thành công">
         </kendo-grid-column>
-        <kendo-grid-column field="TotalWaitedMessages" title="Thành công">
+        <kendo-grid-column field="totalWaitedMessages" title="Thành công">
         </kendo-grid-column>
-        <kendo-grid-column field="TotalFailedMessages" title="Thất bại">
+        <kendo-grid-column field="totalFailedMessages" title="Thất bại">
         </kendo-grid-column>
         <kendo-grid-column field="status" title="Trạng thái">
             <ng-template kendoGridCellTemplate let-dataItem>

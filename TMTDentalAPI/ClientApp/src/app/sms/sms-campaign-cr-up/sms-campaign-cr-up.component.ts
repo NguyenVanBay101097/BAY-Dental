@@ -12,6 +12,7 @@ import SmsCampaignService from '../sms-campaign.service';
 })
 export class SmsCampaignCrUpComponent implements OnInit {
 
+  id: string;
   title: string;
   formGroup: FormGroup;
 

@@ -29,24 +29,26 @@
                                 </td>
                                 <td class="w-100 pb-4">
                                     <div>
-                                        <input type="radio" class="btn-check" id="unlimited" value="unlimited"
-                                            formControlName="typeDate" (change)="changeTypeDate()">
+                                        <input type="radio" class="btn-check" id="unlimited" value="unlimited" formControlName="typeDate">
                                         <label for="unlimited" class="btn btn-sm rounded-right-0"
-                                            [ngClass]="getValueFormControl('typeDate') == 'unlimited' ? 'btn-primary' : 'btn-outline-primary'">Vô
-                                            thời hạn</label>
-                                        <input type="radio" class="btn-check" id="period" value="period"
-                                            formControlName="typeDate" (change)="changeTypeDate()">
+                                            [ngClass]="getValueFormControl('typeDate') == 'unlimited' ? 'btn-primary' : 'btn-outline-primary'">
+                                            Vô thời hạn
+                                        </label>
+                                        <input type="radio" class="btn-check" id="period" value="period" formControlName="typeDate">
                                         <label for="period" class="btn btn-sm rounded-left-0"
-                                            [ngClass]="getValueFormControl('typeDate') == 'period' ? 'btn-primary' : 'btn-outline-primary'">Khoảng
-                                            thời gian</label>
+                                            [ngClass]="getValueFormControl('typeDate') == 'period' ? 'btn-primary' : 'btn-outline-primary'">
+                                            Khoảng thời gian
+                                        </label>
                                     </div>
-                                    <div class="d-flex align-items-center"
-                                        *ngIf="getValueFormControl('typeDate') == 'period'">
+                                    <div class="d-flex align-items-center" *ngIf="getValueFormControl('typeDate') == 'period'">
                                         <kendo-datepicker class="w-fit-content" formControlName="startDateObj">
                                         </kendo-datepicker>
                                         <div class="mx-2">đến</div>
                                         <kendo-datepicker class="w-fit-content" formControlName="endDateObj">
                                         </kendo-datepicker>
+                                        <div *ngIf="(f.startDateObj.errors || f.endDateObj.errors) && (f.startDateObj.touched || f.endDateObj.touched || f.startDateObj.dirty || f.endDateObj.dirty)" class="text-danger">
+                                            <div *ngIf="f.startDateObj.errors.required || f.endDateObj.errors.required">Chọn thời gian chạy chiến dịch</div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

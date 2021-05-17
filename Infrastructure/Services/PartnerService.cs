@@ -2018,6 +2018,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.BirthDay.HasValue && x.BirthDay.Value == currentDay && x.BirthMonth.HasValue && x.BirthMonth.Value == currentMonth);
             }
             var partnerIds = await query.Select(x => x.Id).ToListAsync();
+
             var dictRevenuePartner = await accountMoveLineObj
                 .SearchQuery(x => x.PartnerId.HasValue && partnerIds.Contains(x.PartnerId.Value))
                 .GroupBy(x => x.PartnerId.Value).Select(x => new RevenueReportResultDetail

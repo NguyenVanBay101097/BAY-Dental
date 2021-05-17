@@ -10,7 +10,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public int LimitMessage { get; set; }
         public DateTime? DateEnd { get; set; }
-        public int TotleMessage { get; set; }
+        public int TotalMessage { get; set; }
         public int TotalSuccessfulMessages { get; set; }
         public int TotalFailedMessages { get; set; }
         public int TotalWaitedMessages { get; set; }

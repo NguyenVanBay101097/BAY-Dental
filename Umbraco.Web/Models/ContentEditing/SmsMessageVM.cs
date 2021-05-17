@@ -50,7 +50,7 @@ namespace Umbraco.Web.Models.ContentEditing
         }
         public DateTime? Date { get; set; }
         /// <summary>
-        /// Send now, reminder
+        /// manual, reminder
         /// </summary>
         public string TypeSend { get; set; }
         public string Name { get; set; }

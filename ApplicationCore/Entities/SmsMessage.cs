@@ -11,7 +11,7 @@ namespace ApplicationCore.Entities
         public SmsCampaign SmsCampaign { get; set; }
         public DateTime? Date { get; set; }
         /// <summary>
-        /// Send now, reminder
+        /// manual, reminder
         /// </summary>
         public string TypeSend { get; set; }
         public Guid? SmsTemplateId { get; set; }
