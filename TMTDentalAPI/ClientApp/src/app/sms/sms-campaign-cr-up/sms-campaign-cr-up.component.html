@@ -16,7 +16,7 @@
                                 <td class="o_td_label">
                                     <label class="o_form_label">Tên chiến dịch</label>
                                 </td>
-                                <td class="w-100">
+                                <td class="w-100 pb-4">
                                     <input class="form-control" formControlName="name"/>
                                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tên chiến dịch</div>
@@ -27,7 +27,7 @@
                                 <td class="o_td_label">
                                     <label class="o_form_label">Thời gian chạy</label>
                                 </td>
-                                <td class="w-100">
+                                <td class="w-100 pb-4">
                                     <div>
                                         <input type="radio" class="btn-check" id="unlimited" value="unlimited" formControlName="typeDate" (change)="changeTypeDate()">
                                         <label for="unlimited" class="btn btn-sm rounded-right-0" [ngClass]="getValueFormControl('typeDate') == 'unlimited' ? 'btn-primary' : 'btn-outline-primary'">Vô thời hạn</label>

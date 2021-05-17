@@ -1,0 +1,8 @@
+.color-custom {
+    color: #9a9a9a;
+    font-size: 12px;
+}
+
+.o_form_view .o_group .o_group_col_12 {
+    display: table;
+}

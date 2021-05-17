@@ -16,57 +16,37 @@ import { SmsTemplateService } from '../sms-template.service';
   styleUrls: ['./sms-message-dialog.component.css']
 })
 export class SmsMessageDialogComponent implements OnInit {
-  @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
+
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent
+  @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
 
   formGroup: FormGroup;
-  filteredConfigSMS: any[];
-  filteredSmsAccount: any[];
-  skip: number = 0;
-  id: string;
-  limit: number = 20;
-  type: string;
-  filteredTemplate: any[];
   textareaLimit: number = 200;
-  template: any =
-    {
-      text: '',
-      templateType: 'text'
-    };
-  public today: Date = new Date;
-  public timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
-  public timeRunJob: Date = new Date();
+
+  filteredSmsAccount: any[];
+  filteredTemplate: any[];
+
+  template: any = {
+    text: '',
+    templateType: 'text'
+  };
+  isTemplateCopy = false;
+
   constructor(
-    private fb: FormBuilder,
-    private modalService: NgbModal,
-    private smsTemplateService: SmsTemplateService,
-    private smsConfigService: SmsConfigService,
-    private intlService: IntlService,
-    private smsAccountService: SmsAccountService,
-    private notificationService: NotificationService
+    private fb: FormBuilder, 
+    private modalService: NgbModal, 
+    private notificationService: NotificationService, 
+    private smsAccountService: SmsAccountService, 
+    private smsTemplateService: SmsTemplateService, 
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: [null, Validators.required],
       smsAccount: [null, Validators.required],
-      isBirthdayAutomation: false,
-      thoiDiem: new Date(),
-      thoiGian: 0,
-      TypeSend: ''
+      template: [null, Validators.required],
     })
-
-    this.loadDataFormApi();
-    this.loadSmsTemplate();
     this.loadAccount();
-    this.smsTemplateCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.smsTemplateCbx.loading = true)),
-      switchMap(value => this.searchSmsTemplate(value))
-    ).subscribe((result: any) => {
-      this.filteredTemplate = result;
-      this.smsTemplateCbx.loading = false;
-    });
+    this.loadSmsTemplate();
 
     this.smsAccountCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -76,22 +56,15 @@ export class SmsMessageDialogComponent implements OnInit {
       this.filteredSmsAccount = result;
       this.smsAccountCbx.loading = false;
     });
-  }
 
-  loadDataFormApi() {
-    this.smsConfigService.getConfigByCompany("").subscribe(
-      (res: any) => {
-        if (res) {
-          this.id = res.id;
-          this.formGroup.patchValue(res);
-          if (res.template) {
-            this.template = JSON.parse(res.template.body);
-          }
-        } else {
-          this.id = null;
-        }
-      }
-    )
+    this.smsTemplateCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.smsTemplateCbx.loading = true)),
+      switchMap(value => this.searchSmsTemplate(value))
+    ).subscribe((result: any) => {
+      this.filteredTemplate = result;
+      this.smsTemplateCbx.loading = false;
+    });
   }
 
   loadAccount() {
@@ -135,39 +108,6 @@ export class SmsMessageDialogComponent implements OnInit {
     return this.smsTemplateService.getAutoComplete(q);
   }
 
-  onSave() {
-    if (this.formGroup.invalid) return;
-    var val = this.formGroup.value;
-    val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
-    val.thoiDiem = this.intlService.formatDate(val.thoiDiem, "yyyy-MM-ddTHH:mm");
-    val.thoiGian = Number.parseInt(val.thoiGian);
-    val.templateId = val.template ? val.template.id : null;
-    val.body = this.template ? JSON.stringify(this.template) : '';
-    if (this.id) {
-      this.smsConfigService.update(this.id, val).subscribe(
-        res => {
-          // console.log(res);
-          this.notify("cập nhật thiết lập thành công", true);
-        }
-      )
-    } else {
-      this.smsConfigService.create(val).subscribe(
-        res => {
-          // console.log(res);
-          this.notify("thiết lập thành công", true);
-        }
-      )
-    }
-
-  }
-
-  addTemplate() {
-    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Tạo mẫu tin';
-    modalRef.result.then((val) => {
-      this.loadSmsTemplate();
-    })
-  }
   notify(title, isSuccess = true) {
     this.notificationService.show({
       content: title,
@@ -178,4 +118,7 @@ export class SmsMessageDialogComponent implements OnInit {
     });
   }
 
+  checkedTemplateCopy(event) {
+    this.isTemplateCopy = event.target.checked;
+  }
 }
