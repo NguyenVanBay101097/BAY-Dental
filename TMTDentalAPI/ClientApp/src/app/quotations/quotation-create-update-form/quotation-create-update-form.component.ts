@@ -389,7 +389,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   onSave() {
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      viewChild.updateLineInfo();
+      var checkValidChild = viewChild.checkValidFormGroup();
+      if (!checkValidChild)
+        return;
+      else
+        viewChild.updateLineInfo();
     }
 
     this.submitted = true;
@@ -541,18 +545,13 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   onUpdateOpenLinePromotion(line, lineControl, i) {
-    // if(line.teeth.length == 0){
-    //   var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-    //   viewChild.updateLineInfo();
-    //   return;
-    // }
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      // var checkValidChild = viewChild.checkValidFormGroup();
-      // if (!checkValidChild)
-      //   return;
-      // else
-      viewChild.updateLineInfo();
+      var checkValidChild = viewChild.checkValidFormGroup();
+      if (!checkValidChild)
+        return;
+      else
+        viewChild.updateLineInfo();
     }
     if (!this.isChanged) {
       this.onOpenLinePromotionDialog(i);
@@ -595,11 +594,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   onOpenQuotationPromotion() {
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      // var checkValidChild = viewChild.checkValidFormGroup();
-      // if (!checkValidChild)
-      //   return;
-      // else
-      viewChild.updateLineInfo();
+      var checkValidChild = viewChild.checkValidFormGroup();
+      if (!checkValidChild)
+        return;
+      else
+        viewChild.updateLineInfo();
     }
     
     if (!this.isChanged) {

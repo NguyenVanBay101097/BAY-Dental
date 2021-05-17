@@ -235,39 +235,30 @@ export class QuotationLineCuComponent implements OnInit {
   }
 
   onOpenPromotion() {
-    // if (!this.checkValidFormGroup())
-    //   return;
-    // else {
-    //   this.isEditting = false;
-    //   this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
-    // }
-
-    this.isEditting = false;
-    this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
+    if (!this.checkValidFormGroup()) {
+      this.isEditting = true;
+      return;
+    }
+    else {
+      this.isEditting = false;
+      this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
+    }
   }
 
-  // checkValidFormGroup() {
-  //   if (this.formGroupInfo.invalid)
-  //     return false;
-  //   if (this.formInfoControl("toothType").value == "manual" && !this.formInfoControl("teeth").value.length) {
-  //     this.notify("error", "Vui lòng chọn răng");
-  //     return false;
-  //   }
-  //   return true;
-  // }
+  checkValidFormGroup() {
+    if (this.formGroupInfo.invalid)
+      return false;
+    if (this.formInfoControl("toothType").value == "manual" && !this.formInfoControl("teeth").value.length) {
+      this.notify("error", "Vui lòng chọn răng");
+      return false;
+    }
+    return true;
+  }
 
   updateLineInfo() {
     this.submitted = true;
 
-    // if (!this.checkValidFormGroup())
-    //   return;
-    // else {
-    //   this.isEditting = false;
-    //   var value = this.formGroupInfo.value;
-    //   this.onUpdateEvent.emit(value);
-    // }
-    if (this.formInfoControl("toothType").value == "manual" && !this.formInfoControl("teeth").value.length) {
-      this.notify("error", "Vui lòng chọn răng");
+    if (!this.checkValidFormGroup()) {
       this.isEditting = true;
       return;
     }
@@ -276,7 +267,6 @@ export class QuotationLineCuComponent implements OnInit {
       var value = this.formGroupInfo.value;
       this.onUpdateEvent.emit(value);
     }
-    
   }
 
   onCancel() {
