@@ -30,6 +30,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PartnerId { get; set; }
         public string State { get; set; }
         public Guid? SmsCampaignId { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
 
     }
 }

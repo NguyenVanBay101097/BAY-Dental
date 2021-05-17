@@ -1,17 +1,23 @@
-<form class="o_form_view h-100">
-    <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
-        <div class="flex-0-0-auto">
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <div class="breadcrumb">
             <div class="d-flex">
-                <div class="btns">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onResend()">Gửi lại tin</button>
-                </div>
+                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                </app-tai-date-range-filter-dropdown>
+                <kendo-combobox (selectionChange)="onStatusChange($event)" placeholder="Trạng thái" class="kendo-combobox-sm ml-2" style="width: auto;" [data]="filterStatus" [textField]="'name'" [valueField]="'value'">
+                </kendo-combobox>
+
+                <button type="button" (click)="onResend()" class="ml-2 btn btn-primary btn-sm">Gửi lại tin</button>
+            </div>
+        </div>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo họ tên, số điện thoại" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
     </div>
-</form>
-
-<kendo-grid [data]="gridData" [selectable]="true" [resizable]="true" (pageChange)="pageChange($event)" [skip]="skip"
-    [pageable]="true" [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+</div>
+<kendo-grid [data]="gridData" [selectable]="true" [resizable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true" [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
     <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
     <kendo-grid-column title="Khách hàng" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>

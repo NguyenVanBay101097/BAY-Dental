@@ -6,6 +6,9 @@ export class SmsMessageDetailPaged {
     offset: number;
     search: string;
     smsCampaignId: string;
+    dateFrom: string;
+    dateTo: string;
+    state: string;
 }
 
 @Injectable({
