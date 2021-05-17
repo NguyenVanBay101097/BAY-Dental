@@ -495,3 +495,24 @@ $rose-900: #881337;
         height: 38px;
     }
 }
+.t-tooltip + .tooltip > .tooltip-inner {
+    background-color: white;
+    border: 1px solid #6c757d;
+    color: black;
+}
+.t-tooltip + .bs-tooltip-auto[x-placement^=top] .arrow::before,
+.t-tooltip + .bs-tooltip-top .arrow::before {
+  border-top-color: #6c757d;
+}
+.t-tooltip + .bs-tooltip-auto[x-placement^=right] .arrow::before,
+.t-tooltip + .bs-tooltip-right .arrow::before {
+  border-right-color: #6c757d;
+}
+.t-tooltip + .bs-tooltip-auto[x-placement^=bottom] .arrow::before,
+.t-tooltip + .bs-tooltip-bottom .arrow::before {
+  border-bottom-color: #6c757d;
+}
+.t-tooltip + .bs-tooltip-auto[x-placement^=left] .arrow::before,
+.t-tooltip + .bs-tooltip-left .arrow::before {
+  border-left-color: #6c757d;
+}

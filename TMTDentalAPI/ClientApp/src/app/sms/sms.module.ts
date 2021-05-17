@@ -23,12 +23,30 @@ import { SmsAccountSettingDialogComponent } from './sms-account-setting-dialog/s
 import { SmsMessageDialogComponent } from './sms-message-dialog/sms-message-dialog.component';
 import { SmsMessageStatisticComponent } from './sms-message-statistic/sms-message-statistic.component';
 import { SmsMessageDetailStatisticComponent } from './sms-message-detail-statistic/sms-message-detail-statistic.component';
+import { SmsCampaignListComponent } from './sms-campaign-list/sms-campaign-list.component';
+import { SmsCampaignCrUpComponent } from './sms-campaign-cr-up/sms-campaign-cr-up.component';
 import { SmsComfirmDialogComponent } from './sms-comfirm-dialog/sms-comfirm-dialog.component';
 
 @NgModule({
   declarations: [SmsTemplateListComponent, SmsTemplateCrUpComponent, SmsTemplateContentComponent,
     SmsAccountSettingComponent,
-    SmsBirthdayFormComponent, SmsBirthdayFormManualComponent, SmsBirthdayFormAutomaticComponent, SmsAppointmentFormAutomaticComponent, SmsAppointmentFormManualComponent, SmsAppointmentFormComponent, SmsStatisticComponent, SmsManualDialogComponent, SmsAccountListComponent, SmsAccountSettingDialogComponent, SmsMessageDialogComponent, SmsMessageStatisticComponent, SmsMessageDetailStatisticComponent, SmsComfirmDialogComponent],
+    SmsBirthdayFormComponent, 
+    SmsBirthdayFormManualComponent, 
+    SmsBirthdayFormAutomaticComponent, 
+    SmsAppointmentFormAutomaticComponent, 
+    SmsAppointmentFormManualComponent, 
+    SmsAppointmentFormComponent, 
+    SmsStatisticComponent, 
+    SmsManualDialogComponent, 
+    SmsAccountListComponent, 
+    SmsAccountSettingDialogComponent, 
+    SmsMessageDialogComponent, 
+    SmsMessageStatisticComponent, 
+    SmsMessageDetailStatisticComponent, 
+    SmsCampaignListComponent, 
+    SmsCampaignCrUpComponent, 
+    SmsComfirmDialogComponent
+  ],
   imports: [
     CommonModule,
     SmsRoutingModule,
@@ -43,7 +61,8 @@ import { SmsComfirmDialogComponent } from './sms-comfirm-dialog/sms-comfirm-dial
     SmsTemplateCrUpComponent,
     SmsMessageDialogComponent,
     SmsManualDialogComponent,
-    SmsAccountSettingDialogComponent,
+    SmsAccountSettingDialogComponent, 
+    SmsCampaignCrUpComponent, 
     SmsComfirmDialogComponent
   ]
 })

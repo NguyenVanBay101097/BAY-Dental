@@ -155,6 +155,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Thống kê tin nhắn', link: '/sms/statistic' },
         // { name: 'Quảng cáo dịch vụ', link: '/' },
         { name: 'Đối tác gửi tin', link: '/sms/accounts' },
+        { name: 'Quản lý chiến dịch', link: '/sms/campaign' },
       ],
     },
     {
