@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -7,6 +8,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -47,6 +49,15 @@ namespace TMTDentalAPI.Controllers
             return Ok(display);
         }
 
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
+        public async Task<IActionResult> GetListPaged([FromQuery] SaleCouponProgramGetListPagedRequest val)
+        {
+            var result = await _programService.GetListPaged(val);
+            return Ok(result);
+        }
+
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
         public async Task<IActionResult> GetPromotionBySaleOrder()
@@ -71,6 +82,17 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
+        public async Task<IActionResult> GetAmountTotalUsagePromotion(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var amountTotal = await _programService.GetAmountTotal(id);
+            _unitOfWork.Commit();
+
+            return Ok(amountTotal);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Create")]
         public async Task<IActionResult> Create(SaleCouponProgramSave val)
@@ -82,7 +104,7 @@ namespace TMTDentalAPI.Controllers
             var program = await _programService.CreateProgram(val);
             _unitOfWork.Commit();
 
-            var basic = _mapper.Map<SaleCouponProgramBasic>(program);
+            var basic = _mapper.Map<SaleCouponProgramSimple>(program);
             return Ok(basic);
         }
 
@@ -159,5 +181,7 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
             return NoContent();
         }
+
+      
     }
 }

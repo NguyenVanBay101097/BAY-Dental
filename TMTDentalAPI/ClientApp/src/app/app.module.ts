@@ -19,7 +19,6 @@ import { NgbDateCustomParserFormatter } from "./core/ngb-date-custom-parser-form
 import { RefreshTokenInterceptor } from './auth/refresh-token-interceptor';
 import { MomentModule } from 'ngx-moment';
 import 'moment/locale/vi';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { MyErrorHandler } from './my-error-handler';
 import { FacebookModule } from 'ngx-facebook';
 import { NoCacheInterceptor } from './http-interceptors/no-cache.interceptor';
@@ -54,7 +53,6 @@ registerLocaleData(localeVi, "vi");
         blacklistedRoutes: [],
       },
     }),
-    FlexLayoutModule,
     SharedModule,
     RoutingsModule,
     MomentModule.forRoot({

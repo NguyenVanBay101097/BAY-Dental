@@ -48,6 +48,9 @@ namespace Infrastructure.Services
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId);
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
             var totalItems = await query.CountAsync();
 
             query = query.OrderByDescending(x => x.DateCreated);
@@ -68,7 +71,7 @@ namespace Infrastructure.Services
         {
             var partner = await _partnerService.GetByIdAsync(val.PartnerId);
             var journal = await _journalService.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
-       
+
 
             var res = new PartnerAdvanceDisplay();
             res.Type = val.Type;
@@ -101,16 +104,19 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateTo);
             }
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
             if (!string.IsNullOrEmpty(val.Type))
             {
                 query = query.Where(x => x.Type == val.Type);
             }
-          
+
 
             return await query.SumAsync(x => x.Amount);
         }
 
-       
+
 
         public async Task<PartnerAdvanceDisplay> GetDisplayById(Guid id)
         {

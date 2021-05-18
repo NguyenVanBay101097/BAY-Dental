@@ -5,7 +5,6 @@ import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '@progress/kendo-angular-dropdowns';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ExpireComponent } from './expire/expire.component';
@@ -17,7 +16,6 @@ import { ExpireComponent } from './expire/expire.component';
     AuthRoutingModule,
     ReactiveFormsModule,
     SharedModule,
-    FlexLayoutModule
   ]
 })
 export class AuthModule { }

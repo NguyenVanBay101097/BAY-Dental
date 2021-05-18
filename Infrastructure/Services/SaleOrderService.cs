@@ -248,7 +248,11 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines)
                 .Include(x => x.DotKhams)
-                .Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLinePaymentRels).ThenInclude(x => x.Payment)
+                .Include(x => x.OrderLines)
+                .ThenInclude(x => x.PaymentHistoryLines)
+                .Include(x => x.OrderLines)
+                .ThenInclude(x => x.SaleOrderLinePaymentRels)
+                .ThenInclude(x => x.Payment)
                 .ToListAsync();
 
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
@@ -294,7 +298,7 @@ namespace Infrastructure.Services
             {
                 foreach (var line in sale.OrderLines)
                 {
-                    if (line.SaleOrderLinePaymentRels.Any(x => x.Payment.State != "draft" && x.Payment.State != "cancel"))
+                    if (line.PaymentHistoryLines.Any())
                         throw new Exception("Có dịch vụ đã thanh toán, cần hủy những thanh toán trước khi hủy phiếu");
 
                     if (line.State == "cancel")
@@ -313,8 +317,15 @@ namespace Infrastructure.Services
                 saleLineObj._GetToInvoiceAmount(sale.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(sale.OrderLines);
                 await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x => x.Id).ToList());
+                saleLineObj.RecomputePromotionLine(sale.OrderLines);
+                ReComputePromotionOrder(sale);
                 sale.State = "draft";
                 sale.Residual = 0;
+                await UpdateAsync(sale);
+
+                //tính lại tổng tiền ưu đãi saleorderlines
+                saleLineObj._ComputeAmountDiscountTotal(sale.OrderLines);
+                saleLineObj.ComputeAmount(sale.OrderLines);
             }
 
             _GetInvoiced(self);
@@ -797,23 +808,19 @@ namespace Infrastructure.Services
 
         public bool _IsGlobalDiscountAlreadyApplied(SaleOrder self)
         {
-            var applied_programs = self.NoCodePromoPrograms.Select(x => x.Program)
-                .Concat(self.AppliedCoupons.Select(x => x.Program));
-            if (self.CodePromoProgram != null)
-                applied_programs = applied_programs.Concat(new List<SaleCouponProgram>() { self.CodePromoProgram });
-            var programObj = GetService<ISaleCouponProgramService>();
-            return applied_programs.Where(x => programObj._IsGlobalDiscountProgram(x)).Any();
+            var applied_programs = self.Promotions.Where(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgramId.HasValue && x.SaleCouponProgram.NotIncremental.Value);
+            return applied_programs.Any();
         }
 
         public SaleOrderPromotion _GetRewardValuesDiscount(SaleOrder self, SaleCouponProgram program)
         {
             var programObj = GetService<ISaleCouponProgramService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
+            var productObj = GetService<IProductService>();
             var promotionObj = GetService<ISaleOrderPromotionService>();
 
             if (program.DiscountLineProduct == null)
             {
-                var productObj = GetService<IProductService>();
                 program.DiscountLineProduct = productObj.GetById(program.DiscountLineProductId);
             }
 
@@ -829,7 +836,7 @@ namespace Infrastructure.Services
 
             var reward = new SaleOrderPromotion();
             var lines = _GetPaidOrderLines(self);
-            if (program.DiscountApplyOn == "specific_products" || program.DiscountApplyOn == "on_order")
+            if (program.DiscountApplyOn == "specific_products" || program.DiscountApplyOn == "on_order" || program.DiscountApplyOn == "specific_product_categories")
             {
                 if (program.DiscountApplyOn == "specific_products")
                 {
@@ -840,6 +847,13 @@ namespace Infrastructure.Services
                     lines = lines.Where(x => tmp.Contains(x.ProductId.Value)).ToList();
                 }
 
+                if (program.DiscountApplyOn == "specific_product_categories")
+                {
+                    var discount_specific_categ_ids = program.DiscountSpecificProductCategories.Select(x => x.ProductCategoryId).ToList();
+                    var tmp = productObj.SearchQuery(x => discount_specific_categ_ids.Contains(x.CategId.Value)).Select(x => x.Id).ToList();
+                    lines = lines.Where(x => tmp.Contains(x.ProductId.Value)).ToList();
+                }
+
                 var total_discount_amount = 0M;
 
                 foreach (var line in lines)
@@ -847,6 +861,12 @@ namespace Infrastructure.Services
                     var discount_line_amount = saleLineObj._GetRewardValuesDiscountPercentagePerLine(program, line);
                     if (discount_line_amount > 0)
                         total_discount_amount += discount_line_amount;
+                }
+
+                if (program.DiscountMaxAmount.HasValue && program.DiscountMaxAmount.Value > 0)
+                {
+                    if (total_discount_amount >= program.DiscountMaxAmount)
+                        total_discount_amount = program.DiscountMaxAmount.Value;
                 }
 
                 reward = promotionObj.PreparePromotionToOrder(self, program, total_discount_amount);

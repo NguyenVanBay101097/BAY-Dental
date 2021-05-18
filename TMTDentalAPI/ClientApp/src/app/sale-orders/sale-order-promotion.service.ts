@@ -23,6 +23,16 @@ type: string;
 
 }
 
+export class HistoryPromotionRequest {
+  offSet: number;
+  limit: number;
+  dateFrom: string;
+  dateTo: string;
+  searchOrder?: string;
+  searchOrderLine?: string;
+  saleCouponProgramId: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -39,5 +49,13 @@ export class SaleOrderPromotionService {
 
  removePromotion(ids: string[]) {
   return this.http.post(this.baseApi + this.apiUrl + '/RemovePromotion', ids );
+  }
+
+  GetHistoryPromotionByCouponProgram(val):Observable<PagedResult2<any>>{
+    return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + "/GetHistoryPromotionByCouponProgram",{params: new HttpParams({fromObject: val})});
+  }
+
+  ExportExcelFile(val){
+    return this.http.post(this.baseApi + this.apiUrl + '/ExportExcelFile', val, { responseType: "blob" } );
   }
 }
