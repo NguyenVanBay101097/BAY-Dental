@@ -71,13 +71,13 @@
                                                         [ngClass]="getValueFormControl('typeSend') == 'manual' ? 'btn-primary' : 'btn-outline-primary'">
                                                         Gửi ngay
                                                     </label>
-                                                    <input type="radio" class="btn-check" id="reminder" value="reminder" formControlName="typeSend" (change)="changeTypeSend($event)">
-                                                    <label for="reminder" class="btn btn-sm rounded-left-0"
-                                                        [ngClass]="getValueFormControl('typeSend') == 'reminder' ? 'btn-primary' : 'btn-outline-primary'">
+                                                    <input type="radio" class="btn-check" id="automatic" value="automatic" formControlName="typeSend" (change)="changeTypeSend($event)">
+                                                    <label for="automatic" class="btn btn-sm rounded-left-0"
+                                                        [ngClass]="getValueFormControl('typeSend') == 'automatic' ? 'btn-primary' : 'btn-outline-primary'">
                                                         Đặt lịch
                                                     </label>
                                                 </div>
-                                                <div *ngIf="getValueFormControl('typeSend') == 'reminder'">
+                                                <div *ngIf="getValueFormControl('typeSend') == 'automatic'">
                                                     <kendo-datetimepicker  class="w-fit-content" [format]="'MM/dd/yyyy HH:mm'" formControlName="dateObj" required>
                                                     </kendo-datetimepicker>
                                                     <div *ngIf="!getValueFormControl('dateObj')" class="text-danger">

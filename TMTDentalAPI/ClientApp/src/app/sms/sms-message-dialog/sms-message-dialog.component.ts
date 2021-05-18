@@ -62,8 +62,8 @@ export class SmsMessageDialogComponent implements OnInit {
       smsCampaign: [null, Validators.required],
       smsAccount: [null, Validators.required],
       template: null,
-      typeSend: "manual", // manual: gửi ngay, reminder: đặt lịch
-      dateObj: new Date(), 
+      typeSend: "manual", // manual: gửi ngay, automatic: đặt lịch
+      dateObj: new Date(),
       templateName: null
     })
     this.loadCampaign();
@@ -193,6 +193,9 @@ export class SmsMessageDialogComponent implements OnInit {
     modalRef.componentInstance.title = 'Danh sách khách hàng';
     modalRef.result.then((res) => {
       this.partnerIds = res;
+      if (this.partnerIds && this.partnerIds.length > this.sendLimit) {
+        this.partnerIds = [];
+      }
     })
   }
 
@@ -204,10 +207,10 @@ export class SmsMessageDialogComponent implements OnInit {
     val.smsTemplateId = val.template ? val.template.id : null;
     val.body = this.template ? JSON.stringify(this.template) : '';
     val.partnerIds = this.partnerIds;
-    if (val.typeSend == "reminder") {
+    if (val.typeSend == "automatic") {
       val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm");
     }
-    
+
     this.smsMessageService.create(val).subscribe(
       (res: any) => {
         if (res && res.typeSend == "manual") {
@@ -226,12 +229,22 @@ export class SmsMessageDialogComponent implements OnInit {
   }
 
   changeTypeSend(event) {
-    if (event.target.value == "reminder") {
+    if (event.target.value == "automatic") {
       this.formGroup.get("dateObj").setValue(new Date());
     }
   }
 
   changeSmsCampaign(event) {
+    if (event) {
+      if (event.state == 'draft' || event.state == 'shutdown') {
+        this.notify('Chiến dịch này chưa được kích hoạt hoặc đã bị dừng. Vui lòng kiểm tra lại chiến dịch', false);
+        this.formGroup.get('smsCampaign').setValue(null);
+      }
+      else if (event.typeDate != 'unlimited' && event.limitMessage <= event.totalMessage) {
+        this.notify('Hạn mức gửi tin nhắn đã hết. Vui lòng kiểm tra lại chiến dịch', false);
+        this.formGroup.get('smsCampaign').setValue(null);
+      }
+    }
     this.sendLimit = event.limitMessage - event.totalMessage;
   }
 }
