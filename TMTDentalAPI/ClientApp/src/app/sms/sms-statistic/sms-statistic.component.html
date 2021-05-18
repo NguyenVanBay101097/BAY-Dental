@@ -1,8 +1,15 @@
 <div class="o_cp_controller ">
-    <div class="o_control_panel o_breadcrumb_full">
+    <div class="o_control_panel">
         <ol class="breadcrumb">
             <li class="mb-2">Thống kê tin nhắn đã gửi</li>
         </ol>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input type="text" class="o_searchview_input"
+                    placeholder="Tìm kiếm theo họ tên, số điện thoại, tên tin nhắn" [(ngModel)]="search"
+                    (ngModelChange)="this.searchUpdate.next($event)" />
+            </div>
+        </div>
     </div>
     <div class="o_control_panel d-flex justify-content-between">
         <div class="d-flex">
@@ -15,14 +22,6 @@
             <kendo-combobox (valueChange)="onChangeState($event)" placeholder="Tất cả trạng thái"
                 class="kendo-combobox-sm ml-2" [data]="filteredState" [textField]="'name'" [valueField]="'value'">
             </kendo-combobox>
-
-        </div>
-        <div class="o_cp_searchview">
-            <div class="o_searchview">
-                <input type="text" class="o_searchview_input"
-                    placeholder="Tìm kiếm theo họ tên, số điện thoại, tên tin nhắn" [(ngModel)]="search"
-                    (ngModelChange)="this.searchUpdate.next($event)" />
-            </div>
         </div>
     </div>
 </div>

@@ -8,7 +8,7 @@ import { SmsCampaignPaged, SmsCampaignService } from '../sms-campaign.service';
 import { SmsMessageDetailPaged, SmsMessageDetailService } from '../sms-message-detail.service';
 
 @Component({
-  selector: 'app-sms-statisticaddd',
+  selector: 'app-sms-statistic',
   templateUrl: './sms-statistic.component.html',
   styleUrls: ['./sms-statistic.component.css'],
 })

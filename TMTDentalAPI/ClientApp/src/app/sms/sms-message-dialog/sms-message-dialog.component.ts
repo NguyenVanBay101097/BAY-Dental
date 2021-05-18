@@ -130,6 +130,7 @@ export class SmsMessageDialogComponent implements OnInit {
     val.limit = 20;
     val.offset = 0;
     val.search = search || '';
+    val.paged = true;
     return this.smsCampaignService.getPaged(val);
   }
 
