@@ -35,4 +35,6 @@ export class SaleOrderLineDisplay {
     promotions: any[];
     amountInvoiced: number;
     amountDiscountTotal: number;
+    amountPromotionToOrder: number;
+    amountPromotionToOrderLine: number;
 }

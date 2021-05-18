@@ -33,7 +33,10 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
   // input
   autoPromotions = [];
 
-  private updateSubject = new Subject<any>();
+  private discountSubject = new Subject<any>();
+
+  private promotionSubject = new Subject<any>();
+  private deleteSubject = new Subject<any>();
 
   isChange = false;
   errorMsg: string;
@@ -68,8 +71,16 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
     this.form.discountPercent = 0;
   }
 
-  getUpdateSJ() {
-    return this.updateSubject.asObservable();
+  getDiscountSJ() {
+    return this.discountSubject.asObservable();
+  }
+
+  getPromotionSJ() {
+    return this.promotionSubject.asObservable();
+  }
+
+  getDeleteSJ() {
+    return this.deleteSubject.asObservable();
   }
 
   loadDefaultPromotion() {
@@ -88,89 +99,32 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
     return 0;
   }
 
-  popPromotion(item: SaleOrderPromotionSave) {
-    var i = this.saleOrder.promotions.findIndex(x=> x == item);
-    this.saleOrder.promotions.splice(i, 1);
-
-    this.notificationService.notify('success', 'Thành công!');
-    this.updateSubject.next(this.saleOrder);
-    this.isChange = true;
-  }
-
-  pushPromotion(type, program = null) {
-    var ob = new Subject<any>();
-    var amount = 0;
-    ob.subscribe(res => {
-      var exist = this.saleOrder.promotions.find(x=> (x.type == type && type == 'discount') || (program && x.saleCouponProgramId == program.id));
-      if(exist){
-        exist.type == 'code_usage_program'?this.errorMsg='Chương trình khuyến mãi đã được áp dụng cho đơn hàng này' : this.notificationService.notify('error', 'Ưu đãi đã được áp dụng cho đơn hàng này');
-        return;
-      }
-
-      this.saleOrder.promotions.push({
-        amount: amount,
-        type: type,
-        discountType:  type == 'discount'? this.form.discountType : program.discountType,
-        discountPercent: type == 'discount'? this.form.discountPercent : program.discountPercentage,
-        discountFixed: type == 'discount'?  this.form.discountFixed : program.discountFixedAmount,
-        saleCouponProgramId : program? program.id : null,
-        name: type == 'discount' ? 'Giảm tiền' : program.name
-      } as SaleOrderPromotionSave );
-      this.errorMsg = '';
-  
-      this.notificationService.notify('success', 'Thành công!');
-      this.isChange = true;
-      this.updateSubject.next(this.saleOrder);
-    });
-
-    switch (type) {
-      case 'discount':
-        amount = this.form.discountType == this.discountTypeDict["%"] ? this.form.discountPercent * this.getAmountToApply() / 100 : this.form.discountFixed;
-        ob.next();
-        break;
-      case 'code_usage_program':
-        this.promotionService.getPromotionUsageCode(this.form.code).subscribe((result) => {
-          if (result && !result.success) {
-            this.errorMsg = result.error;
-            return;
-          }
-          let res = result.saleCouponProgram;
-          amount = res.discountType == this.discountTypeDict["%"] ? res.discountPercentage * this.getAmountToApply() / 100 : res.discountFixedAmount;
-          program = res;
-          ob.next();
-        });
-        break;
-      case 'promotion_program':
-        this.promotionService.get(program.id).subscribe((res: SaleCouponProgramDisplay) => {
-          amount = res.discountType == this.discountTypeDict["%"] ? res.discountPercentage * this.getAmountToApply() / 100 : res.discountFixedAmount;
-          program = res;
-          ob.next();
-        });
-        break;
-      default:
-        break;
-    }
-  }
-
   onApplyCoupon() {
     if (this.form.code.trim() == '') {
       this.errorMsg = 'Nhập mã khuyến mãi';
       return;
     }
-    this.pushPromotion('code_usage_program');
+    this.promotionService.getPromotionUsageCode(this.form.code).subscribe((result) => {
+      if (result && !result.success) {
+        this.errorMsg = result.error;
+        return;
+      }
+      this.promotionSubject.next(result.saleCouponProgram);
+    });
   }
 
   applyPromotion(item) {
-    this.pushPromotion('promotion_program', item);
+    this.promotionService.get(item.id).subscribe((res: SaleCouponProgramDisplay) => {
+      this.promotionSubject.next(res);
+    });
   }
 
   applyDiscount() {
-    //push ưu đãi xong parent phân bổ
-    this.pushPromotion('discount');
+    this.discountSubject.next(this.form);
   }
 
   onDeletePromotion(item) {
-    this.popPromotion(item);
+    this.deleteSubject.next(item);
   }
 
 

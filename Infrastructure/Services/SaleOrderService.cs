@@ -2372,8 +2372,10 @@ namespace Infrastructure.Services
                         var discount_amount = 0M;
                         if (item.Type == "discount")
                         {
-                            var price_reduce = item.DiscountType == "percentage" ? line.PriceUnit * (1 - (item.DiscountPercent ?? 0) / 100) : (line.PriceUnit - item.DiscountFixed ?? 0);
-                            discount_amount = (saleLine.PriceUnit - price_reduce) * line.ProductUOMQty;
+
+                            var total = saleLine.PriceUnit * saleLine.ProductUOMQty;
+                            var price_reduce = item.DiscountType == "percentage" ? saleLine.PriceUnit * (1 - item.DiscountPercent / 100) : saleLine.PriceUnit - item.DiscountFixed;
+                            discount_amount = (saleLine.PriceUnit - (price_reduce ?? 0)) * saleLine.ProductUOMQty;
                             var promotion = new SaleOrderPromotion();
 
                             promotion.Name = "Giảm tiền";
@@ -2445,8 +2447,8 @@ namespace Infrastructure.Services
                                 reward.Lines.Add(new SaleOrderPromotionLine
                                 {
                                     SaleOrderLineId = line.Id,
-                                    Amount = promotion.Amount,
-                                    PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
+                                    Amount = amount,
+                                    PriceUnit = (double)(line.ProductUOMQty != 0 ? (amount / line.ProductUOMQty) : 0),
                                 });
                             }
                         }

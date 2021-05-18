@@ -55,7 +55,7 @@
                                         <i class="fas fa-plus"></i>
                                     </a>
                                 </div>
-                                <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
+                                <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty)" class="text-danger">
                                     <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
                                 </div>
                                 <div *ngIf="['draft','cancel'].indexOf(saleOrder.state) === -1">
@@ -70,27 +70,27 @@
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                {{partner ? partner.dateOfBirth : null}}
+                                {{getPartner ? getPartner.dateOfBirth : null}}
                             </td>
                         </tr>
-                        <tr *ngIf="getPartner && partnerPhone">
+                        <tr *ngIf="getPartner && getPartner.phone">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Số điện thoại:
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                {{partnerPhone ? partnerPhone : null}}
+                                {{getPartner.phone ? getPartner.phone : null}}
                             </td>
                         </tr>
-                        <tr *ngIf="getPartner && partnerAddress">
+                        <tr *ngIf="getPartner && getPartner.address">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Địa chỉ:
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                {{partnerAddress ? partnerAddress : null}}
+                                {{getPartner.address ? getPartner.address : null}}
                             </td>
                         </tr>
                     </tbody>
@@ -104,10 +104,10 @@
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'" formControlName="dateOrderObj">
+                                <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'" formControlName="dateOrder">
                                 </kendo-datetimepicker>
-                                <div *ngIf="saleOrder.state == 'draft' && f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
-                                    <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày lập phiếu</div>
+                                <div *ngIf="saleOrder.state == 'draft' && f.dateOrder.errors && (f.dateOrder.touched || f.dateOrder.dirty)" class="text-danger">
+                                    <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu</div>
                                 </div>
                                 <span [class.d-none]="saleOrder.state == 'draft'">
                                     {{saleOrder.dateOrder | date: 'short'}}
@@ -154,13 +154,13 @@
                                 <div style="width: 100px;" class="div-cell py-1 text-right">Thành tiền</div>
                                 <!-- <div style="width: 100px;" class="div-cell py-1 text-right">Thanh toán</div> -->
                                 <!-- <div style="width: 100px;" class="div-cell py-1 text-right">Còn lại</div> -->
-                                <div style="width: 100px;" class="div-cell py-1 text-center" *ngIf="getState != 'done'">Thao tác</div>
+                                <div style="width: 100px;" class="div-cell py-1 text-center" *ngIf="state != 'done'">Thao tác</div>
                             </div>
                         </div>
                         <div class="flex-1-1-100 overflow-auto">
-                            <ng-container *ngFor="let line of orderLines.controls; let i=index">
-                                <app-sale-order-line-cu #lineTemplate [isFast]="true" (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)" [line]="line.value" (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)"
-                                    (onUpdateEvent)="updateLineInfo($event, line)"></app-sale-order-line-cu>
+                            <ng-container *ngFor="let line of saleOrder.orderLines; let i=index">
+                                <app-sale-order-line-cu #lineTemplate [initialListEmployees]="initialListEmployees" [filteredToothCategories]="filteredToothCategories" [initialListTeeths]="listTeeths" [isFast]="true" [line]="line" (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)"
+                                    (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)"></app-sale-order-line-cu>
                             </ng-container>
                         </div>
                     </div>
@@ -168,7 +168,7 @@
                         <!-- ưu đãi -->
                         <div class="card mb-3">
                             <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">Ưu đãi phiếu điều trị
-                                <img *ngIf="getState != 'done'" class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
+                                <img *ngIf="state != 'done'" class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
                                 <span class="ml-auto">{{sumPromotionSaleOrder() | number}}</span>
                             </div>
                             <div class="card-body px-3 py-2">
@@ -195,7 +195,7 @@
                                 </p>
                                 <p class="d-flex justify-content-between mb-0">
                                     <label class="font-weight-600">Tổng tiền</label>
-                                    <label class="font-weight-600">{{getAmountTotal | number}}</label>
+                                    <label class="font-weight-600">{{saleOrder.amountTotal | number}}</label>
                                 </p>
                                 <p *ngIf="saleOrder.state == 'done'" class="d-flex justify-content-between mb-0">
                                     <label class="font-weight-600">Thanh toán</label>
@@ -203,7 +203,7 @@
                                 </p>
                                 <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'" class="d-flex justify-content-between mb-0">
                                     <label class="font-weight-600">Còn lại</label>
-                                    <label class="font-weight-600">{{getAmountTotal - saleOrder.totalPaid | number}}</label>
+                                    <label class="font-weight-600">{{saleOrder.amountTotal - saleOrder.totalPaid | number}}</label>
                                 </p>
                             </div>
                         </div>
