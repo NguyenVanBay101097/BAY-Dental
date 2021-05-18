@@ -22,3 +22,9 @@
 .o_form_view .o_group .o_group_col_12 {
     display: table;
 }
+
+.o_td_value {
+    width: 100%;
+    padding-bottom: 1rem;
+    padding-left: .5rem;
+}
