@@ -25,12 +25,14 @@ export class SmsMessageDialogComponent implements OnInit {
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent;
 
   formGroup: FormGroup;
-  textareaLimit: number = 200;
 
   filteredSmsCampaign: any[];
   filteredSmsAccount: any[];
   filteredTemplate: any[];
 
+  sendLimit;
+
+  textareaLimit: number = 200;
   template: any = {
     text: '',
     templateType: 'text'
@@ -60,7 +62,8 @@ export class SmsMessageDialogComponent implements OnInit {
       smsAccount: [null, Validators.required],
       template: null,
       typeSend: "manual", // manual: gửi ngay, reminder: đặt lịch
-      dateObj: [new Date(), Validators.required]
+      dateObj: new Date(), 
+      templateName: null
     })
     this.loadCampaign();
     this.loadAccount();
@@ -187,7 +190,9 @@ export class SmsMessageDialogComponent implements OnInit {
     val.smsTemplateId = val.template ? val.template.id : null;
     val.body = this.template ? JSON.stringify(this.template) : '';
     val.partnerIds = this.partnerIds;
-    val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm");
+    if (val.typeSend == "reminder") {
+      val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm");
+    }
     
     this.smsMessageService.create(val).subscribe(
       res => {
@@ -195,5 +200,15 @@ export class SmsMessageDialogComponent implements OnInit {
         this.activeModal.close();
       }
     )
+  }
+
+  changeTypeSend(event) {
+    if (event.target.value == "reminder") {
+      this.formGroup.get("dateObj").setValue(new Date());
+    }
+  }
+
+  changeSmsCampaign(event) {
+    this.sendLimit = event.limitMessage - event.totalMessage;
   }
 }
