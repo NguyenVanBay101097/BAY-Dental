@@ -922,10 +922,17 @@ namespace Infrastructure.Services
             return code;
         }
 
-        private async Task<string> GeneratePromoCodeIfEmpty(string type = "saleCouponPromoCode")
+        private async Task<string> GeneratePromoCodeIfEmpty(string type = "promotion.code")
         {
-            var seqObj = GetService<IIRSequenceService>();
-            return await seqObj.NextByCode(type);
+            var sequenceObj = GetService<IIRSequenceService>();
+            var promotionCode = await sequenceObj.NextByCode(type);
+            if (string.IsNullOrEmpty(promotionCode) || promotionCode == "/")
+            {
+                await _InsertPromotionCodeSequence();
+                promotionCode = await sequenceObj.NextByCode("promotion.code");
+            }
+
+            return promotionCode;
         }
 
         private async Task CheckAndUpdatePromoCode(string code)
@@ -940,15 +947,38 @@ namespace Infrastructure.Services
                 var result = rgx.Split(code, 2, m.Index);
                 var numberCode = result[1];
                 int number = Int32.Parse(numberCode.ToString());
-                var sequenceObj =  GetService<IIRSequenceService>();
-                var sequence = await sequenceObj.SearchQuery(domain: x => x.Code == "saleCouponPromoCode").FirstOrDefaultAsync();
-                if(number > sequence.NumberNext)
+                var sequenceObj =  GetService<IIRSequenceService>();                                                
+                var sequence = await sequenceObj.SearchQuery(x => x.Code == "promotion.code").FirstOrDefaultAsync();
+                if(sequence == null)
+                {
+                    sequence = await sequenceObj.CreateAsync(new IRSequence
+                    {
+                        Name = "Mã khuyến mãi",
+                        Code = "promotion.code",
+                        Prefix = "CTKM/",
+                        Padding = 4
+                    });
+                }                
+
+                if (number > sequence.NumberNext)
                 {
                     sequence.NumberNext = number + sequence.NumberIncrement;
                     await sequenceObj.UpdateAsync(sequence);
                 }
             }
             
+        }
+
+        private async Task _InsertPromotionCodeSequence()
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            await seqObj.CreateAsync(new IRSequence
+            {
+                Name = "Mã khuyến mãi",
+                Code = "promotion.code",
+                Prefix = "CTKM/",
+                Padding = 4
+            });
         }
 
     }
