@@ -932,7 +932,7 @@ namespace Infrastructure.Services
         {
             string pattern = @"^CTKM\d{4}$";
             Regex rg = new Regex(pattern, RegexOptions.IgnoreCase);
-            Regex rgx = new Regex(@"CTKM");
+            Regex rgx = new Regex(@"CTKM", RegexOptions.IgnoreCase);
             var isMatching = rg.IsMatch(code);
             if (isMatching)
             {
