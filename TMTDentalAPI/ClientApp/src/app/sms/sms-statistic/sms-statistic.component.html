@@ -13,22 +13,18 @@
     </div>
     <div class="o_control_panel d-flex justify-content-between">
         <div class="d-flex">
-            <kendo-combobox #campaignCbx [filterable]="true" class="kendo-combobox-sm mr-2" placeholder="Lọc chiến dịch"
-                [data]="campaignData" [textField]="'name'" [valueField]="'id'" (valueChange)="onChangeCampaign($event)">
+            <kendo-combobox #campaignCbx [filterable]="true" class="kendo-combobox-sm mr-2" placeholder="Lọc chiến dịch" [data]="campaignData" [textField]="'name'" [valueField]="'id'" (valueChange)="onChangeCampaign($event)">
             </kendo-combobox>
-            <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
-                (searchChange)="onSearchDateChange($event)">
+            <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
             </app-tai-date-range-filter-dropdown>
-            <kendo-combobox (valueChange)="onChangeState($event)" placeholder="Tất cả trạng thái"
-                class="kendo-combobox-sm ml-2" [data]="filteredState" [textField]="'name'" [valueField]="'value'">
+            <kendo-combobox (valueChange)="onChangeState($event)" placeholder="Tất cả trạng thái" class="kendo-combobox-sm ml-2" [data]="filteredState" [textField]="'name'" [valueField]="'value'">
             </kendo-combobox>
         </div>
     </div>
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [resizable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true"
-        [pageSize]="limit">
+    <kendo-grid [data]="gridData" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true" [pageSize]="limit">
         <kendo-grid-column field="partnerName" title="Khách hàng" width="200"></kendo-grid-column>
         <kendo-grid-column field="number" title="Số điện thoại" width="150"></kendo-grid-column>
         <kendo-grid-column title="Thời gian gửi tin" width="150">
