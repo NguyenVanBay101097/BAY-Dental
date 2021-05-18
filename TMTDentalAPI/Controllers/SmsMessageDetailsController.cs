@@ -30,6 +30,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetPagedStatistic([FromQuery] SmsMessageDetailPaged val)
+        {
+            var res = await _smsMessageDetailService.GetPagedStatistic(val);
+            return Ok(res);
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> ReSend(IEnumerable<Guid> ids)
         {

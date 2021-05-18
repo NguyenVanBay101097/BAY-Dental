@@ -31,13 +31,15 @@ namespace Infrastructure.Services
             _tenant = tenant?.Value;
         }
 
-        public async Task<PagedResult2<SmsMessageDetailBasic>> GetPaged(SmsMessageDetailPaged val)
+        public IQueryable<SmsMessageDetail> GetQueryable(SmsMessageDetailPaged val)
         {
             var query = SearchQuery();
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId.Value);
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Number.Contains(val.Search));
+                query = query.Where(x => x.Number.Contains(val.Search) ||
+                (x.PartnerId.HasValue && (x.Partner.Name.Contains(val.Search) || (x.Partner.NameNoSign.Contains(val.Search)))) ||
+                (x.SmsMessageId.HasValue && x.SmsMessage.Name.Contains(val.Search)));
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State.Equals(val.State));
             if (val.SmsCampaignId.HasValue)
@@ -46,7 +48,36 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateCreated.HasValue && val.DateFrom.Value <= x.DateCreated.Value);
             if (val.DateTo.HasValue)
                 query = query.Where(x => x.DateCreated.HasValue && val.DateTo.Value >= x.DateCreated.Value);
-            
+            return query;
+        }
+
+        public async Task<PagedResult2<SmsMessageDetailStatistic>> GetPagedStatistic(SmsMessageDetailPaged val)
+        {
+            var query = GetQueryable(val);
+            var totalItems = await query.CountAsync();
+            var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SmsMessageDetailStatistic
+            {
+                Id = x.Id,
+                Body = x.Body,
+                BrandName = x.SmsAccount.Name,
+                DateCreated = x.DateCreated,
+                ErrorCode = x.ErrorCode,
+                Number = x.Number,
+                PartnerName = x.Partner.DisplayName,
+                SmsCampaignName = x.SmsCampaignId.HasValue ? x.SmsCampaign.Name : "",
+                SmsMessageName = x.SmsMessageId.HasValue ? x.SmsMessage.Name : "",
+                State = x.State
+            }).ToListAsync();
+
+            return new PagedResult2<SmsMessageDetailStatistic>(totalItems: totalItems, offset: val.Offset, limit: val.Limit)
+            {
+                Items = items
+            };
+        }
+
+        public async Task<PagedResult2<SmsMessageDetailBasic>> GetPaged(SmsMessageDetailPaged val)
+        {
+            var query = GetQueryable(val);
             var totalItems = await query.CountAsync();
             var items = await query.Include(x => x.SmsAccount).Include(x => x.Partner).OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).ToListAsync();
             return new PagedResult2<SmsMessageDetailBasic>(totalItems: totalItems, limit: val.Limit, offset: val.Offset)

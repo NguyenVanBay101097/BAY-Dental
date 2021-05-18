@@ -21,10 +21,17 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SmsCampaignPaged
     {
+        public SmsCampaignPaged()
+        {
+            Paged = false;
+            Limit = 20;
+            Offset = 0;
+        }
         public int Limit { get; set; }
         public int Offset { get; set; }
         public string Search { get; set; }
         public string State { get; set; }
+        public bool? Paged { get; set; }
     }
 
     public class SmsCampaignSave

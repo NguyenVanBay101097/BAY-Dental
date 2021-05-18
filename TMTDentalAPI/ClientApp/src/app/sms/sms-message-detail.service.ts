@@ -28,4 +28,8 @@ export class SmsMessageDetailService {
     ReSend(ids) {
         return this.http.post(this.base_api + this.apiUrl + '/ReSend', ids);
     }
+
+    getPagedStatistic(val){
+        return this.http.get(this.base_api + this.apiUrl+'/GetPagedStatistic', { params: val });
+    }
 }

@@ -15,6 +15,7 @@ export class SmsCampaignPaged {
     limit: number;
     offset: number;
     search: string;
+    paged: boolean;
     state: string;
 }
 
