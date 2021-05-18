@@ -48,7 +48,8 @@ import { SmsCampaignDetailComponent } from './sms-campaign-detail/sms-campaign-d
     SmsCampaignListComponent, 
     SmsCampaignCrUpComponent, 
     SmsComfirmDialogComponent, 
-    SmsPartnerListDialogComponent, SmsCampaignDetailComponent
+    SmsPartnerListDialogComponent, 
+    SmsCampaignDetailComponent
   ],
   imports: [
     CommonModule,

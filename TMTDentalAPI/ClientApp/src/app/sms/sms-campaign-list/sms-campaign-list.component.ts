@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
@@ -22,7 +23,8 @@ export class SmsCampaignListComponent implements OnInit {
   state: string;
   constructor(
     private modalService: NgbModal,
-    private smsCampaignService: SmsCampaignService
+    private smsCampaignService: SmsCampaignService, 
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -85,5 +87,9 @@ export class SmsCampaignListComponent implements OnInit {
     modalRef.result.then((val) => {
       this.loadDataFromApi();
     })
+  }
+
+  cellClick(item) {
+    this.router.navigate(['/sms/campaign', item.id]);
   }
 }

@@ -38,12 +38,8 @@ const routes: Routes = [
   { path: 'templates', component: SmsTemplateListComponent },
   { path: 'statistic', component: SmsStatisticComponent },
   { path: 'accounts', component: SmsAccountListComponent },
-  { 
-    path: 'campaign', component: SmsCampaignListComponent, 
-    children: [
-      { path: ':id', component: SmsCampaignDetailComponent }
-    ] 
-  },
+  { path: 'campaign', component: SmsCampaignListComponent, },
+  { path: 'campaign/:id', component: SmsCampaignDetailComponent }
 ];
 
 @NgModule({

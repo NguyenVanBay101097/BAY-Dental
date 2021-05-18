@@ -57,7 +57,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<SmsMessageBasic>(res));
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<IActionResult> GetPaged([FromQuery] SmsMessagePaged val)
         {
             var res = await _smsMessageService.GetPaged(val);

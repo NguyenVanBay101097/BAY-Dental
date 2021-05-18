@@ -5,6 +5,7 @@ export class SmsMessagePaged {
     limit: number;
     offset: number;
     search: string;
+    campaignId: string;
 }
 
 @Injectable({

@@ -29,7 +29,7 @@
 
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
+        (pageChange)="pageChange($event)" (cellClick)="cellClick($event.dataItem)">
         <kendo-grid-column field="name" title="Tên chiến dịch">
         </kendo-grid-column>
         <kendo-grid-column title="Thời gian" width="230">

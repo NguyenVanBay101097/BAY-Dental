@@ -50,4 +50,8 @@ export class SmsCampaignService {
     delete(id: string) {
         return this.http.delete(this.base_api + this.apiUrl + '/' + id);
     }
+
+    get(id: string) {
+        return this.http.get(this.base_api + this.apiUrl + '/' + id);
+    }
 }
