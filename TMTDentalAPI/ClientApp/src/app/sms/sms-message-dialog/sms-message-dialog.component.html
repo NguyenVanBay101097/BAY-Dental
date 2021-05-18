@@ -53,8 +53,11 @@
                                             </td>
                                             <td class="o_td_value">
                                                 <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
-                                                    [textField]="'name'" formControlName="smsAccount"
+                                                    [textField]="'brandName'" formControlName="smsAccount"
                                                     [filterable]="true" #smsAccountCbx [valueField]="'id'">
+                                                    <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                                        <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
+                                                    </ng-template>
                                                 </kendo-combobox>
                                                 <div *ngIf="f.smsAccount.errors && (f.smsAccount.touched || f.smsAccount.dirty)"
                                                     class="text-danger">

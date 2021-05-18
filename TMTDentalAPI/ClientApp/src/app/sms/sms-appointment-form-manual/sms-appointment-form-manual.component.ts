@@ -66,8 +66,6 @@ export class SmsAppointmentFormManualComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe((res) => {
-      console.log(res);
-      
       this.gridData = res;
     }, err => {
       console.log(err);

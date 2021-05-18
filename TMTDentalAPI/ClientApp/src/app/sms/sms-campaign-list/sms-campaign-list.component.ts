@@ -21,6 +21,12 @@ export class SmsCampaignListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   search: string;
   state: string;
+  filterStatus = [
+    { name: "Đang chạy", value: "running" },
+    { name: "Chưa chạy", value: "draft" },
+    { name: "Kết thúc", value: "shutdown" },
+  ];
+
   constructor(
     private modalService: NgbModal,
     private smsCampaignService: SmsCampaignService, 
@@ -87,6 +93,12 @@ export class SmsCampaignListComponent implements OnInit {
     modalRef.result.then((val) => {
       this.loadDataFromApi();
     })
+  }
+
+  onStatusChange(event) {
+    this.state = event ? event.value : '';
+    this.offset = 0;
+    this.loadDataFromApi();
   }
 
   cellClick(item) {

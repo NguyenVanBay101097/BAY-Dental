@@ -59,7 +59,7 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 Body = x.Body,
-                BrandName = x.SmsAccount.Name,
+                BrandName = x.SmsAccount.BrandName,
                 DateCreated = x.DateCreated,
                 ErrorCode = x.ErrorCode,
                 Number = x.Number,
