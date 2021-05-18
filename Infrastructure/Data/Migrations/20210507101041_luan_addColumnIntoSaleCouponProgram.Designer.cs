@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210507101041_luan_addColumnIntoSaleCouponProgram")]
+    partial class luan_addColumnIntoSaleCouponProgram
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1097,9 +1099,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("ToothCategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ToothType")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
@@ -1173,9 +1172,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Hidden")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(256)")
@@ -6477,9 +6473,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("ToothCategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ToothType")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
@@ -7159,9 +7152,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("DiscountType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsPaused")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -7344,9 +7334,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("TotalPaid")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
@@ -7393,9 +7380,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid?>("AdvisoryId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<double?>("AmountDiscountTotal")
-                        .HasColumnType("float");
 
                     b.Property<decimal?>("AmountInvoiced")
                         .HasColumnType("decimal(18,2)");
@@ -7444,9 +7428,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("InvoiceStatus")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsCancelled")
                         .HasColumnType("bit");
@@ -7517,9 +7498,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid?>("ToothCategoryId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ToothType")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
@@ -7919,109 +7897,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("SaleOrderId");
 
                     b.ToTable("SaleOrderPaymentRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderPromotion", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("DiscountFixed")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("DiscountPercent")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("DiscountType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("SaleCouponProgramId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SaleOrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SaleOrderLineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("SaleCouponProgramId");
-
-                    b.HasIndex("SaleOrderId");
-
-                    b.HasIndex("SaleOrderLineId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SaleOrderPromotions");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderPromotionLine", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("PriceUnit")
-                        .HasColumnType("float");
-
-                    b.Property<Guid>("PromotionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SaleOrderLineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("PromotionId");
-
-                    b.HasIndex("SaleOrderLineId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SaleOrderPromotionLines");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderServiceCardCardRel", b =>
@@ -13923,7 +13798,7 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderPaymentAccountPaymentRel", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.AccountPayment", "Payment")
-                        .WithMany("SaleOrderPaymentAccountPaymentRels")
+                        .WithMany()
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -13942,7 +13817,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("CreatedById");
 
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany("PaymentHistoryLines")
+                        .WithMany()
                         .HasForeignKey("SaleOrderLineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -13990,56 +13865,10 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
-                        .WithMany("SaleOrderPaymentRels")
+                        .WithMany()
                         .HasForeignKey("SaleOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderPromotion", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "SaleCouponProgram")
-                        .WithMany()
-                        .HasForeignKey("SaleCouponProgramId");
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
-                        .WithMany("Promotions")
-                        .HasForeignKey("SaleOrderId");
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany("Promotions")
-                        .HasForeignKey("SaleOrderLineId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderPromotionLine", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrderPromotion", "Promotion")
-                        .WithMany("Lines")
-                        .HasForeignKey("PromotionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany("PromotionLines")
-                        .HasForeignKey("SaleOrderLineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderServiceCardCardRel", b =>

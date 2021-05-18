@@ -1,0 +1,53 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window p-3">
+    <div class="discount_price rounded align-middle w-20 d-flex justify-content-start mb-2">
+        <div class="p-2 m-2">
+            <div>Tổng giá trị khuyến mãi</div>
+            <div class="d-flex justify-content-center"><i class="fas fa-dollar-sign mr-2 d-flex align-items-center"></i>{{amountTotal | number}}</div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between mb-2">
+        <div class="w-40">
+            <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo số phiếu điều trị"
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        </div>
+        <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
+            (searchChange)="searchChangeDate($event)">
+        </app-tai-date-range-filter-dropdown>
+    </div>
+    <div class="o_content">
+        <kendo-grid #grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="datePromotion" title="Ngày sử dụng" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.datePromotion | date : 'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="partnerName" title="Khách hàng" width="100"></kendo-grid-column>
+            <kendo-grid-column field="saleOrderName" title="Số phiếu" width="100"></kendo-grid-column>
+            <!-- <kendo-grid-column *ngIf="typeApply != 'on_order'" field="saleOrderLineName" title="Dịch vụ" width="100"></kendo-grid-column>
+            <kendo-grid-column *ngIf="typeApply != 'on_order'" field="amount" title="Tiền dịch vụ" width="100"></kendo-grid-column> -->
+            <kendo-grid-column field="amount" title="Tiền điều trị" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.amount | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="amountPromotion" title="Giá trị khuyến mãi" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.amountPromotion | number}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <div>
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onExportExcel()" accesskey="s">Xuất file</button>
+        <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+    </div>
+</div>

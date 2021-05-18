@@ -8,7 +8,7 @@ namespace ApplicationCore.Entities
     {
         public SaleCouponProgram()
         {
-            Active = true;
+            Active = false;
             RewardType = "discount";
             PromoApplicability = "on_current_order";
             ProgramType = "coupon_program";
@@ -25,6 +25,16 @@ namespace ApplicationCore.Entities
         public string Name { get; set; }
 
         public bool Active { get; set; }
+
+        /// <summary>
+        /// waiting: Chưa chạy
+        /// running: Đang chạy
+        /// paused: Tạm ngừng
+        /// expired: Hết hạn
+        /// </summary>
+        //public string Status { get; set; }
+
+        public bool IsPaused { get; set; }
 
         /// <summary>
         /// Coupon program will be applied based on given sequence if multiple programs are
@@ -65,8 +75,12 @@ namespace ApplicationCore.Entities
         /// </summary>
         public int? ValidityDuration { get; set; }
 
+        /// <summary>
+        /// Không áp dụng cộng dồn khuyến mãi
+        /// </summary>
+        public bool? NotIncremental { get; set; }
         public ICollection<SaleCouponProgramProductRel> DiscountSpecificProducts { get; set; } = new List<SaleCouponProgramProductRel>();
-
+        public ICollection<SaleCouponProgramProductCategoryRel> DiscountSpecificProductCategories { get; set; } = new List<SaleCouponProgramProductCategoryRel>();
         public ICollection<SaleCoupon> Coupons { get; set; } = new List<SaleCoupon>();
 
         public ICollection<SaleOrderLine> SaleLines { get; set; } = new List<SaleOrderLine>();
@@ -102,6 +116,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string PromoApplicability { get; set; }
 
+        /// <summary>
+        /// Mức giảm tối đa
+        /// </summary>
         public decimal? DiscountMaxAmount { get; set; }
 
         public Guid? RewardProductId { get; set; }
@@ -109,12 +126,28 @@ namespace ApplicationCore.Entities
 
         public int? RewardProductQuantity { get; set; }
 
+        /// <summary>
+        /// Ngày bắt đầu
+        /// </summary>
         public DateTime? RuleDateFrom { get; set; }
 
+        /// <summary>
+        /// Ngày kết thúc
+        /// </summary>
         public DateTime? RuleDateTo { get; set; }
 
         public string RewardDescription { get; set; }
 
+        /// <summary>
+        /// on_order : phiếu điều trị
+        /// specific_product_categories: nhóm dịch vụ
+        /// specific_products: dịch vụ
+        /// </summary>
         public string DiscountApplyOn { get; set; }
+
+        /// <summary>
+        /// Chọn các thứ trong tuần
+        /// </summary>
+        public string Days { get; set; }
     }
 }

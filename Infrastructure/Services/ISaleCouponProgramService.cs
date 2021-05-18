@@ -12,9 +12,10 @@ namespace Infrastructure.Services
     {
         Task Apply(SaleCouponProgram rule, SaleOrder order, decimal total_amount, decimal total_qty, SaleCoupon coupon = null);
         Task<PagedResult2<SaleCouponProgramBasic>> GetPagedResultAsync(SaleCouponProgramPaged val);
-
         Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrder();
         Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrderLine(Guid productId);
+
+        Task<decimal> GetAmountTotal(Guid id);
         Task<SaleCouponProgram> CreateProgram(SaleCouponProgramSave val);
         Task UpdateProgram(Guid id, SaleCouponProgramSave val);
         Task<SaleCouponProgramDisplay> GetDisplay(Guid id);
@@ -34,5 +35,6 @@ namespace Infrastructure.Services
         Task ActionUnArchive(IEnumerable<Guid> ids);
 
         Task<SaleCouponProgramResponse> GetPromotionDisplayUsageCode(string code, Guid? productId);
+        Task<PagedResult2<SaleCouponProgramGetListPagedResponse>> GetListPaged(SaleCouponProgramGetListPagedRequest val);
     }
 }
