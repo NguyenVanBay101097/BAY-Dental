@@ -295,7 +295,8 @@ namespace Infrastructure.Services
                 //    program.PromoCode = GeneratePromoCode();
                 //    checkExist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == program.PromoCode).FirstOrDefaultAsync();
                 //} while (checkExist != null);
-                await GeneratePromoCodeIfEmpty();
+                var code = await GeneratePromoCodeIfEmpty();
+                program.PromoCode = code;
             }
 
             program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
@@ -955,7 +956,7 @@ namespace Infrastructure.Services
                     {
                         Name = "Mã khuyến mãi",
                         Code = "promotion.code",
-                        Prefix = "CTKM/",
+                        Prefix = "CTKM",
                         Padding = 4
                     });
                 }                
@@ -976,7 +977,7 @@ namespace Infrastructure.Services
             {
                 Name = "Mã khuyến mãi",
                 Code = "promotion.code",
-                Prefix = "CTKM/",
+                Prefix = "CTKM",
                 Padding = 4
             });
         }
