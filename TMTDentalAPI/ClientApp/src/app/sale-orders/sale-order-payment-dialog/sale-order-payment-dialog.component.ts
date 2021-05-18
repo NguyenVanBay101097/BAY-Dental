@@ -17,6 +17,7 @@ import { debounceTime, tap, switchMap } from "rxjs/operators";
 import { AccountPaymentsOdataService } from "src/app/shared/services/account-payments-odata.service";
 import { SaleOrderPaymentService } from "src/app/core/services/sale-order-payment.service";
 import { validator } from "fast-json-patch";
+import { PartnerService } from "src/app/partners/partner.service";
 
 @Component({
   selector: "app-sale-order-payment-dialog",
@@ -40,6 +41,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   partnerCash = 0;
   returnCash = 0;
   maxAmount: number = 0;
+  partner: any;
 
   constructor(
     private fb: FormBuilder,
@@ -50,7 +52,8 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     private errorService: AppSharedShowErrorService,
     private authService: AuthService,
     private accountPaymenetOdataService: AccountPaymentsOdataService,
-    private saleOrderPaymentService: SaleOrderPaymentService
+    private saleOrderPaymentService: SaleOrderPaymentService,
+    private partnerService: PartnerService
   ) {}
 
   ngOnInit() {
@@ -338,20 +341,36 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   addJournalLine(journal: AccountJournalSimple) {
+    //nếu trường hợp là tạm ứng là load số tiền tạm ứng còn lại và input nhập không cho nhập vượt
     var index = this.journalLinesFC.value.findIndex(
       (x) => x.journalId == journal.id
     );
     if (index == -1) {
-      var soTienConLai = this.amount - this.laySoTienThanhToanExceptCashAndIndex(index);
-      var g = this.fb.group({
-        journalId: journal.id,
-        journal: journal,
-        amount: soTienConLai,
-      });
-      this.journalLinesFC.push(g);
-
-      this.onChangeJournalLineAmount(soTienConLai, this.journalLinesFC.controls.indexOf(g));
-      this.onBlurJournalLineAmount();
+      if (journal.type == 'advance') {
+        this.partnerService.getAmountAdvanceBalance(this.partner.id).subscribe(result => {
+          var soTienConLai = this.amount - this.laySoTienThanhToanExceptCashAndIndex(index);
+          var g = this.fb.group({
+            journalId: journal.id,
+            journal: journal,
+            amount: soTienConLai,
+            amountAdvanceBalance: result
+          });
+          this.journalLinesFC.push(g);
+          this.onChangeJournalLineAmount(soTienConLai, this.journalLinesFC.controls.indexOf(g));
+          this.onBlurJournalLineAmount();
+        })
+      } else {
+        var soTienConLai = this.amount - this.laySoTienThanhToanExceptCashAndIndex(index);
+        var g = this.fb.group({
+          journalId: journal.id,
+          journal: journal,
+          amount: soTienConLai,
+        });
+        this.journalLinesFC.push(g);
+  
+        this.onChangeJournalLineAmount(soTienConLai, this.journalLinesFC.controls.indexOf(g));
+        this.onBlurJournalLineAmount();
+      }
     }
   }
 
@@ -463,8 +482,8 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
     //kiểm tra số tiền của index, nếu là type advance thì ko cho phép vượt quá số tối đa
     if (currentLineValue.journal.type == 'advance') {
-      if (currentLineValue.amount > this.advanceAmount) {
-        currentLine.get('amount').setValue(this.advanceAmount);
+      if (currentLineValue.amount > currentLineValue.amountAdvanceBalance) {
+        currentLine.get('amount').setValue(currentLineValue.amountAdvanceBalance);
       } else {
         currentLine.get('amount').setValue(currentLineValue.amount);
       }
