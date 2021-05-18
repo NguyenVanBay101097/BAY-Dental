@@ -16,8 +16,8 @@ export class SmsPartnerListDialogComponent implements OnInit {
   gridData: GridDataResult;
   loading = false;
   offset = 0;
-  searchUpdate = new Subject<string>();
   search: string;
+  searchUpdate = new Subject<string>();
   selectedIds: any = [];
 
   constructor(

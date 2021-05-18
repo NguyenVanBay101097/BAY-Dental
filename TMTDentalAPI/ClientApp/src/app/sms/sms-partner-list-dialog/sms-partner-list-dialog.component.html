@@ -5,19 +5,33 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <kendo-grid [data]="gridData" [selectable]="true" [resizable]="true" (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
-        <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
-        <kendo-grid-column field="name" title="Khách hàng"></kendo-grid-column>
-        <kendo-grid-column field="phone" title="Số Điện thoại"></kendo-grid-column>
-        <kendo-grid-column field="dateOfBirth" title="Ngày sinh"></kendo-grid-column>
-        <kendo-grid-column field="gender" title="Giới tính"></kendo-grid-column>
-        <kendo-grid-column field="countLine" title="Số dịch vụ"></kendo-grid-column>
-        <kendo-grid-column title="Doanh thu">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.debit | number}}
-            </ng-template>
-        </kendo-grid-column>
-    </kendo-grid>
+    <div class="o_cp_controller">
+        <div class="o_control_panel">
+            <div class="o_cp_t_left">
+                
+            </div>
+            <div class="o_cp_t_right">
+                <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo họ tên, số điện thoại" type="text"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            </div>
+        </div>
+    </div>
+    
+    <div class="o_content">
+        <kendo-grid [data]="gridData" [selectable]="true" [resizable]="true" (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+            <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
+            <kendo-grid-column field="name" title="Khách hàng"></kendo-grid-column>
+            <kendo-grid-column field="phone" title="Số Điện thoại"></kendo-grid-column>
+            <kendo-grid-column field="dateOfBirth" title="Ngày sinh"></kendo-grid-column>
+            <kendo-grid-column field="gender" title="Giới tính"></kendo-grid-column>
+            <kendo-grid-column field="countLine" title="Số dịch vụ"></kendo-grid-column>
+            <kendo-grid-column title="Doanh thu">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.debit | number}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
 </div>
 
 <footer class="modal-footer">

@@ -8,6 +8,7 @@ import { SmsAppointmentFormComponent } from './sms-appointment-form/sms-appointm
 import { SmsBirthdayFormAutomaticComponent } from './sms-birthday-form-automatic/sms-birthday-form-automatic.component';
 import { SmsBirthdayFormManualComponent } from './sms-birthday-form-manual/sms-birthday-form-manual.component';
 import { SmsBirthdayFormComponent } from './sms-birthday-form/sms-birthday-form.component';
+import { SmsCampaignDetailComponent } from './sms-campaign-detail/sms-campaign-detail.component';
 import { SmsCampaignListComponent } from './sms-campaign-list/sms-campaign-list.component';
 import { SmsMessageDetailStatisticComponent } from './sms-message-detail-statistic/sms-message-detail-statistic.component';
 import { SmsMessageStatisticComponent } from './sms-message-statistic/sms-message-statistic.component';
@@ -37,7 +38,12 @@ const routes: Routes = [
   { path: 'templates', component: SmsTemplateListComponent },
   { path: 'statistic', component: SmsStatisticComponent },
   { path: 'accounts', component: SmsAccountListComponent },
-  { path: 'campaign', component: SmsCampaignListComponent },
+  { 
+    path: 'campaign', component: SmsCampaignListComponent, 
+    children: [
+      { path: ':id', component: SmsCampaignDetailComponent }
+    ] 
+  },
 ];
 
 @NgModule({
