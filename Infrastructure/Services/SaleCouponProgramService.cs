@@ -204,13 +204,13 @@ namespace Infrastructure.Services
 
             if (program.PromoCodeUsage == "code_needed" && string.IsNullOrEmpty(program.PromoCode))
             {
-                //SaleCouponProgram checkExist = null;
-                //do
-                //{
-                //    program.PromoCode = GeneratePromoCode();
-                //    checkExist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == program.PromoCode).FirstOrDefaultAsync();
-                //} while (checkExist != null);
-                program.PromoCode = await GeneratePromoCodeIfEmpty();
+                var sequenceObj = GetService<IIRSequenceService>();
+                program.PromoCode = await sequenceObj.NextByCode("promotion.code");
+                if (string.IsNullOrEmpty(program.PromoCode))
+                {
+                    await _InsertPromotionCodeSequence();
+                    program.PromoCode = await sequenceObj.NextByCode("promotion.code");
+                }
             }
 
             program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
@@ -252,6 +252,7 @@ namespace Infrastructure.Services
             {
                 await CheckAndUpdatePromoCode(program.PromoCode);
             }
+
             await CreateAsync(program);
             await _CheckPromoCodeConstraint(program);
             return program;
