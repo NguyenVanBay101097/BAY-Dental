@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { SmsAccountBasic, SmsAccountService } from '../sms-account.service';
+import { SmsAccountService, SmsAccountBasic } from '../sms-account.service';
 
 @Component({
   selector: 'app-sms-account-setting',
