@@ -152,10 +152,9 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Chúc mừng sinh nhật', link: '/sms/birthday-partners' },
         { name: 'Nhắc lịch hẹn', link: '/sms/appointment-reminder' },
         { name: 'Tin nhắn mẫu', link: '/sms/templates' },
-        { name: 'Thống kê tin nhắn', link: '/sms/statistic' },
-        // { name: 'Quảng cáo dịch vụ', link: '/' },
-        { name: 'Đối tác gửi tin', link: '/sms/accounts' },
         { name: 'Quản lý chiến dịch', link: '/sms/campaign' },
+        { name: 'Đối tác gửi tin', link: '/sms/accounts' },
+        { name: 'Thống kê tin nhắn', link: '/sms/statistic' },
       ],
     },
     {

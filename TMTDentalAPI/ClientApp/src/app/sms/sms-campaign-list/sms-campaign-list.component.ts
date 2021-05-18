@@ -4,7 +4,7 @@ import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { SmsCampaignCrUpComponent } from '../sms-campaign-cr-up/sms-campaign-cr-up.component';
-import {SmsCampaignService, SmsCampaignPaged } from '../sms-campaign.service';
+import { SmsCampaignService, SmsCampaignPaged } from '../sms-campaign.service';
 import { SmsMessageDialogComponent } from '../sms-message-dialog/sms-message-dialog.component';
 
 @Component({
@@ -44,6 +44,7 @@ export class SmsCampaignListComponent implements OnInit {
     val.offset = this.offset;
     val.search = this.search || "";
     val.state = this.state || '';
+    val.paged = true;
     this.smsCampaignService.getPaged(val).pipe(
       map(
         (response: any) =>

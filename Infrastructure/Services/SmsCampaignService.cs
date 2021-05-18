@@ -23,12 +23,13 @@ namespace Infrastructure.Services
 
         private IQueryable<SmsCampaign> GetQueryable(SmsCampaignPaged val)
         {
-            var query = SearchQuery(x => !string.IsNullOrEmpty(x.TypeDate));
+            var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State == val.State);
-
+            if (val.Paged.HasValue && val.Paged.Value)
+                query = query.Where(x => !string.IsNullOrEmpty(x.State));
 
             return query;
         }

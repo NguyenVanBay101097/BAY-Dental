@@ -31,8 +31,8 @@ export class SmsMessageDialogComponent implements OnInit {
   filteredSmsAccount: any[];
   filteredTemplate: any[];
 
-  sendLimit;
-
+  sendLimit: number = 0;
+  errorSendLimit: boolean = false;
   textareaLimit: number = 200;
   template: any = {
     text: '',
@@ -195,6 +195,7 @@ export class SmsMessageDialogComponent implements OnInit {
       this.partnerIds = res;
       if (this.partnerIds && this.partnerIds.length > this.sendLimit) {
         this.partnerIds = [];
+        this.errorSendLimit = true;
       }
     })
   }
@@ -244,7 +245,8 @@ export class SmsMessageDialogComponent implements OnInit {
         this.notify('Hạn mức gửi tin nhắn đã hết. Vui lòng kiểm tra lại chiến dịch', false);
         this.formGroup.get('smsCampaign').setValue(null);
       }
+
+      this.sendLimit = event.limitMessage - event.totalMessage;
     }
-    this.sendLimit = event.limitMessage - event.totalMessage;
   }
 }

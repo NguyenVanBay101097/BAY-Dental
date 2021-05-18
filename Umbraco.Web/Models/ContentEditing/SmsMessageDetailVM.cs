@@ -34,4 +34,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
     }
+
+    public class SmsMessageDetailStatistic
+    {
+        public Guid Id { get; set; }
+        public string Body { get; set; }
+        public string Number { get; set; }
+        public string PartnerName { get; set; }
+        public string BrandName { get; set; }
+        public string State { get; set; }
+        public DateTime? DateCreated { get; set; }
+        public string ErrorCode { get; set; }
+        public string SmsCampaignName { get; set; }
+        public string SmsMessageName { get; set; }
+    }
 }

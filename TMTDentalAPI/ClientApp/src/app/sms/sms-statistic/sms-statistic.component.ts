@@ -31,7 +31,7 @@ export class SmsStatisticComponent implements OnInit {
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
-  @ViewChild('campaignCbx', { static: false }) campaignCbx: ComboBoxComponent;
+  @ViewChild('campaignCbx', { static: true }) campaignCbx: ComboBoxComponent;
 
   constructor(
     private intlService: IntlService,
@@ -42,7 +42,9 @@ export class SmsStatisticComponent implements OnInit {
   ngOnInit() {
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
+
     this.loadDataFromApi();
+
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -51,28 +53,16 @@ export class SmsStatisticComponent implements OnInit {
         this.loadDataFromApi();
       });
 
-    // this.campaignCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.campaignCbx.loading = true)),
-    //   switchMap(value => this.searchCampaign(value))
-    // ).subscribe((result: any) => {
-    //   this.campaignData = result ? result.items : [];
-    //   this.campaignCbx.loading = false;
-    // });
-    setTimeout(() => {
-      this.loadCampaign();
-    });
-  }
-
-  ngAfterViewInit(): void {
     this.campaignCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.campaignCbx.loading = true)),
       switchMap(value => this.searchCampaign(value))
     ).subscribe((result: any) => {
-      this.campaignData = result;
+      this.campaignData = result ? result.items : [];
       this.campaignCbx.loading = false;
     });
+
+    this.loadCampaign();
   }
 
   loadDataFromApi() {
@@ -84,7 +74,7 @@ export class SmsStatisticComponent implements OnInit {
     val.smsCampaignId = this.smsCampaignId || '';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
-    this.smsMessageDetailService.getPaged(val)
+    this.smsMessageDetailService.getPagedStatistic(val)
       .pipe(map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -114,7 +104,7 @@ export class SmsStatisticComponent implements OnInit {
   }
 
   onChangeCampaign(event) {
-    this.smsCampaignId = event.id;
+    this.smsCampaignId = event ? event.id : '';
     this.skip = 0;
     this.loadDataFromApi();
   }
@@ -135,8 +125,26 @@ export class SmsStatisticComponent implements OnInit {
     )
   }
 
+  stranslateCodeResponse(code) {
+    switch (code) {
+      case "100":
+        return "Gửi thành công";
+      case "99":
+        return "Lỗi không xác định , thử lại sau";
+      case "101":
+        return "Đăng nhập thất bại (api key hoặc secrect key không đúng)";
+      case "102":
+        return "Tài khoản đã bị khóa";
+      case "103":
+        return "Số dư tài khoản không đủ dể gửi tin";
+      case "104":
+        return "Brandname không tồn tại hoặc đã bị hủy";
+      case "118":
+        return "Loại tin nhắn không hợp lệ";
+      default:
+        return "Lý do khác";
+    }
+  }
 }
-function ngAfterViewInit() {
-  throw new Error('Function not implemented.');
-}
+
 
