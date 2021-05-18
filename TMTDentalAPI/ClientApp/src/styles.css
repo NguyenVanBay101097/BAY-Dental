@@ -466,7 +466,7 @@
   border: 1px solid #42A948;
 } */
 
-input.ng-invalid:not(form), select.ng-invalid  {
+input.ng-touched.ng-invalid:not(form), select.ng-touched.ng-invalid  {
   border: 1px solid #dc3545; /* red */
 }
 

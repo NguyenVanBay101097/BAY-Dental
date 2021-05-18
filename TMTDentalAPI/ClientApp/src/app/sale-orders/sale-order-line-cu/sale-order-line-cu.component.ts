@@ -41,10 +41,10 @@ export class SaleOrderLineCuComponent implements OnInit {
   filteredEmployeesDoctor: any[] = [];
   filteredEmployeesAssistant: any[] = [];
   filteredEmployeesCounselor: any[] = [];
-  initialListEmployees: any = [];
-  filteredToothCategories: any[];
+  @Input() initialListEmployees: any = [];
+  @Input() filteredToothCategories: any[];
   hamList: { [key: string]: {} };
-  initialListTeeths: any[];
+  @Input() initialListTeeths: any[] = [];
   toothTypeDict = [
     { name: "Hàm trên", value: "upper_jaw" },
     { name: "Nguyên Hàm", value: "whole_jaw" },
@@ -72,9 +72,9 @@ export class SaleOrderLineCuComponent implements OnInit {
 
     // this.computeAmount();
 
-    this.loadEmployees();
-    this.loadToothCategories();
-    this.loadTeethList();
+    // this.loadEmployees();
+    // this.loadToothCategories();
+    // this.loadTeethList();
   }
 
   get TeethFA() {
@@ -119,6 +119,12 @@ export class SaleOrderLineCuComponent implements OnInit {
       counselor: this.line.counselor,
       diagnostic: this.line.diagnostic
     });
+
+    this.loadTeethMap(this.line.toothCategory);
+    console.log(this.initialListEmployees);
+    this.filteredEmployeesDoctor = this.initialListEmployees.slice();
+    this.filteredEmployeesCounselor = this.initialListEmployees.slice();
+    this.filteredEmployeesAssistant = this.initialListEmployees.slice();
   }
 
   onEmployeeFilter(value) {
@@ -275,7 +281,7 @@ export class SaleOrderLineCuComponent implements OnInit {
     var val = new ToothFilter();
     this.ToothService.getAllBasic(val).subscribe((result: any[]) => {
       this.initialListTeeths = result;
-      this.onChangeToothCategory(this.line.toothCategory);
+      // this.onChangeToothCategory(this.line.toothCategory);
     });
   }
 

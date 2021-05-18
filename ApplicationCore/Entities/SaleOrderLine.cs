@@ -20,6 +20,8 @@ namespace ApplicationCore.Entities
             QtyInvoiced = 0;
             AmountPaid = 0;
             AmountResidual = 0;
+            AmountInvoiced = 0;
+            AmountDiscountTotal = 0;
         }
 
         public SaleOrderLine(SaleOrderLine line)

@@ -52,7 +52,7 @@
             <div style="width: 100px;" class="div-cell text-right">
                 <div>
                     <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
-                        {{line.priceUnit * line.productUOMQty | number: '1.0-0'}}
+                        {{line.priceSubTotal | number: '1.0-0'}}
                     </ng-container>
                     <ng-template #elseTemplatePriceSub>
                         {{getPriceSubTotalFormGroup() | number}}

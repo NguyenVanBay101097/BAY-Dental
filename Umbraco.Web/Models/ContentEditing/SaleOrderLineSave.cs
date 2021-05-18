@@ -8,7 +8,6 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public SaleOrderLineSave()
         {
-            IsActive = true;
         }
 
         public Guid Id { get; set; }
@@ -38,22 +37,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public ICollection<SaleOrderPromotionSave> Promotions { get; set; } = new List<SaleOrderPromotionSave>();
 
-        public string State { get; set; }
-
-        public string DiscountType { get; set; }
-
-        public decimal? DiscountFixed { get; set; }
-
-        /// <summary>
-        /// Số tiền đã thanh toán
-        /// </summary>
-        public decimal? AmountPaid { get; set; }
-
-        /// <summary>
-        /// Tiền còn nợ
-        /// </summary>
-        public decimal? AmountResidual { get; set; }
-
         /// <summary>
         /// whole_jaw: nguyên hàm
         /// upper_jaw : hàm trên
@@ -67,8 +50,5 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? AssistantId { get; set; }
 
         public Guid? CounselorId { get; set; }
-
-        public bool IsActive { get; set; }
-
     }
 }

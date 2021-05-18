@@ -18,12 +18,17 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit , OnDestroy
 
   title = "Ưu đãi Dịch vụ";
   autoPromotions = [];
- @Input() saleOrderLine: SaleOrderLineDisplay = null;
+  @Input() saleOrderLine: SaleOrderLineDisplay = null;
 
   private updateSubject = new Subject<any>();
 
   isChange = false;
   code = '';
+
+  private btnDiscountSubject = new Subject<any>();
+  private btnPromoCodeSubject = new Subject<any>();
+  private btnPromoNoCodeSubject = new Subject<any>();
+  private btnDeletePromoSubject = new Subject<any>();
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -50,69 +55,50 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit , OnDestroy
     return this.updateSubject.asObservable();
   }
 
+  getBtnDiscountObs() {
+    return this.btnDiscountSubject.asObservable();
+  }
+
+  getBtnPromoCodeObs() {
+    return this.btnPromoCodeSubject.asObservable();
+  }
+
+  getBtnPromoNoCodeObs() {
+    return this.btnPromoNoCodeSubject.asObservable();
+  }
+
+  getBtnDeletePromoObs() {
+    return this.btnDeletePromoSubject.asObservable();
+  }
+
   loadDefaultPromotion() {
     this.promotionService.getPromotionBySaleOrderLine(this.saleOrderLine.productId).subscribe((res: any) => {
       this.autoPromotions = res;
     });
   }
 
-
   getAmountToApply() {
-
-      return this.saleOrderLine.priceUnit * this.saleOrderLine.productUOMQty;
- 
+    return this.saleOrderLine.priceUnit * this.saleOrderLine.productUOMQty;
   }
 
-  onApplyCouponSuccess() {
-    this.notificationService.notify('success', 'Thành công!');
-    this.updateSubject.next(true);
-    this.isChange = true;
+  onApplyCouponSuccess(data) {
+    this.btnPromoCodeSubject.next(data);
   }
 
   applyPromotion(item) {
-      var val = {
-        id:this.saleOrderLine.id,
-        saleProgramId: item.id,
-      };
-
-      var apply$ = this.saleOrderLineService.applyPromotion(val);
-      apply$.subscribe((res) => {
-        this.notificationService.notify('success', 'Thành công!');
-        this.updateSubject.next(true);
-        this.isChange = true;
-
-      });
+    this.btnPromoNoCodeSubject.next(item);
   }
 
   applyDiscount(value) {
-      var val = {
-        id: this.saleOrderLine.id,
-        discountType: value.discountType,
-        discountPercent: value.discountPercent,
-        discountFixed: value.discountFixed,
-      };
-      var apply$ = this.saleOrderLineService.applyDiscountOnOrderLine(val);
-      apply$.subscribe((res) => {
-        this.notificationService.notify('success', 'Thành công!');
-        this.isChange = true;
-        this.updateSubject.next(true);
-      });
+    this.btnDiscountSubject.next(value);
   }
 
   onDeletePromotion(item) {
-    this.saleOrderPromotionService.removePromotion([item.id]).subscribe(res => {
-      this.notificationService.notify('success', 'Thành công!');
-      this.updateSubject.next(true);
-      this.isChange = true;
-
-    })
+    this.btnDeletePromoSubject.next(item);
   }
 
-
-
   onClose() {
-   
-      this.activeModal.close(this.isChange ? true : false);
+    this.activeModal.dismiss();
   }
 
   sumPromotion() {
