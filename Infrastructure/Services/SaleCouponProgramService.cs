@@ -497,7 +497,7 @@ namespace Infrastructure.Services
             var countApplied = await _GetCountAppliedAsync(self);
             if (self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Mã khuyến mãi {coupon_code} vượt quá hạn mức áp dụng.";
-            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value.AbsoluteBeginOfDate() <= order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() <= order.DateOrder))
+            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value < order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if (!_FilterOnMinimumAmount(new List<SaleCouponProgram>() { self }, order).Any() && self.DiscountApplyOn == "on_order")
                 message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
@@ -530,7 +530,7 @@ namespace Infrastructure.Services
             var countApplied = await _GetCountAppliedAsync(self);
             if (self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Chương trình khuyến mãi vượt quá hạn mức áp dụng.";
-            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value.AbsoluteBeginOfDate() <= order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() <= order.DateOrder))
+            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value < order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if (self.ProgramType != "promotion_program" || self.PromoCodeUsage == "code_needed" || self.DiscountApplyOn != "on_order")
                 message.Error = "Khuyến mãi Không áp dụng cho đơn hàng";
@@ -563,7 +563,7 @@ namespace Infrastructure.Services
             var countApplied = await _GetCountAppliedAsync(self);
             if (self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Chương trình khuyến mãi vượt quá hạn mức áp dụng.";
-            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value.AbsoluteBeginOfDate() <= line.Order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() <= line.Order.DateOrder))
+            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > line.Order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value < line.Order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if ((self.DiscountSpecificProducts.Any() && !self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId)))                                                                                                                                                                                
                 message.Error = "Khuyến mãi Không áp dụng cho dịch vụ này";
