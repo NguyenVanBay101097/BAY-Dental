@@ -1,3 +1,4 @@
+import { state } from '@angular/animations';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -42,13 +43,13 @@ export class SmsMessageDialogComponent implements OnInit {
   get f() { return this.formGroup.controls; }
 
   constructor(
-    private fb: FormBuilder, 
-    private modalService: NgbModal, 
-    public activeModal: NgbActiveModal, 
-    private notificationService: NotificationService, 
-    private smsCampaignService: SmsCampaignService, 
-    private smsAccountService: SmsAccountService, 
-    private smsTemplateService: SmsTemplateService, 
+    private fb: FormBuilder,
+    private modalService: NgbModal,
+    public activeModal: NgbActiveModal,
+    private notificationService: NotificationService,
+    private smsCampaignService: SmsCampaignService,
+    private smsAccountService: SmsAccountService,
+    private smsTemplateService: SmsTemplateService,
     private smsMessageService: SmsMessageService,
     private intlService: IntlService,
   ) { }
@@ -106,6 +107,19 @@ export class SmsMessageDialogComponent implements OnInit {
         }
       }
     )
+  }
+
+  onChangeCampaign(event) {
+    if (event) {
+      if (event.state == 'draft' || event.state == 'shutdown') {
+        this.notify('Chiến dịch này chưa được kích hoạt hoặc đã bị dừng. Vui lòng kiểm tra lại chiến dịch', false);
+        this.formGroup.get('smsCampaign').setValue(null);
+      }
+      else if (event.typeDate != 'unlimited' && event.limitMessage <= event.totalMessage) {
+        this.notify('Hạn mức gửi tin nhắn đã hết. Vui lòng kiểm tra lại chiến dịch', false);
+        this.formGroup.get('smsCampaign').setValue(null);
+      }
+    }
   }
 
   searchCampaign(search?: string) {
@@ -188,11 +202,20 @@ export class SmsMessageDialogComponent implements OnInit {
     val.body = this.template ? JSON.stringify(this.template) : '';
     val.partnerIds = this.partnerIds;
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm");
-    
+
     this.smsMessageService.create(val).subscribe(
-      res => {
-        this.notify("Thành công", true);
-        this.activeModal.close();
+      (res: any) => {
+        if (res && res.typeSend == "manual") {
+          this.smsMessageService.actionSendSms(res.id).subscribe(
+            () => {
+              this.notify("Gửi tin nhắn thành công", true);
+              this.activeModal.close();
+            }
+          )
+        } else {
+          this.notify("Thêm mới tin nhắn thành công", true);
+          this.activeModal.close();
+        }
       }
     )
   }

@@ -38,10 +38,25 @@ namespace Infrastructure.Services
             var query = GetQueryable(val);
             var smsMessageObj = GetService<ISmsMessageService>();
             var smsMessageDetailObj = GetService<ISmsMessageDetailService>();
+            var dictTotalSuccessfulMessage = new Dictionary<Guid, int>();
+            var dictTotalFailedMessage = new Dictionary<Guid, int>();
 
-            var ditcTotalWaitedMessage = await smsMessageObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.State == "waiting").ToDictionaryAsync(x => x.SmsCampaignId.Value, x => x.Partners.Count());
-            //var ditcTotalSuccessfulMessage = await smsMessageDetailObj.SearchQuery(x => x.SmsMessageId.HasValue && x.SmsMessage.SmsCampaignId.HasValue && x.State == "success").GroupBy(x => x.SmsMessage.SmsCampaignId.Value).ToDictionaryAsync(x => x.Key, x => x.Count());
-            //var ditcTotalFailedMessage = await smsMessageDetailObj.SearchQuery(x => x.SmsMessageId.HasValue && x.SmsMessage.SmsCampaignId.HasValue && x.State == "fails").GroupBy(x => x.SmsMessage.SmsCampaignId.Value).ToDictionaryAsync(x => x.Key, x => x.Count());
+            var ditcTotalWaitedMessage = await smsMessageObj
+                .SearchQuery(x => x.SmsCampaignId.HasValue && x.State == "waiting")
+                .Include(x => x.Partners)
+                .ToDictionaryAsync(x => x.SmsCampaignId.Value, x => x.Partners.Count());
+
+            var listSuccess = await smsMessageDetailObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.State == "success").ToListAsync();
+            if (listSuccess.Any())
+            {
+                dictTotalSuccessfulMessage = listSuccess.GroupBy(x => x.SmsCampaignId.Value).ToDictionary(x => x.Key, x => x.Count());
+            }
+
+            var listFails = await smsMessageDetailObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.State == "fails").ToListAsync();
+            if (listFails.Any())
+            {
+                dictTotalFailedMessage = listFails.GroupBy(x => x.SmsCampaignId.Value).ToDictionary(x => x.Key, x => x.Count());
+            }
 
             var totalItems = await query.CountAsync();
             var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SmsCampaignBasic
@@ -54,12 +69,12 @@ namespace Infrastructure.Services
                 State = x.State,
                 TypeDate = x.TypeDate,
                 TotalWaitedMessages = ditcTotalWaitedMessage.ContainsKey(x.Id) ? ditcTotalWaitedMessage[x.Id] : 0,
-                //TotalFailedMessages = ditcTotalFailedMessage.ContainsKey(x.Id) ? ditcTotalFailedMessage[x.Id] : 0,
-                //TotalSuccessfulMessages = ditcTotalSuccessfulMessage.ContainsKey(x.Id) ? ditcTotalSuccessfulMessage[x.Id] : 0,
-                //TotleMessage =
-                //(ditcTotalWaitedMessage.ContainsKey(x.Id) ? ditcTotalWaitedMessage[x.Id] : 0) +
-                // (ditcTotalFailedMessage.ContainsKey(x.Id) ? ditcTotalFailedMessage[x.Id] : 0) +
-                // (ditcTotalSuccessfulMessage.ContainsKey(x.Id) ? ditcTotalSuccessfulMessage[x.Id] : 0)
+                TotalFailedMessages = dictTotalFailedMessage.ContainsKey(x.Id) ? dictTotalFailedMessage[x.Id] : 0,
+                TotalSuccessfulMessages = dictTotalSuccessfulMessage.ContainsKey(x.Id) ? dictTotalSuccessfulMessage[x.Id] : 0,
+                TotalMessage =
+                (ditcTotalWaitedMessage.ContainsKey(x.Id) ? ditcTotalWaitedMessage[x.Id] : 0) +
+                 (dictTotalFailedMessage.ContainsKey(x.Id) ? dictTotalFailedMessage[x.Id] : 0) +
+                 (dictTotalSuccessfulMessage.ContainsKey(x.Id) ? dictTotalSuccessfulMessage[x.Id] : 0)
             }).ToListAsync();
             return new PagedResult2<SmsCampaignBasic>(totalItems, val.Offset, val.Limit)
             {

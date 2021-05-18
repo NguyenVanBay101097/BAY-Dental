@@ -32,6 +32,7 @@ namespace Infrastructure.Services
                 sms.State = "sending";
                 sms.SmsAccountId = smsMessage.SmsAccountId.Value;
                 sms.SmsMessageId = smsMessage.Id;
+                sms.SmsCampaignId = smsMessage.SmsCampaignId;
                 listSms.Add(sms);
             }
 

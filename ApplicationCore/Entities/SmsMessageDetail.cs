@@ -17,5 +17,7 @@ namespace ApplicationCore.Entities
         public string ErrorCode { get; set; }
         public Guid? SmsMessageId { get; set; }
         public SmsMessage SmsMessage { get; set; }
+        public Guid? SmsCampaignId { get; set; }
+        public SmsCampaign SmsCampaign { get; set; }
     }
 }

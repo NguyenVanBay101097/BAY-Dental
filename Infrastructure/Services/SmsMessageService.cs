@@ -53,6 +53,10 @@ namespace Infrastructure.Services
             var entity = _mapper.Map<SmsMessage>(val);
             if (entity.TypeSend == "manual")
                 entity.State = "sending";
+            else
+            {
+                entity.State = "waiting";
+            }
 
             if (!entity.SmsCampaignId.HasValue && val.IsBirthDayManual.HasValue && val.IsBirthDayManual.Value)
             {

@@ -24,8 +24,9 @@
                                                 <label class="o_form_label">Tên tin nhắn</label>
                                             </td>
                                             <td class="w-100">
-                                                <input class="form-control" formControlName="name"/>
-                                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
+                                                <input class="form-control" formControlName="name" />
+                                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)"
+                                                    class="text-danger">
                                                     <div *ngIf="f.name.errors.required">Nhập tên tin nhắn</div>
                                                 </div>
                                             </td>
@@ -35,11 +36,13 @@
                                                 <label class="o_form_label">Chọn chiến dịch</label>
                                             </td>
                                             <td>
-                                                <kendo-combobox [data]="filteredSmsCampaign" ngbAutofocus [textField]="'name'"
+                                                <kendo-combobox [data]="filteredSmsCampaign" ngbAutofocus
+                                                    (valueChange)="onChangeCampaign($event)" [textField]="'name'"
                                                     formControlName="smsCampaign" [filterable]="true" #smsCampaignCbx
                                                     [valueField]="'id'">
                                                 </kendo-combobox>
-                                                <div *ngIf="f.smsCampaign.errors && (f.smsCampaign.touched || f.smsCampaign.dirty)" class="text-danger">
+                                                <div *ngIf="f.smsCampaign.errors && (f.smsCampaign.touched || f.smsCampaign.dirty)"
+                                                    class="text-danger">
                                                     <div *ngIf="f.smsCampaign.errors.required">Chọn chiến dịch</div>
                                                 </div>
                                             </td>
@@ -49,11 +52,12 @@
                                                 <label class="o_form_label">Chọn brandname</label>
                                             </td>
                                             <td>
-                                                <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus [textField]="'name'"
-                                                    formControlName="smsAccount" [filterable]="true" #smsAccountCbx
-                                                    [valueField]="'id'">
+                                                <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
+                                                    [textField]="'name'" formControlName="smsAccount"
+                                                    [filterable]="true" #smsAccountCbx [valueField]="'id'">
                                                 </kendo-combobox>
-                                                <div *ngIf="f.smsAccount.errors && (f.smsAccount.touched || f.smsAccount.dirty)" class="text-danger">
+                                                <div *ngIf="f.smsAccount.errors && (f.smsAccount.touched || f.smsAccount.dirty)"
+                                                    class="text-danger">
                                                     <div *ngIf="f.smsAccount.errors.required">Chọn brandname</div>
                                                 </div>
                                             </td>
@@ -64,22 +68,28 @@
                                             </td>
                                             <td>
                                                 <div>
-                                                    <input type="radio" class="btn-check" id="manual" value="manual" formControlName="typeSend">
+                                                    <input type="radio" class="btn-check" id="manual" value="manual"
+                                                        formControlName="typeSend">
                                                     <label for="manual" class="btn btn-sm rounded-right-0"
                                                         [ngClass]="getValueFormControl('typeSend') == 'manual' ? 'btn-primary' : 'btn-outline-primary'">
                                                         Gửi ngay
                                                     </label>
-                                                    <input type="radio" class="btn-check" id="reminder" value="reminder" formControlName="typeSend">
-                                                    <label for="reminder" class="btn btn-sm rounded-left-0"
-                                                        [ngClass]="getValueFormControl('typeSend') == 'reminder' ? 'btn-primary' : 'btn-outline-primary'">
+                                                    <input type="radio" class="btn-check" id="automatic"
+                                                        value="automatic" formControlName="typeSend">
+                                                    <label for="automatic" class="btn btn-sm rounded-left-0"
+                                                        [ngClass]="getValueFormControl('typeSend') == 'automatic' ? 'btn-primary' : 'btn-outline-primary'">
                                                         Đặt lịch
                                                     </label>
                                                 </div>
-                                                <div class="d-flex align-items-center" *ngIf="getValueFormControl('typeSend') == 'reminder'">
-                                                    <kendo-datetimepicker  class="w-fit-content" [format]="'MM/dd/yyyy HH:mm'" formControlName="dateObj">
+                                                <div class="d-flex align-items-center"
+                                                    *ngIf="getValueFormControl('typeSend') == 'automatic'">
+                                                    <kendo-datetimepicker class="w-fit-content"
+                                                        [format]="'MM/dd/yyyy HH:mm'" formControlName="dateObj">
                                                     </kendo-datetimepicker>
-                                                    <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty)" class="text-danger">
-                                                        <div *ngIf="f.dateObj.errors.required">Chọn thời gian gửi tin</div>
+                                                    <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty)"
+                                                        class="text-danger">
+                                                        <div *ngIf="f.dateObj.errors.required">Chọn thời gian gửi tin
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -102,7 +112,8 @@
                                             <td class="w-100">
                                                 <div class="d-flex align-items-center">
                                                     <div class="mr-2">{{partnerIds.length}}</div>
-                                                    <button type="button" class="btn btn-primary" (click)="onSelectPartners()">
+                                                    <button type="button" class="btn btn-primary"
+                                                        (click)="onSelectPartners()">
                                                         Chọn khách hàng
                                                     </button>
                                                 </div>
@@ -124,15 +135,17 @@
                                                 <label class="o_form_label">Chọn tin nhắn mẫu</label>
                                             </td>
                                             <td class="w-100">
-                                                <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
-                                                    formControlName="template" [filterable]="true" #smsTemplateCbx
-                                                    (valueChange)="onChangeTemplate($event)" [valueField]="'id'">
+                                                <kendo-combobox [data]="filteredTemplate" ngbAutofocus
+                                                    [textField]="'name'" formControlName="template" [filterable]="true"
+                                                    #smsTemplateCbx (valueChange)="onChangeTemplate($event)"
+                                                    [valueField]="'id'">
                                                 </kendo-combobox>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="2">
-                                                <app-sms-template-content [textareaLength]="textareaLimit" [template]="template">
+                                                <app-sms-template-content [textareaLength]="textareaLimit"
+                                                    [template]="template">
                                                 </app-sms-template-content>
                                                 <span class="color-custom">
                                                     (Note: Không nhập ký tự đặc biệt hoặc các từ khóa quảng cáo)
@@ -142,7 +155,8 @@
                                         <tr>
                                             <td class="o_td_label">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" id="checkTemplateCopy" (change)="checkedTemplateCopy($event)">
+                                                    <input class="form-check-input" type="checkbox" value=""
+                                                        id="checkTemplateCopy" (change)="checkedTemplateCopy($event)">
                                                     <label class="form-check-label" for="checkTemplateCopy">
                                                         Lưu làm tin mẫu
                                                     </label>
@@ -150,8 +164,11 @@
                                             </td>
                                             <td class="w-100">
                                                 <div *ngIf="isTemplateCopy">
-                                                    <input type="text" class="form-control" formControlName="templateName" placeholder="Tiêu đề tin nhắn mẫu">
-                                                    <span class="text-danger" *ngIf="formGroup.controls.templateName.value==''">
+                                                    <input type="text" class="form-control"
+                                                        formControlName="templateName"
+                                                        placeholder="Tiêu đề tin nhắn mẫu">
+                                                    <span class="text-danger"
+                                                        *ngIf="formGroup.controls.templateName.value==''">
                                                         Nhập tiêu đề tin nhắn mẫu
                                                     </span>
                                                 </div>
