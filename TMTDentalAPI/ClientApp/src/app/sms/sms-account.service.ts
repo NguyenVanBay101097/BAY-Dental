@@ -29,7 +29,7 @@ export class SmsAccountPaged {
 @Injectable({
   providedIn: 'root'
 })
-export default class SmsAccountService {
+export class SmsAccountService {
 
   apiUrl: string = 'api/SmsAccounts';
   constructor(@Inject('BASE_API') private base_api: string, private http: HttpClient) { }

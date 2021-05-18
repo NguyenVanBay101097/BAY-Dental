@@ -5,8 +5,8 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import SmsAccountService, { SmsAccountPaged } from '../sms-account.service';
-import SmsCampaignService, { SmsCampaignPaged } from '../sms-campaign.service';
+import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
+import { SmsCampaignService, SmsCampaignPaged } from '../sms-campaign.service';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsMessageService } from '../sms-message.service';
 import { SmsPartnerListDialogComponent } from '../sms-partner-list-dialog/sms-partner-list-dialog.component';
@@ -188,11 +188,11 @@ export class SmsMessageDialogComponent implements OnInit {
     val.body = this.template ? JSON.stringify(this.template) : '';
     val.partnerIds = this.partnerIds;
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm");
-    console.log(val);
     
     this.smsMessageService.create(val).subscribe(
       res => {
         this.notify("Thành công", true);
+        this.activeModal.close();
       }
     )
   }
