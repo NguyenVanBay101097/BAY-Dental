@@ -1,12 +1,12 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { debounceTime, delay, map, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { EmployeeBasic, EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
@@ -31,39 +31,28 @@ import { QuotationLineDisplay, QuotationsDisplay, QuotationService } from '../qu
   styleUrls: ['./quotation-create-update-form.component.css']
 })
 export class QuotationCreateUpdateFormComponent implements OnInit {
-
   @ViewChild("empCbx", { static: true }) empCbx: ComboBoxComponent;
   formGroup: FormGroup;
-  formGroupInfo: FormGroup;
+  formGroupLine: FormGroup;
   partner: any;
-  employee: any;
-  // employeeId: string;
   saleOrders: any;
-  dateFrom: Date;
-  dateTo: Date;
   toothCategoryId: string;
   partnerId: string;
   quotationId: string;
-  // quotationLine: any;
-  public selectedLine: any;
   hamList: { [key: string]: {} };
   teethSelected: any[] = [];
   filteredToothCategories: any[] = [];
   quotation: any = new QuotationsDisplay();
-  filteredAdvisoryEmployees: EmployeeSimple[] = [];
   search: string = '';
   filterData: EmployeeBasic[] = [];
   isEditing: boolean = true;
   lineSelected = null;
-  defaultToothCate: ToothCategoryBasic;
   filteredEmployees: any[] = [];
   initialListEmployees: any = [];
   submitted: boolean = false;
   @ViewChildren('lineTemplate') lineVCR: QueryList<QuotationLineCuComponent>;
-  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
 
   isChanged: boolean = false;
-  isPercentType: boolean = false;
 
   get linesArray() {
     return this.formGroup.get('lines') as FormArray;
@@ -72,6 +61,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   get paymentsArray() {
     return this.formGroup.get('payments') as FormArray;
   }
+
+  get f() { return this.formGroup.controls; }
 
   constructor(
     private fb: FormBuilder,
@@ -98,13 +89,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       dateApplies: [0, Validators.required],
       dateEndQuotationObj: [null, Validators.required],
       companyId: '',
-      lines: this.fb.array([
-      ]),
+      lines: this.fb.array([]),
       payments: this.fb.array([]),
     })
+
     this.routeActive();
     this.loadToothCategories();
-
     this.loadEmployees();
 
     this.formGroup.valueChanges.subscribe(res => {
@@ -140,14 +130,15 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         }
       )
   }
-  get f() { return this.formGroup.controls; }
+
+  getValueFormControl(key: string) {
+    return this.formGroup.get(key).value;
+  }
 
   patchValueQuotation(result) {
     this.quotation = result;
     this.partner = result.partner;
     this.partnerId = result.partnerId;
-    this.employee = result.employee;
-    // this.employeeId = result.employeeId;
     this.saleOrders = result.orders;
     this.formGroup.patchValue(result);
     this.formGroup.get('dateEndQuotationObj').patchValue(new Date(result.dateEndQuotation));
@@ -215,16 +206,9 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.router.navigate(['quotations/form'], { queryParams: { partner_id: this.partnerId } });
   }
 
-  onChangeQuantity(line: FormGroup) {
-    var res = this.linesArray.controls.find(x => x.value.productId === line.value.productId);
-    if (res) {
-      res.patchValue(line.value);
-    }
-  }
-
   getAmountTotal() {
     let totalAmount = 0;
-    var lines = this.formGroup.get('lines').value;
+    var lines = this.getValueFormControl('lines');
     if (lines && lines.length > 0) {
       lines.forEach(line => {
         totalAmount += line.amount;
@@ -235,25 +219,25 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   getDate(dateQuotation: Date, dateApplies: number) {
     var dateEnd = new Date(dateQuotation.getFullYear(), dateQuotation.getMonth(), dateQuotation.getDate() + dateApplies);
-    this.formGroup.get('dateEndQuotationObj').patchValue((new Date(dateEnd)));
+    this.f.dateEndQuotationObj.patchValue((new Date(dateEnd)));
   }
 
   onDateChange(date: Date) {
-    let dateAppliesChange = this.formGroup.get('dateApplies') ? this.formGroup.get('dateApplies').value : null;
+    let dateAppliesChange = this.formGroup.get('dateApplies') ? this.getValueFormControl('dateApplies') : null;
     if (date && dateAppliesChange) {
       this.getDate(date, dateAppliesChange);
     }
   }
 
   onDateAppliesChange(dateApplies) {
-    let dateQuotation = this.formGroup.get('dateQuotationObj') ? this.formGroup.get('dateQuotationObj').value : null;
+    let dateQuotation = this.formGroup.get('dateQuotationObj') ? this.getValueFormControl('dateQuotationObj') : null;
     if (dateQuotation && dateApplies) {
       this.getDate(dateQuotation, dateApplies);
     }
   }
 
   createFormInfo(data: any) {
-    this.formGroupInfo = this.fb.group({
+    this.formGroupLine = this.fb.group({
       toothCategory: data ? data.toothCategory : null,
       toothCategoryId: data ? data.toothCategoryId : '',
       diagnostic: data ? data.diagnostic : '',
@@ -269,6 +253,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       this.teethSelected = Object.assign([], data.teeth);
     }
   }
+
   // load teeth 
   loadTeethMap(categ: ToothCategoryBasic) {
     var val = new ToothFilter();
@@ -333,8 +318,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     if (value.id) {
       this.teethSelected = [];
       this.loadTeethMap(value);
-      this.formGroupInfo.get('toothCategoryId').patchValue(value.id);
-      this.formGroupInfo.get('toothCategory').patchValue(value);
+      this.formGroupLine.get('toothCategoryId').patchValue(value.id);
+      this.formGroupLine.get('toothCategory').patchValue(value);
     }
   }
   //end load teeth
@@ -358,7 +343,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
   //end payment
 
-  // Luu
   getDataFormGroup() {
     var value = this.formGroup.value;
     value.dateQuotation = this.intlService.formatDate(value.dateQuotationObj, 'yyyy-MM-ddTHH:mm:ss');
@@ -396,8 +380,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         viewChild.updateLineInfo();
     }
 
-    this.submitted = true;
-
     if (!this.formGroup.valid) {
       return false;
     }
@@ -411,7 +393,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     });
 
     if (this.quotationId) {
-
+      this.submitted = true;
       this.quotationService.update(this.quotationId, val).subscribe(
         () => {
           // this.routeActive();
@@ -430,16 +412,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         }
       );
     }
-  }
-
-  onChangeDiscount(event, line: FormGroup) {
-    line.value.discountType = event.discountType;
-    if (event.discountType == "fixed") {
-      line.value.discount = event.discount;
-    } else {
-      line.value.discount = event.discount;
-    }
-    line.patchValue(line.value);
   }
 
   addLine(val, addNew) {
@@ -600,14 +572,14 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       else
         viewChild.updateLineInfo();
     }
-    
+
     if (!this.isChanged) {
       this.openQuotationPromotionDialog();
       return;
     }
-    
+
     const val = this.getDataFormGroup();
-    
+
     if (!this.quotationId) {
       this.submitted = true;
       if (!this.formGroup.valid) {
@@ -673,17 +645,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     return 0;
   }
 
-  notify(type, content) {
-    this.notificationService.show({
-      content: content,
-      hideAfter: 3000,
-      position: { horizontal: 'center', vertical: 'top' },
-      animation: { type: 'fade', duration: 400 },
-      type: { style: type, icon: true }
-    });
-  }
-
-  onBlurPaymentInput(payment: FormGroup) {
+  onPaymentChange(payment: FormGroup) {
     this.computeAmount(payment);
   }
 
@@ -702,6 +664,16 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   getValueFormPaymentArray(key, i) {
     return this.paymentsArray.at(i).get(key).value;
+  }
+
+  notify(type, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: type, icon: true }
+    });
   }
 }
 

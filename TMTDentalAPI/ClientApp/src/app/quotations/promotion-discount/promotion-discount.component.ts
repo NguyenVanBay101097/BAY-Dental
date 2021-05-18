@@ -10,8 +10,7 @@ export class PromotionDiscountComponent implements OnInit {
   form = {
     discountFixed: 0,
     discountPercent: 0,
-    discountType: "percentage", //percentage
-    // code: null,
+    discountType: "percentage",
   };
     
   discountTypeDict = {

@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -21,12 +20,12 @@ export class QuotationLineCuComponent implements OnInit {
   @Output() onCancelEvent = new EventEmitter<any>();
   @Output() onUpdateOpenPromotionEvent = new EventEmitter<any>();
 
+  formGroup: FormGroup;
   submitted: boolean = false;
   isEditting: boolean = false;
   filteredEmployeesDoctor: any[] = [];
   filteredEmployeesAssistant: any[] = [];
   filteredEmployeesCounselor: any[] = [];
-
   initialListEmployees: any = [];
   filteredToothCategories: any[];
   hamList: { [key: string]: {} };
@@ -37,41 +36,52 @@ export class QuotationLineCuComponent implements OnInit {
     { name: "Hàm dưới", value: "lower_jaw" },
     { name: "Chọn răng", value: "manual" },
   ];
-  formGroupInfo: FormGroup;
+
+  get TeethFA() {
+    return this.formGroup.get("teeth") as FormArray;
+  }
+
+  get f() { return this.formGroup.controls; }
+
   constructor(
     private fb: FormBuilder,
     private employeeService: EmployeeService,
-    private modalService: NgbModal,
     private notificationService: NotificationService,
     private ToothService: ToothService,
     private toothCategoryService: ToothCategoryService,
   ) { }
 
   ngOnInit() {
-    this.formGroupInfo = this.fb.group(this.line);
-    this.formGroupInfo.setControl("teeth", this.fb.array(this.line.teeth));
-    this.formGroupInfo.setControl("promotions", this.fb.array(this.line.promotions));
-    this.formGroupInfo.get("qty").setValidators(Validators.required);
-    this.formGroupInfo.updateValueAndValidity();
-    this.formGroupInfo.get("subPrice").setValidators(Validators.required);
-    this.formGroupInfo.updateValueAndValidity();
+    this.formGroup = this.fb.group({
+      subPrice: [0, Validators.required],
+      qty: [0, Validators.required],
+      amount: 0,
+      employee: null,
+      assistant: null,
+      counselor: null,
+      toothType: null,
+      toothCategory: null,
+      toothIds: null,
+      diagnostic: '',
+      amountDiscountTotal: 0,
+      amountPromotionToOrder: 0,
+      amountPromotionToOrderLine: 0,
+      teeth: this.fb.array([]),
+      promotions: this.fb.array([])
+    });
+
+    this.formGroup.patchValue(this.line);
+    this.formGroup.setControl("teeth", this.fb.array(this.line.teeth));
+    this.formGroup.setControl("promotions", this.fb.array(this.line.promotions));
 
     this.loadEmployees();
     this.loadToothCategories();
     this.loadTeethList();
     this.computeAmount();
   }
-  get TeethFA() {
-    return this.formGroupInfo.get("teeth") as FormArray;
-  }
-  get f() { return this.formGroupInfo.controls; }
 
-  formInfoControl(value: string) {
-    return this.formGroupInfo.get(value);
-  }
-
-  getValueFormControl(key) {
-    return this.formGroupInfo.get(key).value;
+  getValueFormControl(key: string) {
+    return this.formGroup.get(key).value;
   }
 
   getPriceUnitLinePromotion(line) {
@@ -83,11 +93,9 @@ export class QuotationLineCuComponent implements OnInit {
   }
 
   computeAmount() {
-    var getquanTity = this.formInfoControl("qty")
-      ? this.formInfoControl("qty").value
-      : 1;
-    var priceUnit = this.getPriceUnitLinePromotion(this.formGroupInfo.value);
-    this.formInfoControl("amount").setValue(priceUnit * getquanTity);
+    var getquanTity = this.getValueFormControl("qty") ? this.getValueFormControl("qty") : 1;
+    var priceUnit = this.getPriceUnitLinePromotion(this.formGroup.value);
+    this.f.amount.setValue(priceUnit * getquanTity);
   }
 
   loadEmployees() {
@@ -122,17 +130,14 @@ export class QuotationLineCuComponent implements OnInit {
       .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
   }
   getToothCateLine() {
-    var res =
-      this.isEditting
-        ? this.formInfoControl("toothCategory").value
-        : this.line.toothCategory;
+    var res = this.isEditting ? this.getValueFormControl("toothCategory") : this.line.toothCategory;
     return res;
   }
   onChangeToothCategory(value: any) {
     if (value.id) {
       this.TeethFA.clear();
       this.loadTeethMap(value);
-      this.formGroupInfo.get("toothCategory").setValue(value);
+      this.formGroup.get("toothCategory").setValue(value);
     }
   }
   loadTeethMap(categ: any) {
@@ -173,22 +178,17 @@ export class QuotationLineCuComponent implements OnInit {
 
   onChangeToothTypeLine(type) {
     if (type != "manual") {
-      this.formInfoControl("qty").setValue(1);
-      (this.formInfoControl("teeth") as FormArray).clear();
+      this.f.qty.setValue(1);
+      (this.f.teeth as FormArray).clear();
     } else {
-      var teeth = this.formInfoControl("teeth").value as any[];
+      var teeth = this.getValueFormControl("teeth") as any[];
       var quantity = teeth && teeth.length > 0 ? teeth.length : 1;
-      this.formInfoControl("qty").setValue(quantity);
+      this.f.qty.setValue(quantity);
     }
-
-    // this.onChangeQuantity();
   }
 
   getToothTypeLine() {
-    var res =
-      this.isEditting
-        ? this.formInfoControl("toothType").value
-        : this.line.toothType;
+    var res = this.isEditting ? this.getValueFormControl("toothType") : this.line.toothType;
     return res;
   }
 
@@ -200,7 +200,7 @@ export class QuotationLineCuComponent implements OnInit {
       this.TeethFA.push(this.fb.group(tooth));
     }
 
-    this.onChangeToothTypeLine(this.formInfoControl("toothType").value);
+    this.onChangeToothTypeLine(this.getValueFormControl("toothType"));
   }
 
   isSelected(tooth: any) {
@@ -221,9 +221,6 @@ export class QuotationLineCuComponent implements OnInit {
   }
 
   onChangeQuantity(val) {
-    // if (!val) {
-    //   this.formInfoControl("qty").patchValue(1);
-    // }
     this.computeAmount();
   }
 
@@ -241,14 +238,14 @@ export class QuotationLineCuComponent implements OnInit {
     }
     else {
       this.isEditting = false;
-      this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
+      this.onUpdateOpenPromotionEvent.emit(this.formGroup.value);
     }
   }
 
   checkValidFormGroup() {
-    if (this.formGroupInfo.invalid)
+    if (this.formGroup.invalid)
       return false;
-    if (this.formInfoControl("toothType").value == "manual" && !this.formInfoControl("teeth").value.length) {
+    if (this.getValueFormControl("toothType") == "manual" && !this.getValueFormControl("teeth").length) {
       this.notify("error", "Vui lòng chọn răng");
       return false;
     }
@@ -264,7 +261,7 @@ export class QuotationLineCuComponent implements OnInit {
     }
     else {
       this.isEditting = false;
-      var value = this.formGroupInfo.value;
+      var value = this.formGroup.value;
       this.onUpdateEvent.emit(value);
     }
   }
@@ -286,13 +283,9 @@ export class QuotationLineCuComponent implements OnInit {
 
   onEditLine() {
     this.isEditting = true;
-    this.formGroupInfo = this.fb.group(this.line);
-    this.formGroupInfo.setControl("teeth", this.fb.array(this.line.teeth));
-    this.formGroupInfo.setControl("promotions", this.fb.array(this.line.promotions));
-    this.formGroupInfo.get("qty").setValidators(Validators.required);
-    this.formGroupInfo.updateValueAndValidity();
-    this.formGroupInfo.get("subPrice").setValidators(Validators.required);
-    this.formGroupInfo.updateValueAndValidity();
+    // this.formGroup.patchValue(this.line);
+    this.formGroup.setControl("teeth", this.fb.array(this.line.teeth));
+    this.formGroup.setControl("promotions", this.fb.array(this.line.promotions));
   }
 
   notify(type, content) {

@@ -20,10 +20,6 @@ export class QuotationLineDisplay {
   subPrice: number;
   diagnostic: string;
   toothCategoryId: string;
-  // advisoryUserId: string;
-  // advisoryUser: any;
-  // advisoryEmployee: any;
-  // advisoryEmployeeId: string;
   employee: any;
   employeeId: string;
   assistant: any;

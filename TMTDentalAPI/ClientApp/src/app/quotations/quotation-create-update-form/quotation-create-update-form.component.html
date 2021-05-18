@@ -124,7 +124,6 @@
 
             <div class="flex-1-1-100 overflow-hidden">
                 <div class="w-100 h-100 d-flex flex-column">
-                    <!-- && isEditting -->
                     <div class="w-25 mb-2">
                         <app-service-list-search-dropdown (onSelectService)="addLine($event, true)"></app-service-list-search-dropdown>
                     </div>
@@ -208,7 +207,7 @@
                                     {{i + 1}}
                                 </td>
                                 <td class="d-flex">
-                                    <kendo-numerictextbox class="form-control" [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="payment" (valueChange)="onBlurPaymentInput(payment_item)">
+                                    <kendo-numerictextbox class="form-control" [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="payment" (valueChange)="onPaymentChange(payment_item)">
                                     </kendo-numerictextbox>
                                     <div class="mt-1 ml-2 d-flex">
                                         <div class="form-check form-check-inline">

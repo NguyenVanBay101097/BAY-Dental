@@ -1,14 +1,15 @@
-<div [formGroup]="formGroupInfo">
+<div [formGroup]="formGroup">
     <div class="div-table w-100">
         <div class="border-left border-right border-top">
             <!-- tên -->
             <div style="width: 425px" class="div-cell font-weight-600 pl-2">
-                <ng-container *ngIf="!isEditting; else elseTemplateName">
+                {{line.name}}
+                <!-- <ng-container *ngIf="!isEditting; else elseTemplateName">
                     {{line.name}}
                 </ng-container>
                 <ng-template #elseTemplateName>
-                    {{formInfoControl('name').value}}
-                </ng-template>
+                    {{getValueFormControl('name')}}
+                </ng-template> -->
             </div>
             <!-- giá -->
             <div style="width: 250px;" class="div-cell text-right">
@@ -17,7 +18,7 @@
                         {{getPriceUnitLinePromotion(line) | number}}
                     </ng-container>
                     <ng-template #elseTemplatePriceUnitPro>
-                        {{getPriceUnitLinePromotion(formGroupInfo.value) | number}}
+                        {{getPriceUnitLinePromotion(formGroup.value) | number}}
                     </ng-template>
                 </div>
                 <div>
@@ -28,7 +29,7 @@
                     </ng-container>
                     <ng-template #elseTemplatePriceUnit>
                         <span class="font-weight-lighter"> 
-                                Giá gốc: {{formInfoControl('subPrice').value | number}}
+                                Giá gốc: {{getValueFormControl('subPrice') | number}}
                                 <i _ngcontent-sgd-c6="" class="far fa-edit text-success pointer"
                                 [ngbPopover]="popContent" [popoverTitle]="popTitle" [autoClose]="'outside'"
                                 ></i>
@@ -41,15 +42,12 @@
                     <ng-template #popContent let-greeting="greeting">
                         <kendo-numerictextbox style="width:100%;" [format]="'n0'" [spinners]="false" formControlName="subPrice" (valueChange)="onChangeQuantity()">
                         </kendo-numerictextbox>
-                        <!-- <div *ngIf="f.subPrice.errors && (f.subPrice.touched || f.subPrice.dirty || submitted)" class="text-danger">
-                            <div *ngIf="f.subPrice.errors.required">Nhập giá</div>
-                        </div> -->
                     </ng-template>
                     <ng-template #popTitle let-language="language">Giá gốc</ng-template>
                 </div>
             </div>
             <!-- số lượng -->
-            <div style="width: 200px;padding: 5px;" class="div-cell text-right">
+            <div style="width: 200px;" class="div-cell text-right">
                 <ng-container *ngIf="!isEditting; else elseTemplateQty">
                     {{line.qty | number}}
                 </ng-container>
@@ -68,7 +66,7 @@
                         {{line.amount | number}}
                     </ng-container>
                     <ng-template #elseTemplatePriceSub>
-                        {{formInfoControl("amount").value | number}}
+                        {{getValueFormControl("amount") | number}}
                     </ng-template>
                 </div>
                 <div>
@@ -77,7 +75,7 @@
                     </ng-container>
                     <ng-template #elseTemplateSubTotal>
                         <span class="font-weight-lighter">
-                                Giá gốc: {{getInitialSubTotalLine(formGroupInfo.value) | number}}
+                                Giá gốc: {{getInitialSubTotalLine(formGroup.value) | number}}
                             </span>
                     </ng-template>
                 </div>
@@ -96,18 +94,6 @@
     <!-- thông tin bổ sung -->
     <div class="border-right border-left border-bottom px-2 mb-3 w-100 pb-2">
         <label class="font-weight-600 mb-0">THÔNG TIN BỔ SUNG</label>
-        <!-- <div class=" row mx-0">
-            <div class="col-sm-4 mt-0 px-0">
-                <div class="row mx-0">
-                    <label class="col-sm-4 font-weight-600 pl-0 col-form-label">Người tư vấn</label>
-                    <div class="col-sm-8">
-                        <span class="form-control-plaintext" *ngIf="!isEditting">{{line.counselor?.name}}</span>
-                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="isEditting" style="width:100%;" [data]="filteredEmployees" [textField]="'name'" formControlName="counselor" [valueField]="'id'">
-                        </kendo-combobox>
-                    </div>
-                </div>
-            </div>
-        </div> -->
         <div class="row mx-0">
             <div class="col-sm-4 mt-0 px-0">
                 <div class="row mx-0">
@@ -186,7 +172,7 @@
                         <tr *ngFor="let ham of hamList | keyvalue">
                             <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
                                 <div class="tooth-wrapper">
-                                    <button [attr.disabled]="!isEditting || formInfoControl('toothType').value != 'manual' ? true : null" (click)="onSelected(rang)" class="btn btn-sm tooth-item-collapsed" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                                    <button [attr.disabled]="!isEditting || getValueFormControl('toothType') != 'manual' ? true : null" (click)="onSelected(rang)" class="btn btn-sm tooth-item-collapsed" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
                                                 {{rang.name}}
                                             </button>
                                 </div>
@@ -219,12 +205,12 @@
             <div class="card-body px-3 py-2">
                 <div class="d-flex">
                     <span>Ưu đãi phiếu điều trị</span>
-                    <span class="ml-auto">{{formInfoControl('amountPromotionToOrder').value | number}}</span>
+                    <span class="ml-auto">{{getValueFormControl('amountPromotionToOrder') | number}}</span>
                 </div>
                 <div class="d-flex">
                     <span>Ưu đãi dịch vụ</span>
                     <img (click)="onOpenPromotion()" class="ml-2 pointer" src="../../../assets/icons/promotion-bg-primary.svg" alt="">
-                    <span class="ml-auto">{{formInfoControl('amountPromotionToOrderLine').value | number}}</span>
+                    <span class="ml-auto">{{getValueFormControl('amountPromotionToOrderLine') | number}}</span>
                 </div>
             </div>
         </div>
