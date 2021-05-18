@@ -54,7 +54,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _smsMessageService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            return Ok(_mapper.Map<SmsMessageBasic>(res));
+            return Ok(_mapper.Map<SmsMessageDisplay>(res));
         }
 
         [HttpGet]
@@ -71,7 +71,7 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid || entity == null) return BadRequest();
             entity = _mapper.Map(val, entity);
             await _smsMessageService.UpdateAsync(entity);
-            var res = _mapper.Map<SmsMessageBasic>(entity);
+            var res = _mapper.Map<SmsMessageDisplay>(entity);
             return Ok(res);
         }
 

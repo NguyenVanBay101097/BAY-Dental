@@ -33,7 +33,10 @@ namespace Infrastructure.Services
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
-
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State == val.State);
+            if (val.CampaignId.HasValue)
+                query = query.Where(x => x.SmsCampaignId.Value == val.CampaignId.Value);
             return query;
         }
 
@@ -41,14 +44,22 @@ namespace Infrastructure.Services
         {
             var query = GetQueryable(val);
             var totalItems = await query.CountAsync();
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SmsMessageBasic
+            {
+                Id = x.Id,
+                Date = x.Date,
+                DateCreated = x.DateCreated,
+                Name = x.Name,
+                CountPartner = x.Partners.Count(),
+                BrandName = x.SmsAccountId.HasValue ? x.SmsAccount.BrandName + $" ({x.SmsAccount.Name})" : "",
+            }).ToListAsync();
             return new PagedResult2<SmsMessageBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = _mapper.Map<IEnumerable<SmsMessageBasic>>(items)
+                Items = items
             };
         }
 
-        public async Task<SmsMessageBasic> CreateAsync(SmsMessageSave val)
+        public async Task<SmsMessageDisplay> CreateAsync(SmsMessageSave val)
         {
             var entity = _mapper.Map<SmsMessage>(val);
             if (entity.TypeSend == "manual")
@@ -84,7 +95,7 @@ namespace Infrastructure.Services
             }
 
             entity = await CreateAsync(entity);
-            return _mapper.Map<SmsMessageBasic>(entity);
+            return _mapper.Map<SmsMessageDisplay>(entity);
         }
 
         public async Task ActionSendSMS(SmsMessage entity)
