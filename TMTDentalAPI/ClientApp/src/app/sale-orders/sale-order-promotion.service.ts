@@ -20,7 +20,7 @@ discountType: string;
 discountPercent: number;
 discountFixed: number;
 type: string;
-
+  saleCouponProgram: any;
 }
 
 export class HistoryPromotionRequest {
