@@ -231,25 +231,25 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return this.formGroup.controls;
   }
 
-  routeActive() {
-    this.route.params.subscribe(
-      () => {
-        this.route.queryParamMap.pipe(
-          switchMap((params: ParamMap) => {
-            this.saleOrderId = params.get("id");
-            this.partnerId = params.get("partner_id");
-            if (this.saleOrderId) {
-              return this.saleOrderService.get(this.saleOrderId);
-            } else {
-              return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
-            }
-          })).subscribe((result: any) => {
-            this.patchValueSaleOrder(result);
-            this.isChanged = false;
-          });
-      }
-    )
-  }
+  // routeActive() {
+  //   this.route.params.subscribe(
+  //     () => {
+  //       this.route.queryParamMap.pipe(
+  //         switchMap((params: ParamMap) => {
+  //           this.saleOrderId = params.get("id");
+  //           this.partnerId = params.get("partner_id");
+  //           if (this.saleOrderId) {
+  //             return this.saleOrderService.get(this.saleOrderId);
+  //           } else {
+  //             return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
+  //           }
+  //         })).subscribe((result: any) => {
+  //           this.patchValueSaleOrder(result);
+  //           this.isChanged = false;
+  //         });
+  //     }
+  //   )
+  // }
 
   get stateControl() {
     return this.saleOrder.state;
@@ -338,7 +338,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionDone() {
     if (this.saleOrderId) {
       this.saleOrderService.actionDone([this.saleOrderId]).subscribe(() => {
-        this.loadRecord();
+        this.loadSaleOrder();
       });
     }
   }
@@ -346,8 +346,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionCancel() {
     if (this.saleOrderId) {
       this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => {
-        this.loadRecord();
-        document.getElementById('home-tab').click()
+        this.loadSaleOrder();
       });
     }
   }
@@ -355,7 +354,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionUnlock() {
     if (this.saleOrderId) {
       this.saleOrderService.actionUnlock([this.saleOrderId]).subscribe(() => {
-        this.loadRecord();
+        this.loadSaleOrder();
       });
     }
   }
@@ -367,6 +366,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       companyId: this.saleOrder.companyId,
       orderLines: this.saleOrder.orderLines.map(x => {
         return {
+          id: x.id,
           name: x.name,
           productId: x.product.id,
           priceUnit: x.priceUnit,
@@ -429,7 +429,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-    var val = this.getFormDataSave();
+
+    this.updateFormGroupDataToSaleOrder();
+    const val = this.getFormDataSave();
     if (!this.saleOrderId) {
       this.saleOrderService.create(val)
         .pipe(
@@ -440,13 +442,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         )
         .subscribe(r => {
           this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.saleOrderId } });
+          this.loadSaleOrder();
         });
     } else {
       this.saleOrderService.update(this.saleOrderId, val)
         .pipe(
-          mergeMap(r => {
-            return this.saleOrderService.actionConfirm([this.saleOrderId]);
-          })
+          mergeMap(() => this.saleOrderService.actionConfirm([this.saleOrderId]))
         )
         .subscribe(() => {
           this.notificationService.show({
@@ -456,7 +457,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
-          this.loadRecord();
+          this.loadSaleOrder();
         });
     }
   }
@@ -511,52 +512,52 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  patchValueSaleOrder(result) {
-    this.saleOrder = result;
-    this.formGroup.patchValue(result);
-    let dateOrder = new Date(result.dateOrder);
-    this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+  // patchValueSaleOrder(result) {
+  //   this.saleOrder = result;
+  //   this.formGroup.patchValue(result);
+  //   let dateOrder = new Date(result.dateOrder);
+  //   this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-    if (result.User) {
-      this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
-    }
-    if (result.Partner) {
-      this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
-      if (!this.saleOrderId) {
-        this.onChangePartner(result.partner);
-      }
-    }
+  //   if (result.User) {
+  //     this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+  //   }
+  //   if (result.Partner) {
+  //     this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+  //     if (!this.saleOrderId) {
+  //       this.onChangePartner(result.partner);
+  //     }
+  //   }
 
-    this.formGroup.setControl('promotions', this.fb.array(result.promotions));
+  //   this.formGroup.setControl('promotions', this.fb.array(result.promotions));
 
-    let control = this.formGroup.get('orderLines') as FormArray;
-    control.clear();
-    result.orderLines.forEach(line => {
-      var g = this.fb.group(line);
-      g.setControl('teeth', this.fb.array(line.teeth));
-      g.setControl('promotions', this.fb.array(line.promotions));
-      control.push(g);
-    });
+  //   let control = this.formGroup.get('orderLines') as FormArray;
+  //   control.clear();
+  //   result.orderLines.forEach(line => {
+  //     var g = this.fb.group(line);
+  //     g.setControl('teeth', this.fb.array(line.teeth));
+  //     g.setControl('promotions', this.fb.array(line.promotions));
+  //     control.push(g);
+  //   });
 
-    this.formGroup.markAsPristine();
-    this.getAmountAdvanceBalance();
-  }
+  //   this.formGroup.markAsPristine();
+  //   this.getAmountAdvanceBalance();
+  // }
 
 
-  async loadRecord() {
-    if (this.saleOrderId) {
-      //  this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
-      //     this.patchValueSaleOrder(result);
-      //     this.saleOrder = result;
-      //     return result;
-      //   });
-      var result = await this.saleOrderService.get(this.saleOrderId).toPromise();
-      this.patchValueSaleOrder(result);
-      this.saleOrder = result;
-      this.isChanged = false;
-      return result;
-    }
-  }
+  // async loadRecord() {
+  //   if (this.saleOrderId) {
+  //     //  this.saleOrderService.get(this.saleOrderId).subscribe((result: any) => {
+  //     //     this.patchValueSaleOrder(result);
+  //     //     this.saleOrder = result;
+  //     //     return result;
+  //     //   });
+  //     var result = await this.saleOrderService.get(this.saleOrderId).toPromise();
+  //     this.patchValueSaleOrder(result);
+  //     this.saleOrder = result;
+  //     this.isChanged = false;
+  //     return result;
+  //   }
+  // }
 
   loadSaleOrder() {
     this.saleOrderService.get(this.saleOrderId).subscribe(res => {
@@ -674,7 +675,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
             type: { style: 'success', icon: true }
           });
 
-          this.loadRecord();
+          this.loadSaleOrder();
           this.paymentComp.loadPayments();
           if (result.print) {
             this.printPayment(result.paymentId)
@@ -731,11 +732,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }, () => {
     });
   }
-
-  paymentOutput(e) {
-    this.loadRecord();
-  }
-
 
   isEditSate() {
     return ['draft', 'sale'].indexOf(this.saleOrder.state) !== -1;

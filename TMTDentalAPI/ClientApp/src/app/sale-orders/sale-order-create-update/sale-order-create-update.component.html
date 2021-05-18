@@ -239,7 +239,7 @@
                                                 <label class="font-weight-600">Thanh toán</label>
                                                 <label class="font-weight-600">{{saleOrder.totalPaid | number}}</label>
                                             </p>
-                                            <p *ngIf="saleOrder.state == 'done'" class="d-flex justify-content-between mb-0">
+                                            <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'" class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Còn lại</label>
                                                 <label class="font-weight-600">{{getAmountTotal() - saleOrder.totalPaid | number}}</label>
                                             </p>
