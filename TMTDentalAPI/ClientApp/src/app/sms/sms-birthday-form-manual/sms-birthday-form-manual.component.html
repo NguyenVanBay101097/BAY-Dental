@@ -9,7 +9,7 @@
                     </select>
                 </div>
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm ml-2" (click)="onSend()">Gửi tin</button>
+                    <button type="button" class="btn btn-primary btn-sm ml-2" (click)="onSend()">Tạo tin nhắn</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -24,12 +24,11 @@
 </div>
 
 
-<kendo-grid [data]="gridData" [selectable]="true" [resizable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true" [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+<kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true" [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
     <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
     <kendo-grid-column field="name" title="Họ tên" width="200"></kendo-grid-column>
-    <kendo-grid-column field="phone" title="Điện thoại" width="120"></kendo-grid-column>
+    <kendo-grid-column field="phone" title="Số điện thoại" width="120"></kendo-grid-column>
     <kendo-grid-column field="dateOfBirth" title="Ngày sinh" width="120"></kendo-grid-column>
-    <kendo-grid-column field="age" title="Tuổi" width="60"></kendo-grid-column>
     <kendo-grid-column field="gender" title="Giới tính" width="120"></kendo-grid-column>
     <kendo-grid-column field="countLine" title="Số dịch vụ" width="120"></kendo-grid-column>
     <kendo-grid-column title="Doanh thu" class="text-right" width="120">
