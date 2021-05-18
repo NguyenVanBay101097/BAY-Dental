@@ -182,6 +182,13 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-      
+        [HttpGet("[action]")]
+        public IActionResult DefaultGet(string programType)
+        {
+            var result = new SaleCouponProgramDisplay();
+            result.ProgramType = programType;
+            result.CompanyId = CompanyId;
+            return Ok(result);
+        }
     }
 }

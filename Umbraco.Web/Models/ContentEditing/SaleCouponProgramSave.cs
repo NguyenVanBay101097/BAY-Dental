@@ -59,7 +59,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string DiscountApplyOn { get; set; }
         public bool? NotIncremental { get; set; }
-        public string Days { get; set; }
+        public IEnumerable<string> Days { get; set; } = new List<string>();
         public IEnumerable<Guid> DiscountSpecificProductIds { get; set; } = new List<Guid>();
         public IEnumerable<Guid> DiscountSpecificProductCategoryIds { get; set; } = new List<Guid>();
     }

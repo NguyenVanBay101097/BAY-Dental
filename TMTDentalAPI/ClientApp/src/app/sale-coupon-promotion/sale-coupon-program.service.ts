@@ -41,6 +41,7 @@ export class SaleCouponProgramDisplay {
     saleOrderMinimumAmount: number;
     discountSpecificProducts: any;
     discountSpecificProductCategories: any;
+    statusDisplay: string;
 }
 
 export class SaleCouponProgramSave {
@@ -85,11 +86,11 @@ export class SaleCouponProgramService {
         return this.http.get<SaleCouponProgramDisplay>(this.baseApi + this.apiUrl + "/" + id);
     }
 
-    create(val: SaleCouponProgramSave): Observable<SaleCouponProgramBasic> {
+    create(val: any): Observable<SaleCouponProgramBasic> {
         return this.http.post<SaleCouponProgramBasic>(this.baseApi + this.apiUrl, val);
     }
 
-    update(id: string, val: SaleCouponProgramSave) {
+    update(id: string, val: any) {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 
@@ -131,5 +132,9 @@ export class SaleCouponProgramService {
 
     getAmountTotalUsagePromotion(id){
         return this.http.get(this.baseApi + this.apiUrl +'/'+id+ "/GetAmountTotalUsagePromotion");
+    }
+
+    defaultGet(programType: string){
+        return this.http.get(this.baseApi + this.apiUrl + '/DefaultGet?programType=' + programType);
     }
 }

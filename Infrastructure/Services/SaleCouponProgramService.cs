@@ -271,9 +271,14 @@ namespace Infrastructure.Services
 
         public async Task<SaleCouponProgramDisplay> GetDisplay(Guid id)
         {
-            var query = SearchQuery(x => x.Id == id);
-            var res = await _mapper.ProjectTo<SaleCouponProgramDisplay>(query).FirstOrDefaultAsync();
-            res.OrderCount = await _GetOrderCountAsync(id);
+            var program = await SearchQuery(x => x.Id == id)
+                .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
+                .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
+                .FirstOrDefaultAsync();
+
+            var res = _mapper.Map<SaleCouponProgramDisplay>(program);
+            res.Days = !string.IsNullOrEmpty(program.Days) ? program.Days.Split(",").ToList() : new List<string>();
+            //res.OrderCount = await _GetOrderCountAsync(id);
             return res;
         }
 

@@ -7,7 +7,7 @@
                 </a>
             </li>
             <li class="active">
-                <span *ngIf="id">{{program.name}}</span>
+                <span *ngIf="id">{{program?.name}}</span>
                 <span *ngIf="!id">Mới</span>
             </li>
         </ol>
@@ -28,34 +28,27 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <!-- <button type="button" name="315" class="btn btn-secondary btn-sm" (click)="generateCoupons()">
-                        <span>Khởi tạo Coupon</span>
-                    </button> -->
-                    <button *ngIf="f.statusDisplay.value == 'Lưu nháp' " type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+                    <button *ngIf="!program.active" type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
                         Lưu
                     </button>
-                    <!-- <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" *ngIf="id">
-                        Thêm mới</button> -->
-                    <button *ngIf="f.statusDisplay.value == 'Lưu nháp'" type="button" class="btn btn-primary btn-sm" (click)="onSaveActive()">
+                    <button *ngIf="!program.active" type="button" class="btn btn-primary btn-sm" (click)="onSaveActive()">
                         Lưu và kích hoạt
                     </button>
-
-                    <button *ngIf="f.statusDisplay.value == 'Đang chạy'" type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onPause()">
+                    <button *ngIf="!program.isPaused" type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onPause()">
                         Tạm ngừng
                     </button>
-
-                    <button *ngIf="f.statusDisplay.value == 'Tạm ngừng'" type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onActive()">
-                        Kích hoạt
+                    <button *ngIf="program.isPaused" type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onActive()">
+                        Chạy lại
                     </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="!active" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': active, 'btn-secondary': !active}"
+                    <button [disabled]="!program.active" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': program.active, 'btn-secondary': !program.active}"
                         type="button">
                         Kích hoạt
                     </button>
-                    <button [disabled]="active" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': !active, 'btn-secondary': active }"
+                    <button [disabled]="program.active" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': !program.active, 'btn-secondary': program.active }"
                         type="button">
                         Nháp
                     </button>
@@ -71,7 +64,7 @@
                                     <div class="d-flex align-items-center mr-2"><i class="fas fa-dollar-sign"></i></div>
                                     <div style="cursor: pointer;" (click)="showHistoryApplyPromotion()">
                                         <div>Giá trị khuyến mãi</div>
-                                        <div class="d-flex justify-content-center text-success">{{amountTotal | number}}</div>
+                                        <div class="d-flex justify-content-center text-success">{{program.amountTotal | number}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -87,28 +80,26 @@
                                         <div *ngIf="f.name.errors.required">Nhập tên chương trình khuyến mãi</div>
                                     </div>
                                 </div>
-                                <div>Tình trạng <span class="ml-3" [ngClass]="getColorStatus(f.statusDisplay.value)">{{f.statusDisplay.value}}</span></div>
+                                <div>Tình trạng <span class="ml-3">{{program.statusDisplay}}</span></div>
                             </div>
                             <table class="o_group o_inner_group o_group_col_6">
                                 <tbody>
                                     <tr>
-                                        <td>Hình thức khuyến mãi</td>
-                                        <td>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label">
+                                                Hình thức khuyến mãi
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
                                             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                                                 <input type="radio" class="btn-check" formControlName="promoCodeUsage" id="radio686_no_code_needed" value="no_code_needed" autocomplete="off">
-                                                <label class="btn btn-sm btn-outline-primary button-radio rounded-left" [class.disabled]="active"
+                                                <label class="btn btn-sm btn-outline-primary button-radio rounded-left" [class.disabled]="program.active"
                                                     for="radio686_no_code_needed">Tự động</label>
                                               
                                                 <input type="radio" class="btn-check" formControlName="promoCodeUsage" id="radio686_code_needed" value="code_needed" autocomplete="off">
-                                                <label class="btn btn-sm btn-outline-primary button-radio" [class.disabled]="active"
+                                                <label class="btn btn-sm btn-outline-primary button-radio" [class.disabled]="program.active"
                                                     for="radio686_code_needed">Mã khuyến mãi</label>
                                             </div>
-                                                <!-- <input class="btn-radio mr-1" type="radio" (change)="onChangePromoCodeUsage()" formControlName="promoCodeUsage"
-                                                    value="no_code_needed" id="radio686_no_code_needed">
-                                                <label class="btn btn-primary btn-sm button-radio" [ngClass]="{'btn-success': !codeNeed}" for="radio686_no_code_needed">Tự động</label>
-                                                <input class="btn-radio" type="radio" (change)="onChangePromoCodeUsage()" formControlName="promoCodeUsage"
-                                                    value="code_needed" id="radio686_code_needed">
-                                                <label class="btn btn-primary btn-sm button-radio" [ngClass]="{'btn-success': codeNeed}" for="radio686_code_needed">Mã khuyến mãi</label> -->
                                         </td>
                                     </tr>
                                     <tr [class.d-none]="promoCodeUsage != 'code_needed'">
@@ -117,8 +108,12 @@
                                             <table>
                                                 <tbody>
                                                     <tr>
-                                                        <td>Mã khuyến mãi</td>
-                                                        <td><input type="text" class="form-control" formControlName="promoCode"></td>
+                                                        <td class="o_td_label">
+                                                            <label class="o_form_label">
+                                                                Mã khuyến mãi
+                                                            </label>
+                                                        </td>
+                                                        <td colspan="1" style="width: 100%;"><input type="text" placeholder="Để trống tự động phát sinh" class="form-control" formControlName="promoCode"></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -130,13 +125,15 @@
                                             <table>
                                                 <tbody>
                                                     <tr>
-                                                        <td>
-                                                            Số lần áp dụng
-                                                            <span class="text-primary" placement="right" ngbTooltip="Số lượng phiếu điều trị được áp dụng mã khuyễn mãi. 0 thì áp dụng không giới hạn">
-                                                            <i class="fas fa-exclamation-circle"></i>
-                                                            </span>
+                                                        <td class="o_td_label">
+                                                            <label class="o_form_label">
+                                                                Số lần áp dụng
+                                                                <span class="text-primary" placement="right" ngbTooltip="Số lượng phiếu điều trị được áp dụng mã khuyễn mãi. 0 thì áp dụng không giới hạn">
+                                                                    <i class="fas fa-exclamation-circle"></i>
+                                                                </span>
+                                                            </label>
                                                         </td>
-                                                        <td>
+                                                        <td colspan="1" style="width: 100%;">
                                                             <input type="text" class="form-control" formControlName="maximumUseNumber">
                                                         </td>
                                                     </tr>
@@ -144,57 +141,21 @@
                                             </table>
                                         </td>
                                     </tr>
-                                    <!-- <tr [class.d-none]="['discount', 'free_shipping'].indexOf(rewardType) !== -1">
+                                    <tr colspan="1" style="width: 100%;">
                                         <td class="o_td_label">
-                                            <label class="o_form_label o_required_modifier">Dịch vụ miễn phí</label>
+                                            <label class="o_form_label">
+                                                Loại khuyến mãi
+                                            </label>
                                         </td>
-                                        <td style="width: 100%;">
-                                            <kendo-combobox [data]="filteredProducts" [textField]="'name'" [filterable]="true"
-                                                #productCbx formControlName="rewardProduct" [valueField]="'id'">
-                                            </kendo-combobox>
-                                        </td>
-                                    </tr> -->
-                                    <!-- <tr
-                                        [class.d-none]="['discount', 'free_shipping'].indexOf(rewardType) !== -1 || rewardProduct == null">
-                                        <td class=" o_td_label">
-                                            <label class="o_form_label">Số lượng</label>
-                                        </td>
-                                        <td style="width: 100%;">
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                formControlName="rewardProductQuantity">
-                                            </kendo-numerictextbox>
-                                        </td>
-                                    </tr> -->
-                                    <tr>
-                                        <td>Loại khuyến mãi</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                                                <input type="radio" class="btn-check" formControlName="discountType" id="radioDiscountFixed" value="fixed_amount" autocomplete="off">
-                                                <label class="btn btn-sm btn-outline-primary button-radio rounded-left" [class.disabled]="active" for="radioDiscountFixed">Số tiền</label>
-                                              
                                                 <input type="radio" class="btn-check" formControlName="discountType" id="radioDiscountPercent" value="percentage" autocomplete="off">
-                                                <label class="btn btn-sm btn-outline-primary button-radio" for="radioDiscountPercent" [class.disabled]="active">Phần trăm</label>
+                                                <label class="btn btn-sm btn-outline-primary button-radio" [class.disabled]="program.active" for="radioDiscountPercent">Phần trăm</label>
+                                                <input type="radio" class="btn-check" formControlName="discountType" id="radioDiscountFixed" value="fixed_amount" autocomplete="off">
+                                                <label class="btn btn-sm btn-outline-primary button-radio rounded-left" [class.disabled]="program.active" for="radioDiscountFixed">Số tiền</label>
                                             </div>
                                         </td>
                                     </tr>
-                                    <!-- <tr [class.d-none]="['product', 'free_shipping'].indexOf(rewardType) !== -1">
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help">
-                                                Áp dụng chiết khấu
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <div class="d-flex">
-                                                <select class="form-control" formControlName="discountType" 
-                                                    #mySelect
-                                                    (change) = "onChangeSelect(mySelect.value)"
-                                                >
-                                                    <option value="percentage">Phần trăm</option>
-                                                    <option value="fixed_amount">Giảm tiền</option>
-                                                </select>
-                                            </div>
-                                        </td>
-                                    </tr> -->
                                     <tr [class.d-none]="rewardType != 'discount' || discountType != 'percentage'">
                                         <td></td>
                                         <td>
@@ -256,8 +217,12 @@
                                     </tr>
                                     <tr
                                         [class.d-none]="['product', 'free_shipping'].indexOf(rewardType) !== -1">
-                                        <td>Áp dụng cho</td>
-                                        <td>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label">
+                                                Áp dụng cho
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
                                             <div class="o_field_radio o_vertical o_field_widget">
                                                 <div class="custom-control custom-radio o_radio_item">
                                                     <input type="radio" formControlName="discountApplyOn"
@@ -378,22 +343,22 @@
                         <div class="p-2">
                             <div class="form-group">
                                 <label for="startDate">Ngày bắt đầu</label>
-                                <kendo-datepicker  class="form-control" id="startDate" formControlName="ruleDateFromObj" (valueChange)="onChangeDate($event)" >
+                                <kendo-datepicker  class="form-control" id="startDate" formControlName="ruleDateFromObj">
                                 </kendo-datepicker>
                             </div>
                             <div class="form-group">
                                 <label for="endDate">Ngày kết thúc</label>
-                                <kendo-datepicker  class="form-control" id="endDate" formControlName="ruleDateToObj" (valueChange)="onChangeDate($event)">
+                                <kendo-datepicker  class="form-control" id="endDate" formControlName="ruleDateToObj">
                                 </kendo-datepicker>
                                 <div *ngIf="f.ruleDateToObj.errors" class="text-danger mb-1">
                                     <div *ngIf="f.ruleDateToObj.errors.dateIncorrect">Chọn ngày kết thúc</div>
                                 </div>
                             </div>
                             <div class="form-check">
-                                <input formControlName="isSelectDay" type="checkbox" class="form-check-input" (change)="changeCheckboxSelectDay($event.target.checked)"  id="daysSelected" [checked]="isSelectedDay">
+                                <input formControlName="isSelectDay" type="checkbox" class="form-check-input" id="daysSelected" [checked]="isSelectedDay">
                                 <label class="form-check-label" for="daysSelected">Chọn các thứ trong tuần</label>
                             </div>
-                            <div [class.d-none]="!isSelectedDay">
+                            <div [class.d-none]="!isSelectDay">
                                 <kendo-multiselect [data]="listDay" [filterable]="true"
                                                 [valuePrimitive]="true"
                                                 textField="name" valueField="id"
