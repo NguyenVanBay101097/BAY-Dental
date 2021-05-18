@@ -5,12 +5,10 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import SmsAccountService, { SmsAccountPaged } from '../sms-account.service';
-import SmsCampaignService, { SmsCampaignPaged } from '../sms-campaign.service';
-import { SmsConfigService } from '../sms-config.service';
+import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
+import { SmsCampaignPaged, SmsCampaignService } from '../sms-campaign.service';
 import { SmsMessageService } from '../sms-message.service';
 import { SmsPartnerListDialogComponent } from '../sms-partner-list-dialog/sms-partner-list-dialog.component';
-import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService } from '../sms-template.service';
 
 @Component({
@@ -42,13 +40,13 @@ export class SmsMessageDialogComponent implements OnInit {
   get f() { return this.formGroup.controls; }
 
   constructor(
-    private fb: FormBuilder, 
-    private modalService: NgbModal, 
-    public activeModal: NgbActiveModal, 
-    private notificationService: NotificationService, 
-    private smsCampaignService: SmsCampaignService, 
-    private smsAccountService: SmsAccountService, 
-    private smsTemplateService: SmsTemplateService, 
+    private fb: FormBuilder,
+    private modalService: NgbModal,
+    public activeModal: NgbActiveModal,
+    private notificationService: NotificationService,
+    private smsCampaignService: SmsCampaignService,
+    private smsAccountService: SmsAccountService,
+    private smsTemplateService: SmsTemplateService,
     private smsMessageService: SmsMessageService,
     private intlService: IntlService,
   ) { }
@@ -189,7 +187,7 @@ export class SmsMessageDialogComponent implements OnInit {
     val.partnerIds = this.partnerIds;
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm");
     console.log(val);
-    
+
     this.smsMessageService.create(val).subscribe(
       res => {
         this.notify("Thành công", true);

@@ -6,7 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { validator } from 'fast-json-patch';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import SmsAccountService, { SmsAccountPaged } from '../sms-account.service';
+import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService } from '../sms-template.service';
