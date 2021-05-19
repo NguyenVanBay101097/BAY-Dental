@@ -220,29 +220,43 @@ namespace Infrastructure.Services
             if (!program.CompanyId.HasValue)
                 program.CompanyId = CompanyId;
 
-            if (program.DiscountApplyOn == "specific_product_categories")
+            if (val.DiscountApplyOn == "specific_product_categories" && val.DiscountSpecificProductCategoryIds.Any())
             {
-                SaveDiscountSpecificProductCategories(program, val);
-            }
-            else
-            {
-                program.DiscountSpecificProductCategories.Clear();
+                foreach(var categId in val.DiscountSpecificProductCategoryIds)
+                {
+                    program.DiscountSpecificProductCategories.Add(new SaleCouponProgramProductCategoryRel
+                    {
+                        ProductCategoryId = categId
+
+                    });
+                }
+              
             }
 
-            if (program.DiscountApplyOn == "specific_products")
+            if (val.DiscountApplyOn == "specific_products" && val.DiscountSpecificProductIds.Any())
             {
-                SaveDiscountSpecificProducts(program, val);
-            }
-            else
-            {
-                program.DiscountSpecificProducts.Clear();
+                foreach (var productId in val.DiscountSpecificProductIds)
+                {
+                    program.DiscountSpecificProducts.Add(new SaleCouponProgramProductRel
+                    {
+                        ProductId = productId
+
+                    });
+                }
             }
 
-            //if (!program.DiscountLineProductId.HasValue)
-            //{
-            //    var discountProduct = await GetOrCreateDiscountProduct(program);
-            //    program.DiscountLineProductId = discountProduct.Id;
-            //}
+            if (val.ApplyPartnerOn == "specific_partners" && val.DiscountSpecificPartnerIds.Any())
+            {
+                foreach (var partnerId in val.DiscountSpecificPartnerIds)
+                {
+                    program.DiscountSpecificPartners.Add(new SaleCouponProgramPartnerRel
+                    {
+                        PartnerId = partnerId
+
+                    });
+                }
+            }
+
 
             _CheckRuleDate(program);
             _CheckDiscountPercentage(program);
@@ -276,6 +290,7 @@ namespace Infrastructure.Services
             var program = await SearchQuery(x => x.Id == id)
                 .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
+                .Include(x => x.DiscountSpecificPartners).ThenInclude(x => x.Partner)
                 .FirstOrDefaultAsync();
 
             var res = _mapper.Map<SaleCouponProgramDisplay>(program);
@@ -291,18 +306,17 @@ namespace Infrastructure.Services
                 .Include(x => x.Coupons).Include(x => x.DiscountLineProduct)
                 .Include(x => x.DiscountSpecificProducts)
                 .Include(x => x.DiscountSpecificProductCategories)
+                .Include(x => x.DiscountSpecificPartners)
                 .FirstOrDefaultAsync();
 
             program = _mapper.Map(val, program);
 
+            program.DiscountSpecificProductCategories.Clear();
+            program.DiscountSpecificProducts.Clear();
+            program.DiscountSpecificPartners.Clear();
+
             if (program.PromoCodeUsage == "code_needed" && string.IsNullOrEmpty(program.PromoCode))
             {
-                //SaleCouponProgram checkExist = null;
-                //do
-                //{
-                //    program.PromoCode = GeneratePromoCode();
-                //    checkExist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == program.PromoCode).FirstOrDefaultAsync();
-                //} while (checkExist != null);
                 var code = await GeneratePromoCodeIfEmpty();
                 program.PromoCode = code;
             }
@@ -310,42 +324,17 @@ namespace Infrastructure.Services
             program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
             program.RuleDateTo = program.RuleDateTo.Value.AbsoluteBeginOfDate();
 
-            //if (!program.DiscountLineProductId.HasValue)
-            //{
-            //    var discountProduct = await GetOrCreateDiscountProduct(program);
-            //    program.DiscountLineProduct = discountProduct;
-            //    program.DiscountLineProductId = discountProduct.Id;
-            //}
-
             if (!program.CompanyId.HasValue)
                 program.CompanyId = CompanyId;
 
             if (program.DiscountApplyOn == "specific_product_categories")
-            {
                 SaveDiscountSpecificProductCategories(program, val);
-            }
-            else
-            {
-                program.DiscountSpecificProductCategories.Clear();
-            }
-
+          
             if (program.DiscountApplyOn == "specific_products")
-            {
                 SaveDiscountSpecificProducts(program, val);
-            }
-            else
-            {
-                program.DiscountSpecificProducts.Clear();
-            }
 
-            //var reward_name = await GetRewardDisplayName(program);
-            //if (program.DiscountLineProduct != null)
-            //{
-            //    var productObj = GetService<IProductService>();
-            //    program.DiscountLineProduct.Name = reward_name;
-            //    program.DiscountLineProduct.NameNoSign = StringUtils.RemoveSignVietnameseV2(reward_name);
-            //    await productObj.UpdateAsync(program.DiscountLineProduct);
-            //}
+            if (program.ApplyPartnerOn == "specific_partners")
+                SaveDiscountSpecificPartners(program, val);
 
             _CheckRuleDate(program);
             _CheckDiscountPercentage(program);
@@ -394,6 +383,20 @@ namespace Infrastructure.Services
             foreach (var productCategoryId in to_add)
             {
                 program.DiscountSpecificProductCategories.Add(new SaleCouponProgramProductCategoryRel { ProductCategoryId = productCategoryId });
+            }
+        }
+
+        private void SaveDiscountSpecificPartners(SaleCouponProgram program, SaleCouponProgramSave val)
+        {
+            var productObj = GetService<IProductService>();
+            var to_remove = program.DiscountSpecificPartners.Where(x => !val.DiscountSpecificPartnerIds.Contains(x.PartnerId)).ToList();
+            foreach (var item in to_remove)
+                program.DiscountSpecificPartners.Remove(item);
+
+            var to_add = val.DiscountSpecificPartnerIds.Where(x => !program.DiscountSpecificPartners.Any(s => s.PartnerId == x)).ToList();
+            foreach (var partnerId in to_add)
+            {
+                program.DiscountSpecificPartners.Add(new SaleCouponProgramPartnerRel { PartnerId = partnerId });
             }
         }
 
@@ -625,7 +628,7 @@ namespace Infrastructure.Services
 
             var productObj = GetService<IProductService>();
             var product = await productObj.SearchQuery(x => x.Id == productId.Value).FirstOrDefaultAsync();
-            if(product == null)
+            if (product == null)
                 return new SaleCouponProgramResponse { Error = "Không tìm thấy dịch vụ đươc áp dụng ", Success = false, SaleCouponProgram = null };
 
             var res = new SaleCouponProgramResponse();
@@ -649,7 +652,7 @@ namespace Infrastructure.Services
                 res.Success = false;
                 res.SaleCouponProgram = null;
             }
-            else if (productId.HasValue && program.DiscountApplyOn == "specific_product_categories" && !program.DiscountSpecificProductCategories.Any(x=> x.ProductCategoryId == product.CategId))
+            else if (productId.HasValue && program.DiscountApplyOn == "specific_product_categories" && !program.DiscountSpecificProductCategories.Any(x => x.ProductCategoryId == product.CategId))
             {
                 res.Error = "Dịch vụ không thuộc nhóm dịch vu được áp dụng khuyến mãi";
                 res.Success = false;

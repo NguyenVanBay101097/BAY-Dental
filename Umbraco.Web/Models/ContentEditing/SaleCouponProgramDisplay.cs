@@ -87,6 +87,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ProductSimple> DiscountSpecificProducts { get; set; } = new List<ProductSimple>();
         public IEnumerable<ProductCategorySimple> DiscountSpecificProductCategories { get; set; } = new List<ProductCategorySimple>();
 
+        /// <summary>
+        /// all : tất cả
+        /// specific_partners: khách hàng
+        /// </summary>
+        public string ApplyPartnerOn { get; set; }
+
+        public IEnumerable<PartnerSimple> DiscountSpecificPartners { get; set; } = new List<PartnerSimple>();
+
         public bool IsPaused { get; set; }
 
         public string StatusDisplay
@@ -108,6 +116,16 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         public bool IsApplyDayOfWeek { get; set; }
+
+        /// <summary>
+        /// áp dụng mức giảm tối thiểu
+        /// </summary>
+        public bool IsApplyMinimumDiscount { get; set; }
+
+        /// <summary>
+        /// áp dụng mức giảm tối đa
+        /// </summary>
+        public bool IsApplyMaxDiscount { get; set; }
     }
 
    

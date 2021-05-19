@@ -188,6 +188,7 @@ namespace TMTDentalAPI.Controllers
             var result = new SaleCouponProgramDisplay();
             result.ProgramType = programType;
             result.CompanyId = CompanyId;
+            result.ApplyPartnerOn = "all";
             return Ok(result);
         }
     }
