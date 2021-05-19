@@ -17,6 +17,7 @@ namespace ApplicationCore.Entities
             RuleMinimumAmount = 0;
             DiscountMaxAmount = 0;
             DiscountApplyOn = "on_order";
+            NotIncremental = false;
         }
 
         /// <summary>

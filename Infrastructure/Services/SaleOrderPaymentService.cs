@@ -406,6 +406,7 @@ namespace Infrastructure.Services
             await orderObj.UpdateAsync(order);
         }
 
+
         public override ISpecification<SaleOrderPayment> RuleDomainGet(IRRule rule)
         {
             var userObj = GetService<IUserService>();

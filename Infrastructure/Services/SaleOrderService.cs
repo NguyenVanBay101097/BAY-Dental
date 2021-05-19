@@ -253,6 +253,7 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderLines)
                 .ThenInclude(x => x.SaleOrderLinePaymentRels)
                 .ThenInclude(x => x.Payment)
+                .Include(x => x.SaleOrderPayments)
                 .ToListAsync();
 
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
@@ -292,7 +293,7 @@ namespace Infrastructure.Services
             var removeDkSteps = await dkStepObj.SearchQuery(x => saleLineIds.Contains(x.SaleLineId.Value)).ToListAsync();
             if (removeDkSteps.Any(x => x.IsDone))
                 throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
-            await dkStepObj.DeleteAsync(removeDkSteps);
+            await dkStepObj.DeleteAsync(removeDkSteps);         
 
             foreach (var sale in self)
             {
@@ -310,6 +311,7 @@ namespace Infrastructure.Services
                     line.AmountPaid = amountPaid;
                     line.AmountResidual = 0;
                 }
+
 
                 saleLineObj._GetInvoiceQty(sale.OrderLines);
                 saleLineObj._GetToInvoiceQty(sale.OrderLines);
@@ -810,8 +812,8 @@ namespace Infrastructure.Services
 
         public bool _IsGlobalDiscountAlreadyApplied(SaleOrder self)
         {
-            var applied_programs = self.Promotions.Where(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgramId.HasValue && x.SaleCouponProgram.NotIncremental.HasValue && x.SaleCouponProgram.NotIncremental.Value);
-            return applied_programs.Any();
+            //Hàm check xem phiếu điều trị đã có áp dụng chương trình khuyến mãi không cho phép cộng dồn hay không?
+            return self.Promotions.Any(x => x.SaleCouponProgram.NotIncremental == true);
         }
 
         public SaleOrderPromotion _GetRewardValuesDiscount(SaleOrder self, SaleCouponProgram program)
@@ -2297,7 +2299,7 @@ namespace Infrastructure.Services
             //var total_amount = order.Sum(x => x.Residual);
 
             var saleLineObj = GetService<ISaleOrderLineService>();
-            var lines = await saleLineObj.SearchQuery(x => x.OrderId == id && x.AmountResidual != 0)
+            var lines = await saleLineObj.SearchQuery(x => x.OrderId == id && (x.PriceTotal - x.AmountInvoiced) != 0)
                 .Select(x => new RegisterSaleOrderPaymentHistoryLine
                 {
                     SaleOrderLineId = x.Id,
