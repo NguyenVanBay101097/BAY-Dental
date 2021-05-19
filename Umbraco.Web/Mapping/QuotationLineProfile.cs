@@ -18,7 +18,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.AmountPromotionToOrder, x => x.MapFrom(s => s.PromotionLines.Where(s => !s.Promotion.QuotationLineId.HasValue).Sum(s => s.PriceUnit)))
                 .ForMember(x => x.AmountPromotionToOrderLine, x => x.MapFrom(s => s.PromotionLines.Where(s => s.Promotion.QuotationLineId.HasValue).Sum(s => s.PriceUnit)));
 
-            CreateMap<QuotationLineSave, QuotationLine>();
+            CreateMap<QuotationLineSave, QuotationLine>()
+                .ForMember(x => x.Id, x => x.Ignore());
         }
     }
 }

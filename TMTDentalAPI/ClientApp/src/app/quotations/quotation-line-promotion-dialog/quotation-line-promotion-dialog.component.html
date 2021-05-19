@@ -27,7 +27,7 @@
             <!-- mã thủ công -->
             <div class="mb-2">
                 <label for="" class="font-weight-600">Mã khuyến mãi</label>
-                <app-quotation-line-apply-coupon [lineId]="quotationLine.id" (applySuccess)="onApplyCouponSuccess()"></app-quotation-line-apply-coupon>
+                <app-quotation-line-apply-coupon [lineId]="quotationLine.id" (applySuccess)="onApplyCouponSuccess($event)"></app-quotation-line-apply-coupon>
                 <div class="">
                     <div *ngFor="let item of getListPromotion('code_usage_program'); let i = index" class="d-flex justify-content-between mt-2">
                         <label class="mb-0" for="">  <img src="../../../assets/icons/promotion.svg" alt=""> {{item.name}}</label>

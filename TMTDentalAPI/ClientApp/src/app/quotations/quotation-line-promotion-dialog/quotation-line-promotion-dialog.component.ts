@@ -19,6 +19,11 @@ export class QuotationLinePromotionDialogComponent implements OnInit {
   autoPromotions = [];
   // code = '';
   private updateSubject = new Subject<any>();
+  
+  private btnDiscountSubject = new Subject<any>();
+  private btnPromoCodeSubject = new Subject<any>();
+  private btnPromoNoCodeSubject = new Subject<any>();
+  private btnDeletePromoSubject = new Subject<any>();
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -43,6 +48,22 @@ export class QuotationLinePromotionDialogComponent implements OnInit {
     return this.updateSubject.asObservable();
   }
 
+  getBtnDiscountObs() {
+    return this.btnDiscountSubject.asObservable();
+  }
+
+  getBtnPromoCodeObs() {
+    return this.btnPromoCodeSubject.asObservable();
+  }
+
+  getBtnPromoNoCodeObs() {
+    return this.btnPromoNoCodeSubject.asObservable();
+  }
+
+  getBtnDeletePromoObs() {
+    return this.btnDeletePromoSubject.asObservable();
+  }
+
   loadDefaultPromotion() {
     this.promotionService.getPromotionBySaleOrderLine(this.quotationLine.productId).subscribe((res: any) => {
       this.autoPromotions = res;
@@ -53,47 +74,20 @@ export class QuotationLinePromotionDialogComponent implements OnInit {
     return this.quotationLine.subPrice * this.quotationLine.qty;
   }
 
-  onApplyCouponSuccess() {
-    this.notificationService.notify('success', 'Thành công!');
-    this.updateSubject.next(true);
-    this.isChange = true;
+  onApplyCouponSuccess(data) {
+    this.btnPromoCodeSubject.next(data);
   }
 
   applyPromotion(item) {
-    var val = {
-      id: this.quotationLine.id,
-      saleProgramId: item.id,
-    };
-
-    var apply$ = this.quotationLineService.applyPromotion(val);
-    apply$.subscribe((res) => {
-      this.notificationService.notify('success', 'Thành công!');
-      this.updateSubject.next(true);
-      this.isChange = true;
-    });
+    this.btnPromoNoCodeSubject.next(item);
   }
 
   applyDiscount(value) {
-    var val = {
-      id: this.quotationLine.id,
-      discountType: value.discountType,
-      discountPercent: value.discountPercent,
-      discountFixed: value.discountFixed,
-    };
-    var apply$ = this.quotationLineService.applyDiscountOnQuotationLine(val);
-    apply$.subscribe((res) => {
-      this.notificationService.notify('success', 'Thành công!');
-      this.isChange = true;
-      this.updateSubject.next(true);
-    });
+    this.btnDiscountSubject.next(value);
   }
 
   onDeletePromotion(item) {
-    this.quotationPromotionService.removePromotion([item.id]).subscribe(res => {
-      this.notificationService.notify('success', 'Thành công!');
-      this.updateSubject.next(true);
-      this.isChange = true;
-    })
+    this.btnDeletePromoSubject.next(item);
   }
 
   getListPromotion(type): any[] {

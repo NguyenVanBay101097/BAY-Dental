@@ -52,7 +52,7 @@
                     {{line.qty | number}}
                 </ng-container>
                 <ng-template #elseTemplateQty>
-                    <kendo-numerictextbox style="width: 100px;" [format]="'n0'" [min]="0" [spinners]="false" formControlName="qty" (valueChange)="onChangeQuantity($event)">
+                    <kendo-numerictextbox style="width: 80px;" [format]="'n0'" [min]="0" [spinners]="false" formControlName="qty" (valueChange)="onChangeQuantity($event)">
                     </kendo-numerictextbox>
                     <div *ngIf="f.qty.errors && (f.qty.touched || f.qty.dirty || submitted)" class="text-danger">
                         <div *ngIf="f.qty.errors.required">Nhập số lượng</div>
@@ -66,7 +66,7 @@
                         {{line.amount | number}}
                     </ng-container>
                     <ng-template #elseTemplatePriceSub>
-                        {{getValueFormControl("amount") | number}}
+                        {{getPriceSubTotalFormGroup() | number}}
                     </ng-template>
                 </div>
                 <div>
@@ -205,12 +205,12 @@
             <div class="card-body px-3 py-2">
                 <div class="d-flex">
                     <span>Ưu đãi phiếu điều trị</span>
-                    <span class="ml-auto">{{getValueFormControl('amountPromotionToOrder') | number}}</span>
+                    <span class="ml-auto">{{line.amountPromotionToOrder | number}}</span>
                 </div>
                 <div class="d-flex">
                     <span>Ưu đãi dịch vụ</span>
                     <img (click)="onOpenPromotion()" class="ml-2 pointer" src="../../../assets/icons/promotion-bg-primary.svg" alt="">
-                    <span class="ml-auto">{{getValueFormControl('amountPromotionToOrderLine') | number}}</span>
+                    <span class="ml-auto">{{line.amountPromotionToOrderLine | number}}</span>
                 </div>
             </div>
         </div>

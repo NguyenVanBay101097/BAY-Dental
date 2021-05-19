@@ -2,10 +2,10 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a [routerLink]="['/partners/customer/' + (partner?partner.id:null) + '/quotations']">Báo giá</a>
+                <a [routerLink]="['/partners/customer/' + quotation.partner?.id + '/quotations']">Báo giá</a>
             </li>
             <li class="active">
-                <span *ngIf="quotationId">{{quotation?quotation.name:''}}</span>
+                <span *ngIf="quotationId">{{quotation?.name}}</span>
                 <span *ngIf="!quotationId">Mới</span>
             </li>
         </ol>
@@ -13,7 +13,7 @@
     </div>
 </div>
 <div class="o_content">
-    <form class="o_form_view h-100" [formGroup]="formGroup">
+    <form class="o_form_view h-100">
         <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
             <div class="flex-0-0-auto">
                 <div class="d-flex">
@@ -42,7 +42,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="partner" [routerLink]="['/partners/customer/' + partner.id]">{{partner.displayName}}</a>
+                                    <a *ngIf="quotation.partner" [routerLink]="['/partners/customer/' + quotation.partner.id]">{{quotation.partner.displayName}}</a>
                                 </td>
                             </tr>
                             <tr>
@@ -52,14 +52,14 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox formControlName="employee" [filterable]="true" #empCbx class="mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
+                                    <kendo-combobox [(ngModel)]="quotation.employee" name="employee" [filterable]="true" (filterChange)="onFilterEmployee($event)" #empCbx class="mr-1" [data]="filterEmployees" [textField]="'name'" [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)" class="text-danger">
+                                    <!-- <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.employee.errors.required">Chọn người báo giá</div>
-                                    </div>
+                                    </div> -->
                                 </td>
                             </tr>
-                            <tr *ngIf="saleOrders && saleOrders.length > 0">
+                            <!-- <tr *ngIf="saleOrders && saleOrders.length > 0">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Phiếu điều trị
@@ -68,7 +68,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <a *ngFor="let order of saleOrders; let i = index" [routerLink]="['/sale-orders/form']" [queryParams]="{id: order.id}">{{order.name}}<span *ngIf="i < saleOrders.length -1">, </span></a>
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -76,7 +76,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
+                                    <textarea type="text" class="form-control" name="note" [(ngModel)]="quotation.note"></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -90,8 +90,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName='dateQuotationObj' (valueChange)="onDateChange($event)">
+                                    <kendo-datepicker [(ngModel)]="quotation.dateQuotation" name="dateQuotation" (valueChange)="onDateChange()">
                                     </kendo-datepicker>
+                                    <!-- <div *ngIf="f.dateQuotation.errors && (f.dateQuotation.touched || f.dateQuotation.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.dateQuotation.errors.required">Chọn ngày báo giá</div>
+                                    </div> -->
                                 </td>
                             </tr>
                             <tr>
@@ -101,8 +104,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="1" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="dateApplies" (valueChange)="onDateAppliesChange($event)">
+                                    <kendo-numerictextbox [min]="1" [autoCorrect]="true" name="dateApplies" [format]="'n0'" [spinners]="false" [(ngModel)]="quotation.dateApplies" (valueChange)="onDateChange()">
                                     </kendo-numerictextbox>
+                                    <!-- <div *ngIf="f.dateApplies.errors && (f.dateApplies.touched || f.dateApplies.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.dateApplies.errors.required">Nhập số ngày</div>
+                                    </div> -->
                                 </td>
                             </tr>
                             <tr>
@@ -112,7 +118,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName='dateEndQuotationObj' [disabled]="true">
+                                    <kendo-datepicker [(ngModel)]="quotation.dateEndQuotation" name="dateEndQuotation" [attr.disabled]="true">
                                     </kendo-datepicker>
                                 </td>
                             </tr>
@@ -124,7 +130,7 @@
 
             <div class="flex-1-1-100 overflow-hidden">
                 <div class="w-100 h-100 d-flex flex-column">
-                    <div class="w-25 mb-2">
+                    <div class="w-100 mb-2">
                         <app-service-list-search-dropdown (onSelectService)="addLine($event, true)"></app-service-list-search-dropdown>
                     </div>
                     <div class="d-flex overflow-hidden w-100">
@@ -139,9 +145,9 @@
                                 </div>
                             </div>
                             <div class="flex-1-1-100 overflow-auto">
-                                <ng-container *ngFor="let line of linesArray.controls; let i=index">
-                                    <app-quotation-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)" [line]="line.value" (onCancelEvent)="onCancelEditLine($event)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)"
-                                        (onDeleteEvent)="onDeleteLine(i)">
+                                <ng-container *ngFor="let line of quotation.lines; let i=index">
+                                    <app-quotation-line-cu #lineTemplate [initialListEmployees]="sourceEmployees" [filteredToothCategories]="filteredToothCategories" [initialListTeeths]="listTeeths" (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)" [line]="line"
+                                        (onCancelEvent)="onCancelEditLine($event)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)" (onDeleteEvent)="onDeleteLine(i)">
                                     </app-quotation-line-cu>
                                 </ng-container>
                             </div>
@@ -172,7 +178,7 @@
                                 <div class="card-body px-3 py-2">
                                     <p class="d-flex justify-content-between mb-0">
                                         <label class="font-weight-600">Thành tiền</label>
-                                        <label class="font-weight-600">{{getAmount() | number}}</label>
+                                        <label class="font-weight-600">{{getAmountSubTotal() | number}}</label>
                                     </p>
                                     <p class="d-flex justify-content-between mb-0">
                                         <label class="font-weight-600">Tổng giảm giá</label>
@@ -180,7 +186,7 @@
                                     </p>
                                     <p class="d-flex justify-content-between mb-0">
                                         <label class="font-weight-600">Tổng tiền</label>
-                                        <label class="font-weight-600">{{getAmount() - getTotalDiscount() | number}}</label>
+                                        <label class="font-weight-600">{{getAmountSubTotal() - getTotalDiscount() | number}}</label>
                                     </p>
                                 </div>
                             </div>
@@ -200,33 +206,33 @@
                             <th class="text-center">#</th>
                         </tr>
                     </thead>
-                    <tbody formArrayName="payments" *ngIf="paymentsArray">
-                        <ng-container *ngFor="let payment_item of paymentsArray.controls; let i = index;">
-                            <tr [formGroupName]="i">
+                    <tbody>
+                        <ng-container *ngFor="let payment_item of quotation.payments; let i = index;">
+                            <tr>
                                 <td class="text-right">
                                     {{i + 1}}
                                 </td>
                                 <td class="d-flex">
-                                    <kendo-numerictextbox class="form-control" [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="payment" (valueChange)="onPaymentChange(payment_item)">
+                                    <kendo-numerictextbox class="form-control" [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" [(ngModel)]="payment_item.payment" [name]="'payments[' + i + '].payment'">
                                     </kendo-numerictextbox>
                                     <div class="mt-1 ml-2 d-flex">
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" [hidden]="true" type="radio" formControlName="discountPercentType" (change)="computeAmount(payment_item)" [id]="'cash-' + i" value="cash">
-                                            <label class="form-check-label btn btn-outline-primary" [class.active]="getValueFormPaymentArray('discountPercentType', i) == 'cash'" [for]="'cash-' + i">VNĐ</label>
+                                            <input class="form-check-input" [hidden]="true" type="radio" [(ngModel)]="payment_item.discountPercentType" [name]="'payments[' + i + '].discountPercentType'" [id]="'cash-' + i" value="cash">
+                                            <label class="form-check-label btn btn-outline-primary" [for]="'cash-' + i">VNĐ</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" [hidden]="true" type="radio" formControlName="discountPercentType" (change)="computeAmount(payment_item)" [id]="'percent-' + i" value="percent">
-                                            <label class="form-check-label btn btn-outline-primary" [class.active]="getValueFormPaymentArray('discountPercentType', i) == 'percent'" [for]="'percent-' + i">%</label>
+                                            <input class="form-check-input" [hidden]="true" type="radio" [(ngModel)]="payment_item.discountPercentType" [name]="'payments[' + i + '].discountPercentType'" [id]="'percent-' + i" value="percent">
+                                            <label class="form-check-label btn btn-outline-primary" [for]="'percent-' + i">%</label>
                                         </div>
                                     </div>
                                 </td>
 
                                 <td>
-                                    <kendo-datepicker class="form-control" formControlName='dateObj'>
+                                    <kendo-datepicker class="form-control" [(ngModel)]="payment_item.date" [name]="'payments[' + i + '].date'">
                                     </kendo-datepicker>
                                 </td>
                                 <td>
-                                    <span class="float-right">{{getValueFormPaymentArray('amount', i) | number}}</span>
+                                    <span class="float-right">{{getAmountPayment(payment_item) | number}}</span>
                                 </td>
                                 <td class="text-center">
                                     <i class="fas fa-trash" (click)="deletePayment(i)"></i>
@@ -237,7 +243,7 @@
                     <tfoot>
                         <tr>
                             <td colspan="7">
-                                <button type="button" title="Thêm thuốc" class="btn btn-primary btn-sm" (click)="onAddPayment()">
+                                <button type="button" title="Thêm tiến độ thanh toán" class="btn btn-primary btn-sm" (click)="onAddPayment()">
                                     <i class="fas fa-plus"></i> Thêm tiến độ thanh toán
                                 </button>
                             </td>

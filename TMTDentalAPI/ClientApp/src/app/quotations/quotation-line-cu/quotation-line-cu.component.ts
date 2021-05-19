@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { debug } from 'console';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
@@ -26,10 +27,11 @@ export class QuotationLineCuComponent implements OnInit {
   filteredEmployeesDoctor: any[] = [];
   filteredEmployeesAssistant: any[] = [];
   filteredEmployeesCounselor: any[] = [];
-  initialListEmployees: any = [];
-  filteredToothCategories: any[];
+  @Input() initialListEmployees: any = [];
+  @Input() filteredToothCategories: any[];
+  @Input() initialListTeeths: any[] = [];
+
   hamList: { [key: string]: {} };
-  initialListTeeths: any[];
   toothTypeDict = [
     { name: "Hàm trên", value: "upper_jaw" },
     { name: "Nguyên Hàm", value: "whole_jaw" },
@@ -52,32 +54,41 @@ export class QuotationLineCuComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.formGroup = this.fb.group({
-      subPrice: [0, Validators.required],
-      qty: [0, Validators.required],
-      amount: 0,
-      employee: null,
-      assistant: null,
-      counselor: null,
-      toothType: null,
-      toothCategory: null,
-      toothIds: null,
-      diagnostic: '',
-      amountDiscountTotal: 0,
-      amountPromotionToOrder: 0,
-      amountPromotionToOrderLine: 0,
-      teeth: this.fb.array([]),
-      promotions: this.fb.array([])
-    });
+    this.formGroup = this.fb.group({});
+    // this.formGroup = this.fb.group({
+    //   subPrice: [0, Validators.required],
+    //   qty: [0, Validators.required],
+    //   amount: 0,
+    //   employee: null,
+    //   assistant: null,
+    //   counselor: null,
+    //   toothType: null,
+    //   toothCategory: null,
+    //   toothIds: null,
+    //   diagnostic: '',
+    //   amountDiscountTotal: 0,
+    //   amountPromotionToOrder: 0,
+    //   amountPromotionToOrderLine: 0,
+    //   teeth: this.fb.array([]),
+    //   promotions: this.fb.array([])
+    // });
 
-    this.formGroup.patchValue(this.line);
-    this.formGroup.setControl("teeth", this.fb.array(this.line.teeth));
-    this.formGroup.setControl("promotions", this.fb.array(this.line.promotions));
+    // this.formGroup = this.fb.group(this.line);
+    // this.formGroup.patchValue(this.line);
+    
+    // if (this.line && this.line.teeth) {
+    //   var lineControl = this.formGroup.get("teeth") as FormArray;
+    //   this.line.teeth.forEach(line => {
+    //     lineControl.push(this.fb.group(line));
+    //   });
+    // }
 
-    this.loadEmployees();
-    this.loadToothCategories();
-    this.loadTeethList();
-    this.computeAmount();
+    // this.formGroup.setControl("teeth", this.fb.array(this.line.teeth));
+    // this.formGroup.setControl("promotions", this.fb.array(this.line.promotions));
+    // this.loadEmployees();
+    // this.loadToothCategories();
+    // this.loadTeethList();
+    // this.computeAmount();
   }
 
   getValueFormControl(key: string) {
@@ -96,6 +107,13 @@ export class QuotationLineCuComponent implements OnInit {
     var getquanTity = this.getValueFormControl("qty") ? this.getValueFormControl("qty") : 1;
     var priceUnit = this.getPriceUnitLinePromotion(this.formGroup.value);
     this.f.amount.setValue(priceUnit * getquanTity);
+  }
+
+  getPriceSubTotalFormGroup() {
+    var quantity = this.formGroup.get('qty').value;
+    var priceUnit = this.formGroup.get('subPrice').value;
+    var priceReduce = priceUnit - (this.line.amountDiscountTotal || 0);
+    return quantity * priceReduce;
   }
 
   loadEmployees() {
@@ -221,7 +239,7 @@ export class QuotationLineCuComponent implements OnInit {
   }
 
   onChangeQuantity(val) {
-    this.computeAmount();
+    // this.computeAmount();
   }
 
   editLine() {
@@ -243,9 +261,11 @@ export class QuotationLineCuComponent implements OnInit {
   }
 
   checkValidFormGroup() {
+    console.log(this.formGroup.value);
+
     if (this.formGroup.invalid)
       return false;
-    if (this.getValueFormControl("toothType") == "manual" && !this.getValueFormControl("teeth").length) {
+    if (this.formGroup.value.toothType == "manual" && !this.formGroup.value.teeth.length) {
       this.notify("error", "Vui lòng chọn răng");
       return false;
     }
@@ -254,7 +274,6 @@ export class QuotationLineCuComponent implements OnInit {
 
   updateLineInfo() {
     this.submitted = true;
-
     if (!this.checkValidFormGroup()) {
       this.isEditting = true;
       return;
@@ -283,9 +302,23 @@ export class QuotationLineCuComponent implements OnInit {
 
   onEditLine() {
     this.isEditting = true;
-    // this.formGroup.patchValue(this.line);
-    this.formGroup.setControl("teeth", this.fb.array(this.line.teeth));
-    this.formGroup.setControl("promotions", this.fb.array(this.line.promotions));
+    this.formGroup = this.fb.group({
+      qty: [this.line.qty, Validators.required],
+      subPrice: [this.line.subPrice, Validators.required],
+      teeth: this.fb.array(this.line.teeth),
+      promotions: this.fb.array(this.line.promotions),
+      toothType: this.line.toothType,
+      toothCategory: this.line.toothCategory,
+      assistant: this.line.assistant,
+      employee: this.line.employee,
+      counselor: this.line.counselor,
+      diagnostic: this.line.diagnostic
+    });
+
+    this.loadTeethMap(this.line.toothCategory);
+    this.filteredEmployeesDoctor = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
+    this.filteredEmployeesCounselor = this.initialListEmployees.slice();
+    this.filteredEmployeesAssistant = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
   }
 
   notify(type, content) {
