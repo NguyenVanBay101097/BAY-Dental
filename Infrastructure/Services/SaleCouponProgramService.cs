@@ -79,7 +79,8 @@ namespace Infrastructure.Services
             var saleProgramAmountDict = await GetAmountPromotionDictAsync(programIds);
 
             var itemsResponse = _mapper.Map<List<SaleCouponProgramGetListPagedResponse>>(items);
-            itemsResponse.ForEach(x => {
+            itemsResponse.ForEach(x =>
+            {
                 if (saleProgramAmountDict.ContainsKey(x.Id))
                 {
                     x.AmountTotal = saleProgramAmountDict[x.Id];
@@ -151,7 +152,7 @@ namespace Infrastructure.Services
             var promotions = await SearchQuery(x => x.Active && !x.IsPaused && x.ProgramType == "promotion_program"
             && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order"
             && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
-            && (string.IsNullOrEmpty(x.Days) || x.Days.Contains(((int)today.DayOfWeek).ToString()))
+            && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString())))
             ).ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
@@ -167,7 +168,7 @@ namespace Infrastructure.Services
             && x.PromoCodeUsage == "no_code_needed" && (x.DiscountApplyOn == "specific_products" || x.DiscountApplyOn == "specific_product_categories")
             && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
             && (x.DiscountSpecificProducts.Any(s => s.ProductId == product.Id) || x.DiscountSpecificProductCategories.Any(s => s.ProductCategoryId == product.CategId))
-            && (string.IsNullOrEmpty(x.Days) || x.Days.Contains(((int)today.DayOfWeek).ToString())))
+            && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString()))))
             .ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
@@ -217,7 +218,7 @@ namespace Infrastructure.Services
             program.RuleDateTo = program.RuleDateTo.Value.AbsoluteBeginOfDate();
 
             if (!program.CompanyId.HasValue)
-            program.CompanyId = CompanyId;
+                program.CompanyId = CompanyId;
 
             if (program.DiscountApplyOn == "specific_product_categories")
             {
@@ -278,6 +279,7 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
 
             var res = _mapper.Map<SaleCouponProgramDisplay>(program);
+            res.AmountTotal = await GetAmountTotal(id);
             res.Days = !string.IsNullOrEmpty(program.Days) ? program.Days.Split(",").ToList() : new List<string>();
             //res.OrderCount = await _GetOrderCountAsync(id);
             return res;
@@ -321,7 +323,7 @@ namespace Infrastructure.Services
             if (program.DiscountApplyOn == "specific_product_categories")
             {
                 SaveDiscountSpecificProductCategories(program, val);
-            } 
+            }
             else
             {
                 program.DiscountSpecificProductCategories.Clear();
@@ -572,7 +574,7 @@ namespace Infrastructure.Services
                 message.Error = $"Chương trình khuyến mãi vượt quá hạn mức áp dụng.";
             if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > line.Order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value < line.Order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
-            else if ((self.DiscountSpecificProducts.Any() && !self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId)))                                                                                                                                                                                
+            else if ((self.DiscountSpecificProducts.Any() && !self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId)))
                 message.Error = "Khuyến mãi Không áp dụng cho dịch vụ này";
             else if (line.Order.Promotions.Where(x => x.SaleOrderId.HasValue && !x.SaleOrderLineId.HasValue).Any(x => x.SaleCouponProgramId == self.Id))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
@@ -613,16 +615,25 @@ namespace Infrastructure.Services
         {
             var now = DateTime.Now;
             //Chương trình khuyến mãi sử dụng mã
-            var program = await SearchQuery(x => x.PromoCode == code).Include(x => x.DiscountSpecificProducts).FirstOrDefaultAsync();
+            var program = await SearchQuery(x => x.PromoCode == code)
+                .Include(x => x.DiscountSpecificProducts)
+                .Include(x => x.DiscountSpecificProductCategories)
+                .FirstOrDefaultAsync();
+
             if (program == null)
                 return new SaleCouponProgramResponse { Error = "Mã khuyến mãi không chính xác", Success = false, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
+
+            var productObj = GetService<IProductService>();
+            var product = await productObj.SearchQuery(x => x.Id == productId.Value).FirstOrDefaultAsync();
+            if(product == null)
+                return new SaleCouponProgramResponse { Error = "Không tìm thấy dịch vụ đươc áp dụng ", Success = false, SaleCouponProgram = null };
 
             var res = new SaleCouponProgramResponse();
             res.SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program);
             res.Success = true;
-            if (!program.Active)
+            if (!program.Active || !program.IsPaused)
             {
-                res.Error = "Mã khuyến mãi không có giá trị";
+                res.Error = "Chương trình khuyến mãi chưa kích hoạt hoặc đang tạm dừng";
                 res.Success = false;
                 res.SaleCouponProgram = null;
             }
@@ -635,6 +646,12 @@ namespace Infrastructure.Services
             else if (productId.HasValue && !program.DiscountSpecificProducts.Any(x => x.ProductId == productId))
             {
                 res.Error = "Mã khuyến mãi không áp dụng cho dịch vụ này";
+                res.Success = false;
+                res.SaleCouponProgram = null;
+            }
+            else if (productId.HasValue && program.DiscountApplyOn == "specific_product_categories" && !program.DiscountSpecificProductCategories.Any(x=> x.ProductCategoryId == product.CategId))
+            {
+                res.Error = "Dịch vụ không thuộc nhóm dịch vu được áp dụng khuyến mãi";
                 res.Success = false;
                 res.SaleCouponProgram = null;
             }
@@ -944,7 +961,7 @@ namespace Infrastructure.Services
 
         private async Task CheckAndUpdatePromoCode(string code)
         {
-            string pattern = @"^CTKM\d{4}$";
+            string pattern = @"^CTKM\d{4,}$";
             Regex rg = new Regex(pattern, RegexOptions.IgnoreCase);
             Regex rgx = new Regex(@"CTKM", RegexOptions.IgnoreCase);
             var isMatching = rg.IsMatch(code);
@@ -954,9 +971,9 @@ namespace Infrastructure.Services
                 var result = rgx.Split(code, 2, m.Index);
                 var numberCode = result[1];
                 int number = Int32.Parse(numberCode.ToString());
-                var sequenceObj =  GetService<IIRSequenceService>();                                                
+                var sequenceObj = GetService<IIRSequenceService>();
                 var sequence = await sequenceObj.SearchQuery(x => x.Code == "promotion.code").FirstOrDefaultAsync();
-                if(sequence == null)
+                if (sequence == null)
                 {
                     sequence = await sequenceObj.CreateAsync(new IRSequence
                     {
@@ -965,7 +982,7 @@ namespace Infrastructure.Services
                         Prefix = "CTKM",
                         Padding = 4
                     });
-                }                
+                }
 
                 if (number > sequence.NumberNext)
                 {
@@ -973,7 +990,7 @@ namespace Infrastructure.Services
                     await sequenceObj.UpdateAsync(sequence);
                 }
             }
-            
+
         }
 
         private async Task _InsertPromotionCodeSequence()

@@ -26,14 +26,6 @@ namespace ApplicationCore.Entities
 
         public bool Active { get; set; }
 
-        /// <summary>
-        /// waiting: Chưa chạy
-        /// running: Đang chạy
-        /// paused: Tạm ngừng
-        /// expired: Hết hạn
-        /// </summary>
-        //public string Status { get; set; }
-
         public bool IsPaused { get; set; }
 
         /// <summary>
@@ -144,6 +136,11 @@ namespace ApplicationCore.Entities
         /// specific_products: dịch vụ
         /// </summary>
         public string DiscountApplyOn { get; set; }
+
+        /// <summary>
+        /// áp dụng thứ trong tuần
+        /// </summary>
+        public bool IsApplyDayOfWeek { get; set; }
 
         /// <summary>
         /// Chọn các thứ trong tuần

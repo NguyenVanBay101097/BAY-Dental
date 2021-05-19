@@ -16,6 +16,7 @@ namespace Umbraco.Web.Models.ContentEditing
             RuleMinQuantity = 1;
             RuleMinimumAmount = 0;
             DiscountMaxAmount = 0;
+            AmountTotal = 0;
             DiscountApplyOn = "on_order";
         }
 
@@ -81,6 +82,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string DiscountApplyOn { get; set; }
         public bool? NotIncremental { get; set; }
+        public decimal AmountTotal { get; set; }
         public IEnumerable<string> Days { get; set; }
         public IEnumerable<ProductSimple> DiscountSpecificProducts { get; set; } = new List<ProductSimple>();
         public IEnumerable<ProductCategorySimple> DiscountSpecificProductCategories { get; set; } = new List<ProductCategorySimple>();
@@ -104,6 +106,8 @@ namespace Umbraco.Web.Models.ContentEditing
                 return "Chưa chạy";
             }
         }
+
+        public bool IsApplyDayOfWeek { get; set; }
     }
 
    
