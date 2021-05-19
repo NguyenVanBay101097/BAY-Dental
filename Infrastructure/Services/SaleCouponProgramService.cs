@@ -531,10 +531,10 @@ namespace Infrastructure.Services
         {
             var message = new CheckPromoCodeMessage();
 
-            var saleObj = GetService<ISaleOrderService>();         
-            var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
-            if (self.MaximumUseNumber != 0 && order_count >= self.MaximumUseNumber)
-                message.Error = $"Mã khuyến mãi {coupon_code} đã hết hạn.";
+            var saleObj = GetService<ISaleOrderService>();
+            var countApplied = await _GetCountAppliedAsync(self);
+            if (self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
+                message.Error = $"Mã khuyến mãi {coupon_code} vượt quá hạn mức áp dụng.";
             else if (self.RuleMinimumAmount > quotation.TotalAmount)
                 message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
             else if (!string.IsNullOrEmpty(self.PromoCode) && (quotation.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
@@ -632,7 +632,7 @@ namespace Infrastructure.Services
             var message = new CheckPromoCodeMessage();
             var saleObj = GetService<ISaleOrderService>();
             //var applicable_programs = await saleObj._GetApplicablePrograms(order);
-            var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
+            var countApplied = await _GetCountAppliedAsync(self);
             if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > line.Quotation.DateQuotation) || (self.RuleDateTo.HasValue && self.RuleDateTo < line.Quotation.DateQuotation))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if (!self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId))
@@ -643,7 +643,15 @@ namespace Infrastructure.Services
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho dịch vụ này";
             else if (!self.Active)
                 message.Error = "Chương trình khuyến mãi không có giá trị";
-          
+            else if (self.Active && self.IsPaused)
+                message.Error = "Chương trình khuyến mãi đang tạm ngừng";
+            else if (!self.Active)
+                message.Error = "Chương trình khuyến mãi chưa kích hoạt";
+            else if (line.Promotions.Any(x => x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
+                message.Error = "Đang áp dụng khuyến mãi không cộng dồn. Vui lòng xóa các CTKM đó.";
+            else if (self.NotIncremental == true && line.Promotions.Any(x => x.SaleCouponProgram != null))
+                message.Error = "Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ.";
+
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" &&  !line.Quotation.Lines.Where(x => x.ProductId == self.RewardProductId &&
             x.Qty >= self.RewardProductQuantity).Any())
                 message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
@@ -656,7 +664,7 @@ namespace Infrastructure.Services
         {
             var message = new CheckPromoCodeMessage();
             var saleObj = GetService<ISaleOrderService>();
-            var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
+            var countApplied = await _GetCountAppliedQuotationAsync(self);
             if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > quotation.DateQuotation) || (self.RuleDateTo.HasValue && self.RuleDateTo < quotation.DateQuotation))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if (self.ProgramType != "promotion_program" || self.PromoCodeUsage == "code_needed" || self.DiscountApplyOn != "on_order")
@@ -667,13 +675,17 @@ namespace Infrastructure.Services
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho báo giá này";
             else if (!self.Active)
                 message.Error = "Chương trình khuyến mãi không có giá trị";
-            //else if (order.CodePromoProgram != null && !string.IsNullOrEmpty(order.CodePromoProgram.PromoCode) && self.PromoCodeUsage == "code_needed")
-            //    message.Error = "Mã khuyến mãi không thể cộng dồn.";
-            //else if (_IsGlobalDiscountProgram(self) && saleObj._IsGlobalDiscountAlreadyApplied(order))
-            //    message.Error = "Chiết khấu tổng không thể cộng dồn";
+            else if (self.Active && self.IsPaused)
+                message.Error = "Chương trình khuyến mãi đang tạm ngừng";
+            else if (!self.Active)
+                message.Error = "Chương trình khuyến mãi chưa kích hoạt";
+            else if (quotation.Promotions.Any(x => x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
+                message.Error = "Đang áp dụng khuyến mãi không cộng dồn. Vui lòng xóa các CTKM đó.";
+            else if (self.NotIncremental == true && quotation.Promotions.Any(x => x.SaleCouponProgram != null))
+                message.Error = "Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ.";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !quotation.Lines.Where(x => x.ProductId == self.RewardProductId &&
             x.Qty >= self.RewardProductQuantity).Any())
-                message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";          
+                message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
 
             return message;
         }
@@ -759,6 +771,18 @@ namespace Infrastructure.Services
         public IEnumerable<SaleCouponProgram> _FilterOnMinimumAmount(SaleCouponProgram self, SaleOrder order)
         {
             return _FilterOnMinimumAmount(new List<SaleCouponProgram>() { self }, order);
+        }
+
+        public IEnumerable<SaleCouponProgram> _FilterQuotaitonOnMinimumAmount(IEnumerable<SaleCouponProgram> self, Quotation quotation)
+        {
+            var untaxed_amount = quotation.TotalAmount;
+            //Some lines should not be considered when checking if threshold is met like delivery
+            return self.Where(x => x.RuleMinimumAmount <= untaxed_amount);
+        }
+
+        public IEnumerable<SaleCouponProgram> _FilterQuotaitonOnMinimumAmount(SaleCouponProgram self, Quotation quotation)
+        {
+            return _FilterQuotaitonOnMinimumAmount(new List<SaleCouponProgram>() { self }, quotation);
         }
 
         private async Task<Product> GetOrCreateDiscountProduct(SaleCouponProgram self)
@@ -936,20 +960,14 @@ namespace Infrastructure.Services
         {
             var orderPromotionObj = GetService<ISaleOrderPromotionService>();
             var countApplied = await orderPromotionObj.SearchQuery(x => x.SaleCouponProgramId.HasValue && x.SaleCouponProgramId == self.Id).CountAsync();
-            //var discountLineProductIds = self.Where(x => x.DiscountLineProductId.HasValue).Select(x => x.DiscountLineProductId.Value).ToList();
-            //var mapped_data = await saleLineObj.SearchQuery(x => x.ProductId.HasValue && discountLineProductIds.Contains(x.ProductId.Value)).GroupBy(x => x.ProductId.Value)
-            //    .Select(x => new
-            //    {
-            //        ProductId = x.Key,
-            //        ProductIdCount = x.Count()
-            //    }).ToDictionaryAsync(x => x.ProductId, x => x.ProductIdCount);
-            //var dict = self.ToDictionary(x => x.Id, x => 0);
-            //foreach (var program in self)
-            //{
-            //    if (program.DiscountLineProductId.HasValue)
-            //        dict[program.Id] = mapped_data.ContainsKey(program.DiscountLineProductId.Value) ?
-            //            mapped_data[program.DiscountLineProductId.Value] : 0;
-            //}
+          
+            return countApplied;
+        }
+
+        public async Task<int> _GetCountAppliedQuotationAsync(SaleCouponProgram self)
+        {
+            var quotationPromotionObj = GetService<IQuotationPromotionService>();
+            var countApplied = await quotationPromotionObj.SearchQuery(x => x.SaleCouponProgramId.HasValue && x.SaleCouponProgramId == self.Id).CountAsync();
             return countApplied;
         }
 

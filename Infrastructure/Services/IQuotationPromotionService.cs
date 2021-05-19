@@ -14,6 +14,8 @@ namespace Infrastructure.Services
 
         Task RemovePromotion(IEnumerable<Guid> ids);
 
+        bool _IsRewardInQuotationLines(Quotation self, SaleCouponProgram program);
+
         QuotationPromotion PreparePromotionToQuotation(Quotation self, SaleCouponProgram program, decimal discountAmount);
         QuotationPromotion PreparePromotionToQuotationLine(QuotationLine self, SaleCouponProgram program, decimal discountAmount);
     }

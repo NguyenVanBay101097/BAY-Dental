@@ -116,6 +116,12 @@ namespace Infrastructure.Services
             }
         }
 
+        public bool _IsRewardInQuotationLines(Quotation self, SaleCouponProgram program)
+        {
+            return self.Lines.Where(x => x.ProductId == program.RewardProductId &&
+            x.Qty >= program.RewardProductQuantity).Any();
+        }
+
         public async Task RemovePromotion(IEnumerable<Guid> ids)
         {
             var quotationObj = GetService<IQuotationService>();
