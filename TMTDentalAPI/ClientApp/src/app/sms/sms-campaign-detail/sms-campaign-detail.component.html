@@ -2,8 +2,7 @@
     <div class="o_control_panel">
         <ol class="breadcrumb">
             <li class="active">
-                <a [routerLink]="['/sms/campaign']">Quản lý chiến dịch </a>/
-                {{campaign ? campaign.name : ''}}
+                <a [routerLink]="['/sms/campaign']">Quản lý chiến dịch </a>/ {{campaign ? campaign.name : ''}}
             </li>
         </ol>
         <div class="o_cp_searchview">
@@ -48,7 +47,8 @@
                                 (click)="cancelSend()">
                                 Hủy gửi
                             </button>
-                            <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                            <app-tai-date-range-filter-dropdown *ngIf="state=='success'" title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" 
+                                (searchChange)="onSearchDateChange($event)">
                             </app-tai-date-range-filter-dropdown>
                         </div>
                         <div class="o_cp_t_right">
@@ -85,7 +85,7 @@
 
         </div>
         <div class="pms-right border p-3" [formGroup]="formGroup">
-            <h4>Chiến dịch mặc định</h4>
+            <h4>{{campaign ? campaign.name : ''}}</h4>
             <table class="w-100">
                 <tr>
                     <td class="o_td_label">

@@ -117,11 +117,12 @@ namespace Infrastructure.Services
                 {
                     var companyId = CompanyId;
                     await smsSendMessageObj.CreateSmsMessageDetail(context, entity, partnerIds, companyId);
+                    entity.State = "success";
                 }
+                await UpdateAsync(entity);
             }
             catch (Exception ex)
             {
-
                 throw new Exception(ex.Message);
             }
         }
