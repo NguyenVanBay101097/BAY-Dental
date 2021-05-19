@@ -44,7 +44,8 @@
                 <div class="o_cp_controller">
                     <div class="o_control_panel">
                         <div class="o_cp_t_left">
-                            <button type="button" class="btn btn-danger btn-sm" (click)="cancelSend()">
+                            <button type="button" *ngIf="state=='waiting'" class="btn btn-danger btn-sm"
+                                (click)="cancelSend()">
                                 Hủy gửi
                             </button>
                         </div>
@@ -57,7 +58,8 @@
                 <div class="o_content">
                     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
                         (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
-                        <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
+                        <kendo-grid-checkbox-column *ngIf="state=='waiting'" showSelectAll="true" width="50">
+                        </kendo-grid-checkbox-column>
                         <kendo-grid-column field="name" title="Tên tin nhắn">
                         </kendo-grid-column>
                         <kendo-grid-column field="brandName" title="Brandname">
@@ -147,8 +149,8 @@
                     </td>
                     <td class="o_td_value">
                         <div class="d-flex align-items-center">
-                            <kendo-numerictextbox [attr.disabled]="!isEdit ? '' : null" class="w-fit-content" [min]="0"
-                                [format]="'n0'" formControlName="limitMessage">
+                            <kendo-numerictextbox style="width: 150px;" [attr.disabled]="!isEdit ? '' : null"
+                                class="w-fit-content" [min]="0" [format]="'n0'" formControlName="limitMessage">
                             </kendo-numerictextbox>
                             <div class="mx-2">SMS</div>
                             <span class="text-primary t-tooltip" placement="right" ngbTooltip="0 là không giới hạn">
@@ -167,7 +169,9 @@
                     </td>
                     <td class="o_td_value">
                         <span class="o_form_label" *ngIf="f.limitMessage.value==0">Không giới hạn</span>
-                        <span class="o_form_label" *ngIf="f.limitMessage.value!=0">{{computeTotalMessage()}}</span>
+                        <span class="o_form_label" *ngIf="f.limitMessage.value!=0">
+                            {{campaign ? (f.limitMessage.value - campaign.totalMessage) : 0}}
+                        </span>
                     </td>
                 </tr>
             </table>
