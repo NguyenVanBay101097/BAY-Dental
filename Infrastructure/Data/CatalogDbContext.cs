@@ -132,6 +132,7 @@ namespace Infrastructure.Data
         public DbSet<IrConfigParameter> IrConfigParameters { get; set; }
         public DbSet<SaleCouponProgramProductRel> SaleCouponProgramProductRels { get; set; }
         public DbSet<SaleCouponProgramProductCategoryRel> SaleCouponProgramProductCategoryRels { get; set; }
+        public DbSet<SaleCouponProgramPartnerRel> SaleCouponProgramPartnerRels { get; set; }
         public DbSet<SaleOrderNoCodePromoProgram> SaleOrderNoCodePromoPrograms { get; set; }
         public DbSet<ZaloOAConfig> ZaloOAConfigs { get; set; }
         public DbSet<IRModelField> IRModelFields { get; set; }
@@ -488,6 +489,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SaleOrderPromotionLineConfiguration());
             builder.ApplyConfiguration(new QuotationPromotionConfiguration());
             builder.ApplyConfiguration(new QuotationPromotionLineConfiguration());
+            builder.ApplyConfiguration(new SaleCouponProgramPartnerRelConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

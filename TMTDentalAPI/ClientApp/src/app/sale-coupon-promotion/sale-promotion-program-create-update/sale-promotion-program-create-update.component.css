@@ -64,3 +64,8 @@ table td {
     background-color: #0d6efd;
     border-color: #0d6efd;
 }
+
+.o_stat_value {
+    color: green !important;
+}
+

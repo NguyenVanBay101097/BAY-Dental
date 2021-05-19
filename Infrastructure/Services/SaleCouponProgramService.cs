@@ -153,7 +153,7 @@ namespace Infrastructure.Services
             var promotions = await SearchQuery(x => x.Active && !x.IsPaused && x.ProgramType == "promotion_program"
             && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order"
             && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
-            && (string.IsNullOrEmpty(x.Days) || x.Days.Contains(((int)today.DayOfWeek).ToString()))
+            && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString())))
             ).ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
@@ -169,7 +169,7 @@ namespace Infrastructure.Services
             && x.PromoCodeUsage == "no_code_needed" && (x.DiscountApplyOn == "specific_products" || x.DiscountApplyOn == "specific_product_categories")
             && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
             && (x.DiscountSpecificProducts.Any(s => s.ProductId == product.Id) || x.DiscountSpecificProductCategories.Any(s => s.ProductCategoryId == product.CategId))
-            && (string.IsNullOrEmpty(x.Days) || x.Days.Contains(((int)today.DayOfWeek).ToString())))
+            && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString()))))
             .ToListAsync();
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
@@ -206,13 +206,13 @@ namespace Infrastructure.Services
 
             if (program.PromoCodeUsage == "code_needed" && string.IsNullOrEmpty(program.PromoCode))
             {
-                //SaleCouponProgram checkExist = null;
-                //do
-                //{
-                //    program.PromoCode = GeneratePromoCode();
-                //    checkExist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == program.PromoCode).FirstOrDefaultAsync();
-                //} while (checkExist != null);
-                program.PromoCode = await GeneratePromoCodeIfEmpty();
+                var sequenceObj = GetService<IIRSequenceService>();
+                program.PromoCode = await sequenceObj.NextByCode("promotion.code");
+                if (string.IsNullOrEmpty(program.PromoCode))
+                {
+                    await _InsertPromotionCodeSequence();
+                    program.PromoCode = await sequenceObj.NextByCode("promotion.code");
+                }
             }
 
             program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
@@ -221,29 +221,43 @@ namespace Infrastructure.Services
             if (!program.CompanyId.HasValue)
                 program.CompanyId = CompanyId;
 
-            if (program.DiscountApplyOn == "specific_product_categories")
+            if (val.DiscountApplyOn == "specific_product_categories" && val.DiscountSpecificProductCategoryIds.Any())
             {
-                SaveDiscountSpecificProductCategories(program, val);
-            }
-            else
-            {
-                program.DiscountSpecificProductCategories.Clear();
+                foreach(var categId in val.DiscountSpecificProductCategoryIds)
+                {
+                    program.DiscountSpecificProductCategories.Add(new SaleCouponProgramProductCategoryRel
+                    {
+                        ProductCategoryId = categId
+
+                    });
+                }
+              
             }
 
-            if (program.DiscountApplyOn == "specific_products")
+            if (val.DiscountApplyOn == "specific_products" && val.DiscountSpecificProductIds.Any())
             {
-                SaveDiscountSpecificProducts(program, val);
-            }
-            else
-            {
-                program.DiscountSpecificProducts.Clear();
+                foreach (var productId in val.DiscountSpecificProductIds)
+                {
+                    program.DiscountSpecificProducts.Add(new SaleCouponProgramProductRel
+                    {
+                        ProductId = productId
+
+                    });
+                }
             }
 
-            //if (!program.DiscountLineProductId.HasValue)
-            //{
-            //    var discountProduct = await GetOrCreateDiscountProduct(program);
-            //    program.DiscountLineProductId = discountProduct.Id;
-            //}
+            if (val.ApplyPartnerOn == "specific_partners" && val.DiscountSpecificPartnerIds.Any())
+            {
+                foreach (var partnerId in val.DiscountSpecificPartnerIds)
+                {
+                    program.DiscountSpecificPartners.Add(new SaleCouponProgramPartnerRel
+                    {
+                        PartnerId = partnerId
+
+                    });
+                }
+            }
+
 
             _CheckRuleDate(program);
             _CheckDiscountPercentage(program);
@@ -254,6 +268,7 @@ namespace Infrastructure.Services
             {
                 await CheckAndUpdatePromoCode(program.PromoCode);
             }
+
             await CreateAsync(program);
             await _CheckPromoCodeConstraint(program);
             return program;
@@ -273,9 +288,16 @@ namespace Infrastructure.Services
 
         public async Task<SaleCouponProgramDisplay> GetDisplay(Guid id)
         {
-            var query = SearchQuery(x => x.Id == id);
-            var res = await _mapper.ProjectTo<SaleCouponProgramDisplay>(query).FirstOrDefaultAsync();
-            res.OrderCount = await _GetOrderCountAsync(id);
+            var program = await SearchQuery(x => x.Id == id)
+                .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
+                .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
+                .Include(x => x.DiscountSpecificPartners).ThenInclude(x => x.Partner)
+                .FirstOrDefaultAsync();
+
+            var res = _mapper.Map<SaleCouponProgramDisplay>(program);
+            res.AmountTotal = await GetAmountTotal(id);
+            res.Days = !string.IsNullOrEmpty(program.Days) ? program.Days.Split(",").ToList() : new List<string>();
+            //res.OrderCount = await _GetOrderCountAsync(id);
             return res;
         }
 
@@ -285,18 +307,17 @@ namespace Infrastructure.Services
                 .Include(x => x.Coupons).Include(x => x.DiscountLineProduct)
                 .Include(x => x.DiscountSpecificProducts)
                 .Include(x => x.DiscountSpecificProductCategories)
+                .Include(x => x.DiscountSpecificPartners)
                 .FirstOrDefaultAsync();
 
             program = _mapper.Map(val, program);
 
+            program.DiscountSpecificProductCategories.Clear();
+            program.DiscountSpecificProducts.Clear();
+            program.DiscountSpecificPartners.Clear();
+
             if (program.PromoCodeUsage == "code_needed" && string.IsNullOrEmpty(program.PromoCode))
             {
-                //SaleCouponProgram checkExist = null;
-                //do
-                //{
-                //    program.PromoCode = GeneratePromoCode();
-                //    checkExist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == program.PromoCode).FirstOrDefaultAsync();
-                //} while (checkExist != null);
                 var code = await GeneratePromoCodeIfEmpty();
                 program.PromoCode = code;
             }
@@ -304,42 +325,17 @@ namespace Infrastructure.Services
             program.RuleDateFrom = program.RuleDateFrom.Value.AbsoluteBeginOfDate();
             program.RuleDateTo = program.RuleDateTo.Value.AbsoluteBeginOfDate();
 
-            //if (!program.DiscountLineProductId.HasValue)
-            //{
-            //    var discountProduct = await GetOrCreateDiscountProduct(program);
-            //    program.DiscountLineProduct = discountProduct;
-            //    program.DiscountLineProductId = discountProduct.Id;
-            //}
-
             if (!program.CompanyId.HasValue)
                 program.CompanyId = CompanyId;
 
             if (program.DiscountApplyOn == "specific_product_categories")
-            {
                 SaveDiscountSpecificProductCategories(program, val);
-            }
-            else
-            {
-                program.DiscountSpecificProductCategories.Clear();
-            }
-
+          
             if (program.DiscountApplyOn == "specific_products")
-            {
                 SaveDiscountSpecificProducts(program, val);
-            }
-            else
-            {
-                program.DiscountSpecificProducts.Clear();
-            }
 
-            //var reward_name = await GetRewardDisplayName(program);
-            //if (program.DiscountLineProduct != null)
-            //{
-            //    var productObj = GetService<IProductService>();
-            //    program.DiscountLineProduct.Name = reward_name;
-            //    program.DiscountLineProduct.NameNoSign = StringUtils.RemoveSignVietnameseV2(reward_name);
-            //    await productObj.UpdateAsync(program.DiscountLineProduct);
-            //}
+            if (program.ApplyPartnerOn == "specific_partners")
+                SaveDiscountSpecificPartners(program, val);
 
             _CheckRuleDate(program);
             _CheckDiscountPercentage(program);
@@ -388,6 +384,20 @@ namespace Infrastructure.Services
             foreach (var productCategoryId in to_add)
             {
                 program.DiscountSpecificProductCategories.Add(new SaleCouponProgramProductCategoryRel { ProductCategoryId = productCategoryId });
+            }
+        }
+
+        private void SaveDiscountSpecificPartners(SaleCouponProgram program, SaleCouponProgramSave val)
+        {
+            var productObj = GetService<IProductService>();
+            var to_remove = program.DiscountSpecificPartners.Where(x => !val.DiscountSpecificPartnerIds.Contains(x.PartnerId)).ToList();
+            foreach (var item in to_remove)
+                program.DiscountSpecificPartners.Remove(item);
+
+            var to_add = val.DiscountSpecificPartnerIds.Where(x => !program.DiscountSpecificPartners.Any(s => s.PartnerId == x)).ToList();
+            foreach (var partnerId in to_add)
+            {
+                program.DiscountSpecificPartners.Add(new SaleCouponProgramPartnerRel { PartnerId = partnerId });
             }
         }
 
@@ -603,9 +613,9 @@ namespace Infrastructure.Services
             if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > line.Order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < line.Order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
             else if ((self.DiscountSpecificProducts.Any() && !self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId)))
-                message.Error = "Khuyến mãi không áp dụng cho dịch vụ này";
-            //else if (line.Order.Promotions.Where(x => x.SaleOrderId.HasValue && !x.SaleOrderLineId.HasValue).Any(x => x.SaleCouponProgramId == self.Id))
-            //    message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này"; //có cần thiết?
+                message.Error = "Khuyến mãi Không áp dụng cho dịch vụ này";
+            else if (line.Order.Promotions.Where(x => x.SaleOrderId.HasValue && !x.SaleOrderLineId.HasValue).Any(x => x.SaleCouponProgramId == self.Id))
+                message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (line.Promotions.Any(x => x.SaleCouponProgramId == self.Id))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho dịch vụ này";
             //else if (line.Order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
@@ -708,16 +718,25 @@ namespace Infrastructure.Services
         {
             var now = DateTime.Now;
             //Chương trình khuyến mãi sử dụng mã
-            var program = await SearchQuery(x => x.PromoCode == code).Include(x => x.DiscountSpecificProducts).FirstOrDefaultAsync();
+            var program = await SearchQuery(x => x.PromoCode == code)
+                .Include(x => x.DiscountSpecificProducts)
+                .Include(x => x.DiscountSpecificProductCategories)
+                .FirstOrDefaultAsync();
+
             if (program == null)
                 return new SaleCouponProgramResponse { Error = "Mã khuyến mãi không chính xác", Success = false, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
+
+            var productObj = GetService<IProductService>();
+            var product = await productObj.SearchQuery(x => x.Id == productId.Value).FirstOrDefaultAsync();
+            if (product == null)
+                return new SaleCouponProgramResponse { Error = "Không tìm thấy dịch vụ đươc áp dụng ", Success = false, SaleCouponProgram = null };
 
             var res = new SaleCouponProgramResponse();
             res.SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program);
             res.Success = true;
-            if (!program.Active)
+            if (!program.Active || !program.IsPaused)
             {
-                res.Error = "Mã khuyến mãi không có giá trị";
+                res.Error = "Chương trình khuyến mãi chưa kích hoạt hoặc đang tạm dừng";
                 res.Success = false;
                 res.SaleCouponProgram = null;
             }
@@ -730,6 +749,12 @@ namespace Infrastructure.Services
             else if (productId.HasValue && !program.DiscountSpecificProducts.Any(x => x.ProductId == productId))
             {
                 res.Error = "Mã khuyến mãi không áp dụng cho dịch vụ này";
+                res.Success = false;
+                res.SaleCouponProgram = null;
+            }
+            else if (productId.HasValue && program.DiscountApplyOn == "specific_product_categories" && !program.DiscountSpecificProductCategories.Any(x => x.ProductCategoryId == product.CategId))
+            {
+                res.Error = "Dịch vụ không thuộc nhóm dịch vu được áp dụng khuyến mãi";
                 res.Success = false;
                 res.SaleCouponProgram = null;
             }
@@ -1045,7 +1070,7 @@ namespace Infrastructure.Services
 
         private async Task CheckAndUpdatePromoCode(string code)
         {
-            string pattern = @"^CTKM\d{4}$";
+            string pattern = @"^CTKM\d{4,}$";
             Regex rg = new Regex(pattern, RegexOptions.IgnoreCase);
             Regex rgx = new Regex(@"CTKM", RegexOptions.IgnoreCase);
             var isMatching = rg.IsMatch(code);

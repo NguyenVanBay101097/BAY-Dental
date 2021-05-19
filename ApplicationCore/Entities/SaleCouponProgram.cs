@@ -27,14 +27,6 @@ namespace ApplicationCore.Entities
 
         public bool Active { get; set; }
 
-        /// <summary>
-        /// waiting: Chưa chạy
-        /// running: Đang chạy
-        /// paused: Tạm ngừng
-        /// expired: Hết hạn
-        /// </summary>
-        //public string Status { get; set; }
-
         public bool IsPaused { get; set; }
 
         /// <summary>
@@ -45,10 +37,6 @@ namespace ApplicationCore.Entities
 
         public int? MaximumUseNumber { get; set; }
 
-        /// <summary>
-        /// Số tiền mua tối thiểu
-        /// </summary>
-        public decimal? RuleMinimumAmount { get; set; }
 
         public int? RuleMinQuantity { get; set; }
 
@@ -82,6 +70,15 @@ namespace ApplicationCore.Entities
         public bool? NotIncremental { get; set; }
         public ICollection<SaleCouponProgramProductRel> DiscountSpecificProducts { get; set; } = new List<SaleCouponProgramProductRel>();
         public ICollection<SaleCouponProgramProductCategoryRel> DiscountSpecificProductCategories { get; set; } = new List<SaleCouponProgramProductCategoryRel>();
+
+        /// <summary>
+        /// all : tất cả
+        /// specific_partners: khách hàng
+        /// </summary>
+        public string ApplyPartnerOn { get; set; }
+
+        public ICollection<SaleCouponProgramPartnerRel> DiscountSpecificPartners { get; set; } = new List<SaleCouponProgramPartnerRel>();
+
         public ICollection<SaleCoupon> Coupons { get; set; } = new List<SaleCoupon>();
 
         public ICollection<SaleOrderLine> SaleLines { get; set; } = new List<SaleOrderLine>();
@@ -118,6 +115,21 @@ namespace ApplicationCore.Entities
         public string PromoApplicability { get; set; }
 
         /// <summary>
+        /// áp dụng mức giảm tối thiểu
+        /// </summary>
+        public bool IsApplyMinimumDiscount { get; set; }
+
+        /// <summary>
+        /// Số tiền mua tối thiểu
+        /// </summary>
+        public decimal? RuleMinimumAmount { get; set; }
+
+        /// <summary>
+        /// áp dụng mức giảm tối đa
+        /// </summary>
+        public bool IsApplyMaxDiscount { get; set; }
+
+        /// <summary>
         /// Mức giảm tối đa
         /// </summary>
         public decimal? DiscountMaxAmount { get; set; }
@@ -145,6 +157,11 @@ namespace ApplicationCore.Entities
         /// specific_products: dịch vụ
         /// </summary>
         public string DiscountApplyOn { get; set; }
+
+        /// <summary>
+        /// áp dụng thứ trong tuần
+        /// </summary>
+        public bool IsApplyDayOfWeek { get; set; }
 
         /// <summary>
         /// Chọn các thứ trong tuần

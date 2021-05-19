@@ -6,6 +6,20 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class SaleCouponProgramDisplay
     {
+        public SaleCouponProgramDisplay()
+        {
+            Active = false;
+            RewardType = "discount";
+            PromoApplicability = "on_current_order";
+            ProgramType = "coupon_program";
+            RewardProductQuantity = 1;
+            RuleMinQuantity = 1;
+            RuleMinimumAmount = 0;
+            DiscountMaxAmount = 0;
+            AmountTotal = 0;
+            DiscountApplyOn = "on_order";
+        }
+
         public Guid Id { get; set; }
 
         /// <summary>
@@ -68,9 +82,18 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string DiscountApplyOn { get; set; }
         public bool? NotIncremental { get; set; }
-        public string Days { get; set; }
+        public decimal AmountTotal { get; set; }
+        public IEnumerable<string> Days { get; set; }
         public IEnumerable<ProductSimple> DiscountSpecificProducts { get; set; } = new List<ProductSimple>();
         public IEnumerable<ProductCategorySimple> DiscountSpecificProductCategories { get; set; } = new List<ProductCategorySimple>();
+
+        /// <summary>
+        /// all : tất cả
+        /// specific_partners: khách hàng
+        /// </summary>
+        public string ApplyPartnerOn { get; set; }
+
+        public IEnumerable<PartnerSimple> DiscountSpecificPartners { get; set; } = new List<PartnerSimple>();
 
         public bool IsPaused { get; set; }
 
@@ -91,6 +114,18 @@ namespace Umbraco.Web.Models.ContentEditing
                 return "Chưa chạy";
             }
         }
+
+        public bool IsApplyDayOfWeek { get; set; }
+
+        /// <summary>
+        /// áp dụng mức giảm tối thiểu
+        /// </summary>
+        public bool IsApplyMinimumDiscount { get; set; }
+
+        /// <summary>
+        /// áp dụng mức giảm tối đa
+        /// </summary>
+        public bool IsApplyMaxDiscount { get; set; }
     }
 
    
