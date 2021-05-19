@@ -808,8 +808,8 @@ namespace Infrastructure.Services
 
         public bool _IsGlobalDiscountAlreadyApplied(SaleOrder self)
         {
-            var applied_programs = self.Promotions.Where(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgramId.HasValue && x.SaleCouponProgram.NotIncremental.HasValue && x.SaleCouponProgram.NotIncremental.Value);
-            return applied_programs.Any();
+            //Hàm check xem phiếu điều trị đã có áp dụng chương trình khuyến mãi không cho phép cộng dồn hay không?
+            return self.Promotions.Any(x => x.SaleCouponProgram.NotIncremental == true);
         }
 
         public SaleOrderPromotion _GetRewardValuesDiscount(SaleOrder self, SaleCouponProgram program)
