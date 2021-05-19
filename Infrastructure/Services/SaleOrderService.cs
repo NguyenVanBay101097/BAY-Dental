@@ -253,6 +253,7 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderLines)
                 .ThenInclude(x => x.SaleOrderLinePaymentRels)
                 .ThenInclude(x => x.Payment)
+                .Include(x => x.SaleOrderPayments)
                 .ToListAsync();
 
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
@@ -294,6 +295,12 @@ namespace Infrastructure.Services
                 throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
             await dkStepObj.DeleteAsync(removeDkSteps);
 
+            //xóa các thanh toán ở trạng thái hủy
+            var salePaymentObj = GetService<ISaleOrderPaymentService>();
+            var paymentIds = self.SelectMany(x => x.SaleOrderPayments.Where(s => s.State == "cancel")).Select(x => x.Id).ToList();
+            if (paymentIds.Any())
+                await salePaymentObj.Unlink(paymentIds);
+
             foreach (var sale in self)
             {
                 foreach (var line in sale.OrderLines)
@@ -310,6 +317,7 @@ namespace Infrastructure.Services
                     line.AmountPaid = amountPaid;
                     line.AmountResidual = 0;
                 }
+
 
                 saleLineObj._GetInvoiceQty(sale.OrderLines);
                 saleLineObj._GetToInvoiceQty(sale.OrderLines);
@@ -2295,7 +2303,7 @@ namespace Infrastructure.Services
             //var total_amount = order.Sum(x => x.Residual);
 
             var saleLineObj = GetService<ISaleOrderLineService>();
-            var lines = await saleLineObj.SearchQuery(x => x.OrderId == id && x.AmountResidual != 0)
+            var lines = await saleLineObj.SearchQuery(x => x.OrderId == id && (x.PriceTotal - x.AmountInvoiced) != 0)
                 .Select(x => new RegisterSaleOrderPaymentHistoryLine
                 {
                     SaleOrderLineId = x.Id,

@@ -406,6 +406,18 @@ namespace Infrastructure.Services
             await orderObj.UpdateAsync(order);
         }
 
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach(var payment in self)
+            {
+                if (payment.State == "posted")
+                    throw new Exception("Bạn không thể xóa thanh toán đã xác nhận");
+            }
+
+            await DeleteAsync(self);
+        }
+
         public override ISpecification<SaleOrderPayment> RuleDomainGet(IRRule rule)
         {
             var userObj = GetService<IUserService>();
