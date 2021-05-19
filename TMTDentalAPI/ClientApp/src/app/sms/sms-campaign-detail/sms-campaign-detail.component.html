@@ -47,6 +47,8 @@
                             <button type="button" class="btn btn-danger btn-sm" (click)="cancelSend()">
                                 Hủy gửi
                             </button>
+                            <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                            </app-tai-date-range-filter-dropdown>
                         </div>
                         <div class="o_cp_t_right">
                             <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo tên tin nhắn"
@@ -80,7 +82,7 @@
 
         </div>
         <div class="pms-right border p-3" [formGroup]="formGroup">
-            <h2>Chiến dịch mặc định</h2>
+            <h4>Chiến dịch mặc định</h4>
             <table class="w-100">
                 <tr>
                     <td class="o_td_label">

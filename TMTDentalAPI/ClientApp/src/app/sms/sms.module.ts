@@ -28,6 +28,7 @@ import { SmsCampaignCrUpComponent } from './sms-campaign-cr-up/sms-campaign-cr-u
 import { SmsComfirmDialogComponent } from './sms-comfirm-dialog/sms-comfirm-dialog.component';
 import { SmsPartnerListDialogComponent } from './sms-partner-list-dialog/sms-partner-list-dialog.component';
 import { SmsCampaignDetailComponent } from './sms-campaign-detail/sms-campaign-detail.component';
+import { SmsMessageDetailDialogComponent } from './sms-message-detail-dialog/sms-message-detail-dialog.component';
 
 @NgModule({
   declarations: [SmsTemplateListComponent, SmsTemplateCrUpComponent, SmsTemplateContentComponent,
@@ -49,7 +50,7 @@ import { SmsCampaignDetailComponent } from './sms-campaign-detail/sms-campaign-d
     SmsCampaignCrUpComponent, 
     SmsComfirmDialogComponent, 
     SmsPartnerListDialogComponent, 
-    SmsCampaignDetailComponent
+    SmsCampaignDetailComponent, SmsMessageDetailDialogComponent
   ],
   imports: [
     CommonModule,
