@@ -33,7 +33,9 @@ export class SmsMessageDialogComponent implements OnInit {
   filteredTemplate: any[];
 
   sendLimit: number = 0;
+  limitMessage: number = 0;
   errorSendLimit: boolean = false;
+  noLimit: boolean = false;
   textareaLimit: number = 200;
   template: any = {
     text: '',
@@ -113,18 +115,7 @@ export class SmsMessageDialogComponent implements OnInit {
     )
   }
 
-  onChangeCampaign(event) {
-    if (event) {
-      if (event.state == 'draft' || event.state == 'shutdown') {
-        this.notify('Chiến dịch này chưa được kích hoạt hoặc đã bị dừng. Vui lòng kiểm tra lại chiến dịch', false);
-        this.formGroup.get('smsCampaign').setValue(null);
-      }
-      else if (event.typeDate != 'unlimited' && event.limitMessage <= event.totalMessage) {
-        this.notify('Hạn mức gửi tin nhắn đã hết. Vui lòng kiểm tra lại chiến dịch', false);
-        this.formGroup.get('smsCampaign').setValue(null);
-      }
-    }
-  }
+
 
   searchCampaign(search?: string) {
     var val = new SmsCampaignPaged();
@@ -195,7 +186,7 @@ export class SmsMessageDialogComponent implements OnInit {
     modalRef.componentInstance.title = 'Danh sách khách hàng';
     modalRef.result.then((res) => {
       this.partnerIds = res;
-      if (this.partnerIds && this.partnerIds.length > this.sendLimit) {
+      if (this.partnerIds && this.limitMessage != 0 && this.partnerIds.length > this.sendLimit) {
         this.partnerIds = [];
         this.errorSendLimit = true;
       }
@@ -252,16 +243,21 @@ export class SmsMessageDialogComponent implements OnInit {
 
   changeSmsCampaign(event) {
     if (event) {
+      if (event.limitMessage == 0) {
+        this.noLimit = true;
+      }
+
       if (event.state == 'draft' || event.state == 'shutdown') {
         this.notify('Chiến dịch này chưa được kích hoạt hoặc đã bị dừng. Vui lòng kiểm tra lại chiến dịch', false);
         this.formGroup.get('smsCampaign').setValue(null);
       }
-      else if (event.typeDate != 'unlimited' && event.limitMessage <= event.totalMessage) {
+      else if (event.typeDate != 'unlimited' && event.limitMessage != 0 && event.limitMessage <= event.totalMessage) {
         this.notify('Hạn mức gửi tin nhắn đã hết. Vui lòng kiểm tra lại chiến dịch', false);
         this.formGroup.get('smsCampaign').setValue(null);
       }
-
-      this.sendLimit = event.limitMessage - event.totalMessage;
+      this.limitMessage = event.limitMessage;
+      this.sendLimit = this.limitMessage - event.totalMessage;
     }
   }
 }
+

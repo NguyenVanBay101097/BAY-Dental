@@ -204,24 +204,6 @@ namespace Infrastructure.Services
         {
             var entity = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             entity = _mapper.Map(val, entity);
-            if (entity.TypeDate == "period")
-            {
-                if (entity.DateStart.HasValue &&
-                    entity.DateStart.Value <= DateTime.Today &&
-                    entity.DateEnd.HasValue &&
-                    entity.DateEnd.Value >= DateTime.Today)
-                {
-                    entity.State = "running";
-                }
-                else if (entity.DateEnd.HasValue && entity.DateEnd.Value <= DateTime.Today)
-                {
-                    entity.State = "draft";
-                }
-                else
-                {
-                    entity.State = "shutdown";
-                }
-            }
             await UpdateAsync(entity);
         }
 

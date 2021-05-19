@@ -173,9 +173,8 @@ export class SmsCampaignDetailComponent implements OnInit {
     if (val.typeDate == 'period') {
       val.dateEnd = this.intlService.formatDate(val.endDateObj, "yyyy-MM-ddT23:59");
       val.dateStart = this.intlService.formatDate(val.startDateObj, "yyyy-MM-dd")
-    } else {
-      val.state = this.formGroup.get('stateCheck') && this.formGroup.get('stateCheck').value ? 'running' : 'shutdown';
     }
+    val.state = this.formGroup.get('stateCheck') && this.formGroup.get('stateCheck').value == true ? 'running' : 'shutdown';
     this.smsCampaignService.update(this.campaignId, val).subscribe(
       result => {
         this.notify("Cập nhật chiến dịch thành công");
