@@ -19,6 +19,8 @@ import { element } from 'protractor';
 import { result } from 'lodash';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { DiscountPricePopoverComponent } from './discount-price-popover/discount-price-popover.component';
+import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
+import { PartnerSimple } from 'src/app/partners/partner-simple';
 
 @Component({
   selector: 'app-sale-promotion-program-create-update',
@@ -44,13 +46,15 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   ];
   listProducts: ProductSimple[];
   listProductCategories: ProductCategory[];
-
+  listPartner: PartnerSimple[];
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   @ViewChild('productMultiSelect', { static: true }) productMultiSelect: MultiSelectComponent;
   @ViewChild('productCategoriesMultiSelect', { static: true }) productCategoriesMultiSelect: MultiSelectComponent;
+  @ViewChild('partnerMultiSelect', { static: true }) partnerMultiSelect: MultiSelectComponent;
+  
 
   constructor(private fb: FormBuilder, private programService: SaleCouponProgramService,
-    private router: Router, private route: ActivatedRoute, private notificationService: NotificationService,
+    private router: Router, private route: ActivatedRoute, private notificationService: NotificationService, private partnerService: PartnerService,
     private modalService: NgbModal, private productService: ProductService, private productCategoryService: ProductCategoryService, private intlService: IntlService,
   ) { }
 
@@ -62,10 +66,10 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
     this.formGroup = this.fb.group({
       name: [null, Validators.required],
-      ruleMinimumAmount: 0,
+      ruleMinimumAmount: [0, Validators.required],
       discountType: 'percentage',
-      discountPercentage: 0,
-      discountFixedAmount: 0,
+      discountPercentage: [0, Validators.required],
+      discountFixedAmount:[0, Validators.required],
       validityDuration: 1,
       rewardType: 'discount',
       discountSpecificProducts: [null],
@@ -73,13 +77,19 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       notIncremental: false,
       discountMaxAmount: 0,
       promoCodeUsage: 'no_code_needed',
-      ruleDateToObj: [startDate, Validators.required],
-      ruleDateFromObj: [endDate, Validators.required],
+      ruleDateToObj: [endDate, Validators.required],
+      ruleDateFromObj: [startDate, Validators.required],
       maximumUseNumber: 0,
       promoCode: null,
       daysSelected: null,
-      isSelectDay: false,
-      discountApplyOn: 'on_order'
+      isApplyDayOfWeek: false,
+      discountApplyOn: 'on_order',
+      applyPartnerOn: 'all',
+      specificPartners: null,
+      isApplyMinimumDiscount: false,
+      isApplyMaxDiscount: false
+    },{
+      validators: DateInvalid('ruleDateFromObj','ruleDateToObj')
     });
 
     this.route.queryParamMap.subscribe(params => {
@@ -96,6 +106,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
     this.loadListProducts();
     this.loadListProductCategories();
+    this.loadListPartner();
 
     this.productMultiSelect.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -113,6 +124,15 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     ).subscribe(result => {
       this.listProductCategories = result;
       this.productCategoriesMultiSelect.loading = false;
+    });
+
+    this.partnerMultiSelect.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.partnerMultiSelect.loading = true)),
+      switchMap(value => this.searchPartners(value))
+    ).subscribe(result => {
+      this.listPartner = result;
+      this.partnerMultiSelect.loading = false;
     });
   }
 
@@ -132,9 +152,15 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     })
   }
 
+  loadListPartner(){
+    this.searchPartners().subscribe(result => {
+      this.listPartner = _.unionBy(this.listPartner,result,'id');
+    })
+  }
+
   searchProductCategories(search?: string) {
     var val = new ProductCategoryPaged();
-    val.search = search;
+    val.search = search || '';
     val.type = 'service';
     return this.productCategoryService.autocomplete(val);
   }
@@ -142,8 +168,16 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   searchProducts(search?: string) {
     var val = new ProductFilter();
     val.saleOK = true;
-    val.search = search;
+    val.search = search || '';
     return this.productService.autocomplete2(val);
+  }
+
+  searchPartners(search?: string){
+    var val = new PartnerFilter();
+    val.active = true;
+    val.customer = true;
+    val.search = search || '';
+    return this.partnerService.autocomplete2(val);
   }
 
   viewCoupons() {
@@ -179,26 +213,31 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   get isSelectDay() {
-    return this.formGroup.get('isSelectDay').value;
+    return this.formGroup.get('isApplyDayOfWeek').value;
+  }
+
+  get applyPartnerOn(){
+    return this.formGroup.get('applyPartnerOn').value;
+  }
+
+  get isApplyMinimumDiscount(){
+    return this.formGroup.get('isApplyMinimumDiscount').value;
+  }
+
+  get isApplyMaxDiscount(){
+    return this.formGroup.get('isApplyMaxDiscount').value;
   }
 
   getDataFromBody() {
-    //program
-    //value
     var value = this.formGroup.value;
     this.program = Object.assign(this.program, value);
     this.program.ruleDateFrom = value.ruleDateFromObj ? this.intlService.formatDate(value.ruleDateFromObj, 'g', 'en-US') : null;
     this.program.ruleDateTo = value.ruleDateToObj ? this.intlService.formatDate(value.ruleDateToObj, 'g', 'en-US') : null;
-    // value.discountSpecificProductIds = value.discountSpecificProducts ? value.discountSpecificProducts.map(x => x.id) : [];
-    // value.discountSpecificProductCategoryIds = value.discountSpecificProductCategories ? value.discountSpecificProductCategories.map(x => x.id) : [];
-    // var days = value.daysSelected ? value.daysSelected : [];
-    // value.days = days.toString();
-    // return value;
     var result = Object.assign({}, this.program);
-    result.discountSpecificProductIds = result.discountSpecificProducts.map(x => x.id);
-    result.discountSpecificProductCategoryIds = result.discountSpecificProductCategories.map(x => x.id);
+    result.discountSpecificProductIds = result.discountSpecificProducts ? result.discountSpecificProducts.map(x => x.id):[];
+    result.discountSpecificProductCategoryIds = result.discountSpecificProductCategories ? result.discountSpecificProductCategories.map(x => x.id):[];
+    result.DiscountSpecificPartnerIds = result.specificPartners ? result.specificPartners.map(x=>x.id):[];
     result.days = result.daysSelected;
-    console.log(result);
     return result;
   }
 
@@ -237,6 +276,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     let modalRef = this.modalService.open(DiscountPricePopoverComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Giá trị khuyến mãi';
     modalRef.componentInstance.id = this.id;
+    modalRef.componentInstance.amountTotal = this.program.amountTotal;
     modalRef.componentInstance.typeApply = this.discountApplyOn;
     modalRef.componentInstance.name = this.f.name.value;
   }
@@ -272,7 +312,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     this.f.maximumUseNumber.disable();
     this.f.ruleDateFromObj.disable();
     this.f.ruleDateToObj.disable();
-    this.f.isSelectDay.disable();
+    this.f.isApplyDayOfWeek.disable();
     this.f.daysSelected.disable();
     this.f.discountType.disable();
     this.f.discountPercentage.disable();
@@ -367,6 +407,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   onChangeSelect(value) {
+    console.log(value);
+    
     if (value == 'percentage') {
       this.f.discountFixedAmount.clearValidators();
       this.f.discountFixedAmount.updateValueAndValidity();
@@ -379,6 +421,14 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.f.discountFixedAmount.setValidators(Validators.required);
       this.f.discountFixedAmount.updateValueAndValidity();
     }
+  }
+
+  checkMinAmoutSaleOrder(value){
+    this.f.isApplyMinimumDiscount.setValue(value);
+  }
+
+  checkApplyMaxDiscount(value){
+    this.f.isApplyMaxDiscount.setValue(value);
   }
 
   onChangeOption(e) {
@@ -434,6 +484,23 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     }
   }
 
+}
+
+export function DateInvalid(dateFromControlName: string, dateToControlName: string) {
+  return (formGroup: FormGroup) => {
+      const dateFromControl = formGroup.controls[dateFromControlName];
+      const dateToControl = formGroup.controls[dateToControlName];
+
+      if (dateToControl.errors && !dateToControl.errors.DateInvalid) {
+          return;
+      }
+
+      if (dateFromControl.value > dateToControl.value) {
+        dateToControl.setErrors({ dateInvalid: true });
+      } else {
+        dateToControl.setErrors(null);
+      }
+  }
 }
 
 
