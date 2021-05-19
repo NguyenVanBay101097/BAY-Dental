@@ -808,7 +808,7 @@ namespace Infrastructure.Services
 
         public bool _IsGlobalDiscountAlreadyApplied(SaleOrder self)
         {
-            var applied_programs = self.Promotions.Where(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgramId.HasValue && x.SaleCouponProgram.NotIncremental.Value);
+            var applied_programs = self.Promotions.Where(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgramId.HasValue && x.SaleCouponProgram.NotIncremental.HasValue && x.SaleCouponProgram.NotIncremental.Value);
             return applied_programs.Any();
         }
 
