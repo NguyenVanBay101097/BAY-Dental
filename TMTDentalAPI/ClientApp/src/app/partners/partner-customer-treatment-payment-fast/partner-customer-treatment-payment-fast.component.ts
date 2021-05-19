@@ -566,11 +566,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     var type = promotionApply.promoCodeUsage == 'code_needed' ? 'code_usage_program' : 'promotion_program';
     var exist = promotions.find(x => x.saleCouponProgramId == promotionApply.id);
     if (exist) {
-      if (type == 'code_usage_program') {
-        this.notifyService.notify('error', 'Chương trình khuyến mãi đã được áp dụng cho đơn hàng này');
-      } else {
-        this.notifyService.notify('error', 'Ưu đãi đã được áp dụng cho đơn hàng này')
-      }
+        this.notifyService.notify('error', 'Mã đang trùng CTKM đang áp dụng')
       return false;
     }
 
@@ -590,11 +586,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     var type = promotionApply.promoCodeUsage == 'code_needed' ? 'code_usage_program' : 'promotion_program';
     var exist = promotions.find(x => x.saleCouponProgramId == promotionApply.id);
     if (exist) {
-      if (type == 'code_usage_program') {
-        this.notifyService.notify('error', 'Chương trình khuyến mãi đã được áp dụng cho đơn hàng này');
-      } else {
-        this.notifyService.notify('error', 'Ưu đãi đã được áp dụng cho đơn hàng này')
-      }
+        this.notifyService.notify('error', 'Mã đang trùng CTKM đang áp dụng')
       return false;
     }
 

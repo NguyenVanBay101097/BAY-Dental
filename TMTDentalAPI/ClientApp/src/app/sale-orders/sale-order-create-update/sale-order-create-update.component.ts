@@ -347,6 +347,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.saleOrderId) {
       this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => {
         this.loadSaleOrder();
+        document.getElementById('home-tab').click()
       });
     }
   }

@@ -80,7 +80,8 @@ namespace Infrastructure.Services
             var saleProgramAmountDict = await GetAmountPromotionDictAsync(programIds);
 
             var itemsResponse = _mapper.Map<List<SaleCouponProgramGetListPagedResponse>>(items);
-            itemsResponse.ForEach(x => {
+            itemsResponse.ForEach(x =>
+            {
                 if (saleProgramAmountDict.ContainsKey(x.Id))
                 {
                     x.AmountTotal = saleProgramAmountDict[x.Id];
@@ -218,7 +219,7 @@ namespace Infrastructure.Services
             program.RuleDateTo = program.RuleDateTo.Value.AbsoluteBeginOfDate();
 
             if (!program.CompanyId.HasValue)
-            program.CompanyId = CompanyId;
+                program.CompanyId = CompanyId;
 
             if (program.DiscountApplyOn == "specific_product_categories")
             {
@@ -316,7 +317,7 @@ namespace Infrastructure.Services
             if (program.DiscountApplyOn == "specific_product_categories")
             {
                 SaveDiscountSpecificProductCategories(program, val);
-            } 
+            }
             else
             {
                 program.DiscountSpecificProductCategories.Clear();
@@ -539,7 +540,7 @@ namespace Infrastructure.Services
             else if (!_FilterOnMinimumAmount(new List<SaleCouponProgram>() { self }, order).Any() && self.DiscountApplyOn == "on_order")
                 message.Error = $"Nên mua hàng tối thiểu {string.Format(new CultureInfo("vi-VN"), "{0:n0}", self.RuleMinimumAmount)} để có thể nhận thưởng";
             else if ((order.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
-                message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
+                message.Error = "Mã đang trùng CTKM đang áp dụng";
             else if (self.Active && self.IsPaused)
                 message.Error = "Chương trình khuyến mãi đang tạm ngừng";
             else if (!self.Active)
@@ -569,7 +570,7 @@ namespace Infrastructure.Services
                 message.Error = $"Chương trình khuyến mãi vượt quá hạn mức áp dụng.";
             if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > line.Order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < line.Order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
-            else if ((self.DiscountSpecificProducts.Any() && !self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId)))                                                                                                                                                                                
+            else if ((self.DiscountSpecificProducts.Any() && !self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId)))
                 message.Error = "Khuyến mãi không áp dụng cho dịch vụ này";
             //else if (line.Order.Promotions.Where(x => x.SaleOrderId.HasValue && !x.SaleOrderLineId.HasValue).Any(x => x.SaleCouponProgramId == self.Id))
             //    message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này"; //có cần thiết?
@@ -953,9 +954,9 @@ namespace Infrastructure.Services
                 var result = rgx.Split(code, 2, m.Index);
                 var numberCode = result[1];
                 int number = Int32.Parse(numberCode.ToString());
-                var sequenceObj =  GetService<IIRSequenceService>();                                                
+                var sequenceObj = GetService<IIRSequenceService>();
                 var sequence = await sequenceObj.SearchQuery(x => x.Code == "promotion.code").FirstOrDefaultAsync();
-                if(sequence == null)
+                if (sequence == null)
                 {
                     sequence = await sequenceObj.CreateAsync(new IRSequence
                     {
@@ -964,7 +965,7 @@ namespace Infrastructure.Services
                         Prefix = "CTKM",
                         Padding = 4
                     });
-                }                
+                }
 
                 if (number > sequence.NumberNext)
                 {
@@ -972,7 +973,7 @@ namespace Infrastructure.Services
                     await sequenceObj.UpdateAsync(sequence);
                 }
             }
-            
+
         }
 
         private async Task _InsertPromotionCodeSequence()

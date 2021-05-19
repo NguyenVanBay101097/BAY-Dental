@@ -263,6 +263,9 @@ namespace Infrastructure.Services
             var amlObj = GetService<IAccountMoveLineService>();
             foreach (var sale in self)
             {
+                if (sale.SaleOrderPayments.Any(x=>x.State == "posted"))
+                    throw new Exception("Đã tồn tại thanh toán , cần hủy những thanh toán trước khi hủy phiếu");
+
                 if (sale.DotKhams.Any())
                     throw new Exception("Không thể hủy phiếu điều trị đã có đợt khám.");
 
@@ -298,9 +301,7 @@ namespace Infrastructure.Services
             foreach (var sale in self)
             {
                 foreach (var line in sale.OrderLines)
-                {
-                    if (line.PaymentHistoryLines.Any())
-                        throw new Exception("Có dịch vụ đã thanh toán, cần hủy những thanh toán trước khi hủy phiếu");
+                {                    
 
                     if (line.State == "cancel")
                         continue;

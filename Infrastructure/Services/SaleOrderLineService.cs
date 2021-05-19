@@ -428,14 +428,14 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).Include(x => x.SaleOrderLinePaymentRels)
                 .Include(x => x.Order).Include(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
-                .Include(x => x.PaymentHistoryLines)
+                .Include(x => x.PaymentHistoryLines).ThenInclude(x => x.SaleOrderPayment)
                 .ToListAsync();
 
 
             if (self.Any(x => x.State != "draft" && x.State != "cancel" && x.State != "sale"))
                 throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
 
-            if (self.Any(x => x.PaymentHistoryLines.Any()))
+            if (self.Any(x => x.PaymentHistoryLines.Any(x => x.SaleOrderPayment.State == "posted")))
                 throw new Exception("không thể xóa dịch vụ đã thanh toán");
 
             foreach (var line in self.Where(x => x.IsRewardLine))
