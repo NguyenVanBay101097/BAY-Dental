@@ -1,4 +1,4 @@
-<div [formGroup]="formGroupInfo" class="bg-white">
+<div [formGroup]="formGroupInfo" class="bg-white mt-2">
 
     <div class="div-table w-100">
         <div class="div-row border-left border-right border-top">
@@ -76,7 +76,7 @@
             </div>
             <!-- còn lại -->
             <div *ngIf="!isFast" style="width: 100px;" class="div-cell text-right">
-                {{(line.priceSubTotal - line.amountInvoiced) | number}}
+                {{((isEditting? getPriceSubTotalFormGroup(): line.priceSubTotal)- line.amountInvoiced) | number}}
             </div>
             <!-- thao tác -->
             <div style="width: 100px;" *ngIf="line.state != 'done'" class="div-cell text-center button_actions">
@@ -97,14 +97,14 @@
 
                 <ng-container *ngIf="line.id">
                     <ng-container *ngIf="line.isActive == true; else elseTemplateActive">
-                        <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-danger" title="Ngừng dịch vụ">
-                            <i class="fas fa-minus-circle text-white"></i>
+                        <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-light " title="Ngừng dịch vụ">
+                            <i class="fas fa-minus-circle text-secondary"></i>
                         </button>
                         <!-- <img width="92%"  class="btn-icon p-0" src="../../../assets/icons/minus.svg" title="Ngừng dịch vụ" alt="Ngừng dịch vụ"> -->
                     </ng-container>
                     <ng-template #elseTemplateActive>
-                        <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-light" title="Làm dịch vụ">
-                            <i class="fas fa-minus-circle text-secondary"></i>
+                        <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm  btn-danger" title="Làm dịch vụ">
+                            <i class="fas fa-minus-circle text-white"></i>
                         </button>
                         <!-- <img  width="92%"  class="btn-icon p-0" src="../../../assets/icons/plus.svg" title=" Làm dịch vụ" alt="Làm dịch vụ"> -->
                     </ng-template>
@@ -113,7 +113,7 @@
         </div>
     </div>
     <!-- thông tin bổ sung -->
-    <div class="border-right border-left border-bottom px-2 mb-3 w-100 pb-2">
+    <div class="border-right border-left border-bottom px-2 w-100 pb-2">
         <label class="font-weight-600 mb-0">THÔNG TIN BỔ SUNG</label>
         <!-- bác sĩ phụ tá -->
         <div class="row mx-0">
@@ -206,6 +206,13 @@
                         </tr>
                     </table>
                 </div>
+                <ng-container *ngIf="TeethFA.errors?.required && TeethFA.touched">
+                    <div class="col-3 row"></div>
+                    <div class="col-9">
+                        <span class="text-danger">Chọn răng</span>
+                    </div>
+                </ng-container>
+
             </div>
         </ng-template>
 

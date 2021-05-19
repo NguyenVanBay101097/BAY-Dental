@@ -315,7 +315,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   computeAmountLine(lines) {
-    console.log(lines);
     lines.forEach(line => {
       line.priceSubTotal = (line.priceUnit - line.amountDiscountTotal) * line.productUOMQty;
     });
@@ -339,6 +338,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.saleOrderId) {
       this.saleOrderService.actionDone([this.saleOrderId]).subscribe(() => {
         this.loadSaleOrder();
+        this.notify('success', 'Hoàn thành phiếu điều trị');
       });
     }
   }
@@ -441,22 +441,20 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           })
         )
         .subscribe(r => {
+          this.notify('success', 'Xác nhận thành công');
+
           this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.saleOrderId } });
           this.loadSaleOrder();
         });
     } else {
       this.saleOrderService.update(this.saleOrderId, val)
         .pipe(
-          mergeMap(() => this.saleOrderService.actionConfirm([this.saleOrderId]))
+          mergeMap(() => {
+            return this.saleOrderService.actionConfirm([this.saleOrderId]);})
         )
         .subscribe(() => {
-          this.notificationService.show({
-            content: 'Cập nhật thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
+          this.notify('success', 'Xác nhận thành công');
+
           this.loadSaleOrder();
         });
     }
@@ -485,19 +483,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
     if (this.saleOrderId) {
       this.saleOrderService.update(this.saleOrderId, val).subscribe((res) => {
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
+        this.notify('success','Lưu thành công');
         this.loadSaleOrder();
       }, (error) => {
+        this.loadSaleOrder();
+
       });
     } else {
       this.saleOrderService.create(val).subscribe((result: any) => {
         this.saleOrderId = result.id;
+        this.notify('success', 'Lưu thành công');
         this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
         this.loadSaleOrder();
       });
@@ -615,7 +610,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       toothType: 'manual',
       isActive: true,
       amountPromotionToOrder: 0,
-      amountPromotionToOrderLine: 0
+      amountPromotionToOrderLine: 0,
+      amountDiscountTotal: 0
     };
 
     this.saleOrder.orderLines.push(value);
@@ -746,15 +742,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   getAmountTotal() {
-    return this.getAmountSubTotal() - this.getTotalDiscount();
-  }
-
-  getTotalDiscount() {
-    var res = this.saleOrder.orderLines.reduce((total, cur) => {
-      return total + (cur.amountDiscountTotal || 0) * cur.productUOMQty;
-    }, 0);
-
-    return res;
+    return this.getAmountSubTotal() - this.saleOrder.amountDiscountTotal;
   }
 
   onDeleteLine(index) {

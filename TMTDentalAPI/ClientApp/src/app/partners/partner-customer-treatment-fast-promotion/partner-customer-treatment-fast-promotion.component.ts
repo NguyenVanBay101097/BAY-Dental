@@ -39,8 +39,6 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
   private deleteSubject = new Subject<any>();
 
   isChange = false;
-  errorMsg: string;
-
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -101,12 +99,13 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
 
   onApplyCoupon() {
     if (this.form.code.trim() == '') {
-      this.errorMsg = 'Nhập mã khuyến mãi';
+      this.notificationService.notify('error', 'Nhập mã khuyến mãi');
       return;
     }
     this.promotionService.getPromotionUsageCode(this.form.code).subscribe((result) => {
       if (result && !result.success) {
-        this.errorMsg = result.error;
+        this.notificationService.notify('error', result.error);
+
         return;
       }
       this.promotionSubject.next(result.saleCouponProgram);

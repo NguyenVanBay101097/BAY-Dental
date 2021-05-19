@@ -37,7 +37,6 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
 
 
   isChange = false;
-  errorMsg: string;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -92,12 +91,12 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
 
   onApplyCoupon() {
     if (this.form.code.trim() == '') {
-      this.errorMsg = 'Nhập mã khuyến mãi';
+      // this.errorMsg = 'Nhập mã khuyến mãi';
       return;
     }
     this.promotionService.getPromotionUsageCode(this.form.code, this.saleOrderLine.productId).subscribe((result) => {
       if (result && !result.success) {
-        this.errorMsg = result.error;
+        // this.errorMsg = result.error;
         return;
       }
       this.promotionSubject.next(result.saleCouponProgram);

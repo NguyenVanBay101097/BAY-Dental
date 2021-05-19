@@ -53,7 +53,6 @@
                 <input type="text" class="form-control" [(ngModel)]="form.code" />
                 <button type="button" class="btn btn-primary" (click)="onApplyCoupon()">Áp dụng</button>
             </div>
-            <p *ngIf="errorMsg" class="text-danger">{{errorMsg}}</p>
             <div class="">
                 <div *ngFor="let item of getListPromotion('code_usage_program'); let i = index" class="d-flex justify-content-between mt-2">
                     <label class="mb-0" for="">  <img src="../../../assets/icons/promotion.svg" alt=""> {{item.name}}</label>

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { SaleOrderService } from '../../core/services/sale-order.service';
 
 @Component({
@@ -10,7 +11,7 @@ import { SaleOrderService } from '../../core/services/sale-order.service';
 export class SaleOrderApplyCouponComponent implements OnInit {
   formGroup: FormGroup;
   @Output() applySuccess = new EventEmitter<any>();
-  constructor(private fb: FormBuilder, private saleOrderService: SaleOrderService) { }
+  constructor(private fb: FormBuilder, private saleOrderService: SaleOrderService, private notifyService: NotifyService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -20,6 +21,9 @@ export class SaleOrderApplyCouponComponent implements OnInit {
 
   onSave() {
     if (!this.formGroup.valid) {
+      if (this.formGroup.get('couponCode').value.trim() === '') {
+        this.notifyService.notify('error', 'Nhập mã khuyến mãi');
+      }
       return false;
     }
 

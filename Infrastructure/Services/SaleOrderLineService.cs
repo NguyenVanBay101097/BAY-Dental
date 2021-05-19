@@ -790,14 +790,14 @@ namespace Infrastructure.Services
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
                     await _CreateRewardLine(orderLine, program);
-                    
+
                 }
                 else
                     throw new Exception(error_status.Error);
             }
             else
-            {          
-                throw new Exception("Mã chương trình khuyến mãi không tồn tại");
+            {
+                throw new Exception("Mã khuyễn mãi không chính xác");
             }
         }
 
@@ -836,7 +836,7 @@ namespace Infrastructure.Services
             }
             else
             {
-                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };
+                return new SaleCouponProgramResponse { Error = "Mã khuyễn mãi không chính xác", Success = false, SaleCouponProgram = null };
 
             }
         }

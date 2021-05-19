@@ -32,6 +32,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal? AmountTotal { get; set; }
 
+        public decimal AmountDiscountTotal { get; set; }
+
         public string Note { get; set; }
 
         /// <summary>

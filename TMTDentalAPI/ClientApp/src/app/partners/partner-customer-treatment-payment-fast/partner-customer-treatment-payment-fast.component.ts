@@ -248,6 +248,11 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     val.amountTotal = (val.orderLines as any[]).reduce((total, cur) => {
       return total + cur.productUOMQty * cur.priceUnit;
     }, 0);
+
+    val.promotions.forEach(p => {
+      delete p.saleCouponProgram;
+    });
+
     val.orderLines.forEach(line => {
       if (line.employee) {
         line.employeeId = line.employee.id;
@@ -257,6 +262,10 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       }
 
       line.priceSubTotal = Math.round(line.productUOMQty * (line.priceUnit - line.amountDiscountTotal))
+
+      line.promotions.forEach(p => {
+        delete p.saleCouponProgram;
+      });
     });
 
     val.isFast = true;
@@ -543,7 +552,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       discountPercent: res.discountPercent,
       discountFixed: res.discountFixed ,
       saleCouponProgramId: null,
-      name: 'Giảm tiền'
+      name: 'Giảm tiền',
+      saleCouponProgram: null
     } as SaleOrderPromotionSave);
     //chạy hàm phân bổ
     this.onComputePromotion();
@@ -551,7 +561,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     return true;
   }
 
-  checkApplyPromotiom(promotions, promotionApply) {
+  checkApplyPromotiomSaleOrderLine(line, promotionApply) {
+    var promotions = line.promotions;
     var type = promotionApply.promoCodeUsage == 'code_needed' ? 'code_usage_program' : 'promotion_program';
     var exist = promotions.find(x => x.saleCouponProgramId == promotionApply.id);
     if (exist) {
@@ -563,8 +574,36 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       return false;
     }
 
-    if (promotions.some(x => x.saleCouponProgram.notIncremental) || (promotionApply.notIncremental && promotions.length)) {
-      this.notifyService.notify('error', 'Chiết khấu tổng không thể cộng dồn');
+    if (promotions.some(x => x.saleCouponProgram && x.saleCouponProgram.notIncremental)) {
+      this.notifyService.notify('error', 'Đang áp dụng khuyến mãi không cộng dồn. Vui lòng xóa các CTKM đó.');
+      return false;
+    }
+    if ((promotionApply.notIncremental && promotions.some(x => x.saleCouponProgram))) {
+      this.notifyService.notify('error', 'Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ');
+      return false;
+    }
+    return true;
+  }
+
+  checkApplyPromotiomSaleOrder(promotionApply) {
+    var promotions = this.saleOrder.promotions;
+    var type = promotionApply.promoCodeUsage == 'code_needed' ? 'code_usage_program' : 'promotion_program';
+    var exist = promotions.find(x => x.saleCouponProgramId == promotionApply.id);
+    if (exist) {
+      if (type == 'code_usage_program') {
+        this.notifyService.notify('error', 'Chương trình khuyến mãi đã được áp dụng cho đơn hàng này');
+      } else {
+        this.notifyService.notify('error', 'Ưu đãi đã được áp dụng cho đơn hàng này')
+      }
+      return false;
+    }
+
+    if (promotions.some(x => x.saleCouponProgram && x.saleCouponProgram.notIncremental)) {
+      this.notifyService.notify('error', 'Đang áp dụng khuyến mãi không cộng dồn. Vui lòng xóa các CTKM đó.');
+      return false;
+    }
+    if ((promotionApply.notIncremental && promotions.some(x => x.saleCouponProgram))) {
+      this.notifyService.notify('error', 'Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ');
       return false;
     }
     return true;
@@ -572,7 +611,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   applyCouponPromotionSaleOrder(promotion) {
    
-    var res = this.checkApplyPromotiom(this.saleOrder.promotions,promotion);
+    var res = this.checkApplyPromotiomSaleOrder(promotion);
     if(!res) return;
     //push cai uu dai vào mảng ưu đãi
     var type = promotion.promoCodeUsage == 'code_needed' ? 'code_usage_program' : 'promotion_program';
@@ -650,7 +689,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       discountPercent: res.discountPercent,
       discountFixed: res.discountFixed,
       saleCouponProgramId: null,
-      name: 'Giảm tiền'
+      name: 'Giảm tiền',
+      saleCouponProgram: null
     } as SaleOrderPromotionSave);
     //chạy hàm phân bổ
     this.onComputePromotion();
@@ -659,7 +699,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   applyCouponPromotionSaleOrderLine(promotion, line) {
-   var res = this.checkApplyPromotiom(this.saleOrder.promotions,promotion);
+   var res = this.checkApplyPromotiomSaleOrderLine(line,promotion);
     if(!res) return;
     //push cai uu dai vào mảng ưu đãi
   line.promotions.push({

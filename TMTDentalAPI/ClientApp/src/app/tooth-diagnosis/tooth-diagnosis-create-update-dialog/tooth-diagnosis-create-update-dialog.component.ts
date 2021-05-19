@@ -34,7 +34,7 @@ export class ToothDiagnosisCreateUpdateDialogComponent implements OnInit {
   ngOnInit() {
     this.myForm = this.fb.group({
       name: [null, Validators.required],
-      product: [[], Validators.required]
+      product: [[]]
     });
 
     setTimeout(() => {

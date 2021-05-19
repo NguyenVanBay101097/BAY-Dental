@@ -189,16 +189,8 @@
                                     </div>
                                     <div class="flex-1-1-100 overflow-auto">
                                         <ng-container *ngFor="let line of saleOrder.orderLines; let i=index">
-                                            <app-sale-order-line-cu #lineTemplate 
-                                            (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion(i)"
-                                            [initialListEmployees]="initialListEmployees"
-                                            [filteredToothCategories]="filteredToothCategories"
-                                            [initialListTeeths]="listTeeths"
-                                            [line]="line"
-                                            (onCancelEvent)="onCancelEditLine($event)"
-                                            (onDeleteEvent)="onDeleteLine(i)"
-                                            (onEditEvent)="onEditLine($event)"
-                                            (onUpdateEvent)="updateLineInfo($event, i)"></app-sale-order-line-cu>
+                                            <app-sale-order-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion(i)" [initialListEmployees]="initialListEmployees" [filteredToothCategories]="filteredToothCategories" [initialListTeeths]="listTeeths" [line]="line" (onCancelEvent)="onCancelEditLine($event)"
+                                                (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)"></app-sale-order-line-cu>
                                         </ng-container>
                                     </div>
                                 </div>
@@ -229,11 +221,11 @@
                                             </p>
                                             <p class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Tổng giảm giá</label>
-                                                <label class="font-weight-600">{{getTotalDiscount() | number : '1.0-0'}}</label>
+                                                <label class="font-weight-600">{{saleOrder.amountDiscountTotal | number : '1.0-0'}}</label>
                                             </p>
                                             <p class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Tổng tiền</label>
-                                                <label class="font-weight-600">{{getAmountSubTotal() - getTotalDiscount() | number}}</label>
+                                                <label class="font-weight-600">{{getAmountSubTotal() - saleOrder.amountDiscountTotal | number}}</label>
                                             </p>
                                             <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'" class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Thanh toán</label>
@@ -254,7 +246,7 @@
                         <app-treatment-process-service-list></app-treatment-process-service-list>
                     </div>
                     <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="payment" role="tabpanel" aria-labelledby="payment-tab">
-                        <app-sale-order-payment-list *ngIf="saleOrderId" (paymentOutput)="paymentOutput($event)" #paymentComp [saleOrderId]="saleOrderId">
+                        <app-sale-order-payment-list *ngIf="saleOrderId" #paymentComp [saleOrderId]="saleOrderId">
                         </app-sale-order-payment-list>
                     </div>
 

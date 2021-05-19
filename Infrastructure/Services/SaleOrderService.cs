@@ -375,6 +375,8 @@ namespace Infrastructure.Services
 
             foreach (var sale in self)
             {
+
+                if (sale.OrderLines.Count == 0) throw new Exception("Bạn không thể hoàn thoành phiếu điều trị khi không có dịch vụ");
                 foreach (var line in sale.OrderLines)
                 {
                     line.State = "done";
@@ -463,7 +465,7 @@ namespace Infrastructure.Services
             }
             else
             {
-                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };
+                return new SaleCouponProgramResponse { Error = "Mã khuyễn mãi không chính xác", Success = false, SaleCouponProgram = null };
 
                 //   var coupon = await couponObj.SearchQuery(x => x.Code == couponCode)
                 //.Include(x => x.Program).Include(x => x.Program.DiscountLineProduct).Include(x => x.Partner).FirstOrDefaultAsync();

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { EmployeePaged } from "src/app/employees/employee";
 import { EmployeeService } from "src/app/employees/employee.service";
 import { SaleOrderLineDisplay } from "../sale-order-line-display";
@@ -110,15 +110,26 @@ export class SaleOrderLineCuComponent implements OnInit {
     this.formGroupInfo = this.fb.group({
       productUOMQty: [this.line.productUOMQty, Validators.required],
       priceUnit: [this.line.priceUnit, Validators.required],
-      teeth: this.fb.array(this.line.teeth),
       promotions: this.fb.array(this.line.promotions),
       toothType: this.line.toothType,
       toothCategory: this.line.toothCategory,
       assistant: this.line.assistant,
       employee: this.line.employee,
       counselor: this.line.counselor,
-      diagnostic: this.line.diagnostic
+      diagnostic: this.line.diagnostic,
+      teeth: this.fb.array(this.line.teeth),
     });
+
+    this.formGroupInfo.get('toothType').valueChanges
+      .subscribe(value => {
+        if (value == 'manual') {
+          this.formGroupInfo.get('teeth').setValidators(Validators.required)
+        } else {
+          this.formGroupInfo.get('teeth').clearValidators();
+        }
+        this.formGroupInfo.get('teeth').updateValueAndValidity();
+      });
+    this.formGroupInfo.get('toothType').setValue(this.line.toothType);
 
     this.loadTeethMap(this.line.toothCategory);
     console.log(this.initialListEmployees);
@@ -287,6 +298,7 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   updateLineInfo() {
     if(this.formGroupInfo.invalid) {
+      this.formGroupInfo.markAllAsTouched();
       return false;
     }
 
@@ -392,11 +404,21 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   onActive(active) {
-    this.saleOrderLineService.patchIsActive(this.line.id, active).subscribe(() => {
+    if(active)
+    {this.saleOrderLineService.patchIsActive(this.line.id, active).subscribe(() => {
       this.line.isActive = active;
-      this.notify('success', 'Thành công');
     });
-
+  } else {
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+      modalRef.componentInstance.title = 'Ngừng dịch vụ';
+      modalRef.componentInstance.body = 'Bạn có chắc chắn ngừng dịch vụ?';
+      modalRef.result.then(() => {
+        this.saleOrderLineService.patchIsActive(this.line.id, active).subscribe(() => {
+          this.line.isActive = active;
+          this.notify('success', 'Ngừng dịch vụ thành công');
+        });
+      });
+  }
   }
 
 }

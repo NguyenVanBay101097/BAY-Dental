@@ -78,11 +78,11 @@ export class ServiceListSearchDropdownComponent implements OnInit {
     val.search = search ? search : '';
     val.type2 = 'service';
     if (val.search) {
-      return this.productService.getPaged(val).pipe(map((res: any) => {
+      return this.productService.autocomplete2(val).pipe(map((res: any) => {
 
-        if (res.items.length > 0) {
-          this.listProducts = res.items;
-          return res.items;
+        if (res.length > 0) {
+          this.listProducts = res;
+          return res;
         } else {
           this.listProducts = [{ error: true }];
           return [{ error: true }];
