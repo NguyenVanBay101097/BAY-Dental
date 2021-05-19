@@ -75,6 +75,39 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyPromotionUsageCode(ApplyPromotionUsageCode val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            var res = await _quotationService.ApplyPromotionUsageCode(val);
+            _unitOfWork.Commit();
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyDiscountOnQuotation(ApplyDiscountViewModel val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _quotationService.ApplyDiscountOnQuotation(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyPromotion(ApplyPromotionRequest val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _quotationService.ApplyPromotionOnQuotation(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> CreateSaleOrderByQuotation(Guid id)
         {
@@ -86,13 +119,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpPost("[action]")]     
+        public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
-            var model = await _quotationService.GetByIdAsync(id);
-            if (model == null)
-                return NotFound();
-            await _quotationService.DeleteAsync(model);
+            if (ids == null || !ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _quotationService.Unlink(ids);
+            _unitOfWork.Commit();
             return NoContent();
         }
 

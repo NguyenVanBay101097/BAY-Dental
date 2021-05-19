@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { PagedResult2 } from '../core/paged-result-2';
 import { EmployeeSimple } from '../employees/employee';
 import { PartnerSimple } from '../partners/partner-simple';
@@ -20,10 +21,12 @@ export class QuotationLineDisplay {
   subPrice: number;
   diagnostic: string;
   toothCategoryId: string;
-  // advisoryUserId: string;
-  // advisoryUser: any;
-  advisoryEmployee: any;
-  advisoryEmployeeId: string;
+  employee: any;
+  employeeId: string;
+  assistant: any;
+  assistantId: string;
+  counselor: any;
+  counselorId: string;
   advisoryId: string;
   toothCategory: any;
   toothIds: any[];
@@ -31,7 +34,10 @@ export class QuotationLineDisplay {
   amount: number;
   teeth: any;
   toothType: string;
-  promotions: any[];
+  promotions: QuotationPromotionBasic[];
+  amountDiscountTotal: number;
+  amountPromotionToOrder: number;
+  amountPromotionToOrderLine: number;
 }
 export class QuotationLineSave {
   productId: string;
@@ -43,6 +49,14 @@ export class QuotationLineSave {
   toothCategoryId: number;
   toothIds: any[];
   companyId: string;
+}
+
+export class PaymentQuotationDisplay {
+  id: string;
+  payment: number;
+  discountPercentType: string;
+  amount: number;
+  date: Date;
 }
 export class QuotationsBasic {
   id: string;
@@ -56,6 +70,14 @@ export class QuotationsBasic {
   totalAmount: number;
   state: string;
   toothType: string;
+}
+
+export class QuotationPromotionBasic {
+  id: string;
+  name: string;
+  saleCouponProgramId: string;
+  amount: number;
+  type: string;
 }
 
 export class QuotationsDisplay {
@@ -73,18 +95,24 @@ export class QuotationsDisplay {
   userId: string;
   employee: EmployeeSimple;
   employeeId: string;
-  dateQuotation: string;
+  dateQuotation: Date;
   dateApplies: number;
   subPrice: number;
   listPrice: number;
-  dateEndQuotation: string;
+  dateEndQuotation: Date;
   note: string;
   totalAmount: number;
   state: string;
-  lines: any[];
-  payments: any[];
+  lines: QuotationLineDisplay[];
+  payments: PaymentQuotationDisplay[];
   companyId: string;
   orders: any[];
+  promotions: QuotationPromotionBasic[];
+}
+
+export class QuotationSimple {
+  id: string;
+  name: string;
 }
 
 export class QuotationsPaged {
@@ -115,7 +143,68 @@ export class QuotationService {
   }
 
   get(id: string): Observable<QuotationsDisplay> {
-    return this.http.get<QuotationsDisplay>(this.baseApi + this.apiUrl + '/' + id);
+    return this.http.get(this.baseApi + this.apiUrl + '/' + id)
+      .pipe(
+        map(
+          (response: any) =>
+            <QuotationsDisplay>{
+              id: response.id,
+              name: response.name,
+              partner: response.partner,
+              partnerId: response.partnerId,
+              employee: response.employee,
+              employeeId: response.employeeId,
+              dateQuotation: new Date(response.dateQuotation),
+              dateApplies: response.dateApplies,
+              subPrice: response.subPrice,
+              listPrice: response.listPrice,
+              dateEndQuotation: new Date(response.dateEndQuotation),
+              note: response.note,
+              totalAmount: response.totalAmount,
+              state: response.state,
+              lines: response.lines.map(x => <QuotationLineDisplay>{
+                productId: x.productId,
+                id: x.id,
+                product: x.product,
+                qty: x.qty,
+                subPrice: x.subPrice,
+                diagnostic: x.diagnostic,
+                toothCategoryId: x.toothCategoryId,
+                employee: x.employee,
+                employeeId: x.employeeId,
+                assistant: x.assistant,
+                assistantId: x.assistantId,
+                counselor: x.counselor,
+                counselorId: x.counselorId,
+                toothCategory: x.toothCategory,
+                toothIds: x.toothIds,
+                name: x.name,
+                amount: x.amount,
+                teeth: x.teeth,
+                toothType: x.toothType,
+                promotions: x.promotions,
+                amountDiscountTotal: x.amountDiscountTotal,
+                amountPromotionToOrder: x.amountPromotionToOrder,
+                amountPromotionToOrderLine: x.amountPromotionToOrderLine,
+              }),
+              payments: response.payments.map(x => <PaymentQuotationDisplay>{
+                amount: x.amount,
+                date: new Date(x.date),
+                discountPercentType: x.discountPercentType,
+                payment: x.payment
+              }),
+              companyId: response.companyId,
+              // orders: any[],
+              promotions: response.promotions.map(x => <QuotationPromotionBasic>{
+                id: x.id,
+                name: x.name,
+                saleCouponProgramId: x.saleCouponProgramId,
+                type: x.type,
+                amount: x.amount
+              }),
+            }
+        )
+      );
   }
 
   printQuotation(id: string) {
@@ -123,14 +212,85 @@ export class QuotationService {
   }
 
   defaultGet(partnerId: string): Observable<QuotationsDisplay> {
-    return this.http.get<QuotationsDisplay>(this.baseApi + this.apiUrl + '/GetDefault/' + partnerId);
+    return this.http.get<QuotationsDisplay>(this.baseApi + this.apiUrl + '/GetDefault/' + partnerId)
+    .pipe(
+      map(
+        (response: any) =>
+          <QuotationsDisplay>{
+            id: response.id,
+            name: response.name,
+            partner: response.partner,
+            partnerId: response.partnerId,
+            employee: response.employee,
+            employeeId: response.employeeId,
+            dateQuotation: new Date(response.dateQuotation),
+            dateApplies: response.dateApplies,
+            subPrice: response.subPrice,
+            listPrice: response.listPrice,
+            dateEndQuotation: new Date(response.dateEndQuotation),
+            note: response.note,
+            totalAmount: response.totalAmount,
+            state: response.state,
+            lines: response.lines.map(x => <QuotationLineDisplay>{
+              productId: x.productId,
+              id: x.id,
+              product: x.product,
+              qty: x.qty,
+              subPrice: x.subPrice,
+              diagnostic: x.diagnostic,
+              toothCategoryId: x.toothCategoryId,
+              employee: x.employee,
+              employeeId: x.employeeId,
+              assistant: x.assistant,
+              assistantId: x.assistantId,
+              counselor: x.counselor,
+              counselorId: x.counselorId,
+              toothCategory: x.toothCategory,
+              toothIds: x.toothIds,
+              name: x.name,
+              amount: x.amount,
+              teeth: x.teeth,
+              toothType: x.toothType,
+              promotions: x.promotions,
+              amountDiscountTotal: x.amountDiscountTotal,
+              amountPromotionToOrder: x.amountPromotionToOrder,
+              amountPromotionToOrderLine: x.amountPromotionToOrderLine,
+            }),
+            payments: response.payments.map(x => <PaymentQuotationDisplay>{
+              amount: x.amount,
+              date: new Date(x.date),
+              discountPercentType: x.discountPercentType,
+              payment: x.payment
+            }),
+            companyId: response.companyId,
+            // orders: any[],
+            promotions: []
+          }
+      )
+    );
   }
 
-  delete(id: string) {
-    return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
+  delete(ids: string[]) {
+    return this.http.post(this.baseApi + this.apiUrl + '/Unlink', ids);
   }
 
   createSaleOrderByQuotation(id: string) {
     return this.http.get(`${this.baseApi + this.apiUrl}/${id}/CreateSaleOrderByQuotation`);
+  }
+
+  applyDiscountOnQuotation(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnQuotation', val);
+  }
+
+  applyDiscountOnQuotationLine(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnQuotationLine', val);
+  }
+
+  applyCouponOnQuotation(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotionUsageCode', val);
+  }
+
+  applyPromotion(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotion', val);
   }
 }

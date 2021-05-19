@@ -20,9 +20,14 @@ namespace ApplicationCore.Entities
         public int Qty { get; set; }
 
         /// <summary>
-        /// Số tiền Giảm giá , số % giảm giá
+        ///số % giảm giá
         /// </summary>
-        public decimal? Discount { get; set; }
+        public decimal? DiscountAmountPercent { get; set; }
+
+        /// <summary>
+        /// Số tiền Giảm giá 
+        /// </summary>
+        public decimal? DiscountAmountFixed { get; set; }
 
         /// <summary>
         /// Loại giảm giá : percent / cash 
@@ -36,6 +41,10 @@ namespace ApplicationCore.Entities
 
         public decimal? SubPrice { get; set; }
 
+        /// <summary>
+        /// Tổng đơn giá giảm của dịch vụ
+        /// </summary>
+        public double? AmountDiscountTotal { get; set; }
 
 
         /// <summary>
@@ -51,6 +60,10 @@ namespace ApplicationCore.Entities
 
         public ICollection<QuotationLineToothRel> QuotationLineToothRels { get; set; } = new List<QuotationLineToothRel>();
 
+        public ICollection<QuotationPromotion> Promotions { get; set; } = new List<QuotationPromotion>();
+
+        public ICollection<QuotationPromotionLine> PromotionLines { get; set; } = new List<QuotationPromotionLine>();
+
         /// <summary>
         /// Phiếu báo giá
         /// </summary>
@@ -58,10 +71,22 @@ namespace ApplicationCore.Entities
         public Quotation Quotation { get; set; }
 
         /// <summary>
-        /// Nhân viên tư vấn
+        /// Bác sĩ
         /// </summary>
-        public Guid? AdvisoryEmployeeId { get; set; }
-        public Employee AdvisoryEmployee { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public Employee Employee { get; set; }
+
+        /// <summary>
+        /// Phụ tá
+        /// </summary>
+        public Guid? AssistantId { get; set; }
+        public Employee Assistant { get; set; }
+
+        /// <summary>
+        /// người tư vấn
+        /// </summary>
+        public Guid? CounselorId { get; set; }
+        public Employee Counselor { get; set; }
 
         /// <summary>
         /// Tư vấn

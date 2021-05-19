@@ -418,7 +418,8 @@ namespace Infrastructure.Services
                     quotationLine.QuotationId = quotation.Id;
                     quotationLine.Qty = toothIds.Count() > 0 ? toothIds.Count() : 1;
                     quotationLine.SubPrice = product.ListPrice;
-                    quotationLine.Discount = 0;
+                    quotationLine.DiscountAmountFixed = 0;
+                    quotationLine.DiscountAmountPercent = 0;
                     quotationLine.DiscountType = "percentage";
                     quotationLine.Amount = quotationLine.Qty * quotationLine.SubPrice;
                     quotationLine.ToothCategoryId = advisory.ToothCategoryId.GetValueOrDefault();
@@ -431,7 +432,7 @@ namespace Infrastructure.Services
                     }
                     quotationLine.Diagnostic = string.Join(", ", toothDiagnosisName);
                     quotationLine.AdvisoryId = advisory.Id;
-                    quotationLine.AdvisoryEmployeeId = advisory.EmployeeId;
+                    quotationLine.CounselorId = advisory.EmployeeId;
                     quotationLines.Add(quotationLine);
                 }
             }

@@ -6416,14 +6416,20 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AdvisoryEmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("AdvisoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("Amount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<double?>("AmountDiscountTotal")
+                        .HasColumnType("float");
+
+                    b.Property<Guid?>("AssistantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CounselorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
@@ -6434,11 +6440,17 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Diagnostic")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Discount")
+                    b.Property<decimal?>("DiscountAmountFixed")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("DiscountAmountPercent")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("DiscountType")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
@@ -6469,11 +6481,15 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdvisoryEmployeeId");
-
                     b.HasIndex("AdvisoryId");
 
+                    b.HasIndex("AssistantId");
+
+                    b.HasIndex("CounselorId");
+
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("ProductId");
 
@@ -6499,6 +6515,109 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("ToothId");
 
                     b.ToTable("QuotationLineToothRels");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.QuotationPromotion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("DiscountFixed")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("DiscountPercent")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("DiscountType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("QuotationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("QuotationLineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SaleCouponProgramId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("QuotationId");
+
+                    b.HasIndex("QuotationLineId");
+
+                    b.HasIndex("SaleCouponProgramId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("QuotationPromotions");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.QuotationPromotionLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("PriceUnit")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("PromotionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("QuotationLineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("PromotionId");
+
+                    b.HasIndex("QuotationLineId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("QuotationPromotionLines");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ResBank", b =>
@@ -13217,17 +13336,25 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.QuotationLine", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.Employee", "AdvisoryEmployee")
-                        .WithMany()
-                        .HasForeignKey("AdvisoryEmployeeId");
-
                     b.HasOne("ApplicationCore.Entities.Advisory", "Advisory")
                         .WithMany("QuotationLines")
                         .HasForeignKey("AdvisoryId");
 
+                    b.HasOne("ApplicationCore.Entities.Employee", "Assistant")
+                        .WithMany()
+                        .HasForeignKey("AssistantId");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Counselor")
+                        .WithMany()
+                        .HasForeignKey("CounselorId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
                         .WithMany()
@@ -13265,6 +13392,50 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("ToothId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.QuotationPromotion", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Quotation", "Quotation")
+                        .WithMany("Promotions")
+                        .HasForeignKey("QuotationId");
+
+                    b.HasOne("ApplicationCore.Entities.QuotationLine", "QuotationLine")
+                        .WithMany("Promotions")
+                        .HasForeignKey("QuotationLineId");
+
+                    b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "SaleCouponProgram")
+                        .WithMany()
+                        .HasForeignKey("SaleCouponProgramId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.QuotationPromotionLine", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.QuotationPromotion", "Promotion")
+                        .WithMany("Lines")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.QuotationLine", "QuotationLine")
+                        .WithMany("PromotionLines")
+                        .HasForeignKey("QuotationLineId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ResBank", b =>

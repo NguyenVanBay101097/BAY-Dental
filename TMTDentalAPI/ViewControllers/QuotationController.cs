@@ -15,12 +15,12 @@ namespace TMTDentalAPI.ViewControllers
             _quotationService = quotationService;
         }
 
-        //public async  Task<IActionResult> Print(Guid id)
-        //{
-        //    var res = await _quotationService.Print(id);
-        //    if (res == null) return NotFound();
+        public async Task<IActionResult> Print(Guid id)
+        {
+            var res = await _quotationService.Print(id);
+            if (res == null) return NotFound();
 
-        //    return View(res);
-        //}
+            return View(res);
+        }
     }
 }

@@ -16,6 +16,15 @@ namespace Infrastructure.Services
         Task UpdateAsync(Guid id, QuotationSave val);
         Task<QuotationDisplay> GetDefault(Guid partnerId);
         Task<SaleOrderSimple> CreateSaleOrderByQuotation(Guid id);
+
+        Task ApplyDiscountOnQuotation(ApplyDiscountViewModel val);
+
+        Task ApplyPromotionOnQuotation(ApplyPromotionRequest val);
+
+        Task<SaleCouponProgramResponse> ApplyPromotionUsageCode(ApplyPromotionUsageCode val);
+
+        Task _ComputeAmountPromotionToQuotation(IEnumerable<Guid> ids);
         Task<QuotationPrintVM> Print(Guid id);
+        Task Unlink(IEnumerable<Guid> ids);
     }
 }

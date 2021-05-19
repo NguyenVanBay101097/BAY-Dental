@@ -268,6 +268,9 @@ namespace Infrastructure.Data
         public DbSet<SaleOrderPromotion> SaleOrderPromotions { get; set; }
         public DbSet<SaleOrderPromotionLine> SaleOrderPromotionLines { get; set; }
 
+        public DbSet<QuotationPromotion> QuotationPromotions { get; set; }
+        public DbSet<QuotationPromotionLine> QuotationPromotionLines { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -483,6 +486,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SaleOrderPaymentAccountPaymentRelConfiguration());
             builder.ApplyConfiguration(new SaleOrderPromotionConfiguration());
             builder.ApplyConfiguration(new SaleOrderPromotionLineConfiguration());
+            builder.ApplyConfiguration(new QuotationPromotionConfiguration());
+            builder.ApplyConfiguration(new QuotationPromotionLineConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

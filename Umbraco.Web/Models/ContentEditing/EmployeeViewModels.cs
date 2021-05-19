@@ -28,6 +28,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
+        public bool IsDoctor { get; set; }
+
+        public bool IsAssistant { get; set; }
+
         /// <summary>
         /// Mã
         /// </summary>

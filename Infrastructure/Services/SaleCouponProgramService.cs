@@ -508,6 +508,8 @@ namespace Infrastructure.Services
                 message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (string.IsNullOrEmpty(self.PromoCode) && order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
                 message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";
+            else if (self.DiscountApplyOn != "on_order")
+                message.Error = "Mã khuyến mãi không áp dụng trên đơn hàng";
             else if (!self.Active)
                 message.Error = "Mã khuyến mãi không có giá trị";
             else if ((self.NotIncremental.HasValue && self.NotIncremental.Value) || saleObj._IsGlobalDiscountAlreadyApplied(order))
@@ -521,6 +523,36 @@ namespace Infrastructure.Services
                 if (!applicable_programs.Contains(self) && self.PromoApplicability == "on_current_order")
                     message.Error = "Không đạt điều kiện nào để có thể nhận thưởng!";
             }
+
+            return message;
+        }
+
+        public async Task<CheckPromoCodeMessage> _CheckQuotationPromoCode(SaleCouponProgram self, Quotation quotation, string coupon_code)
+        {
+            var message = new CheckPromoCodeMessage();
+
+            var saleObj = GetService<ISaleOrderService>();         
+            var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
+            if (self.MaximumUseNumber != 0 && order_count >= self.MaximumUseNumber)
+                message.Error = $"Mã khuyến mãi {coupon_code} đã hết hạn.";
+            else if (self.RuleMinimumAmount > quotation.TotalAmount)
+                message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
+            else if (!string.IsNullOrEmpty(self.PromoCode) && (quotation.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
+                message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";     
+            else if(self.DiscountApplyOn != "on_order")
+                message.Error = "Mã khuyến mãi không áp dụng trên báo giá";
+            else if (!self.Active)
+                message.Error = "Mã khuyến mãi không có giá trị";
+            else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > quotation.DateQuotation) ||
+                (self.RuleDateTo.HasValue && self.RuleDateTo < quotation.DateQuotation))
+                message.Error = "Mã khuyến mãi đã hết hạn";
+            //else if (order.CodePromoProgram != null && !string.IsNullOrEmpty(order.CodePromoProgram.PromoCode) && self.PromoCodeUsage == "code_needed")
+            //    message.Error = "Mã khuyến mãi không thể cộng dồn.";
+            //else if (_IsGlobalDiscountProgram(self) && saleObj._IsGlobalDiscountAlreadyApplied(order))
+            //    message.Error = "Chiết khấu tổng không thể cộng dồn";
+            else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !quotation.Lines.Where(x => x.ProductId == self.RewardProductId &&
+            x.Qty >= self.RewardProductQuantity).Any())
+                message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";        
 
             return message;
         }
@@ -591,6 +623,57 @@ namespace Infrastructure.Services
             //    if (!applicable_programs.Contains(self) && self.PromoApplicability == "on_current_order")
             //        message.Error = "Không đạt điều kiện nào để có thể nhận thưởng!";
             //}
+
+            return message;
+        }
+
+        public async Task<CheckPromoCodeMessage> _CheckPromotionApplyQuotationLine(SaleCouponProgram self, QuotationLine line)
+        {
+            var message = new CheckPromoCodeMessage();
+            var saleObj = GetService<ISaleOrderService>();
+            //var applicable_programs = await saleObj._GetApplicablePrograms(order);
+            var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
+            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > line.Quotation.DateQuotation) || (self.RuleDateTo.HasValue && self.RuleDateTo < line.Quotation.DateQuotation))
+                message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
+            else if (!self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId))
+                message.Error = "Khuyến mãi Không áp dụng cho dịch vụ này";
+            else if (line.Quotation.Promotions.Where(x => x.QuotationId.HasValue && !x.QuotationLineId.HasValue).Any(x => x.SaleCouponProgramId == self.Id))
+                message.Error = "Chương trình khuyến mãi đã được áp dụng cho đơn hàng này";
+            else if (line.Promotions.Any(x => x.SaleCouponProgramId == self.Id))
+                message.Error = "Chương trình khuyến mãi đã được áp dụng cho dịch vụ này";
+            else if (!self.Active)
+                message.Error = "Chương trình khuyến mãi không có giá trị";
+          
+            else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" &&  !line.Quotation.Lines.Where(x => x.ProductId == self.RewardProductId &&
+            x.Qty >= self.RewardProductQuantity).Any())
+                message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
+           
+
+            return message;
+        }
+
+        public async Task<CheckPromoCodeMessage> _CheckQuotationPromotion(SaleCouponProgram self, Quotation quotation)
+        {
+            var message = new CheckPromoCodeMessage();
+            var saleObj = GetService<ISaleOrderService>();
+            var order_count = (await _GetOrderCountDictAsync(new List<SaleCouponProgram>() { self }))[self.Id];
+            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom > quotation.DateQuotation) || (self.RuleDateTo.HasValue && self.RuleDateTo < quotation.DateQuotation))
+                message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
+            else if (self.ProgramType != "promotion_program" || self.PromoCodeUsage == "code_needed" || self.DiscountApplyOn != "on_order")
+                message.Error = "Khuyến mãi Không áp dụng cho đơn hàng";
+            else if (self.RuleMinimumAmount >= quotation.TotalAmount)
+                message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
+            else if ((quotation.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
+                message.Error = "Chương trình khuyến mãi đã được áp dụng cho báo giá này";
+            else if (!self.Active)
+                message.Error = "Chương trình khuyến mãi không có giá trị";
+            //else if (order.CodePromoProgram != null && !string.IsNullOrEmpty(order.CodePromoProgram.PromoCode) && self.PromoCodeUsage == "code_needed")
+            //    message.Error = "Mã khuyến mãi không thể cộng dồn.";
+            //else if (_IsGlobalDiscountProgram(self) && saleObj._IsGlobalDiscountAlreadyApplied(order))
+            //    message.Error = "Chiết khấu tổng không thể cộng dồn";
+            else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !quotation.Lines.Where(x => x.ProductId == self.RewardProductId &&
+            x.Qty >= self.RewardProductQuantity).Any())
+                message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";          
 
             return message;
         }

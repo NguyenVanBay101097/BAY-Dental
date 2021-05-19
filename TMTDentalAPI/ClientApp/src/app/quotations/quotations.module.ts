@@ -12,9 +12,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { QuotationLineCuComponent } from './quotation-line-cu/quotation-line-cu.component';
 import { QuotationLinePromotionDialogComponent } from './quotation-line-promotion-dialog/quotation-line-promotion-dialog.component';
 import { PromotionDiscountComponent } from './promotion-discount/promotion-discount.component';
+import { QuotationLineApplyCouponComponent } from './quotation-line-apply-coupon/quotation-line-apply-coupon.component';
+import { QuotationPromotionDialogComponent } from './quotation-promotion-dialog/quotation-promotion-dialog.component';
+import { QuotationApplyCouponComponent } from './quotation-apply-coupon/quotation-apply-coupon.component';
 
 @NgModule({
-  declarations: [QuotationCreateUpdateFormComponent, QuotationLineCuComponent, QuotationLinePromotionDialogComponent, PromotionDiscountComponent],
+  declarations: [QuotationCreateUpdateFormComponent, QuotationLineCuComponent, QuotationLinePromotionDialogComponent, PromotionDiscountComponent, QuotationLineApplyCouponComponent, QuotationPromotionDialogComponent, QuotationApplyCouponComponent],
   imports: [
     CommonModule,
     QuotationsRoutingModule,
@@ -26,6 +29,6 @@ import { PromotionDiscountComponent } from './promotion-discount/promotion-disco
     NgbModule,
   ],
   providers: [QuotationService],
-  entryComponents:[QuotationLinePromotionDialogComponent]
+  entryComponents:[QuotationLinePromotionDialogComponent,QuotationPromotionDialogComponent]
 })
 export class QuotationsModule { }

@@ -54,6 +54,8 @@ namespace ApplicationCore.Entities
         public ICollection<PaymentQuotation> Payments { get; set; } = new List<PaymentQuotation>();
         public ICollection<SaleOrder> Orders { get; set; } = new List<SaleOrder>();
 
+        public ICollection<QuotationPromotion> Promotions { get; set; } = new List<QuotationPromotion>();
+
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
     }

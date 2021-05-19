@@ -30,6 +30,8 @@ export class PartnerCustomerDetailComponent implements OnInit {
     //   this.loadPartner(this.id);
     // }
 
+    this.checkRole();
+
     this.route.params.subscribe(params => {
       this.id = params.id
       if (this.id) {

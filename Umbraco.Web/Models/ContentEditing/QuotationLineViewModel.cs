@@ -95,6 +95,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? SubPrice { get; set; }
 
         /// <summary>
+        /// tổng tiền ưu đãi của dịch vụ
+        /// </summary>
+        public decimal? AmountDiscountTotal { get; set; }
+
+        /// <summary>
         /// Chuẩn đoán
         /// </summary>
         public string Diagnostic { get; set; }
@@ -102,8 +107,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? AdvisoryId { get; set; }
         public AdvisorySimple Advisory { get; set; }
 
-        public Guid? AdvisoryEmployeeId { get; set; }
-        public EmployeeSimple AdvisoryEmployee { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+        public EmployeeBasic Employee { get; set; }
+
+        public Guid? AssistantId { get; set; }
+        public EmployeeBasic Assistant { get; set; }
+
+        public Guid? CounselorId { get; set; }
+        public EmployeeSimple Counselor { get; set; }
 
         /// <summary>
         /// Loại răng: răng sữa, răng vĩnh viễn !!!
@@ -115,6 +127,18 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string ToothType { get; set; }
 
+        /// <summary>
+        /// tiền ưu đãi line từ đơn hàng
+        /// </summary>
+        public decimal AmountPromotionToOrder { get; set; }
+
+        /// <summary>
+        /// tiền ưu đãi line
+        /// </summary>
+        public decimal AmountPromotionToOrderLine { get; set; }
+
+
+        public IEnumerable<QuotationPromotionBasic> Promotions { get; set; } = new List<QuotationPromotionBasic>();
     }
 
     public class QuotationLineSimple
@@ -160,10 +184,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid? AdvisoryId { get; set; }
 
-        /// <summary>
-        /// Người tư vấn
-        /// </summary>
-        public Guid? AdvisoryEmployeeId { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+
+        public Guid? AssistantId { get; set; }
+
+        public Guid? CounselorId { get; set; }
 
         /// <summary>
         /// Chuẩn đoán

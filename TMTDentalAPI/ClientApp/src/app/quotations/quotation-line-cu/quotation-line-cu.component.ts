@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { debug } from 'console';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
@@ -21,66 +21,99 @@ export class QuotationLineCuComponent implements OnInit {
   @Output() onCancelEvent = new EventEmitter<any>();
   @Output() onUpdateOpenPromotionEvent = new EventEmitter<any>();
 
-
+  formGroup: FormGroup;
+  submitted: boolean = false;
   isEditting: boolean = false;
-  filteredEmployees: any[] = [];
-  initialListEmployees: any = [];
-  filteredToothCategories: any[];
+  filteredEmployeesDoctor: any[] = [];
+  filteredEmployeesAssistant: any[] = [];
+  filteredEmployeesCounselor: any[] = [];
+  @Input() initialListEmployees: any = [];
+  @Input() filteredToothCategories: any[];
+  @Input() initialListTeeths: any[] = [];
+
   hamList: { [key: string]: {} };
-  initialListTeeths: any[];
   toothTypeDict = [
     { name: "Hàm trên", value: "upper_jaw" },
     { name: "Nguyên Hàm", value: "whole_jaw" },
     { name: "Hàm dưới", value: "lower_jaw" },
     { name: "Chọn răng", value: "manual" },
   ];
-  formGroupInfo: FormGroup;
+
+  get TeethFA() {
+    return this.formGroup.get("teeth") as FormArray;
+  }
+
+  get f() { return this.formGroup.controls; }
+
   constructor(
     private fb: FormBuilder,
     private employeeService: EmployeeService,
-    private modalService: NgbModal,
     private notificationService: NotificationService,
     private ToothService: ToothService,
     private toothCategoryService: ToothCategoryService,
   ) { }
 
   ngOnInit() {
-    this.formGroupInfo = this.fb.group(this.line);
-    // this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
-    this.formGroupInfo.setControl("teeth", this.fb.array([]));
-    if (this.line.teeth) {
-      this.line.teeth.forEach((tooth) => {
-        this.TeethFA.push(this.fb.group(tooth));
-      });
-    }
+    this.formGroup = this.fb.group({});
+    // this.formGroup = this.fb.group({
+    //   subPrice: [0, Validators.required],
+    //   qty: [0, Validators.required],
+    //   amount: 0,
+    //   employee: null,
+    //   assistant: null,
+    //   counselor: null,
+    //   toothType: null,
+    //   toothCategory: null,
+    //   toothIds: null,
+    //   diagnostic: '',
+    //   amountDiscountTotal: 0,
+    //   amountPromotionToOrder: 0,
+    //   amountPromotionToOrderLine: 0,
+    //   teeth: this.fb.array([]),
+    //   promotions: this.fb.array([])
+    // });
 
-    this.loadEmployees();
-    this.loadToothCategories();
-    this.loadTeethList();
-    this.computeAmount();
-  }
-  get TeethFA() {
-    return this.formGroupInfo.get("teeth") as FormArray;
-  }
-  get f() { return this.formGroupInfo.controls; }
+    // this.formGroup = this.fb.group(this.line);
+    // this.formGroup.patchValue(this.line);
+    
+    // if (this.line && this.line.teeth) {
+    //   var lineControl = this.formGroup.get("teeth") as FormArray;
+    //   this.line.teeth.forEach(line => {
+    //     lineControl.push(this.fb.group(line));
+    //   });
+    // }
 
-  formInfoControl(value: string) {
-    return this.formGroupInfo.get(value);
+    // this.formGroup.setControl("teeth", this.fb.array(this.line.teeth));
+    // this.formGroup.setControl("promotions", this.fb.array(this.line.promotions));
+    // this.loadEmployees();
+    // this.loadToothCategories();
+    // this.loadTeethList();
+    // this.computeAmount();
   }
+
+  getValueFormControl(key: string) {
+    return this.formGroup.get(key).value;
+  }
+
   getPriceUnitLinePromotion(line) {
-    return line.subPrice - (line.discount || 0);
+    return line.subPrice - (line.amountDiscountTotal || 0);
   }
+
   getInitialSubTotalLine(line) {
     return line.subPrice * line.qty;
   }
 
   computeAmount() {
-    var getquanTity = this.formInfoControl("qty")
-      ? this.formInfoControl("qty").value
-      : 1;
-    var priceUnit = this.getPriceUnitLinePromotion(this.formGroupInfo.value);
-    this.formInfoControl("amount").setValue(priceUnit * getquanTity);
-    return priceUnit * getquanTity;
+    var getquanTity = this.getValueFormControl("qty") ? this.getValueFormControl("qty") : 1;
+    var priceUnit = this.getPriceUnitLinePromotion(this.formGroup.value);
+    this.f.amount.setValue(priceUnit * getquanTity);
+  }
+
+  getPriceSubTotalFormGroup() {
+    var quantity = this.formGroup.get('qty').value;
+    var priceUnit = this.formGroup.get('subPrice').value;
+    var priceReduce = priceUnit - (this.line.amountDiscountTotal || 0);
+    return quantity * priceReduce;
   }
 
   loadEmployees() {
@@ -94,28 +127,35 @@ export class QuotationLineCuComponent implements OnInit {
       .getEmployeeSimpleList(val)
       .subscribe((result: any[]) => {
         this.initialListEmployees = result;
-        this.filteredEmployees = this.initialListEmployees.slice(0, 20);
+        this.filteredEmployeesDoctor = this.initialListEmployees.slice();
+        this.filteredEmployeesAssistant = this.initialListEmployees.slice();
+        this.filteredEmployeesCounselor = this.initialListEmployees.slice();
       });
   }
 
-  onEmployeeFilter(value) {
-     this.filteredEmployees = this.initialListEmployees
+  onEmployeeDoctor(value) {
+    this.filteredEmployeesDoctor = this.initialListEmployees
       .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
       .slice(0, 20);
   }
+  onEmployeeAssistant(value) {
+    this.filteredEmployeesAssistant = this.initialListEmployees
+      .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
 
+  onEmployeeCounselor(value) {
+    this.filteredEmployeesCounselor = this.initialListEmployees
+      .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+  }
   getToothCateLine() {
-    var res =
-      this.isEditting
-        ? this.formInfoControl("toothCategory").value
-        : this.line.toothCategory;
+    var res = this.isEditting ? this.getValueFormControl("toothCategory") : this.line.toothCategory;
     return res;
   }
   onChangeToothCategory(value: any) {
     if (value.id) {
-      // this.TeethFA.clear();
+      this.TeethFA.clear();
       this.loadTeethMap(value);
-      this.formGroupInfo.get("toothCategory").setValue(value);
+      this.formGroup.get("toothCategory").setValue(value);
     }
   }
   loadTeethMap(categ: any) {
@@ -156,22 +196,17 @@ export class QuotationLineCuComponent implements OnInit {
 
   onChangeToothTypeLine(type) {
     if (type != "manual") {
-      this.formInfoControl("qty").setValue(1);
-      (this.formInfoControl("teeth") as FormArray).clear();
+      this.f.qty.setValue(1);
+      (this.f.teeth as FormArray).clear();
     } else {
-      var teeth = this.formInfoControl("teeth").value as any[];
+      var teeth = this.getValueFormControl("teeth") as any[];
       var quantity = teeth && teeth.length > 0 ? teeth.length : 1;
-      this.formInfoControl("qty").setValue(quantity);
+      this.f.qty.setValue(quantity);
     }
-
-    // this.onChangeQuantity();
   }
 
   getToothTypeLine() {
-    var res =
-      this.isEditting
-        ? this.formInfoControl("toothType").value
-        : this.line.toothType;
+    var res = this.isEditting ? this.getValueFormControl("toothType") : this.line.toothType;
     return res;
   }
 
@@ -183,7 +218,7 @@ export class QuotationLineCuComponent implements OnInit {
       this.TeethFA.push(this.fb.group(tooth));
     }
 
-    this.onChangeToothTypeLine(this.formInfoControl("toothType").value);
+    this.onChangeToothTypeLine(this.getValueFormControl("toothType"));
   }
 
   isSelected(tooth: any) {
@@ -204,10 +239,7 @@ export class QuotationLineCuComponent implements OnInit {
   }
 
   onChangeQuantity(val) {
-    if (!val) {
-      this.formInfoControl("qty").patchValue(1);
-    }
-    this.computeAmount();
+    // this.computeAmount();
   }
 
   editLine() {
@@ -217,15 +249,40 @@ export class QuotationLineCuComponent implements OnInit {
     this.onDeleteEvent.emit();
   }
 
-  onOpenPromotion() { 
-    this.isEditting = false;
-    this.onUpdateOpenPromotionEvent.emit(this.formGroupInfo.value);
+  onOpenPromotion() {
+    if (!this.checkValidFormGroup()) {
+      this.isEditting = true;
+      return;
+    }
+    else {
+      this.isEditting = false;
+      this.onUpdateOpenPromotionEvent.emit(this.formGroup.value);
+    }
+  }
+
+  checkValidFormGroup() {
+    console.log(this.formGroup.value);
+
+    if (this.formGroup.invalid)
+      return false;
+    if (this.formGroup.value.toothType == "manual" && !this.formGroup.value.teeth.length) {
+      this.notify("error", "Vui lòng chọn răng");
+      return false;
+    }
+    return true;
   }
 
   updateLineInfo() {
+    this.submitted = true;
+    if (!this.checkValidFormGroup()) {
+      this.isEditting = true;
+      return;
+    }
+    else {
       this.isEditting = false;
-      var value = this.formGroupInfo.value;
+      var value = this.formGroup.value;
       this.onUpdateEvent.emit(value);
+    }
   }
 
   onCancel() {
@@ -242,16 +299,26 @@ export class QuotationLineCuComponent implements OnInit {
       return this.toothTypeDict.find(x => x.value == toothType).name;
     }
   }
+
   onEditLine() {
     this.isEditting = true;
-    this.formGroupInfo = this.fb.group(this.line);
-    // this.formGroupInfo.controls["advisoryEmployee"].setValidators(Validators.required);
-    this.formGroupInfo.setControl("teeth", this.fb.array([]));
-    if (this.line.teeth) {
-      this.line.teeth.forEach((tooth) => {
-        this.TeethFA.push(this.fb.group(tooth));
-      });
-    }
+    this.formGroup = this.fb.group({
+      qty: [this.line.qty, Validators.required],
+      subPrice: [this.line.subPrice, Validators.required],
+      teeth: this.fb.array(this.line.teeth),
+      promotions: this.fb.array(this.line.promotions),
+      toothType: this.line.toothType,
+      toothCategory: this.line.toothCategory,
+      assistant: this.line.assistant,
+      employee: this.line.employee,
+      counselor: this.line.counselor,
+      diagnostic: this.line.diagnostic
+    });
+
+    this.loadTeethMap(this.line.toothCategory);
+    this.filteredEmployeesDoctor = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
+    this.filteredEmployeesCounselor = this.initialListEmployees.slice();
+    this.filteredEmployeesAssistant = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
   }
 
   notify(type, content) {

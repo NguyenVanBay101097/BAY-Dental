@@ -7,7 +7,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ApplyDiscountViewModel
     {
         /// <summary>
-        /// SaleOrderId , SaleOrderLineId
+        /// SaleOrderId , SaleOrderLineId , QuotationId , QuotationLineId
         /// </summary>
         public Guid Id { get; set; }
         /// <summary>
