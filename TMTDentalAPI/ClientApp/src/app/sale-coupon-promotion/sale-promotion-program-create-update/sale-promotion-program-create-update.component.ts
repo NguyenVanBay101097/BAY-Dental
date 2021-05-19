@@ -85,7 +85,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       isApplyDayOfWeek: false,
       discountApplyOn: 'on_order',
       applyPartnerOn: 'all',
-      specificPartners: null,
+      discountSpecificPartners: null,
       isApplyMinimumDiscount: false,
       isApplyMaxDiscount: false
     },{
@@ -236,7 +236,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     var result = Object.assign({}, this.program);
     result.discountSpecificProductIds = result.discountSpecificProducts ? result.discountSpecificProducts.map(x => x.id):[];
     result.discountSpecificProductCategoryIds = result.discountSpecificProductCategories ? result.discountSpecificProductCategories.map(x => x.id):[];
-    result.DiscountSpecificPartnerIds = result.specificPartners ? result.specificPartners.map(x=>x.id):[];
+    result.DiscountSpecificPartnerIds = result.discountSpecificPartners ? result.discountSpecificPartners.map(x=>x.id):[];
     result.days = result.daysSelected;
     return result;
   }
@@ -322,6 +322,10 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     this.f.discountSpecificProducts.disable();
     this.f.discountSpecificProductCategories.disable();
     this.f.ruleMinimumAmount.disable();
+    this.f.applyPartnerOn.disable();
+    this.f.discountSpecificPartners.disable();
+    this.f.isApplyMinimumDiscount.disable();
+    this.f.isApplyMaxDiscount.disable();
   }
 
   createNew() {
@@ -456,6 +460,18 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.f.discountSpecificProducts.updateValueAndValidity();
       this.f.discountSpecificProductCategories.setValidators(Validators.required);
       this.f.discountSpecificProductCategories.updateValueAndValidity();
+    }
+  }
+
+  onChangePartnerApplyOn(e){
+    var val = e.target.value;
+    if(val == "specific_partners"){
+      this.f.discountSpecificPartners.setValidators(Validators.required);
+      this.f.discountSpecificPartners.updateValueAndValidity();
+    }
+    else{
+      this.f.discountSpecificPartners.clearValidators();
+      this.f.discountSpecificPartners.updateValueAndValidity();
     }
   }
 

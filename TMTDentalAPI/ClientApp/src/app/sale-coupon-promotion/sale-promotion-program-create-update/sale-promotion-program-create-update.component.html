@@ -96,12 +96,12 @@
                                             <table>
                                                 <tbody>
                                                     <tr>
-                                                        <td class="o_td_label">
+                                                        <td class="o_td_label w-30">
                                                             <label>
                                                                 Mã khuyến mãi
                                                             </label>
                                                         </td>
-                                                        <td colspan="1" class="w-75"><input type="text" placeholder="Để trống tự động phát sinh" class="form-control" formControlName="promoCode"></td>
+                                                        <td colspan="1" class="w-70"><input type="text" placeholder="Để trống tự động phát sinh" class="form-control" formControlName="promoCode"></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -113,15 +113,15 @@
                                             <table>
                                                 <tbody>
                                                     <tr>
-                                                        <td class="o_td_label">
+                                                        <td class="o_td_label ">
                                                             <label>
                                                                 Số lần áp dụng
-                                                                <span class="text-primary" placement="right" ngbTooltip="Số lượng phiếu điều trị được áp dụng mã khuyễn mãi. 0 thì áp dụng không giới hạn">
+                                                                <span class="text-primary" placement="top" ngbTooltip="Số lượng phiếu điều trị được áp dụng mã khuyễn mãi. 0 thì áp dụng không giới hạn">
                                                                     <i class="fas fa-exclamation-circle"></i>
                                                                 </span>
                                                             </label>
                                                         </td>
-                                                        <td colspan="1" class="w-75">
+                                                        <td colspan="1" class="w-70">
                                                             <kendo-numerictextbox [min]="0" [format]="'n0'"
                                                             formControlName="maximumUseNumber">
                                                             </kendo-numerictextbox>
@@ -152,8 +152,8 @@
                                             <table>
                                                 <tbody>
                                                     <tr>
-                                                        <td class="w-35">Phần trăm giảm giá</td>
-                                                        <td class="w-75"><kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                        <td class="">Phần trăm giảm giá</td>
+                                                        <td><kendo-numerictextbox [min]="0" [format]="'n0'"
                                                             formControlName="discountPercentage">
                                                         </kendo-numerictextbox>
                                                         <div *ngIf="f.discountPercentage.errors && (f.discountPercentage.touched || f.discountPercentage.dirty || submitted)" class="text-danger mb-1">
@@ -171,16 +171,16 @@
                                             <table>
                                                 <tbody>
                                                     <tr>
-                                                        <td class="w-35">
+                                                        <td class="w-40">
                                                             <div class="form-check">
                                                                 <input type="checkbox" class="form-check-input" (change)="checkApplyMaxDiscount($event.target.checked)" formControlName="isApplyMaxDiscount" id="isApplyMaxDiscount">
                                                                 <label class="form-check-label" for="isApplyMaxDiscount">Mức giảm tối đa</label>
-                                                                <span class="text-primary" placement="right" ngbTooltip="Số tiền tối đa có thể giảm">
+                                                                <span class="text-primary" placement="top" ngbTooltip="Số tiền tối đa có thể giảm">
                                                                     <i class="fas fa-exclamation-circle"></i>
                                                                 </span>
                                                             </div>
                                                         </td>
-                                                        <td [class.d-none]="!isApplyMaxDiscount" class="w-75"><kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                        <td [class.d-none]="!isApplyMaxDiscount"><kendo-numerictextbox [min]="0" [format]="'n0'"
                                                             formControlName="discountMaxAmount">
                                                         </kendo-numerictextbox></td>
                                                         <td [class.d-none]="!(discountType == 'percentage' && isApplyMaxDiscount)">VNĐ</td>
@@ -196,7 +196,7 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>Số tiền giảm</td>
-                                                        <td class="w-75"><kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                        <td class="w-70"><kendo-numerictextbox [min]="0" [format]="'n0'"
                                                             formControlName="discountFixedAmount">
                                                         </kendo-numerictextbox>
                                                         <div *ngIf="f.discountFixedAmount.errors && (f.discountFixedAmount.touched || f.discountFixedAmount.dirty || submitted)" class="text-danger mb-1">
@@ -225,7 +225,7 @@
                                                     <label class="custom-control-label o_form_label"
                                                         for="radio151_on_order">
                                                         Phiếu điều trị
-                                                        <span class="text-primary" placement="right" ngbTooltip="KM giảm trên thành tiền phiếu điều trị">
+                                                        <span class="text-primary" placement="top" ngbTooltip="KM giảm trên thành tiền phiếu điều trị">
                                                             <i class="fas fa-exclamation-circle"></i>
                                                         </span>
                                                     </label>
@@ -233,16 +233,16 @@
                                                 <table>
                                                     <tbody>
                                                         <tr [class.d-none]="discountApplyOn != 'on_order'">
-                                                            <td class="w-35">
+                                                            <td class="w-40">
                                                                <div class="form-check">
                                                                 <input type="checkbox" (change)="checkMinAmoutSaleOrder($event.target.checked)" class="form-check-input"formControlName="isApplyMinimumDiscount" id="isApplyMinimumDiscount">
                                                                 <label class="form-check-label" for="isApplyMinimumDiscount">Giá trị phiếu điều trị tối thiểu</label>
-                                                                    <span class="text-primary" placement="right" ngbTooltip="Tổng tiền của phiếu điều trị phải đạt giá trị tối thiểu mới được áp dụng khuyến mãi">
+                                                                    <span class="text-primary" placement="top" ngbTooltip="Tổng tiền của phiếu điều trị phải đạt giá trị tối thiểu mới được áp dụng khuyến mãi">
                                                                         <i class="fas fa-exclamation-circle"></i>
                                                                     </span>
                                                                </div>
                                                             </td>
-                                                            <td class="w-75" [class.d-none]="!isApplyMinimumDiscount">
+                                                            <td class="w-70" [class.d-none]="!isApplyMinimumDiscount">
                                                                 <kendo-numerictextbox [min]="0" [format]="'n0'"
                                                                         formControlName="ruleMinimumAmount">
                                                                 </kendo-numerictextbox>
@@ -262,7 +262,7 @@
                                                     <label class="custom-control-label o_form_label"
                                                         for="radio151_specific_product_categories">
                                                         Nhóm dịch vụ
-                                                        <span class="text-primary" placement="right" ngbTooltip="KM giảm trên đơn giá nhóm dịch vụ">
+                                                        <span class="text-primary" placement="top" ngbTooltip="KM giảm trên đơn giá nhóm dịch vụ">
                                                             <i class="fas fa-exclamation-circle"></i>
                                                         </span>
                                                     </label>
@@ -292,7 +292,7 @@
                                                     <label class="custom-control-label o_form_label"
                                                         for="radio151_specific_products">
                                                         Dịch vụ
-                                                        <span class="text-primary" placement="right" ngbTooltip="KM giảm trên đơn giá dịch vụ">
+                                                        <span class="text-primary" placement="top" ngbTooltip="KM giảm trên đơn giá dịch vụ">
                                                             <i class="fas fa-exclamation-circle"></i>
                                                         </span>
                                                     </label>
@@ -373,13 +373,13 @@
                                 <label class="custom-control-label" for="allPartner">Tất cả khách hàng</label>
                               </div>
                               <div class="custom-control custom-radio">
-                                <input type="radio" id="specific_partner"class="custom-control-input" value="specific_partners" formControlName="applyPartnerOn">
+                                <input type="radio" id="specific_partner"class="custom-control-input" (change)="onChangePartnerApplyOn($event)" value="specific_partners" formControlName="applyPartnerOn">
                                 <label class="custom-control-label" for="specific_partner">Khách hàng</label>
                               </div>
                               <div [class.d-none]="applyPartnerOn != 'specific_partners'">
                                 <kendo-multiselect class="cus-kendo-multiselect" [data]="listPartner" [filterable]="true" #partnerMultiSelect
                                 [textField]="'name'" [valueField]="'id'"
-                                formControlName="specificPartners">
+                                formControlName="discountSpecificPartners">
                                 </kendo-multiselect>
                                
                             </div>
