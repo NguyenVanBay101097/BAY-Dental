@@ -59,7 +59,8 @@
                 </div>
                 <div class="o_content">
                     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-                        (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+                        (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds"
+                        (cellClick)="cellClick($event.dataItem)">
                         <kendo-grid-checkbox-column *ngIf="state=='waiting'" showSelectAll="true" width="50">
                         </kendo-grid-checkbox-column>
                         <kendo-grid-column field="name" title="Tên tin nhắn">

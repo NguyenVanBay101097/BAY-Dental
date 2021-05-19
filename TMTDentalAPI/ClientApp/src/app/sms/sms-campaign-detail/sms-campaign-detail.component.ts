@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { SmsCampaignService } from '../sms-campaign.service';
+import { SmsMessageDetailDialogComponent } from '../sms-message-detail-dialog/sms-message-detail-dialog.component';
 import { SmsMessagePaged, SmsMessageService } from '../sms-message.service';
 
 @Component({
@@ -27,6 +29,8 @@ export class SmsCampaignDetailComponent implements OnInit {
   isEdit: boolean = false;
   state = "waiting"; // waiting: chờ gửi, success: đã gửi
   selectedIds: any = [];
+  dateFrom: Date;
+  dateTo: Date;
 
   get f() { return this.formGroup.controls; }
 
@@ -36,7 +40,8 @@ export class SmsCampaignDetailComponent implements OnInit {
     private smsCampaignService: SmsCampaignService,
     private fb: FormBuilder,
     private notificationService: NotificationService,
-    private intlService: IntlService
+    private intlService: IntlService, 
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -106,6 +111,8 @@ export class SmsCampaignDetailComponent implements OnInit {
         (res: any) => {
           if (res) {
             this.campaign = res;
+            console.log(res);
+
             if (res.state == "running") {
               this.formGroup.get('stateCheck').setValue(true);
             } else {
@@ -126,20 +133,24 @@ export class SmsCampaignDetailComponent implements OnInit {
   }
 
   changeState() {
-    this.selectedIds = [];
+    this.loadDataFromApi();
+  }
+
+  onSearchDateChange(data){
+    this.dateFrom = data.dateFrom;
+    this.dateTo = data.dateTo;
+    this.offset = 0;
     this.loadDataFromApi();
   }
 
   cancelSend() {
     if (this.selectedIds && this.selectedIds.length <= 0) {
       this.notify("Bạn chưa chọn tin nhắn nào để hủy gửi. Vui lòng chọn và thử lại", false);
-      return;
     }
     this.smsMessageService.actionCancelSendSMS(this.selectedIds).subscribe(
       () => {
         this.notify("Hủy thành công", true);
         this.loadDataFromApi();
-        this.getSmsCampaign();
       }
     )
   }
@@ -148,7 +159,13 @@ export class SmsCampaignDetailComponent implements OnInit {
     this.isEdit = true;
   }
 
-  
+  computeTotalMessage() {
+    var totalMessageCampaign = 0;
+    if (this.campaign) {
+      totalMessageCampaign = this.campaign.totalFailedMessages || 0 + this.campaign.totalSuccessfulMessages || 0 + this.campaign.totalWaitedMessages || 0;
+    }
+    return this.f.limitMessage.value - totalMessageCampaign;
+  }
 
   onSaveCampaign() {
     if (this.formGroup.invalid) return false;
@@ -183,5 +200,13 @@ export class SmsCampaignDetailComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: isSuccess ? 'success' : 'error', icon: true },
     });
+  }
+
+  cellClick(item) {
+    const modalRef = this.modalService.open(SmsMessageDetailDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Tin nhắn đã gửi';
+    modalRef.result.then((val) => {
+      this.loadDataFromApi();
+    })
   }
 }

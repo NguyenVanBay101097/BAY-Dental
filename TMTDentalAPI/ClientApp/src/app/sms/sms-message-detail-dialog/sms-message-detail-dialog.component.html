@@ -1,1 +1,54 @@
-<p>sms-message-detail-dialog works!</p>
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+
+<div class="modal-body o_act_window">
+    <div class="o_cp_controller">
+        <div class="o_control_panel">
+            <div class="o_cp_t_left">
+                <kendo-combobox (valueChange)="onChangeState($event)" placeholder="Tất cả trạng thái" class="kendo-combobox-sm ml-2" 
+                    [data]="filteredState" [textField]="'name'" [valueField]="'value'">
+                </kendo-combobox>
+                <button type="button" class="btn btn-danger btn-sm" (click)="cancelSend()">
+                    Gửi lại
+                </button>
+            </div>
+            <div class="o_cp_t_right">
+                <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo họ tên, số điện thoại"
+                    type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            </div>
+        </div>
+    </div>
+    <div class="o_content">
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+            <kendo-grid-checkbox-column showSelectAll="true" width="50">
+            </kendo-grid-checkbox-column>
+            <kendo-grid-column field="" title="Khách hàng">
+            </kendo-grid-column>
+            <kendo-grid-column field="brandName" title="Brandname">
+            </kendo-grid-column>
+            <kendo-grid-column field="countPartner" title="Tổng người nhận">
+            </kendo-grid-column>
+            <kendo-grid-column title="Thời gian tạo">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.dateCreated | date:'dd/MM/yyyy'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="Thời gian gửi">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.date | date:'dd/MM/yyyy'}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>
+
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>
