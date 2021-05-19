@@ -28,4 +28,8 @@ export class SmsMessageService {
     actionSendSms(id: string) {
         return this.http.get(this.base_api + this.apiUrl + '/ActionSendSms/' + id);
     }
+
+    actionCancelSendSMS(vals: string[]) {
+        return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', vals)
+    }
 }

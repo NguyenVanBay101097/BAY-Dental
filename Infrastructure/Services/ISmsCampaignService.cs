@@ -15,5 +15,7 @@ namespace Infrastructure.Services
         Task UpdateAsync(Guid id, SmsCampaignSave val);
         Task<SmsCampaign> GetDefaultCampaignBirthday();
         Task<SmsCampaign> GetDefaultCampaignAppointmentReminder();
+        Task<SmsCampaign> GetDefaultCampaign();
+        Task<SmsCampaignBasic> GetDisplay(Guid id);
     }
 }

@@ -36,5 +36,12 @@ namespace ApplicationCore.Entities
         /// running,draft,shutdown
         /// </summary>
         public string State { get; set; }
+
+        /// <summary>
+        /// default_birthday
+        /// default_appointment
+        /// default_default
+        /// </summary>
+        public string DefaultType { get; set; }
     }
 }

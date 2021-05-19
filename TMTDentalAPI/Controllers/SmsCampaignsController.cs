@@ -36,8 +36,8 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var res = await _smsCampaignService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            return Ok(_mapper.Map<SmsCampaignBasic>(res));
+            var res = await _smsCampaignService.GetDisplay(id);
+            return Ok(res);
         }
 
         [HttpGet("[action]")]

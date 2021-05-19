@@ -76,10 +76,17 @@ namespace Infrastructure.Services
                 entity.SmsCampaignId = campaign.Id;
             }
 
-            if (!entity.SmsCampaignId.HasValue && val.IsAppointmentReminder.HasValue && val.IsAppointmentReminder.Value)
+            else if (!entity.SmsCampaignId.HasValue && val.IsAppointmentReminder.HasValue && val.IsAppointmentReminder.Value)
             {
                 var smsCampaignObj = GetService<ISmsCampaignService>();
                 var campaign = await smsCampaignObj.GetDefaultCampaignAppointmentReminder();
+                entity.SmsCampaignId = campaign.Id;
+            }
+
+            else if (!entity.SmsCampaignId.HasValue)
+            {
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultCampaign();
                 entity.SmsCampaignId = campaign.Id;
             }
 
@@ -116,6 +123,19 @@ namespace Infrastructure.Services
             {
 
                 throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task ActionCancel(IEnumerable<Guid> messIds)
+        {
+            var messes = await SearchQuery(x => messIds.Contains(x.Id)).ToListAsync();
+            if (messes.Any())
+            {
+                foreach (var item in messes)
+                {
+                    item.State = "fails";
+                }
+                await UpdateAsync(messes);
             }
         }
     }

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { GridDataResult } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { SmsCampaignService } from '../sms-campaign.service';
@@ -32,7 +34,9 @@ export class SmsCampaignDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private smsMessageService: SmsMessageService,
     private smsCampaignService: SmsCampaignService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private notificationService: NotificationService,
+    private intlService: IntlService
   ) { }
 
   ngOnInit() {
@@ -100,12 +104,22 @@ export class SmsCampaignDetailComponent implements OnInit {
     this.smsCampaignService.get(this.campaignId)
       .subscribe(
         (res: any) => {
-          if (res.state == "running") {
-            this.formGroup.get('stateCheck').setValue(true);
-          } else {
-            this.formGroup.get('stateCheck').setValue(false);
+          if (res) {
+            this.campaign = res;
+            console.log(res);
+
+            if (res.state == "running") {
+              this.formGroup.get('stateCheck').setValue(true);
+            } else {
+              this.formGroup.get('stateCheck').setValue(false);
+            }
+
+            if (res.typeDate == 'period') {
+              res.startDateObj = new Date(res.dateStart);
+              res.endDateObj = new Date(res.dateEnd);
+            }
+            this.formGroup.patchValue(res);
           }
-          this.formGroup.patchValue(res);
         },
         (err) => {
           console.log(err);
@@ -118,10 +132,61 @@ export class SmsCampaignDetailComponent implements OnInit {
   }
 
   cancelSend() {
+    if (this.selectedIds && this.selectedIds.length <= 0) {
+      this.notify("Bạn chưa chọn tin nhắn nào để hủy gửi. Vui lòng chọn và thử lại", false);
+    }
+    this.smsMessageService.actionCancelSendSMS(this.selectedIds).subscribe(
+      () => {
+        this.notify("Hủy thành công", true);
+        this.loadDataFromApi();
+      }
+    )
+  }
 
+  onEditCampaign() {
+    this.isEdit = true;
+  }
+
+  computeTotalMessage() {
+    var totalMessageCampaign = 0;
+    if (this.campaign) {
+      totalMessageCampaign = this.campaign.totalFailedMessages || 0 + this.campaign.totalSuccessfulMessages || 0 + this.campaign.totalWaitedMessages || 0;
+    }
+    return this.f.limitMessage.value - totalMessageCampaign;
+  }
+
+  onSaveCampaign() {
+    if (this.formGroup.invalid) return false;
+    var val = this.formGroup.value;
+    if (val.typeDate == 'period') {
+      val.dateEnd = this.intlService.formatDate(val.endDateObj, "yyyy-MM-ddT23:59");
+      val.dateStart = this.intlService.formatDate(val.startDateObj, "yyyy-MM-dd")
+    } else {
+      val.state = this.formGroup.get('stateCheck') && this.formGroup.get('stateCheck').value ? 'running' : 'shutdown';
+    }
+    this.smsCampaignService.update(this.campaignId, val).subscribe(
+      result => {
+        this.notify("Cập nhật chiến dịch thành công");
+        this.isEdit = false;
+      }
+    )
   }
 
   getValueFormControl(key) {
     return this.formGroup.get(key).value;
+  }
+
+  onClose() {
+    this.isEdit = false;
+  }
+
+  notify(title, isSuccess = true) {
+    this.notificationService.show({
+      content: title,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: isSuccess ? 'success' : 'error', icon: true },
+    });
   }
 }

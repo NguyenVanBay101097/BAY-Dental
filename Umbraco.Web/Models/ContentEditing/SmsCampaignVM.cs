@@ -17,6 +17,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateStart { get; set; }
         public string TypeDate { get; set; }
         public string State { get; set; }
+        public string DefaultType { get; set; }
     }
 
     public class SmsCampaignPaged

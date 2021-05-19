@@ -92,7 +92,10 @@ namespace Infrastructure.Services
                 campaign = new SmsCampaign
                 {
                     Name = "Chúc mừng sinh nhật",
-                    CompanyId = CompanyId
+                    CompanyId = CompanyId,
+                    TypeDate = "unlimited",
+                    State = "running",
+                    DefaultType = "sms_campaign_birthday"
                 };
 
                 await CreateAsync(campaign);
@@ -118,7 +121,10 @@ namespace Infrastructure.Services
                 campaign = new SmsCampaign
                 {
                     Name = "Nhắc lịch hẹn",
-                    CompanyId = CompanyId
+                    CompanyId = CompanyId,
+                    TypeDate = "unlimited",
+                    DefaultType = "sms_campaign_appointment_reminder",
+                    State = "running"
                 };
 
                 await CreateAsync(campaign);
@@ -126,6 +132,35 @@ namespace Infrastructure.Services
                 await modelDataObj.CreateAsync(new IRModelData
                 {
                     Name = "sms_campaign_appointment_reminder",
+                    Module = "base",
+                    Model = "res.sms.campaign",
+                    ResId = campaign.Id.ToString()
+                });
+            }
+
+            return campaign;
+        }
+
+        public async Task<SmsCampaign> GetDefaultCampaign()
+        {
+            var modelDataObj = GetService<IIRModelDataService>();
+            var campaign = await modelDataObj.GetRef<SmsCampaign>("base.sms_campaign_default");
+            if (campaign == null)
+            {
+                campaign = new SmsCampaign
+                {
+                    Name = "Chiến dịch mặc định",
+                    CompanyId = CompanyId,
+                    TypeDate = "unlimited",
+                    State = "running",
+                    DefaultType = "sms_campaign_default"
+                };
+
+                await CreateAsync(campaign);
+
+                await modelDataObj.CreateAsync(new IRModelData
+                {
+                    Name = "sms_campaign_default",
                     Module = "base",
                     Model = "res.sms.campaign",
                     ResId = campaign.Id.ToString()
@@ -190,5 +225,30 @@ namespace Infrastructure.Services
             await UpdateAsync(entity);
         }
 
+        public async Task<SmsCampaignBasic> GetDisplay(Guid id)
+        {
+            var smsMessageObj = GetService<ISmsMessageService>();
+            var smsMessageDetailObj = GetService<ISmsMessageDetailService>();
+            var TotalWait = await smsMessageObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "waiting").SelectMany(x => x.Partners).CountAsync();
+            var TotalSuccess = await smsMessageDetailObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "success").CountAsync();
+            var TotalFails = await smsMessageDetailObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "fails").CountAsync();
+
+            var campaign = await SearchQuery(x => x.Id == id).Select(x => new SmsCampaignBasic
+            {
+                Id = x.Id,
+                DateEnd = x.DateEnd,
+                DateStart = x.DateStart,
+                DefaultType = x.DefaultType,
+                LimitMessage = x.LimitMessage,
+                Name = x.Name,
+                State = x.State,
+                TotalMessage = TotalFails + TotalSuccess + TotalWait,
+                TotalSuccessfulMessages = TotalSuccess,
+                TotalFailedMessages = TotalFails,
+                TotalWaitedMessages = TotalWait,
+                TypeDate = x.TypeDate
+            }).FirstOrDefaultAsync();
+            return campaign;
+        }
     }
 }
