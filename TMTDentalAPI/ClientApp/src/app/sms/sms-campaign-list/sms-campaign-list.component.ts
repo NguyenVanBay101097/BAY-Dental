@@ -52,7 +52,6 @@ export class SmsCampaignListComponent implements OnInit {
     val.offset = this.offset;
     val.search = this.search || "";
     val.state = this.state || '';
-    val.paged = true;
     this.smsCampaignService.getPaged(val).pipe(
       map(
         (response: any) =>

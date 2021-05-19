@@ -8,6 +8,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
 import { SmsCampaignService, SmsCampaignPaged } from '../sms-campaign.service';
+import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsMessageService } from '../sms-message.service';
 import { SmsPartnerListDialogComponent } from '../sms-partner-list-dialog/sms-partner-list-dialog.component';
@@ -130,7 +131,7 @@ export class SmsMessageDialogComponent implements OnInit {
     val.limit = 20;
     val.offset = 0;
     val.search = search || '';
-    val.paged = true;
+    val.combobox = true;
     return this.smsCampaignService.getPaged(val);
   }
 
@@ -201,8 +202,7 @@ export class SmsMessageDialogComponent implements OnInit {
     })
   }
 
-  onConfirm() {
-    if (this.formGroup.invalid) return;
+  GetValueFormGroup() {
     var val = this.formGroup.value;
     val.smsCampaignId = val.smsCampaign ? val.smsCampaign.id : null;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
@@ -212,22 +212,36 @@ export class SmsMessageDialogComponent implements OnInit {
     if (val.typeSend == "automatic") {
       val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm");
     }
+    return val;
+  }
 
-    this.smsMessageService.create(val).subscribe(
-      (res: any) => {
-        if (res && res.typeSend == "manual") {
-          this.smsMessageService.actionSendSms(res.id).subscribe(
-            () => {
-              this.notify("Gửi tin nhắn thành công", true);
-              this.activeModal.close();
-            }
-          )
-        } else {
-          this.notify("Thêm mới tin nhắn thành công", true);
-          this.activeModal.close();
+  onConfirm() {
+    if (this.formGroup.invalid) return;
+    var val = this.GetValueFormGroup();
+    const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.campaign = val.smsCampaign;
+    modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
+    modalRef.componentInstance.brandName = val.smsAccount.brandName;
+    modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.dateObj, "HH:mm, dd/MM/yyyy");;
+    modalRef.componentInstance.body = this.template ? this.template.text : '';
+    modalRef.componentInstance.numberSms = this.partnerIds ? this.partnerIds.length : 0;
+    modalRef.result.then(() => {
+      this.smsMessageService.create(val).subscribe(
+        (res: any) => {
+          if (res && res.typeSend == "manual") {
+            this.smsMessageService.actionSendSms(res.id).subscribe(
+              () => {
+                this.notify("Gửi tin nhắn thành công", true);
+                this.activeModal.close();
+              }
+            )
+          } else {
+            this.notify("Thêm mới tin nhắn thành công", true);
+            this.activeModal.close();
+          }
         }
-      }
-    )
+      )
+    })
   }
 
   changeTypeSend(event) {

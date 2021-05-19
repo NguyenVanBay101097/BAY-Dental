@@ -28,8 +28,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State == val.State);
-            if (val.Paged.HasValue && val.Paged.Value)
-                query = query.Where(x => !string.IsNullOrEmpty(x.State));
+            if (val.Combobox.HasValue && val.Combobox.Value)
+                query = query.Where(x => string.IsNullOrEmpty(x.DefaultType) || x.DefaultType.Equals("sms_campaign_default"));
 
             return query;
         }
