@@ -36,10 +36,6 @@ namespace ApplicationCore.Entities
 
         public int? MaximumUseNumber { get; set; }
 
-        /// <summary>
-        /// Số tiền mua tối thiểu
-        /// </summary>
-        public decimal? RuleMinimumAmount { get; set; }
 
         public int? RuleMinQuantity { get; set; }
 
@@ -107,6 +103,21 @@ namespace ApplicationCore.Entities
         /// on_next_order: Áp dụng cho đơn hàng tiếp thep
         /// </summary>
         public string PromoApplicability { get; set; }
+
+        /// <summary>
+        /// áp dụng mức giảm tối thiểu
+        /// </summary>
+        public bool IsApplyMinimumDiscount { get; set; }
+
+        /// <summary>
+        /// Số tiền mua tối thiểu
+        /// </summary>
+        public decimal? RuleMinimumAmount { get; set; }
+
+        /// <summary>
+        /// áp dụng mức giảm tối đa
+        /// </summary>
+        public bool IsApplyMaxDiscount { get; set; }
 
         /// <summary>
         /// Mức giảm tối đa
