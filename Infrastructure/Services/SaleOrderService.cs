@@ -293,13 +293,7 @@ namespace Infrastructure.Services
             var removeDkSteps = await dkStepObj.SearchQuery(x => saleLineIds.Contains(x.SaleLineId.Value)).ToListAsync();
             if (removeDkSteps.Any(x => x.IsDone))
                 throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
-            await dkStepObj.DeleteAsync(removeDkSteps);
-
-            //xóa các thanh toán ở trạng thái hủy
-            var salePaymentObj = GetService<ISaleOrderPaymentService>();
-            var paymentIds = self.SelectMany(x => x.SaleOrderPayments.Where(s => s.State == "cancel")).Select(x => x.Id).ToList();
-            if (paymentIds.Any())
-                await salePaymentObj.Unlink(paymentIds);
+            await dkStepObj.DeleteAsync(removeDkSteps);         
 
             foreach (var sale in self)
             {
