@@ -722,7 +722,8 @@ namespace Infrastructure.Services
             var orderPromotionObj = GetService<ISaleOrderPromotionService>();
             var orderObj = GetService<ISaleOrderService>();
 
-            var orderLine = await SearchQuery(x => x.Id == val.Id).Include(x => x.Order)
+            var orderLine = await SearchQuery(x => x.Id == val.Id)
+                .Include(x => x.Order).ThenInclude(x => x.OrderLines)
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
                 .Include(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.PromotionLines)
