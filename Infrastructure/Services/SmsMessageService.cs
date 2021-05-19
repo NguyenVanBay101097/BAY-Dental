@@ -131,11 +131,7 @@ namespace Infrastructure.Services
             var messes = await SearchQuery(x => messIds.Contains(x.Id)).ToListAsync();
             if (messes.Any())
             {
-                foreach (var item in messes)
-                {
-                    item.State = "fails";
-                }
-                await UpdateAsync(messes);
+                await DeleteAsync(messes);
             }
         }
     }

@@ -106,8 +106,6 @@ export class SmsCampaignDetailComponent implements OnInit {
         (res: any) => {
           if (res) {
             this.campaign = res;
-            console.log(res);
-
             if (res.state == "running") {
               this.formGroup.get('stateCheck').setValue(true);
             } else {
@@ -128,17 +126,20 @@ export class SmsCampaignDetailComponent implements OnInit {
   }
 
   changeState() {
+    this.selectedIds = [];
     this.loadDataFromApi();
   }
 
   cancelSend() {
     if (this.selectedIds && this.selectedIds.length <= 0) {
       this.notify("Bạn chưa chọn tin nhắn nào để hủy gửi. Vui lòng chọn và thử lại", false);
+      return;
     }
     this.smsMessageService.actionCancelSendSMS(this.selectedIds).subscribe(
       () => {
         this.notify("Hủy thành công", true);
         this.loadDataFromApi();
+        this.getSmsCampaign();
       }
     )
   }
@@ -147,13 +148,7 @@ export class SmsCampaignDetailComponent implements OnInit {
     this.isEdit = true;
   }
 
-  computeTotalMessage() {
-    var totalMessageCampaign = 0;
-    if (this.campaign) {
-      totalMessageCampaign = this.campaign.totalFailedMessages || 0 + this.campaign.totalSuccessfulMessages || 0 + this.campaign.totalWaitedMessages || 0;
-    }
-    return this.f.limitMessage.value - totalMessageCampaign;
-  }
+  
 
   onSaveCampaign() {
     if (this.formGroup.invalid) return false;

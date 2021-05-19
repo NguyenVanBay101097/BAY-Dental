@@ -50,7 +50,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("[action]")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             await _unitOfWorkAsync.BeginTransactionAsync();
