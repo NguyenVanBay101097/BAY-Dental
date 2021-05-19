@@ -12,7 +12,7 @@
                 <kendo-combobox (valueChange)="onChangeState($event)" placeholder="Tất cả trạng thái" class="kendo-combobox-sm ml-2" 
                     [data]="filteredState" [textField]="'name'" [valueField]="'value'">
                 </kendo-combobox>
-                <button type="button" class="btn btn-danger btn-sm" (click)="cancelSend()">
+                <button type="button" class="btn btn-primary btn-sm mx-2" (click)="onSend()">
                     Gửi lại
                 </button>
             </div>
@@ -23,30 +23,37 @@
         </div>
     </div>
     <div class="o_content">
-        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading"
             (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
             <kendo-grid-checkbox-column showSelectAll="true" width="50">
             </kendo-grid-checkbox-column>
-            <kendo-grid-column field="" title="Khách hàng">
+            <kendo-grid-column field="partnerName" title="Khách hàng">
             </kendo-grid-column>
-            <kendo-grid-column field="brandName" title="Brandname">
-            </kendo-grid-column>
-            <kendo-grid-column field="countPartner" title="Tổng người nhận">
-            </kendo-grid-column>
-            <kendo-grid-column title="Thời gian tạo">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.dateCreated | date:'dd/MM/yyyy'}}
-                </ng-template>
+            <kendo-grid-column field="number" title="Số điện thoại">
             </kendo-grid-column>
             <kendo-grid-column title="Thời gian gửi">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.date | date:'dd/MM/yyyy'}}
+                    {{dataItem.dateCreated | date:'HH:mm, dd/MM/yyyy'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="brandName" title="Brandname">
+            </kendo-grid-column>
+            <kendo-grid-column field="body" title="Nội dung">
+            </kendo-grid-column>
+            <kendo-grid-column title="Nguyên nhân lỗi">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{stranslateCodeResponse(dataItem.errorCode)}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="Trạng thái">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    <span *ngIf="dataItem.state=='success'" class="text-success" >Thành công</span>
+                    <span *ngIf="dataItem.state=='fails'" class="text-danger">Thất bại</span>
                 </ng-template>
             </kendo-grid-column>
         </kendo-grid>
     </div>
 </div>
-
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"

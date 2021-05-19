@@ -9,6 +9,7 @@ export class SmsMessageDetailPaged {
     dateFrom: string;
     dateTo: string;
     state: string;
+    smsMessageId: string;
 }
 
 @Injectable({

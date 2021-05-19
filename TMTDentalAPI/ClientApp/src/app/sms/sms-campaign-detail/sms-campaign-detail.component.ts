@@ -204,6 +204,7 @@ export class SmsCampaignDetailComponent implements OnInit {
 
   cellClick(item) {
     const modalRef = this.modalService.open(SmsMessageDetailDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.title = 'Tin nhắn đã gửi';
     modalRef.result.then((val) => {
       this.loadDataFromApi();

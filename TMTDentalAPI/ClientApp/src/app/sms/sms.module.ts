@@ -50,7 +50,8 @@ import { SmsMessageDetailDialogComponent } from './sms-message-detail-dialog/sms
     SmsCampaignCrUpComponent, 
     SmsComfirmDialogComponent, 
     SmsPartnerListDialogComponent, 
-    SmsCampaignDetailComponent, SmsMessageDetailDialogComponent
+    SmsCampaignDetailComponent, 
+    SmsMessageDetailDialogComponent
   ],
   imports: [
     CommonModule,
@@ -69,7 +70,8 @@ import { SmsMessageDetailDialogComponent } from './sms-message-detail-dialog/sms
     SmsAccountSettingDialogComponent, 
     SmsCampaignCrUpComponent, 
     SmsComfirmDialogComponent, 
-    SmsPartnerListDialogComponent
+    SmsPartnerListDialogComponent, 
+    SmsMessageDetailDialogComponent
   ]
 })
 export class SmsModule { }
