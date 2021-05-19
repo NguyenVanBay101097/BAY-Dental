@@ -22,9 +22,7 @@ export class CommissionProductRuleDialogComponent implements OnInit {
 
   ngOnInit() {
     this.myform = this.fb.group({
-      percentAdvisory: [0, Validators.required],
-      percentDoctor: [0, Validators.required],
-      percentAssistant: [0, Validators.required]
+      percent: [0, Validators.required]
     });
   }
 

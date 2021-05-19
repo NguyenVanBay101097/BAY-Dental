@@ -13,6 +13,7 @@ export class CommissionPaged {
   offset: number;
   limit: number;
   search: string;
+  type: string;
 }
 
 export class CommissionPaging {

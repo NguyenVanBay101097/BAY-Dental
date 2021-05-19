@@ -7,7 +7,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class CommissionSave
     {
         public string Name { get; set; }
-
+        public string Type { get; set; }
         
     }
 }

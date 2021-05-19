@@ -14,8 +14,12 @@ export class CommissionDialogComponent implements OnInit {
   title: string;
   submitted = false;
 
-  get f() { return this.myform.controls; }
-  
+  filterTypes : any[] = [
+    { name : 'Bác sĩ' , value : 'doctor'},
+    { name : 'Phụ tá' , value : 'assistant'},
+    { name : 'Tư vấn' , value : 'counselor'}
+  ]
+
   constructor(
     private fb: FormBuilder,
     private commissionService: CommissionService,
@@ -24,7 +28,8 @@ export class CommissionDialogComponent implements OnInit {
 
   ngOnInit() {
     this.myform = this.fb.group({
-      name: ["", Validators.required]
+      name: ["", Validators.required],
+      type: null,
     });
 
     if (this.id) {
@@ -35,6 +40,8 @@ export class CommissionDialogComponent implements OnInit {
       });
     }
   }
+
+  get f() { return this.myform.controls; }
 
   onSave() {
     this.submitted = true;
@@ -58,6 +65,7 @@ export class CommissionDialogComponent implements OnInit {
 
   saveOrUpdate() {
     var val = this.myform.value;
+    debugger
     if (!this.id) {
       return this.commissionService.create(val);
     } else {

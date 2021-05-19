@@ -166,12 +166,10 @@ namespace Infrastructure.Services
                 {
                     var settlement = new CommissionSettlement
                     {
-                        SaleOrderLineId = agent.SaleOrderLineId,
-                        PaymentId = self.Id,
+                     
                         EmployeeId = agent.EmployeeId,
                         BaseAmount = (rel.AmountPrepaid ?? 0),
-                        Percentage = agent.Percentage,
-                        Amount = Math.Round((rel.AmountPrepaid ?? 0) * (agent.Percentage ?? 0) / 100)
+                    
                     };
 
                     settlements.Add(settlement);

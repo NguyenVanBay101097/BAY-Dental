@@ -6,9 +6,6 @@ namespace ApplicationCore.Entities
 {
     public class CommissionSettlement : BaseEntity
     {
-        //tam thoi co the chua can
-        public Guid? PartnerId { get; set; }
-        public Partner Partner { get; set; }
 
         public Guid? EmployeeId { get; set; }
         public Employee Employee { get; set; }
@@ -29,27 +26,12 @@ namespace ApplicationCore.Entities
         public decimal? Percentage { get; set; }
 
         /// <summary>
-        /// tiền hoa hồng bác sĩ
+        /// tiền hoa hồng 
         /// </summary>
         public decimal? Amount { get; set; }
 
         public Guid? MoveLineId { get; set; }
         public AccountMoveLine MoveLine { get; set; }
-
-        //Không cần
-        public Guid? SaleOrderLineId { get; set; }
-        public SaleOrderLine SaleOrderLine { get; set; }
-
-        //Không cần
-        public Guid? PaymentId { get; set; }
-        public AccountPayment Payment { get; set; }
-
-        /// <summary>
-        /// advisory : hoa hồng tư vấn
-        /// doctor : hoa hồng bác sĩ
-        /// assistant : hoa hồng phụ tá
-        /// </summary>
-        public string Type { get; set; }
 
         /// <summary>
         /// Bảng hoa hồng
@@ -65,7 +47,5 @@ namespace ApplicationCore.Entities
         public Guid? ProductId { get; set; }
         public Product Product { get; set; }
 
-        public Guid? SaleOrderId { get; set; }
-        public SaleOrder SaleOrder { get; set; }
     }
 }

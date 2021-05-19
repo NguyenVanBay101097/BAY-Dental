@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210514111405_thuong_ChangeCommissionSettlement")]
+    partial class thuong_ChangeCommissionSettlement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7122,9 +7124,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Days")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("DiscountApplyOn")
                         .HasColumnType("nvarchar(max)");
 
@@ -7143,9 +7142,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("DiscountType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsPaused")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -7155,9 +7151,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("NotIncremental")
-                        .HasColumnType("bit");
 
                     b.Property<string>("ProgramType")
                         .HasColumnType("nvarchar(max)");
@@ -7217,21 +7210,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("SaleCouponPrograms");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramProductCategoryRel", b =>
-                {
-                    b.Property<Guid>("ProgramId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ProgramId", "ProductCategoryId");
-
-                    b.HasIndex("ProductCategoryId");
-
-                    b.ToTable("SaleCouponProgramProductCategoryRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramProductRel", b =>
@@ -13566,21 +13544,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramProductCategoryRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ProductCategory", "ProductCategory")
-                        .WithMany()
-                        .HasForeignKey("ProductCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "Program")
-                        .WithMany("DiscountSpecificProductCategories")
-                        .HasForeignKey("ProgramId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramProductRel", b =>

@@ -53,37 +53,43 @@ namespace Infrastructure.Services
                 return null;
 
             var partnerCommissionObj = GetService<ISaleOrderLinePartnerCommissionService>();
-            var partnerCommission = await partnerCommissionObj.SearchQuery(x => x.SaleOrderLineId == linePaymentRel.SaleOrderLineId && x.CommissionId == employee.CommissionId && x.PartnerId == user.PartnerId).FirstOrDefaultAsync();
+            var partnerCommission = await partnerCommissionObj.SearchQuery(x => x.SaleOrderLineId == linePaymentRel.SaleOrderLineId && x.CommissionId == employee.CommissionId).FirstOrDefaultAsync();
             if (partnerCommission == null)
                 return null;
 
             var res = new CommissionSettlement
             {
-                Partner = user.Partner,
-                PartnerId = user.PartnerId,
+
                 Employee = employee,
                 EmployeeId = employee.Id,
-                SaleOrderLine = linePaymentRel.SaleOrderLine,
-                SaleOrderLineId = linePaymentRel.SaleOrderLineId,
-                Payment = linePaymentRel.Payment,
-                PaymentId = linePaymentRel.PaymentId,
                 BaseAmount = linePaymentRel.AmountPrepaid,
-                Percentage = partnerCommission.Percentage
             };
 
             return res;
 
         }
 
-        public IEnumerable<CommissionSettlement> ComputeAmount(IEnumerable<CommissionSettlement> val, decimal amountPayment)
+        public override async Task UpdateAsync(IEnumerable<CommissionSettlement> entities)
         {
-            foreach (var item in val)
-            {
-                var amount = item.BaseAmount * amountPayment / item.TotalAmount;
-                item.Amount = Math.Abs((decimal)((amount * item.Percentage.Value) / 100));
-            }
-            return val;
+            await ComputeAmount(entities);
+            await base.UpdateAsync(entities);
+        }
 
+        public async Task ComputeAmount(IEnumerable<CommissionSettlement> val)
+        {
+            var commisstionProductRuleObj = GetService<ICommissionProductRuleService>();
+            foreach (var settlement in val)
+            {
+                var percent = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == settlement.CommissionId && x.ProductId == settlement.ProductId).Select(x => x.Percent).FirstOrDefaultAsync();
+                if (percent <= 0)
+                    continue;
+
+                var total = settlement.MoveLine.PriceSubtotal;              
+                settlement.TotalAmount = total;
+                settlement.BaseAmount = total;
+                settlement.Percentage = percent ?? 0;
+                settlement.Amount = ((total * (percent ?? 0)) / 100);
+            }         
         }
 
 
@@ -125,114 +131,6 @@ namespace Infrastructure.Services
             await DeleteAsync(res);
         }
 
-        public async Task<IEnumerable<CommissionSettlement>> _PrepareCommission(AccountMove res)
-        {
-            var commissionSettlements = new List<CommissionSettlement>();
-            foreach (var moveline in res.InvoiceLines)
-            {
-                var settlements = await _PrepareCommissionByMoveLine(moveline);
-                commissionSettlements.AddRange(settlements);
-            }
-
-            return commissionSettlements;
-        }
-
-        public async Task<IEnumerable<CommissionSettlement>> _PrepareCommissionByMoveLine(AccountMoveLine moveLine)
-        {
-            var commissionSettlements = new List<CommissionSettlement>();
-            var employeeObj = GetService<IEmployeeService>();
-            var orderLineObj = GetService<ISaleOrderLineService>();
-            var commisstionProductRuleObj = GetService<ICommissionProductRuleService>();
-            var lines = await orderLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s => s.InvoiceLineId == moveLine.Id)).Include(x => x.Product).Distinct().ToListAsync();
-            foreach (var line in lines)
-            {
-                var standard_price = GetStandardPrice(line.ProductId.Value, line.CompanyId);
-                if (line.EmployeeId.HasValue)
-                {
-                    var employee = await employeeObj.SearchQuery(x => x.Id == line.EmployeeId)
-                        .Include(x => x.Commission).FirstOrDefaultAsync();
-                    if (employee == null || employee.Commission == null)
-                        continue;
-
-                    var commisstionProductRule_dict = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == employee.CommissionId.Value).ToDictionaryAsync(x => x.ProductId, x => x);
-
-                    commissionSettlements.Add(new CommissionSettlement
-                    {
-                        Date = moveLine.Date,
-                        Employee = employee,
-                        EmployeeId = employee.Id,
-                        TotalAmount = line.AmountResidual,
-                        BaseAmount = (line.Product.ListPrice - standard_price),
-                        Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentDoctor,
-                        MoveLineId = moveLine.Id,
-                        Type = "doctor",
-                        ProductId = line.ProductId,
-                        SaleOrderId = line.OrderId,
-                        CommissionId = employee.CommissionId
-                    });
-                }
-
-                if (line.AssistantId.HasValue)
-                {
-                    var employee = await employeeObj.SearchQuery(x => x.Id == line.AssistantId)
-                        .Include(x => x.Commission).FirstOrDefaultAsync();
-                    if (employee == null || employee.Commission == null)
-                        continue;
-
-                    var commisstionProductRule_dict = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == employee.CommissionId.Value).ToDictionaryAsync(x => x.ProductId, x => x);
-
-                    commissionSettlements.Add(new CommissionSettlement
-                    {
-                        Date = moveLine.Date,
-                        Employee = employee,
-                        EmployeeId = employee.Id,
-                        TotalAmount = line.AmountResidual,
-                        BaseAmount = (line.Product.ListPrice - standard_price),
-                        Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentAssistant,
-                        MoveLineId = moveLine.Id,
-                        Type = "assistant",
-                        ProductId = line.ProductId,
-                        SaleOrderId = line.OrderId,
-                        CommissionId = employee.CommissionId
-                    });
-                }
-
-                if (line.CounselorId.HasValue)
-                {
-                    if (!line.CounselorId.HasValue)
-                        return null;
-
-                    var employee = await employeeObj.SearchQuery(x => x.Id == line.CounselorId.Value)
-                        .Include(x => x.Commission).FirstOrDefaultAsync();
-                    if (employee == null || employee.Commission == null)
-                        continue;
-
-                    var commisstionProductRule_dict = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == employee.CommissionId.Value).ToDictionaryAsync(x => x.ProductId, x => x);
-
-                    commissionSettlements.Add(new CommissionSettlement
-                    {
-                        Date = moveLine.Date,
-                        Employee = employee,
-                        EmployeeId = employee.Id,
-                        TotalAmount = line.AmountResidual,
-                        BaseAmount = (line.Product.ListPrice - standard_price),
-                        Percentage = commisstionProductRule_dict[moveLine.ProductId].PercentAdvisory,
-                        MoveLineId = moveLine.Id,
-                        Type = "advisory",
-                        ProductId = line.ProductId,
-                        SaleOrderId = line.OrderId,
-                        CommissionId = employee.CommissionId
-                    });
-                }
-
-
-            }
-
-            ComputeAmount(commissionSettlements, moveLine.PriceSubtotal.Value);
-
-
-            return commissionSettlements;
-        }
 
         public override ISpecification<CommissionSettlement> RuleDomainGet(IRRule rule)
         {
@@ -262,9 +160,7 @@ namespace Infrastructure.Services
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
                 query = query.Where(x => x.Date <= val.DateTo);
             }
-
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.SaleOrderLine.CompanyId == val.CompanyId);
+       
 
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
@@ -306,8 +202,6 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= val.DateTo);
             }
 
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.SaleOrderLine.CompanyId == val.CompanyId);
 
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
