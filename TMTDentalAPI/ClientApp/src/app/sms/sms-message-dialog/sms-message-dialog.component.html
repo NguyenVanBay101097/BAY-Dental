@@ -107,7 +107,7 @@
                             <tr>
                                 <td colspan="2" class="o_td_label pl-5">
                                     <table class="w-100">
-                                        <tr>
+                                        <tr *ngIf="!noLimit">
                                             <td class="o_td_label pb-3">
                                                 <label class="o_form_label">Hạn mức gửi tin còn lại</label>
                                             </td>
@@ -127,7 +127,7 @@
                                                         Chọn khách hàng
                                                     </button>
                                                 </div>
-                                                <span class="text-danger" *ngIf="errorSendLimit">
+                                                <span class="text-danger" *ngIf="errorSendLimit && !noLimit">
                                                     Vượt hạn mức gửi tin cho phép
                                                 </span>
                                             </td>

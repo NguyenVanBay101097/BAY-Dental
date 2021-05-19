@@ -5,14 +5,16 @@
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên" [(ngModel)]="search"
+                    (ngModelChange)="this.searchUpdate.next($event)" />
             </div>
 
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm mr-1" accesskey="c" (click)="createCampaign()">Thêm</button>
+                    <button type="button" class="btn btn-primary btn-sm mr-1" accesskey="c"
+                        (click)="createCampaign()">Thêm</button>
                     <button type="button" class="btn btn-primary btn-sm" accesskey="a" (click)="createMessage()">Tạo tin
                         nhắn</button>
                 </div>
@@ -22,7 +24,9 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <kendo-combobox (selectionChange)="onStatusChange($event)" placeholder="Trạng thái" class="kendo-combobox-sm" style="width: auto;" [data]="filterStatus" [textField]="'name'" [valueField]="'value'">
+            <kendo-combobox (selectionChange)="onStatusChange($event)" placeholder="Trạng thái"
+                class="kendo-combobox-sm" style="width: auto;" [data]="filterStatus" [textField]="'name'"
+                [valueField]="'value'">
             </kendo-combobox>
         </div>
     </div>
@@ -45,6 +49,10 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="limitMessage" title="Hạn mức tin nhắn">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <span *ngIf="dataItem.limitMessage==0">Không giới hạn</span>
+                <span *ngIf="dataItem.limitMessage!=0">{{dataItem.limitMessage}}</span>
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="totalMessage" title="Tổng tin nhắn">
         </kendo-grid-column>
