@@ -782,9 +782,11 @@ namespace Infrastructure.Services
               .Include(x => x.PromotionLines)
               .Include(x => x.SaleOrderLineInvoice2Rels)
               .FirstOrDefaultAsync();
+
             var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId)
                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
                 .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
+                .Include(x => x.DiscountSpecificPartners)
                 .FirstOrDefaultAsync();
 
             if (program != null)
@@ -823,6 +825,7 @@ namespace Infrastructure.Services
             var program = await programObj.SearchQuery(x => x.PromoCode == val.CouponCode)
                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
                 .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
+                .Include(x => x.DiscountSpecificPartners)
                 .FirstOrDefaultAsync();
             if (program != null)
             {
@@ -869,7 +872,7 @@ namespace Infrastructure.Services
                 (1 - (program.DiscountPercentage ?? 0) / 100);
             var discount_amount = (line.PriceUnit - price_reduce) * line.ProductUOMQty;
 
-            if (program.DiscountMaxAmount.HasValue && program.DiscountMaxAmount.Value > 0)
+            if (program.IsApplyMaxDiscount && program.DiscountMaxAmount.HasValue && program.DiscountMaxAmount.Value > 0)
             {
                 if (discount_amount >= program.DiscountMaxAmount)
                     discount_amount = program.DiscountMaxAmount.Value;
@@ -952,6 +955,7 @@ namespace Infrastructure.Services
 
                 return promotionLine;
             }
+          
 
             return new SaleOrderPromotion();
         }

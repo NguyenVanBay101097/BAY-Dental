@@ -242,6 +242,16 @@ namespace Infrastructure.Services
                 }
             }
 
+            if (listRemove.Any())
+            {
+                var promotionObj = GetService<IQuotationPromotionService>();
+                var lineIds = listRemove.Select(x => x.Id).ToList();
+                ///remove promotions in saleorderline
+                var promotion_ids = await promotionObj.SearchQuery(x => x.QuotationId.HasValue && lineIds.Contains(x.QuotationLineId.Value)).Select(x => x.Id).ToListAsync();
+                if (promotion_ids.Any())
+                    await promotionObj.RemovePromotion(promotion_ids);
+            }
+
             foreach (var line in val.Lines)
             {
                 if (line.Id == Guid.Empty)
@@ -295,6 +305,8 @@ namespace Infrastructure.Services
                     listUpdate.Add(quoLine);
                 }
             }
+
+
 
             await quotationLineObj.CreateAsync(listAdd);
             await quotationLineObj.UpdateAsync(listUpdate);
@@ -584,7 +596,12 @@ namespace Infrastructure.Services
             var ruleObj = GetService<IPromotionRuleService>();
             var coupons = new List<SaleCoupon>();
 
-            var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId).FirstOrDefaultAsync();
+            var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId)
+                .Include(x => x.DiscountSpecificProducts)
+                .Include(x => x.DiscountSpecificProductCategories)
+                .Include(x => x.DiscountSpecificPartners)
+                .FirstOrDefaultAsync();
+
             if (program != null)
             {
                 var error_status = await programObj._CheckQuotationPromotion(program, quotation);
@@ -614,7 +631,12 @@ namespace Infrastructure.Services
              .FirstOrDefaultAsync();
 
             //Chương trình khuyến mãi sử dụng mã
-            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).FirstOrDefaultAsync();
+            var program = await programObj.SearchQuery(x => x.PromoCode == val.CouponCode)
+                .Include(x => x.DiscountSpecificProducts)
+                .Include(x => x.DiscountSpecificProductCategories)
+                .Include(x => x.DiscountSpecificPartners)
+                .FirstOrDefaultAsync();
+
             if (program != null)
             {
                 var error_status = await programObj._CheckQuotationPromoCode(program, quotation, couponCode);
@@ -657,11 +679,11 @@ namespace Infrastructure.Services
         {
             var programObj = GetService<ISaleCouponProgramService>();
             var quotationLineObj = GetService<IQuotationLineService>();
+            var productObj = GetService<IProductService>();
             var promotionObj = GetService<IQuotationPromotionService>();
 
             if (program.DiscountLineProduct == null)
             {
-                var productObj = GetService<IProductService>();
                 program.DiscountLineProduct = productObj.GetById(program.DiscountLineProductId);
             }
 
@@ -677,7 +699,7 @@ namespace Infrastructure.Services
 
             var reward = new QuotationPromotion();
             var lines = self.Lines;
-            if (program.DiscountApplyOn == "specific_products" || program.DiscountApplyOn == "on_order")
+            if (program.DiscountApplyOn == "specific_products" || program.DiscountApplyOn == "on_order" || program.DiscountApplyOn == "specific_product_categories")
             {
                 if (program.DiscountApplyOn == "specific_products")
                 {
@@ -688,6 +710,13 @@ namespace Infrastructure.Services
                     lines = lines.Where(x => tmp.Contains(x.ProductId)).ToList();
                 }
 
+                if (program.DiscountApplyOn == "specific_product_categories")
+                {
+                    var discount_specific_categ_ids = program.DiscountSpecificProductCategories.Select(x => x.ProductCategoryId).ToList();
+                    var tmp = productObj.SearchQuery(x => discount_specific_categ_ids.Contains(x.CategId.Value)).Select(x => x.Id).ToList();
+                    lines = lines.Where(x => tmp.Contains(x.ProductId)).ToList();
+                }
+
                 var total_discount_amount = 0M;
 
                 foreach (var line in lines)
@@ -695,6 +724,12 @@ namespace Infrastructure.Services
                     var discount_line_amount = quotationLineObj._GetRewardValuesDiscountPercentagePerLine(program, line);
                     if (discount_line_amount > 0)
                         total_discount_amount += discount_line_amount;
+                }
+
+                if (program.IsApplyMaxDiscount && program.DiscountMaxAmount.HasValue && program.DiscountMaxAmount.Value > 0)
+                {
+                    if (total_discount_amount >= program.DiscountMaxAmount)
+                        total_discount_amount = program.DiscountMaxAmount.Value;
                 }
 
                 reward = promotionObj.PreparePromotionToQuotation(self, program, total_discount_amount);
@@ -718,7 +753,7 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
               .Include(x => x.Lines)
-              .Include(x => x.Promotions).ToListAsync();      
+              .Include(x => x.Promotions).ToListAsync();
 
             var promotionObj = GetService<IQuotationPromotionService>();
             var promotionIds = await promotionObj.SearchQuery(x => ids.Contains(x.QuotationId.Value)).Select(x => x.Id).ToListAsync();

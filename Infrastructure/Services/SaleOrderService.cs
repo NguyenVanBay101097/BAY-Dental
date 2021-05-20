@@ -262,7 +262,7 @@ namespace Infrastructure.Services
             var amlObj = GetService<IAccountMoveLineService>();
             foreach (var sale in self)
             {
-                if (sale.SaleOrderPayments.Any(x=>x.State == "posted"))
+                if (sale.SaleOrderPayments.Any(x => x.State == "posted"))
                     throw new Exception("Đã tồn tại thanh toán , cần hủy những thanh toán trước khi hủy phiếu");
 
                 if (sale.DotKhams.Any())
@@ -295,12 +295,12 @@ namespace Infrastructure.Services
             var removeDkSteps = await dkStepObj.SearchQuery(x => saleLineIds.Contains(x.SaleLineId.Value)).ToListAsync();
             if (removeDkSteps.Any(x => x.IsDone))
                 throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
-            await dkStepObj.DeleteAsync(removeDkSteps);         
+            await dkStepObj.DeleteAsync(removeDkSteps);
 
             foreach (var sale in self)
             {
                 foreach (var line in sale.OrderLines)
-                {                    
+                {
 
                     if (line.State == "cancel")
                         continue;
@@ -437,7 +437,11 @@ namespace Infrastructure.Services
              .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move").FirstOrDefaultAsync();
 
             //Chương trình khuyến mãi sử dụng mã
-            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).FirstOrDefaultAsync();
+            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).Include(x => x.DiscountSpecificProducts)
+                .Include(x => x.DiscountSpecificProductCategories)
+                .Include(x => x.DiscountSpecificPartners)
+                .FirstOrDefaultAsync();
+
             if (program != null)
             {
                 var error_status = await programObj._CheckPromoCode(program, order, couponCode);
@@ -867,7 +871,7 @@ namespace Infrastructure.Services
                         total_discount_amount += discount_line_amount;
                 }
 
-                if (program.DiscountMaxAmount.HasValue && program.DiscountMaxAmount.Value > 0)
+                if (program.IsApplyMaxDiscount && program.DiscountMaxAmount.HasValue && program.DiscountMaxAmount.Value > 0)
                 {
                     if (total_discount_amount >= program.DiscountMaxAmount)
                         total_discount_amount = program.DiscountMaxAmount.Value;
@@ -1078,7 +1082,12 @@ namespace Infrastructure.Services
             var ruleObj = GetService<IPromotionRuleService>();
             var coupons = new List<SaleCoupon>();
 
-            var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId).FirstOrDefaultAsync();
+            var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId)
+                .Include(x => x.DiscountSpecificPartners)
+                .Include(x => x.DiscountSpecificProductCategories)
+                .Include(x => x.DiscountSpecificProducts)
+                .FirstOrDefaultAsync();
+
             if (program != null)
             {
                 var error_status = await programObj._CheckPromotion(program, order);
