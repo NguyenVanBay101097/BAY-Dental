@@ -18,7 +18,7 @@
                                 </td>
                                 <td class="w-100 pb-4">
                                     <input class="form-control" formControlName="name"/>
-                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
+                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tên chiến dịch</div>
                                     </div>
                                 </td>
@@ -46,7 +46,7 @@
                                         <div class="mx-2">đến</div>
                                         <kendo-datepicker class="w-fit-content" formControlName="endDateObj">
                                         </kendo-datepicker>
-                                        <div *ngIf="(f.startDateObj.errors || f.endDateObj.errors) && (f.startDateObj.touched || f.endDateObj.touched || f.startDateObj.dirty || f.endDateObj.dirty)" class="text-danger">
+                                        <div *ngIf="(f.startDateObj.errors || f.endDateObj.errors) && (f.startDateObj.touched || f.endDateObj.touched || f.startDateObj.dirty || f.endDateObj.dirty || submitted)" class="text-danger">
                                             <div *ngIf="f.startDateObj.errors.required || f.endDateObj.errors.required">Chọn thời gian chạy chiến dịch</div>
                                         </div>
                                     </div>
@@ -67,7 +67,7 @@
                                             <i class="fas fa-exclamation-circle"></i>
                                         </span>
                                     </div>
-                                    <div *ngIf="f.limitMessage.errors && (f.limitMessage.touched || f.limitMessage.dirty)"
+                                    <div *ngIf="f.limitMessage.errors && (f.limitMessage.touched || f.limitMessage.dirty || submitted)"
                                         class="text-danger">
                                         <div *ngIf="f.limitMessage.errors.required">Nhập hạn mức gửi tin</div>
                                     </div>

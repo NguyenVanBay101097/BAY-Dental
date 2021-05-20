@@ -44,6 +44,7 @@ export class SmsMessageDialogComponent implements OnInit {
   isTemplateCopy = false;
 
   partnerIds: any = [];
+  submitted = false;
 
   get f() { return this.formGroup.controls; }
 
@@ -78,7 +79,7 @@ export class SmsMessageDialogComponent implements OnInit {
       tap(() => (this.smsCampaignCbx.loading = true)),
       switchMap(value => this.searchCampaign(value))
     ).subscribe((result: any) => {
-      this.filteredSmsCampaign = result;
+      this.filteredSmsCampaign = result.items;
       this.smsCampaignCbx.loading = false;
     });
 
@@ -87,7 +88,7 @@ export class SmsMessageDialogComponent implements OnInit {
       tap(() => (this.smsAccountCbx.loading = true)),
       switchMap(value => this.searchAccount(value))
     ).subscribe((result: any) => {
-      this.filteredSmsAccount = result;
+      this.filteredSmsAccount = result.items;
       this.smsAccountCbx.loading = false;
     });
 
@@ -207,7 +208,9 @@ export class SmsMessageDialogComponent implements OnInit {
   }
 
   onConfirm() {
+    this.submitted = true;
     if (this.formGroup.invalid) return;
+    if (!this.template.text) return;
     var val = this.GetValueFormGroup();
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.campaign = val.smsCampaign;

@@ -36,6 +36,8 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
       templateType: this.template.templateType,
       text: [this.template.text, Validators.required]
     });
+    this.textControl.markAsTouched();
+    this.textControl.markAsDirty();
   }
 
   get textControl() { return this.formGroup.get('text'); }

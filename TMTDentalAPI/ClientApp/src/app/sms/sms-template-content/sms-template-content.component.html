@@ -1,10 +1,13 @@
 <div [formGroup]="formGroup">
     <div class="position-relative">
-        <textarea type="text" my-autosize class="form-control" id="textarea_mass" formControlName="text" (click)="selectArea($event)" [maxlength]="textareaLength" (keyup)="selectArea($event)" (paste)="selectArea($event)" (change)="onTextChange($event)" rows="5">
+        <textarea type="text" my-autosize class="form-control textarea-required" id="textarea_mass" 
+            formControlName="text" (click)="selectArea($event)" [maxlength]="textareaLength" 
+            (keyup)="selectArea($event)" (paste)="selectArea($event)" (change)="onTextChange($event)" rows="5">
         </textarea>
-        <span style="color:red" *ngIf="textControl.errors?.maxlength">
-                số kí tự đã vượt quá cho phép !
-            </span>
+        <div *ngIf="textControl.errors && (textControl.touched || textControl.dirty)" class="text-danger">
+            <div *ngIf="textControl.errors.required">Nhập nội dung tin nhắn</div>
+            <div *ngIf="textControl.errors.maxlength">Số kí tự đã vượt quá cho phép !</div>
+        </div>
         <div class="d-flex">
             <div>
                 <a *ngFor="let tab of tabs; let i = index" (click)="addToContent(tab.value)" style="background-color:#5dd3e6; border-radius: 90px; color: white;" class="btn-tab btn btn-sm mt-1 mr-1">{{tab.name}}</a>
@@ -12,8 +15,6 @@
             <div style="min-width: 50px;" class="ml-auto">
                 <span class="px-1">Kí tự - {{getLimitText()}}</span>
             </div>
-
         </div>
     </div>
-
 </div>

@@ -15,6 +15,7 @@ export class SmsCampaignCrUpComponent implements OnInit {
   id: string;
   title: string;
   formGroup: FormGroup;
+  submitted = false;
 
   get f() { return this.formGroup.controls; }
 
@@ -42,6 +43,7 @@ export class SmsCampaignCrUpComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid) return false;
     var val = this.formGroup.value;
     val.dateEnd = this.intlService.formatDate(val.endDateObj, "yyyy-MM-ddT23:59");
