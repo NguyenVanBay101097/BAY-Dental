@@ -72,7 +72,7 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit , OnDestroy
   }
 
   loadDefaultPromotion() {
-    this.promotionService.getPromotionBySaleOrderLine(this.saleOrderLine.productId).subscribe((res: any) => {
+    this.promotionService.getPromotionBySaleOrderLine(this.saleOrderLine.productId, this.saleOrderLine.orderPartnerId).subscribe((res: any) => {
       this.autoPromotions = res;
     });
   }

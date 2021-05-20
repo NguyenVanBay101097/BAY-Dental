@@ -33,6 +33,7 @@ import { PartnerCustomerTreatmentFastPromotionComponent } from '../partner-custo
 import { PartnerCustomerTreatmentLineFastPromotionComponent } from '../partner-customer-treatment-line-fast-promotion/partner-customer-treatment-line-fast-promotion.component';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-partner-customer-treatment-payment-fast',
@@ -126,6 +127,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       })).subscribe(result => {
         this.saleOrder = result;
         this.saleOrder.dateOrder = new Date(this.saleOrder.dateOrder);
+        console.log(formatDate(this.saleOrder.dateOrder, 'yyyy-MM-ddTHH:mm:ss', 'en-US'));
+
         this.formGroup.patchValue(this.saleOrder);
       });
   }
@@ -240,6 +243,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     var val = Object.assign({}, this.saleOrder);
     var formValue = this.formGroup.value;
     val = {...val, formValue};
+    console.log(formatDate(val.dateOrder, 'yyyy-MM-ddTHH:mm:ss', 'en-US'));
+    
     val.dateOrder = this.intlService.formatDate(val.dateOrder, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner ? val.partner.id : null;
     val.pricelistId = val.pricelist ? val.pricelist.id : null;

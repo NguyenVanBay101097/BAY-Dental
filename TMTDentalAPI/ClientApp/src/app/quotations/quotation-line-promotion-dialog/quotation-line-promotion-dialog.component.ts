@@ -65,9 +65,9 @@ export class QuotationLinePromotionDialogComponent implements OnInit {
   }
 
   loadDefaultPromotion() {
-    this.promotionService.getPromotionBySaleOrderLine(this.quotationLine.productId).subscribe((res: any) => {
-      this.autoPromotions = res;
-    });
+    // this.promotionService.getPromotionBySaleOrderLine(this.quotationLine.productId).subscribe((res: any) => {
+    //   this.autoPromotions = res;
+    // });
   }
 
   getAmountToApply() {
