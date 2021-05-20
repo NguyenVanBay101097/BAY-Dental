@@ -59,16 +59,16 @@
                                     </div>
                                 </td>
                             </tr>
-                            <!-- <tr *ngIf="saleOrders && saleOrders.length > 0">
+                            <tr *ngIf="quotation.orders && quotation.orders.length > 0">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Phiếu điều trị
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngFor="let order of saleOrders; let i = index" [routerLink]="['/sale-orders/form']" [queryParams]="{id: order.id}">{{order.name}}<span *ngIf="i < saleOrders.length -1">, </span></a>
+                                    <a *ngFor="let order of quotation.orders; let i = index" [routerLink]="['/sale-orders/form']" [queryParams]="{id: order.id}">{{order.name}}<span *ngIf="i < quotation.orders.length -1">, </span></a>
                                 </td>
-                            </tr> -->
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -95,9 +95,6 @@
                                     <div *ngIf="dateQuotationControl?.errors?.required" class="text-danger">
                                         Chọn ngày báo giá
                                     </div>
-                                    <!-- <div *ngIf="f.dateQuotation.errors && (f.dateQuotation.touched || f.dateQuotation.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.dateQuotation.errors.required">Chọn ngày báo giá</div>
-                                    </div> -->
                                 </td>
                             </tr>
                             <tr>
@@ -112,9 +109,6 @@
                                     <div *ngIf="dateAppliesControl?.errors?.required" class="text-danger">
                                         Nhập số ngày áp dụng
                                     </div>
-                                    <!-- <div *ngIf="f.dateApplies.errors && (f.dateApplies.touched || f.dateApplies.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.dateApplies.errors.required">Nhập số ngày</div>
-                                    </div> -->
                                 </td>
                             </tr>
                             <tr>

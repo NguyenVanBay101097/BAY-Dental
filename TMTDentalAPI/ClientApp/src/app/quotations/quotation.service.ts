@@ -80,6 +80,10 @@ export class QuotationPromotionBasic {
   type: string;
 }
 
+export class SaleOrderSimple {
+  id: string;
+  name: string;
+}
 export class QuotationsDisplay {
   /**
    *
@@ -106,7 +110,7 @@ export class QuotationsDisplay {
   lines: QuotationLineDisplay[];
   payments: PaymentQuotationDisplay[];
   companyId: string;
-  orders: any[];
+  orders: SaleOrderSimple[];
   promotions: QuotationPromotionBasic[];
 }
 
@@ -194,7 +198,10 @@ export class QuotationService {
                 payment: x.payment
               }),
               companyId: response.companyId,
-              // orders: any[],
+              orders: response.orders.map(x => <SaleOrderSimple>{
+                id: x.id,
+                name: x.name,
+              }),
               promotions: response.promotions.map(x => <QuotationPromotionBasic>{
                 id: x.id,
                 name: x.name,
@@ -213,61 +220,61 @@ export class QuotationService {
 
   defaultGet(partnerId: string): Observable<QuotationsDisplay> {
     return this.http.get<QuotationsDisplay>(this.baseApi + this.apiUrl + '/GetDefault/' + partnerId)
-    .pipe(
-      map(
-        (response: any) =>
-          <QuotationsDisplay>{
-            id: response.id,
-            name: response.name,
-            partner: response.partner,
-            partnerId: response.partnerId,
-            employee: response.employee,
-            employeeId: response.employeeId,
-            dateQuotation: new Date(response.dateQuotation),
-            dateApplies: response.dateApplies,
-            subPrice: response.subPrice,
-            listPrice: response.listPrice,
-            dateEndQuotation: new Date(response.dateEndQuotation),
-            note: response.note,
-            totalAmount: response.totalAmount,
-            state: response.state,
-            lines: response.lines.map(x => <QuotationLineDisplay>{
-              productId: x.productId,
-              id: x.id,
-              product: x.product,
-              qty: x.qty,
-              subPrice: x.subPrice,
-              diagnostic: x.diagnostic,
-              toothCategoryId: x.toothCategoryId,
-              employee: x.employee,
-              employeeId: x.employeeId,
-              assistant: x.assistant,
-              assistantId: x.assistantId,
-              counselor: x.counselor,
-              counselorId: x.counselorId,
-              toothCategory: x.toothCategory,
-              toothIds: x.toothIds,
-              name: x.name,
-              amount: x.amount,
-              teeth: x.teeth,
-              toothType: x.toothType,
-              promotions: x.promotions,
-              amountDiscountTotal: x.amountDiscountTotal,
-              amountPromotionToOrder: x.amountPromotionToOrder,
-              amountPromotionToOrderLine: x.amountPromotionToOrderLine,
-            }),
-            payments: response.payments.map(x => <PaymentQuotationDisplay>{
-              amount: x.amount,
-              date: new Date(x.date),
-              discountPercentType: x.discountPercentType,
-              payment: x.payment
-            }),
-            companyId: response.companyId,
-            // orders: any[],
-            promotions: []
-          }
-      )
-    );
+      .pipe(
+        map(
+          (response: any) =>
+            <QuotationsDisplay>{
+              id: response.id,
+              name: response.name,
+              partner: response.partner,
+              partnerId: response.partnerId,
+              employee: response.employee,
+              employeeId: response.employeeId,
+              dateQuotation: new Date(response.dateQuotation),
+              dateApplies: response.dateApplies,
+              subPrice: response.subPrice,
+              listPrice: response.listPrice,
+              dateEndQuotation: new Date(response.dateEndQuotation),
+              note: response.note,
+              totalAmount: response.totalAmount,
+              state: response.state,
+              lines: response.lines.map(x => <QuotationLineDisplay>{
+                productId: x.productId,
+                id: x.id,
+                product: x.product,
+                qty: x.qty,
+                subPrice: x.subPrice,
+                diagnostic: x.diagnostic,
+                toothCategoryId: x.toothCategoryId,
+                employee: x.employee,
+                employeeId: x.employeeId,
+                assistant: x.assistant,
+                assistantId: x.assistantId,
+                counselor: x.counselor,
+                counselorId: x.counselorId,
+                toothCategory: x.toothCategory,
+                toothIds: x.toothIds,
+                name: x.name,
+                amount: x.amount,
+                teeth: x.teeth,
+                toothType: x.toothType,
+                promotions: x.promotions,
+                amountDiscountTotal: x.amountDiscountTotal,
+                amountPromotionToOrder: x.amountPromotionToOrder,
+                amountPromotionToOrderLine: x.amountPromotionToOrderLine,
+              }),
+              payments: response.payments.map(x => <PaymentQuotationDisplay>{
+                amount: x.amount,
+                date: new Date(x.date),
+                discountPercentType: x.discountPercentType,
+                payment: x.payment
+              }),
+              companyId: response.companyId,
+              // orders: any[],
+              promotions: []
+            }
+        )
+      );
   }
 
   delete(ids: string[]) {

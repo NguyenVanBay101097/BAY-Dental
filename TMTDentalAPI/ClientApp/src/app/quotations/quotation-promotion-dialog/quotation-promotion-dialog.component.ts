@@ -61,7 +61,7 @@ export class QuotationPromotionDialogComponent implements OnInit {
   }
 
   loadDefaultPromotion() {
-    this.promotionService.getPromotionBySaleOrder().subscribe((res: any) => {
+    this.promotionService.getPromotionBySaleOrder(this.quotation.partner.id).subscribe((res: any) => {
       this.autoPromotions = res;
     });
   }

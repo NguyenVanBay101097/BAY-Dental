@@ -105,7 +105,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         }
       })).subscribe(
         result => {
-          debugger;
           this.quotation = result;
         }
       )
@@ -237,8 +236,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         }
       }),
     };
-
-    console.log(val);
 
     return val;
   }
@@ -394,6 +391,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     var line = this.quotation.lines[i];
     let modalRef = this.modalService.open(QuotationLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.quotationLine = line;
+    modalRef.componentInstance.partnerId = this.quotation.partner.id;
     modalRef.componentInstance.getBtnDiscountObs().subscribe(data => {
       var val = {
         id: line.id,

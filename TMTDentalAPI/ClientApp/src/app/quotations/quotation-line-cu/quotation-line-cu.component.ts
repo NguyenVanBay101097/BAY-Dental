@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { debug } from 'console';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
@@ -227,13 +226,11 @@ export class QuotationLineCuComponent implements OnInit {
 
   viewTeeth() {
     var toothType = this.line.toothType;
-    if (toothType) {
-      if (toothType == "manual") {
-        var teeth = this.line.teeth as any[];
-        return teeth.map(x => x.name).join(', ');
-      } else {
-        return this.toothTypeDict.find(x => x.value == toothType).name;
-      }
+    if (toothType == "manual") {
+      var teeth = this.line.teeth as any[];
+      return teeth.map(x => x.name).join(', ');
+    } else {
+      return this.toothTypeDict.find(x => x.value == toothType).name;
     }
   }
 
