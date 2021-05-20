@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {SmsCampaignService} from '../sms-campaign.service';
+import { Router } from '@angular/router';
+import { SmsCampaignService } from '../sms-campaign.service';
 
 @Component({
   selector: 'app-sms-birthday-form',
@@ -9,7 +10,8 @@ import {SmsCampaignService} from '../sms-campaign.service';
 export class SmsBirthdayFormComponent implements OnInit {
   campaign: any;
   constructor(
-    private smsCampaignService: SmsCampaignService
+    private smsCampaignService: SmsCampaignService,
+    private router: Router
   ) { }
 
   ngOnInit() {
