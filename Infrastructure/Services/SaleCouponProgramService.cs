@@ -156,7 +156,7 @@ namespace Infrastructure.Services
             && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString()))));
 
             if (partnerId.HasValue)
-                query = query.Where(x => x.ApplyPartnerOn == "specific_partners" && x.DiscountSpecificPartners.Any(x => x.PartnerId == partnerId));
+                query = query.Where(x => string.IsNullOrEmpty(x.ApplyPartnerOn) || x.ApplyPartnerOn == "all" || (x.ApplyPartnerOn == "specific_partners" && x.DiscountSpecificPartners.Any(x => x.PartnerId == partnerId)));
 
             var promotions = await query.ToListAsync();
 
@@ -176,7 +176,7 @@ namespace Infrastructure.Services
             && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString()))));
 
             if (partnerId.HasValue)
-                query = query.Where(x => x.ApplyPartnerOn == "specific_partners" && x.DiscountSpecificPartners.Any(x => x.PartnerId == partnerId));
+                query = query.Where(x => string.IsNullOrEmpty(x.ApplyPartnerOn) || x.ApplyPartnerOn == "all" || (x.ApplyPartnerOn == "specific_partners" && x.DiscountSpecificPartners.Any(x => x.PartnerId == partnerId)));
 
             var promotions = await query.ToListAsync();
 
