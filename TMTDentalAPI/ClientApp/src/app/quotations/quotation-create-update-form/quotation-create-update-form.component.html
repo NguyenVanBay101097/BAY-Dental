@@ -13,12 +13,12 @@
     </div>
 </div>
 <div class="o_content">
-    <form class="o_form_view h-100">
+    <form class="o_form_view h-100" #form="ngForm">
         <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
             <div class="flex-0-0-auto">
                 <div class="d-flex">
                     <div class="btns">
-                        <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+                        <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave(form)">
                             Lưu
                         </button>
                         <button *ngIf="quotationId" type="button" accesskey="1" class="btn btn-primary btn-sm" (click)="onCreateSaleOrder()">
@@ -52,11 +52,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [(ngModel)]="quotation.employee" name="employee" [filterable]="true" (filterChange)="onFilterEmployee($event)" #empCbx class="mr-1" [data]="filterEmployees" [textField]="'name'" [valueField]="'id'">
+                                    <kendo-combobox [(ngModel)]="quotation.employee" name="employee" required #employeeControl="ngModel" [filterable]="true" (filterChange)="onFilterEmployee($event)" #empCbx class="mr-1" [data]="filterEmployees" [textField]="'name'" [valueField]="'id'">
                                     </kendo-combobox>
-                                    <!-- <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.employee.errors.required">Chọn người báo giá</div>
-                                    </div> -->
+                                    <div *ngIf="employeeControl?.errors?.required" class="text-danger">
+                                        Chọn người báo giá
+                                    </div>
                                 </td>
                             </tr>
                             <!-- <tr *ngIf="saleOrders && saleOrders.length > 0">
@@ -90,8 +90,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker [(ngModel)]="quotation.dateQuotation" name="dateQuotation" (valueChange)="onDateChange()">
+                                    <kendo-datepicker [(ngModel)]="quotation.dateQuotation" required #dateQuotationControl="ngModel" name="dateQuotation" (valueChange)="onDateChange()">
                                     </kendo-datepicker>
+                                    <div *ngIf="dateQuotationControl?.errors?.required" class="text-danger">
+                                        Chọn ngày báo giá
+                                    </div>
                                     <!-- <div *ngIf="f.dateQuotation.errors && (f.dateQuotation.touched || f.dateQuotation.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.dateQuotation.errors.required">Chọn ngày báo giá</div>
                                     </div> -->
@@ -104,8 +107,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="1" [autoCorrect]="true" name="dateApplies" [format]="'n0'" [spinners]="false" [(ngModel)]="quotation.dateApplies" (valueChange)="onDateChange()">
+                                    <kendo-numerictextbox [min]="1" [autoCorrect]="true" required #dateAppliesControl="ngModel" name="dateApplies" [format]="'n0'" [spinners]="false" [(ngModel)]="quotation.dateApplies" (valueChange)="onDateChange()">
                                     </kendo-numerictextbox>
+                                    <div *ngIf="dateAppliesControl?.errors?.required" class="text-danger">
+                                        Nhập số ngày áp dụng
+                                    </div>
                                     <!-- <div *ngIf="f.dateApplies.errors && (f.dateApplies.touched || f.dateApplies.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.dateApplies.errors.required">Nhập số ngày</div>
                                     </div> -->
