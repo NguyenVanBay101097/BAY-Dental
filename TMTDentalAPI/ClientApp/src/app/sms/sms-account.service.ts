@@ -46,6 +46,10 @@ export class SmsAccountService {
     return this.http.get(this.base_api + this.apiUrl, { params: new HttpParams().set('provider', provider) })
   }
 
+  getDisplay(id: string) {
+    return this.http.get(this.base_api + this.apiUrl + '/' + id);
+  }
+
   getPaged(val: any) {
     return this.http.get(this.base_api + this.apiUrl + '/GetPaged', { params: val })
   }

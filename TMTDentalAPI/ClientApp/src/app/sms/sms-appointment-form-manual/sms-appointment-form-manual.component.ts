@@ -29,6 +29,8 @@ export class SmsAppointmentFormManualComponent implements OnInit {
   dateTo: Date;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+  public today: Date = new Date();
+  public next7days: Date = new Date(new Date(new Date().setDate(new Date().getDate() + 7)).toDateString());
 
   constructor(
     private modalService: NgbModal,
@@ -38,10 +40,9 @@ export class SmsAppointmentFormManualComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd;
+    this.dateFrom = this.today;
+    this.dateTo = this.next7days;
     this.loadDataFromApi();
-
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())

@@ -43,6 +43,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<SmsAccountDisplay>(res));
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var res = await _smsAccountService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+
+            return Ok(_mapper.Map<SmsAccountDisplay>(res));
+        }
+
         [HttpGet("[action]")]
         public async Task<IActionResult> GetPaged([FromQuery] SmsAccountPaged val)
         {

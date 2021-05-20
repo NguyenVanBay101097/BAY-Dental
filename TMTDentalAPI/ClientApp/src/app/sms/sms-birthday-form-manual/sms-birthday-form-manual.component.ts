@@ -20,10 +20,11 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   filteredTemplate: any[];
   skip: number = 0;
   limit: number = 20;
+  isBirthday: boolean = true;
   isRowSelected: any[];
   search: string = '';
   selectedIds: string[] = [];
-  month: number;
+  month: any;
   searchUpdate = new Subject<string>();
   months = [
     { name: 'Tháng 1', value: 1 },
@@ -66,7 +67,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     val.customer = true;
     val.supplier = false;
     val.month = this.month;
-    val.isBirthday = true;
+    val.isBirthday = this.isBirthday;
     this.partnerService.getCustomerBirthDay(val)
       .subscribe((res: any[]) => {
         this.gridData = res;
@@ -114,6 +115,12 @@ export class SmsBirthdayFormManualComponent implements OnInit {
 
   selectMonthChange(event) {
     this.month = event.target.value;
+    if (this.month != '0') {
+      this.isBirthday = false;
+    } else {
+      this.isBirthday = true;
+      this.month = '';
+    }
     this.skip = 0;
     this.loadDataFromApi();
   }

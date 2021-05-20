@@ -53,7 +53,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
   ngOnInit() {
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
-    this.smsCamapignId = this.activatedRoute.snapshot.queryParams.id;
+    this.smsCamapignId = this.activatedRoute.snapshot.queryParams.campaignId;
     this.loadDataFromApi();
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -138,6 +138,10 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
           smsMessageDetailIds.push(id);
         }
       });
+      if (smsMessageDetailIds.length <= 0) {
+        this.notify("Không có tin nhắn nào để gửi. Vui lòng kiểm tra lại", false);
+        return false;
+      }
       var modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
       modalRef.componentInstance.title = "Xác nhận gửi lại tin nhắn";
       modalRef.componentInstance.bodyContent = 'Bạn chắc chắn muốn gửi lại tin nhắn chúc mừng sinh nhật?';
@@ -157,8 +161,8 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
   }
 
   onStatusChange(event) {
+    this.state = event ? event.value : '';
     this.skip = 0;
-    this.state = event.value;
     this.loadDataFromApi();
   }
 
