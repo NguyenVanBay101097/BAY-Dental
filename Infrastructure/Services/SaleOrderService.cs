@@ -1288,7 +1288,7 @@ namespace Infrastructure.Services
                 if (promotion.Type == "discount")
                 {
 
-                    promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
+                    promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (order.OrderLines.Any() ? (promotion.DiscountFixed ?? 0) : 0);
                 }
 
                 if (promotion.SaleCouponProgramId.HasValue)
@@ -1389,8 +1389,10 @@ namespace Infrastructure.Services
 
 
                 ///remove promotions in saleorderline
-                //var promotion_ids = lineToRemoves.SelectMany(x => x.PromotionLines.Select(s => s.PromotionId)).Distinct().ToList();
-                //await promotionObj.RemovePromotion(promotion_ids);
+
+                var promotion_ids = await promotionObj.SearchQuery(x => x.SaleOrderId.HasValue && saleLineIds.Contains(x.SaleOrderLineId.Value)).Select(x => x.Id).ToListAsync();
+                if (promotion_ids.Any())
+                    await promotionObj.RemovePromotion(promotion_ids);
 
                 await saleLineObj.Unlink(lineToRemoves.Select(x => x.Id).ToList());
             }

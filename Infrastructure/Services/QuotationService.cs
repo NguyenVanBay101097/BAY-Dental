@@ -151,7 +151,7 @@ namespace Infrastructure.Services
                 if (promotion.Type == "discount")
                 {
 
-                    promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (promotion.DiscountFixed ?? 0);
+                    promotion.Amount = promotion.DiscountType == "percentage" ? total * (promotion.DiscountPercent ?? 0) / 100 : (quotation.Lines.Any() ? (promotion.DiscountFixed ?? 0) : 0);
                 }
 
                 if (promotion.SaleCouponProgramId.HasValue)
