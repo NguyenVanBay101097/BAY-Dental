@@ -37,6 +37,12 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.State == val.State);
             if (val.CampaignId.HasValue)
                 query = query.Where(x => x.SmsCampaignId.Value == val.CampaignId.Value);
+            if (val.SmsAccountId.HasValue)
+                query = query.Where(x => x.SmsAccountId.HasValue && x.SmsAccountId == val.SmsAccountId.Value);
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateCreated.HasValue && val.DateFrom.Value <= x.Date.Value);
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.DateCreated.HasValue && val.DateTo.Value >= x.Date.Value);
             return query;
         }
 

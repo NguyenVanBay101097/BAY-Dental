@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsMessageDetailDialogComponent } from '../sms-message-detail-dialog/sms-message-detail-dialog.component';
 import { SmsMessagePaged, SmsMessageService } from '../sms-message.service';
@@ -17,6 +19,9 @@ import { SmsMessagePaged, SmsMessageService } from '../sms-message.service';
   styleUrls: ['./sms-campaign-detail.component.css']
 })
 export class SmsCampaignDetailComponent implements OnInit {
+
+  @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent;
+
   gridData: GridDataResult;
   limit = 20;
   offset = 0;
@@ -31,6 +36,8 @@ export class SmsCampaignDetailComponent implements OnInit {
   selectedIds: any = [];
   dateFrom: Date;
   dateTo: Date;
+  filteredSmsAccount: any[];
+  smsAccountId: string = "";
 
   get f() { return this.formGroup.controls; }
 
@@ -41,7 +48,8 @@ export class SmsCampaignDetailComponent implements OnInit {
     private fb: FormBuilder,
     private notificationService: NotificationService,
     private intlService: IntlService, 
-    private modalService: NgbModal
+    private modalService: NgbModal, 
+    private smsAccountService: SmsAccountService
   ) { }
 
   ngOnInit() {
@@ -67,6 +75,17 @@ export class SmsCampaignDetailComponent implements OnInit {
         this.offset = 0;
         this.loadDataFromApi();
       });
+    
+    this.smsAccountCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.smsAccountCbx.loading = true)),
+      switchMap(value => this.searchAccount(value))
+    ).subscribe((result: any) => {
+      this.filteredSmsAccount = result ? result.items : [];
+      this.smsAccountCbx.loading = false;
+    });
+
+    this.loadAccount();
   }
 
   loadDataFromApi() {
@@ -76,7 +95,10 @@ export class SmsCampaignDetailComponent implements OnInit {
     val.offset = this.offset;
     val.search = this.search || "";
     val.campaignId = this.campaignId;
+    val.smsAccountId = this.smsAccountId;
     val.state = this.state;
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
     this.smsMessageService.getPaged(val).pipe(
       map(
         (response: any) =>
@@ -208,5 +230,27 @@ export class SmsCampaignDetailComponent implements OnInit {
     modalRef.result.then((val) => {
       this.loadDataFromApi();
     })
+  }
+
+  onChangeAccount(event) {
+    this.smsAccountId = event ? event.id : "";
+    this.offset = 0;
+    this.loadDataFromApi();
+  }
+
+  searchAccount(search?: string) {
+    var val = new SmsAccountPaged();
+    val.limit = 20;
+    val.offset = 0;
+    val.search = search || '';
+    return this.smsAccountService.getPaged(val);
+  }
+
+  loadAccount() {
+    this.searchAccount().subscribe(
+      (result: any) => {
+        this.filteredSmsAccount = result ? result.items : [];
+      }
+    )
   }
 }
