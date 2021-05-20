@@ -40,12 +40,11 @@ export class SmsAccountSettingDialogComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    this.smsAccountService.get(this.switchBrand).subscribe(
+    this.smsAccountService.getDisplay(this.id).subscribe(
       (result: any) => {
         var obj = new SmsAccountBasic();
         this.formGroup.patchValue(obj);
         if (result) {
-          this.id = result.id
           this.formGroup.patchValue(result);
           this.formGroup.get('provider').patchValue(result.provider);
         } else {
@@ -68,7 +67,7 @@ export class SmsAccountSettingDialogComponent implements OnInit {
     else if (this.switchBrand == 'esms' && (this.f.apiKey.value == '' || this.f.secretkey.value == '')) return;
     else {
       value = this.formGroup.value;
-      value.name = this.switchBrand =="fpt" ? "FPT" : "E-SMS";
+      value.name = this.switchBrand == "fpt" ? "FPT" : "E-SMS";
     }
     return value;
   }

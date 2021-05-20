@@ -43,7 +43,6 @@ export class SmsAppointmentFormManualComponent implements OnInit {
     this.dateFrom = this.today;
     this.dateTo = this.next7days;
     this.loadDataFromApi();
-
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
