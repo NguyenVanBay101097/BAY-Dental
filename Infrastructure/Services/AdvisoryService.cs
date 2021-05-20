@@ -421,6 +421,7 @@ namespace Infrastructure.Services
                     quotationLine.DiscountAmountFixed = 0;
                     quotationLine.DiscountAmountPercent = 0;
                     quotationLine.DiscountType = "percentage";
+                    quotationLine.ToothType = advisory.ToothType;
                     quotationLine.Amount = quotationLine.Qty * quotationLine.SubPrice;
                     quotationLine.ToothCategoryId = advisory.ToothCategoryId.GetValueOrDefault();
                     foreach (var toothId in toothIds)

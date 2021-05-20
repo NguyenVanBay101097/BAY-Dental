@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { debug } from 'console';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
@@ -55,40 +54,6 @@ export class QuotationLineCuComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({});
-    // this.formGroup = this.fb.group({
-    //   subPrice: [0, Validators.required],
-    //   qty: [0, Validators.required],
-    //   amount: 0,
-    //   employee: null,
-    //   assistant: null,
-    //   counselor: null,
-    //   toothType: null,
-    //   toothCategory: null,
-    //   toothIds: null,
-    //   diagnostic: '',
-    //   amountDiscountTotal: 0,
-    //   amountPromotionToOrder: 0,
-    //   amountPromotionToOrderLine: 0,
-    //   teeth: this.fb.array([]),
-    //   promotions: this.fb.array([])
-    // });
-
-    // this.formGroup = this.fb.group(this.line);
-    // this.formGroup.patchValue(this.line);
-    
-    // if (this.line && this.line.teeth) {
-    //   var lineControl = this.formGroup.get("teeth") as FormArray;
-    //   this.line.teeth.forEach(line => {
-    //     lineControl.push(this.fb.group(line));
-    //   });
-    // }
-
-    // this.formGroup.setControl("teeth", this.fb.array(this.line.teeth));
-    // this.formGroup.setControl("promotions", this.fb.array(this.line.promotions));
-    // this.loadEmployees();
-    // this.loadToothCategories();
-    // this.loadTeethList();
-    // this.computeAmount();
   }
 
   getValueFormControl(key: string) {
@@ -101,12 +66,6 @@ export class QuotationLineCuComponent implements OnInit {
 
   getInitialSubTotalLine(line) {
     return line.subPrice * line.qty;
-  }
-
-  computeAmount() {
-    var getquanTity = this.getValueFormControl("qty") ? this.getValueFormControl("qty") : 1;
-    var priceUnit = this.getPriceUnitLinePromotion(this.formGroup.value);
-    this.f.amount.setValue(priceUnit * getquanTity);
   }
 
   getPriceSubTotalFormGroup() {
@@ -238,10 +197,6 @@ export class QuotationLineCuComponent implements OnInit {
     return i;
   }
 
-  onChangeQuantity(val) {
-    // this.computeAmount();
-  }
-
   editLine() {
     this.onEditEvent.emit(this.line);
   }
@@ -250,39 +205,18 @@ export class QuotationLineCuComponent implements OnInit {
   }
 
   onOpenPromotion() {
-    if (!this.checkValidFormGroup()) {
-      this.isEditting = true;
-      return;
-    }
-    else {
-      this.isEditting = false;
-      this.onUpdateOpenPromotionEvent.emit(this.formGroup.value);
-    }
-  }
-
-  checkValidFormGroup() {
-    console.log(this.formGroup.value);
-
-    if (this.formGroup.invalid)
-      return false;
-    if (this.formGroup.value.toothType == "manual" && !this.formGroup.value.teeth.length) {
-      this.notify("error", "Vui lòng chọn răng");
-      return false;
-    }
-    return true;
+    this.onUpdateOpenPromotionEvent.emit(this.formGroup.value);
   }
 
   updateLineInfo() {
-    this.submitted = true;
-    if (!this.checkValidFormGroup()) {
-      this.isEditting = true;
-      return;
+    if (this.formGroup.invalid) {
+      this.formGroup.markAllAsTouched();
+      return false;
     }
-    else {
-      this.isEditting = false;
-      var value = this.formGroup.value;
-      this.onUpdateEvent.emit(value);
-    }
+    this.isEditting = false;
+    var value = this.formGroup.value;
+    this.onUpdateEvent.emit(value);
+    return true;
   }
 
   onCancel() {
@@ -314,6 +248,17 @@ export class QuotationLineCuComponent implements OnInit {
       counselor: this.line.counselor,
       diagnostic: this.line.diagnostic
     });
+
+    this.formGroup.get('toothType').valueChanges
+      .subscribe(value => {
+        if (value == 'manual') {
+          this.formGroup.get('teeth').setValidators(Validators.required)
+        } else {
+          this.formGroup.get('teeth').clearValidators();
+        }
+        this.formGroup.get('teeth').updateValueAndValidity();
+      });
+    this.formGroup.get('toothType').setValue(this.line.toothType);
 
     this.loadTeethMap(this.line.toothCategory);
     this.filteredEmployeesDoctor = this.initialListEmployees.filter(x => x.isDoctor == true).slice();

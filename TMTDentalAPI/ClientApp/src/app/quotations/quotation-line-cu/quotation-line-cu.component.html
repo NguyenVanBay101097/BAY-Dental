@@ -40,7 +40,7 @@
                     </ng-template>
 
                     <ng-template #popContent let-greeting="greeting">
-                        <kendo-numerictextbox style="width:100%;" [format]="'n0'" [spinners]="false" formControlName="subPrice" (valueChange)="onChangeQuantity()">
+                        <kendo-numerictextbox style="width:100%;" [format]="'n0'" [spinners]="false" formControlName="subPrice">
                         </kendo-numerictextbox>
                     </ng-template>
                     <ng-template #popTitle let-language="language">Giá gốc</ng-template>
@@ -52,7 +52,7 @@
                     {{line.qty | number}}
                 </ng-container>
                 <ng-template #elseTemplateQty>
-                    <kendo-numerictextbox style="width: 80px;" [format]="'n0'" [min]="0" [spinners]="false" formControlName="qty" (valueChange)="onChangeQuantity($event)">
+                    <kendo-numerictextbox style="width: 80px;" [format]="'n0'" [min]="0" [spinners]="false" formControlName="qty">
                     </kendo-numerictextbox>
                     <div *ngIf="f.qty.errors && (f.qty.touched || f.qty.dirty || submitted)" class="text-danger">
                         <div *ngIf="f.qty.errors.required">Nhập số lượng</div>
@@ -179,8 +179,13 @@
                             </td>
                         </tr>
                     </table>
-
                 </div>
+                <ng-container *ngIf="TeethFA.errors?.required && TeethFA.touched">
+                    <div class="col-3 row"></div>
+                    <div class="col-9">
+                        <span class="text-danger">Chọn răng</span>
+                    </div>
+                </ng-container>
             </div>
         </ng-template>
         <!-- chuẩn đoán -->
