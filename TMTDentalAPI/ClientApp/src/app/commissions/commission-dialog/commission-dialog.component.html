@@ -33,7 +33,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <!-- <input class="form-control" formControlName="type" name="type">   -->
-                                    <select class="form-control" formControlName="type" (change)="onChangeState()">
+                                    <select class="form-control" formControlName="type">
                                         <option *ngFor="let type of filterTypes" [ngValue]="type.value">{{type.name}}</option>
                                     </select>                                 
                                 </td>

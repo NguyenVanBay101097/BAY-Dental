@@ -60,17 +60,17 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
-        public async Task<IActionResult> GetPromotionBySaleOrder()
+        public async Task<IActionResult> GetPromotionBySaleOrder([FromQuery] Guid? partnerId)
         {
-            var result = await _programService.GetPromotionBySaleOrder();
+            var result = await _programService.GetPromotionBySaleOrder(partnerId);
             return Ok(result);
         }
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
-        public async Task<IActionResult> GetPromotionBySaleOrderLine([FromQuery] Guid productId)
+        public async Task<IActionResult> GetPromotionBySaleOrderLine([FromQuery] Guid productId, Guid? partnerId)
         {
-            var result = await _programService.GetPromotionBySaleOrderLine(productId);
+            var result = await _programService.GetPromotionBySaleOrderLine(productId, partnerId);
             return Ok(result);
         }
 
