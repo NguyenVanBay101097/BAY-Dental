@@ -55,9 +55,11 @@
                                 <div class="d-flex justify-content-center m-auto">
                                     <div class="d-flex align-items-center mr-2"><i class="fas fa-dollar-sign"></i></div>
                                     <div style="cursor: pointer;" (click)="showHistoryApplyPromotion()">
-                                        <div>Giá trị khuyến mãi</div>
-                                        <div class="d-flex justify-content-center text-success">{{program.amountTotal |
-                                            number}}</div>
+                                        <div><label class="o_form_label">Giá trị khuyến mãi</label></div>
+                                        <div class="d-flex justify-content-center text-success"><label
+                                                class="o_form_label">
+                                                {{program.amountTotal | number}}
+                                            </label></div>
                                     </div>
                                 </div>
                             </div>
@@ -294,11 +296,12 @@
                                                                         id="isApplyMinimumDiscount">
                                                                     <label class="form-check-label"
                                                                         for="isApplyMinimumDiscount">Giá trị phiếu điều
-                                                                        trị tối thiểu</label>
-                                                                    <span class="text-primary" placement="top"
-                                                                        ngbTooltip="Tổng tiền của phiếu điều trị phải đạt giá trị tối thiểu mới được áp dụng khuyến mãi">
-                                                                        <i class="fas fa-exclamation-circle"></i>
-                                                                    </span>
+                                                                        trị tối thiểu
+                                                                        <span class="text-primary" placement="top"
+                                                                            ngbTooltip="Tổng tiền của phiếu điều trị phải đạt giá trị tối thiểu mới được áp dụng khuyến mãi">
+                                                                            <i class="fas fa-exclamation-circle"></i>
+                                                                        </span>
+                                                                    </label>
                                                                 </div>
                                                             </td>
                                                             <td class="w-70">
@@ -310,7 +313,7 @@
                                                                         class="text-danger mb-1">
                                                                         <div
                                                                             *ngIf="f.ruleMinimumAmount.errors.required">
-                                                                            Nhập trị giá tối thiểu</div>
+                                                                            Nhập trị giá PĐT tối thiểu</div>
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -400,7 +403,7 @@
                 <div class="block_right">
                     <div class="border rounded bg-white">
                         <div class="header p-2">
-                            Cấu hình chương trình khuyến mãi
+                            <label class="o_form_label">Cấu hình chương trình khuyến mãi</label>
                         </div>
                         <div class="p-2">
                             <div class="form-check">
@@ -414,7 +417,7 @@
                     </div>
                     <div class="border rounded bg-white mt-2">
                         <div class="header p-2">
-                            Thời gian áp dụng khuyến mãi
+                            <label class="o_form_label">Thời gian áp dụng khuyến mãi</label>
                         </div>
                         <div class="p-2">
                             <div class="form-group">
@@ -447,7 +450,7 @@
 
                     <div class="border rounded bg-white mt-2">
                         <div class="header p-2">
-                            Đối tượng áp dụng
+                            <label class="o_form_label">Đối tượng áp dụng</label>
                         </div>
                         <div class="p-2">
                             <div class="custom-control custom-radio">
