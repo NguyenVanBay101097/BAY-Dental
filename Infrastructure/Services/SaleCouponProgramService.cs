@@ -512,30 +512,33 @@ namespace Infrastructure.Services
         public async Task<CheckPromoCodeMessage> _CheckPromoCode(SaleCouponProgram self, SaleOrder order, string coupon_code)
         {
             var message = new CheckPromoCodeMessage();
-
+            var culture = new System.Globalization.CultureInfo("vi-VN");
+            var today = DateTime.Today;
             var saleObj = GetService<ISaleOrderService>();
             var applicable_programs = await saleObj._GetApplicablePrograms(order);
             var countApplied = await _GetCountAppliedAsync(self);
             if (self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Mã khuyến mãi {coupon_code} vượt quá hạn mức áp dụng.";
-            if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < order.DateOrder))
+            else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < order.DateOrder))
                 message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
+            else if (self.IsApplyDayOfWeek && !string.IsNullOrEmpty(self.Days) && !self.Days.Contains(((int)today.DayOfWeek).ToString()))
+                message.Error = $"Mã khuyến mãi không áp dụng cho {culture.DateTimeFormat.GetDayName(today.DayOfWeek)} ";
             else if (!_FilterOnMinimumAmount(new List<SaleCouponProgram>() { self }, order).Any() && self.DiscountApplyOn == "on_order" && self.IsApplyMinimumDiscount)
                 message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
             else if (!string.IsNullOrEmpty(self.ApplyPartnerOn) && self.ApplyPartnerOn == "specific_partners" && !self.DiscountSpecificPartners.Any(x => x.PartnerId == order.PartnerId))
                 message.Error = "Mã khuyến mãi không áp dụng cho khách hàng này";
             else if (!string.IsNullOrEmpty(self.PromoCode) && (order.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
-                message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";
+                message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";        
             else if (string.IsNullOrEmpty(self.PromoCode) && order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
                 message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (self.DiscountApplyOn != "on_order")
                 message.Error = "Mã khuyến mãi không áp dụng trên đơn hàng";
             else if (!self.Active)
                 message.Error = "Mã khuyến mãi không có giá trị";
-            else if ((self.NotIncremental.HasValue && self.NotIncremental.Value) || saleObj._IsGlobalDiscountAlreadyApplied(order))
-                message.Error = "Mã khuyến mãi không thể cộng dồn.";
-            //else if (_IsGlobalDiscountProgram(self) && saleObj._IsGlobalDiscountAlreadyApplied(order))
-            //    message.Error = "Chiết khấu tổng không thể cộng dồn";
+            else if (order.Promotions.Any(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
+                message.Error = "Đang áp dụng khuyến mãi không cộng dồn. Vui lòng xóa các CTKM đó.";
+            else if (self.NotIncremental == true && order.Promotions.Any(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgram != null))
+                message.Error = "Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ.";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !saleObj._IsRewardInOrderLines(order, self))
                 message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
             else
@@ -550,13 +553,16 @@ namespace Infrastructure.Services
         public async Task<CheckPromoCodeMessage> _CheckQuotationPromoCode(SaleCouponProgram self, Quotation quotation, string coupon_code)
         {
             var message = new CheckPromoCodeMessage();
-
+            var culture = new System.Globalization.CultureInfo("vi-VN");
+            var today = DateTime.Today;
             var saleObj = GetService<ISaleOrderService>();
             var countApplied = await _GetCountAppliedQuotationAsync(self);
             if (self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Mã khuyến mãi {coupon_code} vượt quá hạn mức áp dụng.";
             else if (self.ApplyPartnerOn == "on_order" && self.IsApplyMinimumDiscount && self.RuleMinimumAmount > quotation.TotalAmount)
                 message.Error = $"Nên mua hàng tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
+            else if (self.IsApplyDayOfWeek && !string.IsNullOrEmpty(self.Days) && !self.Days.Contains(((int)today.DayOfWeek).ToString()))
+                message.Error = $"Mã khuyến mãi không áp dụng cho {culture.DateTimeFormat.GetDayName(today.DayOfWeek).ToLower()} ";
             else if (!string.IsNullOrEmpty(self.PromoCode) && (quotation.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
                 message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (self.DiscountApplyOn != "on_order")
@@ -571,9 +577,9 @@ namespace Infrastructure.Services
                 message.Error = "Chương trình khuyến mãi đang tạm ngừng";
             else if (!self.Active)
                 message.Error = "Chương trình khuyến mãi chưa kích hoạt";
-            else if (quotation.Promotions.Any(x => x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
+            else if (quotation.Promotions.Any(x => !x.QuotationLineId.HasValue && x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
                 message.Error = "Đang áp dụng khuyến mãi không cộng dồn. Vui lòng xóa các CTKM đó.";
-            else if (self.NotIncremental == true && quotation.Promotions.Any(x => x.SaleCouponProgram != null))
+            else if (self.NotIncremental == true && quotation.Promotions.Any(x => !x.QuotationLineId.HasValue && x.SaleCouponProgram != null))
                 message.Error = "Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ.";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !quotation.Lines.Where(x => x.ProductId == self.RewardProductId &&
             x.Qty >= self.RewardProductQuantity).Any())
@@ -602,9 +608,9 @@ namespace Infrastructure.Services
                 message.Error = "Chương trình khuyến mãi đang tạm ngừng";
             else if (!self.Active)
                 message.Error = "Chương trình khuyến mãi chưa kích hoạt";
-            else if (order.Promotions.Any(x => x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
+            else if (order.Promotions.Any(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
                 message.Error = "Đang áp dụng khuyến mãi không cộng dồn. Vui lòng xóa các CTKM đó.";
-            else if (self.NotIncremental == true && order.Promotions.Any(x => x.SaleCouponProgram != null))
+            else if (self.NotIncremental == true && order.Promotions.Any(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgram != null))
                 message.Error = "Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ.";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !saleObj._IsRewardInOrderLines(order, self))
                 message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
@@ -706,9 +712,9 @@ namespace Infrastructure.Services
                 message.Error = "Chương trình khuyến mãi đang tạm ngừng";
             else if (!self.Active)
                 message.Error = "Chương trình khuyến mãi chưa kích hoạt";
-            else if (quotation.Promotions.Any(x => x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
+            else if (quotation.Promotions.Any(x => !x.QuotationLineId.HasValue && x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
                 message.Error = "Đang áp dụng khuyến mãi không cộng dồn. Vui lòng xóa các CTKM đó.";
-            else if (self.NotIncremental == true && quotation.Promotions.Any(x => x.SaleCouponProgram != null))
+            else if (self.NotIncremental == true && quotation.Promotions.Any(x => !x.QuotationLineId.HasValue && x.SaleCouponProgram != null))
                 message.Error = "Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ.";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !quotation.Lines.Where(x => x.ProductId == self.RewardProductId &&
             x.Qty >= self.RewardProductQuantity).Any())

@@ -438,6 +438,7 @@ namespace Infrastructure.Services
                 }
             }
             await quotationLineObj.CreateAsync(quotationLines);
+            quotationObj.ComputeAmountAll(quotation);
             await quotationObj.UpdateAsync(quotation);
             return _mapper.Map<QuotationSimple>(quotation);
         }

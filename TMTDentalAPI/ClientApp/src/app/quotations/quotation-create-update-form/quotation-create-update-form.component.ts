@@ -429,7 +429,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           var newLine = this.quotation.lines[i];
           modalRef.componentInstance.quotationLine = newLine;
         }, err => {
-          console.log(err);
           this.notify('error', err.error);
         });
     });
@@ -451,7 +450,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           var newLine = this.quotation.lines[i];
           modalRef.componentInstance.quotationLine = newLine;
         }, err => {
-          console.log(err);
           this.notify('error', err.error.error);
         });
     });
@@ -468,7 +466,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           var newLine = this.quotation.lines[i];
           modalRef.componentInstance.quotationLine = newLine;
         }, err => {
-          console.log(err);
           this.notify('error', err.error.error);
         });
     });
@@ -551,7 +548,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.quotation = res;
           modalRef.componentInstance.quotation = this.quotation;
         }, err => {
-          console.log(err);
           this.notify('error', err.error);
         });
     });
@@ -572,7 +568,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.quotation = res;
           modalRef.componentInstance.quotation = this.quotation;
         }, err => {
-          console.log(err);
           this.notify('error', err.error.error);
         });
     });
@@ -588,7 +583,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.quotation = res;
           modalRef.componentInstance.quotation = this.quotation;
         }, err => {
-          console.log(err);
           this.notify('error', err.error.error);
         });
     });
