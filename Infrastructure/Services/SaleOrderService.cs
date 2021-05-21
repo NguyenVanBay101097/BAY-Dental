@@ -174,7 +174,7 @@ namespace Infrastructure.Services
 
         public void _AmountAll(IEnumerable<SaleOrder> self)
         {
-            foreach(var order in self)
+            foreach (var order in self)
             {
                 var totalAmountUntaxed = 0M;
                 var totalAmountTax = 0M;
@@ -1112,7 +1112,7 @@ namespace Infrastructure.Services
 
             if (program != null)
             {
-                var error_status = await programObj._CheckPromotion(program, order);
+                var error_status = programObj._CheckPromotion(program, order);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
                     if (program.PromoApplicability == "on_next_order")
@@ -2532,7 +2532,7 @@ namespace Infrastructure.Services
                             if (program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode))
                                 error_status = await programObj._CheckPromoCode(program, order, program.PromoCode);
                             else
-                                error_status = await programObj._CheckPromotion(program, order);
+                                error_status = programObj._CheckPromotion(program, order);
 
 
                             if (string.IsNullOrEmpty(error_status.Error))

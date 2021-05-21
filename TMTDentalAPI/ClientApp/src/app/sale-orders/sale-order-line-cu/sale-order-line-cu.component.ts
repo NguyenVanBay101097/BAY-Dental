@@ -312,9 +312,7 @@ export class SaleOrderLineCuComponent implements OnInit {
     this.onUpdateEvent.emit(this.formGroupInfo.value);
 
     // this.isItSeff = this.isItSeff;
-    // if(isItseft) {
-    //   this.notify('success', 'Cập nhật thành công');
-    // }
+      this.notify('success', 'Cập nhật thành công');
     return true;
   }
 

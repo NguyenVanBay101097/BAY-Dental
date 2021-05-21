@@ -132,11 +132,11 @@ namespace Infrastructure.Services
                 message.Error = "Chiết khấu tổng không thể cộng dồn.";
             else if (self.Program.RewardType == "product" && !saleObj._IsRewardInOrderLines(order, self.Program))
                 message.Error = "Sản phẩm phần thưởng nên có trong chi tiết đơn hàng để áp dụng giảm giá.";
-            else
-            {
-                if (!applicable_programs.Contains(self.Program) && self.Program.PromoApplicability == "on_current_order")
-                    message.Error = "Không đạt điều kiện nào để có thể nhận thưởng!";
-            }
+            //else
+            //{
+            //    if (!applicable_programs.Contains(self.Program) && self.Program.PromoApplicability == "on_current_order")
+            //        message.Error = "Không đạt điều kiện nào để có thể nhận thưởng!";
+            //}
 
             return message;
         }
@@ -148,7 +148,7 @@ namespace Infrastructure.Services
 
         public void _ComputeDateExpired(IEnumerable<SaleCoupon> self)
         {
-            foreach(var coupon in self)
+            foreach (var coupon in self)
             {
                 var date = (coupon.DateCreated ?? DateTime.Today).Date;
                 var validity_duration = coupon.Program.ValidityDuration ?? 0;

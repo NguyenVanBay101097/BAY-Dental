@@ -8,12 +8,12 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface ISaleCouponProgramService: IBaseService<SaleCouponProgram>
+    public interface ISaleCouponProgramService : IBaseService<SaleCouponProgram>
     {
         Task Apply(SaleCouponProgram rule, SaleOrder order, decimal total_amount, decimal total_qty, SaleCoupon coupon = null);
         Task<PagedResult2<SaleCouponProgramBasic>> GetPagedResultAsync(SaleCouponProgramPaged val);
         Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrder(Guid? partnerId);
-        Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrderLine(Guid productId , Guid? partnerId);
+        Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrderLine(Guid productId, Guid? partnerId);
         Task<IEnumerable<SaleCouponProgramDisplay>> GetPromotionByFastSaleOrder();
         Task<decimal> GetAmountTotal(Guid id);
         Task<SaleCouponProgram> CreateProgram(SaleCouponProgramSave val);
@@ -26,7 +26,7 @@ namespace Infrastructure.Services
         IEnumerable<SaleCouponProgram> _FilterProgramsFromCommonRules(IEnumerable<SaleCouponProgram> self, SaleOrder order, bool next_order = false);
         Task<CheckPromoCodeMessage> _CheckPromoCode(SaleCouponProgram self, SaleOrder order, string coupon_code);
         Task<CheckPromoCodeMessage> _CheckQuotationPromoCode(SaleCouponProgram self, Quotation quotation, string coupon_code);
-        Task<CheckPromoCodeMessage> _CheckPromotion(SaleCouponProgram self, SaleOrder order);
+        CheckPromoCodeMessage _CheckPromotion(SaleCouponProgram self, SaleOrder order);
 
         CheckPromoCodeMessage _CheckQuotationPromotion(SaleCouponProgram self, Quotation quotation);
         CheckPromoCodeMessage _CheckPromotionApplySaleLine(SaleCouponProgram self, SaleOrderLine line);

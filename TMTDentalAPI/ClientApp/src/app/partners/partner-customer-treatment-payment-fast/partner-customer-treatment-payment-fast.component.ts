@@ -52,7 +52,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   saleOrderId: string;
   applyPromotionList = [];
 
-  defaultToothCate:any;
+  defaultToothCate: any;
   listTeeths: any[] = [];
   filteredToothCategories: any[] = [];
   initialListEmployees: any[] = [];
@@ -104,11 +104,12 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   get orderLines() {
-    return this.saleOrder ? this.saleOrder.orderLines: null;
+    return this.saleOrder ? this.saleOrder.orderLines : null;
   }
 
   get getPartner() {
-    return this.formGroup.controls.partner.value;
+    var res = this.saleOrder.partner ?  this.saleOrder.partner  : null;
+    return res;
   }
 
   get f() {
@@ -144,13 +145,13 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       }
     );
   }
-  
+
   loadApplyPromotionList() {
-    this.saleCouponProgramService.getPromotionApplyFastSaleOrder().subscribe(res => {
+    this.saleCouponProgramService.getPromotionByFastSaleOrder().subscribe(res => {
       this.applyPromotionList = res;
     });
   }
-  
+
   loadEmployees() {
     var val = new EmployeePaged();
     val.limit = 0;
@@ -187,7 +188,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       p.id = result.id;
       p.name = result.name;
       p.displayName = result.displayName;
-      this.saleOrder.partner=p;
+      this.saleOrder.partner = p;
       this.filteredPartners = _.unionBy(this.filteredPartners, [p], 'id');
       this.onChangePartner(p);
     }, () => {
@@ -252,9 +253,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   getFormDataSave() {
     var val = Object.assign({}, this.saleOrder);
     var formValue = this.formGroup.value;
-    val = {...val, formValue};
+    val = { ...val, formValue };
     console.log(formatDate(val.dateOrder, 'yyyy-MM-ddTHH:mm:ss', 'en-US'));
-    
+
     val.dateOrder = this.intlService.formatDate(val.dateOrder, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner ? val.partner.id : null;
     val.pricelistId = val.pricelist ? val.pricelist.id : null;
@@ -271,6 +272,12 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     val.orderLines.forEach(line => {
       if (line.employee) {
         line.employeeId = line.employee.id;
+      }
+      if (line.assistant) {
+        line.assistantId = line.assistant.id;
+      }
+      if (line.counselor) {
+        line.counselorId = line.counselor.id;
       }
       if (line.teeth) {
         line.toothIds = line.teeth.map(x => x.id);
@@ -290,7 +297,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   onChangePartner(value) {
     if (value) {
       this.partnerService.getPartner(value.id).subscribe(rs => {
-        this.saleOrder.partner= rs;
+        this.saleOrder.partner = rs;
         this.saleOrder.orderLines.forEach(line => {
           line.orderPartnerId = rs.id;
         });
@@ -313,8 +320,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         this.computeAmountTotal();
 
       });
-    } 
- }
+    }
+  }
 
   addLine(val) {
     if (this.lineSelected) {
@@ -340,7 +347,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       productId: val.id,
       product: {
         id: val.id,
-        name: val.name
+        name: val.name,
+        categId: val.categId
       },
       productUOMQty: 1,
       state: 'draft',
@@ -372,7 +380,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.saleOrder.orderLines.forEach(line => {
       var discountType = line.discountType ? line.discountType : 'percentage';
       var discountFixedValue = line.discountFixed ? line.discountFixed : 0;
-      var discountNumber = line.discount? line.discount : 0;
+      var discountNumber = line.discount ? line.discount : 0;
       var getquanTity = line.productUOMQty ? line.productUOMQty : 1;
       var getamountPaid = line.amountPaid ? line.amountPaid : 0;
       var priceUnit = line.priceUnit ? line.priceUnit.value : 0;
@@ -380,9 +388,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
       var subtotal = discountType == 'percentage' ? price * (1 - discountNumber / 100) :
         Math.max(0, price - discountFixedValue);
-      line.priceSubTotal=subtotal;
+      line.priceSubTotal = subtotal;
       var getResidual = subtotal - getamountPaid;
-      line.amountResidual=getResidual;
+      line.amountResidual = getResidual;
     });
 
   }
@@ -431,7 +439,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       total += line.priceSubTotal;
     });
     // this.computeResidual(total);
-    this.saleOrder.amountTotal=(total);
+    this.saleOrder.amountTotal = (total);
   }
 
   getAmount() {
@@ -442,7 +450,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   getTotalDiscount() {
-    if(!this.orderLines) return 0;
+    if (!this.orderLines) return 0;
     var res = (this.orderLines as any[]).reduce((total, cur) => {
       return total + (cur.amountDiscountTotal || 0) * cur.productUOMQty;
     }, 0);
@@ -451,7 +459,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onDeleteLine(index) {
-    this.orderLines.splice(index,1);
+    this.orderLines.splice(index, 1);
     this.lineSelected = null;
     this.onComputePromotion();
     this.computeAmountTotal();
@@ -473,7 +481,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   updateLineInfo(lineNew, line) {
-    line.priceSubTotal= 323232;
+    line.priceSubTotal = 323232;
     line = Object.assign(line, lineNew);
     this.lineSelected = null;
     this.onComputePromotion();
@@ -490,7 +498,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         amount = promotion.discountType == 'percentage' ? promotion.discountPercent * total / 100 : promotion.discountFixed;
         break;
       case 'code_usage_program':
-        amount = promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercent * total / 100, promotion ): promotion.discountFixed;
+        amount = promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercent * total / 100, promotion) : promotion.discountFixed;
         break;
       case 'promotion_program':
         amount = promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercent * total / 100, promotion) : promotion.discountFixed;
@@ -514,7 +522,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         amount = promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercent * total / 100, promotion) : promotion.discountFixed;
         break;
       case 'promotion_program':
-        amount = promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercent * total / 100 , promotion) : promotion.discountFixed;
+        amount = promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercent * total / 100, promotion) : promotion.discountFixed;
         break;
       default:
         break;
@@ -533,7 +541,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     });
     this.saleOrder.promotions = promotions;
     //compute saleorderline promotion
-   this.orderLines.forEach((line) => {
+    this.orderLines.forEach((line) => {
       let amountToOrder = 0;
       promotions.forEach((pro: SaleOrderPromotionSave) => {
         amountToOrder += ((((line.productUOMQty * line.priceUnit) / total) * pro.amount) / line.productUOMQty);
@@ -543,16 +551,16 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       linePromotions.forEach(pro => {
         pro.amount = this.getAmountPromotionOfSaleOrderLine(line, pro);
       });
-      line.promotions=linePromotions;
+      line.promotions = linePromotions;
 
       let amountToLine = linePromotions.reduce((total, pro) => {
         return total + (pro.amount / line.productUOMQty);
       }, 0);
 
-      line.amountPromotionToOrder=amountToOrder;
-      line.amountPromotionToOrderLine=amountToLine;
-      line.amountDiscountTotal=amountToOrder + amountToLine;
-      line.priceSubTotal=Math.round((line.priceUnit - amountToOrder - amountToLine) * line.productUOMQty);
+      line.amountPromotionToOrder = amountToOrder;
+      line.amountPromotionToOrderLine = amountToLine;
+      line.amountDiscountTotal = amountToOrder + amountToLine;
+      line.priceSubTotal = Math.round((line.priceUnit - amountToOrder - amountToLine) * line.productUOMQty);
     })
   }
 
@@ -568,7 +576,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       type: 'discount',
       discountType: res.discountType,
       discountPercent: res.discountPercent,
-      discountFixed: res.discountFixed ,
+      discountFixed: res.discountFixed,
       saleCouponProgramId: null,
       name: 'Giảm tiền',
       saleCouponProgram: null
@@ -578,11 +586,11 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.computeAmountTotal();
     return true;
   }
-  
+
   checkApplyPromotionSaleOrderLine(line, promotionApply) {
     var promotions = line.promotions;
     var res = this.checkApplyPromotionCommon(promotions, promotionApply);
-    if(!res) return false;
+    if (!res) return false;
 
     return true;
   }
@@ -602,6 +610,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       this.notifyService.notify('error', 'Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ');
       return false;
     }
+
+    return true;
   }
 
   checkApplyPromotionSaleOrder(promotionApply) {
@@ -609,25 +619,25 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     var res = this.checkApplyPromotionCommon(promotions, promotionApply);
     if (!res) return false;
 
-    if (this.saleOrder.amountTotal < promotionApply.ruleMinimumAmount) {
+    if (this.getAmount() < promotionApply.ruleMinimumAmount) {
       this.notifyService.notify('error', 'Đơn hàng không đạt giá trị tối thiểu ' + promotionApply.ruleMinimumAmount.toLocaleString('es'));
       return false;
     }
     return true;
   }
 
-   getMaxAmountPromotion(amount, promotion) {
-  return promotion.isApplyMaxDiscount ? (amount > promotion.discountMaxAmount ? promotion.discountMaxAmount : amount) : amount;
-   }
+  getMaxAmountPromotion(amount, promotion) {
+    return promotion.isApplyMaxDiscount ? (amount > promotion.discountMaxAmount ? promotion.discountMaxAmount : amount) : amount;
+  }
 
   applyCouponPromotionSaleOrder(promotion) {
-   
+
     var res = this.checkApplyPromotionSaleOrder(promotion);
-    if(!res) return;
+    if (!res) return;
     //push cai uu dai vào mảng ưu đãi
     var type = promotion.promoCodeUsage == 'code_needed' ? 'code_usage_program' : 'promotion_program';
     this.saleOrder.promotions.push({
-      amount: promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercentage * this.getAmount() / 100, promotion ): promotion.discountFixedAmount,
+      amount: promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercentage * this.getAmount() / 100, promotion) : promotion.discountFixedAmount,
       type: type,
       discountType: promotion.discountType,
       discountPercent: promotion.discountPercentage,
@@ -644,18 +654,22 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   deletePromotionSaleOrder(item) {
     var promotions = this.saleOrder.promotions;
-    var i = promotions.findIndex(x=> x == item);
-    promotions.splice(i,1);
+    var i = promotions.findIndex(x => x == item);
+    promotions.splice(i, 1);
     //chạy hàm phân bổ
     this.onComputePromotion();
     this.computeAmountTotal();
   }
 
   openSaleOrderPromotionDialog() {
+    var allPromotions = this.applyPromotionList.filter(x =>
+      x.discountApplyOn == 'on_order' &&
+      (x.applyPartnerOn == 'all' || x.discountSpecificPartners.map(x => x.id).some(z => z == this.saleOrder.partner.id)));
     let modalRef = this.modalService.open(PartnerCustomerTreatmentFastPromotionComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.saleOrder = this.saleOrder;
+    modalRef.componentInstance.allPromotions = allPromotions;
     modalRef.componentInstance.getDiscountSJ().subscribe(res => {
-    this.applyDiscountPromotionSaleOrder(res);
+      this.applyDiscountPromotionSaleOrder(res);
     });
 
     modalRef.componentInstance.getPromotionSJ().subscribe(res => {
@@ -669,7 +683,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   onOpenSaleOrderPromotion() {
     if (!this.formGroup.controls.partner.valid) {
-      this.notifyService.notify('error','Chọn khách hàng');
+      this.notifyService.notify('error', 'Chọn khách hàng');
       return;
     }
     //update line trước khi lưu
@@ -693,7 +707,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   applyDiscountPromotionSaleOrderLine(res, line) {
     var exist = line.promotions.find(x => x.type == 'discount');
     if (exist) {
-        this.notifyService.notify('error', 'Ưu đãi đã được áp dụng cho đơn hàng này')
+      this.notifyService.notify('error', 'Ưu đãi đã được áp dụng cho đơn hàng này')
       return false;
     }
     //push cai uu dai vào mảng ưu đãi
@@ -714,19 +728,19 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   applyCouponPromotionSaleOrderLine(promotion, line) {
-   var res = this.checkApplyPromotionSaleOrderLine(line,promotion);
-    if(!res) return;
+    var res = this.checkApplyPromotionSaleOrderLine(line, promotion);
+    if (!res) return;
     //push cai uu dai vào mảng ưu đãi
-   
-  line.promotions.push({
-    amount: promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercentage * (line.priceUnit * line.productUOMQty) / 100, promotion): promotion.discountFixedAmount,
+
+    line.promotions.push({
+      amount: promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercentage * (line.priceUnit * line.productUOMQty) / 100, promotion) : promotion.discountFixedAmount,
       type: promotion.promoCodeUsage == 'code_needed' ? 'code_usage_program' : 'promotion_program',
       discountType: promotion.discountType,
       discountPercent: promotion.discountPercentage,
       discountFixed: promotion.discountFixedAmount,
       saleCouponProgramId: promotion.id,
       name: promotion.name,
-    saleCouponProgram: promotion
+      saleCouponProgram: promotion
     } as SaleOrderPromotionSave);
     //chạy hàm phân bổ
     this.onComputePromotion();
@@ -737,7 +751,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   deletePromotionSaleOrderLine(item, line) {
     var promotions = line.promotions;
     var i = promotions.findIndex(x => x == item);
-    promotions.splice(i,1);
+    promotions.splice(i, 1);
     //chạy hàm phân bổ
     this.onComputePromotion();
     this.computeAmountTotal();
@@ -746,8 +760,14 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   onOpenLinePromotionDialog(i) {
     var line = this.orderLines[i];
+    var allPromotions = this.applyPromotionList.filter(x =>
+      ((x.discountApplyOn == 'specific_products' && x.discountSpecificProducts.map(z => z.id).some(i => i == line.productId)) ||
+        (x.discountApplyOn == 'specific_product_categories' && x.discountSpecificProductCategories.map(z => z.id).some(i => i == line.product.categId)))
+       &&
+      (x.applyPartnerOn == 'all' || x.discountSpecificPartners.map(x => x.id).some(z => z == this.saleOrder.partner.id)));
     let modalRef = this.modalService.open(PartnerCustomerTreatmentLineFastPromotionComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.saleOrderLine = line;
+    modalRef.componentInstance.allPromotions = allPromotions;
     modalRef.componentInstance.getDiscountSJ().subscribe(res => {
       this.applyDiscountPromotionSaleOrderLine(res, line);
     });

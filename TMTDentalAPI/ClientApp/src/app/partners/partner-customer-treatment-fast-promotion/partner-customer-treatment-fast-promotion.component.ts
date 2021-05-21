@@ -31,6 +31,7 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
 
 
   // input
+  allPromotions = [];
   autoPromotions = [];
 
   private discountSubject = new Subject<any>();
@@ -55,6 +56,8 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
 
     //   this.loadDefaultPromotion();
     // }, 300);
+
+    this.autoPromotions = this.allPromotions.filter(x => x.promoCodeUsage == 'no_code_needed');
   }
 
   onChangeDiscount(val) {
@@ -102,14 +105,12 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
       this.notificationService.notify('error', 'Nhập mã khuyến mãi');
       return;
     }
-    this.promotionService.getPromotionUsageCode(this.form.code).subscribe((result) => {
-      if (result && !result.success) {
-        this.notificationService.notify('error', result.error);
-
-        return;
-      }
-      this.promotionSubject.next(result.saleCouponProgram);
-    });
+    var exist = this.allPromotions.find(x => x.promoCode == this.form.code);
+    if (!exist) {
+      this.notificationService.notify('error', 'Mã khuyến mãi không chính xác');
+      return;
+    }
+    this.promotionSubject.next(exist);
   }
 
   applyPromotion(item) {

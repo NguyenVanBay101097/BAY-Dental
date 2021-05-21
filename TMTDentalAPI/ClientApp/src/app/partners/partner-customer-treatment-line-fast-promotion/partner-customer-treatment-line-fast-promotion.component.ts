@@ -17,6 +17,7 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
 
   title = "Ưu đãi Dịch vụ";
   autoPromotions = [];
+  allPromotions = [];
   form = {
     discountFixed: 0,
     discountPercent: 0,
@@ -49,9 +50,10 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
   ) { }
 
   ngOnInit() {
-    setTimeout(() => {
-      this.loadDefaultPromotion();
-    }, 300);
+    // setTimeout(() => {
+    //   this.loadDefaultPromotion();
+    // }, 300);
+    this.autoPromotions = this.allPromotions.filter(x => x.promoCodeUsage == 'no_code_needed');
   }
 
   onChangeDiscount(val) {
@@ -91,16 +93,16 @@ export class PartnerCustomerTreatmentLineFastPromotionComponent implements OnIni
 
   onApplyCoupon() {
     if (this.form.code.trim() == '') {
-      // this.errorMsg = 'Nhập mã khuyến mãi';
+      this.notificationService.notify('error', 'Nhập mã khuyến mãi');
       return;
     }
-    this.promotionService.getPromotionUsageCode(this.form.code, this.saleOrderLine.productId).subscribe((result) => {
-      if (result && !result.success) {
-        // this.errorMsg = result.error;
-        return;
-      }
-      this.promotionSubject.next(result.saleCouponProgram);
-    });
+
+    var exist = this.allPromotions.find(x => x.promoCode == this.form.code);
+    if(!exist) {
+      this.notificationService.notify('error', 'Mã khuyến mãi không chính xác');
+      return;
+    }
+    this.promotionSubject.next(exist);
   }
 
   applyPromotion(item) {
