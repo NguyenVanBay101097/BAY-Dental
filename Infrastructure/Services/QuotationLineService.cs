@@ -47,6 +47,13 @@ namespace Infrastructure.Services
             //discount_amount = so luong * don gia da giam * phan tram
             var price_reduce = ((line.SubPrice ?? 0) * (1 - (program.DiscountPercentage ?? 0) / 100));
             var discount_amount = ((line.SubPrice ?? 0) - price_reduce) * line.Qty;
+
+            if (program.IsApplyMaxDiscount && program.DiscountMaxAmount.HasValue && program.DiscountMaxAmount.Value > 0)
+            {
+                if (discount_amount >= program.DiscountMaxAmount)
+                    discount_amount = program.DiscountMaxAmount.Value;
+            }
+
             return discount_amount;
         }
 

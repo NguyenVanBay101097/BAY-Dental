@@ -37,4 +37,5 @@ export class SaleOrderLineDisplay {
     amountDiscountTotal: number;
     amountPromotionToOrder: number;
     amountPromotionToOrderLine: number;
+    orderPartnerId: string;
 }

@@ -82,7 +82,7 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
   }
 
   loadDefaultPromotion() {
-    this.promotionService.getPromotionBySaleOrder().subscribe((res: any) => {
+    this.promotionService.getPromotionBySaleOrder(this.saleOrder.partnerId).subscribe((res: any) => {
       this.autoPromotions = res;
     });
   }

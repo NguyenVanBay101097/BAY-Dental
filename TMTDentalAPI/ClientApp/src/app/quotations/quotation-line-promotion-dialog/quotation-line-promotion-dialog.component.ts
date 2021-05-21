@@ -14,6 +14,7 @@ import { QuotationLineDisplay } from '../quotation.service';
 })
 export class QuotationLinePromotionDialogComponent implements OnInit {
   @Input() quotationLine: QuotationLineDisplay = null;
+  @Input() partnerId: string;
   title = "Ưu đãi Dịch vụ";
   isChange: boolean = false;
   autoPromotions = [];
@@ -65,7 +66,7 @@ export class QuotationLinePromotionDialogComponent implements OnInit {
   }
 
   loadDefaultPromotion() {
-    this.promotionService.getPromotionBySaleOrderLine(this.quotationLine.productId).subscribe((res: any) => {
+    this.promotionService.getPromotionBySaleOrderLine(this.quotationLine.productId, this.partnerId).subscribe((res: any) => {
       this.autoPromotions = res;
     });
   }

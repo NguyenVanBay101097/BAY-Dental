@@ -123,12 +123,12 @@ export class SaleCouponProgramService {
         return this.http.get<any>(this.baseApi + this.apiUrl + '/GetPromotionUsageCode?code='+ code + (productId? '&productId='+ productId : ''));
     }
 
-    getPromotionBySaleOrder() {
-        return this.http.get(this.baseApi + this.apiUrl + "/GetPromotionBySaleOrder");
+    getPromotionBySaleOrder(partnerId) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetPromotionBySaleOrder?partnerId="+partnerId);
     }
 
-    getPromotionBySaleOrderLine(id) {
-        return this.http.get(this.baseApi + this.apiUrl + "/GetPromotionBySaleOrderLine?productId=" + id);
+    getPromotionBySaleOrderLine(id, partnerId) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetPromotionBySaleOrderLine?productId=" + id + '&partnerId='+partnerId);
     }
 
     getAmountTotalUsagePromotion(id){

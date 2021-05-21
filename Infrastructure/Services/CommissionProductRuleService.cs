@@ -28,7 +28,7 @@ namespace Infrastructure.Services
                     .Include(x => x.Categ).Include(x => x.Product).ToListAsync();
             var commissionProductRule_dict = commissionProductRules.ToDictionary(x => x.ProductId.Value, x => x);
 
-            var products = await _mapper.ProjectTo<ProductBasic2>(productObj.SearchQuery(x => x.Type == "service" && x.Type2 == "service").Include(x => x.Categ)).ToListAsync();
+            var products = await _mapper.ProjectTo<ProductBasic2>(productObj.SearchQuery(x => x.Type == "service" && x.Type2 == "service" && x.Active).Include(x => x.Categ)).ToListAsync();
             var commissionProductRuleList = new List<CommissionProductRuleDisplay>();
 
             foreach (var product in products)

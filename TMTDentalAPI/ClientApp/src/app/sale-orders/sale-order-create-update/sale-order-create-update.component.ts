@@ -1,6 +1,6 @@
 import { DiscountDefault } from '../../core/services/sale-order.service';
-import { Component, EventEmitter, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { Component, EventEmitter, KeyValueDiffer, KeyValueDiffers, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
+import { FormControl, FormGroup, FormBuilder, FormArray, Validators, NgForm } from '@angular/forms';
 import { switchMap, mergeMap, catchError } from 'rxjs/operators';
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
@@ -132,9 +132,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private location: Location,
     private toothService: ToothService,
     private employeeService: EmployeeService,
-    private saleOrderPromotionService: SaleOrderPromotionService
+    private saleOrderPromotionService: SaleOrderPromotionService,
+    private differs: KeyValueDiffers
   ) {
   }
+  private customerDiffer: KeyValueDiffer<string, any>;
 
   ngOnInit() {
     this.partnerId = this.route.snapshot.queryParamMap.get('partner_id');
@@ -146,15 +148,20 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
     if (this.partnerId) {
       this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' }).subscribe((res: any) => {
-        console.log(res);
         this.saleOrder = res;
         this.updateFormGroup(res);
+        this.formGroup.valueChanges.subscribe(res => {
+          this.isChanged = true;
+        });
       });
     } else if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((res: any) => {
-        console.log(res);
         this.saleOrder = res;
         this.updateFormGroup(res);
+      
+        this.formGroup.valueChanges.subscribe(res => {
+          this.isChanged = true;
+        });
       });
     }
 
@@ -164,9 +171,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadToothCategories();
     this.loadEmployees();
 
-    // this.formGroup.valueChanges.subscribe(res => {
-    //   this.isChanged = true;
-    // });
   }
 
   loadEmployees() {
@@ -201,7 +205,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     // this.formGroup.patchValue(result);
     let dateOrder = new Date(result.dateOrder);
     this.formGroup.get('dateOrderObj').patchValue(dateOrder);
-
     // if (result.User) {
     //   this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
     // }
@@ -312,6 +315,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.computeAmountLine([line]);
     this.computeAmountTotal();
     this.lineSelected = null;
+    this.isChanged = true;
   }
 
   computeAmountLine(lines) {
@@ -752,6 +756,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.lineSelected = null;
     }
     this.saleOrder.orderLines.splice(index, 1);
+    this.isChanged = true;
   }
 
   openSaleOrderPromotionDialog() {
