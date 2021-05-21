@@ -92,7 +92,9 @@
                                         </tr>
                                     </table>
                                 </div>
-                                <div *ngIf="getValueFormControl('toothType') == 'manual' && getValueFormControl('teeth').length == 0 && submitted" 
+                                <div *ngIf="getValueFormControl('toothType') == 'manual'
+                                    && (getValueFormControl('teeth') && getValueFormControl('teeth').length == 0) 
+                                    && submitted" 
                                     class="text-danger">
                                     Chọn răng
                                 </div>
@@ -115,7 +117,7 @@
                             <app-consulting-service-popover [tags]="f.product.value" (onSave)="updateProduct($event)">
                             </app-consulting-service-popover>
                             <div *ngIf = "f.product.value.length == 0 && submitted" class="text-danger">
-                                Chọn dịch vụ
+                                Chọn dịch vụ tư vấn
                             </div>
                         </div>
                         
@@ -133,7 +135,7 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" [class.d-none]="id" class="btn btn-primary" (click)="resetForm()" accesskey="s">Nhập lại</button>
+    <button type="button" class="btn btn-primary" (click)="resetForm()" accesskey="s">Nhập lại</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

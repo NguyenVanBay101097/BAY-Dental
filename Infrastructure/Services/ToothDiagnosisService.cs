@@ -31,17 +31,11 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<ToothDiagnosisBasic>> GetPagedResultAsync(ToothDiagnosisPaged val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x => x.CompanyId == CompanyId);
 
             if (!string.IsNullOrEmpty(val.Search))
-            {
                 query = query.Where(x => x.Name.Contains(val.Search));
-            }
 
-            if (val.CompanyId.HasValue)
-            {
-                query = query.Where(x => x.CompanyId == val.CompanyId);
-            }
 
             query = query.OrderByDescending(x => x.DateCreated);
 

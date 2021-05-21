@@ -4,6 +4,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ToothDiagnosisCreateUpdateDialogComponent } from '../tooth-diagnosis-create-update-dialog/tooth-diagnosis-create-update-dialog.component';
 import { ToothDiagnosisPaged, ToothDiagnosisService } from '../tooth-diagnosis.service';
@@ -26,7 +27,8 @@ export class ToothDiagnosisListComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private toothDiagnosisService: ToothDiagnosisService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private authService : AuthService
   ) { }
 
   ngOnInit() {
@@ -46,6 +48,7 @@ export class ToothDiagnosisListComponent implements OnInit {
     val.offset = this.skip;
     val.limit = this.limit;
     val.search = this.search || '';
+  
 
     this.toothDiagnosisService.getPaged(val).pipe(
       map(response => (<GridDataResult>{

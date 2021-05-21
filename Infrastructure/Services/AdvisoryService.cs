@@ -297,6 +297,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Employee).ToListAsync();
 
             res.Advisories = _mapper.Map<IEnumerable<AdvisoryDisplay>>(advisories);
+           
 
             return res;
         }

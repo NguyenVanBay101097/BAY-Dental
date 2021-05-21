@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { anyChanged } from '@progress/kendo-angular-common';
 import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { result } from 'lodash';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
-import { ToothDiagnosisPaged, ToothDiagnosisService } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
+import { ToothDiagnosisPaged, ToothDiagnosisSave, ToothDiagnosisService } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 
 @Component({
   selector: 'app-tooth-diagnosis-popover',
@@ -22,6 +23,7 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
   @Input() tags = [];
   dataSource = [];
   searchUpdatePopOver = new Subject<string>();
+  mytags: any;
   @Input() popOverPlace = 'right';
   @Output() onSave = new EventEmitter();
   @ViewChild('popOver', { static: true }) public popover: any;
@@ -47,6 +49,7 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
       popover.close();
     } else {
       this.loadPopOver();
+      this.mytags = mytags;
       popover.open({ mytags });
     }
   }
@@ -62,22 +65,55 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
     })
   }
 
-  // getPageProduct(){
-  //   var val = new ProductPaged();
-  //   val.limit = 0;
-  //   val.offset = 0;
-  //   val.search = '';
-  //   val.type2 = 'service';
-  //   this.productService.getPaged(val).subscribe(result => {
-  //     this.dataSource = result.items;
-  //   })
-  // }
-
   loadPopOver(q?: string) {
     this.getPageDiagnosis(q);
   }
   update(tags) {
     this.popover.close();
     this.onSave.emit(tags);
+  }
+
+  public valueNormalizer = (text$: Observable<string>): any => text$.pipe(
+    switchMap((text: string) => {
+      // Search in values
+      const matchingValue: any = this.mytags.find((item: any) => {
+        // Search for matching item to avoid duplicates
+        return item['name'].toLowerCase() === text.toLowerCase();
+      });
+
+      if (matchingValue) {
+        // Return the already selected matching value and the component will remove it
+        return of(matchingValue);
+      }
+
+      // Search in data
+      const matchingItem: any = this.dataSource.find((item: any) => {
+        return item['name'].toLowerCase() === text.toLowerCase();
+      });
+
+      if (matchingItem) {
+        return of(matchingItem);
+      } else {
+        
+        return of(text).pipe(switchMap(this.service$));
+      }
+    })
+  )
+
+  public service$ = (text: string): any => {
+    var val = new ToothDiagnosisSave();
+    val.productIds = [];
+    val.name = text;
+    return this.toothDiagnosisService.create(val).pipe(
+      map((result: any) => {
+        console.log(result);
+        
+        return {
+          id: result.id,
+          name: result.name
+        }
+      })
+    );
+      
   }
 }
