@@ -465,8 +465,6 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   onChangeSelect(value) {
-    console.log(value);
-    
     if (value == 'percentage') {
       this.f.discountFixedAmount.clearValidators();
       this.f.discountFixedAmount.updateValueAndValidity();
