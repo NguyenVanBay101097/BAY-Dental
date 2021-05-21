@@ -576,15 +576,17 @@ export function DateInvalid(dateFromControlName: string, dateToControlName: stri
       const dateToControl = formGroup.controls[dateToControlName];
       var dateFrom = dateFromControl.value.toLocaleDateString('en-US');
       var dateTo = dateToControl.value.toLocaleDateString('en-US');
-      if (dateToControl.errors && !dateToControl.errors.DateInvalid) {
-          return;
-      }
-
+      console.log(dateFrom);
+      console.log(dateTo);
       if (dateFrom > dateTo) {
         dateToControl.setErrors({ dateInvalid: true });
       } else {
         dateToControl.setErrors(null);
       }
+      if (dateToControl.errors && !dateToControl.errors.DateInvalid) {
+          return;
+      }
+
   }
 }
 
