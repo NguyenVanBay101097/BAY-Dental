@@ -95,7 +95,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? SubPrice { get; set; }
 
         /// <summary>
-        /// tổng tiền ưu đãi của dịch vụ
+        /// tổng đơn giá ưu đãi của dịch vụ
         /// </summary>
         public decimal? AmountDiscountTotal { get; set; }
 
