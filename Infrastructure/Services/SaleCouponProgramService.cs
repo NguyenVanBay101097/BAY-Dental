@@ -156,7 +156,7 @@ namespace Infrastructure.Services
             var today = DateTime.Today;
             var query = SearchQuery(x => x.Active && !x.IsPaused && x.ProgramType == "promotion_program"
            && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order"
-           && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value.AbsoluteEndOfDate())
+           && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
            && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString()))));
 
             if (partnerId.HasValue)
@@ -175,7 +175,7 @@ namespace Infrastructure.Services
             var product = await productObj.SearchQuery(x => x.Id == productId).FirstOrDefaultAsync();
             var query = SearchQuery(x => x.Active && !x.IsPaused && x.ProgramType == "promotion_program"
             && x.PromoCodeUsage == "no_code_needed" && (x.DiscountApplyOn == "specific_products" || x.DiscountApplyOn == "specific_product_categories")
-            && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value.AbsoluteEndOfDate())
+            && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
             && (x.DiscountSpecificProducts.Any(s => s.ProductId == product.Id) || x.DiscountSpecificProductCategories.Any(s => s.ProductCategoryId == product.CategId))
             && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString()))));
 
@@ -192,9 +192,9 @@ namespace Infrastructure.Services
         {
             var today = DateTime.Today;
             var query = SearchQuery(x => x.Active && !x.IsPaused
-                        && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value.AbsoluteEndOfDate())
+                        && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
                         && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString())))
-                        && (x.MaximumUseNumber == 0 || (x.MaximumUseNumber > 0 && x.Promotions.Count <= x.MaximumUseNumber)));
+                        && (x.MaximumUseNumber == 0 || (x.MaximumUseNumber > 0 && x.Promotions.Where(x=> x.SaleCouponProgram.PromoCodeUsage != "no_code_needed").Count() <= x.MaximumUseNumber)));
 
             var promotions = await query.Include(x => x.Promotions).Include(x => x.DiscountSpecificPartners).Include(x => x.DiscountSpecificProductCategories).Include(x => x.DiscountSpecificProducts).ToListAsync();
 
