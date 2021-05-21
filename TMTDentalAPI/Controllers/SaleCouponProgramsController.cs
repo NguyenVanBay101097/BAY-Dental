@@ -191,5 +191,14 @@ namespace TMTDentalAPI.Controllers
             result.ApplyPartnerOn = "all";
             return Ok(result);
         }
+
+        [HttpGet("[action]")]
+        public IActionResult CheckPromoCodeExist(string code)
+        {
+            var promoCode = _programService.SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == code).FirstOrDefault();
+            if (promoCode != null)
+                return Ok(true);
+            return Ok(false);
+        }
     }
 }

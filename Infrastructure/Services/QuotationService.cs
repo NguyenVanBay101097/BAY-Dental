@@ -587,6 +587,7 @@ namespace Infrastructure.Services
             var orderLineObj = GetService<ISaleOrderLineService>();
             var quotation = await SearchQuery(x => x.Id == val.Id)
               .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+              .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
               .Include(x => x.Lines).ThenInclude(x => x.Promotions)
               .Include("Lines.Product")
               .FirstOrDefaultAsync();
@@ -626,6 +627,7 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             var quotation = await SearchQuery(x => x.Id == val.Id)
              .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+             .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
              .Include(x => x.Lines).ThenInclude(x => x.Promotions)
              .Include(x => x.Lines).ThenInclude(x => x.Product)
              .FirstOrDefaultAsync();

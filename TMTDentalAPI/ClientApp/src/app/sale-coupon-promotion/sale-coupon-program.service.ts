@@ -42,6 +42,7 @@ export class SaleCouponProgramDisplay {
     discountSpecificProducts: any;
     discountSpecificProductCategories: any;
     statusDisplay: string;
+    promoCode: string;
 }
 
 export class SaleCouponProgramSave {
@@ -136,5 +137,9 @@ export class SaleCouponProgramService {
 
     defaultGet(programType: string){
         return this.http.get(this.baseApi + this.apiUrl + '/DefaultGet?programType=' + programType);
+    }
+
+    checkPromoCodeExist(code: any){
+        return this.http.get(this.baseApi + this.apiUrl + '/CheckPromoCodeExist?code=' + code);
     }
 }

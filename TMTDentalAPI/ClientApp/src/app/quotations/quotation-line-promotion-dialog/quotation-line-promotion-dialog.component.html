@@ -6,7 +6,6 @@
 <div class="modal-body o_act_window">
     <div class="px-3 py-2">
         <div>
-
             <!-- giảm tiền -->
             <div class="mb-2">
                 <label class="font-weight-600">Giảm đơn giá</label>
@@ -31,8 +30,10 @@
                 <div class="">
                     <div *ngFor="let item of getListPromotion('code_usage_program'); let i = index" class="d-flex justify-content-between mt-2">
                         <label class="mb-0" for="">  <img src="../../../assets/icons/promotion.svg" alt=""> {{item.name}}</label>
-                        <i title="Xóa giảm tiền" class="fa fa-trash-alt bg-danger text-white btn-icon" (click)="onDeletePromotion(item)"></i>
-
+                        <!-- <i title="Xóa giảm tiền" class="fa fa-trash-alt bg-danger text-white btn-icon" (click)="onDeletePromotion(item)"></i> -->
+                        <button type="button" class="btn bg-danger btn-sm" (click)="onDeletePromotion(item)">
+                            <i title="Xóa giảm tiền" class="far fa-trash-alt text-white"></i>
+                        </button>
                     </div>
                 </div>
             </div>

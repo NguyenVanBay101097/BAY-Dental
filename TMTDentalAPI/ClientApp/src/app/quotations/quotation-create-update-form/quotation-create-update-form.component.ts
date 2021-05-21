@@ -1,18 +1,18 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, NgForm } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { catchError, debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { EmployeeBasic, EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { PrintService } from 'src/app/shared/services/print.service';
-import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
-import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
+import { ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { QuotationLineCuComponent } from '../quotation-line-cu/quotation-line-cu.component';
 import { QuotationLinePromotionDialogComponent } from '../quotation-line-promotion-dialog/quotation-line-promotion-dialog.component';
 import { QuotationLineService } from '../quotation-line.service';
@@ -48,18 +48,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   isChanged: boolean = false;
 
-  get linesArray() {
-    return this.formGroup.get('lines') as FormArray;
-  }
-
-  get paymentsArray() {
-    return this.formGroup.get('payments') as FormArray;
-  }
-
-  get f() { return this.formGroup.controls; }
-
   constructor(
-    private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private quotationService: QuotationService,
     private toothService: ToothService,
@@ -119,10 +108,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.quotation = result;
         }
       )
-  }
-
-  getValueFormControl(key: string) {
-    return this.formGroup.get(key).value;
   }
 
   searchEmployees(q?: string) {
@@ -185,23 +170,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   onCreateNewQuotation() {
-    this.router.navigate(['quotations/form'], { queryParams: { partner_id: this.partnerId } });
-  }
-
-  getAmountTotal() {
-    let totalAmount = 0;
-    var lines = this.getValueFormControl('lines');
-    if (lines && lines.length > 0) {
-      lines.forEach(line => {
-        totalAmount += line.amount;
-      });
-    }
-    return totalAmount;
-  }
-
-  getDate(dateQuotation: Date, dateApplies: number) {
-    var dateEnd = new Date(dateQuotation.getFullYear(), dateQuotation.getMonth(), dateQuotation.getDate() + dateApplies);
-    this.f.dateEndQuotation.patchValue((new Date(dateEnd)));
+    this.router.navigate(['quotations/form'], { queryParams: { partner_id: this.quotation.partner.id } });
   }
 
   onDateChange() {
@@ -212,13 +181,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       this.quotation.dateEndQuotation = dateEnd;
     } else {
       this.quotation.dateEndQuotation = null;
-    }
-  }
-
-  onDateAppliesChange(dateApplies) {
-    let dateQuotation = this.formGroup.get('dateQuotation') ? this.getValueFormControl('dateQuotation') : null;
-    if (dateQuotation && dateApplies) {
-      this.getDate(dateQuotation, dateApplies);
     }
   }
 
@@ -235,8 +197,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   deletePayment(index) {
-    this.paymentsArray.removeAt(index);
-    this.paymentsArray.markAsDirty();
+    this.quotation.payments.splice(index, 1);
   }
   //end payment
 
@@ -276,8 +237,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       }),
     };
 
-    console.log(val);
-
     return val;
   }
 
@@ -290,25 +249,16 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     }
   }
 
-  onSave() {
+  onSave(form: NgForm) {
+    if (form.invalid) return false;
+
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      var checkValidChild = viewChild.checkValidFormGroup();
-      if (!checkValidChild)
-        return;
-      else
-        viewChild.updateLineInfo();
+      var rs = viewChild.updateLineInfo();
+      if(!rs) return;
     }
 
-    // if (!this.formGroup.valid) {
-    //   return false;
-    // }
-
     var val = this.getDataFormGroup();
-
-    // val.payments.forEach(payment => {
-    //   payment.date = this.intlService.formatDate(payment.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    // });
 
     if (this.quotationId) {
       this.submitted = true;
@@ -367,11 +317,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     };
 
     this.quotation.lines.push(value);
-    // this.orderLines.push(value);
-    // this.orderLines.markAsDirty();
-    // this.computeAmountTotal();
-
-    // this.saleOrderLine = null;
     this.lineSelected = value;
 
     // mặc định là trạng thái sửa
@@ -395,7 +340,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     var line = this.quotation.lines[index];
     Object.assign(line, value);
     this.computeAmountLine([line]);
-    // this.computeAmountTotal();
     this.lineSelected = null;
   }
 
@@ -406,10 +350,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   onDeleteLine(index) {
-    this.linesArray.removeAt(index);
-    this.getAmountTotal();
-    this.linesArray.markAsDirty();
-    this.lineSelected = null;
+    var line = this.quotation.lines[index];
+    if (line == this.lineSelected) {
+      this.lineSelected = null;
+    }
+    this.quotation.lines.splice(index, 1);
   }
 
   onCancelEditLine(line) {
@@ -419,24 +364,13 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   onUpdateOpenLinePromotion(line, lineControl, i) {
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      var checkValidChild = viewChild.checkValidFormGroup();
-      if (!checkValidChild)
-        return;
-      else
-        viewChild.updateLineInfo();
+      var rs = viewChild.updateLineInfo();
+      if (!rs) return;
     }
-    if (!this.isChanged) {
-      this.onOpenLinePromotionDialog(i);
-      return;
-    }
-
+   
     const val = this.getDataFormGroup();
     this.submitted = true;
     if (!this.quotationId) {
-      if (!this.formGroup.valid) {
-        return false;
-      }
-
       this.quotationService.create(val).subscribe(async (result: any) => {
         this.quotationId = result.id;
         this.router.navigate(["/quotations/form"], {
@@ -457,6 +391,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     var line = this.quotation.lines[i];
     let modalRef = this.modalService.open(QuotationLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.quotationLine = line;
+    modalRef.componentInstance.partnerId = this.quotation.partner.id;
     modalRef.componentInstance.getBtnDiscountObs().subscribe(data => {
       var val = {
         id: line.id,
@@ -468,11 +403,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       this.quotationLineService.applyDiscountOnQuotationLine(val).pipe(
         mergeMap(() => this.quotationService.get(this.quotationId))
       )
-      .subscribe(res => {
-        this.quotation = res;
-        var newLine = this.quotation.lines[i];
-        modalRef.componentInstance.quotationLine = newLine;
-      });
+        .subscribe(res => {
+          this.quotation = res;
+          var newLine = this.quotation.lines[i];
+          modalRef.componentInstance.quotationLine = newLine;
+        });
     });
 
     modalRef.componentInstance.getBtnPromoCodeObs().subscribe(data => {
@@ -489,14 +424,13 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           return this.quotationService.get(this.quotationId);
         })
       )
-      .subscribe(res => {
-        this.quotation = res;
-        var newLine = this.quotation.lines[i];
-        modalRef.componentInstance.quotationLine = newLine;
-      }, err => {
-        console.log(err);
-        this.notify('error', err.error);
-      });
+        .subscribe(res => {
+          this.quotation = res;
+          var newLine = this.quotation.lines[i];
+          modalRef.componentInstance.quotationLine = newLine;
+        }, err => {
+          this.notify('error', err.error);
+        });
     });
 
     modalRef.componentInstance.getBtnPromoNoCodeObs().subscribe(data => {
@@ -511,14 +445,13 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           return this.quotationService.get(this.quotationId);
         })
       )
-      .subscribe(res => {
-        this.quotation = res;
-        var newLine = this.quotation.lines[i];
-        modalRef.componentInstance.quotationLine = newLine;
-      }, err => {
-        console.log(err);
-        this.notify('error', err.error.error);
-      });
+        .subscribe(res => {
+          this.quotation = res;
+          var newLine = this.quotation.lines[i];
+          modalRef.componentInstance.quotationLine = newLine;
+        }, err => {
+          this.notify('error', err.error.error);
+        });
     });
 
     modalRef.componentInstance.getBtnDeletePromoObs().subscribe(data => {
@@ -528,14 +461,13 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           return this.quotationService.get(this.quotationId);
         })
       )
-      .subscribe(res => {
-        this.quotation = res;
-        var newLine = this.quotation.lines[i];
-        modalRef.componentInstance.quotationLine = newLine;
-      }, err => {
-        console.log(err);
-        this.notify('error', err.error.error);
-      });
+        .subscribe(res => {
+          this.quotation = res;
+          var newLine = this.quotation.lines[i];
+          modalRef.componentInstance.quotationLine = newLine;
+        }, err => {
+          this.notify('error', err.error.error);
+        });
     });
 
   }
@@ -543,25 +475,14 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   onOpenQuotationPromotion() {
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      var checkValidChild = viewChild.checkValidFormGroup();
-      if (!checkValidChild)
-        return;
-      else
-        viewChild.updateLineInfo();
+      var rs  = viewChild.updateLineInfo();
+      if(!rs) return;
     }
 
-    if (!this.isChanged) {
-      this.openQuotationPromotionDialog();
-      return;
-    }
-
+    this.submitted = true;
     const val = this.getDataFormGroup();
 
     if (!this.quotationId) {
-      this.submitted = true;
-      if (!this.formGroup.valid) {
-        return false;
-      }
       this.quotationService.create(val).subscribe(async (result: any) => {
         this.quotationId = result.id;
         this.quotation = result;
@@ -585,7 +506,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     if (this.quotationId) {
       var result = await this.quotationService.get(this.quotationId).toPromise();
       this.quotation = result;
-      this.isChanged = true;
       return result;
     }
   }
@@ -604,10 +524,10 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       this.quotationService.applyDiscountOnQuotation(val).pipe(
         mergeMap(() => this.quotationService.get(this.quotationId))
       )
-      .subscribe(res => {
-        this.quotation = res;
-        modalRef.componentInstance.quotation = this.quotation;
-      });
+        .subscribe(res => {
+          this.quotation = res;
+          modalRef.componentInstance.quotation = this.quotation;
+        });
     });
 
     modalRef.componentInstance.getBtnPromoCodeObs().subscribe(data => {
@@ -624,13 +544,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           return this.quotationService.get(this.quotationId);
         })
       )
-      .subscribe(res => {
-        this.quotation = res;
-        modalRef.componentInstance.quotation = this.quotation;
-      }, err => {
-        console.log(err);
-        this.notify('error', err.error);
-      });
+        .subscribe(res => {
+          this.quotation = res;
+          modalRef.componentInstance.quotation = this.quotation;
+        }, err => {
+          this.notify('error', err.error);
+        });
     });
 
     modalRef.componentInstance.getBtnPromoNoCodeObs().subscribe(data => {
@@ -645,13 +564,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           return this.quotationService.get(this.quotationId);
         })
       )
-      .subscribe(res => {
-        this.quotation = res;
-        modalRef.componentInstance.quotation = this.quotation;
-      }, err => {
-        console.log(err);
-        this.notify('error', err.error.error);
-      });
+        .subscribe(res => {
+          this.quotation = res;
+          modalRef.componentInstance.quotation = this.quotation;
+        }, err => {
+          this.notify('error', err.error.error);
+        });
     });
 
     modalRef.componentInstance.getBtnDeletePromoObs().subscribe(data => {
@@ -661,13 +579,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           return this.quotationService.get(this.quotationId);
         })
       )
-      .subscribe(res => {
-        this.quotation = res;
-        modalRef.componentInstance.quotation = this.quotation;
-      }, err => {
-        console.log(err);
-        this.notify('error', err.error.error);
-      });
+        .subscribe(res => {
+          this.quotation = res;
+          modalRef.componentInstance.quotation = this.quotation;
+        }, err => {
+          this.notify('error', err.error.error);
+        });
     });
   }
 
@@ -692,27 +609,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       }, 0);
     }
     return 0;
-  }
-
-  onPaymentChange(payment: FormGroup) {
-    this.computeAmount(payment);
-  }
-
-  computeAmount(payment: FormGroup) {
-    let amount = 0;
-    if (payment.get('discountPercentType').value === 'cash') {
-      amount = payment.get('payment') ? payment.get('payment').value : 0;
-    }
-    else {
-      var percent = payment.get('payment') ? payment.get('payment').value : 0;
-      amount = this.getAmountTotal() * (percent / 100);
-
-    }
-    payment.get('amount').patchValue(amount);
-  }
-
-  getValueFormPaymentArray(key, i) {
-    return this.paymentsArray.at(i).get(key).value;
   }
 
   notify(type, content) {

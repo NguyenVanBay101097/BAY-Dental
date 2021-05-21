@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operators';
 import { PriceListService } from 'src/app/price-list/price-list.service';
 import * as _ from 'lodash';
 import { SaleCouponProgramDisplay, SaleCouponProgramService } from '../sale-coupon-program.service';
@@ -35,6 +35,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   id: string;
   program: any = new SaleCouponProgramDisplay();
   submitted = false;
+  promoCodeFilter = '';
+  promoCode = '';
   listDay: any[] = [
     { id: '0', name: 'Chủ Nhật' },
     { id: '1', name: 'Thứ 2' },
@@ -66,20 +68,20 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
     this.formGroup = this.fb.group({
       name: [null, Validators.required],
-      ruleMinimumAmount: [0, Validators.required],
+      ruleMinimumAmount: [null],
       discountType: 'percentage',
       discountPercentage: [0, Validators.required],
-      discountFixedAmount:[0, Validators.required],
+      discountFixedAmount:[null],
       validityDuration: 1,
       rewardType: 'discount',
       discountSpecificProducts: [null],
       discountSpecificProductCategories: [null],
       notIncremental: false,
-      discountMaxAmount: 0,
+      discountMaxAmount: null,
       promoCodeUsage: 'no_code_needed',
       ruleDateToObj: [endDate, Validators.required],
       ruleDateFromObj: [startDate, Validators.required],
-      maximumUseNumber: 0,
+      maximumUseNumber: null,
       promoCode: null,
       daysSelected: null,
       isApplyDayOfWeek: false,
@@ -98,7 +100,6 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
         this.loadRecord();
       } else {
         this.programService.defaultGet('promotion_program').subscribe((result: any) => {
-          console.log(result);
           this.program = result;
         })
       }
@@ -134,6 +135,28 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.listPartner = result;
       this.partnerMultiSelect.loading = false;
     });
+
+    this.formGroup.get('promoCode').valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(value => {
+        if(value!=this.promoCode){
+          return this.programService.checkPromoCodeExist(value);
+        }
+        return this.programService.checkPromoCodeExist(null);
+      }))
+      .subscribe(result => {
+        if(result){
+          this.f.promoCode.setErrors({'exist':true});
+        }
+        else{
+          this.f.promoCode.clearValidators();
+          this.f.promoCode.updateValueAndValidity();
+          return;
+        }
+        
+      })
+      
   }
 
   get f() {
@@ -208,10 +231,6 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     return this.formGroup.get('active').value;
   }
 
-  get statusDisplay() {
-    return this.formGroup.get('statusDisplay').value;
-  }
-
   get isSelectDay() {
     return this.formGroup.get('isApplyDayOfWeek').value;
   }
@@ -243,6 +262,40 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
   changeCheckbox(value) {
     this.f.notIncremental.setValue(value);
+  }
+
+  ChangPromoCodeUsage(value){
+    if(value == 'no_code_needed'){
+      this.f.promoCode.setValue(null);
+      this.f.maximumUseNumber.setValue(0);
+    }
+    
+  }
+
+  ChangeDiscountType(value){
+    if (value == 'percentage') {
+      this.f.discountFixedAmount.setValue(null);
+      this.f.discountFixedAmount.clearValidators();
+      this.f.discountFixedAmount.updateValueAndValidity();
+      this.f.discountPercentage.setValidators(Validators.required);
+      this.f.discountPercentage.updateValueAndValidity();
+    }
+    else {
+      this.f.discountPercentage.setValue(0);
+      this.f.isApplyMaxDiscount.setValue(false);
+      this.f.discountMaxAmount.setValue(null);
+      this.f.discountPercentage.clearValidators();
+      this.f.discountPercentage.updateValueAndValidity();
+      this.f.discountFixedAmount.setValidators(Validators.required);
+      this.f.discountFixedAmount.updateValueAndValidity();
+    }
+  }
+
+  ChangeApplyDay(event){
+    if(!event.target.checked){
+      this.f.daysSelected.setValue(null);
+    }
+    
   }
 
   generateCoupons() {
@@ -283,7 +336,6 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
   loadRecord() {
     this.programService.get(this.id).subscribe(result => {
-      console.log(result);
       this.program = result;
       this.formGroup.patchValue(result);
 
@@ -301,6 +353,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       if (result.active) {
         this.disabled();
       }
+
+      this.promoCode = result.promoCode;
     });
   }
 
@@ -428,7 +482,14 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   checkMinAmoutSaleOrder(value){
-    this.f.isApplyMinimumDiscount.setValue(value);
+    if(value){
+      this.f.ruleMinimumAmount.setValidators(Validators.required);
+      this.f.ruleMinimumAmount.updateValueAndValidity();
+    }
+    else{
+      this.f.ruleMinimumAmount.clearValidators();
+      this.f.ruleMinimumAmount.updateValueAndValidity();
+    }
   }
 
   checkApplyMaxDiscount(value){
@@ -438,14 +499,17 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   onChangeOption(e) {
     var value = e.target.value;
     if (value == 'on_order') {
+      this.f.discountSpecificProducts.setValue(null);
+      this.f.discountSpecificProductCategories.setValue(null);
       this.f.discountSpecificProducts.clearValidators();
       this.f.discountSpecificProducts.updateValueAndValidity();
       this.f.discountSpecificProductCategories.clearValidators();
       this.f.discountSpecificProductCategories.updateValueAndValidity();
-      this.f.ruleMinimumAmount.setValidators(Validators.required);
-      this.f.ruleMinimumAmount.updateValueAndValidity();
     }
     else if (value == 'specific_products') {
+      this.f.ruleMinimumAmount.setValue(null);
+      this.f.isApplyMinimumDiscount.setValue(false);
+      this.f.discountSpecificProductCategories.setValue(null);
       this.f.ruleMinimumAmount.clearValidators();
       this.f.ruleMinimumAmount.updateValueAndValidity();
       this.f.discountSpecificProductCategories.clearValidators();
@@ -454,6 +518,9 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.f.discountSpecificProducts.updateValueAndValidity();
     }
     else {
+      this.f.ruleMinimumAmount.setValue(null);
+      this.f.isApplyMinimumDiscount.setValue(false);
+      this.f.discountSpecificProducts.setValue(null);
       this.f.ruleMinimumAmount.clearValidators();
       this.f.ruleMinimumAmount.updateValueAndValidity();
       this.f.discountSpecificProducts.clearValidators();
@@ -470,6 +537,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.f.discountSpecificPartners.updateValueAndValidity();
     }
     else{
+      this.f.discountSpecificPartners.setValue(null);
       this.f.discountSpecificPartners.clearValidators();
       this.f.discountSpecificPartners.updateValueAndValidity();
     }
@@ -506,12 +574,13 @@ export function DateInvalid(dateFromControlName: string, dateToControlName: stri
   return (formGroup: FormGroup) => {
       const dateFromControl = formGroup.controls[dateFromControlName];
       const dateToControl = formGroup.controls[dateToControlName];
-
+      var dateFrom = dateFromControl.value.toLocaleDateString('en-US');
+      var dateTo = dateToControl.value.toLocaleDateString('en-US');
       if (dateToControl.errors && !dateToControl.errors.DateInvalid) {
           return;
       }
 
-      if (dateFromControl.value > dateToControl.value) {
+      if (dateFrom > dateTo) {
         dateToControl.setErrors({ dateInvalid: true });
       } else {
         dateToControl.setErrors(null);
