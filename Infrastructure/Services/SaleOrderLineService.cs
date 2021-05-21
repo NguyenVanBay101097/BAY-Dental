@@ -217,10 +217,15 @@ namespace Infrastructure.Services
         public void _GetInvoiceAmount(IEnumerable<SaleOrderLine> self)
         {
             var amlObj = GetService<IAccountMoveLineService>();
+            var selfIds = self.Select(x => x.Id).ToList();
+            var selfAmls = amlObj.SearchQuery(x => x.SaleLineRels.Any(x => selfIds.Contains(x.OrderLineId)))
+                .Include(x => x.SaleLineRels)
+                .Include(x => x.Move).ToList();
+
             foreach (var line in self)
             {
                 decimal amountInvoiced = 0;
-                var amls = amlObj.SearchQuery(x => x.SaleLineRels.Any(x => x.OrderLineId == line.Id)).Include(x => x.Move).ToList();
+                var amls = selfAmls.Where(x => x.SaleLineRels.Any(s => s.OrderLineId == line.Id)).ToList();
                 foreach (var invoiceLine in amls)
                 {
                     var move = invoiceLine.Move;

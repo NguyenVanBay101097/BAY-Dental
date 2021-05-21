@@ -112,6 +112,7 @@ export class QuotationsDisplay {
   companyId: string;
   orders: SaleOrderSimple[];
   promotions: QuotationPromotionBasic[];
+  totalAmountDiscount: number;
 }
 
 export class QuotationSimple {
@@ -209,6 +210,7 @@ export class QuotationService {
                 type: x.type,
                 amount: x.amount
               }),
+              totalAmountDiscount: response.totalAmountDiscount
             }
         )
       );

@@ -58,6 +58,7 @@ namespace Infrastructure.Services
         Task<RegisterSaleOrderPayment> GetSaleOrderPaymentBySaleOrderId(Guid id);
         Task ApplyDiscountDefault(ApplyDiscountViewModel val);
         void _AmountAll(SaleOrder order);
+        void _AmountAll(IEnumerable<SaleOrder> self);
 
         //Task CancelSaleOrderLine(ActionCancelSaleOrderLineViewModel val);
 
