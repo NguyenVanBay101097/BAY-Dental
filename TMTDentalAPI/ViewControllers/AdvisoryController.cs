@@ -22,9 +22,9 @@ namespace TMTDentalAPI.ViewControllers
             _advisoryService = advisoryService;
             _mapper = mapper;
         }
-        public async Task<IActionResult> Print(Guid customerId, IEnumerable<Guid> ids)
+        public async Task<IActionResult> Print(IEnumerable<Guid> ids)
         {
-            var res = await _advisoryService.Print(customerId, ids);
+            var res = await _advisoryService.Print(ids);
             if (res == null) return NotFound();
 
             return View(res);

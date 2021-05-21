@@ -19,7 +19,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
         public int Limit { get; set; }
         public string Search { get; set; }
-        public Guid? CompanyId { get; set; }
     }
 
     public class ToothDiagnosisSave
@@ -34,4 +33,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public IEnumerable<ProductSimple> Product { get; set; } = new List<ProductSimple>();
     }
+
+  
 }

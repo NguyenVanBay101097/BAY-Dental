@@ -125,8 +125,40 @@ namespace Umbraco.Web.Models.ContentEditing
     public class AdvisoryPrintVM
     {
         public CompanyPrintVM Company { get; set; }
-        public PartnerDisplay Partner { get; set; }
-        public IEnumerable<AdvisoryDisplay> Advisories { get; set; }
+        public PartnerInfoVm Partner { get; set; }
+        public IEnumerable<AdvisoryItemPrintVM> Advisories { get; set; }
+    }
+
+    public class AdvisoryItemPrintVM
+    {
+        //Ngày tư vấn
+        public DateTime Date { get; set; }
+
+        /// <summary>
+        /// Người tư vấn
+        /// </summary>
+        public Guid? EmployeeId { get; set; }
+        public EmployeeSimple Employee { get; set; }
+
+        public string ToothType { get; set; }
+
+        /// <summary>
+        /// ToothType Or list name tooth string join
+        /// </summary>
+        public string Tooths { get; set; }
+
+
+
+        /// <summary>
+        /// list name Diagnosis string join
+        /// </summary>
+        public string Diagnosis { get; set; }
+
+        /// <summary>
+        /// list name services
+        /// </summary>
+        public string Services { get; set; }
+
     }
 
     public class CreateFromAdvisoryInput
@@ -134,4 +166,5 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CustomerId { get; set; }
         public IEnumerable<Guid> Ids { get; set; } = new List<Guid>();
     }
+
 }

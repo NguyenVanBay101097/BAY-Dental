@@ -19,7 +19,7 @@
 <ng-template #popContent let-mytags="mytags">
     <div>
         <kendo-multiselect [filterable]="true" #multiSelect class="mr-3" [data]="dataSource" [(ngModel)]="mytags"
-        (filterChange)="this.searchUpdatePopOver.next($event)" [filterable]="true"
+        (filterChange)="this.searchUpdatePopOver.next($event)" [filterable]="true" [allowCustom]="true" [valueNormalizer]="valueNormalizer"
         [textField]="'name'" [valueField]="'id'" [popupSettings]="{appendTo: 'component'}">
         </kendo-multiselect>
         <button type="button" class="btn btn-sm mt-1 btn-primary" (click)="update(mytags)" accesskey="c">

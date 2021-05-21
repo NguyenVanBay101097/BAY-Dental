@@ -29,7 +29,7 @@ export class CommissionDialogComponent implements OnInit {
   ngOnInit() {
     this.myform = this.fb.group({
       name: ["", Validators.required],
-      type: null,
+      type: 'doctor',
     });
 
     if (this.id) {
@@ -65,7 +65,6 @@ export class CommissionDialogComponent implements OnInit {
 
   saveOrUpdate() {
     var val = this.myform.value;
-    debugger
     if (!this.id) {
       return this.commissionService.create(val);
     } else {

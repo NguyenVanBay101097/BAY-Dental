@@ -63,7 +63,7 @@ export class CommissionListV2Component implements OnInit {
 
   createCommission() {
     let modalRef = this.modalService.open(CommissionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm Bảng hoa hồng';
+    modalRef.componentInstance.title = 'Thêm bảng hoa hồng';
     modalRef.result.then(result => {
       this.checkCreate = true;
       this.loadDataFromApi();
@@ -73,7 +73,7 @@ export class CommissionListV2Component implements OnInit {
 
   editCommission(item: any, i) {
     let modalRef = this.modalService.open(CommissionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm Bảng hoa hồng';
+    modalRef.componentInstance.title = 'Sửa bảng hoa hồng';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(result => {
       this.loadDataFromApi();
@@ -83,7 +83,7 @@ export class CommissionListV2Component implements OnInit {
 
   deleteCommission(item: any, i) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa Bảng hoa hồng';
+    modalRef.componentInstance.title = 'Xóa bảng hoa hồng';
     modalRef.result.then(() => {
       this.commissionService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();

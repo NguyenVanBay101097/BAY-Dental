@@ -37,7 +37,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   filterData: EmployeeBasic[] = [];
   toothTypeDict = [
     { name: "Hàm trên", value: "upper_jaw" },
-    { name: "Nguyên Hàm", value: "whole_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
     { name: "Hàm dưới", value: "lower_jaw" },
     { name: "Chọn răng", value: "manual" },
   ];
@@ -203,6 +203,10 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     if (!this.myForm.valid) {
       return false;
     }
+
+    if (this.getValueFormControl('toothType') == 'manual' && (this.getValueFormControl('teeth') && this.getValueFormControl('teeth').length == 0) )
+      return;
+    
     var valueForm = this.myForm.value;
     if (valueForm.employeeAdvisory) {
       valueForm.employeeId = valueForm.employeeAdvisory.id;

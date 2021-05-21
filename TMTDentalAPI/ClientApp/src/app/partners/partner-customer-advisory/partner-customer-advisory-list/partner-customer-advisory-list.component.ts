@@ -324,7 +324,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
       this.notify('error', 'Bạn chưa chọn thông tin tư vấn');
       return;
     }
-    this.advisoryService.getPrint(this.customerId,this.mySelection).subscribe((res: any) => {
+    this.advisoryService.getPrint(this.mySelection).subscribe((res: any) => {
       this.printService.printHtml(res.html);
     });
   }

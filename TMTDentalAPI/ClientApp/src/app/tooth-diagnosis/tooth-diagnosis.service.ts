@@ -14,12 +14,14 @@ export class ToothDiagnosisSave {
   id: string;
   name: string;
   product: any[];
+  productIds: any[];
 }
 
 export class ToothDiagnosisPaged {
   offset: number;
   limit: number;
   search: string;
+
 }
 @Injectable({
   providedIn: 'root'
