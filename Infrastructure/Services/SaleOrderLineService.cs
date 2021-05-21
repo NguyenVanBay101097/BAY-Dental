@@ -76,7 +76,7 @@ namespace Infrastructure.Services
                 foreach (var rel in line.SaleOrderLinePaymentRels)
                 {
                     var payment = rel.Payment;
-                    if (payment != null && payment.State != "draft")
+                    if (payment != null && payment.State != "draft" && payment.State != "cancel")
                         amountPaid += (rel.AmountPrepaid ?? 0);
                 }
 
