@@ -384,7 +384,7 @@ namespace Infrastructure.Services
             var now = DateTime.Now;
             var firstDayOfMonth = new DateTime(now.Year, now.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-            var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id) && x.State != "cancel")
+            var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move).ThenInclude(s => s.Lines)
                 .Include(x => x.Order)
                 .Include(x => x.PaymentRels).ThenInclude(s => s.Payment)
@@ -396,6 +396,9 @@ namespace Infrastructure.Services
                 ///check thanh toán trong mới cho hủy
                 if (firstDayOfMonth < res.Date && res.Date > lastDayOfMonth)
                     throw new Exception("Bạn chỉ được hủy thanh toán trong tháng");
+
+                if(res.State == "cancel")
+                    throw new Exception("Không thể hủy phiếu ở trạng thái hủy");
 
                 ///xử lý tìm các payment update state = "cancel" va hóa đơn thanh toán để xóa
                 var payment_ids = res.PaymentRels.Select(x => x.PaymentId).ToList();
@@ -473,7 +476,7 @@ namespace Infrastructure.Services
 
             var userObj = GetService<IUserService>();
 
-            result.User = await userObj.GetCurrentUser();
+            result.User = await userObj.GetCurrentUser();        
 
             return result;
 

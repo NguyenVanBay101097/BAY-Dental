@@ -59,7 +59,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   ngOnInit() {
     this.paymentForm = this.fb.group({
       amount: 0,
-      date: new Date(),
+      date: [new Date(), Validators.required],
       orderId: [null, Validators.required],
       companyId: [null, Validators.required],
       journalLines: this.fb.array([]),
@@ -295,6 +295,10 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   nextStep() {
+    if(this.paymentForm.invalid){
+      return;
+    }
+    this.submitted = true;
     this.step++;
     //gán lại default
     //Nếu chưa có dòng phương thức tiền mặt thì add, có thì update tiền mặt mặc định

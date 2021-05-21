@@ -42,28 +42,43 @@ export class SaleOrderPaymentListComponent implements OnInit {
     if (this.saleOrderId) {
       val.saleOrderId = this.saleOrderId;
       this.saleOrderPaymentService.getPaged(val).subscribe(result => {
-       this.paymentHistories = result.items;
+        this.paymentHistories = result.items;
       });
     }
   }
 
   deletePayment(payment) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Hủy thanh toán';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy thanh toán?';
-    modalRef.result.then(() => {
-      this.saleOrderPaymentService.actionCancel([payment.id]).subscribe(() => {
-        this.notificationService.show({
-          content: 'Hủy thanh toán thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-
-        this.paymentOutput.emit('');
-        this.loadPayments();
+    if(payment.state == "cancel"){
+      this.notificationService.show({
+        content: 'Không thể hủy phiếu ở trạng thái hủy',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
       });
+      return;
+    }
+
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Hủy thanh toán điều trị';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy thanh toán điều trị?';
+    modalRef.result.then(() => {
+      this.saleOrderPaymentService.actionCancel([payment.id])
+        .subscribe(() => {
+          this.notificationService.show({
+            content: 'Hủy thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+
+          this.paymentOutput.emit('');
+          this.loadPayments();
+        }, err => {
+          console.log(err);
+        })
+    }, () => {
     });
   }
 
@@ -76,7 +91,7 @@ export class SaleOrderPaymentListComponent implements OnInit {
     });
   }
 
-  getPaymentState(state){
+  getPaymentState(state) {
     if (state == 'draft') {
       return 'Nháp'
     }
