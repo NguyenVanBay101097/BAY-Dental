@@ -14,7 +14,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<SaleCouponProgramBasic>> GetPagedResultAsync(SaleCouponProgramPaged val);
         Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrder(Guid? partnerId);
         Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrderLine(Guid productId , Guid? partnerId);
-
+        Task<IEnumerable<SaleCouponProgramDisplay>> GetPromotionByFastSaleOrder();
         Task<decimal> GetAmountTotal(Guid id);
         Task<SaleCouponProgram> CreateProgram(SaleCouponProgramSave val);
         Task UpdateProgram(Guid id, SaleCouponProgramSave val);
@@ -38,7 +38,7 @@ namespace Infrastructure.Services
         Task ActionArchive(IEnumerable<Guid> ids);
         Task ActionUnArchive(IEnumerable<Guid> ids);
 
-        Task<SaleCouponProgramResponse> GetPromotionDisplayUsageCode(string code, Guid? productId);
+        //Task<SaleCouponProgramResponse> GetPromotionDisplayUsageCode(string code, Guid? productId);
         Task<PagedResult2<SaleCouponProgramGetListPagedResponse>> GetListPaged(SaleCouponProgramGetListPagedRequest val);
     }
 }

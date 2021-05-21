@@ -81,7 +81,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       promoCodeUsage: 'no_code_needed',
       ruleDateToObj: [endDate, Validators.required],
       ruleDateFromObj: [startDate, Validators.required],
-      maximumUseNumber: null,
+      maximumUseNumber: 0,
       promoCode: null,
       daysSelected: null,
       isApplyDayOfWeek: false,
@@ -465,8 +465,6 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   onChangeSelect(value) {
-    console.log(value);
-    
     if (value == 'percentage') {
       this.f.discountFixedAmount.clearValidators();
       this.f.discountFixedAmount.updateValueAndValidity();
@@ -576,15 +574,15 @@ export function DateInvalid(dateFromControlName: string, dateToControlName: stri
       const dateToControl = formGroup.controls[dateToControlName];
       var dateFrom = dateFromControl.value.toLocaleDateString('en-US');
       var dateTo = dateToControl.value.toLocaleDateString('en-US');
-      if (dateToControl.errors && !dateToControl.errors.DateInvalid) {
-          return;
-      }
-
       if (dateFrom > dateTo) {
         dateToControl.setErrors({ dateInvalid: true });
       } else {
         dateToControl.setErrors(null);
       }
+      if (dateToControl.errors && !dateToControl.errors.DateInvalid) {
+          return;
+      }
+
   }
 }
 
