@@ -79,6 +79,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<SaleCouponProgramPartnerRel> DiscountSpecificPartners { get; set; } = new List<SaleCouponProgramPartnerRel>();
 
+        public ICollection<SaleOrderPromotion> Promotions { get; set; } = new List<SaleOrderPromotion>();
+
         public ICollection<SaleCoupon> Coupons { get; set; } = new List<SaleCoupon>();
 
         public ICollection<SaleOrderLine> SaleLines { get; set; } = new List<SaleOrderLine>();

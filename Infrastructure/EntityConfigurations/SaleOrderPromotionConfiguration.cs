@@ -12,8 +12,8 @@ namespace Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<SaleOrderPromotion> builder)
         {
             builder.HasOne(x => x.SaleCouponProgram)
-            .WithMany()
-            .HasForeignKey(x => x.SaleCouponProgramId);         
+            .WithMany(x => x.Promotions)
+            .HasForeignKey(x => x.SaleCouponProgramId);
 
             builder.HasOne(x => x.SaleOrder)
             .WithMany(x => x.Promotions)
