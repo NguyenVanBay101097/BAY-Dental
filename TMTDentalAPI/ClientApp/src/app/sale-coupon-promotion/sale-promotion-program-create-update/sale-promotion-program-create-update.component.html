@@ -36,11 +36,11 @@
                         (click)="onSaveActive()">
                         Lưu và kích hoạt
                     </button>
-                    <button *ngIf="!program.isPaused && program.active && statusDisplay == '' " type="button"
+                    <button *ngIf="!program.isPaused && program.active && program.statusDisplay == 'Đang chạy'" type="button"
                         class="btn btn-primary btn-sm" accesskey="s" (click)="onPause()">
                         Tạm ngừng
                     </button>
-                    <button *ngIf="program.isPaused && program.active" type="button" class="btn btn-primary btn-sm"
+                    <button *ngIf="program.isPaused && program.active && program.statusDisplay != 'Hết hạn'" type="button" class="btn btn-primary btn-sm"
                         accesskey="s" (click)="onActive()">
                         Kích hoạt
                     </button>
@@ -76,7 +76,7 @@
                                         <div *ngIf="f.name.errors.required">Nhập tên chương trình khuyến mãi</div>
                                     </div>
                                 </div>
-                                <div>Tình trạng <span class="ml-3"
+                                <div class="o_form_label">Tình trạng <span class="ml-3"
                                         [ngClass]="getColorStatus(program.statusDisplay)">{{program.statusDisplay}}</span>
                                 </div>
                             </div>
