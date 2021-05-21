@@ -81,7 +81,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       promoCodeUsage: 'no_code_needed',
       ruleDateToObj: [endDate, Validators.required],
       ruleDateFromObj: [startDate, Validators.required],
-      maximumUseNumber: null,
+      maximumUseNumber: 0,
       promoCode: null,
       daysSelected: null,
       isApplyDayOfWeek: false,
