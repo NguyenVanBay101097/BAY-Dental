@@ -172,6 +172,28 @@ namespace Infrastructure.Services
             order.Residual = order.AmountTotal - order.TotalPaid;
         }
 
+        public void _AmountAll(IEnumerable<SaleOrder> self)
+        {
+            foreach(var order in self)
+            {
+                var totalAmountUntaxed = 0M;
+                var totalAmountTax = 0M;
+                var totalInvoiced = 0M;
+
+                foreach (var line in order.OrderLines)
+                {
+                    totalAmountUntaxed += line.PriceSubTotal;
+                    totalAmountTax += line.PriceTax;
+                    totalInvoiced += (line.AmountInvoiced ?? 0);
+                }
+                order.AmountTax = Math.Round(totalAmountTax);
+                order.AmountUntaxed = Math.Round(totalAmountUntaxed);
+                order.AmountTotal = order.AmountTax + order.AmountUntaxed;
+                order.TotalPaid = totalInvoiced;
+                order.Residual = order.AmountTotal - order.TotalPaid;
+            }
+        }
+
         public async Task<PagedResult<SaleOrder>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "")
         {
             Expression<Func<SaleOrder, object>> sort = null;
