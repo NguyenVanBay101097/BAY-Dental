@@ -13,6 +13,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<QuotationBasic>> GetPagedResultAsync(QuotationPaged val);
         Task<QuotationDisplay> GetDisplay(Guid id);
         Task<QuotationBasic> CreateAsync(QuotationSave val);
+        void ComputeAmountAll(Quotation quotation);
         Task UpdateAsync(Guid id, QuotationSave val);
         Task<QuotationDisplay> GetDefault(Guid partnerId);
         Task<SaleOrderSimple> CreateSaleOrderByQuotation(Guid id);
