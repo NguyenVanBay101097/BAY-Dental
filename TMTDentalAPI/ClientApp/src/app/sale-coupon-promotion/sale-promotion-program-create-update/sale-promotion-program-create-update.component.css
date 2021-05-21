@@ -69,3 +69,12 @@ table td {
     color: green !important;
 }
 
+.hide {
+    opacity: 0;
+}
+.o_td_label {
+    min-width: 160px !important;
+}
+
+
+
