@@ -33,6 +33,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Output() onDeleteEvent = new EventEmitter<any>();
   @Output() onEditEvent = new EventEmitter<any>();
   @Output() onCancelEvent = new EventEmitter<any>();
+  @Output() onActiveEvent = new EventEmitter<any>();
 
   isEditting: boolean = false;
   isItSeff = false;
@@ -297,7 +298,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   updateLineInfo() {
-    if(this.formGroupInfo.invalid) {
+    if (this.formGroupInfo.invalid) {
       this.formGroupInfo.markAllAsTouched();
       return false;
     }
@@ -318,7 +319,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   onChangeQuantity() {
-    if(this.formGroupInfo.invalid) {
+    if (this.formGroupInfo.invalid) {
       return;
     }
     this.computeAmount();
@@ -404,21 +405,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   onActive(active) {
-    if(active)
-    {this.saleOrderLineService.patchIsActive(this.line.id, active).subscribe(() => {
-      this.line.isActive = active;
-    });
-  } else {
-      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-      modalRef.componentInstance.title = 'Ngừng dịch vụ';
-      modalRef.componentInstance.body = 'Bạn có chắc chắn ngừng dịch vụ?';
-      modalRef.result.then(() => {
-        this.saleOrderLineService.patchIsActive(this.line.id, active).subscribe(() => {
-          this.line.isActive = active;
-          this.notify('success', 'Ngừng dịch vụ thành công');
-        });
-      });
-  }
+    this.onActiveEvent.emit(active);
   }
 
 }

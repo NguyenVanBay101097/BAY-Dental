@@ -382,7 +382,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           toothIds: x.teeth.map(s => s.id),
           toothCategoryId: x.toothCategory != null ? x.toothCategory.id : null,
           diagnostic: x.diagnostic,
-          toothType: x.toothType
+          toothType: x.toothType,
+          isActive: x.isActive
         }
       })
     };
@@ -561,8 +562,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   loadSaleOrder() {
     this.saleOrderService.get(this.saleOrderId).subscribe(res => {
-      console.log(res);
-      this.saleOrder = res;
+      this.resetSaleOrder(res);
     });
   }
 
@@ -775,7 +775,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         mergeMap(() => this.saleOrderService.get(this.saleOrderId))
       )
       .subscribe(res => {
-        this.saleOrder = res;
+        this.resetSaleOrder(res);
         modalRef.componentInstance.saleOrder = this.saleOrder;
       });
     });
@@ -795,7 +795,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         })
       )
       .subscribe(res => {
-        this.saleOrder = res;
+        this.resetSaleOrder(res);
         modalRef.componentInstance.saleOrder = this.saleOrder;
       }, err => {
         console.log(err);
@@ -816,7 +816,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         })
       )
       .subscribe(res => {
-        this.saleOrder = res;
+        this.resetSaleOrder(res);
         modalRef.componentInstance.saleOrder = this.saleOrder;
       }, err => {
         console.log(err);
@@ -832,13 +832,18 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         })
       )
       .subscribe(res => {
-        this.saleOrder = res;
+        this.resetSaleOrder(res);
         modalRef.componentInstance.saleOrder = this.saleOrder;
       }, err => {
         console.log(err);
         this.notify('error', err.error.error);
       });
     });
+  }
+
+  resetSaleOrder(value){
+    this.saleOrder = value;
+    this.isChanged = false;
   }
 
   onOpenSaleOrderPromotion() {
@@ -865,7 +870,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           return this.saleOrderService.get(this.saleOrderId);
         })
       ).subscribe((result: any) => {
-        this.saleOrder = result;
+        this.resetSaleOrder(result);
         this.openSaleOrderPromotionDialog();
       });
     } else if (this.isChanged) { //Nếu dữ liệu cần lưu lại
@@ -881,7 +886,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           return this.saleOrderService.get(this.saleOrderId);
         })
       ).subscribe((result: any) => {
-        this.saleOrder = result;
+        this.resetSaleOrder(result);
         this.openSaleOrderPromotionDialog();
       });
     } else {
@@ -929,7 +934,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         mergeMap(() => this.saleOrderService.get(this.saleOrderId))
       )
       .subscribe(res => {
-        this.saleOrder = res;
+        this.resetSaleOrder(res);
         var newLine = this.saleOrder.orderLines[i];
         modalRef.componentInstance.saleOrderLine = newLine;
       });
@@ -950,7 +955,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         })
       )
       .subscribe(res => {
-        this.saleOrder = res;
+        this.resetSaleOrder(res);
         var newLine = this.saleOrder.orderLines[i];
         modalRef.componentInstance.saleOrderLine = newLine;
       }, err => {
@@ -972,7 +977,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         })
       )
       .subscribe(res => {
-        this.saleOrder = res;
+        this.resetSaleOrder(res);
         var newLine = this.saleOrder.orderLines[i];
         modalRef.componentInstance.saleOrderLine = newLine;
       }, err => {
@@ -989,7 +994,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         })
       )
       .subscribe(res => {
-        this.saleOrder = res;
+        this.resetSaleOrder(res);
         var newLine = this.saleOrder.orderLines[i];
         modalRef.componentInstance.saleOrderLine = newLine;
       }, err => {
@@ -1023,7 +1028,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           return this.saleOrderService.get(this.saleOrderId);
         })
       ).subscribe((result: any) => {
-        this.saleOrder = result;
+        this.resetSaleOrder(result);
         this.onOpenLinePromotionDialog(i);
       });
     } else if (this.isChanged) { //Nếu dữ liệu cần lưu lại
@@ -1039,7 +1044,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           return this.saleOrderService.get(this.saleOrderId);
         })
       ).subscribe((result: any) => {
-        this.saleOrder = result;
+        this.resetSaleOrder(result);
         this.onOpenLinePromotionDialog(i);
       });
     } else {
@@ -1088,6 +1093,24 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     //     this.onOpenLinePromotionDialog(i);
     //   });
     // }
+  }
+
+  onActiveLine(active, line) {
+    if (active) {
+      this.saleOrderLineService.patchIsActive(line.id, active).subscribe(() => {
+        line.isActive = active;
+      });
+    } else {
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+      modalRef.componentInstance.title = 'Ngừng dịch vụ';
+      modalRef.componentInstance.body = 'Bạn có chắc chắn ngừng dịch vụ?';
+      modalRef.result.then(() => {
+        this.saleOrderLineService.patchIsActive(line.id, active).subscribe(() => {
+          line.isActive = active;
+          this.notify('success', 'Ngừng dịch vụ thành công');
+        });
+      });
+    }
   }
 }
 

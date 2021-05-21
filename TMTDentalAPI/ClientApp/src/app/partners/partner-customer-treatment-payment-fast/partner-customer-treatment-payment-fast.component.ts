@@ -34,6 +34,7 @@ import { PartnerCustomerTreatmentLineFastPromotionComponent } from '../partner-c
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { formatDate } from '@angular/common';
+import { SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
 
 @Component({
   selector: 'app-partner-customer-treatment-payment-fast',
@@ -49,6 +50,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   saleOrder: any = {};
   lineSelected = null;
   saleOrderId: string;
+  applyPromotionList = [];
 
   defaultToothCate:any;
   listTeeths: any[] = [];
@@ -67,7 +69,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     private notifyService: NotifyService,
     private toothCategoryService: ToothCategoryService,
     private employeeService: EmployeeService,
-    private toothService: ToothService
+    private toothService: ToothService,
+    private saleCouponProgramService: SaleCouponProgramService
   ) {
   }
 
@@ -97,6 +100,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.loadToothCategories();
     this.loadTeethList();
     this.loadToothCateDefault();
+    this.loadApplyPromotionList();
   }
 
   get orderLines() {
@@ -104,7 +108,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   get getPartner() {
-    return this.saleOrder ? this.saleOrder.partner: null;
+    return this.formGroup.controls.partner.value;
   }
 
   get f() {
@@ -139,6 +143,12 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         this.defaultToothCate = res;
       }
     );
+  }
+  
+  loadApplyPromotionList() {
+    this.saleCouponProgramService.getPromotionApplyFastSaleOrder().subscribe(res => {
+      this.applyPromotionList = res;
+    });
   }
   
   loadEmployees() {
@@ -281,6 +291,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     if (value) {
       this.partnerService.getPartner(value.id).subscribe(rs => {
         this.saleOrder.partner= rs;
+        this.saleOrder.orderLines.forEach(line => {
+          line.orderPartnerId = rs.id;
+        });
       });
     }
   }
@@ -477,10 +490,10 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         amount = promotion.discountType == 'percentage' ? promotion.discountPercent * total / 100 : promotion.discountFixed;
         break;
       case 'code_usage_program':
-        amount = promotion.discountType == 'percentage' ? promotion.discountPercent * total / 100 : promotion.discountFixed;
+        amount = promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercent * total / 100, promotion ): promotion.discountFixed;
         break;
       case 'promotion_program':
-        amount = promotion.discountType == 'percentage' ? promotion.discountPercent * total / 100 : promotion.discountFixed;
+        amount = promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercent * total / 100, promotion) : promotion.discountFixed;
         break;
       default:
         break;
@@ -498,10 +511,10 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         amount = (line.priceUnit - price_reduce) * line.productUOMQty;
         break;
       case 'code_usage_program':
-        amount = promotion.discountType == 'percentage' ? promotion.discountPercent * total / 100 : promotion.discountFixed;
+        amount = promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercent * total / 100, promotion) : promotion.discountFixed;
         break;
       case 'promotion_program':
-        amount = promotion.discountType == 'percentage' ? promotion.discountPercent * total / 100 : promotion.discountFixed;
+        amount = promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercent * total / 100 , promotion) : promotion.discountFixed;
         break;
       default:
         break;
@@ -565,13 +578,19 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.computeAmountTotal();
     return true;
   }
-
-  checkApplyPromotiomSaleOrderLine(line, promotionApply) {
+  
+  checkApplyPromotionSaleOrderLine(line, promotionApply) {
     var promotions = line.promotions;
-    var type = promotionApply.promoCodeUsage == 'code_needed' ? 'code_usage_program' : 'promotion_program';
+    var res = this.checkApplyPromotionCommon(promotions, promotionApply);
+    if(!res) return false;
+
+    return true;
+  }
+
+  checkApplyPromotionCommon(promotions, promotionApply) {
     var exist = promotions.find(x => x.saleCouponProgramId == promotionApply.id);
     if (exist) {
-        this.notifyService.notify('error', 'Mã đang trùng CTKM đang áp dụng')
+      this.notifyService.notify('error', 'Mã đang trùng CTKM đang áp dụng')
       return false;
     }
 
@@ -583,37 +602,32 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       this.notifyService.notify('error', 'Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ');
       return false;
     }
-    return true;
   }
 
-  checkApplyPromotiomSaleOrder(promotionApply) {
+  checkApplyPromotionSaleOrder(promotionApply) {
     var promotions = this.saleOrder.promotions;
-    var type = promotionApply.promoCodeUsage == 'code_needed' ? 'code_usage_program' : 'promotion_program';
-    var exist = promotions.find(x => x.saleCouponProgramId == promotionApply.id);
-    if (exist) {
-        this.notifyService.notify('error', 'Mã đang trùng CTKM đang áp dụng')
-      return false;
-    }
+    var res = this.checkApplyPromotionCommon(promotions, promotionApply);
+    if (!res) return false;
 
-    if (promotions.some(x => x.saleCouponProgram && x.saleCouponProgram.notIncremental)) {
-      this.notifyService.notify('error', 'Đang áp dụng khuyến mãi không cộng dồn. Vui lòng xóa các CTKM đó.');
-      return false;
-    }
-    if ((promotionApply.notIncremental && promotions.some(x => x.saleCouponProgram))) {
-      this.notifyService.notify('error', 'Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ');
+    if (this.saleOrder.amountTotal < promotionApply.ruleMinimumAmount) {
+      this.notifyService.notify('error', 'Đơn hàng không đạt giá trị tối thiểu ' + promotionApply.ruleMinimumAmount.toLocaleString('es'));
       return false;
     }
     return true;
   }
+
+   getMaxAmountPromotion(amount, promotion) {
+  return promotion.isApplyMaxDiscount ? (amount > promotion.discountMaxAmount ? promotion.discountMaxAmount : amount) : amount;
+   }
 
   applyCouponPromotionSaleOrder(promotion) {
    
-    var res = this.checkApplyPromotiomSaleOrder(promotion);
+    var res = this.checkApplyPromotionSaleOrder(promotion);
     if(!res) return;
     //push cai uu dai vào mảng ưu đãi
     var type = promotion.promoCodeUsage == 'code_needed' ? 'code_usage_program' : 'promotion_program';
     this.saleOrder.promotions.push({
-      amount: promotion.discountType == 'percentage' ? promotion.discountPercentage * this.getAmount() / 100 : promotion.discountFixedAmount,
+      amount: promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercentage * this.getAmount() / 100, promotion ): promotion.discountFixedAmount,
       type: type,
       discountType: promotion.discountType,
       discountPercent: promotion.discountPercentage,
@@ -654,6 +668,10 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onOpenSaleOrderPromotion() {
+    if (!this.formGroup.controls.partner.valid) {
+      this.notifyService.notify('error','Chọn khách hàng');
+      return;
+    }
     //update line trước khi lưu
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
@@ -696,11 +714,12 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   applyCouponPromotionSaleOrderLine(promotion, line) {
-   var res = this.checkApplyPromotiomSaleOrderLine(line,promotion);
+   var res = this.checkApplyPromotionSaleOrderLine(line,promotion);
     if(!res) return;
     //push cai uu dai vào mảng ưu đãi
+   
   line.promotions.push({
-      amount: promotion.discountType == 'percentage' ? promotion.discountPercentage * (line.priceUnit * line.productUOMQty) / 100 : promotion.discountFixedAmount,
+    amount: promotion.discountType == 'percentage' ? this.getMaxAmountPromotion(promotion.discountPercentage * (line.priceUnit * line.productUOMQty) / 100, promotion): promotion.discountFixedAmount,
       type: promotion.promoCodeUsage == 'code_needed' ? 'code_usage_program' : 'promotion_program',
       discountType: promotion.discountType,
       discountPercent: promotion.discountPercentage,
@@ -741,6 +760,10 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onUpdateOpenLinePromotion(line, lineControl, i) {
+    if (!this.formGroup.controls.partner.valid) {
+      this.notifyService.notify('error', 'Chọn khách hàng');
+      return;
+    }
     //update line trước khi mở popup promotion
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);

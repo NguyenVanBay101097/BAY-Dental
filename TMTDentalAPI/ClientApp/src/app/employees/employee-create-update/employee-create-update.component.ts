@@ -329,6 +329,9 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
         (rs: any) => {
           rs.birthDay = rs.birthDay ? new Date(rs.birthDay) : null;
           rs.startWorkDate = rs.startWorkDate ? new Date(rs.startWorkDate) : null;
+          this.listCommissions = _.unionBy(this.listCommissions, rs.commission, 'id');
+          this.listAssistantCommissions = _.unionBy(this.listCommissions, rs.assistantCommission, 'id');
+          this.listCounselorCommissions = _.unionBy(this.listCommissions, rs.counselorCommission, 'id');
           this.formCreate.get('createChangePassword').setValue(false);
           this.onChangeCreateChangePassword(null);
           this.formCreate.patchValue(rs);

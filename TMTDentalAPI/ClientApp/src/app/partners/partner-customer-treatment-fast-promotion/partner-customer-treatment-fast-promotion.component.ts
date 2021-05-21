@@ -51,10 +51,10 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    setTimeout(() => {
+    // setTimeout(() => {
 
-      this.loadDefaultPromotion();
-    }, 300);
+    //   this.loadDefaultPromotion();
+    // }, 300);
   }
 
   onChangeDiscount(val) {
@@ -82,7 +82,7 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
   }
 
   loadDefaultPromotion() {
-    this.promotionService.getPromotionBySaleOrder(this.saleOrder.partnerId).subscribe((res: any) => {
+    this.promotionService.getPromotionBySaleOrder(this.saleOrder.partner.id).subscribe((res: any) => {
       this.autoPromotions = res;
     });
   }

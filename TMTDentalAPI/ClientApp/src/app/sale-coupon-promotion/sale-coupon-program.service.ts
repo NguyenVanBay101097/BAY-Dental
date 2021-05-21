@@ -142,4 +142,8 @@ export class SaleCouponProgramService {
     checkPromoCodeExist(code: any){
         return this.http.get(this.baseApi + this.apiUrl + '/CheckPromoCodeExist?code=' + code);
     }
+
+    getPromotionApplyFastSaleOrder() {
+        return this.http.get<SaleCouponProgramDisplay[]>(this.baseApi + this.apiUrl + '/fdsafsa');
+    }
 }
