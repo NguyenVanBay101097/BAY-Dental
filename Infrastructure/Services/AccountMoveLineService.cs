@@ -314,7 +314,9 @@ namespace Infrastructure.Services
 
         public IEnumerable<AccountMoveLine> _AmountResidual(IEnumerable<Guid> ids)
         {
-            var self = SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Account).Include(x => x.MatchedDebits)
+            var self = SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Account)
+                .Include(x => x.MatchedDebits)
                 .Include(x => x.MatchedCredits).ToList();
             return _AmountResidual(self);
         }
@@ -552,44 +554,42 @@ namespace Infrastructure.Services
                 recMoves = recMoves.Concat(moveLine.MatchedCredits);
             }
 
-            var amlsToRecompute = recMoves.Select(x => x.DebitMoveId).Concat(recMoves.Select(x => x.CreditMoveId)).ToList();
+            var amlsToRecompute = (recMoves.Select(x => x.DebitMoveId).Concat(recMoves.Select(x => x.CreditMoveId))).Distinct().ToList();
             await recMoveObj.Unlink(recMoves.Select(x => x.Id).ToList());
 
             //trigger update
             var amls = _AmountResidual(amlsToRecompute);
             await UpdateAsync(amls);
 
-            //trigger update self
-            var aml2s = _AmountResidual(self.Select(x => x.Id).ToList());
-            await UpdateAsync(aml2s);
+            ////trigger update self
+            //var aml2s = _AmountResidual(self.Select(x => x.Id).ToList());
+            //await UpdateAsync(aml2s);
 
             var invoiceIds = amls.Select(x => x.MoveId).Distinct().ToList();
             if (invoiceIds.Any())
             {
                 await invObj._ComputeAmount(invoiceIds);
 
-                //Tìm sale orders để tính lại residual
-                var saleLineObj = GetService<ISaleOrderLineService>();
-                var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s => invoiceIds.Contains(s.InvoiceLine.MoveId)))
-                    .Select(x => x.OrderId).Distinct().ToListAsync();
-                if (saleOrderIds.Any())
-                {
-                    var saleObj = GetService<ISaleOrderService>();
-                    await saleObj.RecomputeResidual(saleOrderIds);
-                }
+                ////Tìm sale orders để tính lại residual
+                //var saleLineObj = GetService<ISaleOrderLineService>();
+                //var saleOrderIds = await saleLineObj.SearchQuery(x => x.SaleOrderLineInvoice2Rels.Any(s => invoiceIds.Contains(s.InvoiceLine.MoveId)))
+                //    .Select(x => x.OrderId).Distinct().ToListAsync();
+                //if (saleOrderIds.Any())
+                //{
+                //    var saleObj = GetService<ISaleOrderService>();
+                //    await saleObj.RecomputeResidual(saleOrderIds);
+                //}
 
-                //Tìm service card orders để tính lại residual
-                var cardOrderLineObj = GetService<IServiceCardOrderLineService>();
-                var cardOrderIds = await cardOrderLineObj.SearchQuery(x => x.OrderLineInvoiceRels.Any(s => invoiceIds.Contains(s.InvoiceLine.MoveId)))
-                    .Select(x => x.OrderId).Distinct().ToListAsync();
-                if (cardOrderIds.Any())
-                {
-                    var saleObj = GetService<IServiceCardOrderService>();
-                    await saleObj.UpdateResidual(cardOrderIds);
-                }
+                ////Tìm service card orders để tính lại residual
+                //var cardOrderLineObj = GetService<IServiceCardOrderLineService>();
+                //var cardOrderIds = await cardOrderLineObj.SearchQuery(x => x.OrderLineInvoiceRels.Any(s => invoiceIds.Contains(s.InvoiceLine.MoveId)))
+                //    .Select(x => x.OrderId).Distinct().ToListAsync();
+                //if (cardOrderIds.Any())
+                //{
+                //    var saleObj = GetService<IServiceCardOrderService>();
+                //    await saleObj.UpdateResidual(cardOrderIds);
+                //}
             }
-
-
         }
 
         public override ISpecification<AccountMoveLine> RuleDomainGet(IRRule rule)

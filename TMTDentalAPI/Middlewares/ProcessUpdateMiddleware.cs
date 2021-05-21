@@ -40,19 +40,19 @@ namespace TMTDentalAPI.Middlewares
             //neeus url cua request ma == 'ProcessUpdate'
             if (context.Request.Path.Equals(new PathString("/ProcessUpdate")))
             {
-                var tenantContext = context.GetTenantContext<AppTenant>();
-                var tenant = tenantContext?.Tenant;
-                if (tenant != null)
+                try
                 {
-                    try
+                    var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
+                    var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+                    if (pendingMigrations.Any())
+                        await dbContext.Database.MigrateAsync();
+
+                    await _mediator.Publish(new ProcessUpdateNotification(context));
+
+                    var tenantContext = context.GetTenantContext<AppTenant>();
+                    var tenant = tenantContext?.Tenant;
+                    if (tenant != null)
                     {
-                        var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
-                        var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
-                        if (pendingMigrations.Any())
-                            await dbContext.Database.MigrateAsync();
-
-                        await _mediator.Publish(new ProcessUpdateNotification(context));
-
                         var tenantDbContext = (TenantDbContext)context.RequestServices.GetService(typeof(TenantDbContext));
                         var tnt = tenantDbContext.Tenants.Where(x => x.Hostname == tenant.Hostname).FirstOrDefault();
                         tnt.Version = _appSettings.Version;
@@ -60,17 +60,16 @@ namespace TMTDentalAPI.Middlewares
 
                         _cache.Remove(tenant.Hostname); //clear cache
                         tenant.Version = _appSettings.Version;
-
                         context.SetTenantContext(tenantContext);
+                    }
 
-                        context.Response.StatusCode = (int)HttpStatusCode.NoContent;
-                        context.Response.Headers.Add("Pragma", new[] { "no-cache" });
-                        context.Response.Headers.Add("Cache-Control", new[] { "no-cache,no-store" });
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogError(e.Message);
-                    }
+                    context.Response.StatusCode = (int)HttpStatusCode.NoContent;
+                    context.Response.Headers.Add("Pragma", new[] { "no-cache" });
+                    context.Response.Headers.Add("Cache-Control", new[] { "no-cache,no-store" });
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.Message);
                 }
             }
             else
