@@ -605,7 +605,7 @@ namespace Infrastructure.Services
 
             if (program != null)
             {
-                var error_status = await programObj._CheckQuotationPromotion(program, quotation);
+                var error_status =  programObj._CheckQuotationPromotion(program, quotation);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
 

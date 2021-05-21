@@ -2447,7 +2447,7 @@ namespace Infrastructure.Services
                             var program = await programObj.SearchQuery(x => x.Id == item.SaleCouponProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
                             if (program != null)
                             {
-                                var error_status = await programObj._CheckPromotionApplySaleLine(program, saleLine);
+                                var error_status = programObj._CheckPromotionApplySaleLine(program, saleLine);
                                 if (string.IsNullOrEmpty(error_status.Error))
                                 {
                                     saleLine.Promotions.Add(saleLineService._GetRewardLineValues(saleLine, program));
