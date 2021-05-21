@@ -76,9 +76,9 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
-        public async Task<IActionResult> GetPromotionUsageCode([FromQuery] string code, Guid? productId)
+        public async Task<IActionResult> GetPromotionByFastSaleOrder()
         {
-            var result = await _programService.GetPromotionDisplayUsageCode(code, productId);
+            var result = await _programService.GetPromotionByFastSaleOrder();
             return Ok(result);
         }
 

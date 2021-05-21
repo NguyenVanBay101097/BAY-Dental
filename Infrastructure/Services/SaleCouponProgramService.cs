@@ -150,10 +150,10 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrder(Guid? partnerId)
         {
             var today = DateTime.Today;
-            var query =  SearchQuery(x => x.Active && !x.IsPaused && x.ProgramType == "promotion_program"
-            && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order"
-            && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
-            && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString()))));
+            var query = SearchQuery(x => x.Active && !x.IsPaused && x.ProgramType == "promotion_program"
+           && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order"
+           && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value.AbsoluteEndOfDate())
+           && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString()))) && x.Promotions.Count <= x.MaximumUseNumber);
 
             if (partnerId.HasValue)
                 query = query.Where(x => string.IsNullOrEmpty(x.ApplyPartnerOn) || x.ApplyPartnerOn == "all" || (x.ApplyPartnerOn == "specific_partners" && x.DiscountSpecificPartners.Any(x => x.PartnerId == partnerId)));
@@ -164,16 +164,17 @@ namespace Infrastructure.Services
             return basics;
         }
 
-        public async Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrderLine(Guid productId , Guid? partnerId)
+        public async Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrderLine(Guid productId, Guid? partnerId)
         {
             var today = DateTime.Today;
             var productObj = GetService<IProductService>();
             var product = await productObj.SearchQuery(x => x.Id == productId).FirstOrDefaultAsync();
             var query = SearchQuery(x => x.Active && !x.IsPaused && x.ProgramType == "promotion_program"
             && x.PromoCodeUsage == "no_code_needed" && (x.DiscountApplyOn == "specific_products" || x.DiscountApplyOn == "specific_product_categories")
-            && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
+            && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value.AbsoluteEndOfDate())
             && (x.DiscountSpecificProducts.Any(s => s.ProductId == product.Id) || x.DiscountSpecificProductCategories.Any(s => s.ProductCategoryId == product.CategId))
-            && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString()))));
+            && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString())))
+            && x.Promotions.Count <= x.MaximumUseNumber);
 
             if (partnerId.HasValue)
                 query = query.Where(x => string.IsNullOrEmpty(x.ApplyPartnerOn) || x.ApplyPartnerOn == "all" || (x.ApplyPartnerOn == "specific_partners" && x.DiscountSpecificPartners.Any(x => x.PartnerId == partnerId)));
@@ -182,6 +183,20 @@ namespace Infrastructure.Services
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
             return basics;
+        }
+
+        public async Task<IEnumerable<SaleCouponProgramDisplay>> GetPromotionByFastSaleOrder()
+        {
+            var today = DateTime.Today;
+            var query = SearchQuery(x => x.Active && !x.IsPaused
+                        && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value.AbsoluteEndOfDate())
+                        && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString())))
+                        && x.Promotions.Count <= x.MaximumUseNumber);
+
+            var promotions = await query.Include(x => x.Promotions).Include(x => x.DiscountSpecificPartners).Include(x => x.DiscountSpecificProductCategories).Include(x => x.DiscountSpecificProducts).ToListAsync();
+
+            var displays = _mapper.Map<IEnumerable<SaleCouponProgramDisplay>>(promotions);
+            return displays;
         }
 
         public override ISpecification<SaleCouponProgram> RuleDomainGet(IRRule rule)
@@ -528,7 +543,7 @@ namespace Infrastructure.Services
             else if (!string.IsNullOrEmpty(self.ApplyPartnerOn) && self.ApplyPartnerOn == "specific_partners" && !self.DiscountSpecificPartners.Any(x => x.PartnerId == order.PartnerId))
                 message.Error = "Mã khuyến mãi không áp dụng cho khách hàng này";
             else if (!string.IsNullOrEmpty(self.PromoCode) && (order.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
-                message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";        
+                message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (string.IsNullOrEmpty(self.PromoCode) && order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
                 message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (self.DiscountApplyOn != "on_order")
@@ -738,60 +753,73 @@ namespace Infrastructure.Services
         //    }
         //}
 
-        public async Task<SaleCouponProgramResponse> GetPromotionDisplayUsageCode(string code, Guid? productId)
-        {
-            var now = DateTime.Now;
-            //Chương trình khuyến mãi sử dụng mã
-            var program = await SearchQuery(x => x.PromoCode == code)
-                .Include(x => x.DiscountSpecificProducts)
-                .Include(x => x.DiscountSpecificProductCategories)
-                .FirstOrDefaultAsync();
+        //public async Task<SaleCouponProgramResponse> GetPromotionDisplayUsageCode(string code, Guid? productId)
+        //{
+        //    var today = DateTime.Today;
+        //    //Chương trình khuyến mãi sử dụng mã
+        //    var program = await SearchQuery(x => x.PromoCode == code)
+        //        .Include(x => x.DiscountSpecificProducts)
+        //        .Include(x => x.DiscountSpecificProductCategories)
+        //        .Include(x => x.DiscountSpecificPartners)
+        //        .FirstOrDefaultAsync();
 
-            if (program == null)
-                return new SaleCouponProgramResponse { Error = "Mã khuyến mãi không chính xác", Success = false, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
+        //    if (program == null)
+        //        return new SaleCouponProgramResponse { Error = "Mã khuyến mãi không chính xác", Success = false, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
 
-            var productObj = GetService<IProductService>();
-            var product = await productObj.SearchQuery(x => x.Id == productId.Value).FirstOrDefaultAsync();
-            if (product == null)
-                return new SaleCouponProgramResponse { Error = "Không tìm thấy dịch vụ đươc áp dụng ", Success = false, SaleCouponProgram = null };
+        //    var productObj = GetService<IProductService>();
+        //    var product = await productObj.SearchQuery(x => x.Id == productId.Value).FirstOrDefaultAsync();
+        //    if (product == null)
+        //        return new SaleCouponProgramResponse { Error = "Không tìm thấy dịch vụ đươc áp dụng ", Success = false, SaleCouponProgram = null };
 
-            var res = new SaleCouponProgramResponse();
-            res.SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program);
-            res.Success = true;
-            if (!program.Active || !program.IsPaused)
-            {
-                res.Error = "Chương trình khuyến mãi chưa kích hoạt hoặc đang tạm dừng";
-                res.Success = false;
-                res.SaleCouponProgram = null;
-            }
-            else if (!productId.HasValue && program.DiscountApplyOn == "specific_products")
-            {
-                res.Error = "Khuyến mãi không áp dụng cho đơn hàng";
-                res.Success = false;
-                res.SaleCouponProgram = null;
-            }
-            else if (productId.HasValue && !program.DiscountSpecificProducts.Any(x => x.ProductId == productId))
-            {
-                res.Error = "Mã khuyến mãi không áp dụng cho dịch vụ này";
-                res.Success = false;
-                res.SaleCouponProgram = null;
-            }
-            else if (productId.HasValue && program.DiscountApplyOn == "specific_product_categories" && !program.DiscountSpecificProductCategories.Any(x => x.ProductCategoryId == product.CategId))
-            {
-                res.Error = "Dịch vụ không thuộc nhóm dịch vu được áp dụng khuyến mãi";
-                res.Success = false;
-                res.SaleCouponProgram = null;
-            }
-            else if ((program.RuleDateFrom.HasValue && program.RuleDateFrom > now) || (program.RuleDateTo.HasValue && program.RuleDateTo < now))
-            {
-                res.Error = "Mã khuyến mãi đã hết hạn";
-                res.Success = false;
-                res.SaleCouponProgram = null;
-            }
+        //    var res = new SaleCouponProgramResponse();
+        //    res.SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program);
+        //    res.Success = true;
+        //    if (!program.Active || !program.IsPaused)
+        //    {
+        //        res.Error = "Chương trình khuyến mãi chưa kích hoạt hoặc đang tạm dừng";
+        //        res.Success = false;
+        //        res.SaleCouponProgram = null;
+        //    }
+        //    else if (!productId.HasValue && (program.DiscountApplyOn == "specific_products" || program.DiscountApplyOn == "specific_product_categories"))
+        //    {
+        //        res.Error = "Khuyến mãi không áp dụng cho phiếu điều trị";
+        //        res.Success = false;
+        //        res.SaleCouponProgram = null;
+        //    }
+        //    else if (program.IsApplyDayOfWeek && !string.IsNullOrEmpty(program.Days) && !program.Days.Contains(((int)today.DayOfWeek).ToString()))
+        //    {
+        //        res.Error = $"Mã khuyến mãi không áp dụng cho {culture.DateTimeFormat.GetDayName(today.DayOfWeek).ToLower()} ";
+        //        res.Success = false;
+        //        res.SaleCouponProgram = null;
+        //    }             
+        //    else if (productId.HasValue && program.DiscountApplyOn == "on_order")
+        //    {
+        //        res.Error = "Khuyến mãi không áp dụng cho chi tiết điều trị";
+        //        res.Success = false;
+        //        res.SaleCouponProgram = null;
+        //    }
+        //    else if (productId.HasValue && !program.DiscountSpecificProducts.Any(x => x.ProductId == productId))
+        //    {
+        //        res.Error = "Mã khuyến mãi không áp dụng cho dịch vụ này";
+        //        res.Success = false;
+        //        res.SaleCouponProgram = null;
+        //    }
+        //    else if (productId.HasValue && program.DiscountApplyOn == "specific_product_categories" && !program.DiscountSpecificProductCategories.Any(x => x.ProductCategoryId == product.CategId))
+        //    {
+        //        res.Error = "Dịch vụ không thuộc nhóm dịch vu được áp dụng khuyến mãi";
+        //        res.Success = false;
+        //        res.SaleCouponProgram = null;
+        //    }
+        //    else if ((program.RuleDateFrom.HasValue && program.RuleDateFrom > today) || (program.RuleDateTo.HasValue && program.RuleDateTo.Value.AbsoluteEndOfDate() < today))
+        //    {
+        //        res.Error = "Mã khuyến mãi đã hết hạn";
+        //        res.Success = false;
+        //        res.SaleCouponProgram = null;
+        //    }
 
 
-            return res;
-        }
+        //    return res;
+        //}
 
         public async Task<decimal> GetAmountTotal(Guid id)
         {
