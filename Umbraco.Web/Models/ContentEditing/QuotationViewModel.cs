@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -114,6 +115,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<PaymentQuotationDisplay> Payments { get; set; } = new List<PaymentQuotationDisplay>();
 
         public IEnumerable<QuotationPromotionBasic> Promotions { get; set; } = new List<QuotationPromotionBasic>();
+
+        public decimal TotalAmountDiscount 
+        {
+            get
+            {
+                return Lines.Sum(x => (x.AmountDiscountTotal ?? 0) * x.Qty);
+            }
+        }
 
     }
 

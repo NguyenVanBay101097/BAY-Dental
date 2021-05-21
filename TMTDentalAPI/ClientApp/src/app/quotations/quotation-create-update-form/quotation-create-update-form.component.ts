@@ -595,11 +595,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   getTotalDiscount() {
-    var res = this.quotation.lines.reduce((total, cur) => {
-      return total + (cur.amountDiscountTotal || 0) * cur.qty;
-    }, 0);
+    return this.quotation.totalAmountDiscount;
+    // var res = this.quotation.lines.reduce((total, cur) => {
+    //   return total + (cur.amountDiscountTotal || 0) * cur.qty;
+    // }, 0);
 
-    return res;
+    // return res;
   }
 
   sumPromotionQuotation() {

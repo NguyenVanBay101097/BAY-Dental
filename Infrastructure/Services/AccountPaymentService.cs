@@ -1093,10 +1093,7 @@ namespace Infrastructure.Services
         public async Task CancelAsync(IEnumerable<Guid> ids)
         {
             await CancelAsync(SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.MoveLines).ThenInclude(x => x.Move)
-                .Include(x => x.MoveLines).ThenInclude(x => x.Move).ThenInclude(x => x.Lines)
-                .Include(x => x.AccountMovePaymentRels)
-                .Include(x => x.SaleOrderPaymentRels)
+                .Include(x => x.MoveLines)
                 .ToList());
         }
 
@@ -1104,35 +1101,39 @@ namespace Infrastructure.Services
         {
             var moveObj = GetService<IAccountMoveService>();
             var moveLineObj = GetService<IAccountMoveLineService>();
+            var moveIds = payments.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList();
+            var moves = await moveObj.ButtonDraft(moveIds);
+            //await moveObj.Unlink(moveIds);
+            await moveObj.DeleteAsync(moves);
             foreach (var rec in payments)
             {
-                foreach (var move in rec.MoveLines.Select(x => x.Move).Distinct().ToList())
-                {
-                    if (rec.AccountMovePaymentRels.Any())
-                        await moveLineObj.RemoveMoveReconcile(move.Lines.Select(x => x.Id).ToList());
-                    else
-                        await moveLineObj.RemoveMoveReconcile(rec.MoveLines.Select(x => x.Id).ToList());
+                //foreach (var move in rec.MoveLines.Select(x => x.Move).Distinct().ToList())
+                //{
+                //    if (rec.AccountMovePaymentRels.Any())
+                //        await moveLineObj.RemoveMoveReconcile(move.Lines.Select(x => x.Id).ToList());
+                //    else
+                //        await moveLineObj.RemoveMoveReconcile(rec.MoveLines.Select(x => x.Id).ToList());
 
-                    await moveObj.ButtonCancel(new List<Guid>() { move.Id });
-                    await moveObj.Unlink(new List<Guid>() { move.Id });
-                }
+                //    await moveObj.ButtonCancel(new List<Guid>() { move.Id });
+                //    await moveObj.Unlink(new List<Guid>() { move.Id });
+                //}
 
                 rec.State = "cancel";
             }
 
             await UpdateAsync(payments);
 
-            //delete commission
-            var settlementObj = GetService<ICommissionSettlementService>();
-            await settlementObj.Unlink(payments.Select(x => x.Id).ToList());
+            ////delete commission
+            //var settlementObj = GetService<ICommissionSettlementService>();
+            //await settlementObj.Unlink(payments.Select(x => x.Id).ToList());
 
-            //update saleorderline
-            var saleOrderIds = payments.SelectMany(x => x.SaleOrderPaymentRels).Select(x => x.SaleOrderId).ToList();
-            if (saleOrderIds.Any())
-            {
-                foreach (var saleOrderId in saleOrderIds)
-                    await _ComputeSaleOrderLines(saleOrderId);
-            }
+            ////update saleorderline
+            //var saleOrderIds = payments.SelectMany(x => x.SaleOrderPaymentRels).Select(x => x.SaleOrderId).ToList();
+            //if (saleOrderIds.Any())
+            //{
+            //    foreach (var saleOrderId in saleOrderIds)
+            //        await _ComputeSaleOrderLines(saleOrderId);
+            //}
         }
 
         public async Task UnlinkAsync(IEnumerable<Guid> ids)

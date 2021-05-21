@@ -25,13 +25,13 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var tenant = scope.ServiceProvider.GetService<AppTenant>();
-                if (tenant == null)
-                    return Task.CompletedTask;
-
-                Version version1 = new Version(_version);
-                Version version2 = new Version(tenant.Version);
-                if (version2.CompareTo(version1) >= 0)
-                    return Task.CompletedTask;
+                if (tenant != null)
+                {
+                    Version version1 = new Version(_version);
+                    Version version2 = new Version(tenant.Version);
+                    if (version2.CompareTo(version1) >= 0)
+                        return Task.CompletedTask;
+                }
 
                 var scopedServices = scope.ServiceProvider;
                 var context = scope.ServiceProvider.GetService<CatalogDbContext>();

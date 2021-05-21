@@ -342,7 +342,9 @@ namespace Infrastructure.Services
 
             var amlObj = GetService<IAccountMoveLineService>();
             var line_ids = self.SelectMany(x => x.Lines).Select(x => x.Id).ToList();
-            await amlObj.RemoveMoveReconcile(line_ids);
+            var lines = amlObj.SearchQuery(x => line_ids.Contains(x.Id)).Include(x => x.MatchedDebits)
+                .Include(x => x.MatchedCredits).ToList();
+            await amlObj.RemoveMoveReconcile(lines);
 
             foreach (var move in self)
                 move.State = "draft";

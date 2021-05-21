@@ -395,7 +395,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   viewTeeth() {
-    var toothType = this.line.toothType;
+    var toothType = this.line.toothType || 'manual';
     if (toothType == "manual") {
       var teeth = this.line.teeth as any[];
       return teeth.map(x => x.name).join(',');

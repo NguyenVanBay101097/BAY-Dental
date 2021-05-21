@@ -28,9 +28,9 @@ namespace Infrastructure.Services
         Task<CheckPromoCodeMessage> _CheckQuotationPromoCode(SaleCouponProgram self, Quotation quotation, string coupon_code);
         Task<CheckPromoCodeMessage> _CheckPromotion(SaleCouponProgram self, SaleOrder order);
 
-        Task<CheckPromoCodeMessage> _CheckQuotationPromotion(SaleCouponProgram self, Quotation quotation);
-        Task<CheckPromoCodeMessage> _CheckPromotionApplySaleLine(SaleCouponProgram self, SaleOrderLine line);
-        Task<CheckPromoCodeMessage> _CheckPromotionApplyQuotationLine(SaleCouponProgram self, QuotationLine line);
+        CheckPromoCodeMessage _CheckQuotationPromotion(SaleCouponProgram self, Quotation quotation);
+        CheckPromoCodeMessage _CheckPromotionApplySaleLine(SaleCouponProgram self, SaleOrderLine line);
+        CheckPromoCodeMessage _CheckPromotionApplyQuotationLine(SaleCouponProgram self, QuotationLine line);
         IEnumerable<SaleCouponProgram> _FilterOnMinimumAmount(IEnumerable<SaleCouponProgram> self, SaleOrder order);
         IEnumerable<SaleCouponProgram> _FilterOnMinimumAmount(SaleCouponProgram self, SaleOrder order);
         IEnumerable<SaleCouponProgram> _KeepOnlyMostInterestingAutoAppliedGlobalDiscountProgram(IEnumerable<SaleCouponProgram> self);
