@@ -493,7 +493,7 @@ namespace Infrastructure.Services
             }
             else
             {
-                return new SaleCouponProgramResponse { Error = "Mã khuyễn mãi không chính xác", Success = false, SaleCouponProgram = null };
+                return new SaleCouponProgramResponse { Error = "Mã khuyến mãi không chính xác", Success = false, SaleCouponProgram = null };
 
                 //   var coupon = await couponObj.SearchQuery(x => x.Code == couponCode)
                 //.Include(x => x.Program).Include(x => x.Program.DiscountLineProduct).Include(x => x.Partner).FirstOrDefaultAsync();

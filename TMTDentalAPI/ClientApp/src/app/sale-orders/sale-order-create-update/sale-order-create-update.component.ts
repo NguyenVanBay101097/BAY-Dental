@@ -57,6 +57,7 @@ import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.serv
 import { SaleOrderLinePromotionDialogComponent } from '../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component';
 import {Location} from '@angular/common'; 
 import { SaleOrderPromotionService } from '../sale-order-promotion.service';
+import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
 declare var $: any;
 
 @Component({
@@ -133,7 +134,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private toothService: ToothService,
     private employeeService: EmployeeService,
     private saleOrderPromotionService: SaleOrderPromotionService,
-    private differs: KeyValueDiffers
+    private differs: KeyValueDiffers,
+    private saleOrderPaymentService: SaleOrderPaymentService
   ) {
   }
   private customerDiffer: KeyValueDiffer<string, any>;
@@ -689,7 +691,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   printPayment(paymentId) {
-    this.accountPaymentOdataService.getPrint(paymentId).subscribe(result => {
+    this.saleOrderPaymentService.getPrint(paymentId).subscribe(result => {
       if (result) {
         var html = result['html']
         this.printService.printHtml(html);

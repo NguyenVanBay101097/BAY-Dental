@@ -154,10 +154,11 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrder(Guid? partnerId)
         {
             var today = DateTime.Today;
+            var wdToday = today.DayOfWeek.ToString();
             var query = SearchQuery(x => x.Active && !x.IsPaused && x.ProgramType == "promotion_program"
            && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order"
            && (!x.RuleDateFrom.HasValue || today >= x.RuleDateFrom.Value) && (!x.RuleDateTo.HasValue || today <= x.RuleDateTo.Value)
-           && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(((int)today.DayOfWeek).ToString()))));
+           && (string.IsNullOrEmpty(x.Days) || (x.IsApplyDayOfWeek && x.Days.Contains(wdToday))));
 
             if (partnerId.HasValue)
                 query = query.Where(x => string.IsNullOrEmpty(x.ApplyPartnerOn) || x.ApplyPartnerOn == "all" || (x.ApplyPartnerOn == "specific_partners" && x.DiscountSpecificPartners.Any(x => x.PartnerId == partnerId)));

@@ -121,15 +121,6 @@ export class SaleOrderLineCuComponent implements OnInit {
       teeth: this.fb.array(this.line.teeth),
     });
 
-    this.formGroupInfo.get('toothType').valueChanges
-      .subscribe(value => {
-        if (value == 'manual') {
-          this.formGroupInfo.get('teeth').setValidators(Validators.required)
-        } else {
-          this.formGroupInfo.get('teeth').clearValidators();
-        }
-        this.formGroupInfo.get('teeth').updateValueAndValidity();
-      });
     this.formGroupInfo.get('toothType').setValue(this.line.toothType);
 
     this.loadTeethMap(this.line.toothCategory);

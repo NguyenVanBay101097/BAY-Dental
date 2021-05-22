@@ -682,10 +682,19 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onOpenSaleOrderPromotion() {
-    if (!this.formGroup.controls.partner.valid) {
-      this.notifyService.notify('error', 'Chọn khách hàng');
-      return;
+    var partner = this.formGroup.get('partner').value;
+    if (!partner) {
+      this.notificationService.show({
+        content: 'Vui lòng chọn khách hàng',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+
+      return false;
     }
+
     //update line trước khi lưu
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
@@ -780,10 +789,19 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onUpdateOpenLinePromotion(line, lineControl, i) {
-    if (!this.formGroup.controls.partner.valid) {
-      this.notifyService.notify('error', 'Chọn khách hàng');
-      return;
+    var partner = this.formGroup.get('partner').value;
+    if (!partner) {
+      this.notificationService.show({
+        content: 'Vui lòng chọn khách hàng',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+
+      return false;
     }
+
     //update line trước khi mở popup promotion
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
