@@ -71,24 +71,32 @@
         <div class="text-lg font-semibold mb-1">DANH SÁCH TƯ VẤN</div>
         <table class="table table-bordered">
             <thead>
-                <tr class="font-semibold">
-                    <td>Ngày tư vấn</td>
-                    <td>Người tư vấn</td>
-                    <td>Răng</td>
-                    <td>Chẩn đoán</td>
-                    <td>Dịch vụ</td>
+                <tr>
+                    <th>Ngày tư vấn</th>
+                    <th>Người tư vấn</th>
+                    <th width="15%">Răng</th>
+                    <th>Chẩn đoán</th>
+                    <th>Dịch vụ</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model.Advisories)
                 {
-                    <tr>
-                        <td>@item.Date.ToString("dd/MM/yyyy")</td>
-                        <td>@item.Employee.Name</td>
-                        <td>@string.Join(", ", item.Teeth.Select(x => x.Name))</td>
-                        <td>@string.Join(", ", item.ToothDiagnosis.Select(x => x.Name))</td>
-                        <td>@string.Join(", ", item.Product.Select(x => x.Name))</td>
-                    </tr>
+                <tr>
+                    <td>@item.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@item.Employee.Name</td>
+                    @if (item.ToothType != "manual")
+                    {
+                        <td>@((item.ToothType == "whole_jaw" ? "Nguyên hàm" : (item.ToothType == "upper_jaw" ? "Hàm trên" : "Hàm dưới")))</td>
+                    }
+                    else
+                    {
+                        <td>@(item.Tooths)</td>
+                    }
+
+                    <td>@item.Diagnosis</td>
+                    <td>@item.Services</td>
+                </tr>
                 }
             </tbody>
         </table>

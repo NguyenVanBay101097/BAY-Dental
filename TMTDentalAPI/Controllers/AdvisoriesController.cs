@@ -107,10 +107,10 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetPrint([FromQuery] Guid customerId, [FromQuery] IEnumerable<Guid> ids)
+        public async Task<IActionResult> GetPrint([FromQuery] IEnumerable<Guid> ids)
         {
 
-            var res = await _advisoryService.Print(customerId, ids);
+            var res = await _advisoryService.Print(ids);
 
             if (res == null)
                 return NotFound();

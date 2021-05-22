@@ -33,4 +33,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public IEnumerable<ProductSimple> Product { get; set; } = new List<ProductSimple>();
     }
+
+  
 }

@@ -19,7 +19,7 @@ namespace Infrastructure.Services
         Task RemoveAdvisory(Guid id);
         Task<AdvisoryDisplay> DefaultGet(AdvisoryDefaultGet val);
         Task<ToothAdvised> GetToothAdvise(AdvisoryToothAdvise val);
-        Task<AdvisoryPrintVM> Print(Guid customerId, IEnumerable<Guid> ids);
+        Task<AdvisoryPrintVM> Print(IEnumerable<Guid> ids);
         Task<SaleOrderSimple> CreateSaleOrder(CreateFromAdvisoryInput val);
         Task<QuotationSimple> CreateQuotation(CreateFromAdvisoryInput val);
     }

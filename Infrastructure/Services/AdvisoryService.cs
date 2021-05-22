@@ -7,6 +7,7 @@ using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -272,35 +273,62 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<AdvisoryPrintVM> Print(Guid customerId, IEnumerable<Guid> ids)
+        public async Task<AdvisoryPrintVM> Print(IEnumerable<Guid> ids)
         {
-            var _partnerService = GetService<IPartnerService>();
+            var _partnerObj = GetService<IPartnerService>();
+            var _companyObj = GetService<ICompanyService>();
+
+
             var res = new AdvisoryPrintVM();
+            var partnerId = await SearchQuery(x => ids.Contains(x.Id)).GroupBy(x => x.CustomerId).Select(x => x.Key).FirstOrDefaultAsync();
+            var companyId = await SearchQuery(x => ids.Contains(x.Id)).GroupBy(x => x.CompanyId).Select(x => x.Key).FirstOrDefaultAsync();
 
-            var partner = await _partnerService.SearchQuery(x => x.Id == customerId).Include(x => x.Company.Partner).FirstOrDefaultAsync();
-            if (partner == null) return null;
-
-            res.Partner = _mapper.Map<PartnerDisplay>(partner);
-            res.Company = _mapper.Map<CompanyPrintVM>(partner.Company);
-
-            var query = SearchQuery();
-
-            if (ids != null && ids.Count() > 0)
+            res.Partner = await _partnerObj.SearchQuery(x => x.Id == partnerId).Select(x => new PartnerInfoVm
             {
-                query = query.Where(x => ids.Contains(x.Id));
-            }
+                Id = x.Id,
+                BirthYear = x.BirthYear,
+                DisplayName = x.DisplayName,
+                Name = x.Name,
+                Phone = x.Phone,
+                Email = x.Email,
+                CityName = x.CityName,
+                DistrictName = x.DistrictName,
+                WardName = x.WardName,
+                Street = x.Street,
+            }).FirstOrDefaultAsync();
 
-            var advisories = await query
-                .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
-                .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
-                .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
-                .Include(x => x.Employee).ToListAsync();
+            res.Company = await _companyObj.SearchQuery(x => x.Id == companyId).Select(x => new CompanyPrintVM
+            {
+                Name = x.Name,
+                Email = x.Email,
+                Phone = x.Phone,
+                Logo = x.Logo,
+                PartnerCityName = x.Partner.CityName,
+                PartnerDistrictName = x.Partner.DistrictName,
+                PartnerWardName = x.Partner.WardName,
+                PartnerStreet = x.Partner.Street,
+            }).FirstOrDefaultAsync();
 
-            res.Advisories = _mapper.Map<IEnumerable<AdvisoryDisplay>>(advisories);
-           
+            var advisories = await SearchQuery(x => ids.Contains(x.Id)).Select(x => new AdvisoryItemPrintVM
+            {
+                Date = x.Date,
+                EmployeeId = x.EmployeeId ?? null,
+                Employee = x.Employee != null ? new EmployeeSimple
+                {
+                    Id = x.Employee.Id,
+                    Name = x.Employee.Name,
+                } : null,
+                ToothType = x.ToothType,
+                Tooths = String.Join(",", x.AdvisoryToothRels.Select(x => x.Tooth.Name)),
+                Diagnosis = x.AdvisoryToothDiagnosisRels.Any() ? String.Join(",", x.AdvisoryToothDiagnosisRels.Select(x => x.ToothDiagnosis.Name)) : null,
+                Services = x.AdvisoryProductRels.Any() ? String.Join(",", x.AdvisoryProductRels.Select(x => x.Product.Name)) : null
+            }).ToListAsync();
+
+            res.Advisories = advisories;        
 
             return res;
         }
+
 
         public async Task<SaleOrderSimple> CreateSaleOrder(CreateFromAdvisoryInput val)
         {
