@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -764,5 +765,18 @@ namespace Infrastructure.Services
 
             await DeleteAsync(self);
         }
+
+        public override ISpecification<Quotation> RuleDomainGet(IRRule rule)
+        {
+            switch (rule.Code)
+            {
+                case "quotation.quotation_comp_rule":
+                    return new InitialSpecification<Quotation>(x => x.CompanyId == CompanyId);
+                default:
+                    return null;
+            }
+        }
+
+
     }
 }

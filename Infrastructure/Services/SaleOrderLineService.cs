@@ -441,7 +441,7 @@ namespace Infrastructure.Services
                 throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
 
             if (self.Any(x => x.PaymentHistoryLines.Any(x => x.SaleOrderPayment.State == "posted")))
-                throw new Exception("không thể xóa dịch vụ đã thanh toán");
+                throw new Exception("Không thể xóa dịch vụ đã thanh toán");
 
             foreach (var line in self.Where(x => x.IsRewardLine))
             {
@@ -847,7 +847,7 @@ namespace Infrastructure.Services
             }
             else
             {
-                return new SaleCouponProgramResponse { Error = "Mã khuyễn mãi không chính xác", Success = false, SaleCouponProgram = null };
+                return new SaleCouponProgramResponse { Error = "Mã khuyến mãi không chính xác", Success = false, SaleCouponProgram = null };
 
             }
         }

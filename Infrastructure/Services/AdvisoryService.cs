@@ -545,5 +545,18 @@ namespace Infrastructure.Services
             else
                 return false;
         }
+
+        public override ISpecification<Advisory> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "advisory.advisory_comp_rule":
+                    return new InitialSpecification<Advisory>(x => x.CompanyId == CompanyId);
+                default:
+                    return null;
+            }
+        }
     }
 }

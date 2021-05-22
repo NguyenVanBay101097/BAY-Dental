@@ -31,7 +31,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<ToothDiagnosisBasic>> GetPagedResultAsync(ToothDiagnosisPaged val)
         {
-            var query = SearchQuery(x => x.CompanyId == CompanyId);
+            var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
@@ -143,5 +143,19 @@ namespace Infrastructure.Services
 
             return products;
         }
+
+        public override ISpecification<ToothDiagnosis> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "tooth.tooth_diagnosis_comp_rule":
+                    return new InitialSpecification<ToothDiagnosis>(x => x.CompanyId == CompanyId);
+                default:
+                    return null;
+            }
+        }
+
     }
 }

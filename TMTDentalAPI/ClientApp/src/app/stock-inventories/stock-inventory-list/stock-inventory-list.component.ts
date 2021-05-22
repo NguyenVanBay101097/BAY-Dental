@@ -54,6 +54,7 @@ export class StockInventoryListComponent implements OnInit {
         this.offset = 0;
         this.loadDataFromApi();
       });
+    this.checkRole();
     this.loadDataFromApi();
   }
 
@@ -143,7 +144,7 @@ export class StockInventoryListComponent implements OnInit {
     }
   }
 
-  checkRole(){
+  checkRole() {
     this.canCreate = this.checkPermissionService.check(["Stock.Inventory.Create"]);
   }
 
