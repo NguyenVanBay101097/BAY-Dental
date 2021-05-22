@@ -149,11 +149,10 @@ namespace Infrastructure.Services
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
-            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
-                                                                                        .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
-
             if (val.ComputeCreditDebit)
             {
+                var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
+                                                                                            .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
                 var partnerBasics = _mapper.Map<List<PartnerBasic>>(items);
                 var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
                 foreach (var item in partnerBasics)

@@ -124,10 +124,9 @@ export class SaleOrderLineCuComponent implements OnInit {
     this.formGroupInfo.get('toothType').setValue(this.line.toothType);
 
     this.loadTeethMap(this.line.toothCategory);
-    console.log(this.initialListEmployees);
-    this.filteredEmployeesDoctor = this.initialListEmployees.slice();
+    this.filteredEmployeesDoctor = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
     this.filteredEmployeesCounselor = this.initialListEmployees.slice();
-    this.filteredEmployeesAssistant = this.initialListEmployees.slice();
+    this.filteredEmployeesAssistant = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
   }
 
   onEmployeeFilter(value) {
@@ -299,11 +298,11 @@ export class SaleOrderLineCuComponent implements OnInit {
     //   return false;
     // }
 
-    this.isEditting = false;
     this.onUpdateEvent.emit(this.formGroupInfo.value);
+    this.isEditting = false;
 
     // this.isItSeff = this.isItSeff;
-      this.notify('success', 'Cập nhật thành công');
+    // this.notify('success', 'Cập nhật thành công');
     return true;
   }
 

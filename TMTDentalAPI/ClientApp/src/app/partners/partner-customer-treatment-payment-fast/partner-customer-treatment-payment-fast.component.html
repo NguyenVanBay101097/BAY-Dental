@@ -49,48 +49,24 @@
                             </td>
                             <td colspan="1" style="width: 100%;">
                                 <div class="d-flex">
-                                    <kendo-combobox [class.d-none]="saleOrder.state != 'draft'" [data]="filteredPartners" [textField]="'displayName'" [filterable]="true" #partnerCbx formControlName="partner" [valueField]="'id'" (valueChange)="onChangePartner($event)">
+                                    <kendo-combobox [popupSettings]="{width: 'auto', popupClass: 'partner-cbx'}" [class.d-none]="saleOrder.state != 'draft'" [data]="filteredPartners" [textField]="'displayName'" [filterable]="true" #partnerCbx formControlName="partner" [valueField]="'id'">
+                                        <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                            <div class="partner-item-cbx">
+                                                <div class="name">{{ dataItem.displayName }}</div>
+                                                <div class="phone">{{ dataItem.phone }}</div>
+                                            </div>
+                                          </ng-template>
                                     </kendo-combobox>
                                     <a type="button" [class.d-none]="saleOrder.state != 'draft'" title="Thêm khách hàng" class="pl-2 py-1" (click)="quickCreateCustomer()">
                                         <i class="fas fa-plus"></i>
                                     </a>
                                 </div>
-                                <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty)" class="text-danger">
+                                <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
                                     <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
                                 </div>
                                 <div *ngIf="['draft','cancel'].indexOf(saleOrder.state) === -1">
-                                    {{getPartner?.name}}
+                                    {{getPartner?.displayName}}
                                 </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="getPartner">
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Ngày sinh:
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{getPartner ? getPartner.dateOfBirth : null}}
-                            </td>
-                        </tr>
-                        <tr *ngIf="getPartner && getPartner.phone">
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Số điện thoại:
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{getPartner.phone ? getPartner.phone : null}}
-                            </td>
-                        </tr>
-                        <tr *ngIf="getPartner && getPartner.address">
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Địa chỉ:
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{getPartner.address ? getPartner.address : null}}
                             </td>
                         </tr>
                     </tbody>
@@ -106,7 +82,7 @@
                             <td colspan="1" style="width: 100%;">
                                 <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'" formControlName="dateOrder">
                                 </kendo-datetimepicker>
-                                <div *ngIf="saleOrder.state == 'draft' && f.dateOrder.errors && (f.dateOrder.touched || f.dateOrder.dirty)" class="text-danger">
+                                <div *ngIf="saleOrder.state == 'draft' && f.dateOrder.errors && (f.dateOrder.touched || f.dateOrder.dirty || submitted)" class="text-danger">
                                     <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu</div>
                                 </div>
                                 <span [class.d-none]="saleOrder.state == 'draft'">

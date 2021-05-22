@@ -136,3 +136,16 @@
 .div-cell {
     border-left: none;
 }
+
+.partner-cbx .partner-item-cbx {
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.partner-cbx .partner-item-cbx:last-child {
+    border-bottom: none;
+}
+
+.partner-item-cbx .name {
+    font-weight: 600;
+}
+
