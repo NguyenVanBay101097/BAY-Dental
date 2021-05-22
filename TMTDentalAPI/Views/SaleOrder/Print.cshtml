@@ -38,24 +38,24 @@
                 <tbody>
                     <tr>
                         <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
+                            <div class="o_form_label o_form_label_help">
                                 Khách hàng
-                            </label>
+                            </div>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            @Model.Partner.Name
+                            <div class="o_field_widget">@Model.Partner.Name</div> 
                         </td>
                     </tr>
                     @if (!string.IsNullOrEmpty(Model.Partner.Phone))
                     {
                         <tr>
                             <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
+                                <div class="o_form_label o_form_label_help">
                                     Điện thoại
-                                </label>
+                                </div>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                @Model.Partner.Phone
+                                <div class="o_field_widget">@Model.Partner.Phone</div>
                             </td>
                         </tr>
                     }
@@ -64,12 +64,12 @@
                     {
                         <tr>
                             <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
+                                <div class="o_form_label o_form_label_help">
                                     Địa chỉ
-                                </label>
+                                </div>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                @Model.Partner.Address
+                                <div class="o_field_widget">@Model.Partner.Address</div>
                             </td>
                         </tr>
                     }
@@ -117,32 +117,32 @@
                 <tbody>
                     <tr>
                         <td colspan="1" class="o_td_label pr-3">
-                            <label class="o_form_label">
+                            <div class="o_form_label">
                                 Tổng tiền
-                            </label>
+                            </div>
                         </td>
                         <td colspan="1" class="text-right pe-0">
-                            <span class="o_form_field o_form_field_number">@string.Format(culture, "{0:0,0}", Model.AmountTotal)</span>
+                            <div class="o_form_field o_form_field_number">@string.Format(culture, "{0:0,0}", Model.AmountTotal)</div>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label pr-3">
-                            <label class="o_form_label">
+                            <div class="o_form_label">
                                 Đã thanh toán
-                            </label>
+                            </div>
                         </td>
                         <td colspan="1" class="text-right pe-0">
-                            <span class="o_form_field o_form_field_number">@((Model.AmountTotal - Model.Residual) == 0 ? "0" : string.Format(culture, "{0:0,0}", (Model.AmountTotal - Model.Residual)))</span>
+                            <div class="o_form_field o_form_field_number">@((Model.AmountTotal - Model.Residual) == 0 ? "0" : string.Format(culture, "{0:0,0}", (Model.AmountTotal - Model.Residual)))</div>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label pr-3">
-                            <label class="o_form_label">
+                            <div class="o_form_label">
                                 Còn lại
-                            </label>
+                            </div>
                         </td>
                         <td colspan="1" class="text-right pe-0">
-                            <span class="o_form_field o_form_field_number">@(Model.Residual == 0 ? "0" : string.Format(culture, "{0:0,0}", Model.Residual) )</span>
+                            <div class="o_form_field o_form_field_number">@(Model.Residual == 0 ? "0" : string.Format(culture, "{0:0,0}", Model.Residual) )</div>
                         </td>
                     </tr>
                 </tbody>

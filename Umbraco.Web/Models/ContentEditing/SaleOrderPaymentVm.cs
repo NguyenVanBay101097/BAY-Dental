@@ -147,6 +147,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<SaleOrderPaymentJournalLineDisplay> JournalLines { get; set; } = new List<SaleOrderPaymentJournalLineDisplay>();
 
         public string Note { get; set; }
-        public ApplicationUser User { get; set; }
+        public ApplicationUserSimple User { get; set; }
     }
 }

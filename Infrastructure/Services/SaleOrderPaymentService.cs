@@ -468,16 +468,17 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderPaymentPrintVM> GetPrint(Guid id)
         {
-            var result = _mapper.Map<SaleOrderPaymentPrintVM>(await (SearchQuery(x => x.Id == id).Include(x => x.Company.Partner)
+            var payment = await (SearchQuery(x => x.Id == id).Include(x => x.Company.Partner)
                 .Include(x => x.Order.Partner)
+                .Include(x => x.CreatedBy)
                 .Include(x => x.JournalLines).ThenInclude(x => x.Journal)
-                ).FirstOrDefaultAsync());
-            if (result == null) return null;
+                ).FirstOrDefaultAsync();
 
-            var userObj = GetService<IUserService>();
+            var result = _mapper.Map<SaleOrderPaymentPrintVM>(payment);
+            if (result == null) 
+                return null;
 
-            result.User = await userObj.GetCurrentUser();        
-
+            result.User = _mapper.Map<ApplicationUserSimple>(payment.CreatedBy);        
             return result;
 
         }

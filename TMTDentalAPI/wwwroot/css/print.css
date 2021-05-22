@@ -353,7 +353,7 @@ label, strong {
 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
     width: 0%;
     padding: 0px 15px 0px 0px;
-    min-width: 100px;
+    min-width: 150px;
 }
 
 
@@ -455,6 +455,14 @@ body.A5 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
 .o_form_view .o_group .o_td_label .o_form_label {
     font-weight: 600;
     margin-right: 0px;
+}
+
+.o_form_view .o_group .o_form_label {
+    margin-bottom: 5px;
+}
+
+.o_form_view .o_field_widget {
+    margin-bottom: 5px;
 }
 
 .o_form_view .o_inner_group.oe_subtotal_footer > tbody > tr > td {
