@@ -20,14 +20,20 @@ export class SaleOrderApplyCouponComponent implements OnInit {
   }
 
   onSave() {
+    if (this.formGroup.get('couponCode').value.trim() === '') {
+      this.notifyService.notify('error', 'Nhập mã khuyến mãi');
+      return false;
+    }
+
     if (!this.formGroup.valid) {
-      if (this.formGroup.get('couponCode').value.trim() === '') {
-        this.notifyService.notify('error', 'Nhập mã khuyến mãi');
-      }
       return false;
     }
 
     this.applySuccess.emit(this.formGroup.value);
+  }
+
+  get f() {
+    return this.formGroup.controls;
   }
 }
 

@@ -162,9 +162,16 @@
                                         <div class="card-body p-3">
                                             <!-- <kendo-numerictextbox [min]="0" [max]="getJournalLineAmountMax(journalFG.value)" (valueChange)="onJournalLineAmountChange($event, journalFG.value)" class="k-numerictextbox-text-right w-100" formControlName="amount" [spinners]="false" [format]="'n0'"></kendo-numerictextbox> -->
                                             <kendo-numerictextbox [min]="0" (blur)="onBlurJournalLineAmount()" (valueChange)="onChangeJournalLineAmount($event, i)" class="k-numerictextbox-text-right w-100" formControlName="amount" [spinners]="false" [format]="'n0'"></kendo-numerictextbox>
-                                            <div class="d-flex" *ngIf="journalFG.value.journal.type == 'advance'">
-                                                <label class="text-muted my-1">Tạm ứng hiện có: {{journalFG.get('amountAdvanceBalance')?.value | number}}</label>
-                                                <!-- <label *ngIf="journalFG.value.journal.type == 'advance' && advanceAmount < journalFG.value.amount" class="text-danger my-1 ml-auto">Tiền tạm ứng không đủ</label> -->
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    &nbsp;
+                                                    <label class="text-muted my-1" [class.d-none]="journalFG.value.journal.type != 'advance'">Tạm ứng hiện có: {{journalFG.get('amountAdvanceBalance')?.value | number}}</label>
+                                                    <!-- <label *ngIf="journalFG.value.journal.type == 'advance' && advanceAmount < journalFG.value.amount" class="text-danger my-1 ml-auto">Tiền tạm ứng không đủ</label> -->
+                                                </div>
+                                                <div *ngIf="journalFG.controls.amount.errors && (journalFG.controls.amount.touched || journalFG.controls.amount.dirty || submitted)" class="text-danger text-right">
+                                                    <div *ngIf="journalFG.controls.amount.errors.required">Nhập số tiền</div>
+                                                    <div *ngIf="journalFG.controls.amount.errors.min">Số tiền phải lớn hơn hoặc bằng 0</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

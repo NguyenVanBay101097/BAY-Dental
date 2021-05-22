@@ -295,7 +295,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   nextStep() {
-    
+
     this.submitted = true;
     if (this.paymentForm.invalid) {
       return;
@@ -358,7 +358,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
           var g = this.fb.group({
             journalId: journal.id,
             journal: journal,
-            amount: soTienConLai,
+            amount: [soTienConLai, [Validators.required, Validators.min(0)]],
             amountAdvanceBalance: result
           });
           this.journalLinesFC.push(g);
@@ -370,7 +370,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
         var g = this.fb.group({
           journalId: journal.id,
           journal: journal,
-          amount: soTienConLai,
+          amount: [soTienConLai, [Validators.required, Validators.min(0)]],
         });
         this.journalLinesFC.push(g);
 

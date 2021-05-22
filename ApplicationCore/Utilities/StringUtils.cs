@@ -1172,22 +1172,19 @@ namespace ApplicationCore.Utilities
             }
         }
 
-        public static string ConvertFirstCharToUpper(this string input)
+        //Hàm return về ký tự đầu của tất cả các từ trong input
+        public static string GetAllFirstChar(this string input)
         {
-            string[] finalstring = input.Split(' ');
-
+            string[] finalstring = input.Split(" ");
             string output = string.Empty;
             foreach (var item in finalstring)
             {
-                if (output == "")
+                var str = item.Trim();
+                if (!string.IsNullOrWhiteSpace(str))
                 {
-                    output = (item.RemoveSignVietnameseV2().ToUpper().Substring(0, 1));
+                    var firstChar = str.Substring(0, 1).RemoveSignVietnameseV2();
+                    output += firstChar;
                 }
-                else
-                {
-                    output += (item.RemoveSignVietnameseV2().ToUpper().Substring(0, 1));
-                }
-
             }
 
             return output;
