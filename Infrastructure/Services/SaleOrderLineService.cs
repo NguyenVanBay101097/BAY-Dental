@@ -834,7 +834,7 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
             if (program != null)
             {
-                var error_status =  programObj._CheckPromotionApplySaleLine(program, orderLine);
+                var error_status = programObj._CheckPromotionApplySaleLine(program, orderLine);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
                     await _CreateRewardLine(orderLine, program);

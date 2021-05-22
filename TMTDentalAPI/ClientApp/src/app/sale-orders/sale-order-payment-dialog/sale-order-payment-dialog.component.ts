@@ -54,11 +54,11 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     private accountPaymenetOdataService: AccountPaymentsOdataService,
     private saleOrderPaymentService: SaleOrderPaymentService,
     private partnerService: PartnerService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.paymentForm = this.fb.group({
-      amount: 0,
+      amount: [0, [Validators.required, Validators.min(1)]],
       date: [new Date(), Validators.required],
       orderId: [null, Validators.required],
       companyId: [null, Validators.required],
@@ -102,7 +102,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     });
   }
 
-  get amount(){
+  get amount() {
     return this.paymentForm.get('amount').value;
   }
 
@@ -118,8 +118,8 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     return this.f.lines as FormArray;
   }
 
-  get cashLineFG(){
-    return this.journalLinesFC.controls.find(x=> x.value.journal.type == 'cash');
+  get cashLineFG() {
+    return this.journalLinesFC.controls.find(x => x.value.journal.type == 'cash');
   }
 
   loadFilteredJournals() {
@@ -198,7 +198,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       alert('Vui lòng phân bổ đủ số tiền cần thanh toán');
       return false;
     }
-    
+
     this.submitted = true;
     if (!this.paymentForm.valid) {
       return;
@@ -295,10 +295,12 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   nextStep() {
-    if(this.paymentForm.invalid){
+    
+    this.submitted = true;
+    if (this.paymentForm.invalid) {
       return;
     }
-    this.submitted = true;
+
     this.step++;
     //gán lại default
     //Nếu chưa có dòng phương thức tiền mặt thì add, có thì update tiền mặt mặc định
@@ -371,7 +373,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
           amount: soTienConLai,
         });
         this.journalLinesFC.push(g);
-  
+
         this.onChangeJournalLineAmount(soTienConLai, this.journalLinesFC.controls.indexOf(g));
         this.onBlurJournalLineAmount();
       }
@@ -382,7 +384,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     var coins = [500, 1e3, 2e3, 5e3, 1e4, 2e4, 5e4, 1e5, 2e5, 5e5];
 
     function greedy(amount, max) {
-      for (var temp = amount, result = []; temp > 0; ) {
+      for (var temp = amount, result = []; temp > 0;) {
         temp -= max;
         result.push(max);
       }
@@ -422,13 +424,13 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     });
   }
 
-  onCashSuggestionClick(amount: number){
+  onCashSuggestionClick(amount: number) {
     this.partnerCash = amount;
     this.updateReturnCash();
   }
 
   isJournalActiveClass(item: AccountJournalSimple) {
-    return this.journalLinesFC.value.findIndex(x=> x.journalId == item.id) != -1;
+    return this.journalLinesFC.value.findIndex(x => x.journalId == item.id) != -1;
   }
 
   onDeleteJournalLine(index) {
@@ -454,7 +456,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   laySoTienThanhToanExceptCashAndIndex(index) {
     var paymentLines = this.journalLinesFC.value;
     var total = 0;
-    for(var i = 0; i < paymentLines.length; i++) {
+    for (var i = 0; i < paymentLines.length; i++) {
       var line = paymentLines[i];
       if (i != index && line.journal.type != 'cash') {
         total += line.amount;
@@ -465,7 +467,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   getCashLineControl() {
-    for(var i = 0; i < this.journalLinesFC.controls.length; i++) {
+    for (var i = 0; i < this.journalLinesFC.controls.length; i++) {
       var control = this.journalLinesFC.controls[i];
       var controlValue = control.value;
       if (controlValue.journal.type == 'cash') {
@@ -503,14 +505,14 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     }
   }
 
-  onJournalLineAmountChange(val = null, journalLine = null){
-    if(!val && journalLine){
-      this.journalLinesFC.controls.find(x=> x.value.journalId == journalLine.journalId).get('amount').setValue(0);
+  onJournalLineAmountChange(val = null, journalLine = null) {
+    if (!val && journalLine) {
+      this.journalLinesFC.controls.find(x => x.value.journalId == journalLine.journalId).get('amount').setValue(0);
     }
 
     var cashLineFG = this.cashLineFG;
-    var otherLineAmount = this.journalLinesFC.value.reduce((total, cur)=>{ return total+ cur.amount}, 0) - cashLineFG.value.amount;
-    
+    var otherLineAmount = this.journalLinesFC.value.reduce((total, cur) => { return total + cur.amount }, 0) - cashLineFG.value.amount;
+
     cashLineFG.get('amount').setValue(this.amount - otherLineAmount);
     this.addCashSuggest();
     this.partnerCash = this.cashSuggestions[0];
@@ -518,12 +520,12 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   getJournalLineAmountMax(journalLine) {
     var cash = this.cashLineFG.value.amount;
-    var otherLineAmount = this.journalLinesFC.value.reduce((total, cur)=>{ return total+ cur.amount}, 0) - cash - journalLine.amount;
-    if(journalLine.journal.type != 'advance') {
+    var otherLineAmount = this.journalLinesFC.value.reduce((total, cur) => { return total + cur.amount }, 0) - cash - journalLine.amount;
+    if (journalLine.journal.type != 'advance') {
       return this.amount - otherLineAmount;
     } else {
       var advanceMax = this.amount - otherLineAmount > this.advanceAmount ? this.advanceAmount : this.amount - otherLineAmount;
-      return  advanceMax > 0 ? advanceMax : 0;
+      return advanceMax > 0 ? advanceMax : 0;
     }
   }
 

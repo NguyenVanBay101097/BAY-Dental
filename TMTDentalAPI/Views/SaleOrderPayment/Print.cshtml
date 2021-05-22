@@ -38,54 +38,66 @@
                 <tbody>
                     <tr>
                         <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
+                            <div class="o_form_label o_form_label_help">
                                 Khách hàng
-                            </label>
+                            </div>
                         </td>
-                        <td colspan="1" style="width: 100%;">@Model.OrderPartner.DisplayName</td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">@Model.OrderPartner.DisplayName</div>
+                        </td>
                     </tr>
                     @if (!string.IsNullOrEmpty(Model.OrderPartner.Phone))
                     {
                         <tr>
                             <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
+                                <div class="o_form_label o_form_label_help">
                                     Điện thoại
-                                </label>
+                                </div>
                             </td>
-                            <td colspan="1" style="width: 100%;">@(Model.OrderPartner.Phone)</td>
+                            <td colspan="1" style="width: 100%;">
+                                <div class="o_field_widget">@(Model.OrderPartner.Phone)</div>
+                            </td>
                         </tr>
                     }
                     <tr>
                         <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
+                            <div class="o_form_label o_form_label_help">
                                 Địa chỉ
-                            </label>
+                            </div>
                         </td>
-                        <td colspan="1" style="width: 100%;">@Model.OrderPartner.Address</td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">@Model.OrderPartner.Address</div>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
+                            <div class="o_form_label o_form_label_help">
                                 Ngày thanh toán
-                            </label>
+                            </div>
                         </td>
-                        <td colspan="1" style="width: 100%;">@(string.Format(info, "{0:dd/MM/yyyy}", Model.Date))</td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">@(string.Format(info, "{0:dd/MM/yyyy}", Model.Date))</div>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
+                            <div class="o_form_label o_form_label_help">
                                 Phương thức thanh toán
-                            </label>
+                            </div>
                         </td>
-                        <td colspan="1" style="width: 100%;">@(string.Join(", ",Model.JournalLines.Select(x => x.Journal.Name)))</td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">@(string.Join(", ",Model.JournalLines.Select(x => x.Journal.Name)))</div>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
+                            <div class="o_form_label o_form_label_help">
                                 Số tiền
-                            </label>
+                            </div>
                         </td>
-                        <td colspan="1" style="width: 100%;">@(string.Format(info, "{0:0,0}", Model.Amount))</td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">@(string.Format(info, "{0:0,0}", Model.Amount))</div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -104,7 +116,7 @@
         </div>
         <div class="col">
             <div class="text-center">
-                <span class="font-semibold"> Người lập</span> <br />
+                <span class="font-semibold"> Nhân viên</span> <br />
                 <i>(Ký, họ tên)</i> <br />
                 <span></span> <br />
                 <span></span> <br />
