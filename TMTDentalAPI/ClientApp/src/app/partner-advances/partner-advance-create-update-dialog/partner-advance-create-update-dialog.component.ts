@@ -104,7 +104,7 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
 
   loadAmountAdvanceBalance() {
     if (this.partnerId) {
-      this.partnerService.getAmountAdvanceBalance(this.partnerId).subscribe((res : number) => {
+      this.partnerService.getAmountAdvanceBalance(this.partnerId).subscribe((res: number) => {
         this.amountBalance = Math.abs(res);
       });
     }
@@ -138,7 +138,6 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
     if (this.formGroup.invalid) {
       return false;
     }
-
     var val = this.formGroup.value;
     val = this.computeForm(val);
 
@@ -153,14 +152,14 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
             type: { style: 'success', icon: true }
           });
 
-          this.onPrint();
+          this.onPrint(this.id);
           this.activeModal.close();
 
         }
       );
     } else {
       this.partnerAdvanceService.create(val).subscribe(
-        result => {
+        (result:any) => {
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,
@@ -168,7 +167,8 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
-          this.onPrint();
+
+          this.onPrint(result.id);
           this.activeModal.close();
 
         }
@@ -198,7 +198,9 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
                 animation: { type: "fade", duration: 400 },
                 type: { style: "success", icon: true },
               });
-
+              if (print) {
+                this.onPrint(this.id);
+              }
               this.activeModal.close();
             },
             (error) => {
@@ -221,7 +223,7 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
                 type: { style: "success", icon: true },
               });
               if (print) {
-                this.onPrint();
+                this.onPrint(result.id);
               }
 
               this.activeModal.close();
@@ -236,11 +238,11 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
     }
   }
 
-  onPrint() {
-    if (!this.id) {
+  onPrint(id) {
+    if (!id) {
       return;
     }
-    this.partnerAdvanceService.getPrint(this.id).subscribe((result: any) => {
+    this.partnerAdvanceService.getPrint(id).subscribe((result: any) => {
       this.printService.printHtml(result.html);
     });
   }

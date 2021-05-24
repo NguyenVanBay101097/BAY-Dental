@@ -2506,7 +2506,6 @@ namespace Infrastructure.Services
                         reward.DiscountPercent = promotion.DiscountPercent;
                         reward.SaleOrderId = order.Id;
                         reward.Type = promotion.Type;
-
                         if (order.OrderLines.Any())
                         {
                             foreach (var line in order.OrderLines)

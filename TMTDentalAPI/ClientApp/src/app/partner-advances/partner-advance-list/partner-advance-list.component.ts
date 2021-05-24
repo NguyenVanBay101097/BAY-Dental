@@ -190,11 +190,28 @@ export class PartnerAdvanceListComponent implements OnInit {
     }, (err) => { });
   }
 
+  getType(value) {
+    switch (value) {
+      case 'advance':
+        return 'Đóng tạm ứng';
+      case 'refund':
+        return 'Hoàn tạm ứng';
+    }
+  }
+
+  getState(state) {
+    switch (state) {
+      case 'draft':
+        return 'Nháp';
+      case 'confirmed':
+        return 'Đã xác nhận';
+    }
+  }
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa ' + (item.type = 'advance' ? 'đóng tạm ứng' : 'hoàn tạm ứng');
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa' + (item.type = 'advance' ? 'đóng tạm ứng ?' : 'hoàn tạm ứng ?');
+    modalRef.componentInstance.title = 'Xóa ' + (item.type == 'advance' ? 'đóng tạm ứng' : 'hoàn tạm ứng');
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa' + ' ' + (item.type == 'advance' ? 'đóng tạm ứng ?' : 'hoàn tạm ứng ?');
     modalRef.result.then(() => {
       this.partnerAdvanceService.delete(item.id).subscribe(() => {
         this.notificationService.show({
@@ -214,22 +231,6 @@ export class PartnerAdvanceListComponent implements OnInit {
   }
 
 
-  getType(type) {
-    switch (type) {
-      case 'advance':
-        return 'Đóng tạm ứng';
-      case 'refund':
-        return 'Hoàn tạm ứng';
-    }
-  }
 
-  getState(state) {
-    switch (state) {
-      case 'draft':
-        return 'Nháp';
-      case 'confirmed':
-        return 'Đã xác nhận';
-    }
-  }
 
 }

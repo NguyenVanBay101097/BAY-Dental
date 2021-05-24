@@ -76,14 +76,14 @@
                             <kendo-grid-column field="name" title="Số phiếu tạm ứng" width="120">
                             </kendo-grid-column>
                             <kendo-grid-column field="date" title="Ngày tạm ứng" width="135">
-                                <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                                     {{dataItem.date | date:'shortDate'}}
                                 </ng-template>
                             </kendo-grid-column>
                             <kendo-grid-column field="journalName" title="Phương thức" width="115">
                             </kendo-grid-column>
-                            <kendo-grid-column field="type" title="Loại tạm ứng" width="100">
-                                <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                            <kendo-grid-column title="Loại tạm ứng" width="100">
+                                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                                     {{getType(dataItem.type)}}
                                 </ng-template>
                             </kendo-grid-column>
@@ -99,11 +99,11 @@
                             </kendo-grid-column>
                             <kendo-grid-command-column title="Thao tác" width="100">
                                 <ng-template kendoGridCellTemplate let-dataItem>
-                                    <button kendoButton (click)="editItem(dataItem)"
-                                        class="btn btn-success btn-sm mr-2"><i title="Sửa"
-                                            class="far fa-edit"></i></button>
-                                    <button kendoButton (click)="deleteItem(dataItem)" class="btn btn-danger btn-sm"><i
-                                            title="Xóa" class="far fa-trash-alt"></i></button>
+                                    <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)"><i
+                                            class="fas fa-edit"></i></button>
+                                    <button type="button" class="btn btn-sm btn-danger" (click)="deleteItem(dataItem)">
+                                        <i class="far fa-trash-alt"></i>
+                                    </button>
                                 </ng-template>
                             </kendo-grid-command-column>
                         </kendo-grid>
