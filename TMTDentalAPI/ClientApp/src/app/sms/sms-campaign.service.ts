@@ -43,6 +43,10 @@ export class SmsCampaignService {
         return this.http.get(this.base_api + this.apiUrl + '/GetDefaultCampaignBirthday')
     }
 
+    getDefaultThanksCustomer() {
+        return this.http.get(this.base_api + this.apiUrl + '/GetDefaultThanksCustomer')
+    }
+
     getPaged(val: any) {
         return this.http.get(this.base_api + this.apiUrl + '/GetPaged', { params: val })
     }

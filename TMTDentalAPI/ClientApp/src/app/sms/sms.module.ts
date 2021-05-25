@@ -29,6 +29,9 @@ import { SmsComfirmDialogComponent } from './sms-comfirm-dialog/sms-comfirm-dial
 import { SmsPartnerListDialogComponent } from './sms-partner-list-dialog/sms-partner-list-dialog.component';
 import { SmsCampaignDetailComponent } from './sms-campaign-detail/sms-campaign-detail.component';
 import { SmsMessageDetailDialogComponent } from './sms-message-detail-dialog/sms-message-detail-dialog.component';
+import { SmsThanksFormComponent } from './sms-thanks-form/sms-thanks-form.component';
+import { SmsThanksFormManualComponent } from './sms-thanks-form-manual/sms-thanks-form-manual.component';
+import { SmsThanksFormAutomaticComponent } from './sms-thanks-form-automatic/sms-thanks-form-automatic.component';
 
 @NgModule({
   declarations: [SmsTemplateListComponent, SmsTemplateCrUpComponent, SmsTemplateContentComponent,
@@ -51,7 +54,7 @@ import { SmsMessageDetailDialogComponent } from './sms-message-detail-dialog/sms
     SmsComfirmDialogComponent, 
     SmsPartnerListDialogComponent, 
     SmsCampaignDetailComponent, 
-    SmsMessageDetailDialogComponent
+    SmsMessageDetailDialogComponent, SmsThanksFormComponent, SmsThanksFormManualComponent, SmsThanksFormAutomaticComponent
   ],
   imports: [
     CommonModule,

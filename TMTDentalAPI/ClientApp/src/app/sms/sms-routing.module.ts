@@ -14,6 +14,8 @@ import { SmsMessageDetailStatisticComponent } from './sms-message-detail-statist
 import { SmsMessageStatisticComponent } from './sms-message-statistic/sms-message-statistic.component';
 import { SmsStatisticComponent } from './sms-statistic/sms-statistic.component';
 import { SmsTemplateListComponent } from './sms-template-list/sms-template-list.component';
+import { SmsThanksFormAutomaticComponent } from './sms-thanks-form-automatic/sms-thanks-form-automatic.component';
+import { SmsThanksFormManualComponent } from './sms-thanks-form-manual/sms-thanks-form-manual.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'birthday-partners', pathMatch: 'full' },
@@ -23,6 +25,15 @@ const routes: Routes = [
       { path: '', redirectTo: 'manually', pathMatch: 'full' },
       { path: 'auto', component: SmsBirthdayFormAutomaticComponent },
       { path: 'manually', component: SmsBirthdayFormManualComponent },
+      { path: 'statistic', component: SmsMessageDetailStatisticComponent }
+    ]
+  },
+  {
+    path: 'tkanks-customer', component: SmsAppointmentFormComponent,
+    children: [
+      { path: '', redirectTo: 'manually', pathMatch: 'full' },
+      { path: 'auto', component: SmsThanksFormAutomaticComponent },
+      { path: 'manually', component: SmsThanksFormManualComponent },
       { path: 'statistic', component: SmsMessageDetailStatisticComponent }
     ]
   },
