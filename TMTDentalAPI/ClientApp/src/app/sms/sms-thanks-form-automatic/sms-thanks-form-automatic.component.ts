@@ -189,6 +189,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   addTemplate() {
     const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo mẫu tin';
+    modalRef.componentInstance.templateTypeTab = "thanks";
     modalRef.result.then((val) => {
       this.loadSmsTemplate();
     })

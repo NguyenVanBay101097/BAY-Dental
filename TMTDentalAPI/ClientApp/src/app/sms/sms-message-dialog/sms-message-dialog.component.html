@@ -155,7 +155,9 @@
                                         </tr>
                                         <tr>
                                             <td colspan="2">
-                                                <app-sms-template-content [textareaLength]="textareaLimit"
+                                                <app-sms-template-content 
+                                                    [type]="templateTypeTab"
+                                                    [textareaLength]="textareaLimit"
                                                     [template]="template">
                                                 </app-sms-template-content>
                                                 <span class="color-custom">

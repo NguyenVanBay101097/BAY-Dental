@@ -31,6 +31,7 @@ export class SmsManualDialogComponent implements OnInit {
   isBirthDayManual: false;
   isAppointmentReminder: false;
   isTemplateCopy = false;
+  templateTypeTab;
   template: any = {
     templateType: 'text',
     text: ''
@@ -98,6 +99,7 @@ export class SmsManualDialogComponent implements OnInit {
   addTemplate() {
     const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo mẫu tin';
+    modalRef.componentInstance.templateTypeTab = this.templateTypeTab;
     modalRef.result.then((val) => {
       this.loadSmsTemplate();
     })

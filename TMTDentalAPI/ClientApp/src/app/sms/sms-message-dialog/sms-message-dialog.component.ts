@@ -37,6 +37,7 @@ export class SmsMessageDialogComponent implements OnInit {
   errorSendLimit: boolean = false;
   noLimit: boolean = false;
   textareaLimit: number = 200;
+  templateTypeTab;
   template: any = {
     text: '',
     templateType: 'text'

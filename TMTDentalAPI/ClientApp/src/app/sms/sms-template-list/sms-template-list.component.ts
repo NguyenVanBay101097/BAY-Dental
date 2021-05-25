@@ -73,6 +73,7 @@ export class SmsTemplateListComponent implements OnInit {
   createItem() {
     const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo mẫu tin';
+    modalRef.componentInstance.templateTypeTab = "template";
     modalRef.result.then((val) => {
       this.loadDataFromApi();
     })
@@ -82,6 +83,7 @@ export class SmsTemplateListComponent implements OnInit {
     const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = "Sửa mẫu tin";
     modalRef.componentInstance.id = dataItem.id;
+    modalRef.componentInstance.templateTypeTab = "template";
     modalRef.result.then(() => {
       this.loadDataFromApi();
     });

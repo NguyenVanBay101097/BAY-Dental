@@ -29,11 +29,10 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
   type: string;
   filteredTemplate: any[];
   textareaLimit: number = 200;
-  template: any =
-    {
-      text: '',
-      templateType: 'text'
-    };
+  template: any = {
+    text: '',
+    templateType: 'text'
+  };
   isTemplateCopy = false;
   public today: Date = new Date;
   public timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
@@ -192,6 +191,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
   addTemplate() {
     const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo mẫu tin';
+    modalRef.componentInstance.templateTypeTab = "appointment";
     modalRef.result.then((val) => {
       this.loadSmsTemplate();
     })
