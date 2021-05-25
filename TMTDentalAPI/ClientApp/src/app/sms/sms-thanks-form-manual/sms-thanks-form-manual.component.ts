@@ -6,9 +6,8 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { AppointmentPaged } from 'src/app/appointment/appointment';
-import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
+import { SmsThanksCustomerService } from '../sms-thanks-customer.service';
 
 @Component({
   selector: 'app-sms-thanks-form-manual',
@@ -36,7 +35,7 @@ export class SmsThanksFormManualComponent implements OnInit {
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private intlService: IntlService,
-    private thanksService: SmsThanksService
+    private thanksService: SmsThanksCustomerService
   ) { }
 
   ngOnInit() {
@@ -53,25 +52,25 @@ export class SmsThanksFormManualComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    var val = new AppointmentPaged();
-    val.limit = this.limit;
-    val.offset = this.skip;
-    val.search = this.search || '';
-    val.dateTimeFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
-    val.dateTimeTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
+    // var val = new SmsPaged();
+    // val.limit = this.limit;
+    // val.offset = this.skip;
+    // val.search = this.search || '';
+    // val.dateTimeFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    // val.dateTimeTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
 
-    this.thanksService.getPaged(val).pipe(
-      map((response: any) =>
-      (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe((res) => {
-      this.gridData = res;
-    }, err => {
-      console.log(err);
-    }
-    )
+    // this.thanksService.getPaged(val).pipe(
+    //   map((response: any) =>
+    //   (<GridDataResult>{
+    //     data: response.items,
+    //     total: response.totalItems
+    //   }))
+    // ).subscribe((res) => {
+    //   this.gridData = res;
+    // }, err => {
+    //   console.log(err);
+    // }
+    // )
   }
 
   pageChange(event) {
