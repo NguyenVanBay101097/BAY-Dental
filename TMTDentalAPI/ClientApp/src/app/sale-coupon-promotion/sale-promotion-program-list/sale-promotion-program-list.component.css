@@ -19,3 +19,8 @@
     border-top-right-radius: 0!important;
     border-bottom-right-radius: 0!important;
 }
+
+.btn-outline-primary {
+    background-color: unset !important;
+    color: #007bff;
+}
