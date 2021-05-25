@@ -75,24 +75,23 @@ namespace Infrastructure.Services
             var errors = new List<string>();
             if (!access)
             {
-                //var functions_2 = functionDics.Where(x => !permissionList.Any(s => x.Value.Any(xs => xs == s)));
-                //var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\features.json");
-                //using (var reader = new StreamReader(filePath))
-                //{
-                //    var fileContent = reader.ReadToEnd();
-                //    var features = JsonConvert.DeserializeObject<List<PermissionTreeViewModel>>(fileContent);
+                var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\features.json");
+                using (var reader = new StreamReader(filePath))
+                {
+                    var fileContent = reader.ReadToEnd();
+                    var features = JsonConvert.DeserializeObject<List<PermissionTreeViewModel>>(fileContent);
 
-                //    foreach (var func in functions_2)
-                //    {
-                //        var function = features.SelectMany(x => x.Children).FirstOrDefault(x => func.Key.IndexOf(x.Permission) != -1);
-                //        if (function == null)
-                //            continue;
+                    foreach (var func in functions)
+                    {
+                        var functionObj = features.SelectMany(x => x.Functions).FirstOrDefault(x => x.Ops.Any(z => z.Permission == func));
+                        if (functionObj == null || permissionList.Contains(func))
+                            continue;
 
-                //        var op = function.Children.FirstOrDefault(x => x.Permission == func.Key);
-                //        var msg = $"Bạn không có quyền {(op != null ? op.Name.ToLower() : "xem")} {function.Name}";
-                //        errors.Add(msg);
-                //    }
-                //}
+                        var op = functionObj.Ops.FirstOrDefault(x => x.Permission == func);
+                        var msg = $"Bạn không có quyền {(op != null ? op.Name.ToLower() : "xem")} {functionObj.Name}";
+                        errors.Add(msg);
+                    }
+                }
 
                 if (errors.Count == 0)
                     errors.Add("Bạn không có quyền thao tác!");
