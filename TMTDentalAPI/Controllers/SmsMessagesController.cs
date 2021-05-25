@@ -42,7 +42,12 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> ActionSendSms(Guid id)
         {
-            var entity = await _smsMessageService.SearchQuery(x => x.Id == id).Include(x => x.SmsAccount).Include(x => x.SmsMessagePartnerRels).FirstOrDefaultAsync();
+            var entity = await _smsMessageService.SearchQuery(x => x.Id == id)
+                .Include(x => x.SmsMessageAppointmentRels)
+                .Include(x => x.SmsMessageSaleOrderLineRels)
+                .Include(x => x.SmsMessageSaleOrderRels)
+                .Include(x => x.SmsAccount)
+                .Include(x => x.SmsMessagePartnerRels).FirstOrDefaultAsync();
             if (entity == null) return NotFound();
             await _unitOfWorkAsync.BeginTransactionAsync();
             await _smsMessageService.ActionSendSMS(entity);

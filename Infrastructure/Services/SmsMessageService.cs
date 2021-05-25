@@ -130,19 +130,19 @@ namespace Infrastructure.Services
                 }
             }
 
-            else if (!entity.SmsCampaignId.HasValue && val.IsThanksCustomer.HasValue && val.IsThanksCustomer.Value)
+            else if (!entity.SmsCampaignId.HasValue && val.IsAppointmentReminder.HasValue && val.IsAppointmentReminder.Value)
             {
                 var smsCampaignObj = GetService<ISmsCampaignService>();
-                var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
+                var campaign = await smsCampaignObj.GetDefaultCampaignAppointmentReminder();
                 entity.SmsCampaignId = campaign.Id;
-                entity.ResModel = "sale-order";
+                entity.ResModel = "appointment";
                 if (val.GuidIds.Any())
                 {
                     foreach (var id in val.GuidIds)
                     {
-                        entity.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
+                        entity.SmsMessageAppointmentRels.Add(new SmsMessageAppointmentRel()
                         {
-                            SaleOrderId = id
+                            AppointmentId = id
                         });
                     }
                 }
@@ -186,18 +186,17 @@ namespace Infrastructure.Services
                     case "appointment":
                         var appointmentIds = entity.SmsMessageAppointmentRels.Select(x => x.AppointmentId);
                         var appObj = GetService<IAppointmentService>();
-                        var dictAppPartner = await appObj.SearchQuery(x => appointmentIds.Contains(x.Id)).Include(x => x.Doctor).ToDictionaryAsync(x => x.PartnerId, x => x);
                         partnerIds = await appObj.SearchQuery(x => appointmentIds.Contains(x.Id)).Select(x => x.PartnerId).ToListAsync();
                         break;
                     case "sale-order":
                         var saleOrderObj = GetService<ISaleOrderService>();
-                        var orderIds = entity.SmsMessageSaleOrderRels.Select(s => s.SaleOrderId);
+                        var orderIds = entity.SmsMessageSaleOrderRels.Select(s => s.SaleOrderId).ToList();
                         partnerIds = await saleOrderObj.SearchQuery(x => orderIds.Contains(x.Id)).Select(x => x.PartnerId).ToListAsync();
                         break;
                     case "sale-order-line":
                         var saleOrderLineObj = GetService<ISaleOrderLineService>();
                         var orderLineIds = entity.SmsMessageSaleOrderLineRels.Select(s => s.SaleOrderLineId);
-                        partnerIds = await saleOrderLineObj.SearchQuery(x =>x.OrderPartnerId.HasValue && orderLineIds.Contains(x.Id)).Select(x => x.OrderPartnerId.Value).ToListAsync();
+                        partnerIds = await saleOrderLineObj.SearchQuery(x => x.OrderPartnerId.HasValue && orderLineIds.Contains(x.Id)).Select(x => x.OrderPartnerId.Value).ToListAsync();
                         break;
                     default:
                         break;

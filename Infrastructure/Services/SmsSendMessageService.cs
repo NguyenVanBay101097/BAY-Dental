@@ -19,11 +19,17 @@ namespace Infrastructure.Services
         public async Task CreateSmsMessageDetail(CatalogDbContext context, SmsMessage smsMessage, IEnumerable<Guid> ids, Guid companyId)
         {
             var listSms = new List<SmsMessageDetail>();
+            var dictApp = new Dictionary<Guid, Appointment>();
             var partners = await context.Partners.Where(x => ids.Contains(x.Id)).Include(x => x.Title).ToListAsync();
+            if (smsMessage.ResModel == "appointment")
+            {
+                var appIds = smsMessage.SmsMessageAppointmentRels.Select(x => x.AppointmentId).ToList();
+                dictApp = await context.Appointments.Where(x => appIds.Contains(x.Id)).Include(x => x.Doctor).ToDictionaryAsync(x => x.PartnerId, x => x);
+            }
             var company = await context.Companies.Where(x => x.Id == companyId).FirstOrDefaultAsync();
             foreach (var partner in partners)
             {
-                var content = await PersonalizedContent(context, smsMessage.Body, partner, company);
+                var content = await PersonalizedContent(context, smsMessage.Body, partner, company, dictApp);
                 var sms = new SmsMessageDetail();
                 sms.Id = GuidComb.GenerateComb();
                 sms.Body = content;
@@ -59,19 +65,20 @@ namespace Infrastructure.Services
         }
 
 
-        private async Task<string> PersonalizedContent(CatalogDbContext context, string body, Partner partner, Company company)
+        private async Task<string> PersonalizedContent(
+            CatalogDbContext context, string body, Partner partner, Company company, Dictionary<Guid, Appointment> dictApp)
         {
             var content = JsonConvert.DeserializeObject<Body>(body);
             var messageContent = content.text
                 .Replace("{ten_khach_hang}", partner.Name.Split(' ').Last())
-                .Replace("{ho_ten_khach_hang}", partner.DisplayName)
-                .Replace("{ten_cong_ty}", company.Name)
-                .Replace("{ngay_sinh}", partner.GetDateOfBirth())
-                .Replace("{danh_xung_khach_hang}", partner.Title != null ? partner.Title.Name : "")
+                .Replace("{ho_ten_khach_hang}", partner.DisplayName.Split(' ').Last())
+                .Replace("{ten_cong_ty}", company.Name.Split(' ').Last())
+                .Replace("{ngay_sinh}", partner.GetDateOfBirth().Split(' ').Last())
+                .Replace("{danh_xung}", partner.Title != null ? partner.Title.Name.Split(' ').Last() : "")
 
-                .Replace("{gio_hen}", partner.Name)
-                .Replace("{ngay_hen}", partner.Name)
-                .Replace("{bac_si_lich_hen}", partner.Name)
+                .Replace("{gio_hen}", dictApp.ContainsKey(partner.Id) ? dictApp[partner.Id].Time.Split(' ').Last() : "")
+                .Replace("{ngay_hen}", dictApp.ContainsKey(partner.Id) ? dictApp[partner.Id].Date.ToString("dd/MM/yyyy").Split(' ').Last() : "")
+                .Replace("{bac_si_lich_hen}", dictApp.ContainsKey(partner.Id) && dictApp[partner.Id].DoctorId.HasValue ? dictApp[partner.Id].Doctor.Name.Split(' ').Last() : "")
                 .Replace("{bac_si_chi_tiet_dieu_tri}", partner.Name)
                 .Replace("{so_phieu_dieu_tri}", partner.Name)
                 .Replace("{dich_vu}", partner.Name);
