@@ -205,6 +205,13 @@ namespace Infrastructure.Services
             return namePhieu;
         }
 
+        //public AccountAccount ComputeAccount()
+        //{
+        //    //neu account type = other, lay account thong qua loai thu chi
+        //    //neu account type = commission, lay account commission
+            
+        //}
+
         private IList<AccountMove> _PreparePhieuThuChiMoves(IList<PhieuThuChi> val)
         {
             var all_move_vals = new List<AccountMove>();
@@ -246,8 +253,8 @@ namespace Infrastructure.Services
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         DateMaturity = phieu.Date,
-                        AccountId = phieu.LoaiThuChi.AccountId.Value,
-                        Account = phieu.LoaiThuChi.Account,
+                        AccountId = phieu.AccountId.Value,
+                        Account = phieu.Account,
                         PhieuThuChiId = phieu.Id,
                         Move = move_vals,
                         PartnerId = phieu.PartnerId,
@@ -272,6 +279,7 @@ namespace Infrastructure.Services
 
             return all_move_vals;
         }
+
         /// <summary>
         /// hủy phiếu
         /// </summary>

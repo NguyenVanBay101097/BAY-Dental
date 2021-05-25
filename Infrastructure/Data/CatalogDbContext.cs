@@ -272,6 +272,8 @@ namespace Infrastructure.Data
         public DbSet<QuotationPromotion> QuotationPromotions { get; set; }
         public DbSet<QuotationPromotionLine> QuotationPromotionLines { get; set; }
 
+        public DbSet<Agent> Agents { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -490,6 +492,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new QuotationPromotionConfiguration());
             builder.ApplyConfiguration(new QuotationPromotionLineConfiguration());
             builder.ApplyConfiguration(new SaleCouponProgramPartnerRelConfiguration());
+            builder.ApplyConfiguration(new AgentConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

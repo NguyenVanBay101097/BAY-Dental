@@ -10,6 +10,7 @@ namespace ApplicationCore.Entities
         {
             State = "draft";
             Date = DateTime.Today;
+            AccountType = "other";
         }
 
         /// <summary>
@@ -38,6 +39,8 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Mã THU/năm/sequence
         ///    CHI/năm/sequence
+        ///    THUCN/năm/sequence
+        ///    CHIHH/năm/sequence
         /// </summary>
         public string Name { get; set; }
 
@@ -46,6 +49,13 @@ namespace ApplicationCore.Entities
         /// chi: phiếu chi
         /// </summary>
         public string Type { get; set; }
+
+        /// <summary>
+        /// commission
+        /// customer_debt
+        /// other
+        /// </summary>
+        public string AccountType { get; set; }
 
         /// <summary>
         /// Số tiền
@@ -75,7 +85,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Loại thu/Loại chi
         /// </summary>
-        public Guid LoaiThuChiId { get; set; }
+        public Guid? LoaiThuChiId { get; set; }
         public LoaiThuChi LoaiThuChi { get; set; }
 
         /// <summary>
@@ -83,9 +93,18 @@ namespace ApplicationCore.Entities
         /// </summary>
         public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
 
+        /// <summary>
+        /// customer
+        /// supplier
+        /// employee
+        /// agent
+        /// </summary>
         public string PartnerType { get; set; }
 
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
+
+        public Guid? AccountId { get; set; }
+        public AccountAccount Account { get; set; }
     }
 }

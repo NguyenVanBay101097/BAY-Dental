@@ -41,6 +41,8 @@ namespace ApplicationCore.Entities
         /// </summary>
         public bool Customer { get; set; }
 
+        public bool IsAgent { get; set; }
+
         /// <summary>
         /// Chi nhánh
         /// </summary>
@@ -181,15 +183,21 @@ namespace ApplicationCore.Entities
         public Guid? TitleId { get; set; }
         public PartnerTitle Title { get; set; }
 
-        /// <summary>
-        /// Nhan vien tu van 
-        /// </summary>
-        public Guid? ConsultantId { get; set; }
-        public Employee Consultant { get; set; }
+        ///// <summary>
+        ///// Nhan vien tu van 
+        ///// </summary>
+        //public Guid? ConsultantId { get; set; }
+        //public Employee Consultant { get; set; }
 
         public ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
         public ICollection<DotKham> DotKhams { get; set; } = new List<DotKham>();
+
+        /// <summary>
+        /// người giới thiệu
+        /// </summary>
+        public Guid? AgentId { get; set; }
+        public Agent Agent { get; set; }
 
         /// <summary>
         /// khách hàng tạm ứng

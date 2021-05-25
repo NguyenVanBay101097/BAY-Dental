@@ -609,6 +609,27 @@
         ]
       },
       {
+        "Name": "Người giới thiệu",
+        "Ops": [        
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Agent.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Agent.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Agent.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Agent.Delete"
+          }
+        ]
+      },
+      {
         "Name": "Bảng hoa hồng",
         "Ops": [
           {

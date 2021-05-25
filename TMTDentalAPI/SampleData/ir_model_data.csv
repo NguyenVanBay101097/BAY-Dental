@@ -78,6 +78,7 @@ sale.model_sale_order_payment,SaleOrderPayment,SaleOrder Payment,0
 base.model_tooth_diagnosis,ToothDiagnosis,Tooth Diagnosis,0
 sale.model_advisory,Advisory,Advisory,0
 sale.model_quotation,Quotation,Quotation,0
+base.model_agent,Agent,Agent,0
 
 
 

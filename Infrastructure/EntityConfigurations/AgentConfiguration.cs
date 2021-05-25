@@ -7,27 +7,15 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    class PhieuThuChiConfiguration : IEntityTypeConfiguration<PhieuThuChi>
+    public class AgentConfiguration : IEntityTypeConfiguration<Agent>
     {
-        public void Configure(EntityTypeBuilder<PhieuThuChi> builder)
+        public void Configure(EntityTypeBuilder<Agent> builder)
         {
-            builder.HasOne(x => x.LoaiThuChi)
-              .WithMany()
-              .HasForeignKey(x => x.LoaiThuChiId);
-
-            builder.HasOne(x => x.Account)
-             .WithMany()
-             .HasForeignKey(x => x.AccountId);
-
-            builder.HasOne(x => x.Journal)
-               .WithMany()
-               .HasForeignKey(x => x.JournalId)
-               .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasOne(x => x.Partner)
-                 .WithMany()
-                 .HasForeignKey(x => x.PartnerId);
-
+            .WithMany()
+            .HasForeignKey(x => x.PartnerId)
+            .OnDelete(DeleteBehavior.Restrict);
+           
             builder.HasOne(x => x.Company)
             .WithMany()
             .HasForeignKey(x => x.CompanyId)
