@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
-import { SmsCampaignService } from "../sms-campaign.service";
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SmsCampaignService } from '../sms-campaign.service';
 
 @Component({
   selector: "app-sms-thanks-form",
@@ -9,20 +9,26 @@ import { SmsCampaignService } from "../sms-campaign.service";
 })
 export class SmsThanksFormComponent implements OnInit {
   campaign: any;
+  campaignId: string;
   constructor(
     private smsCampaignService: SmsCampaignService,
-    private router: Router
-  ) {}
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit() {
+    this.route.paramMap.subscribe(params => {
+      this.campaignId = params.get('id');
+    });
     this.loadThanksCustomer();
   }
 
   loadThanksCustomer() {
-    this.smsCampaignService.getDefaultThanksCustomer().subscribe((result) => {
-      if (result) {
-        this.campaign = result;
+    this.smsCampaignService.getDefaultThanksCustomer().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
       }
-    });
+    );
   }
 }

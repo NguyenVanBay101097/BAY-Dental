@@ -11,7 +11,7 @@ export class SmsThanksCustomerPaged {
 @Injectable({
     providedIn: 'root'
 })
-export class SmsTemplateService {
+export class SmsThanksCustomerService {
     apiUrl: string = 'api/SmsThanksCustomers';
     constructor(@Inject('BASE_API') private base_api: string, private http: HttpClient) { }
 
