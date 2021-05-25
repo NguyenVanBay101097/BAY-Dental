@@ -1,5 +1,5 @@
-<div class="w-100 h-100 d-flex">
-    <div class="w-25 h-100 mr-2">
+<div class="pms-wrapper d-flex">
+    <div class="pms-left border mr-2">
         <div class="d-flex flex-column h-100">
             <div class="pb-1 flex-0-0-auto has-search">
                 <span class="fa fa-search form-control-feedback"></span>
@@ -23,9 +23,52 @@
             </div>
         </div>
     </div>
-    <div class="w-75 d-flex flex-column">
-        <div class="overflow-auto">
-            
+    <div class="pms-right border h-100 overflow-auto d-flex flex-column p-2">
+        <!-- <div class="flex-0-0-auto mb-3 d-flex align-items-center">
+            <div class="has-search mr-1 flex-fill">
+                <span class="fa fa-search form-control-feedback"></span>
+                <input [(ngModel)]="searchService" (ngModelChange)="this.searchServiceUpdate.next($event)"
+                    class="form-control size-text-14" placeholder="Tìm kiếm theo mã hoặc tên ..." type="text">
+            </div>
+            <div class="flex-fill">
+                <button class="btn btn-sm btn-primary mr-2" (click)="createService()">Thêm mới</button>
+                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="importFromExcel()">
+                    <i class="fas fa-upload"></i> Import
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="exportExcelFile()">
+                    <i class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
+                <button class="btn btn-sm btn-secondary mr-2" (click)="updateServiceFromExcel()">
+                    <i class="fas fa-upload"></i>
+                    Cập nhật Excel</button>
+
+            </div>
         </div>
+        <div class="flex-1-1-100 h-100 overflow-hidden">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+                (pageChange)="pageChange($event)">
+                <kendo-grid-column field="name" title="Tên dịch vụ" width="250">
+                </kendo-grid-column>
+                <kendo-grid-column field="defaultCode" title="Mã dịch vụ" width="100">
+                </kendo-grid-column>
+                <kendo-grid-column field="categName" title="Nhóm dịch vụ" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="listPrice" class="text-right" title="Giá bán" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.listPrice | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="id" width="100">
+                    <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                        Thao tác
+                    </ng-template>
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <button class="btn btn-success btn-sm mr-2" (click)="editService(dataItem)">
+                            <i class="far fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" (click)="deleteService(dataItem)">
+                            <i class="far fa-trash-alt"></i></button>
+                    </ng-template>
+                </kendo-grid-column>
+            </kendo-grid>
+        </div> -->
     </div>
 </div>
