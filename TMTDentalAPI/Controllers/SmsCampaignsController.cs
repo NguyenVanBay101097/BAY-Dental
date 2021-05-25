@@ -61,6 +61,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDefaultThanksCustomer()
+        {
+            var res = await _smsCampaignService.GetDefaultThanksCustomer();
+            return Ok(res);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsCampaignSave val)
         {

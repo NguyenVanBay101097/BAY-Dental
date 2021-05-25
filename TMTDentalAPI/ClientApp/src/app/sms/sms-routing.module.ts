@@ -29,7 +29,7 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'tkanks-customer', component: SmsAppointmentFormComponent,
+    path: 'thanks-customer', component: SmsAppointmentFormComponent,
     children: [
       { path: '', redirectTo: 'manually', pathMatch: 'full' },
       { path: 'auto', component: SmsThanksFormAutomaticComponent },
