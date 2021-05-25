@@ -20,11 +20,15 @@
           {
             "Name": "Xóa",
             "Permission": "Basic.Partner.Delete"
+          },
+          {
+            "Name": "Xuất excel",
+            "Permission": "Basic.Partner.Export"
           }
         ]
       },
       {
-        "Name": "Điều trị/Tư vấn",
+        "Name": "Phiếu điều trị",
         "Ops": [
           {
             "Name": "Xem",
@@ -45,6 +49,27 @@
           {
             "Name": "Hủy phiếu",
             "Permission": "Basic.SaleOrder.Cancel"
+          }
+        ]
+      },
+      {
+        "Name": "Tư vấn",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.Advisory.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.Advisory.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.Advisory.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.Advisory.Delete"
           }
         ]
       },
@@ -257,19 +282,19 @@
         "Ops": [
           {
             "Name": "Xem",
-            "Permission": "Stock.Criteria.Read"
+            "Permission": "Stock.StockInventoryCriteria.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "Stock.Criteria.Create"
+            "Permission": "Stock.StockInventoryCriteria.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "Stock.Criteria.Update"
+            "Permission": "Stock.StockInventoryCriteria.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "Stock.Criteria.Delete"
+            "Permission": "Stock.StockInventoryCriteria.Delete"
           }
         ]
       },
@@ -450,6 +475,48 @@
           {
             "Name": "Xóa",
             "Permission": "Catalog.PartnerCategory.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Nhãn khảo sát",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.SurveyTag.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.SurveyTag.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.SurveyTag.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.SurveyTag.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Chẩn đoán răng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.ToothDiagnosis.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.ToothDiagnosis.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.ToothDiagnosis.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.ToothDiagnosis.Delete"
           }
         ]
       },
@@ -715,27 +782,6 @@
           {
             "Name": "Xóa",
             "Permission": "System.Company.Delete"
-          }
-        ]
-      },
-      {
-        "Name": "Người dùng",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "System.ApplicationUser.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "System.ApplicationUser.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "System.ApplicationUser.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "System.ApplicationUser.Delete"
           }
         ]
       },

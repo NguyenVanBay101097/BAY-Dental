@@ -8,6 +8,7 @@ import { SaleCouponProgramService, SaleCouponProgramBasic, SaleCouponProgramGetL
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-sale-promotion-program-list',
@@ -42,7 +43,8 @@ export class SalePromotionProgramListComponent implements OnInit {
 
   constructor(private programService: SaleCouponProgramService, private route: ActivatedRoute, 
     private router: Router, private modalService: NgbModal, 
-    private checkPermissionService: CheckPermissionService 
+    private checkPermissionService: CheckPermissionService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -52,6 +54,7 @@ export class SalePromotionProgramListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
   }
@@ -61,6 +64,7 @@ export class SalePromotionProgramListComponent implements OnInit {
   }
 
   changeFilterActive() {
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
@@ -126,6 +130,16 @@ export class SalePromotionProgramListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  notify(type, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: type, icon: true }
+    });
+  }
+
   createItem() {
     this.router.navigate(['programs/promotion-programs/form']);
   }
@@ -140,6 +154,7 @@ export class SalePromotionProgramListComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có muốn xóa chương trình khuyến mãi không?';
     modalRef.result.then(() => {
       this.programService.unlink([item.id]).subscribe(() => {
+        this.notify('success', 'Xóa CTKM thành công');
         this.loadDataFromApi();
         this.selectedIds = [];
       });
@@ -154,6 +169,7 @@ export class SalePromotionProgramListComponent implements OnInit {
       modalRef.componentInstance.body2 = 'Lưu ý: Chỉ tạm ngừng các khuyến mãi đã kích hoạt đang chạy hoặc chưa chạy.';
       modalRef.result.then(() => {
         this.programService.actionArchive(this.selectedIds).subscribe(() => {
+          this.notify('success', 'Tạm ngừng CTKM thành công');
           this.loadDataFromApi();
           this.selectedIds = [];
         });
@@ -168,6 +184,7 @@ export class SalePromotionProgramListComponent implements OnInit {
       modalRef.componentInstance.body = 'Bạn có muốn kích hoạt chương trình khuyến mãi?';
       modalRef.result.then(() => {
         this.programService.actionUnArchive(this.selectedIds).subscribe(() => {
+          this.notify('success', 'Kích hoạt CTKM thành công');
           this.loadDataFromApi();
           this.selectedIds = [];
         });
@@ -177,6 +194,7 @@ export class SalePromotionProgramListComponent implements OnInit {
 
   valueChangeStatus(value) {
     this.selectedStatus = value;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 }

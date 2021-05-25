@@ -36,12 +36,12 @@
                         (click)="onSaveActive()">
                         Lưu và kích hoạt
                     </button>
-                    <button *ngIf="!program.isPaused && program.active && program.statusDisplay == 'Đang chạy'" type="button"
-                        class="btn btn-primary btn-sm" accesskey="s" (click)="onPause()">
+                    <button *ngIf="!program.isPaused && program.active && program.statusDisplay == 'Đang chạy'"
+                        type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onPause()">
                         Tạm ngừng
                     </button>
-                    <button *ngIf="program.isPaused && program.active && program.statusDisplay != 'Hết hạn'" type="button" class="btn btn-primary btn-sm"
-                        accesskey="s" (click)="onActive()">
+                    <button *ngIf="program.isPaused && program.active && program.statusDisplay != 'Hết hạn'"
+                        type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onActive()">
                         Kích hoạt
                     </button>
                 </div>
@@ -150,8 +150,13 @@
                                                         </td>
                                                         <td colspan="1" class="w-70">
                                                             <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                                formControlName="maximumUseNumber">
+                                                                [autoCorrect]="true" formControlName="maximumUseNumber">
                                                             </kendo-numerictextbox>
+                                                            <div *ngIf="f.maximumUseNumber.errors && (f.maximumUseNumber.touched || f.maximumUseNumber.dirty || submitted)"
+                                                                class="text-danger">
+                                                                <div *ngIf="f.maximumUseNumber.errors.required">Nhập
+                                                                    số lần áp dụng</div>
+                                                            </div>
                                                         </td>
                                                         <td></td>
                                                     </tr>
@@ -192,7 +197,8 @@
                                                         <td class="o_td_label">Phần trăm giảm giá</td>
                                                         <td class="w-70">
                                                             <kendo-numerictextbox [min]="0" [max]="100" [format]="'n0'"
-                                                                formControlName="discountPercentage" [autoCorrect]="true">
+                                                                formControlName="discountPercentage"
+                                                                [autoCorrect]="true">
                                                             </kendo-numerictextbox>
                                                             <div *ngIf="f.discountPercentage.errors && (f.discountPercentage.touched || f.discountPercentage.dirty || submitted)"
                                                                 class="text-danger mb-1">
@@ -228,8 +234,14 @@
                                                         </td>
                                                         <td class="w-70" [class.d-none]="!isApplyMaxDiscount">
                                                             <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                                formControlName="discountMaxAmount">
+                                                                formControlName="discountMaxAmount"
+                                                                [autoCorrect]="true">
                                                             </kendo-numerictextbox>
+                                                            <div *ngIf="f.discountMaxAmount.errors && (f.discountMaxAmount.touched || f.discountMaxAmount.dirty || submitted)"
+                                                                class="text-danger">
+                                                                <div *ngIf="f.discountMaxAmount.errors.required">Nhập
+                                                                    mức giảm tối đa</div>
+                                                            </div>
                                                         </td>
                                                         <td
                                                             [class.d-none]="!(discountType == 'percentage' && isApplyMaxDiscount)">
@@ -248,7 +260,8 @@
                                                         <td class="o_td_label">Số tiền giảm</td>
                                                         <td class="w-70">
                                                             <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                                formControlName="discountFixedAmount">
+                                                                formControlName="discountFixedAmount"
+                                                                [autoCorrect]="true">
                                                             </kendo-numerictextbox>
                                                             <div *ngIf="f.discountFixedAmount.errors && (f.discountFixedAmount.touched || f.discountFixedAmount.dirty || submitted)"
                                                                 class="text-danger mb-1">
@@ -307,13 +320,14 @@
                                                             <td class="w-70">
                                                                 <div [class.hide]="!isApplyMinimumDiscount">
                                                                     <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                                        formControlName="ruleMinimumAmount">
+                                                                        formControlName="ruleMinimumAmount"
+                                                                        [autoCorrect]="true">
                                                                     </kendo-numerictextbox>
                                                                     <div *ngIf="f.ruleMinimumAmount.errors && (f.ruleMinimumAmount.touched || f.ruleMinimumAmount.dirty || submitted)"
                                                                         class="text-danger mb-1">
                                                                         <div
                                                                             *ngIf="f.ruleMinimumAmount.errors.required">
-                                                                            Nhập trị giá PĐT tối thiểu</div>
+                                                                            Nhập trị giá tối thiểu</div>
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -424,12 +438,16 @@
                                 <label for="startDate">Ngày bắt đầu</label>
                                 <kendo-datepicker class="form-control" id="startDate" formControlName="ruleDateFromObj">
                                 </kendo-datepicker>
+                                <!-- <div *ngIf="f.ruleDateFromObj.errors" class="text-danger mb-1">
+                                    <div *ngIf="f.ruleDateFromObj.errors.required">Nhập ngày bắt đầu</div>
+                                </div> -->
                             </div>
                             <div class="form-group">
                                 <label for="endDate">Ngày kết thúc</label>
                                 <kendo-datepicker class="form-control" id="endDate" formControlName="ruleDateToObj">
                                 </kendo-datepicker>
                                 <div *ngIf="f.ruleDateToObj.errors" class="text-danger mb-1">
+                                    <!-- <div *ngIf="f.ruleDateToObj.errors.required">Nhập ngày kết thúc</div> -->
                                     <div *ngIf="f.ruleDateToObj.errors.dateInvalid">Chọn lại ngày kết thúc</div>
                                 </div>
                             </div>

@@ -31,6 +31,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Catalog.ToothDiagnosis.Read")]
         public async Task<IActionResult> Get([FromQuery] ToothDiagnosisPaged val)
         {
             var result = await _toothDiagnosisService.GetPagedResultAsync(val);
@@ -38,6 +39,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Catalog.ToothDiagnosis.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _toothDiagnosisService.GetToothDiagnosisDisplay(id);
@@ -55,6 +57,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Catalog.ToothDiagnosis.Create")]
         public async Task<IActionResult> Create(ToothDiagnosisSave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -67,6 +70,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Catalog.ToothDiagnosis.Update")]
         public async Task<IActionResult> Update(Guid id, ToothDiagnosisSave val)
         {
             if (!ModelState.IsValid)
@@ -80,6 +84,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Catalog.ToothDiagnosis.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();

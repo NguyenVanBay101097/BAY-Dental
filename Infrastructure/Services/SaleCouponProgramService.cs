@@ -829,10 +829,12 @@ namespace Infrastructure.Services
             var now = DateTime.Today;
             foreach (var program in self)
             {
+                if (!program.Active)
+                    throw new Exception("Bạn không thể tạm ngừng CTKM chưa kích hoạt");
                 if (program.RuleDateTo >= now)
-                {
                     program.IsPaused = true;
-                }
+                else
+                    throw new Exception("Chỉ có thể tạm ngừng các khuyến mãi đã kích hoạt đang chạy hoặc chưa chạy");
             }
 
             await UpdateAsync(self);

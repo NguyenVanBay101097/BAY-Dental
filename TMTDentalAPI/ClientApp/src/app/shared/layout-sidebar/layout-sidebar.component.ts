@@ -96,7 +96,7 @@ export class LayoutSidebarComponent implements OnInit {
       link: '/stock/stock-report-xuat-nhap-ton',
       children: [
       ],
-      permissions: ["Report.Stock","Stock.Picking.Read","Basic.ProductRequest.Read","Stock.Inventory.Read"]
+      permissions: ["Report.Stock", "Stock.Picking.Read", "Basic.ProductRequest.Read", "Stock.Inventory.Read"]
     },
     {
       name: 'Lương',
@@ -140,7 +140,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-gift',
       groups: 'sale.group_sale_coupon_promotion',
       children: [
-        { name: 'Chương trình coupon', link: '/programs/coupon-programs', permissions: ['SaleCoupon.SaleCoupons.Read'] },
+        // { name: 'Chương trình coupon', link: '/programs/coupon-programs', permissions: ['SaleCoupon.SaleCoupons.Read'] },
         { name: 'Chương trình khuyến mãi', link: '/programs/promotion-programs', permissions: ['SaleCoupon.SaleCouponProgram.Read'] },
       ],
       permissions: ['SaleCoupon.SaleCoupons.Read', 'SaleCoupon.SaleCouponProgram.Read']
@@ -175,21 +175,21 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-list',
       children: [
         { name: 'Thông tin khách hàng', link: '/partners/customer-management', permissions: ['Catalog.PartnerCategory.Read'] },
-        { name: 'Nhãn khảo sát', link: '/surveys/survey-tag', groups: 'survey.group_survey' },
+        { name: 'Nhãn khảo sát', link: '/surveys/survey-tag', groups: 'survey.group_survey', permissions: ['Catalog.SurveyTag.Read'] },
         // { name: "Nguồn khách hàng", link: "/partner-sources" },
-        { name: 'Nhà cung cấp', link: '/partners/suppliers' },
+        { name: 'Nhà cung cấp', link: '/partners/suppliers', permissions: ['Basic.Partner.Read'] },
         { name: 'Dịch vụ - Vật tư - Thuốc', link: '/products', permissions: ['Catalog.Products.Read'] },
         { name: 'Đơn thuốc mẫu', link: '/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
         // { name: 'Tiểu sử bệnh', link: '/histories' },
         // { name: 'Danh xưng', link: '/partner-titles' },
         { name: 'Đơn vị tính', link: '/uoms', groups: 'product.group_uom', permissions: ['UoM.UoMs.Read'] },
-        { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom', permissions:["UoM.UoMCategory.Read"] },
+        { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom', permissions: ["UoM.UoMCategory.Read"] },
         { name: 'Bảng hoa hồng', link: '/commissions/v2', permissions: ['Catalog.Commission.Read'] },
         { name: 'Nhân viên', link: '/employees', permissions: ['Catalog.Employee.Read'] },
-        { name: 'Thông số Labo', link: '/labo-orders/labo-managerment',permissions:["Catalog.Products.Read"] },
+        { name: 'Thông số Labo', link: '/labo-orders/labo-managerment', permissions: ["Catalog.Products.Read", 'Catalog.LaboFinishLine.Read', 'Catalog.LaboBridge.Read', 'Catalog.LaboBiteJoint.Read'] },
         { name: 'Loại thu chi', link: '/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
         { name: 'Tiêu chí kiểm kho', link: '/stock/criterias', permissions: ['Stock.Criteria.Read'] },
-        { name: 'Thông tin chẩn đoán răng', link: '/tooth-diagnosis' },
+        { name: 'Thông tin chẩn đoán răng', link: '/tooth-diagnosis', permissions: ['Catalog.ToothDiagnosis.Read'] },
         // { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' }},
         // { name: 'Vật liệu Labo', link: '/products/labos' },
         // { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
@@ -213,7 +213,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-cogs',
       children: [
         { name: 'Chi nhánh', link: '/companies', permissions: ['System.Company.Read'] },
-        { name: 'Người dùng', link: '/users', permissions: ['System.ApplicationUser.Read'] },
+        // { name: 'Người dùng', link: '/users', permissions: ['System.ApplicationUser.Read'] },
         { name: 'Nhóm quyền', link: '/roles', permissions: ['System.ApplicationRole.Read'] },
         { name: 'Cấu hình chung', link: '/config-settings' }
       ],
@@ -284,9 +284,9 @@ export class LayoutSidebarComponent implements OnInit {
     for (var i = 0; i < menuItems.length; i++) {
       var menuItem = menuItems[i];
       if (this.hasPermission(menuItem)) {
-       // list.push(menuItem);
+        // list.push(menuItem);
         if (menuItem.children) {
-          var childArr : any[] = []; 
+          var childArr: any[] = [];
           menuItem.children.forEach(child => {
             if (this.hasPermission(child)) {
               childArr.push(child);
