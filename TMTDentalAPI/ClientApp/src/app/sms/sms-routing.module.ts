@@ -16,6 +16,7 @@ import { SmsStatisticComponent } from './sms-statistic/sms-statistic.component';
 import { SmsTemplateListComponent } from './sms-template-list/sms-template-list.component';
 import { SmsThanksFormAutomaticComponent } from './sms-thanks-form-automatic/sms-thanks-form-automatic.component';
 import { SmsThanksFormManualComponent } from './sms-thanks-form-manual/sms-thanks-form-manual.component';
+import { SmsThanksFormComponent } from './sms-thanks-form/sms-thanks-form.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'birthday-partners', pathMatch: 'full' },
@@ -29,7 +30,7 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'thanks-customer', component: SmsAppointmentFormComponent,
+    path: 'thanks-customer', component: SmsThanksFormComponent,
     children: [
       { path: '', redirectTo: 'manually', pathMatch: 'full' },
       { path: 'auto', component: SmsThanksFormAutomaticComponent },
