@@ -23,6 +23,8 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.searchInit();
+    this.loadDataDefault();
   }
 
   searchInit() {

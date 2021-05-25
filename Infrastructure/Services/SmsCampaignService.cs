@@ -262,5 +262,33 @@ namespace Infrastructure.Services
             }
             return campaign;
         }
+
+        public async Task<SmsCampaign> GetDefaultCareAfterOrder()
+        {
+            var modelDataObj = GetService<IIRModelDataService>();
+            var campaign = await modelDataObj.GetRef<SmsCampaign>("base.sms_care_after_order");
+            if (campaign == null)
+            {
+                campaign = new SmsCampaign
+                {
+                    Name = "Tin nhắn chăm sóc sau điều trị",
+                    CompanyId = CompanyId,
+                    TypeDate = "unlimited",
+                    State = "running",
+                    DefaultType = "sms_care_after_order"
+                };
+
+                await CreateAsync(campaign);
+
+                await modelDataObj.CreateAsync(new IRModelData
+                {
+                    Name = "sms_care_after_order",
+                    Module = "base",
+                    Model = "res.sms.campaign",
+                    ResId = campaign.Id.ToString()
+                });
+            }
+            return campaign;
+        }
     }
 }

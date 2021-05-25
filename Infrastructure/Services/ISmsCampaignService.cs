@@ -17,6 +17,7 @@ namespace Infrastructure.Services
         Task<SmsCampaign> GetDefaultCampaignAppointmentReminder();
         Task<SmsCampaign> GetDefaultCampaign();
         Task<SmsCampaign> GetDefaultThanksCustomer();
+        Task<SmsCampaign> GetDefaultCareAfterOrder();
         Task<SmsCampaignBasic> GetDisplay(Guid id);
     }
 }
