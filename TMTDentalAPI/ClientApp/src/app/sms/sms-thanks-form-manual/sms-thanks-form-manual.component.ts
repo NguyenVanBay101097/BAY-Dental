@@ -6,8 +6,8 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
-import { SmsThanksCustomerService } from '../sms-thanks-customer.service';
 
 @Component({
   selector: 'app-sms-thanks-form-manual',
@@ -35,7 +35,7 @@ export class SmsThanksFormManualComponent implements OnInit {
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private intlService: IntlService,
-    private thanksService: SmsThanksCustomerService
+    private saleOrderService: SaleOrderService
   ) { }
 
   ngOnInit() {
@@ -52,25 +52,25 @@ export class SmsThanksFormManualComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    // var val = new SmsPaged();
-    // val.limit = this.limit;
-    // val.offset = this.skip;
-    // val.search = this.search || '';
-    // val.dateTimeFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
-    // val.dateTimeTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
-
-    // this.thanksService.getPaged(val).pipe(
-    //   map((response: any) =>
-    //   (<GridDataResult>{
-    //     data: response.items,
-    //     total: response.totalItems
-    //   }))
-    // ).subscribe((res) => {
-    //   this.gridData = res;
-    // }, err => {
-    //   console.log(err);
-    // }
-    // )
+    var val = new SaleOrderPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.dateOrderFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    val.dateOrderTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
+    val.state = "done";
+    this.saleOrderService.getSaleOrderForSms(val).pipe(
+      map((response: any) =>
+      (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe((res) => {
+      this.gridData = res;
+    }, err => {
+      console.log(err);
+    }
+    )
   }
 
   pageChange(event) {
@@ -93,7 +93,7 @@ export class SmsThanksFormManualComponent implements OnInit {
       var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
       modalRef.componentInstance.title = "Tạo tin gửi";
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
-      modalRef.componentInstance.isAppointmentReminder = true;
+      modalRef.componentInstance.isThanksCustomer = true;
       modalRef.result.then(
         result => {
 

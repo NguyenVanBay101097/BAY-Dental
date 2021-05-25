@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
+import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
 import { SmsComposerService } from '../sms-composer.service';
 import { SmsMessageService } from '../sms-message.service';
@@ -30,6 +31,8 @@ export class SmsManualDialogComponent implements OnInit {
   submitted = false;
   isBirthDayManual: false;
   isAppointmentReminder: false;
+  campaign: any;
+  isThanksCustomer: false;
   isTemplateCopy = false;
   template: any = {
     templateType: 'text',
@@ -44,6 +47,7 @@ export class SmsManualDialogComponent implements OnInit {
     private modalService: NgbModal,
     private fb: FormBuilder,
     private smsAccountService: SmsAccountService,
+    private smsCampaignService: SmsCampaignService,
     private notificationService: NotificationService,
     private intlService: IntlService
   ) { }
@@ -68,7 +72,9 @@ export class SmsManualDialogComponent implements OnInit {
       this.smsTemplateCbx.loading = false;
     });
 
-
+    if (this.isThanksCustomer) {
+      this.loadDefaultCampaignThanksCustomer();
+    }
 
     this.smsAccountCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -89,6 +95,15 @@ export class SmsManualDialogComponent implements OnInit {
       this.isTemplateCopy = false;
     }
 
+  }
+
+  loadDefaultCampaignThanksCustomer() {
+    this.smsCampaignService.getDefaultThanksCustomer().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
+      })
   }
 
   searchSmsTemplate(q?: string) {
@@ -164,11 +179,12 @@ export class SmsManualDialogComponent implements OnInit {
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.smsTemplateId = val.template ? val.template.id : null;
     val.date = this.intlService.formatDate(new Date(), "yyyy-MM-ddTHH:mm");
-    val.partnerIds = this.ids;
+    val.GuidIds = this.ids;
     val.body = JSON.stringify(this.template);
     val.isBirthDayManual = this.isBirthDayManual;
     val.isAppointmentReminder = this.isAppointmentReminder;
-
+    val.isThanksCustomer = this.isThanksCustomer;
+    
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.brandName = val.smsAccount.brandName;

@@ -14,7 +14,7 @@ namespace Infrastructure.EntityConfigurations
             builder.HasKey(x => new { x.PartnerId, x.SmsMessageId });
 
             builder.HasOne(x => x.SmsMessage)
-               .WithMany(x => x.Partners)
+               .WithMany(x => x.SmsMessagePartnerRels)
                .HasForeignKey(x => x.SmsMessageId);
 
             builder.HasOne(x => x.Partner)

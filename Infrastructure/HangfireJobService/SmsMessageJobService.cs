@@ -40,13 +40,13 @@ namespace Infrastructure.HangfireJobService
                     x.State == "waiting" &&
                     x.Date.HasValue &&
                     x.Date.Value <= now
-                ).Include(x => x.SmsAccount).Include(x => x.Partners);
+                ).Include(x => x.SmsAccount).Include(x => x.SmsMessagePartnerRels);
                 var smsMessages = await query.ToListAsync();
                 foreach (var item in smsMessages)
                 {
-                    if (item.Partners.Any())
+                    if (item.SmsMessagePartnerRels.Any())
                     {
-                        var partnerIds = item.Partners.Select(x => x.PartnerId).ToList();
+                        var partnerIds = item.SmsMessagePartnerRels.Select(x => x.PartnerId).ToList();
                         await _smsSendMessageService.CreateSmsMessageDetail(context, item, partnerIds, companyId);
                     }
                 }

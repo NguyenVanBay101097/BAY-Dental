@@ -32,7 +32,6 @@ import { SmsMessageDetailDialogComponent } from "./sms-message-detail-dialog/sms
 import { SmsThanksFormComponent } from "./sms-thanks-form/sms-thanks-form.component";
 import { SmsThanksFormManualComponent } from "./sms-thanks-form-manual/sms-thanks-form-manual.component";
 import { SmsThanksFormAutomaticComponent } from "./sms-thanks-form-automatic/sms-thanks-form-automatic.component";
-import { SmsThanksCustomerService } from "./sms-thanks-customer.service";
 
 @NgModule({
   declarations: [
@@ -83,6 +82,5 @@ import { SmsThanksCustomerService } from "./sms-thanks-customer.service";
     SmsPartnerListDialogComponent,
     SmsMessageDetailDialogComponent,
   ],
-  exports: [SmsThanksCustomerService],
 })
 export class SmsModule {}

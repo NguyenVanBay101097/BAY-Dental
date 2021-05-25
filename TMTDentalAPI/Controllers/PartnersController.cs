@@ -736,5 +736,12 @@ namespace TMTDentalAPI.Controllers
             var res =await _partnerService.GetPartnerForTCare(val);
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetPartnerOrderDone(PartnerPaged val)
+        {
+            var res = await _partnerService.GetPartnerOrderDone(val);
+            return Ok(res);
+        }
     }
 }

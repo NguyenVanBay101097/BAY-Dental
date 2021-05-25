@@ -26,6 +26,13 @@ namespace ApplicationCore.Entities
         /// success: Thành công
         /// </summary>
         public string State { get; set; }
-        public ICollection<SmsMessagePartnerRel> Partners { get; set; } = new List<SmsMessagePartnerRel>();
+        /// <summary>
+        /// Partner, Appointment, SaleOrder, SaleOrderLine
+        /// </summary>
+        public string ResModel { get; set; }
+        public ICollection<SmsMessagePartnerRel> SmsMessagePartnerRels { get; set; } = new List<SmsMessagePartnerRel>();
+        public ICollection<SmsMessageAppointmentRel> SmsMessageAppointmentRels { get; set; } = new List<SmsMessageAppointmentRel>();
+        public ICollection<SmsMessageSaleOrderRel> SmsMessageSaleOrderRels { get; set; } = new List<SmsMessageSaleOrderRel>();
+        public ICollection<SmsMessageSaleOrderLineRel> SmsMessageSaleOrderLineRels { get; set; } = new List<SmsMessageSaleOrderLineRel>();
     }
 }

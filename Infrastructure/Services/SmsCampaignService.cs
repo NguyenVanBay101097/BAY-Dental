@@ -44,8 +44,8 @@ namespace Infrastructure.Services
 
             var ditcTotalWaitedMessage = await smsMessageObj
                 .SearchQuery(x => x.SmsCampaignId.HasValue && x.State == "waiting")
-                .Include(x => x.Partners)
-                .ToDictionaryAsync(x => x.SmsCampaignId.Value, x => x.Partners.Count());
+                .Include(x => x.SmsMessagePartnerRels)
+                .ToDictionaryAsync(x => x.SmsCampaignId.Value, x => x.SmsMessagePartnerRels.Count());
 
             var listSuccess = await smsMessageDetailObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.State == "success").ToListAsync();
             if (listSuccess.Any())
@@ -81,6 +81,69 @@ namespace Infrastructure.Services
             {
                 Items = items
             };
+        }
+
+        public async Task<SmsCampaignBasic> CreateAsync(SmsCampaignSave val)
+        {
+            var entity = _mapper.Map<SmsCampaign>(val);
+            entity.CompanyId = CompanyId;
+            if (entity.TypeDate == "unlimited")
+            {
+                entity.State = "running";
+            }
+            else if (entity.TypeDate == "period")
+            {
+                if (entity.DateStart.HasValue &&
+                    entity.DateStart.Value <= DateTime.Today &&
+                    entity.DateEnd.HasValue &&
+                    entity.DateEnd.Value >= DateTime.Today)
+                {
+                    entity.State = "running";
+                }
+                else if (entity.DateStart.HasValue && entity.DateStart.Value > DateTime.Today)
+                {
+                    entity.State = "draft";
+                }
+                else
+                {
+                    entity.State = "shutdown";
+                }
+            }
+            entity = await CreateAsync(entity);
+            return _mapper.Map<SmsCampaignBasic>(entity);
+        }
+
+        public async Task UpdateAsync(Guid id, SmsCampaignSave val)
+        {
+            var entity = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            entity = _mapper.Map(val, entity);
+            await UpdateAsync(entity);
+        }
+
+        public async Task<SmsCampaignBasic> GetDisplay(Guid id)
+        {
+            var smsMessageObj = GetService<ISmsMessageService>();
+            var smsMessageDetailObj = GetService<ISmsMessageDetailService>();
+            var TotalWait = await smsMessageObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "waiting").SelectMany(x => x.SmsMessagePartnerRels).CountAsync();
+            var TotalSuccess = await smsMessageDetailObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "success").CountAsync();
+            var TotalFails = await smsMessageDetailObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "fails").CountAsync();
+
+            var campaign = await SearchQuery(x => x.Id == id).Select(x => new SmsCampaignBasic
+            {
+                Id = x.Id,
+                DateEnd = x.DateEnd,
+                DateStart = x.DateStart,
+                DefaultType = x.DefaultType,
+                LimitMessage = x.LimitMessage,
+                Name = x.Name,
+                State = x.State,
+                TotalMessage = TotalFails + TotalSuccess + TotalWait,
+                TotalSuccessfulMessages = TotalSuccess,
+                TotalFailedMessages = TotalFails,
+                TotalWaitedMessages = TotalWait,
+                TypeDate = x.TypeDate
+            }).FirstOrDefaultAsync();
+            return campaign;
         }
 
         public async Task<SmsCampaign> GetDefaultCampaignBirthday()
@@ -170,68 +233,7 @@ namespace Infrastructure.Services
             return campaign;
         }
 
-        public async Task<SmsCampaignBasic> CreateAsync(SmsCampaignSave val)
-        {
-            var entity = _mapper.Map<SmsCampaign>(val);
-            entity.CompanyId = CompanyId;
-            if (entity.TypeDate == "unlimited")
-            {
-                entity.State = "running";
-            }
-            else if (entity.TypeDate == "period")
-            {
-                if (entity.DateStart.HasValue &&
-                    entity.DateStart.Value <= DateTime.Today &&
-                    entity.DateEnd.HasValue &&
-                    entity.DateEnd.Value >= DateTime.Today)
-                {
-                    entity.State = "running";
-                }
-                else if (entity.DateStart.HasValue && entity.DateStart.Value > DateTime.Today)
-                {
-                    entity.State = "draft";
-                }
-                else
-                {
-                    entity.State = "shutdown";
-                }
-            }
-            entity = await CreateAsync(entity);
-            return _mapper.Map<SmsCampaignBasic>(entity);
-        }
-
-        public async Task UpdateAsync(Guid id, SmsCampaignSave val)
-        {
-            var entity = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            entity = _mapper.Map(val, entity);
-            await UpdateAsync(entity);
-        }
-
-        public async Task<SmsCampaignBasic> GetDisplay(Guid id)
-        {
-            var smsMessageObj = GetService<ISmsMessageService>();
-            var smsMessageDetailObj = GetService<ISmsMessageDetailService>();
-            var TotalWait = await smsMessageObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "waiting").SelectMany(x => x.Partners).CountAsync();
-            var TotalSuccess = await smsMessageDetailObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "success").CountAsync();
-            var TotalFails = await smsMessageDetailObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "fails").CountAsync();
-
-            var campaign = await SearchQuery(x => x.Id == id).Select(x => new SmsCampaignBasic
-            {
-                Id = x.Id,
-                DateEnd = x.DateEnd,
-                DateStart = x.DateStart,
-                DefaultType = x.DefaultType,
-                LimitMessage = x.LimitMessage,
-                Name = x.Name,
-                State = x.State,
-                TotalMessage = TotalFails + TotalSuccess + TotalWait,
-                TotalSuccessfulMessages = TotalSuccess,
-                TotalFailedMessages = TotalFails,
-                TotalWaitedMessages = TotalWait,
-                TypeDate = x.TypeDate
-            }).FirstOrDefaultAsync();
-            return campaign;
-        }
+       
 
         public async Task<SmsCampaign> GetDefaultThanksCustomer()
         {
@@ -241,7 +243,7 @@ namespace Infrastructure.Services
             {
                 campaign = new SmsCampaign
                 {
-                    Name = "Tin nhắn cảm ơn",
+                    Name = "Cảm ơn khách hàng",
                     CompanyId = CompanyId,
                     TypeDate = "unlimited",
                     State = "running",

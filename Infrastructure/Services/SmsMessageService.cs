@@ -6,6 +6,7 @@ using Infrastructure.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace Infrastructure.Services
                 Date = x.Date,
                 DateCreated = x.DateCreated,
                 Name = x.Name,
-                CountPartner = x.Partners.Count(),
+                CountPartner = x.SmsMessagePartnerRels.Count(),
                 BrandName = x.SmsAccountId.HasValue ? x.SmsAccount.BrandName + $" ({x.SmsAccount.Name})" : "",
             }).ToListAsync();
             return new PagedResult2<SmsMessageBasic>(totalItems, val.Offset, val.Limit)
@@ -80,13 +81,71 @@ namespace Infrastructure.Services
                 var smsCampaignObj = GetService<ISmsCampaignService>();
                 var campaign = await smsCampaignObj.GetDefaultCampaignBirthday();
                 entity.SmsCampaignId = campaign.Id;
+                entity.ResModel = "partner";
+                if (val.GuidIds.Any())
+                {
+                    foreach (var id in val.GuidIds)
+                    {
+                        entity.SmsMessagePartnerRels.Add(new SmsMessagePartnerRel()
+                        {
+                            PartnerId = id
+                        });
+                    }
+                }
             }
 
-            else if (!entity.SmsCampaignId.HasValue && val.IsAppointmentReminder.HasValue && val.IsAppointmentReminder.Value)
+            else if (!entity.SmsCampaignId.HasValue && val.IsCareAfterOrder.HasValue && val.IsCareAfterOrder.Value)
             {
                 var smsCampaignObj = GetService<ISmsCampaignService>();
                 var campaign = await smsCampaignObj.GetDefaultCampaignAppointmentReminder();
                 entity.SmsCampaignId = campaign.Id;
+                entity.ResModel = "sale-order-line";
+                if (val.GuidIds.Any())
+                {
+                    foreach (var id in val.GuidIds)
+                    {
+                        entity.SmsMessageSaleOrderLineRels.Add(new SmsMessageSaleOrderLineRel()
+                        {
+                            SaleOrderLineId = id
+                        });
+                    }
+                }
+            }
+
+            else if (!entity.SmsCampaignId.HasValue && val.IsThanksCustomer.HasValue && val.IsThanksCustomer.Value)
+            {
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
+                entity.SmsCampaignId = campaign.Id;
+                entity.ResModel = "sale-order";
+                if (val.GuidIds.Any())
+                {
+                    foreach (var id in val.GuidIds)
+                    {
+                        entity.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
+                        {
+                            SaleOrderId = id
+                        });
+                    }
+                }
+            }
+
+            else if (!entity.SmsCampaignId.HasValue && val.IsThanksCustomer.HasValue && val.IsThanksCustomer.Value)
+            {
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
+                entity.SmsCampaignId = campaign.Id;
+                entity.ResModel = "sale-order";
+                if (val.GuidIds.Any())
+                {
+                    foreach (var id in val.GuidIds)
+                    {
+                        entity.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
+                        {
+                            SaleOrderId = id
+                        });
+                    }
+                }
             }
 
             else if (!entity.SmsCampaignId.HasValue)
@@ -94,16 +153,16 @@ namespace Infrastructure.Services
                 var smsCampaignObj = GetService<ISmsCampaignService>();
                 var campaign = await smsCampaignObj.GetDefaultCampaign();
                 entity.SmsCampaignId = campaign.Id;
-            }
-
-            if (val.PartnerIds.Any())
-            {
-                foreach (var partnerId in val.PartnerIds)
+                entity.ResModel = "partner";
+                if (val.GuidIds.Any())
                 {
-                    entity.Partners.Add(new SmsMessagePartnerRel()
+                    foreach (var id in val.GuidIds)
                     {
-                        PartnerId = partnerId
-                    });
+                        entity.SmsMessagePartnerRels.Add(new SmsMessagePartnerRel()
+                        {
+                            PartnerId = id
+                        });
+                    }
                 }
             }
 
@@ -118,8 +177,25 @@ namespace Infrastructure.Services
             await using var context = DbContextHelper.GetCatalogDbContext(hostName, _configuration);
             try
             {
-                var partnerIds = entity.Partners.Select(x => x.PartnerId).ToList();
-                if (partnerIds != null && partnerIds.Any())
+                var partnerIds = new List<Guid>();
+                switch (entity.ResModel)
+                {
+                    case "partner":
+                        partnerIds = entity.SmsMessagePartnerRels.Select(x => x.PartnerId).ToList();
+                        break;
+                    case "appointment":
+
+                        break;
+                    case "sale-order":
+                        break;
+                    case "sale-order-line":
+                        break;
+                    default:
+                        break;
+                }
+
+
+                if (partnerIds.Any())
                 {
                     var companyId = CompanyId;
                     await smsSendMessageObj.CreateSmsMessageDetail(context, entity, partnerIds, companyId);
@@ -133,6 +209,25 @@ namespace Infrastructure.Services
             }
         }
 
+        //private async Task<string> PersonalizedContent(string body)
+        //{
+        //    var content = JsonConvert.DeserializeObject<Body>(body);
+        //    var messageContent = content.text
+        //        .Replace("{ten_khach_hang}", partner.Name.Split(' ').Last())
+        //        .Replace("{ho_ten_khach_hang}", partner.DisplayName)
+        //        .Replace("{ten_cong_ty}", company.Name)
+        //        .Replace("{ngay_sinh}", partner.Name)
+        //        .Replace("{gio_hen}", partner.Name)
+        //        .Replace("{ngay_hen}", partner.Name)
+        //        .Replace("{bac_si_lich_hen}", partner.Name)
+        //        .Replace("{bac_si_chi_tiet_dieu_tri}", partner.Name)
+        //        .Replace("{so_phieu_dieu_tri}", partner.Name)
+        //        .Replace("{dich_vu}", partner.Name)
+        //        .Replace("{danh_xung_khach_hang}", partner.Title != null ? partner.Title.Name : "");
+        //    return messageContent;
+        //}
+
+
         public async Task ActionCancel(IEnumerable<Guid> messIds)
         {
             var messes = await SearchQuery(x => messIds.Contains(x.Id)).ToListAsync();
@@ -140,6 +235,12 @@ namespace Infrastructure.Services
             {
                 await DeleteAsync(messes);
             }
+        }
+
+        public class Body
+        {
+            public string templateType { get; set; }
+            public string text { get; set; }
         }
     }
 }

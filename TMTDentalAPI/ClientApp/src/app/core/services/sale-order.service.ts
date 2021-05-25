@@ -61,6 +61,10 @@ export class SaleOrderService {
         return this.http.get<PagedResult2<SaleOrderBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
+    getSaleOrderForSms(val: any) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetSaleOrderForSms', { params: val });
+    }
+
     get(id): Observable<SaleOrderDisplay> {
         return this.http.get<SaleOrderDisplay>(this.baseApi + this.apiUrl + "/" + id);
     }
@@ -161,8 +165,8 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/CreateFastSaleOrder', val)
     }
 
-    printSaleOrder(id: string){
-        return this.http.get(this.baseApi + this.apiUrlPrint + '/Print' + '/' + id , {responseType:'text'} );
+    printSaleOrder(id: string) {
+        return this.http.get(this.baseApi + this.apiUrlPrint + '/Print' + '/' + id, { responseType: 'text' });
     }
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {
@@ -194,7 +198,7 @@ export class SaleOrderService {
     }
 
     getToSurveyPaged(val: any) {
-        return this.http.post(this.baseApi + this.apiUrl  + '/ToSurvey', val);
+        return this.http.post(this.baseApi + this.apiUrl + '/ToSurvey', val);
     }
 
     getLineForProductRequest(id): Observable<SaleOrderLineForProductRequest[]> {

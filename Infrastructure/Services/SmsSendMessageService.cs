@@ -66,6 +66,13 @@ namespace Infrastructure.Services
                 .Replace("{ten_khach_hang}", partner.Name.Split(' ').Last())
                 .Replace("{ho_ten_khach_hang}", partner.DisplayName)
                 .Replace("{ten_cong_ty}", company.Name)
+                .Replace("{ngay_sinh}", partner.Name)
+                .Replace("{gio_hen}", partner.Name)
+                .Replace("{ngay_hen}", partner.Name)
+                .Replace("{bac_si_lich_hen}", partner.Name)
+                .Replace("{bac_si_chi_tiet_dieu_tri}", partner.Name)
+                .Replace("{so_phieu_dieu_tri}", partner.Name)
+                .Replace("{dich_vu}", partner.Name)
                 .Replace("{danh_xung_khach_hang}", partner.Title != null ? partner.Title.Name : "");
             return messageContent;
         }

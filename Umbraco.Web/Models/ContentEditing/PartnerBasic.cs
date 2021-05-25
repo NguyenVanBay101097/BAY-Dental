@@ -129,6 +129,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? Month { get; set; }
         public bool? Active { get; set; }
         public bool? isBoth { get; set; } // get both customer and supplier
+        public bool? OrderDone { get; set; }
     }
 
     public class PartnerGetDebtPagedFilter
@@ -154,6 +155,19 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid MoveId { get; set; }
         public string MoveType { get; set; }
+    }
+
+    public class PartnerSaleOrderDone
+    {
+        public Guid Id { get; set; }
+        public string DisplayName { get; set; }
+        public string Phone { get; set; }
+        public string SaleOrderName { get; set; }
+        public Guid? SaleOrderId { get; set; }
+        public DateTime? DateDone { get; set; }
+        public string SaleOrderLineName { get; set; }
+        public IEnumerable<SaleOrderLineSmsSimple> SaleOrderLines { get; set; } = new List<SaleOrderLineSmsSimple>();
+        public decimal? Debit { get; set; }
     }
 
     public class PartnerPatch
