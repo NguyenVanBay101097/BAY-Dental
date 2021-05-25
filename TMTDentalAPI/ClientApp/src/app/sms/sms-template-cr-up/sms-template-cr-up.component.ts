@@ -61,6 +61,7 @@ export class SmsTemplateCrUpComponent implements OnInit {
 
   onSave() {
     if (this.formGroup.invalid) { return false; }
+    if (!this.template.text) return;
     var formValue = this.formGroup.value;
     formValue.body = JSON.stringify(this.template);
 

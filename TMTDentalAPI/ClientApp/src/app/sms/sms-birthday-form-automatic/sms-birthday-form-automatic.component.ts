@@ -154,6 +154,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
 
   onSave() {
     if (this.formGroup.invalid) return;
+    if (!this.template.text) return;
     var val = this.formGroup.value;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.dateSend = this.intlService.formatDate(val.dateTimeSend, "yyyy-MM-ddTHH:mm");

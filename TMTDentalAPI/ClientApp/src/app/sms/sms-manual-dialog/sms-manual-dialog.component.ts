@@ -155,9 +155,8 @@ export class SmsManualDialogComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-    if (this.formGroup.invalid) {
-      return false
-    };
+    if (this.formGroup.invalid) return false;
+    if (!this.template.text) return;
     var val = this.formGroup.value;
     if (this.isTemplateCopy && val.templateName == '') {
       return false

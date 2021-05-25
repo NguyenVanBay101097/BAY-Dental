@@ -38,6 +38,7 @@ export class SmsCampaignDetailComponent implements OnInit {
   dateTo: Date;
   filteredSmsAccount: any[];
   smsAccountId: string = "";
+  submitted = false;
 
   get f() { return this.formGroup.controls; }
 
@@ -190,6 +191,7 @@ export class SmsCampaignDetailComponent implements OnInit {
   }
 
   onSaveCampaign() {
+    this.submitted = true;
     if (this.formGroup.invalid) return false;
     var val = this.formGroup.value;
     if (val.typeDate == 'period') {

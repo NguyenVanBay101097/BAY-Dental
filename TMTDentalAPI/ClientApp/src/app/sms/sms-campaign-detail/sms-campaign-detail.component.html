@@ -109,7 +109,7 @@
                     </td>
                     <td class="o_td_value">
                         <input [attr.disabled]="!isEdit ? '' : null" class="form-control" formControlName="name" />
-                        <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
+                        <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
                             <div *ngIf="f.name.errors.required">Nhập tên chiến dịch</div>
                         </div>
                     </td>
@@ -141,11 +141,11 @@
                             <kendo-datepicker [attr.disabled]="!isEdit ? '' : null" class="w-fit-content"
                                 formControlName="endDateObj">
                             </kendo-datepicker>
-                            <div *ngIf="(f.startDateObj.errors || f.endDateObj.errors) && (f.startDateObj.touched || f.endDateObj.touched || f.startDateObj.dirty || f.endDateObj.dirty)"
+                            <div *ngIf="(f.startDateObj.errors || f.endDateObj.errors) && (f.startDateObj.touched || f.endDateObj.touched || f.startDateObj.dirty || f.endDateObj.dirty || submitted)"
                                 class="text-danger">
-                                <div *ngIf="f.startDateObj.errors.required || f.endDateObj.errors.required">Chọn
-                                    thời
-                                    gian chạy chiến dịch</div>
+                                <div *ngIf="f.startDateObj.errors.required || f.endDateObj.errors.required">
+                                    Chọn thời gian chạy chiến dịch
+                                </div>
                             </div>
                         </div>
                     </td>

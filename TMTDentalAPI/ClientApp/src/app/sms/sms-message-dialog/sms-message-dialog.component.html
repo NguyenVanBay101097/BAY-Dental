@@ -25,7 +25,7 @@
                                             </td>
                                             <td class="o_td_value">
                                                 <input class="form-control" formControlName="name" />
-                                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)"
+                                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
                                                     class="text-danger">
                                                     <div *ngIf="f.name.errors.required">Nhập tên tin nhắn</div>
                                                 </div>
@@ -36,12 +36,11 @@
                                                 <label class="o_form_label">Chọn chiến dịch</label>
                                             </td>
                                             <td class="o_td_value">
-                                                <kendo-combobox [data]="filteredSmsCampaign" ngbAutofocus
-                                                    [textField]="'name'" formControlName="smsCampaign"
-                                                    [filterable]="true" #smsCampaignCbx [valueField]="'id'"
+                                                <kendo-combobox [data]="filteredSmsCampaign" [textField]="'name'" [valueField]="'id'" 
+                                                    formControlName="smsCampaign" [filterable]="true" #smsCampaignCbx
                                                     (valueChange)="changeSmsCampaign($event)">
                                                 </kendo-combobox>
-                                                <div *ngIf="f.smsCampaign.errors && (f.smsCampaign.touched || f.smsCampaign.dirty)"
+                                                <div *ngIf="f.smsCampaign.errors && (f.smsCampaign.touched || f.smsCampaign.dirty || submitted)"
                                                     class="text-danger">
                                                     <div *ngIf="f.smsCampaign.errors.required">Chọn chiến dịch</div>
                                                 </div>
@@ -59,7 +58,7 @@
                                                         <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
                                                     </ng-template>
                                                 </kendo-combobox>
-                                                <div *ngIf="f.smsAccount.errors && (f.smsAccount.touched || f.smsAccount.dirty)"
+                                                <div *ngIf="f.smsAccount.errors && (f.smsAccount.touched || f.smsAccount.dirty || submitted)"
                                                     class="text-danger">
                                                     <div *ngIf="f.smsAccount.errors.required">Chọn brandname</div>
                                                 </div>
@@ -148,10 +147,9 @@
                                                 <label class="o_form_label">Chọn tin nhắn mẫu</label>
                                             </td>
                                             <td class="o_td_value">
-                                                <kendo-combobox [data]="filteredTemplate" ngbAutofocus
-                                                    [textField]="'name'" formControlName="template" [filterable]="true"
-                                                    #smsTemplateCbx (valueChange)="onChangeTemplate($event)"
-                                                    [valueField]="'id'">
+                                                <kendo-combobox [data]="filteredTemplate" [textField]="'name'" [valueField]="'id'"
+                                                    formControlName="template" [filterable]="true"
+                                                    #smsTemplateCbx (valueChange)="onChangeTemplate($event)">
                                                 </kendo-combobox>
                                             </td>
                                         </tr>

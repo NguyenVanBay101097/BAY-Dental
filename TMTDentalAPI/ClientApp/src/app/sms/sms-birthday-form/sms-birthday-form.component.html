@@ -13,8 +13,8 @@
                         <a routerLink="auto" class="nav-link px-3 py-1" routerLinkActive="active">Tự động</a>
                     </li>
                     <li class="nav-item">
-                        <a routerLink="statistic" routerLinkActive="active"
-                            [queryParams]="{campaignId:campaign ? campaign.id :''}" class="nav-link px-3 py-1">Tin đã gửi</a>
+                        <a routerLink="statistic" [queryParams]="{id: campaign ? campaign.id : campaignId}"
+                            class="nav-link px-3 py-1" routerLinkActive="active">Tin đã gửi</a>
                     </li>
                 </ul>
             </div>
