@@ -13,9 +13,9 @@
                         <label class="btn-sm btn btn-outline-primary active mr-2" (click)="onItemChange('esms')">
                             <input type="radio" checked autocomplete="off">E-SMS
                         </label>
-                        <label class="btn-sm btn btn-outline-success" (click)="onItemChange('fpt')">
+                        <!-- <label class="btn-sm btn btn-outline-success" (click)="onItemChange('fpt')">
                             <input type="radio" autocomplete="off">FPT
-                        </label>
+                        </label> -->
                     </div>
                 </div>
                 <div class="o_group">
@@ -38,7 +38,8 @@
                                         </td>
                                         <td colspan="1" style="width: 100%;">
                                             <input type="text" class="form-control"
-                                                [class.border-outline]="f.clientId.value==''" formControlName="clientId">
+                                                [class.border-outline]="f.clientId.value==''"
+                                                formControlName="clientId">
                                             <span *ngIf="f.clientId.value==''" class="text-danger">Nhập Client Id</span>
                                         </td>
                                         <span></span>
@@ -88,7 +89,8 @@
                                         </td>
                                         <td colspan="1" style="width: 100%;">
                                             <input type="text" class="form-control"
-                                                [class.border-outline]="f.secretkey.value==''" formControlName="secretkey">
+                                                [class.border-outline]="f.secretkey.value==''"
+                                                formControlName="secretkey">
                                             <span *ngIf="f.secretkey.value==''" class="text-danger">Nhập Secret Key
                                                 Secret</span>
                                         </td>

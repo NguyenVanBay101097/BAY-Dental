@@ -133,6 +133,7 @@ namespace TMTDentalAPI
                     };
                 });
 
+            #region -- Add Singlton, Scope of the service
             services.AddDbContext<IDbContext, CatalogDbContext>();
             services.AddScoped<IDbContext>(sp => sp.GetRequiredService<CatalogDbContext>());
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
@@ -346,7 +347,9 @@ namespace TMTDentalAPI
 
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
+            #endregion
 
+            #region -- Add profile mapper of entity
             Action<IMapperConfigurationExpression> mapperConfigExp = mc =>
             {
                 mc.AddProfile(new ProductCategoryProfile());
@@ -498,6 +501,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SmsCampaignProfile());
                 mc.AddProfile(new SmsMessageProfile());
             };
+
+            #endregion
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
             IMapper mapper = mappingConfig.CreateMapper();
