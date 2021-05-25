@@ -32,7 +32,9 @@ import { SmsMessageDetailDialogComponent } from "./sms-message-detail-dialog/sms
 import { SmsThanksFormComponent } from "./sms-thanks-form/sms-thanks-form.component";
 import { SmsThanksFormManualComponent } from "./sms-thanks-form-manual/sms-thanks-form-manual.component";
 import { SmsThanksFormAutomaticComponent } from "./sms-thanks-form-automatic/sms-thanks-form-automatic.component";
-import { SmsThanksCustomerService } from "./sms-thanks-customer.service";
+import { SmsCareAfterOrderFormComponent } from './sms-care-after-order-form/sms-care-after-order-form.component';
+import { SmsCareAfterOrderFormAutomaticComponent } from './sms-care-after-order-form-automatic/sms-care-after-order-form-automatic.component';
+import { SmsCareAfterOrderFormManualComponent } from './sms-care-after-order-form-manual/sms-care-after-order-form-manual.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +64,9 @@ import { SmsThanksCustomerService } from "./sms-thanks-customer.service";
     SmsThanksFormComponent,
     SmsThanksFormManualComponent,
     SmsThanksFormAutomaticComponent,
+    SmsCareAfterOrderFormComponent,
+    SmsCareAfterOrderFormAutomaticComponent,
+    SmsCareAfterOrderFormManualComponent,
   ],
   imports: [
     CommonModule,
@@ -82,7 +87,6 @@ import { SmsThanksCustomerService } from "./sms-thanks-customer.service";
     SmsComfirmDialogComponent,
     SmsPartnerListDialogComponent,
     SmsMessageDetailDialogComponent,
-  ],
-  exports: [SmsThanksCustomerService],
+  ]
 })
 export class SmsModule {}

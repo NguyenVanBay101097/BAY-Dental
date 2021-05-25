@@ -7,7 +7,6 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
-import { SmsThanksCustomerService } from '../sms-thanks-customer.service';
 
 @Component({
   selector: 'app-sms-thanks-form-manual',
@@ -34,8 +33,7 @@ export class SmsThanksFormManualComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private notificationService: NotificationService,
-    private intlService: IntlService,
-    private thanksService: SmsThanksCustomerService
+    private intlService: IntlService
   ) { }
 
   ngOnInit() {
