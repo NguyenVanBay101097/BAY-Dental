@@ -76,7 +76,7 @@
                                         <div *ngIf="f.name.errors.required">Nhập tên chương trình khuyến mãi</div>
                                     </div>
                                 </div>
-                                <div class="o_form_label">Tình trạng <span class="ml-3"
+                                <div class="o_form_label">Trạng thái <span class="ml-3"
                                         [ngClass]="getColorStatus(program.statusDisplay)">{{program.statusDisplay}}</span>
                                 </div>
                             </div>
@@ -191,8 +191,8 @@
                                                     <tr>
                                                         <td class="o_td_label">Phần trăm giảm giá</td>
                                                         <td class="w-70">
-                                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                                formControlName="discountPercentage">
+                                                            <kendo-numerictextbox [min]="0" [max]="100" [format]="'n0'"
+                                                                formControlName="discountPercentage" [autoCorrect]="true">
                                                             </kendo-numerictextbox>
                                                             <div *ngIf="f.discountPercentage.errors && (f.discountPercentage.touched || f.discountPercentage.dirty || submitted)"
                                                                 class="text-danger mb-1">
