@@ -19,7 +19,7 @@ export class SmsTemplateCrUpComponent implements OnInit {
   skip: number = 0;
   textareaLimit: number = 500;
   id: string;
-  templateTypeTab;
+  templateTypeTab: string = "template";
   template: any = {
     text: null,
     templateType: 'text'
