@@ -10,6 +10,9 @@ import { SmsBirthdayFormManualComponent } from './sms-birthday-form-manual/sms-b
 import { SmsBirthdayFormComponent } from './sms-birthday-form/sms-birthday-form.component';
 import { SmsCampaignDetailComponent } from './sms-campaign-detail/sms-campaign-detail.component';
 import { SmsCampaignListComponent } from './sms-campaign-list/sms-campaign-list.component';
+import { SmsCareAfterOrderFormAutomaticComponent } from './sms-care-after-order-form-automatic/sms-care-after-order-form-automatic.component';
+import { SmsCareAfterOrderFormManualComponent } from './sms-care-after-order-form-manual/sms-care-after-order-form-manual.component';
+import { SmsCareAfterOrderFormComponent } from './sms-care-after-order-form/sms-care-after-order-form.component';
 import { SmsMessageDetailStatisticComponent } from './sms-message-detail-statistic/sms-message-detail-statistic.component';
 import { SmsMessageStatisticComponent } from './sms-message-statistic/sms-message-statistic.component';
 import { SmsStatisticComponent } from './sms-statistic/sms-statistic.component';
@@ -35,6 +38,15 @@ const routes: Routes = [
       { path: '', redirectTo: 'manually', pathMatch: 'full' },
       { path: 'auto', component: SmsThanksFormAutomaticComponent },
       { path: 'manually', component: SmsThanksFormManualComponent },
+      { path: 'statistic', component: SmsMessageDetailStatisticComponent }
+    ]
+  },
+  {
+    path: 'care-after-order', component: SmsCareAfterOrderFormComponent,
+    children: [
+      { path: '', redirectTo: 'manually', pathMatch: 'full' },
+      { path: 'auto', component: SmsCareAfterOrderFormAutomaticComponent },
+      { path: 'manually', component: SmsCareAfterOrderFormManualComponent },
       { path: 'statistic', component: SmsMessageDetailStatisticComponent }
     ]
   },

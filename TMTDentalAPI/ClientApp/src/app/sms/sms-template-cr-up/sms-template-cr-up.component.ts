@@ -19,11 +19,11 @@ export class SmsTemplateCrUpComponent implements OnInit {
   skip: number = 0;
   textareaLimit: number = 500;
   id: string;
-  template: any =
-    {
-      text: null,
-      templateType: 'text'
-    };
+  templateTypeTab;
+  template: any = {
+    text: null,
+    templateType: 'text'
+  };
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,

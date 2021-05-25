@@ -94,6 +94,7 @@ export class SmsThanksFormManualComponent implements OnInit {
       modalRef.componentInstance.title = "Tạo tin gửi";
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
       modalRef.componentInstance.isThanksCustomer = true;
+      modalRef.componentInstance.templateTypeTab = "thanks";
       modalRef.result.then(
         result => {
 

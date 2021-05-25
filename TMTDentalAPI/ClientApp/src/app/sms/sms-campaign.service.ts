@@ -47,6 +47,10 @@ export class SmsCampaignService {
         return this.http.get(this.base_api + this.apiUrl + '/GetDefaultThanksCustomer')
     }
 
+    getDefaultCareAfterOrder() {
+        return this.http.get(this.base_api + this.apiUrl + '/GetDefaultCareAfterOrder')
+    }
+
     getPaged(val: any) {
         return this.http.get(this.base_api + this.apiUrl + '/GetPaged', { params: val })
     }

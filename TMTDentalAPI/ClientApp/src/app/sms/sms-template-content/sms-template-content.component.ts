@@ -10,19 +10,53 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class SmsTemplateContentComponent implements OnInit, OnChanges {
 
   formGroup: FormGroup;
+  @Input() type: any;
   @Input() template: any;
   @Input() textareaLength: any;
 
-  //cá nhân hóa
-  tabs = [
-    { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
-    { name: 'Họ tên khách hàng', value: '{ho_ten_khach_hang}' },
-    { name: 'Tên công ty', value: '{ten_cong_ty}' },
-    { name: 'Danh xưng khách hàng', value: '{danh_xung_khach_hang}' },
-  ];
+  tabs: Array<{name: string, value: string}> = [];
 
   selectArea_start: number = 0;
   selectArea_end: number = 0;
+
+  listTabs = {
+    "birthday": [
+      { name: 'Danh xưng', value: '{danh_xung}' },
+      { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
+      { name: 'Ngày sinh', value: '{ngay_sinh}' }
+    ], 
+    "appointment": [
+      { name: 'Danh xưng', value: '{danh_xung}' },
+      { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
+      { name: 'Giờ hẹn', value: '{gio_hen}' },
+      { name: 'Ngày hẹn', value: '{ngay_hen}' },
+      { name: 'Bác sĩ', value: '{bac_si}' }
+    ], 
+    "template": [
+      { name: 'Danh xưng', value: '{danh_xung}' },
+      { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
+      { name: 'Ngày sinh', value: '{ngay_sinh}' },
+      { name: 'Giờ hẹn', value: '{gio_hen}' },
+      { name: 'Ngày hẹn', value: '{ngay_hen}' },
+      { name: 'Bác sĩ', value: '{bac_si}' }
+    ], 
+    "care_after_order": [
+      { name: 'Danh xưng', value: '{danh_xung}' },
+      { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
+      { name: 'Số phiếu điều trị', value: '{so_phieu_dieu_tri}' },
+      { name: 'Dịch vụ', value: '{dich_vu}' },
+      { name: 'Bác sĩ', value: '{bac_si}' }
+    ], 
+    "thanks": [
+      { name: 'Danh xưng', value: '{danh_xung}' },
+      { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
+    ], 
+    "campaign": [
+      { name: 'Danh xưng', value: '{danh_xung}' },
+      { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
+    ]
+  }
+
   constructor(
     private fb: FormBuilder
   ) { }
@@ -38,6 +72,10 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
     });
     this.textControl.markAsTouched();
     this.textControl.markAsDirty();
+
+    if (this.listTabs[this.type]) {
+      this.tabs = this.listTabs[this.type];
+    }
   }
 
   get textControl() { return this.formGroup.get('text'); }

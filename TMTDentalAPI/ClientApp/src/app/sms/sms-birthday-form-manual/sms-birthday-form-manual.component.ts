@@ -95,6 +95,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
       modalRef.componentInstance.title = "Tạo tin gửi";
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
       modalRef.componentInstance.isBirthDayManual = true;
+      modalRef.componentInstance.templateTypeTab = "birthday";
       modalRef.result.then(
         result => {
 

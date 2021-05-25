@@ -31,11 +31,10 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   filteredTemplate: any[];
   textareaLimit: number = 200;
   isTemplateCopy = false;
-  template: any =
-    {
-      text: '',
-      templateType: 'text'
-    };
+  template: any = {
+    text: '',
+    templateType: 'text'
+  };
   public today: Date = new Date;
   public timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
   public timeRunJob: Date = new Date();
@@ -192,6 +191,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   addTemplate() {
     const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo mẫu tin';
+    modalRef.componentInstance.templateTypeTab = "birthday";
     modalRef.result.then((val) => {
       this.loadSmsTemplate();
     })

@@ -10,7 +10,11 @@
         </div>
         <div class="d-flex">
             <div>
-                <a *ngFor="let tab of tabs; let i = index" (click)="addToContent(tab.value)" style="background-color:#5dd3e6; border-radius: 90px; color: white;" class="btn-tab btn btn-sm mt-1 mr-1">{{tab.name}}</a>
+                <a *ngFor="let tab of tabs; let i = index" 
+                    (click)="addToContent(tab.value)" style="background-color:#5dd3e6; border-radius: 90px; color: white;" 
+                    class="btn-tab btn btn-sm mt-1 mr-1">
+                    {{tab.name}}
+                </a>
             </div>
             <div style="min-width: 50px;" class="ml-auto">
                 <span class="px-1">Kí tự - {{getLimitText()}}</span>

@@ -89,6 +89,7 @@ export class SmsCampaignListComponent implements OnInit {
   createMessage() {
     const modalRef = this.modalService.open(SmsMessageDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo tin nhắn';
+    modalRef.componentInstance.templateTypeTab = "campaign";
     modalRef.result.then((val) => {
       this.loadDataFromApi();
     })

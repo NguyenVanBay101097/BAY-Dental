@@ -95,6 +95,7 @@ export class SmsAppointmentFormManualComponent implements OnInit {
       modalRef.componentInstance.title = "Tạo tin gửi";
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
       modalRef.componentInstance.isAppointmentReminder = true;
+      modalRef.componentInstance.templateTypeTab = "appointment";
       modalRef.result.then(
         result => {
         }
