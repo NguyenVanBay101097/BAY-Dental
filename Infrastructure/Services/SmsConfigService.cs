@@ -32,6 +32,18 @@ namespace Infrastructure.Services
                 var campaign = await smsCampaignObj.GetDefaultCampaignAppointmentReminder();
                 entity.SmsCampaignId = campaign.Id;
             }
+            else if (!entity.SmsCampaignId.HasValue && entity.Type == "thanks-customer")
+            {
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
+                entity.SmsCampaignId = campaign.Id;
+            }
+            else if (!entity.SmsCampaignId.HasValue && entity.Type == "care-after-order")
+            {
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultCareAfterOrder();
+                entity.SmsCampaignId = campaign.Id;
+            }
             entity = await base.CreateAsync(entity);
             ActionRunJob(entity);
             return entity;
@@ -52,7 +64,19 @@ namespace Infrastructure.Services
                 var campaign = await smsCampaignObj.GetDefaultCampaignAppointmentReminder();
                 entity.SmsCampaignId = campaign.Id;
             }
-            await base.UpdateAsync(entity);
+            else if (!entity.SmsCampaignId.HasValue && entity.Type == "thanks-customer")
+            {
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
+                entity.SmsCampaignId = campaign.Id;
+            }
+            else if (!entity.SmsCampaignId.HasValue && entity.Type == "care-after-order")
+            {
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultCareAfterOrder();
+                entity.SmsCampaignId = campaign.Id;
+                await base.UpdateAsync(entity);
+            }
         }
 
         public void ActionRunJob(SmsConfig model)
@@ -60,8 +84,34 @@ namespace Infrastructure.Services
             var hostName = _tenant != null ? _tenant.Hostname : "localhost";
             var jobIdApp = $"{hostName}_Sms_AppointmentAutomaticReminder";
             var jobIdBir = $"{hostName}_Sms_BirthdayAutomaticReminder";
+            var jobIdThanksCustomer = $"{hostName}_Sms_ThanksCustomerAutomaticReminder";
+            var jobIdCareAfterOrder = $"{hostName}_Sms_CareAfterTreatmentAutomaticReminder";
 
             if (model.Type == "appointment")
+            {
+                if (model.IsAppointmentAutomation)
+                {
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
+                }
+                else
+                {
+                    ActionStopJob(jobIdApp);
+                }
+            }
+
+            if (model.Type == "thanks-customer")
+            {
+                if (model.IsAppointmentAutomation)
+                {
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
+                }
+                else
+                {
+                    ActionStopJob(jobIdApp);
+                }
+            }
+
+            if (model.Type == "care-after-order")
             {
                 if (model.IsAppointmentAutomation)
                 {

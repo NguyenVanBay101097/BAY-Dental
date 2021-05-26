@@ -26,6 +26,8 @@ namespace ApplicationCore.Entities
         public bool IsBirthdayAutomation { get; set; }
 
         public bool IsAppointmentAutomation { get; set; }
+        public bool IsCareAfterOrderAutomation { get; set; }
+        public bool IsThanksCustomerAutomation { get; set; }
 
         public string Type { get; set; }
 
