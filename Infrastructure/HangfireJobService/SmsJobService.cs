@@ -42,12 +42,13 @@ namespace Infrastructure.HangfireJobService
 
                 if (smsConfig.IsAppointmentAutomation)
                     await RunAppointmentAutomatic(context, smsConfig);
+
                 else if (smsConfig.IsBirthdayAutomation)
                     await RunBirthdayAutomatic(context, smsConfig);
-                else if (smsConfig.IsThanksCustomerAutomation)
-                    await RunThanksCustomerAutomatic(context, smsConfig);
+
                 else if (smsConfig.IsCareAfterOrderAutomation)
                     await RunCareAfterOrderAutomatic(context, smsConfig);
+
                 transaction.Commit();
             }
             catch (Exception ex)
