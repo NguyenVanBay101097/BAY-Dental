@@ -153,7 +153,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       dateObj: null,
       addressCheckDetail: 0,
       title: null,
-      consultant: null,
+      agent: null,
       avatar: null
     });
 
@@ -264,7 +264,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         tap(() => (this.titleCbx.loading = true)),
         switchMap((value) => this.searchTitles(value))
       )
-      .subscribe((result) => {
+      .subscribe((result) => {     
         this.filteredTitles = result;
         this.titleCbx.loading = false;
       });
@@ -277,6 +277,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         switchMap((value) => this.searchAgents(value))
       )
       .subscribe((result) => {
+        console.log(result);
         this.filteredAgents = result.items;
         this.agentCbx.loading = false;
       });

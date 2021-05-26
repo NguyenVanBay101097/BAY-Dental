@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -57,7 +57,7 @@ export class AgentService {
   apiUrl = "api/Agents";
 
   getPaged(val): Observable<AgentPagging> {
-    return this.http.get<AgentPagging>(this.base_api + this.apiUrl, { params: val });
+    return this.http.get<AgentPagging>(this.base_api + this.apiUrl, { params: new HttpParams({fromObject: val}) });
   }
 
   get(id): Observable<AgentDisplay> {

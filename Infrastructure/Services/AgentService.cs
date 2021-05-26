@@ -28,7 +28,7 @@ namespace Infrastructure.Services
             var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => val.Search.Contains(x.Name));
+                query = query.Where(x => x.Name.Contains(val.Search));
                
 
             query = query.OrderByDescending(x => x.DateCreated);
