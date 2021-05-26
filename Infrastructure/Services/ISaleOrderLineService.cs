@@ -47,5 +47,7 @@ namespace Infrastructure.Services
         void ComputeResidual(IEnumerable<SaleOrderLine> self);
 
         Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids);
+
+        Task<PagedResult2<SmsCareAfterOrder>> GetPagedSmsCareAfterOrderAsync(SmsCareAfterOrderPaged val);
     }
 }

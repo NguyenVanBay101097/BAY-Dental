@@ -1,4 +1,4 @@
-import { Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -13,11 +13,9 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
   @Input() type: any;
   @Input() template: any;
   @Input() textareaLength: any;
+  @ViewChild('textarea', {static: false}) textarea: ElementRef;
 
   tabs: Array<{name: string, value: string}> = [];
-
-  selectArea_start: number = 0;
-  selectArea_end: number = 0;
 
   listTabs = {
     "birthday": [
@@ -79,43 +77,36 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
   }
 
   get textControl() { return this.formGroup.get('text'); }
+  get textValue() { return this.formGroup.get('text').value; }
 
-  onTextChange(e) {
-    this.textControl.setValue(e.target.value);
-    this.template.text = this.textControl.value;
-  }
-
-  selectArea(event) {
-    this.selectArea_start = event.target.selectionStart;
-    this.selectArea_end = event.target.selectionEnd;
+  onTextChange() {
+    this.template.text = this.textValue;
   }
 
   getLimitText() {
-    var text = this.formGroup.get('text').value;
-    if (text) {
-      return this.textareaLength - text.length;
-    } else {
-      return this.textareaLength;
-    }
+    return this.textValue ? this.textareaLength - this.textValue.length : this.textareaLength;
   }
 
-  addToContent(value) {
-    if (this.formGroup.value.text) {
+  addToContent(tabValue) {
+    const selectionStart = this.textarea.nativeElement.selectionStart;
+    const selectionEnd = this.textarea.nativeElement.selectionEnd;
+    var tabValueNew = tabValue;
+    if (this.textValue) {
+      tabValueNew = ((selectionStart > 0 && this.textValue[selectionStart - 1] == ' ') ? "" : " ") 
+                    + tabValue 
+                    + ((selectionEnd < this.textareaLength && this.textValue[selectionEnd] == ' ') ? "" : " ");
       this.formGroup.patchValue({
-        text: this.formGroup.value.text.slice(0, this.selectArea_start) + value + this.formGroup.value.text.slice(this.selectArea_end)
+        text: this.textValue.slice(0, selectionStart) 
+              + tabValueNew
+              + this.textValue.slice(this.textarea.nativeElement.selectionEnd)
       });
-      this.template.text = this.textControl.value;
     } else {
-      this.formGroup.patchValue({
-        text: value
-      });
-      this.template.text = this.textControl.value;
+      this.formGroup.patchValue({ text: tabValue });
     }
-    this.selectArea_start = this.selectArea_start + value.length;
-    this.selectArea_end = this.selectArea_start;
-    // this.content.nativeElement.focus();
-    // this.content.nativeElement.selectionEnd = this.selectArea_end;
-    // this.content.nativeElement.selectionStart = this.selectArea_start;
+    this.template.text = this.textValue;
+
+    this.textarea.nativeElement.focus();
+    this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
   }
 
 }

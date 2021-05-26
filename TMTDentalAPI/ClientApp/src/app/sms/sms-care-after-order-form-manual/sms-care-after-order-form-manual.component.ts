@@ -86,6 +86,7 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
 
   selectProduct(item) {
     this.productSelected = this.productSelected == item ? null : item;
+    
   }
 
   notify(type, content) {
