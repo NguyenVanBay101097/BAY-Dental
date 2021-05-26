@@ -52,31 +52,7 @@ namespace Infrastructure.Services
         public override async Task UpdateAsync(SmsConfig entity)
         {
             ActionRunJob(entity);
-            if (!entity.SmsCampaignId.HasValue && entity.Type == "birthday")
-            {
-                var smsCampaignObj = GetService<ISmsCampaignService>();
-                var campaign = await smsCampaignObj.GetDefaultCampaignBirthday();
-                entity.SmsCampaignId = campaign.Id;
-            }
-            else if (!entity.SmsCampaignId.HasValue && entity.Type == "appointment")
-            {
-                var smsCampaignObj = GetService<ISmsCampaignService>();
-                var campaign = await smsCampaignObj.GetDefaultCampaignAppointmentReminder();
-                entity.SmsCampaignId = campaign.Id;
-            }
-            else if (!entity.SmsCampaignId.HasValue && entity.Type == "thanks-customer")
-            {
-                var smsCampaignObj = GetService<ISmsCampaignService>();
-                var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
-                entity.SmsCampaignId = campaign.Id;
-            }
-            else if (!entity.SmsCampaignId.HasValue && entity.Type == "care-after-order")
-            {
-                var smsCampaignObj = GetService<ISmsCampaignService>();
-                var campaign = await smsCampaignObj.GetDefaultCareAfterOrder();
-                entity.SmsCampaignId = campaign.Id;
-                await base.UpdateAsync(entity);
-            }
+            await base.UpdateAsync(entity);
         }
 
         public void ActionRunJob(SmsConfig model)
@@ -91,7 +67,7 @@ namespace Infrastructure.Services
             {
                 if (model.IsAppointmentAutomation)
                 {
-                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunJob(hostName, model.Id), $"*/10 * * * *", TimeZoneInfo.Local);
                 }
                 else
                 {
@@ -101,9 +77,9 @@ namespace Infrastructure.Services
 
             if (model.Type == "thanks-customer")
             {
-                if (model.IsAppointmentAutomation)
+                if (model.IsThanksCustomerAutomation)
                 {
-                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdThanksCustomer, x => x.RunJob(hostName, model.Id), $"*/10 * * * *", TimeZoneInfo.Local);
                 }
                 else
                 {
@@ -113,9 +89,9 @@ namespace Infrastructure.Services
 
             if (model.Type == "care-after-order")
             {
-                if (model.IsAppointmentAutomation)
+                if (model.IsCareAfterOrderAutomation)
                 {
-                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdCareAfterOrder, x => x.RunJob(hostName, model.Id), $"*/10 * * * *", TimeZoneInfo.Local);
                 }
                 else
                 {

@@ -91,9 +91,9 @@ namespace TMTDentalAPI.Controllers
 
             if (val.HasAnyLabo.HasValue)
             {
-                 if (!val.HasAnyLabo.Value)
+                if (!val.HasAnyLabo.Value)
                     query = query.Where(x => !x.Labos.Any());
-                 else
+                else
                     query = query.Where(x => x.Labos.Any());
             }
 
@@ -125,12 +125,12 @@ namespace TMTDentalAPI.Controllers
             return Ok(paged);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetSmsCareAfterOrderManual([FromQuery]SmsCareAfterOrderPaged val)
-        {
-            var result = await _saleLineService.GetPagedSmsCareAfterOrderAsync(val);
+        //[HttpGet]
+        //public async Task<IActionResult> GetSmsCareAfterOrderManual([FromQuery] SmsCareAfterOrderPaged val)
+        //{
+        //    //var result = await _saleLineService.GetPagedSmsCareAfterOrderAsync(val);
 
-            return Ok(result);
-        }
+        //    return Ok();
+        //}
     }
 }
