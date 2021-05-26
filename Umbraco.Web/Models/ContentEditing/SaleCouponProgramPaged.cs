@@ -31,6 +31,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Status { get; set; }
 
         public IEnumerable<Guid> Ids { get; set; }
+
+        public DateTime? RuleDateFromBegin { get; set; }
+
+        public DateTime? RuleDateFromEnd { get; set; }
     }
 
     public class SaleCouponProgramResponse
@@ -64,6 +68,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// expired
         /// </summary>
         public string Status { get; set; }
+
+        public DateTime? RuleDateFromBegin { get; set; }
+
+        public DateTime? RuleDateFromEnd { get; set; }
     }
 
     public class SaleCouponProgramGetListPagedResponse

@@ -88,6 +88,7 @@ import { DashboardPartnerCustomerReportComponent } from './components/dashboard-
 import { DashboardSaleReportComponent } from './components/dashboard-sale-report/dashboard-sale-report.component';
 import { DashboardServiceTodayReportComponent } from './components/dashboard-service-today-report/dashboard-service-today-report.component';
 import { SaleOrderLineCuComponent } from '../sale-orders/sale-order-line-cu/sale-order-line-cu.component';
+import { CashBankTodayReportComponent } from './components/cash-bank-today-report/cash-bank-today-report.component';
 import { DateRangePickerFilterComponent } from './date-range-picker-filter/date-range-picker-filter.component';
 import { LocaleConfig, LOCALE_CONFIG } from './date-range-picker-filter/config/daterangepicker.config';
 import { DaterangepickerDirective } from './date-range-picker-filter/config/daterangepicker.directive';
@@ -176,6 +177,8 @@ const config: LocaleConfig = {};
         DashboardSaleReportComponent,
         DashboardServiceTodayReportComponent,
         SaleOrderLineCuComponent,
+        CashBankTodayReportComponent,
+        SaleOrderLineCuComponent,
         DateRangePickerFilterComponent,
         DaterangepickerDirective,
         DateRangePickerDropdownComponent
@@ -250,6 +253,8 @@ const config: LocaleConfig = {};
         DashboardPartnerCustomerReportComponent,
         DashboardSaleReportComponent,
         DashboardServiceTodayReportComponent,
+        SaleOrderLineCuComponent,
+        CashBankTodayReportComponent,
         SaleOrderLineCuComponent,
         DateRangePickerFilterComponent,
         DaterangepickerDirective,

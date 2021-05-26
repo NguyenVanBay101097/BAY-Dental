@@ -33,6 +33,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Basic.Advisory.Read")]
         public async Task<IActionResult> Get([FromQuery] AdvisoryPaged val)
         {
             var result = await _advisoryService.GetPagedResultAsync(val);
@@ -40,6 +41,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Basic.Advisory.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _advisoryService.GetAdvisoryDisplay(id);
@@ -60,6 +62,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.Advisory.Create")]
         public async Task<IActionResult> Create(AdvisorySave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -71,6 +74,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Basic.Advisory.Update")]
         public async Task<IActionResult> Update(Guid id, AdvisorySave val)
         {
             if (!ModelState.IsValid)
@@ -84,6 +88,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Basic.Advisory.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();

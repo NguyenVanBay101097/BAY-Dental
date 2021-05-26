@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ApplicationCore.Utilities;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
@@ -18,6 +19,14 @@ namespace Umbraco.Web.Models.ContentEditing
             DiscountMaxAmount = 0;
             AmountTotal = 0;
             DiscountApplyOn = "on_order";
+            RuleDateFrom = DateTime.Today;
+            RuleDateTo = DateTime.Today.AbsoluteEndOfDate();
+            MaximumUseNumber = 0;
+            NotIncremental = false;
+            PromoCodeUsage = "no_code_needed";
+            DiscountType = "percentage";
+            DiscountPercentage = 0;
+            DiscountFixedAmount = 0;
         }
 
         public Guid Id { get; set; }

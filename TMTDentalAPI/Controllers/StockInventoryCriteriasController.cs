@@ -28,7 +28,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        [CheckAccess(Actions = "Stock.Inventory.Read")]
+        [CheckAccess(Actions = "Stock.StockInventoryCriteria.Read")]
         public async Task<IActionResult> Get([FromQuery] StockInventoryCriteriaPaged val)
         {
             var result = await _SI_criteriaService.GetPagedResultAsync(val);
@@ -36,7 +36,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [CheckAccess(Actions = "Stock.Inventory.Read")]
+        [CheckAccess(Actions = "Stock.StockInventoryCriteria.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var employee = await _SI_criteriaService.GetByIdAsync(id);
@@ -46,7 +46,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        [CheckAccess(Actions = "Stock.Inventory.Create")]
+        [CheckAccess(Actions = "Stock.StockInventoryCriteria.Create")]
         public async Task<IActionResult> Create(StockInventoryCriteriaSave val)
         {
             var entity = _mapper.Map<StockInventoryCriteria>(val);
@@ -55,7 +55,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        [CheckAccess(Actions = "Stock.Inventory.Update")]
+        [CheckAccess(Actions = "Stock.StockInventoryCriteria.Update")]
         public async Task<IActionResult> Update(Guid id,StockInventoryCriteriaSave val)
         {
             var entity = await _SI_criteriaService.GetByIdAsync(id);
@@ -69,7 +69,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [CheckAccess(Actions = "Stock.Inventory.Delete")]
+        [CheckAccess(Actions = "Stock.StockInventoryCriteria.Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var entity = await _SI_criteriaService.GetByIdAsync(id);

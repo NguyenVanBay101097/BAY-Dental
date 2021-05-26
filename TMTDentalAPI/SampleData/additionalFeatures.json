@@ -3,6 +3,7 @@
     "Permissions": [ "Basic.Partner.Read" ],
     "Additionals": [
       "Catalog.History.Read",
+      "Basic.SaleOrder.Read",
       "Catalog.PartnerTitle.Read",
       "Basic.Appointment.Read",
       "Basic.DotKham.Read",

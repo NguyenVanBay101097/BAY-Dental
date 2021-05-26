@@ -1,56 +1,16 @@
-<div class="card-body">
-    <div *ngIf="!getToday" class="d-flex justify-content-around">
+<div class="card-body p-3">
+    <div *ngIf="!getToday" class="d-flex justify-content-center">
         <div class="t_report_item">
             <span class="font-weight-bold">TIỀN MẶT</span>
-            <h4 class="text-primary">
+            <h4 class="text-primary mb-0">
                 {{(reportValueCash ? reportValueCash : 0) | number}}
             </h4>
         </div>
         <div class="t_report_item">
             <span class="font-weight-bold">NGÂN HÀNG</span>
-            <h4 class="text-primary">
+            <h4 class="text-primary mb-0">
                 {{(reportValueBank ? reportValueBank : 0) | number}}
             </h4>
         </div>
     </div>
-    <table *ngIf="getToday" class="table border-none mb-0">
-        <thead>
-            <tr class="text-center">
-                <td colspan="2">
-                    <span class="font-weight-bold">THU TRONG NGÀY</span>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <span class="font-weight-bold">TIỀN MẶT</span>
-                </td>
-                <td class="text-right">
-                    <h5 class="text-primary">
-                        {{(reportValueCash ? reportValueCash : 0) | number}}
-                    </h5>
-                </td>
-            </tr>
-            <tr class="border_bottom">
-                <td>
-                    <span class="font-weight-bold">NGÂN HÀNG</span>
-                </td>
-                <td class="text-right">
-                    <h5 class="text-primary">
-                        {{(reportValueBank ? reportValueBank : 0) | number}}
-                    </h5>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <span class="font-weight-bold">TỔNG THU</span>
-                </td>
-                <td class="text-right">
-                    <h5 class="text-primary">
-                        {{((reportValueCash ? reportValueCash : 0) +
-                        (reportValueBank ? reportValueBank : 0)) | number}}
-                    </h5>
-                </td>
-            </tr>
-        </thead>
-    </table>
 </div>
