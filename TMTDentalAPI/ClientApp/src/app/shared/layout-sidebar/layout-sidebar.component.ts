@@ -188,7 +188,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhân viên', link: '/employees', permissions: ['Catalog.Employee.Read'] },
         { name: 'Thông số Labo', link: '/labo-orders/labo-managerment', permissions: ["Catalog.Products.Read", 'Catalog.LaboFinishLine.Read', 'Catalog.LaboBridge.Read', 'Catalog.LaboBiteJoint.Read'] },
         { name: 'Loại thu chi', link: '/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
-        { name: 'Tiêu chí kiểm kho', link: '/stock/criterias', permissions: ['Stock.Criteria.Read'] },
+        { name: 'Tiêu chí kiểm kho', link: '/stock/criterias', permissions: ['Stock.StockInventoryCriteria.Read'] },
         { name: 'Thông tin chẩn đoán răng', link: '/tooth-diagnosis', permissions: ['Catalog.ToothDiagnosis.Read'] },
         // { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' }},
         // { name: 'Vật liệu Labo', link: '/products/labos' },

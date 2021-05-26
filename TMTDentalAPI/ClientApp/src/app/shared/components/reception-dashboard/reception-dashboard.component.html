@@ -19,7 +19,7 @@
                         </div>
                     </div>
                 </a>
-                <a *ngIf="canPurchaseOrderLink" [routerLink]="['/purchase/orders/create']" [queryParams]="{type: 'order'}"
+                <!-- <a *ngIf="canPurchaseOrderLink" [routerLink]="['/purchase/orders/create']" [queryParams]="{type: 'order'}"
                     class="card bg-primary t_card">
                     <div class="card-body">
                         <div class="d-flex">
@@ -36,7 +36,7 @@
                             <span class="title-custom">PHIẾU ĐIỀU TRỊ NHANH</span>
                         </div>
                     </div>
-                </a>
+                </a> -->
                 <div class="t_card t_card_ghost"></div>
                 <div class="t_card t_card_ghost"></div>
             </div>
@@ -45,24 +45,22 @@
             <h4 class="header-title">BÁO CÁO HÔM NAY</h4>
             <div class="t_report_today_detail">
                 <div class="t_kanban_left">
-                    <div *ngIf="canSaleReport" class="card t_card_right border-secondary">
-                        <app-dashboard-sale-report></app-dashboard-sale-report>
-                    </div>
-                    <div *ngIf="canCashBankReport" class="card t_card_right border-secondary">
-                        <app-dashboard-cash-bank-report></app-dashboard-cash-bank-report>
-                    </div>
-                    <div *ngIf="canPartnerCustomerReport" class="card t_card_right border-secondary">
-                        <app-dashboard-partner-customer-report></app-dashboard-partner-customer-report>
-                    </div>
-                    <div *ngIf="canLaboOrderReport" class="card t_card_right border-secondary">
-                        <app-dashboard-labo-order-report></app-dashboard-labo-order-report>
-                    </div>
+                    <app-dashboard-sale-report *ngIf="canSaleReport" class="card t_card_right border-secondary">
+                    </app-dashboard-sale-report>
+                    <app-dashboard-cash-bank-report *ngIf="canCashBankReport"
+                        class="card t_card_right border-secondary"></app-dashboard-cash-bank-report>
+                    <app-dashboard-partner-customer-report *ngIf="canPartnerCustomerReport"
+                        class="card t_card_right border-secondary"></app-dashboard-partner-customer-report>
+                    <app-dashboard-labo-order-report *ngIf="canLaboOrderReport"
+                        class="card t_card_right border-secondary"></app-dashboard-labo-order-report>
                     <div class="t_card_right t_card_ghost"></div>
                     <div class="t_card_right t_card_ghost"></div>
                 </div>
                 <div class="t_kanban_right">
-                    <div *ngIf="canCashBankReport" class="card border-secondary">
-                        <app-dashboard-cash-bank-report [getToday]="true"></app-dashboard-cash-bank-report>
+                    <div *ngIf="canCashBankReport" class="card border-secondary"> 
+                        <div class="card-body p3">
+                            <app-cash-bank-today-report ></app-cash-bank-today-report>   
+                        </div>  
                     </div>
                 </div>
             </div>

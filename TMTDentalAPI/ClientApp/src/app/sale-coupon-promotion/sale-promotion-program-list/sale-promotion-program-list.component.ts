@@ -9,6 +9,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-sale-promotion-program-list',
@@ -36,6 +37,12 @@ export class SalePromotionProgramListComponent implements OnInit {
   listFilterStatus = this.listStatus;
   selectedStatus = null;
 
+  ruleDateFromBegin: Date;
+  ruleDateFromEnd: Date;
+
+  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+
   // permission
   canSaleCouponProgramCreate = this.checkPermissionService.check(["SaleCoupon.SaleCouponProgram.Create"]);
   canSaleCouponProgramUpdate = this.checkPermissionService.check(["SaleCoupon.SaleCouponProgram.Update"]);
@@ -44,10 +51,14 @@ export class SalePromotionProgramListComponent implements OnInit {
   constructor(private programService: SaleCouponProgramService, private route: ActivatedRoute, 
     private router: Router, private modalService: NgbModal, 
     private checkPermissionService: CheckPermissionService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private intlService: IntlService
   ) { }
 
   ngOnInit() {
+    this.ruleDateFromBegin = this.monthStart;
+    this.ruleDateFromEnd = this.monthEnd;
+
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(
@@ -57,6 +68,13 @@ export class SalePromotionProgramListComponent implements OnInit {
         this.skip = 0;
         this.loadDataFromApi();
       });
+  }
+
+  onDateSearchChange(data) {
+    this.ruleDateFromBegin = data.dateFrom;
+    this.ruleDateFromEnd = data.dateTo;
+    this.skip = 0;
+    this.loadDataFromApi();
   }
 
   filterChangeStatus(search: string) {
@@ -106,6 +124,9 @@ export class SalePromotionProgramListComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.active = this.filterActive;
+    val.ruleDateFromBegin = this.ruleDateFromBegin ? this.intlService.formatDate(this.ruleDateFromBegin, 'yyyy-MM-dd') : '';
+    val.ruleDateFromEnd = this.ruleDateFromEnd ? this.intlService.formatDate(this.ruleDateFromEnd, 'yyyy-MM-dd') : '';
+
     if (this.selectedStatus && this.selectedStatus.value) {
       val.status = this.selectedStatus.value;
     }

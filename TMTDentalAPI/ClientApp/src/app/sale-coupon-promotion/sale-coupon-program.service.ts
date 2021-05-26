@@ -57,6 +57,8 @@ export class SaleCouponProgramGetListPagedRequest {
     programType: string;
     active: boolean;
     status: string;
+    ruleDateFromBegin: string;
+    ruleDateFromEnd: string;
 }
 
 export class SaleCouponProgramGetListPagedResponse {

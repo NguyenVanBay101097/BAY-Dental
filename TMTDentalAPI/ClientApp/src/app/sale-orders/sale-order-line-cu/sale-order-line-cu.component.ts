@@ -124,6 +124,7 @@ export class SaleOrderLineCuComponent implements OnInit {
     this.formGroupInfo.get('toothType').setValue(this.line.toothType);
 
     this.loadTeethMap(this.line.toothCategory);
+    console.log(this.initialListEmployees);
     this.filteredEmployeesDoctor = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
     this.filteredEmployeesCounselor = this.initialListEmployees.slice();
     this.filteredEmployeesAssistant = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
@@ -131,12 +132,12 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   onEmployeeFilter(value) {
     this.filteredEmployeesDoctor = this.initialListEmployees
-      .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+      .filter((s) => s.isDoctor == true && s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
   }
 
   onEmployeeAssistant(value) {
     this.filteredEmployeesAssistant = this.initialListEmployees
-      .filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+      .filter((s) => s.isDoctor == true && s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1);
   }
 
   onEmployeeCounselor(value) {

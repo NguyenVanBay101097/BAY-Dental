@@ -35,11 +35,13 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <kendo-combobox class="kendo-combobox-sm mr-1" [placeholder]="'Lọc theo trạng thái'"
+            <kendo-combobox class="kendo-combobox-sm mr-2" [placeholder]="'Tất cả trạng thái'"
                 [popupSettings]="{width: 'auto'}" [filterable]="true" 
                 [data]="listFilterStatus" [valueField]="'value'" [textField]="'text'"
                 (valueChange)="valueChangeStatus($event)" (filterChange)="filterChangeStatus($event)">
             </kendo-combobox>
+            <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="ruleDateFromBegin" [dateTo]="ruleDateFromEnd" (searchChange)="onDateSearchChange($event)">
+            </app-tai-date-range-filter-dropdown>
         </div>
     </div>
 </div>

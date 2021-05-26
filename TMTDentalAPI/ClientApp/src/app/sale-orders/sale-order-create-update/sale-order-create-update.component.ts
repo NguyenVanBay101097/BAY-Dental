@@ -170,13 +170,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     var val = new EmployeePaged();
     val.limit = 0;
     val.offset = 0;
-    val.isDoctor = true;
     val.active = true;
 
     this.employeeService
-      .getEmployeeSimpleList(val)
-      .subscribe((result: any[]) => {
-        this.initialListEmployees = result;
+      .getEmployeePaged(val)
+      .subscribe((result: any) => {
+        this.initialListEmployees = result.items;
       });
   }
 

@@ -49,7 +49,8 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.Active == val.Active);
             }
-            if (!string.IsNullOrEmpty(val.Status))
+
+            if (!string.IsNullOrEmpty(val.Status) && val.Active == true)
             {
                 var now = DateTime.Today;
                 if (val.Status == "waiting")
@@ -68,6 +69,15 @@ namespace Infrastructure.Services
                 {
                     query = query.Where(x => now > x.RuleDateTo);
                 }
+            }
+
+            if (val.RuleDateFromBegin.HasValue)
+                query = query.Where(x => x.RuleDateFrom >= val.RuleDateFromBegin);
+
+            if (val.RuleDateFromEnd.HasValue)
+            {
+                var ruleDateFromEnd = val.RuleDateFromEnd.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.RuleDateFrom <= ruleDateFromEnd);
             }
 
             query = query.OrderByDescending(x => x.DateCreated);
@@ -132,6 +142,14 @@ namespace Infrastructure.Services
             if (val.Ids != null)
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => val.Ids.Contains(x.Id)));
 
+            if (val.RuleDateFromBegin.HasValue)
+                spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.RuleDateFrom >= val.RuleDateFromBegin));
+
+            if (val.RuleDateFromEnd.HasValue)
+            {
+                var ruleDateFromEnd = val.RuleDateFromEnd.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => x.RuleDateFrom <= ruleDateFromEnd));
+            }
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Sequence).ThenBy(s => s.RewardType));
             if (val.Limit > 0)
