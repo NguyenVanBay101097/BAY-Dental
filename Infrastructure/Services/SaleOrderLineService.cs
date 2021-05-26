@@ -655,5 +655,10 @@ namespace Infrastructure.Services
             //save changes
             await requestedObj.CreateAsync(toCreateRequested);
         }
+
+        public async Task<PagedResult2<SmsCareAfterOrder>> GetPagedSmsCareAfterOrderAsync(SmsCareAfterOrderPaged val)
+        {
+            return null;
+        }
     }
 }
