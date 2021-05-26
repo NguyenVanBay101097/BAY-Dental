@@ -2121,6 +2121,26 @@ namespace Infrastructure.Services
             var partnerIds = await query.Select(x => x.Id).ToListAsync();
             return partnerIds;
         }
+
+        public async Task<IEnumerable<PartnerSaleOrderDone>> GetPartnerOrderDone(PartnerPaged val)
+        {
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();
+            var today = DateTime.Today;
+            var today1 = DateTime.Now.Date;
+            var list =await saleOrderLineObj.SearchQuery(x => x.OrderPartnerId.HasValue && x.Order.State == "done" && x.Order.DateDone.HasValue && x.Order.DateDone.Value.Date == today).Include(x => x.Order).GroupBy(x => new { PartnerId = x.OrderPartnerId, PartnerName = x.OrderPartner.DisplayName, PartnerPhone = x.OrderPartner.Phone })
+                .Select(x => new PartnerSaleOrderDone
+                {
+                    Id = x.Key.PartnerId.Value,
+                    DisplayName = x.Key.PartnerName,
+                    Phone = x.Key.PartnerPhone,
+                    Debit = x.Sum(s => s.PriceSubTotal),
+                    SaleOrderLineName = string.Join(",", x.Select(s => s.Name)),
+                    SaleOrderName = string.Join(",", x.Select(s => s.Order.Name)),
+                    DateDone = x.Select(s => s.Order.DateDone).Max()
+                }).ToListAsync();
+            return list;
+        }
     }
 
     public class PartnerCreditDebitItem

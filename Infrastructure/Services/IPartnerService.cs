@@ -72,5 +72,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<PartnerBasic>> GetCustomerBirthDay(PartnerPaged val);
         Task<IEnumerable<PartnerBasic>> GetCustomerAppointments(PartnerPaged val);
         Task<IEnumerable<Guid>> GetPartnerForTCare(PartnerForTCarePaged val);
+        Task<IEnumerable<PartnerSaleOrderDone>> GetPartnerOrderDone(PartnerPaged val);
+
     }
 }

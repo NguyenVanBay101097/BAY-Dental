@@ -33,4 +33,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool IsListLabo { get; set; }
     }
+
+    public class SaleOrderLineSmsSimple
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public Guid ProductId { get; set; }
+        public ProductSimple Product { get; set; }
+    }
 }

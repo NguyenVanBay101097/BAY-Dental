@@ -13,7 +13,7 @@ namespace Umbraco.Web.Mapping
         public SmsMessageProfile()
         {
             CreateMap<SmsMessage, SmsMessageDisplay>()
-                .ForMember(x => x.Partners, x => x.MapFrom(s => s.Partners.Select(m => m.Partner)));
+                .ForMember(x => x.Partners, x => x.MapFrom(s => s.SmsMessagePartnerRels.Select(m => m.Partner)));
             CreateMap<SmsMessageSave, SmsMessage>();
         }
     }

@@ -90,9 +90,9 @@ namespace Infrastructure.HangfireJobService
                             PartnerId = id,
                             SmsMessageId = smsMessage.Id
                         };
-                        smsMessage.Partners.Add(rel);
+                        smsMessage.SmsMessagePartnerRels.Add(rel);
                     }
-                    context.SmsMessagePartnerRels.AddRange(smsMessage.Partners);
+                    context.SmsMessagePartnerRels.AddRange(smsMessage.SmsMessagePartnerRels);
                     await context.SaveChangesAsync();
                     smsMessage = await context.SmsMessages.Where(x => x.Id == smsMessage.Id).Include(x => x.SmsAccount).FirstOrDefaultAsync();
                     await _smsSendMessageService.CreateSmsMessageDetail(context, smsMessage, partnerIds, config.CompanyId);
@@ -138,9 +138,9 @@ namespace Infrastructure.HangfireJobService
                         PartnerId = item.Id,
                         SmsMessageId = smsMessage.Id
                     };
-                    smsMessage.Partners.Add(rel);
+                    smsMessage.SmsMessagePartnerRels.Add(rel);
                 }
-                context.SmsMessagePartnerRels.AddRange(smsMessage.Partners);
+                context.SmsMessagePartnerRels.AddRange(smsMessage.SmsMessagePartnerRels);
                 await context.SaveChangesAsync();
             }
         }
