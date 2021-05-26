@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { RouterModule } from '@angular/router';
@@ -88,7 +88,13 @@ import { DashboardPartnerCustomerReportComponent } from './components/dashboard-
 import { DashboardSaleReportComponent } from './components/dashboard-sale-report/dashboard-sale-report.component';
 import { DashboardServiceTodayReportComponent } from './components/dashboard-service-today-report/dashboard-service-today-report.component';
 import { SaleOrderLineCuComponent } from '../sale-orders/sale-order-line-cu/sale-order-line-cu.component';
+import { DateRangePickerFilterComponent } from './date-range-picker-filter/date-range-picker-filter.component';
+import { LocaleConfig, LOCALE_CONFIG } from './date-range-picker-filter/config/daterangepicker.config';
+import { DaterangepickerDirective } from './date-range-picker-filter/config/daterangepicker.directive';
+import { LocaleService } from './date-range-picker-filter/config/locale.service';
+import { DateRangePickerDropdownComponent } from './date-range-picker-filter/date-range-picker-dropdown/date-range-picker-dropdown.component';
 
+const config: LocaleConfig = {};
 @NgModule({
     declarations: [
         PopoverStateAppointmentComponent,
@@ -169,7 +175,10 @@ import { SaleOrderLineCuComponent } from '../sale-orders/sale-order-line-cu/sale
         DashboardPartnerCustomerReportComponent,
         DashboardSaleReportComponent,
         DashboardServiceTodayReportComponent,
-        SaleOrderLineCuComponent
+        SaleOrderLineCuComponent,
+        DateRangePickerFilterComponent,
+        DaterangepickerDirective,
+        DateRangePickerDropdownComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -241,7 +250,10 @@ import { SaleOrderLineCuComponent } from '../sale-orders/sale-order-line-cu/sale
         DashboardPartnerCustomerReportComponent,
         DashboardSaleReportComponent,
         DashboardServiceTodayReportComponent,
-        SaleOrderLineCuComponent
+        SaleOrderLineCuComponent,
+        DateRangePickerFilterComponent,
+        DaterangepickerDirective,
+        DateRangePickerDropdownComponent
     ],
     imports: [
         NgbModule,
@@ -259,7 +271,10 @@ import { SaleOrderLineCuComponent } from '../sale-orders/sale-order-line-cu/sale
             }
         })
     ],
-    providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService, FundBookService],
+    providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService, FundBookService,
+        { provide: LOCALE_CONFIG, useValue: config },
+        { provide: LocaleService, useClass: LocaleService, deps: [LOCALE_CONFIG] }
+    ],
     entryComponents: [
         ConfirmDialogComponent,
         ChangePasswordDialogComponent,
@@ -284,8 +299,11 @@ import { SaleOrderLineCuComponent } from '../sale-orders/sale-order-line-cu/sale
         LaboOrderCuDialogComponent,
         PartnerWebcamComponent,
         LaboFinnishLineImportComponent,
-        CashBookCuDialogComponent
+        CashBookCuDialogComponent,
+        DateRangePickerFilterComponent,
+        DateRangePickerDropdownComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule { }
+
