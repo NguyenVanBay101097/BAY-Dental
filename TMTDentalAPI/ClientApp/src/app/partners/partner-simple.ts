@@ -1,3 +1,4 @@
+import { AgentBasic } from './../agents/agent.service';
 import { EmployeeSimple } from '../employees/employee';
 import { HistorySimple } from '../history/history';
 import { ApplicationUserSimple } from '../appointment/appointment';
@@ -63,7 +64,8 @@ export class PartnerDisplay extends PartnerBasic {
     date: string;
     titleId: string;
     title: PartnerTitle;
-    consultant: EmployeeSimple;
+    agenId:string;
+    agent: AgentBasic;
 }
 
 export class PartnerSimpleInfo {

@@ -55,6 +55,7 @@ namespace TMTDentalAPI.Controllers
             var agent = _mapper.Map<Agent>(val);
             agent.CompanyId = CompanyId;
 
+            await _agentService.CreateAsync(agent);
 
             _unitOfWork.Commit();
 
@@ -64,7 +65,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "Catalog.Agent.Update")]
-        public async Task<IActionResult> Update(Guid id, CommissionDisplay val)
+        public async Task<IActionResult> Update(Guid id, AgentDisplay val)
         {
 
             var agent = await _agentService.SearchQuery(x => x.Id == id)

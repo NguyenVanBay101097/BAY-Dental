@@ -21,6 +21,9 @@ import { AgentService } from './agent.service';
     NgbModule,
   ], providers: [
     AgentService
-  ],
+  ], entryComponents:
+  [
+    AgentCreateUpdateDialogComponent
+  ]
 })
 export class AgentsModule { }

@@ -338,6 +338,7 @@ namespace TMTDentalAPI
 
             services.AddScoped<IQuotationPromotionService, QuotationPromotionService>();
             services.AddScoped<IQuotationPromotionLineService, QuotationPromotionLineService>();
+            services.AddScoped<IAgentService, AgentService>();
 
             services.AddMemoryCache();
 
@@ -503,6 +504,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SaleOrderPromotionLineProfile());
                 mc.AddProfile(new QuotationPromotionProfile());
                 mc.AddProfile(new QuotationPromotionLineProfile());
+                mc.AddProfile(new AgentProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
