@@ -13,8 +13,38 @@
     flex: 1;
 }
 
+.cate-item {
+    border-left: none;
+}
+
+.cate-item:not(.active):hover {
+    background-color: rgb(230, 226, 226);
+    cursor: pointer;
+}
+
+li {
+    cursor: pointer;
+}
+
+.cate-item:first-child {
+    border-top: none;
+}
+
+.edit_remove_action button {
+    background: none;
+    border: none;
+    margin-right: 5px;
+    border-style: none;
+    padding: 0;
+    outline: none;
+}
+
 .search-input {
     box-shadow: none;
+}
+
+.list-group-item {
+    border-radius: 0px !important;
 }
 
 .has-search .form-control {
@@ -36,7 +66,6 @@
     pointer-events: none;
     color: #aaa;
 }
-
 tbody>.cursor:hover {
     background-color: #c1c1c1;
 }

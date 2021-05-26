@@ -1,74 +1,58 @@
 <div class="pms-wrapper d-flex">
     <div class="pms-left border mr-2">
-        <div class="d-flex flex-column h-100">
-            <div class="pb-1 flex-0-0-auto has-search">
-                <span class="fa fa-search form-control-feedback"></span>
-                <input #searchInput class="form-control size-text-14" placeholder="Tìm kiếm dịch vụ" type="text"
-                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" (keyup)="onKeyUp($event);">
+        <div class="h-100 overflow-hidden d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-center border-bottom px-2 py-1 flex-0-0-auto">
+                <label class="font-weight-600" for="">Dịch vụ</label>
             </div>
-            <div class="flex--1-1-100 overflow-auto">
-                <table class="sticky-table table-sm">
-                    <thead>
-                        <tr>
-                            <th class="sticky-th">Dịch vụ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="cursor" (click)="selectProduct(item)"
-                            *ngFor="let item of listProducts;let i = index">
-                            <td class="sticky-td">{{item.Name}}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="search border-bottom flex-0-0-auto">
+                <div class="has-search">
+                    <span class="fa fa-search form-control-feedback"></span>
+                    <input [(ngModel)]="searchProduct" (ngModelChange)="searchProductUpdate.next($event)" 
+                        class="form-control size-text-14 border-0" placeholder="Tìm kiếm dịch vụ" type="text">
+                </div>
             </div>
+            <ul class="list-group flex-1-1-100 overflow-auto">
+                <li [ngClass]="{'active': productSelected && item.Id == productSelected.Id}" (click)="selectProduct(item)" 
+                    *ngFor="let item of listProducts;index as i" 
+                    class="list-group-item cate-item d-flex justify-content-between align-items-center">
+                    <span class="mr-1">{{item.Name}}</span>
+                </li>
+            </ul>
         </div>
     </div>
     <div class="pms-right border h-100 overflow-auto d-flex flex-column p-2">
-        <!-- <div class="flex-0-0-auto mb-3 d-flex align-items-center">
-            <div class="has-search mr-1 flex-fill">
+        <div class="flex-0-0-auto mb-2 d-flex align-items-center">
+            <div class="d-flex flex-fill">
+                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                </app-tai-date-range-filter-dropdown>
+                <button class="btn btn-sm btn-primary ml-2" (click)="createService()">Thêm mới</button>
+            </div>
+            <div class="has-search flex-fill">
                 <span class="fa fa-search form-control-feedback"></span>
                 <input [(ngModel)]="searchService" (ngModelChange)="this.searchServiceUpdate.next($event)"
                     class="form-control size-text-14" placeholder="Tìm kiếm theo mã hoặc tên ..." type="text">
             </div>
-            <div class="flex-fill">
-                <button class="btn btn-sm btn-primary mr-2" (click)="createService()">Thêm mới</button>
-                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="importFromExcel()">
-                    <i class="fas fa-upload"></i> Import
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="exportExcelFile()">
-                    <i class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
-                <button class="btn btn-sm btn-secondary mr-2" (click)="updateServiceFromExcel()">
-                    <i class="fas fa-upload"></i>
-                    Cập nhật Excel</button>
-
-            </div>
         </div>
         <div class="flex-1-1-100 h-100 overflow-hidden">
             <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+                [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds"
                 (pageChange)="pageChange($event)">
-                <kendo-grid-column field="name" title="Tên dịch vụ" width="250">
+                <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
+                <kendo-grid-column field="partnerName" title="Khách hàng" width="250">
                 </kendo-grid-column>
-                <kendo-grid-column field="defaultCode" title="Mã dịch vụ" width="100">
+                <kendo-grid-column field="partnerPhone" title="Số điện thoại">
                 </kendo-grid-column>
-                <kendo-grid-column field="categName" title="Nhóm dịch vụ" width="150">
+                <kendo-grid-column field="categName" title="Phiếu điều trị">
                 </kendo-grid-column>
-                <kendo-grid-column field="listPrice" class="text-right" title="Giá bán" width="150">
+                <kendo-grid-column field="doctorName" title="Bác sĩ">
+                </kendo-grid-column>
+                <kendo-grid-column title="Ngày hoàn thành điều trị">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.listPrice | number}}
-                    </ng-template>
-                </kendo-grid-column>
-                <kendo-grid-column field="id" width="100">
-                    <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                        Thao tác
-                    </ng-template>
-                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <button class="btn btn-success btn-sm mr-2" (click)="editService(dataItem)">
-                            <i class="far fa-edit"></i></button>
-                        <button class="btn btn-danger btn-sm" (click)="deleteService(dataItem)">
-                            <i class="far fa-trash-alt"></i></button>
+                        <span>{{dataItem.time}}</span>
+                        <span>, {{dataItem.date | date:'shortDate'}}</span>
                     </ng-template>
                 </kendo-grid-column>
             </kendo-grid>
-        </div> -->
+        </div>
     </div>
 </div>

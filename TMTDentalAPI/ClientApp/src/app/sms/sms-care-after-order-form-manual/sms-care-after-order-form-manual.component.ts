@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { fromEvent, Subject } from 'rxjs';
-import { distinctUntilChanged, filter } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductsOdataService } from 'src/app/shared/services/ProductsOdata.service';
 
@@ -12,9 +12,17 @@ import { ProductsOdataService } from 'src/app/shared/services/ProductsOdata.serv
 })
 export class SmsCareAfterOrderFormManualComponent implements OnInit {
 
-  @ViewChild("searchInput", { static: true }) searchInput: ElementRef;
   listProducts: any[] = [];
   totalListProducts: any[] = [];
+  searchProduct: string;
+  searchProductUpdate = new Subject<string>();
+  productSelected: any;
+  dateFrom: Date;
+  dateTo: Date;
+  monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+  monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+  search: string = '';
+  selectedIds: string[] = [];
   searchUpdate = new Subject<string>();
 
   constructor(
@@ -23,31 +31,20 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.searchInit();
-    this.loadDataDefault();
-  }
+    this.loadProducts();
 
-  searchInit() {
-    fromEvent(document, 'keyup').pipe(
-      filter((s: any) => s.keyCode === 113)
-    ).subscribe(s => {     
-      this.searchInput.nativeElement.focus();
-    });
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
 
-    this.searchUpdate
-      .pipe(distinctUntilChanged())
-      .subscribe((value) => {
-        this.onSearch(value);
+    this.searchProductUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(value => {
+        this.onSearchProduct(value);
       });
   }
-
-  onKeyUp(s) {
-    if (s.key === 'Enter' || s.keyCode === 13) {
-      if (this.listProducts) { this.selectProduct(this.listProducts[0]); }
-    }
-  }
-
-  loadDataDefault() {
+  
+  loadProducts() {
     const state = {
       filter: {
         logic: 'and',
@@ -63,34 +60,32 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
       orderby: 'DateCreated desc'
     };
 
-    this.productOdataService
-      .getFetch(state, options).subscribe(
-        (res: any) => {
-          this.listProducts = res.data;
-          this.totalListProducts = res.data.map(x => ({
-            ...x, searchString: x.Name.toLowerCase() + ' ' + x.NameNoSign.toLowerCase()
-              + ' ' + x.DefaultCode.toLowerCase()
-          }));
+    this.productOdataService.getFetch(state, options).subscribe(
+      (res: any) => {
+        this.listProducts = res.data;
+        this.totalListProducts = res.data.map(x => ({
+          ...x, searchString: x.Name.toLowerCase() + ' ' + x.NameNoSign.toLowerCase()
+            + ' ' + x.DefaultCode.toLowerCase()
+        }));
 
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 
-  onSearch(val) {
+  onSearchProduct(val) {
     val = val.trim().toLowerCase();
     if (val === '') {
       this.listProducts = this.totalListProducts;
-      return;
+    } else {
+      this.listProducts = this.totalListProducts.filter(x => x.searchString.includes(val));
     }
-    this.listProducts = this.totalListProducts.filter(x => x.searchString.includes(val));
-    return;
   }
 
   selectProduct(item) {
-
+    this.productSelected = this.productSelected == item ? null : item;
   }
 
   notify(type, content) {
