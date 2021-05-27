@@ -53,10 +53,10 @@
                                                 [title]="'Thời gian'" [dateTo]="dateTo"
                                                 (searchChange)="onSearchDateChange($event)">
                                             </app-tai-date-range-filter-dropdown>
-                                            <button class="btn btn-primary btn-sm mr-2 " title="Đóng tạm ứng"
+                                            <button class="btn btn-primary btn-sm mr-2 " title="Thu nợ"
                                                 (click)="createItem()">Thu nợ</button>
-                                            <button class="btn btn-primary btn-sm mr-2" *ngIf="amountBalance != 0"
-                                                title="Hoàn tạm ứng" (click)="createRefundModal()">Xuất file</button>
+                                            <button class="btn btn-primary btn-sm mr-2" 
+                                                title="xuất file" (click)="exportExcelFile()"> <i class="fas fa-download mr-2"></i>Xuất file</button>
                                         </div>
                                     </div>
                                 </div>

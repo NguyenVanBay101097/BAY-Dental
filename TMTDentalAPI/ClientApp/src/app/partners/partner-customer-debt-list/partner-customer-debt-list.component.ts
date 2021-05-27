@@ -140,4 +140,34 @@ export class PartnerCustomerDebtListComponent implements OnInit {
     this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
   }
 
+  exportExcelFile() {
+    var paged = new SaleOrderPaymentMethodFilter();
+    paged.limit = this.limit;
+    paged.offset = this.offset;
+    paged.partnerId = this.partnerId;
+    paged.journalType = 'debt';
+    paged.search = this.search || '';
+    paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
+
+    this.saleOrderPaymentService.exportCustomerDebtExcelFile(paged).subscribe((res) => {
+      let filename = "Sổ công nợ khách hàng";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
 }
