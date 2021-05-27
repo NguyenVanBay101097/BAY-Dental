@@ -50,15 +50,21 @@ namespace Infrastructure.Services
             return paged;
         }
 
-        public async Task<PagedResult2<SaleOrderPaymentHistoryAdvance>> GetPagedResultHistoryAdvanceAsync(HistoryAdvancePaymentFilter val)
+        public async Task<PagedResult2<SaleOrderPaymentMethodResult>> GetPagedResultPaymentMethodAsync(SaleOrderPaymentMethodFilter val)
         {
-            var journalObj = GetService<IAccountJournalService>();
             var paymentObj = GetService<IAccountPaymentService>();
-            var journalAdvance = await journalObj.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "advance" && x.Active).FirstOrDefaultAsync();
 
-            var query = paymentObj.SearchQuery(x => x.Journal.Type == "advance" && x.State == "posted");
+
+            var query = paymentObj.SearchQuery(x => x.State == "posted");
+
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId.Value);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.SaleOrderPaymentRels.Any(x => x.SaleOrder.Name.Contains(val.Search)));
+
+            if (!string.IsNullOrEmpty(val.JournalType))
+                query = query.Where(x => x.Journal.Type == val.JournalType);
 
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.PaymentDate >= val.DateFrom);
@@ -76,25 +82,29 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.Select(x => new SaleOrderPaymentHistoryAdvance
+            var items = await query.Select(x => new SaleOrderPaymentMethodResult
             {
                 PaymentName = x.Name,
                 PaymentDate = x.PaymentDate,
                 PaymentAmount = x.Amount,
-                Orders = x.SaleOrderPaymentAccountPaymentRels.Select(s => new SaleOrderBasic
+                Orders = x.SaleOrderPaymentAccountPaymentRels.Select(s => new SaleOrderSimple
                 {
                     Id = s.SaleOrderPayment.OrderId,
                     Name = s.SaleOrderPayment.Order.Name
                 })
             }).ToListAsync();
 
-            var paged = new PagedResult2<SaleOrderPaymentHistoryAdvance>(totalItems, val.Offset, val.Limit)
+            var paged = new PagedResult2<SaleOrderPaymentMethodResult>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };
 
             return paged;
         }
+
+
+
+
 
         public async Task<SaleOrderPaymentDisplay> GetDisplay(Guid id)
         {
@@ -397,7 +407,7 @@ namespace Infrastructure.Services
                 if (firstDayOfMonth < res.Date && res.Date > lastDayOfMonth)
                     throw new Exception("Bạn chỉ được hủy thanh toán trong tháng");
 
-                if(res.State == "cancel")
+                if (res.State == "cancel")
                     throw new Exception("Không thể hủy phiếu ở trạng thái hủy");
 
                 ///xử lý tìm các payment update state = "cancel" va hóa đơn thanh toán để xóa
@@ -452,6 +462,54 @@ namespace Infrastructure.Services
             await orderObj.UpdateAsync(order);
         }
 
+        public async Task<List<SaleOrderPaymentMethodResult>> GetCustomerDebtExportExcel(SaleOrderPaymentMethodFilter val)
+        {
+            var paymentObj = GetService<IAccountPaymentService>();
+
+
+            var query = paymentObj.SearchQuery(x => x.State == "posted");
+
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId.Value);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.SaleOrderPaymentRels.Any(x => x.SaleOrder.Name.Contains(val.Search)));
+
+            if (!string.IsNullOrEmpty(val.JournalType))
+                query = query.Where(x => x.Journal.Type == val.JournalType);
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.PaymentDate >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+            {
+                var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.PaymentDate <= dateOrderTo);
+            }
+
+            var totalItems = await query.CountAsync();
+
+            query = query.OrderByDescending(x => x.DateCreated);
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var debts = await query.Select(x => new SaleOrderPaymentMethodResult
+            {
+                PaymentName = x.Name,
+                PaymentDate = x.PaymentDate,
+                PaymentAmount = x.Amount,
+                Orders = x.SaleOrderPaymentAccountPaymentRels.Select(s => new SaleOrderSimple
+                {
+                    Id = s.SaleOrderPayment.OrderId,
+                    Name = s.SaleOrderPayment.Order.Name
+                })
+            }).ToListAsync();
+
+       
+
+            return debts;
+        }
 
         public override ISpecification<SaleOrderPayment> RuleDomainGet(IRRule rule)
         {
@@ -475,10 +533,10 @@ namespace Infrastructure.Services
                 ).FirstOrDefaultAsync();
 
             var result = _mapper.Map<SaleOrderPaymentPrintVM>(payment);
-            if (result == null) 
+            if (result == null)
                 return null;
 
-            result.User = _mapper.Map<ApplicationUserSimple>(payment.CreatedBy);        
+            result.User = _mapper.Map<ApplicationUserSimple>(payment.CreatedBy);
             return result;
 
         }

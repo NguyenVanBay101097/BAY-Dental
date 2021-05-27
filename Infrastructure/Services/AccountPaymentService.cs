@@ -1207,6 +1207,8 @@ namespace Infrastructure.Services
             return items;
         }
 
+  
+
         public override ISpecification<AccountPayment> RuleDomainGet(IRRule rule)
         {
             var userObj = GetService<IUserService>();

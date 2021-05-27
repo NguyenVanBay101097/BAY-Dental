@@ -157,7 +157,6 @@ export class CashBookCuDialogComponent implements OnInit {
 
   loadRecord() {
     this.phieuThuChiService.get(this.id).subscribe((result: any) => {
-      console.log(result);
       this.phieuThuChiDisplay = result;
       this.formGroup.patchValue(result);
       var date = new Date(result.date);

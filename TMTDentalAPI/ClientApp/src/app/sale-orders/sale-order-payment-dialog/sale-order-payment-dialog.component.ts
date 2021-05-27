@@ -147,7 +147,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   searchJournals(search?: string) {
     var val = new AccountJournalFilter();
-    val.type = "bank,cash,advance";
+    val.type = "bank,cash,advance,debt";
     val.search = search || "";
     val.companyId = this.authService.userInfo.companyId;
     return this.accountJournalService.autocomplete(val);

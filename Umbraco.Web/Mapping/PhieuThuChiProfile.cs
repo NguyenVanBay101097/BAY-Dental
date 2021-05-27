@@ -19,6 +19,16 @@ namespace Umbraco.Web.Mapping
                  .ForMember(x => x.LoaiThuChi, x => x.Ignore())
                  .ForMember(x => x.Journal, x => x.Ignore());
 
+            CreateMap<PhieuThuChi, CustomerDebtSave>();
+            CreateMap<CustomerDebtSave, PhieuThuChi>()
+                 .ForMember(x => x.Id, x => x.Ignore())
+                 .ForMember(x => x.Journal, x => x.Ignore());
+
+            CreateMap<PhieuThuChi, CommissionAgentSave>();
+            CreateMap<CommissionAgentSave, PhieuThuChi>()
+                 .ForMember(x => x.Id, x => x.Ignore())
+                 .ForMember(x => x.Journal, x => x.Ignore());
+
             CreateMap<PhieuThuChi, PhieuThuChiDisplay>();
             CreateMap<PhieuThuChi, PhieuThuChiPrintVM>();
         }

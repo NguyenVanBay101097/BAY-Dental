@@ -146,6 +146,36 @@ namespace TMTDentalAPI.Controllers
             return Ok(amountAdvance);
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetAmountDebtTotal(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var amountDebtTotal = await _partnerService.GetAmountDebtTotal(id);
+            _unitOfWork.Commit();
+
+            return Ok(amountDebtTotal);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetAmountDebtPaidTotal(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var amountDebtPaidTotal = await _partnerService.GetAmountDebtPaid(id);
+            _unitOfWork.Commit();
+
+            return Ok(amountDebtPaidTotal);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetAmountDebtBalance(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var amountDebtPaidTotal = await _partnerService.GetAmountDebtBalance(id);
+            _unitOfWork.Commit();
+
+            return Ok(amountDebtPaidTotal);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "Basic.Partner.Create")]
         public async Task<IActionResult> Create(PartnerDisplay val)

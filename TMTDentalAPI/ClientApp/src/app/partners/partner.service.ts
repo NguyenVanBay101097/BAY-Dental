@@ -527,6 +527,18 @@ export class PartnerService {
     getAmountAdvanceUsed(id){
         return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceUsed');
     }
+
+    getAmountDebtTotal(id){
+        return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountDebtTotal');
+    }
+
+    getAmountDebtPaidTotal(id){
+        return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountDebtPaidTotal');
+    }
+
+    getAmountDebtBalance(id){
+        return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountDebtBalance');
+    }
 }
 
 

@@ -17,22 +17,24 @@ export class SaleOrderPaymentPagging {
   items: SaleOrderPaymentBasic[];
 }
 
-export class HistoryAdvancePaymentFilter {
+export class SaleOrderPaymentMethodFilter {
   offset: number;
   limit: number;
   dateFrom: string;
   dateTo: string;
+  search: string;
   partnerId: string;
+  journalType: string;
 }
 
-export class HistoryPaymentAdvancePagging {
+export class HistoryPaymentMethodPagging {
   limit: number;
   offset: number;
   totalItems: number;
-  items: SaleOrderPaymentHistoryAdvance[];
+  items: SaleOrderPaymentMethodResult[];
 }
 
-export class SaleOrderPaymentHistoryAdvance {
+export class SaleOrderPaymentMethodResult {
   paymentName: string;
   paymentDate: Date;
   paymentAmount: number;
@@ -94,8 +96,8 @@ export class SaleOrderPaymentService {
     return this.http.get<SaleOrderPaymentPagging>(this.baseApi + this.apiUrl, { params: val });
   }
 
-  getHistoryAdvancePaged(val): Observable<HistoryPaymentAdvancePagging> {
-    return this.http.get<HistoryPaymentAdvancePagging>(this.baseApi + this.apiUrl + "/GetHistoryPaymentAdvance", { params: val });
+  getHistoryPaymentMethodPaged(val): Observable<HistoryPaymentMethodPagging> {
+    return this.http.get<HistoryPaymentMethodPagging>(this.baseApi + this.apiUrl + "/GetHistoryPaymentMethod", { params: val });
   }
 
   get(id): Observable<SaleOrderPaymentDisplay> {
@@ -124,6 +126,10 @@ export class SaleOrderPaymentService {
 
   getPrint(id) {
     return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint', )
+  }
+
+  exportCustomerDebtExcelFile(val){
+    return this.http.post(this.baseApi + this.apiUrl + '/ExportCustomerDebtExcelFile', val, { responseType: "blob" } );
   }
 
 }

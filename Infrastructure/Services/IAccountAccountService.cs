@@ -15,5 +15,8 @@ namespace Infrastructure.Services
         Task<AccountAccount> GetAccountIncomeCurrentCompany();
         Task<AccountAccount> GetAccount334CurrentCompany();
         Task<AccountAccount> GetAccountAdvanceCurrentCompany();
+
+        Task<AccountAccount> GetAccountCommissionAgentCompany();
+        Task<AccountAccount> GetAccountCustomerDebtCompany();
     }
 }

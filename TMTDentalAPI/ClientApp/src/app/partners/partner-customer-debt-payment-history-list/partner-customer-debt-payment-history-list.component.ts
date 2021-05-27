@@ -1,5 +1,4 @@
-import { AccountPaymentPaged } from './../../account-payments/account-payment.service';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -7,20 +6,20 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-import { SaleOrderPaymentMethodFilter, SaleOrderPaymentPaged, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
-import { PartnerService } from 'src/app/partners/partner.service';
+import { PhieuThuChiPaged, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PartnerService } from '../partner.service';
 
 @Component({
-  selector: 'app-partner-advance-history-list',
-  templateUrl: './partner-advance-history-list.component.html',
-  styleUrls: ['./partner-advance-history-list.component.css']
+  selector: 'app-partner-customer-debt-payment-history-list',
+  templateUrl: './partner-customer-debt-payment-history-list.component.html',
+  styleUrls: ['./partner-customer-debt-payment-history-list.component.css']
 })
-export class PartnerAdvanceHistoryListComponent implements OnInit {
-  @Input() partnerId: string;
+export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
-  
+  partnerId: string;
   search: string;
   limit = 20;
   offset = 0;
@@ -28,19 +27,19 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   loading = false;
-  
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
   constructor( private intlService: IntlService,
     private modalService: NgbModal,
     private partnerService: PartnerService,
+    private phieuthuchiService: PhieuThuChiService,
     private router: Router,
     private route: ActivatedRoute,
-    private notificationService: NotificationService,
-    private saleOrderPaymentService: SaleOrderPaymentService) { }
+    private notifyService: NotifyService,) { }
 
   ngOnInit() {
+    this.partnerId = this.route.parent.snapshot.paramMap.get('id');
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 
@@ -57,17 +56,17 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  loadDataFromApi() {
+  loadDataFromApi(){
     this.loading = true;
-    var paged = new SaleOrderPaymentMethodFilter();
+    var paged = new PhieuThuChiPaged();
     paged.limit = this.limit;
     paged.offset = this.offset;
     paged.partnerId = this.partnerId;
-    paged.journalType = 'advance';
+    paged.accountType = 'customer_debt';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
-    this.saleOrderPaymentService.getHistoryPaymentMethodPaged(paged).pipe(
-      map(response => (<GridDataResult>{
+    this.phieuthuchiService.getPaged(paged).pipe(
+      map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
       }))
@@ -92,8 +91,18 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  getFormSaleOrder(id){
-    this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
+  deleteItem(item: any) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa thanh toán công nợ';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa thanh toán công nợ ?';
+    modalRef.result.then(() => {
+      this.phieuthuchiService.delete(item.id).subscribe(() => {
+        this.notifyService.notify('success','Xóa thành công');
+        this.loadDataFromApi();
+      }, () => {
+      });
+    }, () => {
+    });
   }
 
 }

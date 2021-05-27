@@ -1,5 +1,4 @@
-import { AccountPaymentPaged } from './../../account-payments/account-payment.service';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -7,20 +6,20 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-import { SaleOrderPaymentMethodFilter, SaleOrderPaymentPaged, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
-import { PartnerService } from 'src/app/partners/partner.service';
+import { SaleOrderPaymentMethodFilter, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PartnerCustomerDebtPaymentDialogComponent } from '../partner-customer-debt-payment-dialog/partner-customer-debt-payment-dialog.component';
+import { PartnerService } from '../partner.service';
 
 @Component({
-  selector: 'app-partner-advance-history-list',
-  templateUrl: './partner-advance-history-list.component.html',
-  styleUrls: ['./partner-advance-history-list.component.css']
+  selector: 'app-partner-customer-debt-list',
+  templateUrl: './partner-customer-debt-list.component.html',
+  styleUrls: ['./partner-customer-debt-list.component.css']
 })
-export class PartnerAdvanceHistoryListComponent implements OnInit {
-  @Input() partnerId: string;
+export class PartnerCustomerDebtListComponent implements OnInit {
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
-  
+  partnerId: string;
   search: string;
   limit = 20;
   offset = 0;
@@ -28,19 +27,25 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   loading = false;
-  
+  amountDebtTotal = 0;
+  amountDebtPaidTotal = 0;
+  amountDebtBalanceTotal = 0;
+
+
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
-  constructor( private intlService: IntlService,
+  constructor(private intlService: IntlService,
     private modalService: NgbModal,
     private partnerService: PartnerService,
     private router: Router,
     private route: ActivatedRoute,
-    private notificationService: NotificationService,
+    private notifyService: NotifyService,
     private saleOrderPaymentService: SaleOrderPaymentService) { }
 
+
   ngOnInit() {
+    this.partnerId = this.route.parent.snapshot.paramMap.get('id');
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 
@@ -55,6 +60,9 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
 
 
     this.loadDataFromApi();
+    this.loadAmountDebtTotal();
+    this.loadAmountDebtPaidTotal();
+    this.loadAmountDebtBalanceTotal();
   }
 
   loadDataFromApi() {
@@ -63,7 +71,8 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
     paged.limit = this.limit;
     paged.offset = this.offset;
     paged.partnerId = this.partnerId;
-    paged.journalType = 'advance';
+    paged.journalType = 'debt';
+    paged.search = this.search || '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
     this.saleOrderPaymentService.getHistoryPaymentMethodPaged(paged).pipe(
@@ -92,7 +101,42 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  getFormSaleOrder(id){
+  loadAmountDebtTotal() {
+    this.partnerService.getAmountDebtTotal(this.partnerId).subscribe(rs => {
+      this.amountDebtTotal = rs;
+    });
+  }
+
+  loadAmountDebtPaidTotal() {
+    this.partnerService.getAmountDebtPaidTotal(this.partnerId).subscribe(rs => {
+      this.amountDebtPaidTotal = rs;
+    });
+  }
+
+  loadAmountDebtBalanceTotal() {
+    this.partnerService.getAmountDebtBalance(this.partnerId).subscribe(rs => {
+      this.amountDebtBalanceTotal = rs;
+    });
+  }
+
+
+  createItem() {
+    const modalRef = this.modalService.open(PartnerCustomerDebtPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thu công nợ khách hàng';
+    modalRef.componentInstance.type = 'thu';
+    modalRef.componentInstance.partnerId = this.partnerId;
+    modalRef.result.then(() => {
+      this.notifyService.notify('success', 'Thanh toán thành công');
+      this.loadDataFromApi();
+      this.loadAmountDebtTotal();
+      this.loadAmountDebtPaidTotal();
+      this.loadAmountDebtBalanceTotal();
+    }, er => { })
+  }
+
+
+
+  getFormSaleOrder(id) {
     this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
   }
 

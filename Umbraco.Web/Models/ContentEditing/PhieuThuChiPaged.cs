@@ -34,5 +34,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
 
         public Guid? CompanyId { get; set; }
+
+        public Guid? PartnerId { get; set; }
+
+        /// <summary>
+        /// commission
+        /// customer_debt
+        /// other
+        /// </summary>
+        public string AccountType { get; set; }
     }
 }

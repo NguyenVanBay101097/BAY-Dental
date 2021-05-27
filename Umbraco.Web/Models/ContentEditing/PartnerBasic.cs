@@ -526,6 +526,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<CustomerStatisticsDetails> Details { get; set; } = new List<CustomerStatisticsDetails>();
     }
 
+
+
     public class PartnerInfoVm
     {
         public Guid Id { get; set; }

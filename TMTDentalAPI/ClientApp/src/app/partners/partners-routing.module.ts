@@ -31,6 +31,7 @@ import { PartnerCustomerQuotationListComponent } from './partner-customer-quotat
 import { PartnerCustomerAdvisoryListComponent } from './partner-customer-advisory/partner-customer-advisory-list/partner-customer-advisory-list.component';
 import { PartnerAdvanceListComponent } from '../partner-advances/partner-advance-list/partner-advance-list.component';
 import { AuthGuard } from '../auth/auth.guard';
+import { PartnerCustomerDebtListComponent } from './partner-customer-debt-list/partner-customer-debt-list.component';
 
 const routes: Routes = [
   {
@@ -64,6 +65,7 @@ const routes: Routes = [
       { path: 'overview', component: PartnerOverviewComponent },
       { path: 'labo-orders', component: PartnerCustomerLaboOrdersComponentComponent },
       { path: 'treatment', component: PartnerCustomerTreatmentListComponent },
+      { path: 'debt', component: PartnerCustomerDebtListComponent },
     ]
   },
   {

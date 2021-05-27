@@ -70,5 +70,10 @@ namespace Infrastructure.Services
         Task<PagedResult2<PartnerGetDebtPagedItem>> GetDebtPaged(Guid id, PartnerGetDebtPagedFilter val);
         Task<decimal> GetAmountAdvanceBalance(Guid id);
         Task<decimal> GetAmountAdvanceUsed(Guid id);
+
+        Task<decimal> GetAmountDebtTotal(Guid id);
+        Task<decimal> GetAmountDebtPaid(Guid id);
+        Task<decimal> GetAmountDebtBalance(Guid id);
+
     }
 }
