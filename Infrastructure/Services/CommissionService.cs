@@ -107,11 +107,12 @@ namespace Infrastructure.Services
         public override ISpecification<Commission> RuleDomainGet(IRRule rule)
         {
             var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            var companyId = CompanyId;
             switch (rule.Code)
             {
                 case "sale.commission_comp_rule":
-                    return new InitialSpecification<Commission>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                    return new InitialSpecification<Commission>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
                 default:
                     return null;
             }

@@ -127,12 +127,14 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class HistoryPromotionReponse
     {
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
         public decimal AmountPromotion { get; set; }
         public DateTime? DatePromotion { get; set; }
         public string PartnerName { get; set; }
         public string SaleOrderName { get; set; }
         public Guid? SaleOrderId { get; set; }
+        public string SaleOrderLineName { get; set; }
+        public decimal? SaleOrderLinePriceTotal { get; set; }
     }
 
 }

@@ -287,7 +287,7 @@
                                                     <input type="radio" formControlName="discountApplyOn"
                                                         class="custom-control-input o_radio_input"
                                                         id="radio151_on_order" value="on_order"
-                                                        (change)="onChangeOption($event)">
+                                                        (change)="onChangeOption($event.target.value)">
                                                     <label class="custom-control-label o_form_label"
                                                         for="radio151_on_order">
                                                         Phiếu điều trị
@@ -342,7 +342,7 @@
                                                         class="custom-control-input o_radio_input"
                                                         value="specific_product_categories"
                                                         id="radio151_specific_product_categories"
-                                                        (change)="onChangeOption($event)">
+                                                        (change)="onChangeOption($event.target.value)">
                                                     <label class="custom-control-label o_form_label"
                                                         for="radio151_specific_product_categories">
                                                         Nhóm dịch vụ
@@ -378,7 +378,7 @@
                                                     <input type="radio" formControlName="discountApplyOn"
                                                         class="custom-control-input o_radio_input"
                                                         value="specific_products" id="radio151_specific_products"
-                                                        (change)="onChangeOption($event)">
+                                                        (change)="onChangeOption($event.target.value)">
                                                     <label class="custom-control-label o_form_label"
                                                         for="radio151_specific_products">
                                                         Dịch vụ
@@ -473,12 +473,12 @@
                         <div class="p-2">
                             <div class="custom-control custom-radio">
                                 <input type="radio" id="allPartner" class="custom-control-input" value="all"
-                                    (change)="onChangePartnerApplyOn($event)" formControlName="applyPartnerOn">
+                                    (change)="onChangePartnerApplyOn($event.target.value)" formControlName="applyPartnerOn">
                                 <label class="custom-control-label" for="allPartner">Tất cả khách hàng</label>
                             </div>
                             <div class="custom-control custom-radio">
                                 <input type="radio" id="specific_partner" class="custom-control-input"
-                                    (change)="onChangePartnerApplyOn($event)" value="specific_partners"
+                                    (change)="onChangePartnerApplyOn($event.target.value)" value="specific_partners"
                                     formControlName="applyPartnerOn">
                                 <label class="custom-control-label" for="specific_partner">Khách hàng</label>
                             </div>

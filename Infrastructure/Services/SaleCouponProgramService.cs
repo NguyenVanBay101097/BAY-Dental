@@ -567,7 +567,7 @@ namespace Infrastructure.Services
             else if (!string.IsNullOrEmpty(self.ApplyPartnerOn) && self.ApplyPartnerOn == "specific_partners" && !self.DiscountSpecificPartners.Any(x => x.PartnerId == order.PartnerId))
                 message.Error = "Mã khuyến mãi không áp dụng cho khách hàng này";
             else if (!string.IsNullOrEmpty(self.PromoCode) && (order.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
-                message.Error = "Mã khuyến mãi đã được áp dụng cho đơn hàng này";
+                message.Error = "Mã đang trùng CTKM đang áp dụng";
             else if (string.IsNullOrEmpty(self.PromoCode) && order.NoCodePromoPrograms.Select(x => x.Program).Contains(self))
                 message.Error = "Ưu đãi khuyến mãi đã được áp dụng cho đơn hàng này";
             else if (self.DiscountApplyOn != "on_order")
@@ -577,7 +577,7 @@ namespace Infrastructure.Services
             else if (order.Promotions.Any(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
                 message.Error = "Đang áp dụng khuyến mãi không cộng dồn. Vui lòng xóa các CTKM đó.";
             else if (self.NotIncremental == true && order.Promotions.Any(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgram != null))
-                message.Error = "Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ.";
+                message.Error = "Mã khuyến mãi này không dùng chung với khuyến mãi khác";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !saleObj._IsRewardInOrderLines(order, self))
                 message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
 
@@ -817,7 +817,7 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             if (self.Any(x => x.Active))
-                throw new Exception("Bạn không thể xóa chương trình đang hoạt động");
+                throw new Exception("Không thể xóa chương trình khuyến mãi đã kích hoạt");
             await DeleteAsync(self);
         }
 
@@ -848,11 +848,9 @@ namespace Infrastructure.Services
             foreach (var program in self)
             {
                 if (!program.Active)
-                    throw new Exception("Bạn không thể tạm ngừng CTKM chưa kích hoạt");
+                    continue;
                 if (program.RuleDateTo >= now)
                     program.IsPaused = true;
-                else
-                    throw new Exception("Chỉ có thể tạm ngừng các khuyến mãi đã kích hoạt đang chạy hoặc chưa chạy");
             }
 
             await UpdateAsync(self);

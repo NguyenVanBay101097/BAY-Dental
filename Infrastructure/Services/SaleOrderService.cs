@@ -448,15 +448,9 @@ namespace Infrastructure.Services
             var couponObj = GetService<ISaleCouponService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var order = await SearchQuery(x => x.Id == val.Id)
-             .Include(x => x.Promotions).ThenInclude(x => x.Lines)
-             .Include(x => x.OrderLines).ThenInclude(x => x.Promotions)
-              .Include(x => x.OrderLines).ThenInclude(x => x.Product)
-             .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
-             .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
-             .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
-             .Include("OrderLines.SaleOrderLineInvoice2Rels")
-             .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
-             .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move").FirstOrDefaultAsync();
+             .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+             .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines)
+             .FirstOrDefaultAsync();
 
             //Chương trình khuyến mãi sử dụng mã
             var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).Include(x => x.DiscountSpecificProducts)
@@ -1090,15 +1084,9 @@ namespace Infrastructure.Services
             var couponObj = GetService<ISaleCouponService>();
             var orderLineObj = GetService<ISaleOrderLineService>();
             var order = await SearchQuery(x => x.Id == val.Id)
-              .Include(x => x.Promotions).ThenInclude(x => x.Lines)
-              .Include(x => x.OrderLines).ThenInclude(x => x.Promotions)
-              .Include("OrderLines.Product")
-              .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
-              .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
-              .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
-              .Include("OrderLines.SaleOrderLineInvoice2Rels")
-              .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
-              .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move").FirstOrDefaultAsync();
+              .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+              .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines).FirstOrDefaultAsync();
+
             var soLineObj = GetService<ISaleOrderLineService>();
             var product_list = new List<ApplyPromotionProductListItem>();
             var ruleObj = GetService<IPromotionRuleService>();

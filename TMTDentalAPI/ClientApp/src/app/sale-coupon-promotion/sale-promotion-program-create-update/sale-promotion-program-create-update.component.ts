@@ -68,16 +68,16 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
     this.formGroup = this.fb.group({
       name: [null, Validators.required],
-      ruleMinimumAmount: [null],
+      ruleMinimumAmount: [0],
       discountType: 'percentage',
       discountPercentage: [0, Validators.required],
-      discountFixedAmount: [null],
+      discountFixedAmount: [0],
       validityDuration: 1,
       rewardType: 'discount',
       discountSpecificProducts: [null],
       discountSpecificProductCategories: [null],
       notIncremental: false,
-      discountMaxAmount: null,
+      discountMaxAmount: 0,
       promoCodeUsage: 'no_code_needed',
       ruleDateToObj: [endDate, Validators.required],
       ruleDateFromObj: [startDate, Validators.required],
@@ -106,6 +106,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
         })
       }
     });
+
+    this.handleFormControlsValueChange();
 
     this.loadListProducts();
     this.loadListProductCategories();
@@ -163,6 +165,36 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
   get f() {
     return this.formGroup.controls;
+  }
+
+  handleFormControlsValueChange() {
+    this.formGroup.get('applyPartnerOn').valueChanges.subscribe((e) => {
+      this.onChangePartnerApplyOn(e);
+    });
+
+    this.formGroup.get('promoCodeUsage').valueChanges.subscribe(e => {
+      this.ChangPromoCodeUsage(e);
+    });
+
+    this.formGroup.get('discountType').valueChanges.subscribe(e => {
+      this.ChangeDiscountType(e);
+    });
+
+    this.formGroup.get('discountType').valueChanges.subscribe(e => {
+      this.ChangeDiscountType(e);
+    });
+
+    this.formGroup.get('isApplyMaxDiscount').valueChanges.subscribe(e => {
+      this.checkApplyMaxDiscount(e);
+    });
+
+    this.formGroup.get('isApplyMinimumDiscount').valueChanges.subscribe(e => {
+      this.checkMinAmoutSaleOrder(e);
+    });
+
+    this.formGroup.get('discountApplyOn').valueChanges.subscribe(e => {
+      this.onChangeOption(e);
+    });
   }
 
   loadListProducts() {
@@ -354,9 +386,9 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   loadRecord() {
-    this.programService.get(this.id).subscribe(result => {
+    this.programService.get(this.id).subscribe((result: any) => {
       this.program = result;
-      this.formGroup.patchValue(result);
+      this.formGroup.patchValue(result, {emitEvent: true});
 
       this.formGroup.get('daysSelected').setValue(result.days || []);
       if (result.ruleDateFrom) {
@@ -519,8 +551,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     }
   }
 
-  onChangeOption(e) {
-    var value = e.target.value;
+  onChangeOption(value) {
     if (value == 'on_order') {
       this.f.discountSpecificProducts.setValue(null);
       this.f.discountSpecificProductCategories.setValue(null);
@@ -530,7 +561,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.f.discountSpecificProductCategories.updateValueAndValidity();
     }
     else if (value == 'specific_products') {
-      this.f.ruleMinimumAmount.setValue(null);
+      this.f.ruleMinimumAmount.setValue(0);
       this.f.isApplyMinimumDiscount.setValue(false);
       this.f.discountSpecificProductCategories.setValue(null);
       this.f.ruleMinimumAmount.clearValidators();
@@ -541,7 +572,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.f.discountSpecificProducts.updateValueAndValidity();
     }
     else {
-      this.f.ruleMinimumAmount.setValue(null);
+      this.f.ruleMinimumAmount.setValue(0);
       this.f.isApplyMinimumDiscount.setValue(false);
       this.f.discountSpecificProducts.setValue(null);
       this.f.ruleMinimumAmount.clearValidators();
@@ -553,8 +584,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     }
   }
 
-  onChangePartnerApplyOn(e) {
-    var val = e.target.value;
+  onChangePartnerApplyOn(val) {
     if (val == "specific_partners") {
       this.f.discountSpecificPartners.setValidators(Validators.required);
       this.f.discountSpecificPartners.updateValueAndValidity();

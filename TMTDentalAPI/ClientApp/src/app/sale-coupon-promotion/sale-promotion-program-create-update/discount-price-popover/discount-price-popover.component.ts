@@ -33,8 +33,8 @@ export class DiscountPricePopoverComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd;
+    // this.dateFrom = this.monthStart;
+    // this.dateTo = this.monthEnd;
     if(this.id){
       this.loadGridData();
     }
@@ -63,6 +63,7 @@ export class DiscountPricePopoverComponent implements OnInit {
     var val = new HistoryPromotionRequest();
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+    val.limit = this.pageSize;
     val.offSet = this.skip;
     val.searchOrder = this.search || '';
     val.saleCouponProgramId = this.id;
@@ -72,6 +73,7 @@ export class DiscountPricePopoverComponent implements OnInit {
         total: rs1.totalItems
       }))
     ).subscribe(rs2=>{
+      console.log(rs2)
       this.gridView = rs2;
     }, er => {
       console.log(er);
