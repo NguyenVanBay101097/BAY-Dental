@@ -5,7 +5,8 @@ import { SmsCampaignService } from '../sms-campaign.service';
 @Component({
   selector: 'app-sms-care-after-order-form',
   templateUrl: './sms-care-after-order-form.component.html',
-  styleUrls: ['./sms-care-after-order-form.component.css']
+  styleUrls: ['./sms-care-after-order-form.component.css'], 
+  host: {'class': 'h-100'}
 })
 export class SmsCareAfterOrderFormComponent implements OnInit {
   campaign: any;

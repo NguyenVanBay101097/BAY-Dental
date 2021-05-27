@@ -125,7 +125,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(paged);
         }
 
-        [HttpGet]
+        [HttpGet("[action]")]
         public async Task<IActionResult> GetSmsCareAfterOrderManual([FromQuery]SmsCareAfterOrderPaged val)
         {
             var result = await _saleLineService.GetPagedSmsCareAfterOrderAsync(val);

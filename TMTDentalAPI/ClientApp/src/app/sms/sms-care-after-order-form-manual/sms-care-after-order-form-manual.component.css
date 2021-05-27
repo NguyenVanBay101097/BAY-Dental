@@ -66,6 +66,11 @@ li {
     pointer-events: none;
     color: #aaa;
 }
+
+.k-widget.k-grid {
+    height: 100% !important;
+}
+
 tbody>.cursor:hover {
     background-color: #c1c1c1;
 }
