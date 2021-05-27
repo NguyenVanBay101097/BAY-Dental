@@ -28,7 +28,7 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
       { name: 'Giờ hẹn', value: '{gio_hen}' },
       { name: 'Ngày hẹn', value: '{ngay_hen}' },
-      { name: 'Bác sĩ', value: '{bac_si}' }
+      { name: 'Bác sĩ', value: '{bac_si_lich_hen}' }
     ], 
     "template": [
       { name: 'Danh xưng', value: '{danh_xung}' },

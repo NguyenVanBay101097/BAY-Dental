@@ -10,6 +10,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool IsAppointmentAutomation { get; set; }
 
+        public bool IsCareAfterOrderAutomation { get; set; }
+
+        public bool IsThanksCustomerAutomation { get; set; }
+
         public string Type { get; set; }
 
         public Guid? TemplateId { get; set; }
@@ -29,7 +33,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public bool IsBirthdayAutomation { get; set; }
+
         public bool IsAppointmentAutomation { get; set; }
+
+        public bool IsCareAfterOrderAutomation { get; set; }
+
+        public bool IsThanksCustomerAutomation { get; set; }
 
         public Guid? TemplateId { get; set; }
         public SmsTemplateBasic Template { get; set; }

@@ -42,8 +42,13 @@ namespace Infrastructure.HangfireJobService
 
                 if (smsConfig.IsAppointmentAutomation)
                     await RunAppointmentAutomatic(context, smsConfig);
+
                 else if (smsConfig.IsBirthdayAutomation)
                     await RunBirthdayAutomatic(context, smsConfig);
+
+                else if (smsConfig.IsCareAfterOrderAutomation)
+                    await RunCareAfterOrderAutomatic(context, smsConfig);
+
                 transaction.Commit();
             }
             catch (Exception ex)
@@ -56,7 +61,6 @@ namespace Infrastructure.HangfireJobService
         public async Task RunAppointmentAutomatic(CatalogDbContext context, SmsConfig config)
         {
             var now = DateTime.Now;
-            var time = DateTime.Now;
             if (!string.IsNullOrEmpty(config.TypeTimeBeforSend))
             {
                 var query = context.Appointments.AsQueryable();
@@ -83,16 +87,16 @@ namespace Infrastructure.HangfireJobService
                     smsMessage.Date = config.DateSend;
                     context.SmsMessages.Add(smsMessage);
                     await context.SaveChangesAsync();
-                    foreach (var id in partnerIds)
+                    foreach (var app in listAppointments)
                     {
-                        var rel = new SmsMessagePartnerRel()
+                        var rel = new SmsMessageAppointmentRel()
                         {
-                            PartnerId = id,
+                            AppointmentId = app.Id,
                             SmsMessageId = smsMessage.Id
                         };
-                        smsMessage.SmsMessagePartnerRels.Add(rel);
+                        smsMessage.SmsMessageAppointmentRels.Add(rel);
                     }
-                    context.SmsMessagePartnerRels.AddRange(smsMessage.SmsMessagePartnerRels);
+                    context.SmsMessageAppointmentRels.AddRange(smsMessage.SmsMessageAppointmentRels);
                     await context.SaveChangesAsync();
                     smsMessage = await context.SmsMessages.Where(x => x.Id == smsMessage.Id).Include(x => x.SmsAccount).FirstOrDefaultAsync();
                     await _smsSendMessageService.CreateSmsMessageDetail(context, smsMessage, partnerIds, config.CompanyId);
@@ -145,5 +149,52 @@ namespace Infrastructure.HangfireJobService
             }
         }
 
+        public async Task RunThanksCustomerAutomatic(CatalogDbContext context, SmsConfig config)
+        {
+            var now = DateTime.Now;
+            if (!string.IsNullOrEmpty(config.TypeTimeBeforSend))
+            {
+                var orders = await context.SaleOrders.Where(
+                    x => x.State == "done" &&
+                    x.DateDone.HasValue &&
+                    ((config.TypeTimeBeforSend == "hour" && x.DateDone.Value.AddHours(config.TimeBeforSend) <= now) ||
+                    (config.TypeTimeBeforSend == "day" && x.DateDone.Value.AddDays(config.TimeBeforSend) <= now))).ToListAsync();
+
+                if (orders.Any())
+                {
+                    var smsMessage = new SmsMessage();
+                    smsMessage.SmsAccountId = config.SmsAccountId;
+                    smsMessage.SmsCampaignId = config.SmsCampaignId;
+                    smsMessage.Id = GuidComb.GenerateComb();
+                    smsMessage.Name = $"Cảm ơn khách hàng tự động, ngày {DateTime.Today.ToString("dd-MM-yyyy")}";
+                    smsMessage.SmsTemplateId = config.TemplateId;
+                    smsMessage.Body = config.Body;
+                    smsMessage.State = "waiting";
+                    smsMessage.TypeSend = "automatic";
+                    smsMessage.Date = config.DateSend;
+                    context.SmsMessages.Add(smsMessage);
+                    await context.SaveChangesAsync();
+                    foreach (var or in orders)
+                    {
+                        var rel = new SmsMessageSaleOrderRel()
+                        {
+                            SaleOrderId = or.Id,
+                            SmsMessageId = smsMessage.Id
+                        };
+                        smsMessage.SmsMessageSaleOrderRels.Add(rel);
+                    }
+                    context.SmsMessageAppointmentRels.AddRange(smsMessage.SmsMessageAppointmentRels);
+                    await context.SaveChangesAsync();
+                    var partnerIds = orders.Select(x => x.PartnerId).ToList();
+                    smsMessage = await context.SmsMessages.Where(x => x.Id == smsMessage.Id).Include(x => x.SmsAccount).FirstOrDefaultAsync();
+                    await _smsSendMessageService.CreateSmsMessageDetail(context, smsMessage, partnerIds, config.CompanyId);
+                }
+            }
+        }
+
+        public Task RunCareAfterOrderAutomatic(CatalogDbContext context, SmsConfig config)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

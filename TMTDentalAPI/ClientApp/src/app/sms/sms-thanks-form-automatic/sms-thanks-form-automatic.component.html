@@ -57,7 +57,7 @@
                                                 <option class="form-control" value="day">Ngày
                                                 </option>
                                             </select>
-                                            <span class="ml-2 text-span">trước thời gian hẹn</span>
+                                            <span class="ml-2 text-span">sau khi hoàn thành phiếu điều trị</span>
                                         </td>
                                     </tr>
                                 </table>
@@ -91,9 +91,7 @@
                                             <label class="o_form_label">Nội dung</label>
                                         </td>
                                         <td colspan="1" style="width: 80%;">
-                                            <app-sms-template-content 
-                                                [type]="'thanks'"
-                                                [textareaLength]="textareaLimit"
+                                            <app-sms-template-content [type]="'thanks'" [textareaLength]="textareaLimit"
                                                 [template]="template">
                                             </app-sms-template-content>
                                             <p class="color-custom">(Lưu ý: Không nhập ký tự đặc biệt hoặc các từ khóa

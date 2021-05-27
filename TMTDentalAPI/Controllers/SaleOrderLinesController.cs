@@ -91,9 +91,9 @@ namespace TMTDentalAPI.Controllers
 
             if (val.HasAnyLabo.HasValue)
             {
-                 if (!val.HasAnyLabo.Value)
+                if (!val.HasAnyLabo.Value)
                     query = query.Where(x => !x.Labos.Any());
-                 else
+                else
                     query = query.Where(x => x.Labos.Any());
             }
 
