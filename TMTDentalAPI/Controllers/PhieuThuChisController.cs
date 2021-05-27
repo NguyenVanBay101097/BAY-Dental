@@ -176,6 +176,21 @@ namespace TMTDentalAPI.Controllers
             return Ok(new PrintData() { html = html });
         }
 
+        [AllowAnonymous]
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetPrint2(Guid id)
+        {
+            var res = await _phieuThuChiService.GetPrint(id);
+            if (res == null)
+                return NotFound();
+
+            res.AmountText = AmountToText.amount_to_text(res.Amount);
+
+            var html = _viewRenderService.Render("PhieuThuChi/Print2", res);
+
+            return Ok(new PrintData() { html = html });
+        }
+
         [HttpGet("[action]")]
         public async Task<IActionResult> ExportExcelFile([FromQuery] PhieuThuChiPaged val)
         {

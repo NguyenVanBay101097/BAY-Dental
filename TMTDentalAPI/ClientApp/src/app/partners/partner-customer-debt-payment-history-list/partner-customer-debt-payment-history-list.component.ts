@@ -10,6 +10,7 @@ import { PhieuThuChiPaged, PhieuThuChiService } from 'src/app/phieu-thu-chi/phie
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { PartnerService } from '../partner.service';
+import { PrintService } from "src/app/shared/services/print.service";
 
 @Component({
   selector: 'app-partner-customer-debt-payment-history-list',
@@ -35,6 +36,7 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
     private partnerService: PartnerService,
     private phieuthuchiService: PhieuThuChiService,
     private router: Router,
+    private printService: PrintService,
     private route: ActivatedRoute,
     private notifyService: NotifyService,) { }
 
@@ -89,6 +91,12 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
     this.dateTo = data.dateTo;
     this.offset = 0;
     this.loadDataFromApi();
+  }
+
+  printItem(item) {
+    this.phieuthuchiService.getPrint2(item.id).subscribe((data: any) => {
+      this.printService.printHtml(data.html);
+    });
   }
 
   deleteItem(item: any) {

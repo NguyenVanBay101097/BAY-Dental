@@ -31,6 +31,7 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<PhieuThuChi, PhieuThuChiDisplay>();
             CreateMap<PhieuThuChi, PhieuThuChiPrintVM>();
+            CreateMap<PhieuThuChi, PrintVM>();
         }
     }
 }

@@ -128,8 +128,11 @@ export class SaleOrderPaymentService {
     return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint', )
   }
 
-  exportCustomerDebtExcelFile(val){
-    return this.http.post(this.baseApi + this.apiUrl + '/ExportCustomerDebtExcelFile', val, { responseType: "blob" } );
+  exportCustomerDebtExcelFile(val: any) {
+    return this.http.get(this.baseApi + this.apiUrl + "/ExportCustomerDebtExcelFile", {
+      responseType: "blob",
+      params: val,
+    });
   }
 
 }

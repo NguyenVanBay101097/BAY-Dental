@@ -508,6 +508,23 @@ namespace Infrastructure.Services
             await DeleteAsync(phieuthuchi);
         }
 
+        public async Task<PrintVM> GetPrint(Guid id)
+        {
+            var res = await (SearchQuery(x => x.Id == id).Include(x => x.Company.Partner)
+                .Include(x => x.Partner)
+                .Include(x => x.CreatedBy)
+                .Include(x=>x.Journal)
+                ).FirstOrDefaultAsync();
+
+            var result = _mapper.Map<PrintVM>(res);
+            if (result == null)
+                return null;
+
+            result.User = _mapper.Map<ApplicationUserSimple>(res.CreatedBy);
+            return result;
+
+        }
+
         public async Task InsertModelsIfNotExists()
         {
             var modelObj = GetService<IIRModelService>();
