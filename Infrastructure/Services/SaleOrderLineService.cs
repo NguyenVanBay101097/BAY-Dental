@@ -796,7 +796,7 @@ namespace Infrastructure.Services
 
             if (program != null)
             {
-                var error_status = programObj._CheckPromotionApplySaleLine(program, orderLine);
+                var error_status = await programObj._CheckPromotionApplySaleLine(program, orderLine);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
                     await _CreateRewardLine(orderLine, program);
@@ -827,14 +827,14 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
 
             //Chương trình khuyến mãi sử dụng mã
-            var program = await programObj.SearchQuery(x => x.PromoCode == val.CouponCode)
+            var program = await programObj.SearchQuery(x => x.PromoCode == val.CouponCode && x.Active)
                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
                 .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
                 .Include(x => x.DiscountSpecificPartners)
                 .FirstOrDefaultAsync();
             if (program != null)
             {
-                var error_status = programObj._CheckPromotionApplySaleLine(program, orderLine);
+                var error_status = await programObj._CheckPromotionApplySaleLine(program, orderLine);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
                     await _CreateRewardLine(orderLine, program);

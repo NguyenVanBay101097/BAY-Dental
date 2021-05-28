@@ -29,7 +29,7 @@ namespace Infrastructure.Services
         CheckPromoCodeMessage _CheckPromotion(SaleCouponProgram self, SaleOrder order);
 
         CheckPromoCodeMessage _CheckQuotationPromotion(SaleCouponProgram self, Quotation quotation);
-        CheckPromoCodeMessage _CheckPromotionApplySaleLine(SaleCouponProgram self, SaleOrderLine line);
+        Task<CheckPromoCodeMessage> _CheckPromotionApplySaleLine(SaleCouponProgram self, SaleOrderLine line);
         CheckPromoCodeMessage _CheckPromotionApplyQuotationLine(SaleCouponProgram self, QuotationLine line);
         IEnumerable<SaleCouponProgram> _FilterOnMinimumAmount(IEnumerable<SaleCouponProgram> self, SaleOrder order);
         IEnumerable<SaleCouponProgram> _FilterOnMinimumAmount(SaleCouponProgram self, SaleOrder order);
