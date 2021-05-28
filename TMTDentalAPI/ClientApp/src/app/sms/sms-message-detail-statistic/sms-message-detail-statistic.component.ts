@@ -109,6 +109,8 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
         return "Brandname không tồn tại hoặc đã bị hủy";
       case "118":
         return "Loại tin nhắn không hợp lệ";
+      case "199":
+        return "Tin nhắn chứa các ký tự đặc biệt";
       default:
         return "Lý do khác";
     }

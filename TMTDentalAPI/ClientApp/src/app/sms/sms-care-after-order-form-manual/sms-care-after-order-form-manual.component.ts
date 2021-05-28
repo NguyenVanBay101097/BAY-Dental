@@ -6,6 +6,7 @@ import { fromEvent, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { SaleOrderLineService, SmsCareAfterOrderPaged } from 'src/app/core/services/sale-order-line.service';
 import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ProductsOdataService } from 'src/app/shared/services/ProductsOdata.service';
 
 @Component({
@@ -19,7 +20,7 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
   totalListProducts: any[] = [];
   searchProduct: string;
   searchProductUpdate = new Subject<string>();
-  productSelected: any;
+  productId: any;
   dateFrom: Date;
   dateTo: Date;
   monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
@@ -35,8 +36,8 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
 
   constructor(
     private notificationService: NotificationService,
-    private productOdataService: ProductsOdataService,
-    private saleOrderLineService: SaleOrderLineService, 
+    private productService: ProductService,
+    private saleOrderLineService: SaleOrderLineService,
     private intlService: IntlService,
   ) { }
 
@@ -53,45 +54,21 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
         this.onSearchProduct(value);
       });
   }
-  
+
   loadProducts() {
-    const state = {
-      filter: {
-        logic: 'and',
-        filters: [
-          { field: 'Type2', operator: 'eq', value: 'service' },
-          { field: 'Active', operator: 'eq', value: true }
-        ]
+    this.onSearchProduct().subscribe(
+      res => {
+        this.listProducts = res;
       }
-    };
-
-    const options = {
-      select: 'Id,Name,NameNoSign,DefaultCode,ListPrice',
-      orderby: 'DateCreated desc'
-    };
-
-    this.productOdataService.getFetch(state, options).subscribe(
-      (res: any) => {
-        this.listProducts = res.data;
-        this.totalListProducts = res.data.map(x => ({
-          ...x, searchString: x.Name.toLowerCase() + ' ' + x.NameNoSign.toLowerCase()
-            + ' ' + x.DefaultCode.toLowerCase()
-        }));
-
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+    )
   }
 
-  onSearchProduct(val) {
-    val = val.trim().toLowerCase();
-    if (val === '') {
-      this.listProducts = this.totalListProducts;
-    } else {
-      this.listProducts = this.totalListProducts.filter(x => x.searchString.includes(val));
-    }
+  onSearchProduct(q?: string) {
+    var productPaged = new ProductPaged();
+    productPaged.limit = 20;
+    productPaged.offset = 0;
+    productPaged.search = q || '';
+    return this.productService.autocomplete2(productPaged);
   }
 
   searchChangeDate(value) {
@@ -102,7 +79,7 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
   }
 
   selectProduct(item) {
-    this.productSelected = this.productSelected == item ? null : item;
+    this.productId = item ? item.id : '';
     this.loadDataFromApi();
   }
 
@@ -111,7 +88,7 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     this.filterPaged.limit = this.limit;
     this.filterPaged.offset = this.skip;
     this.filterPaged.search = this.search ? this.search : '';
-    this.filterPaged.productId = this.productSelected ? this.productSelected.Id : '';
+    this.filterPaged.productId = this.productId || '';
     this.filterPaged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
     this.filterPaged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : '';
     this.saleOrderLineService.getSmsCareAfterOrderManual(this.filterPaged).pipe(

@@ -74,6 +74,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SmsCareAfterOrder
     {
+        public Guid SaleOrderLineId { get; set; }
+        public Guid? PartnerId { get; set; }
         public string PartnerName { get; set; }
         public string PartnerPhone { get; set; }
         public string SaleOrderName { get; set; }
