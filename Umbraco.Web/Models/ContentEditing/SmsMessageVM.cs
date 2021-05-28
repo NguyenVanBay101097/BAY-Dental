@@ -67,7 +67,7 @@ namespace Umbraco.Web.Models.ContentEditing
         }
         public DateTime? Date { get; set; }
         /// <summary>
-        /// manual, reminder
+        /// manual, automaic
         /// </summary>
         public string TypeSend { get; set; }
         public string Name { get; set; }
@@ -78,6 +78,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
         public IEnumerable<Guid> GuidIds { get; set; } = new List<Guid>();
         public bool? IsBirthDayManual { get; set; }
+        public string ResModel { get; set; }
         public bool? IsAppointmentReminder { get; set; }
         public bool? IsThanksCustomer { get; set; }
         public bool? IsCareAfterOrder { get; set; }

@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using Hangfire;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using MyERP.Utilities;
@@ -16,20 +17,25 @@ namespace Infrastructure.Services
 {
     public class SmsSendMessageService : ISmsSendMessageService
     {
-        public async Task CreateSmsMessageDetail(CatalogDbContext context, SmsMessage smsMessage, IEnumerable<Guid> ids, Guid companyId)
+        private readonly CatalogDbContext _context;
+        public SmsSendMessageService(CatalogDbContext context)
+        {
+            _context = context;
+        }
+        public async Task CreateSmsMessageDetail(SmsMessage smsMessage, IEnumerable<Guid> ids, Guid companyId)
         {
             var listSms = new List<SmsMessageDetail>();
             var dictApp = new Dictionary<Guid, Appointment>();
-            var partners = await context.Partners.Where(x => ids.Contains(x.Id)).Include(x => x.Title).ToListAsync();
+            var partners = await _context.Partners.Where(x => ids.Contains(x.Id)).Include(x => x.Title).ToListAsync();
             if (smsMessage.ResModel == "appointment")
             {
                 var appIds = smsMessage.SmsMessageAppointmentRels.Select(x => x.AppointmentId).ToList();
-                dictApp = await context.Appointments.Where(x => appIds.Contains(x.Id)).Include(x => x.Doctor).ToDictionaryAsync(x => x.PartnerId, x => x);
+                dictApp = await _context.Appointments.Where(x => appIds.Contains(x.Id)).Include(x => x.Doctor).ToDictionaryAsync(x => x.PartnerId, x => x);
             }
-            var company = await context.Companies.Where(x => x.Id == companyId).FirstOrDefaultAsync();
+            var company = await _context.Companies.Where(x => x.Id == companyId).FirstOrDefaultAsync();
             foreach (var partner in partners)
             {
-                var content = await PersonalizedContent(context, smsMessage.Body, partner, company, dictApp);
+                var content = await PersonalizedContent(smsMessage.Body, partner, company, dictApp);
                 var sms = new SmsMessageDetail();
                 sms.Id = GuidComb.GenerateComb();
                 sms.Body = content;
@@ -42,31 +48,17 @@ namespace Infrastructure.Services
                 listSms.Add(sms);
             }
 
-            await context.SmsMessageDetails.AddRangeAsync(listSms);
-            await context.SaveChangesAsync();
+            smsMessage.State = "success";
+            _context.Entry(smsMessage).State = EntityState.Modified;
+            await _context.SmsMessageDetails.AddRangeAsync(listSms);
+            var smsIds = listSms.Select(x => x.Id);
 
-            var dict = await SendSMS(listSms, smsMessage.SmsAccount, context);
-            foreach (var item in listSms)
-            {
-                if (dict.ContainsKey(item.Id))
-                {
-                    item.State = dict[item.Id].Message;
-                    item.ErrorCode = dict[item.Id].CodeResult;
-                    context.Entry(item).State = EntityState.Modified;
-                }
-            }
-            var messError = dict.Values.Where(x => x.CodeResult != "100");
-            if (messError == null || !messError.Any())
-            {
-                smsMessage.State = "success";
-                context.Entry(smsMessage).State = EntityState.Modified;
-            }
-            await context.SaveChangesAsync();
+            BackgroundJob.Enqueue(() => SendSMS(listSms, smsMessage.SmsAccount));
+
+            await _context.SaveChangesAsync();
         }
 
-
-        private async Task<string> PersonalizedContent(
-            CatalogDbContext context, string body, Partner partner, Company company, Dictionary<Guid, Appointment> dictApp)
+        private async Task<string> PersonalizedContent(string body, Partner partner, Company company, Dictionary<Guid, Appointment> dictApp)
         {
             var content = JsonConvert.DeserializeObject<Body>(body);
             var messageContent = content.text
@@ -85,9 +77,8 @@ namespace Infrastructure.Services
             return messageContent;
         }
 
-        public async Task<Dictionary<Guid, ESMSSendMessageResponseModel>> SendSMS(IEnumerable<SmsMessageDetail> lines, SmsAccount account, CatalogDbContext context)
+        public async Task SendSMS(IEnumerable<SmsMessageDetail> lines, SmsAccount account)
         {
-            var dict = new Dictionary<Guid, ESMSSendMessageResponseModel>();
             if (account == null) throw new Exception("Bạn chưa cài đặt Brand Name");
             if (account.Provider == "fpt")
             {
@@ -117,68 +108,56 @@ namespace Infrastructure.Services
             }
             else if (account.Provider == "esms")
             {
-                var requestEsms = new List<ESMSSendMessageRequestModel>();
                 foreach (var line in lines)
                 {
                     var esms = new ESMSSendMessageRequestModel();
                     esms.Phone = line.Number;
-                    esms.SmsId = line.Id;
                     esms.ApiKey = account.ApiKey;
                     esms.SecretKey = account.Secretkey;
                     esms.Brandname = account.BrandName;
                     esms.Content = line.Body;
                     esms.SmsType = "2";
                     esms.IsUnicode = 1;
-                    requestEsms.Add(esms);
-                }
-                var responses = await ESmsSendSMS(requestEsms);
-                if (responses != null && responses.Any())
-                {
-                    foreach (var res in responses)
+                    var res = await ESmsSendSMS(esms);
+                    if (res != null)
                     {
-                        if (res.SmsSmsId.HasValue)
-                        {
-                            dict.Add(res.SmsSmsId.Value, res);
-                        }
+                        line.ErrorCode = res.CodeResult;
+                        line.State = res.Message;
                     }
+                    _context.Entry(line).State = EntityState.Modified;
                 }
+                await _context.SaveChangesAsync();
             }
-            return dict;
+
         }
 
-        public async Task<IEnumerable<ESMSSendMessageResponseModel>> ESmsSendSMS(IEnumerable<ESMSSendMessageRequestModel> vals)
+        public async Task<ESMSSendMessageResponseModel> ESmsSendSMS(ESMSSendMessageRequestModel val)
         {
-            var listReponse = new List<ESMSSendMessageResponseModel>();
-            foreach (var val in vals.ToList())
+            var model = new ESMSSendMessageResponseModel();
+            var url = "http://rest.esms.vn/MainService.svc/json/SendMultipleMessage_V4_post_json/";
+            var client = new HttpClient();
+            var jsonObject = JsonConvert.SerializeObject(val);
+            var content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
+            var result = await client.PostAsync(url, content);
+            if (result.IsSuccessStatusCode)
             {
-                var model = new ESMSSendMessageResponseModel();
-                var url = "http://rest.esms.vn/MainService.svc/json/SendMultipleMessage_V4_post_json/";
-                var client = new HttpClient();
-                var jsonObject = JsonConvert.SerializeObject(val);
-                var content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
-                var result = await client.PostAsync(url, content);
-                if (result.IsSuccessStatusCode)
-                {
-                    var response = await result.Content.ReadAsStringAsync();
-                    model = JsonConvert.DeserializeObject<ESMSSendMessageResponseModel>(response);
+                var response = await result.Content.ReadAsStringAsync();
+                model = JsonConvert.DeserializeObject<ESMSSendMessageResponseModel>(response);
 
-                    if (model != null && model.CodeResult.Equals("100"))
-                    {
-                        model.Message = "success";
-                    }
-                    else
-                    {
-                        model.Message = "fails";
-                    }
+                if (model != null && model.CodeResult.Equals("100"))
+                {
+                    model.Message = "success";
                 }
                 else
                 {
                     model.Message = "fails";
                 }
-                model.SmsSmsId = val.SmsId;
-                listReponse.Add(model);
             }
-            return listReponse;
+            else
+            {
+                model.Message = "fails";
+            }
+            return model;
         }
 
         public async Task<FPTAccessTokenResponseModel> FptGetAccessToken(SmsAccount account)
@@ -277,7 +256,6 @@ namespace Infrastructure.Services
             public string CodeResult { get; set; }
             public string CountRegenerate { get; set; }
             public string SMSID { get; set; }
-            public Guid? SmsSmsId { get; set; }
             public string Message { get; set; }
         }
 

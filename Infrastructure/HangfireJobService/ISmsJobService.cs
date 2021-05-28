@@ -10,8 +10,8 @@ namespace Infrastructure.HangfireJobService
     public interface ISmsJobService
     {
         Task RunJob(string db, Guid configId);
-        Task RunAppointmentAutomatic(CatalogDbContext context, SmsConfig config);
-        Task RunBirthdayAutomatic(CatalogDbContext context, SmsConfig config);
+        Task RunAppointmentAutomatic(string db, Guid configId);
+        Task RunBirthdayAutomatic(string db, Guid configId);
         Task RunThanksCustomerAutomatic(CatalogDbContext context, SmsConfig config);
         Task RunCareAfterOrderAutomatic(CatalogDbContext context, SmsConfig config);
     }

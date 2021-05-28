@@ -40,7 +40,7 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> ReSend(IEnumerable<Guid> ids)
         {
-            var details = await _smsMessageDetailService.SearchQuery(x => ids.Contains(x.Id)).Include(x => x.SmsAccount).ToListAsync();
+            var details = await _smsMessageDetailService.SearchQuery().Where(x => ids.Contains(x.Id)).Include(x => x.SmsAccount).ToListAsync();
             if (details != null && details.Any())
                 await _smsMessageDetailService.ReSendSms(details);
             return NoContent();

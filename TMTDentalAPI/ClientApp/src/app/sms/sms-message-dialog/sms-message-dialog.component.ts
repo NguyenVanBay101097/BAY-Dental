@@ -201,7 +201,8 @@ export class SmsMessageDialogComponent implements OnInit {
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.smsTemplateId = val.template ? val.template.id : null;
     val.body = this.template ? JSON.stringify(this.template) : '';
-    val.partnerIds = this.partnerIds;
+    val.resModel = "partner"
+    val.guidIds = this.partnerIds;
     if (val.typeSend == "automatic") {
       val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm");
     }

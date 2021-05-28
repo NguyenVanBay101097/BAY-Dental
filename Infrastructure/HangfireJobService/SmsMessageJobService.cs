@@ -21,12 +21,10 @@ namespace Infrastructure.HangfireJobService
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ISmsSendMessageService _smsSendMessageService;
-        public SmsMessageJobService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, ISmsSendMessageService smsSendMessageService)
+        public SmsMessageJobService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
-            _smsSendMessageService = smsSendMessageService;
         }
         public async Task RunJobFindSmsMessage(string db, Guid companyId)
         {
@@ -34,6 +32,7 @@ namespace Infrastructure.HangfireJobService
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
+                var smsMessageDetailService = new SmsMessageDetailService(null, null, null, context, null);
                 var now = DateTime.Now;
                 var query = context.SmsMessages.Where(
                     x => x.TypeSend == "automatic" &&
@@ -47,7 +46,7 @@ namespace Infrastructure.HangfireJobService
                     if (item.SmsMessagePartnerRels.Any())
                     {
                         var partnerIds = item.SmsMessagePartnerRels.Select(x => x.PartnerId).ToList();
-                        await _smsSendMessageService.CreateSmsMessageDetail(context, item, partnerIds, companyId);
+                        await smsMessageDetailService.CreateSmsMessageDetail(item, partnerIds, companyId);
                     }
                 }
                 transaction.Commit();

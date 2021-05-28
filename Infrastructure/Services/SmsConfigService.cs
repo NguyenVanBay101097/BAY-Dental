@@ -67,7 +67,7 @@ namespace Infrastructure.Services
             {
                 if (model.IsAppointmentAutomation)
                 {
-                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunJob(hostName, model.Id), $"*/10 * * * *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
                 }
                 else
                 {
@@ -75,35 +75,23 @@ namespace Infrastructure.Services
                 }
             }
 
-            if (model.Type == "thanks-customer")
-            {
-                if (model.IsThanksCustomerAutomation)
-                {
-                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdThanksCustomer, x => x.RunJob(hostName, model.Id), $"*/10 * * * *", TimeZoneInfo.Local);
-                }
-                else
-                {
-                    ActionStopJob(jobIdApp);
-                }
-            }
-
-            if (model.Type == "care-after-order")
-            {
-                if (model.IsCareAfterOrderAutomation)
-                {
-                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdCareAfterOrder, x => x.RunJob(hostName, model.Id), $"*/10 * * * *", TimeZoneInfo.Local);
-                }
-                else
-                {
-                    ActionStopJob(jobIdApp);
-                }
-            }
+            //if (model.Type == "care-after-order")
+            //{
+            //    if (model.IsCareAfterOrderAutomation)
+            //    {
+            //        RecurringJob.AddOrUpdate<ISmsJobService>(jobIdCareAfterOrder, x => x.RunJob(hostName, model.Id), $"*/10 * * * *", TimeZoneInfo.Local);
+            //    }
+            //    else
+            //    {
+            //        ActionStopJob(jobIdApp);
+            //    }
+            //}
 
             if (model.Type == "birthday")
             {
                 if (model.IsBirthdayAutomation)
                 {
-                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunJob(hostName, model.Id), $"0 8 * * *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
                 }
                 else
                 {

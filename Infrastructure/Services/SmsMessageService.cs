@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using AutoMapper;
+using Infrastructure.Data;
 using Infrastructure.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -21,12 +22,14 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly CatalogDbContext _context;
         private readonly AppTenant _tenant;
-        public SmsMessageService(IConfiguration configuration, ITenant<AppTenant> tenant, IMapper mapper, IAsyncRepository<SmsMessage> repository, IHttpContextAccessor httpContextAccessor) : base(repository, httpContextAccessor)
+        public SmsMessageService(CatalogDbContext context, IConfiguration configuration, ITenant<AppTenant> tenant, IMapper mapper, IAsyncRepository<SmsMessage> repository, IHttpContextAccessor httpContextAccessor) : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _tenant = tenant?.Value;
             _configuration = configuration;
+            _context = context;
         }
 
         private IQueryable<SmsMessage> GetQueryable(SmsMessagePaged val)
@@ -166,13 +169,27 @@ namespace Infrastructure.Services
                 }
             }
 
+            else
+            {
+                entity.ResModel = "partner";
+                if (val.GuidIds.Any())
+                {
+                    foreach (var id in val.GuidIds)
+                    {
+                        entity.SmsMessagePartnerRels.Add(new SmsMessagePartnerRel()
+                        {
+                            PartnerId = id
+                        });
+                    }
+                }
+            }
             entity = await CreateAsync(entity);
             return _mapper.Map<SmsMessageDisplay>(entity);
         }
 
         public async Task ActionSendSMS(SmsMessage entity)
         {
-            var smsSendMessageObj = GetService<ISmsSendMessageService>();
+            var smsMessageDetailObj = GetService<ISmsMessageDetailService>();
             var hostName = _tenant != null ? _tenant.Hostname : "localhost";
             await using var context = DbContextHelper.GetCatalogDbContext(hostName, _configuration);
             try
@@ -206,7 +223,7 @@ namespace Infrastructure.Services
                 if (partnerIds.Any())
                 {
                     var companyId = CompanyId;
-                    await smsSendMessageObj.CreateSmsMessageDetail(context, entity, partnerIds, companyId);
+                    await smsMessageDetailObj.CreateSmsMessageDetail(entity, partnerIds, companyId);
                     entity.State = "success";
                 }
                 await UpdateAsync(entity);
