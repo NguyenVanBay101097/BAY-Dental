@@ -72,8 +72,7 @@ export class SmsTemplateListComponent implements OnInit {
 
   createItem() {
     const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Tạo mẫu tin';
-    modalRef.componentInstance.templateTypeTab = "template";
+    modalRef.componentInstance.title = 'Thêm tin nhắn mẫu';
     modalRef.result.then((val) => {
       this.loadDataFromApi();
     })
@@ -81,9 +80,8 @@ export class SmsTemplateListComponent implements OnInit {
 
   editItem(dataItem) {
     const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = "Sửa mẫu tin";
+    modalRef.componentInstance.title = "Sửa tin nhắn mẫu";
     modalRef.componentInstance.id = dataItem.id;
-    modalRef.componentInstance.templateTypeTab = "template";
     modalRef.result.then(() => {
       this.loadDataFromApi();
     });
@@ -91,7 +89,7 @@ export class SmsTemplateListComponent implements OnInit {
 
   deleteItem(dataItem) {
     const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = "Xóa mẫu tin";
+    modalRef.componentInstance.title = "Xóa tin nhắn mẫu";
     modalRef.componentInstance.body = "Bạn chắc chắn muốn xóa";
     modalRef.result.then(() => {
       this.smsTemplateService.delete(dataItem.id).subscribe(res => {

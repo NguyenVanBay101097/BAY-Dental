@@ -19,11 +19,18 @@ export class SmsTemplateCrUpComponent implements OnInit {
   skip: number = 0;
   textareaLimit: number = 500;
   id: string;
-  templateTypeTab;
+  templateTypeTab: string = '';
   template: any = {
     text: null,
     templateType: 'text'
   };
+  listTemplates = [
+    { name: 'Chúc mừng sinh nhật', value: 'birthday' },
+    { name: 'Nhắc lịch hẹn', value: 'appointment' },
+    { name: 'Chăm sóc sau điều trị', value: 'care_after_order' },
+    { name: 'Cám ơn', value: 'thanks' },
+    { name: 'Chiến dịch khác', value: 'campaign' },
+  ]
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
@@ -37,6 +44,7 @@ export class SmsTemplateCrUpComponent implements OnInit {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       body: [this.template, Validators.required],
+      type: ['', Validators.required]
     })
 
     setTimeout(() => {
@@ -64,7 +72,6 @@ export class SmsTemplateCrUpComponent implements OnInit {
     if (!this.template.text) return;
     var formValue = this.formGroup.value;
     formValue.body = JSON.stringify(this.template);
-
     if (this.id) {
       this.smsTemplateService.update(this.id, formValue).subscribe(
         (res) => {
@@ -105,5 +112,7 @@ export class SmsTemplateCrUpComponent implements OnInit {
     }
 
   }
-
+  selectTemplate(value) {
+    this.templateTypeTab = value;
+  }
 }

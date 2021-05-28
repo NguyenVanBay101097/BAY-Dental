@@ -8,12 +8,12 @@
             <div *ngIf="textControl.errors.maxlength">Số kí tự đã vượt quá cho phép !</div>
         </div>
         <p class="color-custom">(Lưu ý: Không nhập ký tự đặc biệt hoặc các từ khóa quảng cáo)
-            <span class="text-primary t-tooltip ml-1" placement="top" [ngbTooltip]="tipContent">
+            <span class="text-primary t-tooltip ml-1" placement="top" [ngbTooltip]="tipContent" tooltipClass="my_class">
                 <i class="fas fa-exclamation-circle"></i>
             </span>
 
             <ng-template #tipContent>
-               
+                <app-sms-tooltips-content></app-sms-tooltips-content>
             </ng-template>
         </p>
         <div class="d-flex">

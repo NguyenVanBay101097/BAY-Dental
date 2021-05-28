@@ -6,6 +6,7 @@ export class SmsTemplateBasic {
   id: string;
   name: string;
   body: string;
+  type: string;
 }
 export class SmsTemplatePaging {
   offset: number;

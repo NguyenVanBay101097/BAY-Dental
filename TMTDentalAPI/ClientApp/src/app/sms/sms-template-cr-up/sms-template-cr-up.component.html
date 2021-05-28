@@ -14,13 +14,24 @@
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Tên</label>
+                                    <label class="o_form_label">Tiêu đề tin nhắn mẫu</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input placeholder="Nhập tên ....." class="form-control" formControlName="name" />
                                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tên</div>
                                     </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Loại tin nhắn mẫu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <select name="" id="" (change)="selectTemplate($event.target.value)" class="form-control" formControlName="type">
+                                        <option selected value=""><i class="fas fa-filter"></i>Loại tin</option>
+                                        <option [value]="item.value" *ngFor="let item of listTemplates">{{item.name}}</option>
+                                    </select>
                                 </td>
                             </tr>
                             <tr>
