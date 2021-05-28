@@ -33,7 +33,7 @@ namespace Infrastructure.Services
         public async Task Post(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.AccountMovePaymentRels)
+                .Include(x => x.AccountMovePaymentRels).ThenInclude(x => x.Move)
                 .Include(x => x.SaleOrderPaymentRels)
                 .Include(x => x.SaleOrderLinePaymentRels)
                 .Include(x => x.CardOrderPaymentRels)
@@ -258,13 +258,11 @@ namespace Infrastructure.Services
                         rec_pay_line_name += "Thanh toán nhà cung cấp";
                 }
 
-                //if (payment.AccountMovePaymentRels.Any())
-                //{
-                //    var moveObj = GetService<IAccountMoveService>();
-                //    var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId);
-                //    var move_names = await moveObj.SearchQuery(x => move_ids.Contains(x.Id)).Select(x => x.Name).ToListAsync();
-                //    rec_pay_line_name += $": {string.Join(", ", move_names)}";
-                //}
+                if (payment.AccountMovePaymentRels.Any())
+                {
+                    var move_origins = payment.AccountMovePaymentRels.Select(x => x.Move.InvoiceOrigin).ToList();
+                    rec_pay_line_name += $": {string.Join(", ", move_origins)}";
+                }
 
                 var liquidity_line_name = "";
                 if (payment.PaymentType == "transfer")
@@ -280,14 +278,14 @@ namespace Infrastructure.Services
                     Journal = payment.Journal,
                     PartnerId = payment.PartnerId,
                     CompanyId = payment.CompanyId,
-                    InvoiceOrigin = payment.Name
+                    InvoiceOrigin = payment.Name,
                 };
 
                 var lines = new List<AccountMoveLine>()
                 {
                     new AccountMoveLine
                     {
-                        Name = rec_pay_line_name,
+                        Name = !string.IsNullOrEmpty(payment.Communication) ? payment.Communication : rec_pay_line_name,
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         DateMaturity = payment.PaymentDate,

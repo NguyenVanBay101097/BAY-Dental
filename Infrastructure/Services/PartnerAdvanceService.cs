@@ -199,8 +199,6 @@ namespace Infrastructure.Services
 
             foreach (var item in res)
             {
-
-
                 ///ghi so
                 var moves = await _PreparePartnerAdvanceMovesAsync(res);
 
@@ -255,13 +253,14 @@ namespace Infrastructure.Services
                     Journal = partnerAdvance.Journal,
                     CompanyId = partnerAdvance.CompanyId,
                     PartnerId = partnerAdvance.PartnerId,
+                    InvoiceOrigin = partnerAdvance.Name
                 };
 
                 var lines = new List<AccountMoveLine>()
                 {
                     new AccountMoveLine
                     {
-                        Name = !string.IsNullOrEmpty(rec_pay_line_name) ? rec_pay_line_name : "/",
+                        Name =  !string.IsNullOrEmpty(partnerAdvance.Note) ? partnerAdvance.Note : rec_pay_line_name,
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         DateMaturity = partnerAdvance.Date,

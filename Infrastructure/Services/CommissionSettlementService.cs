@@ -213,7 +213,9 @@ namespace Infrastructure.Services
                     BaseAmount = x.BaseAmount,
                     Date = x.Date,
                     Percentage = x.Percentage,
-                    ProductName = x.Product.Name
+                    ProductName = x.Product.Name,
+                    PartnerName = x.MoveLine.Partner.Name,
+                    InvoiceOrigin = x.MoveLine.Move.InvoiceOrigin
                 }).ToListAsync();
 
             var totalItems = await query.CountAsync();

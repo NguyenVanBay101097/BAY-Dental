@@ -32,7 +32,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
 
   dateFrom: Date;
   dateTo: Date;
-  resultSelection = 'cash';
+  resultSelection = 'cash_bank';
 
   constructor(
     private modalService: NgbModal,
@@ -110,6 +110,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
           })
       ).subscribe(
         (res) => {
+          console.log(res);
           this.gridData = res;
           this.loading = false;
         },
