@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -8,6 +9,7 @@ import { SaleOrderLineService, SmsCareAfterOrderPaged } from 'src/app/core/servi
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ProductsOdataService } from 'src/app/shared/services/ProductsOdata.service';
+import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 
 @Component({
   selector: 'app-sms-care-after-order-form-manual',
@@ -38,6 +40,7 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     private notificationService: NotificationService,
     private productService: ProductService,
     private saleOrderLineService: SaleOrderLineService,
+    private modalService: NgbModal,
     private intlService: IntlService,
   ) { }
 
@@ -50,24 +53,29 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     this.searchProductUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
-      .subscribe(value => {
-        this.onSearchProduct(value);
+      .subscribe(() => {
+        this.loadProducts();
       });
   }
 
   loadProducts() {
     this.onSearchProduct().subscribe(
       res => {
+        if (res && res[0]) {
+          this.productId = res[0].id;
+        }
         this.listProducts = res;
+        this.loadDataFromApi();
       }
     )
   }
 
-  onSearchProduct(q?: string) {
+  onSearchProduct() {
     var productPaged = new ProductPaged();
     productPaged.limit = 20;
     productPaged.offset = 0;
-    productPaged.search = q || '';
+    productPaged.search = this.searchProduct || '';
+    productPaged.type = "service";
     return this.productService.autocomplete2(productPaged);
   }
 
@@ -114,5 +122,22 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: type, icon: true }
     });
+  }
+
+  onSend() {
+    if (this.selectedIds.length == 0) {
+      this.notify("Bạn phải chọn khách hàng trước khi gửi tin", false);
+    }
+    else {
+      var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
+      modalRef.componentInstance.title = "Tin nhắn chăm sóc sau điều trị";
+      modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
+      modalRef.componentInstance.isCareAfterOrder = true;
+      modalRef.componentInstance.templateTypeTab = "care_after_order";
+      modalRef.result.then(
+        result => {
+        }
+      )
+    }
   }
 }
