@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Infrastructure.Services;
@@ -18,43 +19,22 @@ namespace TMTDentalAPI.Controllers
         public AccountInvoiceReportsController(IAccountInvoiceReportService invoiceReportService, IProductService productService)
         {
             _productService = productService;
-           _invoiceReportService = invoiceReportService;
+            _invoiceReportService = invoiceReportService;
         }
 
-        [HttpPost("GetSummaryByTime")]
-        public async Task<IActionResult> GetSummaryByTime(AccountInvoiceReportByTimeSearch val)
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetRevenueReportPaged([FromQuery] AccountInvoiceReportPaged val)
         {
-            var res = await _invoiceReportService.GetSummaryByTime(val);
+            var res = await _invoiceReportService.GetRevenueReportPaged(val);
             return Ok(res);
         }
 
-        [HttpPost("GetDetailByTime")]
-        public async Task<IActionResult> GetDetailByTime(AccountInvoiceReportByTimeItem val)
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetRevenueReportDetailPaged([FromQuery] AccountInvoiceReportDetailPaged val)
         {
-            var res = await _invoiceReportService.GetDetailByTime(val);
+            var res = await _invoiceReportService.GetRevenueReportDetailPaged(val);
             return Ok(res);
         }
 
-        [HttpPost("GetHomeTodaySummary")]
-        public async Task<IActionResult> GetHomeTodaySummary()
-        {
-            var res = await _invoiceReportService.GetToDaySummary();
-            return Ok(res);
-        }
-
-        [HttpPost("GetAmountResidualToday")]
-        public async Task<IActionResult> GetAmountResidualToday()
-        {
-            var res = await _invoiceReportService.GetAmountResidualToday();
-            return Ok(res);
-        }
-
-        [HttpGet("GetTop/{number}")]
-        public async Task<IActionResult> GetTop(int number)
-        {
-            var res = await _invoiceReportService.GetTopServices(number);
-            
-            return Ok(res);
-        }
     }
 }
