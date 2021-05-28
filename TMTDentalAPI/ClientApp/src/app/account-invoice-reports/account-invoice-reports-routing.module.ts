@@ -1,17 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AccountInvoiceReportByTimeComponent } from './account-invoice-report-by-time/account-invoice-report-by-time.component';
-import { AccountInvoiceReportIndexComponent } from './account-invoice-report-index/account-invoice-report-index.component';
+import { AccountInvoiceReportRevenueComponent } from './account-invoice-report-revenue/account-invoice-report-revenue.component';
 
 const routes: Routes = [
-  {
-    path: 'account-invoice-reports',
-    component: AccountInvoiceReportIndexComponent,
-    children: [
-      { path: '', redirectTo: 'time', pathMatch: 'full' },
-      { path: 'time', component: AccountInvoiceReportByTimeComponent }
-    ]
-  }
+  { path: '', redirectTo: 'time', pathMatch: 'full' },
+  { path: 'revenue', component:  AccountInvoiceReportRevenueComponent}
 ];
 
 @NgModule({

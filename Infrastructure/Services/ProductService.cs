@@ -428,7 +428,10 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Type))
                 query = query.Where(x => x.Type == val.Type);
             if (!string.IsNullOrEmpty(val.Type2))
-                query = query.Where(x => x.Type2 == val.Type2);
+            {
+                var types = val.Type2.Split(",");
+                query = query.Where(x => types.Contains(x.Type2));
+            }
 
             var res = await query.Include(x => x.UOM).OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).ToListAsync();
             return _mapper.Map<IEnumerable<ProductSimple>>(res);

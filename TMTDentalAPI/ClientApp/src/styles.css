@@ -876,3 +876,11 @@ html .o_web_client {
     background-color: #9365B8;
     color: white !important;
 }
+
+.flex-0-0-auto {
+    flex: 0 0 auto;
+}
+
+.flex-1-1-100 {
+    flex: 1 1 100%;
+}

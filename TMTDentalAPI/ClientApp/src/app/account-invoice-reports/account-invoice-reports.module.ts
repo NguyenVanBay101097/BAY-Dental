@@ -2,20 +2,21 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AccountInvoiceReportsRoutingModule } from './account-invoice-reports-routing.module';
-import { AccountInvoiceReportByTimeComponent } from './account-invoice-report-by-time/account-invoice-report-by-time.component';
 import { AccountInvoiceReportService } from './account-invoice-report.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule } from '@angular/forms';
-import { AccountInvoiceReportByTimeDetailComponent } from './account-invoice-report-by-time-detail/account-invoice-report-by-time-detail.component';
-import { AccountInvoiceReportIndexComponent } from './account-invoice-report-index/account-invoice-report-index.component';
+import { AccountInvoiceReportRevenueComponent } from './account-invoice-report-revenue/account-invoice-report-revenue.component';
+import { SharedModule } from '../shared/shared.module';
+import { AccountInvoiceReportRevenueDetailComponent } from './account-invoice-report-revenue-detail/account-invoice-report-revenue-detail.component';
 
 @NgModule({
-  declarations: [AccountInvoiceReportByTimeComponent, AccountInvoiceReportByTimeDetailComponent, AccountInvoiceReportIndexComponent],
+  declarations: [AccountInvoiceReportRevenueComponent, AccountInvoiceReportRevenueDetailComponent],
   imports: [
     CommonModule,
     AccountInvoiceReportsRoutingModule,
     MyCustomKendoModule,
-    FormsModule
+    FormsModule,
+    SharedModule
   ],
   providers: [
     AccountInvoiceReportService

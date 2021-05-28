@@ -50,12 +50,32 @@ namespace Infrastructure.Services
             if (val.DateTo.HasValue)
             {
                 var dateTo = new DateTime(val.DateTo.Value.Year, val.DateTo.Value.Month, val.DateTo.Value.Day, 23, 59, 59, 999);
-                query = query.Where(x => x.InvoiceDate >= dateTo);
+                query = query.Where(x => x.InvoiceDate <= dateTo);
             }
 
             if (val.CompanyId.HasValue)
             {
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                switch (val.GroupBy)
+                {
+                    case "InvoiceDate":
+                        break;
+                    case "ProductId":
+                        query = query.Where(x => x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search));
+                        break;
+                    case "EmployeeId":
+                        query = query.Where(x => x.Employee.Name.Contains(val.Search));
+                        break;
+                    case "AssistantId":
+                        query = query.Where(x => x.Assistant.Name.Contains(val.Search));
+                        break;
+                    default:
+                        break;
+                }
             }
 
             return query;
@@ -72,7 +92,7 @@ namespace Infrastructure.Services
                 case "InvoiceDate":
                     var queryDate = query.GroupBy(x => x.InvoiceDate.Value.Date);
                     count = await queryDate.Select(x => x.Key).CountAsync();
-                    if (val.Offset > 0) queryDate.Skip(val.Offset).Take(val.Limit);
+                    if (val.Limit > 0) queryDate.Skip(val.Offset).Take(val.Limit);
                     res = await queryDate.Select(x => new AccountInvoiceReportDisplay
                     {
                         InvoiceDate = x.Key as DateTime?,
@@ -83,7 +103,7 @@ namespace Infrastructure.Services
                 case "ProductId":
                     var queryPr = query.GroupBy(x => new { x.ProductId, x.Product.Name });
                     count = await queryPr.Select(x => x.Key).CountAsync();
-                    if (val.Offset > 0) queryPr.Skip(val.Offset).Take(val.Limit);
+                    if (val.Limit > 0) queryPr.Skip(val.Offset).Take(val.Limit);
                     res = await queryPr.Select(x => new AccountInvoiceReportDisplay
                     {
                         ProductId = x.Key.ProductId.Value,
@@ -94,7 +114,7 @@ namespace Infrastructure.Services
                 case "EmployeeId":
                     var queryEmp = query.GroupBy(x => new { x.EmployeeId, x.Employee.Name });
                     count = await queryEmp.Select(x => x.Key).CountAsync();
-                    if (val.Offset > 0) queryEmp.Skip(val.Offset).Take(val.Limit);
+                    if (val.Limit > 0) queryEmp.Skip(val.Offset).Take(val.Limit);
                     res = await queryEmp.Select(x => new AccountInvoiceReportDisplay
                     {
                         EmployeeId = x.Key.EmployeeId,
@@ -105,7 +125,7 @@ namespace Infrastructure.Services
                 case "AssistantId":
                     var queryAss = query.GroupBy(x => new { x.AssistantId, x.Assistant.Name });
                     count = await queryAss.Select(x => x.Key).CountAsync();
-                    if (val.Offset > 0) queryAss.Skip(val.Offset).Take(val.Limit);
+                    if (val.Limit > 0) queryAss.Skip(val.Offset).Take(val.Limit);
                     res = await queryAss.Select(x => new AccountInvoiceReportDisplay
                     {
                         AssistantId = x.Key.AssistantId,
@@ -153,7 +173,7 @@ namespace Infrastructure.Services
             }
 
             count = await query.CountAsync();
-            if (val.Offset > 0) query = query.Skip(val.Offset).Take(val.Limit);
+            if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
             res = await query.Select(x => new AccountInvoiceReportDetailDisplay
             {
                 InvoiceDate = x.InvoiceDate,

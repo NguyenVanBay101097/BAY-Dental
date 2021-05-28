@@ -1,0 +1,75 @@
+<div class="h-100 w-100 bg-white">
+    <h5 class="p-2 bg-gray">Báo cáo doanh thu</h5>
+    <div class="content d-flex px-2 bg-white">
+        <div class="left flex-0-0-auto">
+            <div class=" d-flex flex-column border type p-1">
+                <input [(ngModel)]="filter.groupBy" (ngModelChange)="onChangeGroupBy()" (change)="loadReport()" value="InvoiceDate" type="radio" class="btn-check hidden" name="type" id="type-time" autocomplete="off" [checked]="true">
+                <label class="mb-0 p-2" for="type-time"><i class="far fa-clock"></i> Thời gian</label>
+                <input [(ngModel)]="filter.groupBy" (ngModelChange)="onChangeGroupBy()" (change)="loadReport()" value="ProductId" type="radio" class="btn-check hidden" name="type" id="type-service" autocomplete="off">
+                <label class="mb-0 p-2" for="type-service"><i class="fas fa-bars"></i> Doanh thu dịch vụ</label>
+                <input [(ngModel)]="filter.groupBy" (ngModelChange)="onChangeGroupBy()" (change)="loadReport()" value="emp-ass" type="radio" class="btn-check hidden" name="type" id="type-emp" autocomplete="off">
+                <label class="mb-0 p-2" for="type-emp"> <i class="fas fa-user-alt"></i> Doanh thu nhân viên</label>
+            </div>
+
+        </div>
+        <!-- right -->
+        <div class="flex-1-1-100 right border p-2 ml-2 d-flex flex-column">
+            <h5 class="flex-0-0-auto">{{getTitle()}}</h5>
+            <div class="filter d-flex flex-0-0-auto">
+                <app-date-range-picker-filter class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+                <select *ngIf="this.filter.groupBy == 'emp-ass'" [(ngModel)]="empFilter" (change)="loadReport()" class="form-control w-auto mr-1" aria-label="Default select example">
+                    <option value="EmployeeId">Bác sĩ</option>
+                    <option value="AssistantId">Phụ tá</option>
+                </select>
+                <kendo-combobox [hidden]=" this.filter.groupBy != 'emp-ass'" class="mr-1" [placeholder]="'Tìm nhân viên'" [valueField]="'id'" [textField]="'name'" [filterable]="true" #emp [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
+                </kendo-combobox>
+                <kendo-combobox [hidden]="this.filter.groupBy == 'ProductId'" class="mr-1" [placeholder]="'Tìm dịch vụ, thuốc'" [valueField]="'id'" [textField]="'name'" [filterable]="true" #pro [data]="listProduct" (selectionChange)="onSelectProduct($event)">
+                </kendo-combobox>
+                <select [(ngModel)]="filter.companyId" (change)="loadReport()" class="form-control w-auto mr-1" aria-label="Default select example">
+                    <option value="all" selected>Tất cả chi nhánh</option>
+                    <option *ngFor="let item of companies" [value]="item.id">{{item.name}}</option>
+                </select>
+                <button class="btn btn-primary" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
+                    file</button>
+            </div>
+            <kendo-grid (excelExport)="onExcelExport($event)" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
+                <kendo-grid-column *ngIf="this.filter.groupBy == 'InvoiceDate'" field="invoiceDate" title="Ngày" width="40">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.invoiceDate | date: 'dd/MM/yyyy'}}
+                    </ng-template>
+                    <ng-template kendoGridFooterTemplate let-column let-columnIndex="columnIndex">
+                        <span class="font-weight-bold">Tổng</span>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column *ngIf="this.filter.groupBy == 'ProductId'" field="productName" title="Dịch vụ & Thuốc" width="40">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.productName || 'Không xác định'}}
+                    </ng-template>
+                    <ng-template kendoGridFooterTemplate let-column let-columnIndex="columnIndex">
+                        <span class="font-weight-bold">Tổng</span>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column *ngIf="this.filter.groupBy == 'emp-ass'" field="employeeName" title="Nhân viên" width="40">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{(empFilter == 'EmployeeId' ? dataItem.employeeName : dataItem.assistantName) || 'Không xác định'}}
+                    </ng-template>
+                    <ng-template kendoGridFooterTemplate let-column let-columnIndex="columnIndex">
+                        <span class="font-weight-bold">Tổng</span>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column class="text-right" field="priceSubTotal" title="Doanh thu" width="250">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.priceSubTotal |number}}
+                    </ng-template>
+                    <ng-template kendoGridFooterTemplate let-column let-columnIndex="columnIndex">
+                        <div class="text-right">{{sumPriceSubTotal() | number}}</div>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-excel fileName="revenueReport.xlsx" [fetchData]="allData"></kendo-grid-excel>
+                <div *kendoGridDetailTemplate="let dataItem">
+                    <app-account-invoice-report-revenue-detail [parent]="dataItem" [parentFilter]="filter"></app-account-invoice-report-revenue-detail>
+                </div>
+            </kendo-grid>
+        </div>
+    </div>
+</div>

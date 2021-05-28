@@ -187,8 +187,8 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
-        path: 'revenue-report',
-        loadChildren: () => import('./revenue-report/revenue-report.module').then(m => m.RevenueReportModule),
+        path: 'account-invoice-reports',
+        loadChildren: () => import('./account-invoice-reports/account-invoice-reports.module').then(m => m.AccountInvoiceReportsModule),
         canActivate: [AuthGuard]
       },
       {
