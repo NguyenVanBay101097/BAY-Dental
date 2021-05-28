@@ -91,7 +91,7 @@ namespace Infrastructure.Services
             {
                 if (model.IsBirthdayAutomation)
                 {
-                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunJob(hostName, model.Id), $"8 * * * *", TimeZoneInfo.Local);
                 }
                 else
                 {

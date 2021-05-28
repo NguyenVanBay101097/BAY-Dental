@@ -33,7 +33,9 @@ namespace Infrastructure.Services
         private readonly IAsyncRepository<SmsMessageDetail> _repository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly CatalogDbContext _context;
-
+        private readonly string SpecialCharactors = "@,_,{,},[,],|,~,\\,\\,$";
+        private readonly string SpecialString = "khuyen mai,uu dai,tang,chiet khau,co hoi nhan ngay,co hoi boc tham,rut tham,trung thuong,giam***%,sale***upto,mua* tang*,giamgia,giam d," +
+            "giamd,giam toi,giam den,giam gia,giam ngay,giam hoc phi,giam hphi,sale off,sale,sale d,kmai,giam-gia,uu-dai,sale-off,K.Mai,ma KM,hoc bong (.*) khi dang ky";
         public SmsMessageDetailService(
             IHttpContextAccessor httpContextAccessor,
             ITenant<AppTenant> tenant,
@@ -136,6 +138,7 @@ namespace Infrastructure.Services
         public async Task CreateSmsMessageDetail(SmsMessage smsMessage, IEnumerable<Guid> ids, Guid companyId)
         {
             var listSms = new List<SmsMessageDetail>();
+            var listSmsErrors = new List<SmsMessageDetail>();
             var dictApp = new Dictionary<Guid, Appointment>();
             var partners = await _context.Partners.Where(x => ids.Contains(x.Id)).Include(x => x.Title).ToListAsync();
             if (smsMessage.ResModel == "appointment")
@@ -144,6 +147,8 @@ namespace Infrastructure.Services
                 dictApp = await _context.Appointments.Where(x => appIds.Contains(x.Id)).Include(x => x.Doctor).ToDictionaryAsync(x => x.PartnerId, x => x);
             }
             var company = await _context.Companies.Where(x => x.Id == companyId).FirstOrDefaultAsync();
+            var listCharactorSpecial = SpecialCharactors.Split(",");
+            var listStringSpecial = SpecialString.Split(",");
             foreach (var partner in partners)
             {
                 var content = await PersonalizedContent(smsMessage.Body, partner, company, dictApp);
@@ -156,18 +161,27 @@ namespace Infrastructure.Services
                 sms.SmsAccountId = smsMessage.SmsAccountId.Value;
                 sms.SmsMessageId = smsMessage.Id;
                 sms.SmsCampaignId = smsMessage.SmsCampaignId;
-                listSms.Add(sms);
+
+                if (listStringSpecial.Any(x => content.Contains(x)) || listCharactorSpecial.Any(x => content.Contains(x)))
+                {
+                    sms.State = "fails";
+                    sms.ErrorCode = "199"; ///199 chua ky tu dac biet
+                    listSmsErrors.Add(sms);
+                }
+                else
+                    listSms.Add(sms);
             }
 
             smsMessage.State = "success";
             _context.Entry(smsMessage).State = EntityState.Modified;
             await _context.SmsMessageDetails.AddRangeAsync(listSms);
+            await _context.SmsMessageDetails.AddRangeAsync(listSmsErrors);
             await _context.SaveChangesAsync();
+
             var smsIds = listSms.Select(x => x.Id).ToList();
 
             await SendSMS(smsIds, smsMessage.SmsAccountId.Value);
 
-            await _context.SaveChangesAsync();
         }
 
         private async Task<string> PersonalizedContent(string body, Partner partner, Company company, Dictionary<Guid, Appointment> dictApp)
