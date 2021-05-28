@@ -12,6 +12,9 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<AgentBasic>> GetPagedResultAsync(AgentPaged val);
 
+        Task<PagedResult2<CommissionAgentResult>> GetCommissionAgent(CommissionAgentFilter val);
+
         Task<AgentDisplay> GetDisplayById(Guid id);
+
     }
 }

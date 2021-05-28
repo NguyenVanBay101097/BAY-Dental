@@ -91,4 +91,27 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Address { get; set; }
     }
+
+    public class CommissionAgentFilter
+    {
+        public CommissionAgentFilter()
+        {
+            Limit = 20;
+        }
+
+        public int Offset { get; set; }
+
+        public int Limit { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public string Search { get; set; }
+    }
+
+    public class CommissionAgentResult
+    {
+       public AgentBasic Agent { get; set; }
+       public decimal AmountTotal { get; set; }
+       public decimal AmountCommissionTotal { get; set; }
+    }
 }

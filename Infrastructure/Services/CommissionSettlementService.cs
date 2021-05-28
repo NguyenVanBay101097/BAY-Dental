@@ -80,6 +80,9 @@ namespace Infrastructure.Services
             var commisstionProductRuleObj = GetService<ICommissionProductRuleService>();
             foreach (var settlement in val)
             {
+                if (settlement.PartnerId.HasValue && !settlement.EmployeeId.HasValue)
+                    continue;
+
                 var percent = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == settlement.CommissionId && x.ProductId == settlement.ProductId).Select(x => x.Percent).FirstOrDefaultAsync();
                 if (percent <= 0)
                     continue;

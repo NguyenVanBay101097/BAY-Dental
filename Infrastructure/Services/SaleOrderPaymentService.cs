@@ -235,6 +235,7 @@ namespace Infrastructure.Services
             // Invoice values.
             var invoice_vals = await _PrepareInvoice(self);
             var lines = await paymentLineObj.SearchQuery(x => x.SaleOrderPaymentId == self.Id)
+                .Include(x => x.SaleOrderPayment).ThenInclude(x => x.Order)
                 .Include(x => x.SaleOrderLine).ThenInclude(x => x.Employee)
                 .ToListAsync();
 
@@ -311,8 +312,9 @@ namespace Infrastructure.Services
             };
 
             var lineObj = GetService<ISaleOrderLineService>();
+            var partnerObj = GetService<IPartnerService>();
             var saleOrderLine = await lineObj.SearchQuery(x => x.Id == self.SaleOrderLineId).Include(x => x.Employee).Include(x => x.Assistant).Include(x => x.Counselor).FirstOrDefaultAsync();
-
+            var partner = await partnerObj.SearchQuery(x => x.Id == self.SaleOrderPayment.Order.PartnerId).Include(x => x.Agent).FirstOrDefaultAsync();
             var today = DateTime.Today;
             //add hoa hồng bác sĩ
             if (saleOrderLine.EmployeeId.HasValue && saleOrderLine.Employee.CommissionId.HasValue)
@@ -352,7 +354,18 @@ namespace Infrastructure.Services
                 });
             }
 
-            res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
+            //add người giới thiệu nếu có
+            if (partner.AgentId.HasValue)
+            {
+                res.CommissionSettlements.Add(new CommissionSettlement
+                {
+                    PartnerId = partner.Agent.PartnerId,
+                    ProductId = saleOrderLine.ProductId,
+                    Date = today
+                });
+            }
+
+             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
 
             return res;
@@ -506,7 +519,7 @@ namespace Infrastructure.Services
                 })
             }).ToListAsync();
 
-       
+
 
             return debts;
         }

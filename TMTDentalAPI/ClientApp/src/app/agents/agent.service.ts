@@ -8,6 +8,26 @@ export class AgentPaged {
   search: string;
 }
 
+export class CommissionAgentFilter {
+  limit: number;
+  offset: number;
+  search: string;
+  dateFrom: string;
+  dateTo: string;
+}
+
+export class CommissionAgentPagging {
+  limit: number;
+  offset: number;
+  totalItems: number;
+  items: AgentBasic[];
+}
+
+export class CommissionAgentResult {
+  agent: AgentBasic;
+  amountTotal: number;
+  amountCommissionTotal: number;
+}
 
 export class AgentBasic {
   id: string;
@@ -23,28 +43,28 @@ export class AgentPagging {
 }
 
 export class AgentDisplay {
-  id : string;
-  name : string;
-  gender : string
+  id: string;
+  name: string;
+  gender: string
   birthYear: number;
   birthMonth: number;
   birthDay: number;
-  jobTitle:string;
+  jobTitle: string;
   Phone: string;
   email: string;
-  address :string;
+  address: string;
 }
 
 export class AgentSave {
-  name : string;
-  gender : string
+  name: string;
+  gender: string
   birthYear: number;
   birthMonth: number;
   birthDay: number;
-  jobTitle:string;
+  jobTitle: string;
   Phone: string;
   email: string;
-  address :string;
+  address: string;
 }
 
 
@@ -57,7 +77,11 @@ export class AgentService {
   apiUrl = "api/Agents";
 
   getPaged(val): Observable<AgentPagging> {
-    return this.http.get<AgentPagging>(this.base_api + this.apiUrl, { params: new HttpParams({fromObject: val}) });
+    return this.http.get<AgentPagging>(this.base_api + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
+  }
+
+  getCommissionAgent(val): Observable<CommissionAgentPagging> {
+    return this.http.get<CommissionAgentPagging>(this.base_api + this.apiUrl + '/GetCommissionAgent', { params: new HttpParams({ fromObject: val }) });
   }
 
   get(id): Observable<AgentDisplay> {

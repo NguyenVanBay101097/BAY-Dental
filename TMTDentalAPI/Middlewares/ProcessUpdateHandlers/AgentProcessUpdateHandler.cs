@@ -157,7 +157,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         {
                             journalHHA = new AccountJournal
                             {
-                                Name = "hoa hồng",
+                                Name = "Hoa hồng",
                                 Type = "commission",
                                 UpdatePosted = true,
                                 Code = "COMMISSION",

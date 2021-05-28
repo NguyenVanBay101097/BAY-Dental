@@ -1,0 +1,47 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">Hoa hồng người giới thiệu</li>
+    </ol>
+    <div class="o_cp_searchview">
+        <div class="o_searchview">
+            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo người giới thiệu"
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+        </div>
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
+                (searchChange)="onSearchDateChange($event)">
+            </app-tai-date-range-filter-dropdown>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+       
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="skip"
+    [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true"
+    (cellClick)="clickItem($event)">
+    <kendo-grid-column title="Người giới thiệu" width="135">
+        <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+            {{dataItem.agent.name }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Tổng doanh thu" class="text-right" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+            <!-- <a class="text-primary" *ngFor="let order of dataItem.orders" (click)="getFormSaleOrder(order.id)">{{order.name}}</a>-->
+              {{dataItem.amountTotal | number}} 
+        </ng-template>
+    </kendo-grid-column>  
+    <kendo-grid-column title="Tổng chi hoa hồng" class="text-right" width="135">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.amountCommissionTotal | number}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>
+
+</div>

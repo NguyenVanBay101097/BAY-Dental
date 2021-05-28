@@ -8,9 +8,11 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../shared/shared.module';
 import { AgentService } from './agent.service';
+import { AgentCommissionListComponent } from './agent-commission-list/agent-commission-list.component';
+import { AgentCommissionFormDetailComponent } from './agent-commission-form-detail/agent-commission-form-detail.component';
 
 @NgModule({
-  declarations: [AgentListComponent, AgentCreateUpdateDialogComponent],
+  declarations: [AgentListComponent, AgentCreateUpdateDialogComponent, AgentCommissionListComponent, AgentCommissionFormDetailComponent],
   imports: [
     CommonModule,
     AgentRoutingModule,

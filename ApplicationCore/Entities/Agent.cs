@@ -5,7 +5,7 @@ using System.Text;
 namespace ApplicationCore.Entities
 {
     /// <summary>
-    /// ngưởi giới thiệu
+    /// người giới thiệu
     /// </summary>
     public class Agent : BaseEntity
     {

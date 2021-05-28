@@ -208,7 +208,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
             this.filteredTitles = _.unionBy(this.filteredTitles, [result.title], 'id');
           }
-
+          
           if (result.agent) {
             this.filteredAgents = _.unionBy(this.filteredAgents, [result.agent], 'id');
           }
@@ -555,7 +555,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     val.birthDay = val.birthDayStr ? parseInt(val.birthDayStr) : null;
     val.birthMonth = val.birthMonthStr ? parseInt(val.birthMonthStr) : null;
     val.birthYear = val.birthYearStr ? parseInt(val.birthYearStr) : null;
-    val.consultantId = val.consultant ? val.consultant.id : null;
+    val.agentId = val.agent ? val.agent.id : null;
 
     if (this.id) {
       this.partnerService.update(this.id, val).subscribe(

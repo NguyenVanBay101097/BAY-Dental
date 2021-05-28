@@ -171,6 +171,14 @@ export class LayoutSidebarComponent implements OnInit {
       permissions: ['TCare.Channel.Read', 'TCare.Scenario.Read', 'TCare.Messaging.Read', 'TCare.MessTemplate.Read', 'TCare.Config.Create']
     },
     {
+      name: 'Hoa hồng',
+      icon: 'fas fa-poll',
+      children: [
+        { name: 'Người giới thiệu', link: '/agents/commission' },
+      ],
+      permissions: ['Catalog.Agent.Read']
+    },
+    {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [

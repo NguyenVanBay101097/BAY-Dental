@@ -104,6 +104,12 @@ namespace ApplicationCore.Entities
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
 
+        /// <summary>
+        /// khách hàng : phần chi hoa hồng
+        /// </summary>
+        public Guid? CustomerId { get; set; }
+        public Partner Customer { get; set; }
+
         public Guid? AccountId { get; set; }
         public AccountAccount Account { get; set; }
     }

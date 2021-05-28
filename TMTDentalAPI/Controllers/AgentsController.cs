@@ -46,6 +46,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Catalog.Agent.Read")]
+        public async Task<IActionResult> GetCommissionAgent([FromQuery] CommissionAgentFilter val)
+        {
+            var result = await _agentService.GetCommissionAgent(val);
+            return Ok(result);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "Catalog.Agent.Create")]
         public async Task<IActionResult> Create(AgentSave val)

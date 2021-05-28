@@ -246,6 +246,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Người giới thiệu
         /// </summary>
         public Guid? AgentId { get; set; }
-        public Agent Agent { get; set; }
+        public AgentBasic Agent { get; set; }
     }
 }
