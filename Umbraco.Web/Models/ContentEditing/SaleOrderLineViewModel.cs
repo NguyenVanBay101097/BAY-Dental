@@ -67,9 +67,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
         public int Limit { get; set; }
         public string Search { get; set; }
-        public DateTime? DateOrderFrom { get; set; }
-        public DateTime? DateOrderTo { get; set; }
-        public Guid ProductId { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? ProductId { get; set; }
     }
 
     public class SmsCareAfterOrder

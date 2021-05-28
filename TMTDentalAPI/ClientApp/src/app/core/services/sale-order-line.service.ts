@@ -49,6 +49,15 @@ export class SaleOrderLineForProductRequest {
     boms: ProductBomForSaleOrderLine[];
 }
 
+export class SmsCareAfterOrderPaged {
+    offset: number;
+    limit: number;
+    search: string;
+    dateFrom: string;
+    dateTo: string;
+    productId: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SaleOrderLineService {
     apiUrl = 'api/SaleOrderLines';
@@ -84,5 +93,9 @@ export class SaleOrderLineService {
 
     getListLineIsLabo(val: any):Observable<PagedResult2<any>> {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetListLineIsLabo', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getSmsCareAfterOrderManual(val: any):Observable<PagedResult2<any>> {
+        return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetSmsCareAfterOrderManual', { params: new HttpParams({ fromObject: val }) });
     }
 }

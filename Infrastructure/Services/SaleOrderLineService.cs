@@ -658,7 +658,44 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SmsCareAfterOrder>> GetPagedSmsCareAfterOrderAsync(SmsCareAfterOrderPaged val)
         {
-            return null;
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search) 
+                    || x.OrderPartner.Phone.Contains(val.Search));
+            if (val.ProductId.HasValue)
+                query = query.Where(x => x.ProductId == val.ProductId);
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateCreated <= val.DateFrom);
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.DateCreated >= val.DateTo);
+            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
+
+            if (val.Limit > 0)
+            {
+                query = query.Take(val.Limit).Skip(val.Offset);
+            }
+
+            var saleOrderLines = await query.ToListAsync();
+
+            var smsCareAfterOrderList = new List<SmsCareAfterOrder>();
+
+            foreach (var item in saleOrderLines)
+            {
+                var smsCareAfterOrder = new SmsCareAfterOrder 
+                {
+                    PartnerName = item.OrderPartner.Name,
+                    PartnerPhone = item.OrderPartner.Phone,
+                    SaleOrderName = item.Order.Name,
+                    DoctorName = item.EmployeeId.HasValue ? item.Employee.Name : null,
+                    DateDone = item.Order.DateDone
+                };
+                smsCareAfterOrderList.Add(smsCareAfterOrder);
+            }
+
+            return new PagedResult2<SmsCareAfterOrder>(smsCareAfterOrderList.Count(), val.Offset, val.Limit)
+            {
+                Items = smsCareAfterOrderList
+            };
         }
     }
 }

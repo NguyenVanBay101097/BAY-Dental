@@ -1,7 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { GridDataResult } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { fromEvent, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { SaleOrderLineService, SmsCareAfterOrderPaged } from 'src/app/core/services/sale-order-line.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductsOdataService } from 'src/app/shared/services/ProductsOdata.service';
 
@@ -24,10 +27,17 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
   search: string = '';
   selectedIds: string[] = [];
   searchUpdate = new Subject<string>();
+  filterPaged: SmsCareAfterOrderPaged = new SmsCareAfterOrderPaged();
+  gridData: GridDataResult;
+  limit = 20;
+  skip = 0;
+  loading = false;
 
   constructor(
     private notificationService: NotificationService,
     private productOdataService: ProductsOdataService,
+    private saleOrderLineService: SaleOrderLineService, 
+    private intlService: IntlService,
   ) { }
 
   ngOnInit() {
@@ -84,9 +94,39 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     }
   }
 
+  searchChangeDate(value) {
+    this.dateFrom = value.dateFrom;
+    this.dateTo = value.dateTo;
+    this.skip = 0;
+    this.loadDataFromApi();
+  }
+
   selectProduct(item) {
     this.productSelected = this.productSelected == item ? null : item;
-    
+    this.loadDataFromApi();
+  }
+
+  loadDataFromApi() {
+    this.loading = true;
+    this.filterPaged.limit = this.limit;
+    this.filterPaged.offset = this.skip;
+    this.filterPaged.search = this.search ? this.search : '';
+    this.filterPaged.productId = this.productSelected ? this.productSelected.Id : '';
+    this.filterPaged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
+    this.filterPaged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : '';
+    this.saleOrderLineService.getSmsCareAfterOrderManual(this.filterPaged).pipe(
+      map(response => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      console.log(res);
+      this.gridData = res;
+      this.loading = false;
+    }, err => {
+      console.log(err);
+      this.loading = false;
+    })
   }
 
   notify(type, content) {

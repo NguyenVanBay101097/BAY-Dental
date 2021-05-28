@@ -125,12 +125,12 @@ namespace TMTDentalAPI.Controllers
             return Ok(paged);
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetSmsCareAfterOrderManual([FromQuery] SmsCareAfterOrderPaged val)
-        //{
-        //    //var result = await _saleLineService.GetPagedSmsCareAfterOrderAsync(val);
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSmsCareAfterOrderManual([FromQuery]SmsCareAfterOrderPaged val)
+        {
+            var result = await _saleLineService.GetPagedSmsCareAfterOrderAsync(val);
 
-        //    return Ok();
-        //}
+            return Ok(result);
+        }
     }
 }
