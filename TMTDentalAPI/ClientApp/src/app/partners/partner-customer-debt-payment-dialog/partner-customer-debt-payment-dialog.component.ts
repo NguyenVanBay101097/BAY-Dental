@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
+import { PartnerService } from '../partner.service';
 
 @Component({
   selector: 'app-partner-customer-debt-payment-dialog',
@@ -21,11 +22,12 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
   formGroup: FormGroup;
   submitted: boolean = false;
   filteredJournals: any = [];
+  amountDebtBalanceTotal = 0;
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
   
   constructor(private phieuthuchiService: PhieuThuChiService, private fb: FormBuilder, private intlService: IntlService,
-    public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
+    public activeModal: NgbActiveModal, private accountJournalService: AccountJournalService, private partnerService: PartnerService,
      private authService: AuthService) { }
 
   ngOnInit() {
@@ -37,6 +39,7 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
     });
     this.loadDefault();
     this.loadFilteredJournals();
+    this.loadAmountDebtBalanceTotal();
   }
 
   loadDefault(){
@@ -84,6 +87,12 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
         this.activeModal.close(true);
       },
     )
+  }
+
+  loadAmountDebtBalanceTotal() {
+    this.partnerService.getAmountDebtBalance(this.partnerId).subscribe(rs => {
+      this.amountDebtBalanceTotal = rs;
+    });
   }
 
   onCancel() {

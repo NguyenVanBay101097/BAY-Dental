@@ -61,7 +61,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.PartnerId == val.PartnerId.Value);
 
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.SaleOrderPaymentRels.Any(x => x.SaleOrder.Name.Contains(val.Search)));
+                query = query.Where(x => x.Name.Contains(val.Search) || x.SaleOrderPaymentAccountPaymentRels.Any(x => x.SaleOrderPayment.Order.Name.Contains(val.Search)));
 
             if (!string.IsNullOrEmpty(val.JournalType))
                 query = query.Where(x => x.Journal.Type == val.JournalType);
