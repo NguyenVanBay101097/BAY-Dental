@@ -100,7 +100,7 @@ namespace Infrastructure.Services
             else if (!entity.SmsCampaignId.HasValue && val.IsCareAfterOrder.HasValue && val.IsCareAfterOrder.Value)
             {
                 var smsCampaignObj = GetService<ISmsCampaignService>();
-                var campaign = await smsCampaignObj.GetDefaultCampaignAppointmentReminder();
+                var campaign = await smsCampaignObj.GetDefaultCareAfterOrder();
                 entity.SmsCampaignId = campaign.Id;
                 entity.ResModel = "sale-order-line";
                 if (val.GuidIds.Any())

@@ -192,7 +192,7 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val)
         {
             var query = GetQueryPaged(val);
-            query = query.OrderBy(x=> x.Name);
+            query = query.OrderBy(x => x.Name);
 
             var totalItems = await query.CountAsync();
             if (val.Limit > 0)
@@ -412,8 +412,10 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ProductSimple>> GetProductsAutocomplete2(ProductPaged val)
         {
-            var query = SearchQuery(domain: x => x.Active && (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
-             x.NameNoSign.Contains(val.Search)));
+            var query = SearchQuery(x => x.Active);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search));
             if (val.KeToaOK.HasValue)
                 query = query.Where(x => x.KeToaOK == val.KeToaOK);
             if (val.IsLabo.HasValue)

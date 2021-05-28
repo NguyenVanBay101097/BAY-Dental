@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { SmsCareAfterOrderFormAutomaticDialogComponent } from '../sms-care-after-order-form-automatic-dialog/sms-care-after-order-form-automatic-dialog.component';
+import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 
 @Component({
   selector: 'app-sms-care-after-order-form-automatic',
@@ -22,7 +25,9 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
     { name: "Không kích hoạt", value: "inactive" }
   ];
 
-  constructor() { }
+  constructor(
+    private modalService: NgbModal
+  ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -56,6 +61,17 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
 
   loadDataFromApi() {
 
+  }
+
+  setupAutomaic() {
+    var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
+    modalRef.componentInstance.title = "Tin nhắn chúc mừng sinh nhật";
+    modalRef.componentInstance.templateTypeTab = "care_after_order";
+    modalRef.result.then(
+      result => {
+
+      }
+    )
   }
 
   pageChange(event): void {

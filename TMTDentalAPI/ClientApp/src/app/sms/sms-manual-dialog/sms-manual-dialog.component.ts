@@ -29,10 +29,11 @@ export class SmsManualDialogComponent implements OnInit {
   ids: string[] = [];
   smsMessageDetail: any
   submitted = false;
-  isBirthDayManual: false;
-  isAppointmentReminder: false;
+  isBirthDayManual = false;
+  isAppointmentReminder = false;
+  isThanksCustomer = false;
+  isCareAfterOrder = false;
   campaign: any;
-  isThanksCustomer: false;
   isTemplateCopy = false;
   templateTypeTab;
   template: any = {
@@ -186,7 +187,7 @@ export class SmsManualDialogComponent implements OnInit {
     val.isBirthDayManual = this.isBirthDayManual;
     val.isAppointmentReminder = this.isAppointmentReminder;
     val.isThanksCustomer = this.isThanksCustomer;
-    
+    val.isCareAfterOrder = this.isCareAfterOrder;
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.brandName = val.smsAccount.brandName;

@@ -15,7 +15,7 @@
                 <li [ngClass]="{'active': productId == item.id}" (click)="selectProduct(item)"
                     *ngFor="let item of listProducts;index as i"
                     class="list-group-item cate-item d-flex justify-content-between align-items-center">
-                    <span class="mr-1">{{item.Name}}</span>
+                    <span class="mr-1">{{item.name}}</span>
                 </li>
             </ul>
         </div>
@@ -26,7 +26,7 @@
                 <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
                     (searchChange)="searchChangeDate($event)">
                 </app-tai-date-range-filter-dropdown>
-                <button class="btn btn-sm btn-primary ml-2" (click)="createService()">Thêm mới</button>
+                <button class="btn btn-sm btn-primary ml-2" (click)="onSend()">Tạo tin nhắn</button>
             </div>
             <div class="has-search flex-fill">
                 <span class="fa fa-search form-control-feedback"></span>
@@ -37,7 +37,7 @@
         </div>
         <div class="flex-1-1-100 h-100 overflow-hidden">
             <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-                [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds"
+                [selectable]="true" [kendoGridSelectBy]="'saleOrderLineId'" [selectedKeys]="selectedIds"
                 (pageChange)="pageChange($event)">
                 <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
                 <kendo-grid-column field="partnerName" title="Khách hàng" width="250">

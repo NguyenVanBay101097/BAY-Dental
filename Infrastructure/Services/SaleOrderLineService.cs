@@ -663,13 +663,13 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
                     || x.OrderPartner.Phone.Contains(val.Search));
             if (val.ProductId.HasValue)
-                query = query.Where(x => x.ProductId == val.ProductId);
+                query = query.Where(x => x.ProductId == val.ProductId.Value);
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.DateCreated <= val.DateFrom);
+                query = query.Where(x => x.DateCreated >= val.DateFrom.Value);
 
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.DateCreated >= val.DateTo);
+                query = query.Where(x => x.DateCreated <= val.DateTo.Value);
 
             var totalItems = await query.CountAsync();
 

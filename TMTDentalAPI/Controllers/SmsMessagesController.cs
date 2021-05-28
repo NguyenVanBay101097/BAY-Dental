@@ -33,7 +33,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid || val == null) return BadRequest();
             await _unitOfWorkAsync.BeginTransactionAsync();
-
             var res = await _smsMessageService.CreateAsync(val);
             _unitOfWorkAsync.Commit();
             return Ok(res);
