@@ -1,5 +1,5 @@
 <header class="modal-header">
-    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <h5 class="modal-title">{{title}}</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
         tabindex="-1">×</button>
 </header>
@@ -21,7 +21,7 @@
                 <div class="o_group">
                     <div *ngIf="switchBrand">
                         <ng-template [ngIf]="switchBrand=='fpt'">
-                            <table class="o_group o_inner_group o_group_col_12 modal-body">
+                            <table class="o_group o_inner_group o_group_col_6 modal-body">
                                 <tbody>
                                     <tr>
                                         <td colspan="1" class="o_td_label">
@@ -138,7 +138,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Kết nối</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

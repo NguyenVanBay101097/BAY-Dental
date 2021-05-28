@@ -18,7 +18,7 @@ export class SmsAccountListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  title = 'Cấu hình SMS';
+  title = 'Danh sách Brandname';
   loading = false;
   opened = false;
   searchUpdate = new Subject<string>();
@@ -62,8 +62,8 @@ export class SmsAccountListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(SmsAccountSettingDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = '';
+    let modalRef = this.modalService.open(SmsAccountSettingDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm Brandname';
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {
@@ -76,7 +76,7 @@ export class SmsAccountListComponent implements OnInit {
   }
 
   editItem(item) {
-    let modalRef = this.modalService.open(SmsAccountSettingDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(SmsAccountSettingDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {

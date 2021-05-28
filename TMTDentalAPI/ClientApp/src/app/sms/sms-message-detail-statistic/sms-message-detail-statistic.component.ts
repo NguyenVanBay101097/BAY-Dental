@@ -128,7 +128,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
 
   onSend() {
     if (this.selectedIds.length == 0) {
-      this.notify("chưa chọn khách hàng", false);
+      this.notify("Bạn phải chọn tin nhắn trước khi gửi lại", false);
     }
     else {
       var smsMessageDetailIds = [];

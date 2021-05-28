@@ -198,7 +198,7 @@ export class SmsManualDialogComponent implements OnInit {
         (res: any) => {
           this.smsMessageService.actionSendSms(res.id).subscribe(
             () => {
-              this.notify("gửi tin thành công", true);
+              this.notify("Gửi tin nhắn thành công", true);
               this.activeModal.close(res);
             }
           )

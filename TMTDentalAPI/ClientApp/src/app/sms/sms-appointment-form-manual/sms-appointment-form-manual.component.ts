@@ -88,11 +88,11 @@ export class SmsAppointmentFormManualComponent implements OnInit {
 
   onSend() {
     if (this.selectedIds.length == 0) {
-      this.notify("chưa chọn khách hàng", false);
+      this.notify("Bạn phải chọn khách hàng trước khi gửi tin", false);
     }
     else {
       var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
-      modalRef.componentInstance.title = "Tạo tin gửi";
+      modalRef.componentInstance.title = "Tin nhắn nhắc lịch hẹn";
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
       modalRef.componentInstance.isAppointmentReminder = true;
       modalRef.componentInstance.templateTypeTab = "appointment";

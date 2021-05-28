@@ -18,7 +18,7 @@ export class SmsStatisticComponent implements OnInit {
   dateTo: Date;
   filteredState: any[] = [
     { name: 'Gửi thất bại', value: 'fails' },
-    { name: 'Gửi Thành công', value: 'success' },
+    { name: 'Gửi thành công', value: 'success' },
     { name: 'Đang gửi', value: 'sending' }
   ]
   campaignData: any[] = [];

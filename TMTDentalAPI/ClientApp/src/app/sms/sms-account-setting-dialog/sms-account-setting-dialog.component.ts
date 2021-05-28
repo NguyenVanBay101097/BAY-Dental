@@ -14,6 +14,7 @@ export class SmsAccountSettingDialogComponent implements OnInit {
   formGroup: FormGroup;
   switchBrand: string = "esms";
   id: string;
+  title: string;
   constructor(
     private fb: FormBuilder,
     private notificationService: NotificationService,
