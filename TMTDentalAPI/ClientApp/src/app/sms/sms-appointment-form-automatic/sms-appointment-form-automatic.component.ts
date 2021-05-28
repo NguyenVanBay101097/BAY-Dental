@@ -91,7 +91,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
 
   loadDataFormApi() {
     var type = "appointment"
-    this.smsConfigService.getConfigByCompany(type).subscribe(
+    this.smsConfigService.get(type).subscribe(
       (res: any) => {
         if (res) {
           this.id = res.id;

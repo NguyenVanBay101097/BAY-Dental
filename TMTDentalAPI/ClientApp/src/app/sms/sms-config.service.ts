@@ -17,7 +17,7 @@ export class SmsConfigService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
-  getConfigByCompany(type: string) {
+  get(type: string) {
     return this.http.get(this.base_api + this.apiUrl, { params: new HttpParams().set('type', type) });
   }
 }

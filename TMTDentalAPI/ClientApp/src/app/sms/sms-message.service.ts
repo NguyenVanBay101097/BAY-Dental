@@ -35,4 +35,8 @@ export class SmsMessageService {
     actionCancelSendSMS(vals: string[]) {
         return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', vals)
     }
+
+    SetupSendSmsOrderAutomatic(orderId) {
+        return this.http.get(this.base_api + this.apiUrl + '/SetupSendSmsOrderAutomatic/' + orderId);
+    }
 }

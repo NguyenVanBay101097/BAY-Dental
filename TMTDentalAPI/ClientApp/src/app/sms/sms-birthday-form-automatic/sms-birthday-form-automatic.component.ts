@@ -82,7 +82,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
 
   loadDataFormApi() {
     var type = "birthday"
-    this.smsConfigService.getConfigByCompany(type).subscribe(
+    this.smsConfigService.get(type).subscribe(
       (res: any) => {
         if (res) {
           this.id = res.id;

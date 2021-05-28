@@ -14,5 +14,6 @@ namespace Infrastructure.Services
         Task<SmsMessageDisplay> CreateAsync(SmsMessageSave val);
         Task ActionSendSMS(SmsMessage message);
         Task ActionCancel(IEnumerable<Guid> messIds);
+        Task SetupSendSmsOrderAutomatic(Guid orderId);
     }
 }

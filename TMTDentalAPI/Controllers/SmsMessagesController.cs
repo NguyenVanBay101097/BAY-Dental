@@ -64,6 +64,16 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpGet("[action]/{orderId}")]
+        public async Task<IActionResult> SetupSendSmsOrderAutomatic(Guid orderId)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+            await _unitOfWorkAsync.BeginTransactionAsync();
+            await _smsMessageService.SetupSendSmsOrderAutomatic(orderId);
+            _unitOfWorkAsync.Commit();
+            return NoContent();
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {

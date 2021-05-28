@@ -47,7 +47,6 @@ import { SaleOrderPaymentListComponent } from '../sale-order-payment-list/sale-o
 import { AccountPaymentsOdataService } from 'src/app/shared/services/account-payments-odata.service';
 import { ToaThuocCuDialogComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog/toa-thuoc-cu-dialog.component';
 import { ToaThuocLinesSaveCuFormComponent } from 'src/app/toa-thuocs/toa-thuoc-lines-save-cu-form/toa-thuoc-lines-save-cu-form.component';
-import { SmsConfigService } from 'src/app/sms/sms-config.service';
 import { SmsMessageService } from 'src/app/sms/sms-message.service';
 
 declare var $: any;
@@ -106,14 +105,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private pricelistService: PriceListService,
     private errorService: AppSharedShowErrorService,
     private paymentService: AccountPaymentService,
+    private smsMessageService: SmsMessageService,
     private saleOrderOdataService: SaleOrdersOdataService,
     private employeeOdataService: EmployeesOdataService,
     private toothCategoryOdataService: ToothCategoryOdataService,
     private teethOdataService: TeethOdataService,
     private toaThuocService: ToaThuocService,
     private printService: PrintService,
-    private smsConfigService: SmsConfigService,
-    private smsMessageService: SmsMessageService
   ) {
   }
 
@@ -695,13 +693,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.saleOrderId) {
       this.saleOrderService.actionDone([this.saleOrderId]).subscribe(() => {
         this.loadRecord();
-
+        this.smsMessageService.SetupSendSmsOrderAutomatic(this.saleOrderId).subscribe(
+          () => { }
+        )
       });
     }
-  }
-
-  createMessageAutomatic(orderId: string) {
-    this
   }
 
   actionUnlock() {

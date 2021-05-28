@@ -234,25 +234,6 @@ namespace Infrastructure.Services
             }
         }
 
-        //private async Task<string> PersonalizedContent(string body)
-        //{
-        //    var content = JsonConvert.DeserializeObject<Body>(body);
-        //    var messageContent = content.text
-        //        .Replace("{ten_khach_hang}", partner.Name.Split(' ').Last())
-        //        .Replace("{ho_ten_khach_hang}", partner.DisplayName)
-        //        .Replace("{ten_cong_ty}", company.Name)
-        //        .Replace("{ngay_sinh}", partner.Name)
-        //        .Replace("{gio_hen}", partner.Name)
-        //        .Replace("{ngay_hen}", partner.Name)
-        //        .Replace("{bac_si_lich_hen}", partner.Name)
-        //        .Replace("{bac_si_chi_tiet_dieu_tri}", partner.Name)
-        //        .Replace("{so_phieu_dieu_tri}", partner.Name)
-        //        .Replace("{dich_vu}", partner.Name)
-        //        .Replace("{danh_xung_khach_hang}", partner.Title != null ? partner.Title.Name : "");
-        //    return messageContent;
-        //}
-
-
         public async Task ActionCancel(IEnumerable<Guid> messIds)
         {
             var messes = await SearchQuery(x => messIds.Contains(x.Id)).ToListAsync();
@@ -262,10 +243,35 @@ namespace Infrastructure.Services
             }
         }
 
-        public class Body
+        public async Task SetupSendSmsOrderAutomatic(Guid orderId)
         {
-            public string templateType { get; set; }
-            public string text { get; set; }
+            var configObj = GetService<ISmsConfigService>();
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var saleOrder = await saleOrderObj.SearchQuery(x => x.Id == orderId).FirstOrDefaultAsync();
+            var config = await configObj.SearchQuery(x => x.Type == "thanks-customer").FirstOrDefaultAsync();
+            if (config.IsThanksCustomerAutomation && saleOrder.State == "done" && saleOrder.DateDone.HasValue)
+            {
+                var entity = new SmsMessage();
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
+                entity.SmsCampaignId = campaign.Id;
+                entity.ResModel = "sale-order";
+                entity.Body = config.Body;
+                entity.Date = config.TypeTimeBeforSend == "hour" ? saleOrder.DateDone.Value.AddHours(config.TimeBeforSend) : saleOrder.DateDone.Value.AddDays(config.TimeBeforSend);
+                entity.SmsAccountId = config.SmsAccountId;
+                entity.SmsTemplateId = config.TemplateId;
+                entity.State = "waiting";
+                entity.TypeSend = "automatic";
+                entity.Name = $"Tin nhắn cảm ơn khách hàng ngày {DateTime.Now.ToString("dd-MM-yyyy HH:mm")}";
+
+                entity.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
+                {
+                    SaleOrderId = saleOrder.Id
+                });
+
+                await CreateAsync(entity);
+            }
+
         }
     }
 }

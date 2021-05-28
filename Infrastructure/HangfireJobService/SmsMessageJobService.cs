@@ -39,15 +39,25 @@ namespace Infrastructure.HangfireJobService
                     x.State == "waiting" &&
                     x.Date.HasValue &&
                     x.Date.Value <= now
-                ).Include(x => x.SmsAccount).Include(x => x.SmsMessagePartnerRels);
+                ).Include(x => x.SmsAccount)
+                .Include(x => x.SmsMessagePartnerRels)
+                .Include(x => x.SmsMessageSaleOrderRels).ThenInclude(x => x.SaleOrder);
                 var smsMessages = await query.ToListAsync();
+                var partnerIds = new List<Guid>();
                 foreach (var item in smsMessages)
                 {
-                    if (item.SmsMessagePartnerRels.Any())
+                    if (item.SmsMessagePartnerRels.Any() && item.ResModel == "partner")
                     {
-                        var partnerIds = item.SmsMessagePartnerRels.Select(x => x.PartnerId).ToList();
-                        await smsMessageDetailService.CreateSmsMessageDetail(item, partnerIds, companyId);
+                        partnerIds = item.SmsMessagePartnerRels.Select(x => x.PartnerId).ToList();
                     }
+                    else if (item.SmsMessageSaleOrderRels.Any() && item.ResModel == "sale-order")
+                    {
+                        partnerIds = item.SmsMessageSaleOrderRels.Select(x => x.SaleOrder.PartnerId).ToList();
+                    }
+
+                    if (partnerIds.Any())
+                        await smsMessageDetailService.CreateSmsMessageDetail(item, partnerIds, companyId);
+
                 }
                 transaction.Commit();
             }
