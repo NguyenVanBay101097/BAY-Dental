@@ -297,6 +297,9 @@ namespace Infrastructure.Services
                 ProductUoMId = self.SaleOrderLine.ProductUOMId,
                 Quantity = 1,
                 PriceUnit = self.Amount,
+                EmployeeId = self.SaleOrderLine.EmployeeId,
+                AssistantId = self.SaleOrderLine.AssistantId
+
                 //SalesmanId = self.SalesmanId
             };
 

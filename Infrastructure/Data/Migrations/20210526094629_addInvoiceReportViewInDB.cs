@@ -41,7 +41,7 @@ AS (
                     FROM AccountMoves am) AS invoice_type ON invoice_type.id = am.Id
 
 					WHERE aml.AccountId IS NOT NULL 
-					and am.Type in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt') and aml.AccountId = '6c2fa416-ccd6-4d92-5e70-08d8eced7944'
+					and am.Type in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt')
 
 					GROUP BY aml.Id ,
 					 am.InvoiceDate,

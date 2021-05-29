@@ -92,7 +92,7 @@ namespace Infrastructure.Services
                 case "InvoiceDate":
                     var queryDate = query.GroupBy(x => x.InvoiceDate.Value.Date);
                     count = await queryDate.Select(x => x.Key).CountAsync();
-                    if (val.Limit > 0) queryDate.Skip(val.Offset).Take(val.Limit);
+                    if (val.Limit > 0) queryDate = queryDate.Skip(val.Offset).Take(val.Limit);
                     res = await queryDate.Select(x => new AccountInvoiceReportDisplay
                     {
                         InvoiceDate = x.Key as DateTime?,
@@ -103,7 +103,7 @@ namespace Infrastructure.Services
                 case "ProductId":
                     var queryPr = query.GroupBy(x => new { x.ProductId, x.Product.Name });
                     count = await queryPr.Select(x => x.Key).CountAsync();
-                    if (val.Limit > 0) queryPr.Skip(val.Offset).Take(val.Limit);
+                    if (val.Limit > 0) queryPr = queryPr.Skip(val.Offset).Take(val.Limit);
                     res = await queryPr.Select(x => new AccountInvoiceReportDisplay
                     {
                         ProductId = x.Key.ProductId.Value,
@@ -114,7 +114,7 @@ namespace Infrastructure.Services
                 case "EmployeeId":
                     var queryEmp = query.GroupBy(x => new { x.EmployeeId, x.Employee.Name });
                     count = await queryEmp.Select(x => x.Key).CountAsync();
-                    if (val.Limit > 0) queryEmp.Skip(val.Offset).Take(val.Limit);
+                    if (val.Limit > 0) queryEmp = queryEmp.Skip(val.Offset).Take(val.Limit);
                     res = await queryEmp.Select(x => new AccountInvoiceReportDisplay
                     {
                         EmployeeId = x.Key.EmployeeId,
@@ -125,7 +125,7 @@ namespace Infrastructure.Services
                 case "AssistantId":
                     var queryAss = query.GroupBy(x => new { x.AssistantId, x.Assistant.Name });
                     count = await queryAss.Select(x => x.Key).CountAsync();
-                    if (val.Limit > 0) queryAss.Skip(val.Offset).Take(val.Limit);
+                    if (val.Limit > 0) queryAss = queryAss.Skip(val.Offset).Take(val.Limit);
                     res = await queryAss.Select(x => new AccountInvoiceReportDisplay
                     {
                         AssistantId = x.Key.AssistantId,

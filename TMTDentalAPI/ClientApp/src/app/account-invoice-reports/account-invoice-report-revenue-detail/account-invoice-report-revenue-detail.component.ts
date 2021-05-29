@@ -15,6 +15,7 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
   filter = new AccountInvoiceReportDetailPaged();
   @Input() parent: AccountInvoiceReportDisplay;
   @Input() parentFilter: AccountInvoiceReportPaged;
+  @Input() empFilter = 'EmployeeId';
   gridData: GridDataResult;
   loading = false;
 
@@ -39,11 +40,8 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
         case 'ProductId':
           this.filter.productId = this.parent.productId;
           break;
-        case 'EmployeeId':
-          this.filter.productId = this.parent.employeeId;
-          break;
-        case 'AssistantId':
-          this.filter.productId = this.parent.assistantId;
+        case 'emp-ass':
+          this.empFilter == 'EmployeeId'? this.filter.employeeId =  this.parent.employeeId: this.filter.assistantId = this.parent.assistantId;
           break;
         default:
           break;
