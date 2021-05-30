@@ -16,7 +16,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime DateOrder { get; set; }
 
         public Guid PartnerId { get; set; }
-        public Guid EmployeeId { get; set; }
+        public Guid? EmployeeId { get; set; }
 
         public string Note { get; set; }
 
@@ -28,6 +28,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? PricelistId { get; set; }
         public Guid? JournalId { get; set; }
+
+        public Guid? QuotationId { get; set; }
 
         public bool? IsQuotation { get; set; }
         public bool IsFast { get; set; }

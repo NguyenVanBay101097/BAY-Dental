@@ -46,6 +46,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
 
     this.configSettingsService.defaultGet().subscribe((result: any) => {
       this.formGroup.patchValue(result);
+      
       if (result.tCareRunAt) {
         var tCareRunAt = new Date(result.tCareRunAt);
         this.formGroup.get('tCareRunAtObj').patchValue(tCareRunAt);

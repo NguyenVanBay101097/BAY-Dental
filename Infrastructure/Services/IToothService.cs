@@ -12,5 +12,6 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<Tooth>> GetPagedResultAsync(int offset = 0, int limit = 20, string search = "");
         Task<IEnumerable<ToothDisplay>> GetAllDisplay(ToothFilter val);
+        Task<ToothDisplay> GetDisplay(Guid id);
     }
 }

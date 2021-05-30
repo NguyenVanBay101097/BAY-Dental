@@ -13,7 +13,6 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DialogService } from '@progress/kendo-angular-dialog';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPriceListItemSave, ProductPriceListSave } from '../price-list';
-import { FlexAlignStyleBuilder } from '@angular/flex-layout';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Observable } from 'rxjs';
 import { CompanyPaged, CompanyService, CompanyBasic } from 'src/app/companies/company.service';

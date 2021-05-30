@@ -1,12 +1,10 @@
 [
   {
     "Name": "Điều trị",
-    "Permission": "Basic",
-    "Children": [
+    "Functions": [
       {
         "Name": "Khách hàng/Nhà cung cấp",
-        "Permission": "Basic.Partner",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Basic.Partner.Read"
@@ -22,13 +20,16 @@
           {
             "Name": "Xóa",
             "Permission": "Basic.Partner.Delete"
+          },
+          {
+            "Name": "Xuất excel",
+            "Permission": "Basic.Partner.Export"
           }
         ]
       },
       {
-        "Name": "Điều trị/Tư vấn",
-        "Permission": "Basic.SaleOrder",
-        "Children": [
+        "Name": "Phiếu điều trị",
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Basic.SaleOrder.Read"
@@ -52,9 +53,29 @@
         ]
       },
       {
+        "Name": "Tư vấn",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.Advisory.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.Advisory.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.Advisory.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.Advisory.Delete"
+          }
+        ]
+      },
+      {
         "Name": "Lịch hẹn",
-        "Permission": "Basic.Appointment",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Basic.Appointment.Read"
@@ -75,8 +96,7 @@
       },
       {
         "Name": "Đợt khám",
-        "Permission": "Basic.DotKham",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Basic.DotKham.Read"
@@ -97,8 +117,7 @@
       },
       {
         "Name": "Thanh toán",
-        "Permission": "Basic.AccountPayment",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Basic.AccountPayment.Read"
@@ -119,8 +138,7 @@
       },
       {
         "Name": "Yêu cầu vật tư",
-        "Permission": "Basic.ProductRequest",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Basic.ProductRequest.Read"
@@ -142,17 +160,36 @@
             "Permission": "Basic.ProductRequest.Done"
           }
         ]
+      },
+      {
+        "Name": "Khách hàng tạm ứng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.PartnerAdvance.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.PartnerAdvance.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.PartnerAdvance.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.PartnerAdvance.Delete"
+          }
+        ]
       }
     ]
   },
   {
     "Name": "Bán Thuốc",
-    "Permission": "Medicine",
-    "Children": [
+    "Functions": [
       {
         "Name": "Đơn thuốc",
-        "Permission": "Medicine.ToaThuoc",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Medicine.ToaThuoc.Read"
@@ -173,8 +210,7 @@
       },
       {
         "Name": "Hóa Đơn thuốc",
-        "Permission": "Medicine.MedicineOrder",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Medicine.MedicineOrder.Read"
@@ -193,12 +229,10 @@
   },
   {
     "Name": "Mua hàng",
-    "Permission": "Purchase",
-    "Children": [
+    "Functions": [
       {
         "Name": "Mua/trả hàng",
-        "Permission": "Purchase.Order",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Purchase.Order.Read"
@@ -221,12 +255,10 @@
   },
   {
     "Name": "Kho",
-    "Permission": "Stock",
-    "Children": [
+    "Functions": [
       {
         "Name": "Phiếu nhập/xuất",
-        "Permission": "Stock.Picking",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Stock.Picking.Read"
@@ -247,30 +279,28 @@
       },
       {
         "Name": "Tiêu chí kiểm kho",
-        "Permission": "Stock.Criteria",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
-            "Permission": "Stock.Criteria.Read"
+            "Permission": "Stock.StockInventoryCriteria.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "Stock.Criteria.Create"
+            "Permission": "Stock.StockInventoryCriteria.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "Stock.Criteria.Update"
+            "Permission": "Stock.StockInventoryCriteria.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "Stock.Criteria.Delete"
+            "Permission": "Stock.StockInventoryCriteria.Delete"
           }
         ]
       },
       {
         "Name": "Kiểm kho",
-        "Permission": "Stock.Inventory",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Stock.Inventory.Read"
@@ -293,12 +323,10 @@
   },
   {
     "Name": "Lương",
-    "Permission": "Salary",
-    "Children": [
+    "Functions": [
       {
         "Name": "Bảng lương",
-        "Permission": "Salary.HrPayslipRun",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Salary.HrPayslipRun.Read"
@@ -319,8 +347,7 @@
       },
       {
         "Name": "Chấm công",
-        "Permission": "Salary.ChamCong",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Salary.ChamCong.Read"
@@ -341,8 +368,7 @@
       },
       {
         "Name": "Quản lý tạm ứng - chi lương",
-        "Permission": "Salary.SalaryPayment",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Salary.SalaryPayment.Read"
@@ -363,18 +389,21 @@
       },
       {
         "Name": "Báo cáo thanh toán lương",
-        "Permission": "Salary.AccountCommonPartnerReport"
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Salary.AccountCommonPartnerReport"
+          }
+        ]
       }
     ]
   },
   {
     "Name": "Labo",
-    "Permission": "Labo",
-    "Children": [
+    "Functions": [
       {
         "Name": "Quản lý phiếu Labo",
-        "Permission": "Labo.LaboOrder",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Labo.LaboOrder.Read"
@@ -399,8 +428,7 @@
       },
       {
         "Name": "Đơn hàng Labo",
-        "Permission": "Labo.OrderLabo",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Labo.OrderLabo.Read"
@@ -413,8 +441,7 @@
       },
       {
         "Name": "Xuất Labo cho khách",
-        "Permission": "Labo.ExportLabo",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Labo.ExportLabo.Read"
@@ -429,12 +456,10 @@
   },
   {
     "Name": "Danh mục",
-    "Permission": "Catalog",
-    "Children": [
+    "Functions": [
       {
         "Name": "Nhãn khách hàng",
-        "Permission": "Catalog.PartnerCategory",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.PartnerCategory.Read"
@@ -454,9 +479,50 @@
         ]
       },
       {
+        "Name": "Nhãn khảo sát",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.SurveyTag.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.SurveyTag.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.SurveyTag.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.SurveyTag.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Chẩn đoán răng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.ToothDiagnosis.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.ToothDiagnosis.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.ToothDiagnosis.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.ToothDiagnosis.Delete"
+          }
+        ]
+      },
+      {
         "Name": "Nguồn khách hàng",
-        "Permission": "Catalog.PartnerSource",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.PartnerSource.Read"
@@ -477,8 +543,7 @@
       },
       {
         "Name": "Dịch vụ, vật tư, thuốc, vật liệu Labo, gửi kèm Labo",
-        "Permission": "Catalog.Products",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.Products.Read"
@@ -499,8 +564,7 @@
       },
       {
         "Name": "Nhóm dịch vụ, vật tư, thuốc",
-        "Permission": "Catalog.ProductCategory",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.ProductCategory.Read"
@@ -521,8 +585,7 @@
       },
       {
         "Name": "Đơn thuốc mẫu",
-        "Permission": "Catalog.SamplePrescription",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.SamplePrescription.Read"
@@ -543,8 +606,7 @@
       },
       {
         "Name": "Tiểu sử bệnh",
-        "Permission": "Catalog.History",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.History.Read"
@@ -565,8 +627,7 @@
       },
       {
         "Name": "Danh xưng",
-        "Permission": "Catalog.PartnerTitle",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.PartnerTitle.Read"
@@ -587,11 +648,14 @@
       },
       {
         "Name": "Nhân viên",
-        "Permission": "Catalog.Employee",
-        "Children": [
+        "Ops": [
           {
             "Name": "Thông tin tính lương",
             "Permission": "Catalog.Employee.Salary.Update"
+          },
+          {
+            "Name": "Cấu hình hoa hồng",
+            "Permission": "Catalog.Employee.Commission.Update"
           },
           {
             "Name": "Xem",
@@ -613,8 +677,7 @@
       },
       {
         "Name": "Bảng hoa hồng",
-        "Permission": "Catalog.Commission",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.Commission.Read"
@@ -635,8 +698,7 @@
       },
       {
         "Name": "Đường hoàn tất Labo",
-        "Permission": "Catalog.LaboFinishLine",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.LaboFinishLine.Read"
@@ -657,8 +719,7 @@
       },
       {
         "Name": "Kiểu nhịp Labo",
-        "Permission": "Catalog.LaboBridge",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.LaboBridge.Read"
@@ -679,8 +740,7 @@
       },
       {
         "Name": "Khớp cắn Labo",
-        "Permission": "Catalog.LaboBiteJoint",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.LaboBiteJoint.Read"
@@ -703,12 +763,10 @@
   },
   {
     "Name": "Cấu hình",
-    "Permission": "System",
-    "Children": [
+    "Functions": [
       {
         "Name": "Chi nhánh",
-        "Permission": "System.Company",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "System.Company.Read"
@@ -728,31 +786,8 @@
         ]
       },
       {
-        "Name": "Người dùng",
-        "Permission": "System.ApplicationUser",
-        "Children": [
-          {
-            "Name": "Xem",
-            "Permission": "System.ApplicationUser.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "System.ApplicationUser.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "System.ApplicationUser.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "System.ApplicationUser.Delete"
-          }
-        ]
-      },
-      {
         "Name": "Nhóm quyền",
-        "Permission": "System.ApplicationRole",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "System.ApplicationRole.Read"
@@ -775,16 +810,19 @@
   },
   {
     "Name": "Sổ quỹ",
-    "Permission": "Account",
-    "Children": [
+    "Functions": [
       {
         "Name": "Dữ liệu sổ quỹ",
-        "Permission": "Account.Read"
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Account.Read"
+          }
+        ]
       },
       {
         "Name": "Phiếu thu/chi",
-        "Permission": "Account.PhieuThuChi",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Account.PhieuThuChi.Read"
@@ -804,9 +842,8 @@
         ]
       },
       {
-        "Name": "Loại thu/chi",
-        "Permission": "Account.LoaiThuChi",
-        "Children": [
+        "Name": "Loại thu chi",
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Account.LoaiThuChi.Read"
@@ -829,66 +866,132 @@
   },
   {
     "Name": "Báo cáo",
-    "Permission": "Report",
-    "Children": [
+    "Functions": [
       {
         "Name": "Kết quả kinh doanh",
-        "Permission": "Report.Financial"
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Financial"
+          }
+        ]
       },
       {
-        "Name": "Tiền mặt, ngân hàng",
-        "Permission": "Report.CashBankAccount"
+        "Name": "Tiền mặt ngân hàng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.CashBankAccount"
+          }
+        ]
       },
       {
         "Name": "Thống kê doanh thu",
-        "Permission": "Report.Revenue"
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Revenue"
+          }
+        ]
       },
       {
         "Name": "Thống kê điều trị",
-        "Permission": "Report.Sale"
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Sale"
+          }
+        ]
       },
       {
         "Name": "Công nợ KH/NCC",
-        "Permission": "Report.AccountPartner"
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.AccountPartner"
+          }
+        ]
       },
       {
         "Name": "Xuất nhập tồn",
-        "Permission": "Report.Stock"
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Stock"
+          }
+        ]
       },
       {
         "Name": "Tình hình thu nợ khách hàng",
-        "Permission": "Report.RealRevenue"
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.RealRevenue"
+          }
+        ]
       },
-      //{
-      //  "Name": "Thống kê công việc",
-      //  "Permission": "Report.DotKham"
-      //},
       {
         "Name": "Thống kê hoa hồng",
-        "Permission": "Report.Commission"
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Commission"
+          }
+        ]
       },
       {
         "Name": "Khách hàng lân cận phòng khám",
-        "Permission": "Report.PartnerLocation"
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.PartnerLocation"
+          }
+        ]
       },
       {
         "Name": "Thống kê nguồn khách hàng",
-        "Permission": "Report.PartnerSource"
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.PartnerSource"
+          }
+        ]
       },
       {
         "Name": "Thống kê khách hàng cũ mới",
-        "Permission": "Report.PartnerOldNew"
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.PartnerOldNew"
+          }
+        ]
+      },
+      {
+        "Name": "Thống kê labo",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.LaboOrder"
+          }
+        ]
+      },
+      {
+        "Name": "Thống kê lịch hẹn",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Appointment"
+          }
+        ]
       }
     ]
   },
   {
     "Name": "Khuyến mãi/coupon",
-    "Permission": "SaleCoupon",
-    "Children": [
+    "Functions": [
       {
         "Name": "Chương trình khuyến mãi/coupon",
-        "Permission": "SaleCoupon.SaleCouponProgram",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "SaleCoupon.SaleCouponProgram.Read"
@@ -909,8 +1012,7 @@
       },
       {
         "Name": "Coupon",
-        "Permission": "SaleCoupon.SaleCoupons",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "SaleCoupon.SaleCoupons.Read"
@@ -919,27 +1021,16 @@
             "Name": "Thêm",
             "Permission": "SaleCoupon.SaleCoupons.Create"
           }
-          //{
-          //  "Name": "Cập nhật",
-          //  "Permission": "SaleCoupon.SaleCoupons.Update"
-          //},
-          //{
-          //  "Name": "Xóa",
-          //  "Permission": "SaleCoupon.SaleCoupons.Delete"
-          //}
         ]
       }
-    ],
-    "Groups": "sale.group_sale_coupon_promotion"
+    ]
   },
   {
     "Name": "Thẻ tiền mặt",
-    "Permission": "ServiceCard",
-    "Children": [
+    "Functions": [
       {
         "Name": "Đơn bán thẻ",
-        "Permission": "ServiceCard.Order",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "ServiceCard.Order.Read"
@@ -960,8 +1051,7 @@
       },
       {
         "Name": "Loại thẻ",
-        "Permission": "ServiceCard.Type",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "ServiceCard.Type.Read"
@@ -982,8 +1072,7 @@
       },
       {
         "Name": "Danh sách thẻ",
-        "Permission": "ServiceCard.Card",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "ServiceCard.Card.Read"
@@ -1002,17 +1091,14 @@
           }
         ]
       }
-    ],
-    "Groups": "sale.group_service_card"
+    ]
   },
   {
     "Name": "Thành viên",
-    "Permission": "LoyaltyCard",
-    "Children": [
+    "Functions": [
       {
         "Name": "Thẻ thành viên",
-        "Permission": "LoyaltyCard.CardCard",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "LoyaltyCard.CardCard.Read"
@@ -1033,8 +1119,7 @@
       },
       {
         "Name": "Loại thẻ thành viên",
-        "Permission": "LoyaltyCard.CardType",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "LoyaltyCard.CardType.Read"
@@ -1053,17 +1138,14 @@
           }
         ]
       }
-    ],
-    "Groups": "sale.group_loyalty_card"
+    ]
   },
   {
     "Name": "Đơn vị tính",
-    "Permission": "UoM",
-    "Children": [
+    "Functions": [
       {
         "Name": "Đơn vị tính",
-        "Permission": "UoM.UoMs",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "UoM.UoMs.Read"
@@ -1084,8 +1166,7 @@
       },
       {
         "Name": "Nhóm đơn vị tính",
-        "Permission": "UoM.UoMCategory",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "UoM.UoMCategory.Read"
@@ -1104,17 +1185,14 @@
           }
         ]
       }
-    ],
-    "Groups": "product.group_uom"
+    ]
   },
   {
     "Name": "Chăm sóc tự động",
-    "Permission": "TCare",
-    "Children": [
+    "Functions": [
       {
         "Name": "Kênh chăm sóc",
-        "Permission": "TCare.Channel",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "TCare.Channel.Read"
@@ -1135,8 +1213,7 @@
       },
       {
         "Name": "Kịch bản",
-        "Permission": "TCare.Scenario",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "TCare.Scenario.Read"
@@ -1156,9 +1233,8 @@
         ]
       },
       {
-        "Name": "Thống kê gửu tin",
-        "Permission": "TCare.Messaging",
-        "Children": [
+        "Name": "Thống kê gửi tin",
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "TCare.Messaging.Read"
@@ -1167,8 +1243,7 @@
       },
       {
         "Name": "Mẫu tin nhắn",
-        "Permission": "TCare.MessTemplate",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "TCare.MessTemplate.Read"
@@ -1189,25 +1264,21 @@
       },
       {
         "Name": "Thiết lập tự động",
-        "Permission": "TCare.Config",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "TCare.Config.Create"
           }
         ]
       }
-    ],
-    "Groups": "tcare.group_tcare"
+    ]
   },
   {
     "Name": "Khảo sát đánh giá",
-    "Permission": "Survey",
-    "Children": [
+    "Functions": [
       {
         "Name": "Danh sách công việc",
-        "Permission": "Survey.Assignment",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Survey.Assignment.Read"
@@ -1232,8 +1303,7 @@
       },
       {
         "Name": "Khảo sát",
-        "Permission": "Survey.UserInput",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Survey.UserInput.Read"
@@ -1246,8 +1316,7 @@
       },
       {
         "Name": "Câu hỏi khảo sát",
-        "Permission": "Survey.Question",
-        "Children": [
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Survey.Question.Read"
@@ -1268,4 +1337,5 @@
       }
     ]
   }
+
 ]

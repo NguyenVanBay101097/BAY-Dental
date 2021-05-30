@@ -6,6 +6,6 @@ namespace ApplicationCore.Utilities
 {
     public interface IViewRenderService
     {
-        string Render<T>(string name, T model) ;
+        string Render<T>(string name, T model);
     }
 }

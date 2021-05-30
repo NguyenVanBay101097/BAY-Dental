@@ -8,21 +8,18 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
-                        (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons d-flex">
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle btn-sm mr-1" type="button" id="dropdownAppointmentState"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-primary dropdown-toggle btn-sm mr-1" type="button" id="dropdownAppointmentState" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Theo {{getTitle()}}
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownAppointmentState">
-                        <button class="dropdown-item" *ngFor="let item of groups" type="button"
-                            (click)="setGroupBy(item.value)">
+                        <button class="dropdown-item" *ngFor="let item of groups" type="button" (click)="setGroupBy(item.value)">
                             <span>{{item.text}}</span>
                         </button>
                     </div>
@@ -30,27 +27,24 @@
             </div>
             <div class="o_cp_sidebar">
                 <div hasGroups [groups]="'base.group_multi_company'">
-                    <kendo-combobox [data]="listCompanies" [placeholder]="'Tất cả chi nhánh'" [filterable]="true"
-                    (filterChange)="fillChangeCompany($event); this.searchUpdateCompanies.next($event);" #comboboxCbx 
-                    (valueChange)="changeCompany($event)" class="cbbox-sm"
-                    [textField]="'name'" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+                    <kendo-combobox [data]="listCompanies" [placeholder]="'Tất cả chi nhánh'" [filterable]="true" (filterChange)="fillChangeCompany($event); this.searchUpdateCompanies.next($event);" #comboboxCbx (valueChange)="changeCompany($event)" class="cbbox-sm" [textField]="'name'"
+                        [valueField]="'id'" [popupSettings]="{width: 'auto'}">
                     </kendo-combobox>
                 </div>
             </div>
         </div>
         <div class="o_cp_right">
             <div class="btn-group o_search_options">
-                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
+                <!-- <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
                     (searchChange)="onSearchDateChange($event)">
-                </app-tai-date-range-filter-dropdown>
+                </app-tai-date-range-filter-dropdown> -->
+                <app-date-range-picker-filter [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
             </div>
             <nav aria-label="View switcher" class="btn-group o_cp_switch_buttons" role="toolbar">
-                <button accesskey="l" (click)="setViewType('list')" [class.active]="viewType == 'list'"
-                    class="btn btn-sm btn-secondary o_cp_switch_list" title="Danh sách" type="button">
+                <button accesskey="l" (click)="setViewType('list')" [class.active]="viewType == 'list'" class="btn btn-sm btn-secondary o_cp_switch_list" title="Danh sách" type="button">
                     <i class="fas fa-list-ul"></i>
                 </button>
-                <button (click)="setViewType('graph')" [class.active]="viewType == 'graph'" aria-label="View graph"
-                    class="btn btn-sm btn-secondary o_cp_switch_graph" title="Biểu đồ" type="button">
+                <button (click)="setViewType('graph')" [class.active]="viewType == 'graph'" aria-label="View graph" class="btn btn-sm btn-secondary o_cp_switch_graph" title="Biểu đồ" type="button">
                     <i class="fas fa-chart-bar"></i>
                 </button>
             </nav>
@@ -64,12 +58,10 @@
         <h4 class="text-success">{{reportResult.balance | number}}</h4>
     </div>
     <div>
-        <kendo-grid *ngIf="viewType == 'list'" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true"
-            [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid *ngIf="viewType == 'list'" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
             <kendo-grid-column field="name" [title]="getTitle()">
             </kendo-grid-column>
-            <kendo-grid-column field="priceTotal" class="text-right" title="Tổng doanh thu"
-                footerClass="text-right font-weight-bold">
+            <kendo-grid-column field="priceTotal" class="text-right" title="Tổng doanh thu" footerClass="text-right font-weight-bold">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.balance | number}}
                 </ng-template>

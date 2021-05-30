@@ -19,13 +19,13 @@ import { NgbDateCustomParserFormatter } from "./core/ngb-date-custom-parser-form
 import { RefreshTokenInterceptor } from './auth/refresh-token-interceptor';
 import { MomentModule } from 'ngx-moment';
 import 'moment/locale/vi';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { MyErrorHandler } from './my-error-handler';
 import { FacebookModule } from 'ngx-facebook';
 import { NoCacheInterceptor } from './http-interceptors/no-cache.interceptor';
 // import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { PartnerGeneralSettingsComponent } from './partner-general-settings/partner-general-settings.component';
+import { AppHomeComponent } from './app-home/app-home.component';
 
 
 export function tokenGetter() {
@@ -38,7 +38,8 @@ registerLocaleData(localeVi, "vi");
 @NgModule({
   declarations: [
     AppComponent,
-    PartnerGeneralSettingsComponent
+    PartnerGeneralSettingsComponent,
+    AppHomeComponent
   ],
   imports: [
     CommonModule,
@@ -52,7 +53,6 @@ registerLocaleData(localeVi, "vi");
         blacklistedRoutes: [],
       },
     }),
-    FlexLayoutModule,
     SharedModule,
     RoutingsModule,
     MomentModule.forRoot({

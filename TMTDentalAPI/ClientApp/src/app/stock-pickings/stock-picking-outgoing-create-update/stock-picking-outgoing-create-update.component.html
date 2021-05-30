@@ -23,14 +23,14 @@
         <div class="o_form_sheet_bg h-100 d-flex flex-column">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="pickingState != 'done'" class="btn btn-primary btn-sm" accesskey="s" (click)="onSaveOrUpdate()">Lưu</button>
-                    <button type="button" accesskey="1" class="btn btn-primary btn-sm" *ngIf="['draft'].indexOf(picking.state) !== -1" (click)="actionDone()">
+                    <button type="button" *ngIf="pickingState != 'done' && canCreateUpdate" class="btn btn-primary btn-sm" accesskey="s" (click)="onSaveOrUpdate()">Lưu</button>
+                    <button type="button" accesskey="1" class="btn btn-primary btn-sm" *ngIf="['draft'].indexOf(picking.state) !== -1 && canActionDone" (click)="actionDone()">
                         Hoàn thành
                     </button>
-                    <button *ngIf="id" type="button" accesskey="1" class="btn btn-primary btn-sm" (click)="onPrint()">
+                    <button *ngIf="id && canPrint" type="button" accesskey="1" class="btn btn-primary btn-sm" (click)="onPrint()">
                         In Phiếu
                       </button>
-                    <a [routerLink]="['/stock/outgoing-pickings/create']" accesskey="c" *ngIf="id" class="btn btn-secondary btn-sm">
+                    <a [routerLink]="['/stock/outgoing-pickings/create']" accesskey="c" *ngIf="id && canCreate" class="btn btn-secondary btn-sm">
                         Thêm mới
                     </a>
                 </div>

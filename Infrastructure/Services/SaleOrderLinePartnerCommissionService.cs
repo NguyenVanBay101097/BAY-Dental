@@ -38,13 +38,9 @@ namespace Infrastructure.Services
 
             if (rule == null)
             {
-                self.Percentage = 0;
-                self.Amount = 0;
             }
             else
             {
-                self.Percentage = rule.PercentFixed ?? 0;
-                self.Amount = orderLine.PriceTotal * ((rule.PercentFixed ?? 0) / 100);
             }
             
             return self;

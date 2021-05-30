@@ -1,0 +1,121 @@
+:host {
+    display: table;
+    width: 100%;
+}
+
+.b-sticky-left {
+    position: sticky;
+    left: 0;
+    /* border: 1px solid #dee2e6; */
+    z-index: 3;
+    background-color: #f9f9f9;
+}
+
+.b-sticky-right {
+    position: sticky;
+    right: 0;
+    background-color: #f9f9f9;
+    /* border: 1px solid #dee2e6; */
+    z-index: 3;
+}
+
+.tooth-item-collapsed {
+    padding: .25rem .5rem;
+    border: 1px solid #ccc;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 0;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+    box-shadow: none;
+}
+
+.tooth-wrapper .tooth-item-collapsed:last-child {
+    border-right: 1px solid #ccc;
+}
+
+.table-tooth tr td {
+    padding: 0;
+}
+
+.table-tooth tr:first-child td {
+    padding-bottom: .25rem;
+}
+
+.table-tooth tr:last-child td {
+    padding-top: .25rem;
+}
+
+.table-tooth tr td:first-child {
+    padding-right: .25rem;
+}
+
+.table-tooth tr td:last-child {
+    padding-left: .25rem;
+}
+
+.tooth-item-collapsed.selected,
+.tooth-item-collapsed:hover {
+    background-color: #F5FAFF;
+    color: #007BFF;
+    border-color: #007BFF;
+    border-right: 1px solid #007BFF !important;
+}
+
+.teeth-map td {
+    border-left: none !important;
+}
+
+.btn:hover {
+    cursor: pointer;
+}
+
+.icon:hover {
+    cursor: pointer;
+}
+
+.pointer:hover {
+    cursor: pointer;
+}
+
+.btn-icon:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.btn-icon {
+    padding: 4px;
+    margin-right: 2px;
+    border-radius: 4px;
+}
+
+.btn-radio-active,
+.btn-radio:hover {
+    background: #F5FAFF !important;
+    border: 1px solid #007BFF !important;
+    box-sizing: border-box;
+    border-radius: 4px;
+    color: #007BFF !important;
+}
+
+.promotions {
+    background: #F5FAFF !important;
+    border: 1px solid #007BFF !important;
+    box-sizing: border-box;
+    border-radius: 4px;
+    color: #007BFF !important;
+    max-width: 350px;
+}
+
+.btn-radio {
+    background: #FFFFFF;
+    border: 1px solid #EBEDEF;
+    box-sizing: border-box;
+    border-radius: 4px;
+    color: #828588;
+}
+
+.button_actions .btn {
+    padding: 0.125rem 0.35rem;
+    margin-right: 5px;
+}

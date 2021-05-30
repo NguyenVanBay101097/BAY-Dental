@@ -9,5 +9,6 @@ namespace ApplicationCore.Entities
     {
         public ICollection<ApplicationRoleFunction> Functions { get; set; } = new List<ApplicationRoleFunction>();
         public ICollection<IdentityUserRole<string>> UserRoles { get; set; }
+        public bool Hidden { get; set; }
     }
 }

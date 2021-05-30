@@ -19,7 +19,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<SaleOrderLinePrintVM> OrderLines { get; set; } = new List<SaleOrderLinePrintVM>();
 
-        public IEnumerable<PaymentInfoContentPrintVm> HistoryPayments { get; set; } = new List<PaymentInfoContentPrintVm>();
+        public IEnumerable<SaleOrderPaymentBasic> HistoryPayments { get; set; } = new List<SaleOrderPaymentBasic>();
 
         public IEnumerable<DotKhamDisplayVm> DotKhams { get; set; } = new List<DotKhamDisplayVm>();
 

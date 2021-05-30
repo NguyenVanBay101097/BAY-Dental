@@ -144,6 +144,9 @@ namespace TMTDentalAPI
             services.AddScoped<IDistrictService, DistrictService>();
             services.AddScoped<IWardService, WardService>();
             services.AddScoped<IIRSequenceService, IRSequenceService>();
+            services.AddScoped<IQuotationService, QuotationService>();
+            services.AddScoped<IQuotationLineService, QuotationLineService>();
+            services.AddScoped<IPaymentQuotationService, PaymentQuotationService>();
 
             services.AddScoped<IResourceCalendarService, ResourceCalendarService>();
             services.AddScoped<IResourceCalendarAttendanceService, ResourceCalendarAttendanceService>();
@@ -323,9 +326,21 @@ namespace TMTDentalAPI
 
             services.AddScoped<ISurveyUserInputLineService, SurveyUserInputLineService>();
             services.AddScoped<IStockInventoryCriteriaService, StockInventoryCriteriaService>();
+            services.AddScoped<IPartnerAdvanceService, PartnerAdvanceService>();
+
+            services.AddScoped<ISaleOrderPaymentService, SaleOrderPaymentService>();
+            services.AddScoped<ISaleOrderPaymentHistoryLineService, SaleOrderPaymentHistoryLineService>();
+            services.AddScoped<ISaleOrderPaymentJournalLineService, SaleOrderPaymentJournalLineService>();
+            services.AddScoped<IApplicationRoleService, ApplicationRoleService>();
+
+            services.AddScoped<ISaleOrderPromotionService, SaleOrderPromotionService>();
+            services.AddScoped<ISaleOrderPromotionLineService, SaleOrderPromotionLineService>();
             services.AddScoped<IPrintPaperSizeService, PrintPaperSizeService>();
             services.AddScoped<IConfigPrintService, ConfigPrintService>();
             services.AddScoped<IViewToStringRenderService, ViewToStringRenderService>();
+
+            services.AddScoped<IQuotationPromotionService, QuotationPromotionService>();
+            services.AddScoped<IQuotationPromotionLineService, QuotationPromotionLineService>();
 
             services.AddMemoryCache();
 
@@ -334,6 +349,9 @@ namespace TMTDentalAPI
 
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
+
+            services.AddScoped<IToothDiagnosisService, ToothDiagnosisService>();
+            services.AddScoped<IAdvisoryService, AdvisoryService>();
 
             Action<IMapperConfigurationExpression> mapperConfigExp = mc =>
             {
@@ -475,6 +493,19 @@ namespace TMTDentalAPI
                 mc.AddProfile(new StockLocationProfile());
                 mc.AddProfile(new StockInventoryCriteriaProfile());
                 mc.AddProfile(new ProductStockInventoryCriteriaRelProfile());
+                mc.AddProfile(new QuotationProfile());
+                mc.AddProfile(new QuotationLineProfile());
+                mc.AddProfile(new PaymentQuotationProfile());
+                mc.AddProfile(new ToothDiagnosisProfile());
+                mc.AddProfile(new AdvisoryProfile());
+                mc.AddProfile(new PartnerAdvanceProfile());
+                mc.AddProfile(new SaleOrderPaymentProfile());
+                mc.AddProfile(new SaleOrderPaymentHistoryLineProfile());
+                mc.AddProfile(new SaleOrderPaymentJournalLineProfile());
+                mc.AddProfile(new SaleOrderPromotionProfile());
+                mc.AddProfile(new SaleOrderPromotionLineProfile());
+                mc.AddProfile(new QuotationPromotionProfile());
+                mc.AddProfile(new QuotationPromotionLineProfile());
                 mc.AddProfile(new ConfigPrintProfile());
                 mc.AddProfile(new PrintPaperSizeProfile());
             };

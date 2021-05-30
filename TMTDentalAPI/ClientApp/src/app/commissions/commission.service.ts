@@ -13,6 +13,7 @@ export class CommissionPaged {
   offset: number;
   limit: number;
   search: string;
+  type: string;
 }
 
 export class CommissionPaging {
@@ -26,7 +27,9 @@ export class CommissionProductRule {
   appliedOn: string;
   categ: ProductCategoryBasic;
   categId: string;
-  percentFixed: number;
+  percentAdvisory: number;
+  percentDoctor: number;
+  percentAssistant: number;
   product: ProductSimple;
   productId: string;
 }
@@ -35,7 +38,9 @@ export class CommissionProductRuleDisplay {
   appliedOn: string;
   categ: ProductCategoryBasic;
   categId: string;
-  percentFixed: number;
+  percentAdvisory: number;
+  percentDoctor: number;
+  percentAssistant: number;
   product: ProductSimple;
   productId: string;
   companyId: string;
@@ -71,4 +76,5 @@ export class CommissionService {
   autocomplete(val: CommissionPaged): Observable<Commission[]> {
     return this.http.post<Commission[]>(this.baseApi + this.apiUrl + '/autocomplete', val);
   }
+
 }

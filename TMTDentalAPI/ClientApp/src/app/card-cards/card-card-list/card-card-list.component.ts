@@ -23,6 +23,10 @@ export class CardCardListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   stateFilter: string = '';
 
+  canCreate = false;
+  canUpdate = false;
+  canDelete = false;
+
   stateFilterOptions: TmtOptionSelect[] = [
     { text: 'Tất cả', value: '' },
     { text: 'Nháp', value: 'draft' },
@@ -125,5 +129,9 @@ export class CardCardListComponent implements OnInit {
         }, 100);
       }
     );
+  }
+
+  checkRole(){
+    
   }
 }

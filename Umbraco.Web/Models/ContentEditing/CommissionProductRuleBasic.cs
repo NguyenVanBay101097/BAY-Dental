@@ -8,7 +8,11 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public decimal PercentFixed { get; set; }
+        /// <summary>
+        /// % hoa hồng 
+        /// </summary>
+        public decimal? Percent { get; set; }      
+
         public string AppliedOn { get; set; }
     }
 }

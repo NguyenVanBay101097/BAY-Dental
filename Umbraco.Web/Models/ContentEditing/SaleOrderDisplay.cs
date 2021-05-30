@@ -31,14 +31,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? AmountUntaxed { get; set; }
 
         public decimal? AmountTotal { get; set; }
-        public decimal? PaidTotal
-        {
-            get
-            {
-                return (this.AmountTotal ?? 0) - (this.Residual ?? 0);
-            }
-            set { }
-        }
+
+        public decimal AmountDiscountTotal { get; set; }
 
         public string Note { get; set; }
 
@@ -51,7 +45,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<SaleOrderLineDisplay> OrderLines { get; set; } = new List<SaleOrderLineDisplay>();
 
-
+        public IEnumerable<SaleOrderPromotionBasic> Promotions { get; set; } = new List<SaleOrderPromotionBasic>();
 
         public Guid CompanyId { get; set; }
 
@@ -70,6 +64,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? JournalId { get; set; }
         public AccountJournalSimple Journal { get; set; }
 
+        public Guid? QuotationId { get; set; }
+        public QuotationSimple Quotation { get; set; }
+
         public bool? IsQuotation { get; set; }
         public bool? IsFast { get; set; }
 
@@ -80,6 +77,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string InvoiceStatus { get; set; }
 
         public int InvoiceCount { get; set; }
+
+        public decimal? TotalPaid { get; set; }
     }
 
     public class SaleOrderDisplayVm
@@ -130,6 +129,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<SaleOrderLineDisplay> OrderLines { get; set; } = new List<SaleOrderLineDisplay>();
 
         public IEnumerable<DotKhamDisplayVm> DotKhams { get; set; } = new List<DotKhamDisplayVm>();
+
+        public IEnumerable<SaleOrderPromotionBasic> Promotions { get; set; } = new List<SaleOrderPromotionBasic>();
 
         public Guid CompanyId { get; set; }
 

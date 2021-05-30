@@ -6,6 +6,7 @@ import { GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-a
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { fromEvent, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SurveyConfigurationEvaluationDialogComponent } from '../survey-configuration-evaluation-dialog/survey-configuration-evaluation-dialog.component';
 import { SurveyQuestionBasic, SurveyQuestionDisplay, SurveyQuestionPaged, SurveyQuestionService } from '../survey-question.service';
@@ -30,11 +31,14 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
     {name: 'Câu hỏi ẩn', value: false},
   ];
   defaultFilter = this.listFilter[0];
-
+  canAdd = false;
+  canUpdate = false;
+  canDelete = false;
   constructor(
     private surveyQuestionService: SurveyQuestionService,
     private modalService: NgbModal,
     private notificationService: NotificationService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -45,6 +49,7 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
         this.loadDataFromApi();
       });
     this.loadDataFromApi();
+    this.checkRole();
   }
 
   loadDataFromApi() {
@@ -170,4 +175,9 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
 
   }
 
+  checkRole() {
+    this.canAdd = this.checkPermissionService.check(['Survey.Question.Create']);
+    this.canUpdate = this.checkPermissionService.check(['Survey.Question.Update']);
+    this.canDelete = this.checkPermissionService.check(['Survey.Question.Delete']);
+  }
 }

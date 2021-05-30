@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { PermissionTreeViewModel } from 'src/app/roles/role.service';
 
 @Injectable({ providedIn: 'root' })
 export class WebService {
@@ -27,7 +28,7 @@ export class WebService {
     }
 
     getFeatures() {
-        return this.http.get(this.baseApi + this.apiUrl + '/Features');
+        return this.http.get<PermissionTreeViewModel[]>(this.baseApi + this.apiUrl + '/Features');
     }
 
     getExpire() {
