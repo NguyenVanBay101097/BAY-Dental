@@ -671,10 +671,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   printPayment(paymentId) {
     this.saleOrderPaymentService.getPrint(paymentId).subscribe(result => {
-      if (result) {
-        var html = result['html']
-        this.printService.printHtml(html);
-      }
+      this.printService.printHtml(result);
     });
   }
 
