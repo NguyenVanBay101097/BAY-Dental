@@ -27,5 +27,6 @@ namespace ApplicationCore.Constants
         public const string PhieuThuChiPaperCode = "PhieuThuChi";
         public const string StockPickingPaperCode = "StockPicking";
         public const string StockInventoryPaperCode = "StockInventory";
+        public const string SaleOrderPaymentPaperCode = "SaleOrderPayment";
     }
 }

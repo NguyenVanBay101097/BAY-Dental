@@ -123,7 +123,7 @@ export class SaleOrderPaymentService {
   }
 
   getPrint(id) {
-    return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint', )
+    return this.http.get(this.baseApi + "SaleOrderPayment/Print?id=" + id, { responseType: 'text' });
   }
 
 }
