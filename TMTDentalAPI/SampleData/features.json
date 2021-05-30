@@ -987,10 +987,10 @@
     ]
   },
   {
-    "Name": "Khuyến mãi/coupon",
+    "Name": "Khuyến mãi",
     "Functions": [
       {
-        "Name": "Chương trình khuyến mãi/coupon",
+        "Name": "Chương trình khuyến mãi",
         "Ops": [
           {
             "Name": "Xem",
@@ -1009,20 +1009,20 @@
             "Permission": "SaleCoupon.SaleCouponProgram.Delete"
           }
         ]
-      },
-      {
-        "Name": "Coupon",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "SaleCoupon.SaleCoupons.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "SaleCoupon.SaleCoupons.Create"
-          }
-        ]
       }
+      //{
+      //  "Name": "Coupon",
+      //  "Ops": [
+      //    {
+      //      "Name": "Xem",
+      //      "Permission": "SaleCoupon.SaleCoupons.Read"
+      //    },
+      //    {
+      //      "Name": "Thêm",
+      //      "Permission": "SaleCoupon.SaleCoupons.Create"
+      //    }
+      //  ]
+      //}
     ]
   },
   {
@@ -1093,53 +1093,53 @@
       }
     ]
   },
-  {
-    "Name": "Thành viên",
-    "Functions": [
-      {
-        "Name": "Thẻ thành viên",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "LoyaltyCard.CardCard.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "LoyaltyCard.CardCard.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "LoyaltyCard.CardCard.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "LoyaltyCard.CardCard.Delete"
-          }
-        ]
-      },
-      {
-        "Name": "Loại thẻ thành viên",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "LoyaltyCard.CardType.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "LoyaltyCard.CardType.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "LoyaltyCard.CardType.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "LoyaltyCard.CardType.Delete"
-          }
-        ]
-      }
-    ]
-  },
+  //{
+  //  "Name": "Thành viên",
+  //  "Functions": [
+  //    {
+  //      "Name": "Thẻ thành viên",
+  //      "Ops": [
+  //        {
+  //          "Name": "Xem",
+  //          "Permission": "LoyaltyCard.CardCard.Read"
+  //        },
+  //        {
+  //          "Name": "Thêm",
+  //          "Permission": "LoyaltyCard.CardCard.Create"
+  //        },
+  //        {
+  //          "Name": "Cập nhật",
+  //          "Permission": "LoyaltyCard.CardCard.Update"
+  //        },
+  //        {
+  //          "Name": "Xóa",
+  //          "Permission": "LoyaltyCard.CardCard.Delete"
+  //        }
+  //      ]
+  //    },
+  //    {
+  //      "Name": "Loại thẻ thành viên",
+  //      "Ops": [
+  //        {
+  //          "Name": "Xem",
+  //          "Permission": "LoyaltyCard.CardType.Read"
+  //        },
+  //        {
+  //          "Name": "Thêm",
+  //          "Permission": "LoyaltyCard.CardType.Create"
+  //        },
+  //        {
+  //          "Name": "Cập nhật",
+  //          "Permission": "LoyaltyCard.CardType.Update"
+  //        },
+  //        {
+  //          "Name": "Xóa",
+  //          "Permission": "LoyaltyCard.CardType.Delete"
+  //        }
+  //      ]
+  //    }
+  //  ]
+  //},
   {
     "Name": "Đơn vị tính",
     "Functions": [

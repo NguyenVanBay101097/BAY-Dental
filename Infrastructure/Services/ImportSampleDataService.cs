@@ -419,14 +419,14 @@ namespace Infrastructure.Services
 
             //lấy các phiếu điều trị đã xác nhận và thanh toán
             var orders = await orderObj.SearchQuery(x => x.State != "draft" && (!x.IsQuotation.HasValue || x.IsQuotation == false))
-                .Include(x => x.SaleOrderPaymentRels)
+                .Include(x => x.SaleOrderPaymentRels).ThenInclude(x => x.Payment)
                 .Include(x => x.OrderLines)
                 //.ThenInclude(x => x.SaleOrderLinePaymentRels).ThenInclude(x => x.Payment)
                 //.Include(x => x.OrderLines).ThenInclude(x => x.PartnerCommissions)
                 //.Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLineInvoice2Rels).ThenInclude(x => x.InvoiceLine)
                 .ToListAsync();
 
-            var orderPaymentIds = orders.SelectMany(x => x.SaleOrderPaymentRels).Select(x => x.PaymentId).Distinct().ToList();
+            var orderPaymentIds = orders.SelectMany(x => x.SaleOrderPaymentRels).Where(x => x.Payment.State == "posted").Select(x => x.PaymentId).Distinct().ToList();
             payment_ids = payment_ids.Union(orderPaymentIds);
 
             var orderLineIds = orders.SelectMany(x => x.OrderLines).Select(x => x.Id).ToList();

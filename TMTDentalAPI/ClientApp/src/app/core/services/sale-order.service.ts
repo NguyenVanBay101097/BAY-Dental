@@ -165,7 +165,7 @@ export class SaleOrderService {
     }
 
     printSaleOrder(id: string) {
-        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrintSaleOrder');
+        return this.http.get(this.baseApi + this.apiUrlPrint + '/Print' + `?id=${id}`, { responseType: 'text' });
     }
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {

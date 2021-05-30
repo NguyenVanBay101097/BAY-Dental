@@ -241,7 +241,7 @@ namespace Infrastructure.Services
             };
             #endregion
 
-            #region for PayrollDiary
+            #region for PayrollDiary And Partner Advance
             var currentLiabilities = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_liabilities");
             var acc334 = new AccountAccount
             {
@@ -258,6 +258,15 @@ namespace Infrastructure.Services
                 Code = "642",
                 InternalType = expensesType.Type,
                 UserTypeId = expensesType.Id,
+                CompanyId = company.Id,
+            };
+
+            var accKHTU = new AccountAccount
+            {
+                Name = "Khách hàng tạm ứng",
+                Code = "KHTU",
+                InternalType = currentLiabilities.Type,
+                UserTypeId = currentLiabilities.Id,
                 CompanyId = company.Id,
             };
             #endregion
@@ -316,7 +325,7 @@ namespace Infrastructure.Services
 
 
 
-            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642 });
+            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU });
 
             #endregion
 
@@ -379,7 +388,18 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal });
+            var journalAdvance = new AccountJournal
+            {
+                Name = "Tạm ứng",
+                Type = "advance",
+                UpdatePosted = true,
+                Code = "ADVANCE",
+                DefaultDebitAccountId = accKHTU.Id,
+                DefaultCreditAccountId = accKHTU.Id,
+                CompanyId = company.Id,
+            };
+
+            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance });
 
             #endregion
         }

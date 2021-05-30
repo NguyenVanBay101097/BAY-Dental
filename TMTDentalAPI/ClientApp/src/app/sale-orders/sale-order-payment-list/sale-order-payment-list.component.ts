@@ -83,7 +83,7 @@ export class SaleOrderPaymentListComponent implements OnInit {
   }
 
   printPayment(payment) {
-    this.saleOrderPaymentService.getPrint(payment.id).subscribe(result => {
+    this.saleOrderPaymentService.getPrint(payment.id).subscribe((result: any) => {
       if (result) {
         this.printService.printHtml(result);
       }

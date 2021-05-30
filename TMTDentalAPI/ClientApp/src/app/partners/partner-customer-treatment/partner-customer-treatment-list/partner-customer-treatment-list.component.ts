@@ -40,8 +40,6 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd;
     this.activeRoute.parent.params.subscribe(
       params => {
         this.partnerId = params.id;

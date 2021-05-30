@@ -257,7 +257,7 @@
     <record model="account.account" id="data_account_KHTU">
       <field name="name">Khách hàng tạm ứng</field>
       <field name="code">KHTU</field>
-      <field name="user_type_id" ref="account.data_account_type_liquidity" />
+      <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
     </record>
 
     <!-- account.journal -->

@@ -14297,7 +14297,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("CreatedById");
 
                     b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "SaleCouponProgram")
-                        .WithMany()
+                        .WithMany("Promotions")
                         .HasForeignKey("SaleCouponProgramId");
 
                     b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")

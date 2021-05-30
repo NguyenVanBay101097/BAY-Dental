@@ -53,8 +53,6 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd;
     this.loadToothCategories();
     setTimeout(() => {
       this.loadDefaultToothCategory().subscribe(result => {
