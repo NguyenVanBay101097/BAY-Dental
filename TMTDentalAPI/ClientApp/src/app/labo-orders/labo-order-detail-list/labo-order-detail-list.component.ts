@@ -7,6 +7,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { PrintService } from 'src/app/shared/services/print.service';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { Subject } from 'rxjs';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-labo-order-detail-list',
@@ -22,11 +23,20 @@ export class LaboOrderDetailListComponent implements OnInit {
   gridData: GridDataResult;
   details: LaboOrderBasic[];
   loading = false;
+
+  // check permissions
+  canAdd: boolean= false;
+  canUpdate: boolean = false;
+  canDelete: boolean = false;
+
   constructor(private laboOrderService: LaboOrderService, private modalService: NgbModal,
-    private printService: PrintService) { }
+    private printService: PrintService, 
+    private checkPermissionService: CheckPermissionService
+    ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
+    this.checkRole();
   }
 
   loadDataFromApi() {
@@ -74,7 +84,7 @@ export class LaboOrderDetailListComponent implements OnInit {
 
   createItem() {
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Tạo phiếu labo';
+    modalRef.componentInstance.title = 'Tạo phiếu Labo';
     modalRef.componentInstance.saleOrderLineId = this.item.id;
     modalRef.result.then(res => {
       this.loadDataFromApi();
@@ -110,8 +120,13 @@ export class LaboOrderDetailListComponent implements OnInit {
 
   printLabo(item: any) {
     this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.printHtml(result.html);
+      this.printService.printHtml(result);
     });
   }
 
+  checkRole(){
+    this.canAdd = this.checkPermissionService.check(['Labo.LaboOrder.Create']);
+    this.canUpdate = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
+    this.canDelete = this.checkPermissionService.check(['Labo.LaboOrder.Delete']);
+  }
 }

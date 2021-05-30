@@ -21,6 +21,7 @@ import { PrintService } from 'src/app/shared/services/print.service';
 import { forkJoin } from 'rxjs';
 import { unionBy } from 'lodash';
 import { observe } from 'fast-json-patch';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 declare var jquery: any;
 declare var $: any;
 
@@ -42,6 +43,11 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   productList: ProductBasic2[] = [];
   sourceProductList = [];
 
+  canActionDone = false;
+  canCreateUpdate = false;
+  canCreate = false;
+  canPrint = false;
+
   filteredPartners: PartnerSimple[] = [];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
@@ -59,7 +65,8 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     private stockMoveService: StockMoveService,
     private productService: ProductService,
     private modalService: NgbModal,
-    private printServie: PrintService
+    private printServie: PrintService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -75,7 +82,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
       state: null,
       name: null
     });
-
+    this.checkRole();
     this.id = this.route.snapshot.paramMap.get('id');
     if (this.id) {
       this.loadRecord();
@@ -353,11 +360,16 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   }
 
   onPrint() {
-    this.stockPickingService.Print(this.id).subscribe((res:any) => {
-      console.log(res);
-      
-      this.printServie.printHtml(res.html);
+    this.stockPickingService.Print(this.id).subscribe((res:any) => {     
+      this.printServie.printHtml(res);
     });
+  }
+
+  checkRole(){
+    this.canActionDone = this.checkPermissionService.check(["Stock.Picking.Update"]);
+    this.canCreateUpdate = this.checkPermissionService.check(["Stock.Picking.Update","Stock.Picking.Create"]);
+    this.canPrint = this.checkPermissionService.check(["Stock.Picking.Read"]);
+    this.canCreate = this.checkPermissionService.check(["Stock.Picking.Create"]);
   }
 }
 

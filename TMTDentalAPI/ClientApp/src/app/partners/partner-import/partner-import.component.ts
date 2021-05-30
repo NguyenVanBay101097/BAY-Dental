@@ -15,14 +15,14 @@ import { PartnerPaged } from '../partner-simple';
 export class PartnerImportComponent implements OnInit {
 
   constructor(public activeModal: NgbActiveModal, private fb: FormBuilder,
-    private partnerService: PartnerService, private showErrorService: AppSharedShowErrorService, 
+    private partnerService: PartnerService, private showErrorService: AppSharedShowErrorService,
     private notificationService: NotificationService) { }
 
   formGroup: FormGroup;
   title = "";
   type: string;
-  update:string;
-  isUpdate:boolean;
+  update: string;
+  isUpdate: boolean;
   errors: any = [];
 
   ngOnInit() {
@@ -70,7 +70,7 @@ export class PartnerImportComponent implements OnInit {
     });
   }
 
-  updateFileExcel(){
+  updateFileExcel() {
     if (!this.formGroup.valid) {
       this.notificationService.show({
         content: 'Vui lòng chọn file để cập nhật',
@@ -96,13 +96,13 @@ export class PartnerImportComponent implements OnInit {
     });
   }
 
-  loadExcelUpdateFile(){
+  loadExcelUpdateFile() {
     var paged = new PartnerPaged();
     paged.customer = true;
-   // paged.search = this.search || "";
+    // paged.search = this.search || "";
 
-   // var categs = this.searchCategs || [];
-   // paged.tagIds = categs.map(x => x.id);
+    // var categs = this.searchCategs || [];
+    // paged.tagIds = categs.map(x => x.id);
     // paged.categoryId = this.searchCateg ? this.searchCateg.id : null;
     this.partnerService.exportPartnerExcelFile(paged).subscribe((rs) => {
       let filename = "danh_sach_khach_hang";
@@ -121,5 +121,9 @@ export class PartnerImportComponent implements OnInit {
         window.URL.revokeObjectURL(data);
       }, 100);
     });
+  }
+
+  notifyError(value) {
+    this.errors = value;
   }
 }

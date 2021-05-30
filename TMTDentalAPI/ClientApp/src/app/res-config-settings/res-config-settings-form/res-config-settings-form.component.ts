@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ResConfigSettingsService } from '../res-config-settings.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { PrintPaperSizeBasic, PrintPaperSizePaged, PrintPaperSizeService } from 'src/app/config-prints/print-paper-size.service';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-res-config-settings-form',
@@ -15,7 +18,10 @@ import { IntlService } from '@progress/kendo-angular-intl';
 })
 export class ResConfigSettingsFormComponent implements OnInit {
   formGroup: FormGroup;
-  constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService,
+  filterdPaperSizes: PrintPaperSizeBasic[] = [];
+  
+  @ViewChild('papersizeCbx', { static: true }) papersizeCbx: ComboBoxComponent;
+  constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService, private printPaperSizeService: PrintPaperSizeService,
     private authService: AuthService, private notificationService: NotificationService, private intlService: IntlService) {
   }
 
@@ -37,12 +43,16 @@ export class ResConfigSettingsFormComponent implements OnInit {
       groupSurvey: false,
     });
 
+
     this.configSettingsService.defaultGet().subscribe((result: any) => {
       this.formGroup.patchValue(result);
+      
       if (result.tCareRunAt) {
         var tCareRunAt = new Date(result.tCareRunAt);
         this.formGroup.get('tCareRunAtObj').patchValue(tCareRunAt);
       }
+     
+      
     });
   }
 
@@ -51,6 +61,18 @@ export class ResConfigSettingsFormComponent implements OnInit {
     if (companyShareProduct == false) {
       this.formGroup.get('productListpriceRestrictCompany').setValue(companyShareProduct);
     }
+  }
+
+  loadPaperSizes() {
+    this.searchPaperSizes().subscribe((result) => {
+      this.filterdPaperSizes = _.unionBy(this.filterdPaperSizes, result.items, "id");
+    });
+  }
+
+  searchPaperSizes(q?: string) {
+    var val = new PrintPaperSizePaged();
+    val.search = q || '';  
+    return this.printPaperSizeService.getPaged(val);
   }
 
   onSave() {

@@ -24,4 +24,27 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool IsExistSalaryPayment { get; set; }
 
     }
+
+    public class HrPayslipRunPrintVm
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public DateTime DateStart { get; set; }
+
+        public DateTime DateEnd { get; set; }
+
+        public Guid CompanyId { get; set; }
+        public CompanyPrintVM Company { get; set; }
+
+        public string State { get; set; }
+        public DateTime? Date { get; set; }
+
+        public string CreatedById { get; set; }
+        public IEnumerable<HrPayslipDisplay> Slips { get; set; } = new List<HrPayslipDisplay>();
+        public string UserName { get; set; }
+        public bool IsExistSalaryPayment { get; set; }
+
+    }
 }

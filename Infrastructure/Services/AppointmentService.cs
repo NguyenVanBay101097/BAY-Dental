@@ -14,17 +14,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 using ApplicationCore.Utilities;
+using OfficeOpenXml;
 
 namespace Infrastructure.Services
 {
     public class AppointmentService : BaseService<Appointment>, IAppointmentService
     {
         private readonly IMapper _mapper;
-        public AppointmentService(IAsyncRepository<Appointment> repository, IHttpContextAccessor httpContextAccessor,
+        private readonly IProductAppointmentRelService _productAppointmentRelService;
+        public AppointmentService(IProductAppointmentRelService productAppointmentRelService, IAsyncRepository<Appointment> repository, IHttpContextAccessor httpContextAccessor,
             IMapper mapper)
         : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _productAppointmentRelService = productAppointmentRelService;
         }
 
         public override async Task<Appointment> CreateAsync(Appointment entity)
@@ -63,6 +66,7 @@ namespace Infrastructure.Services
                 .Include("Partner")
                 .Include("Partner.PartnerPartnerCategoryRels")
                 .Include("Partner.PartnerPartnerCategoryRels.Category")
+                .Include(x => x.AppointmentServices).ThenInclude(x => x.Product)
                 .Include("Doctor")
                 .FirstOrDefaultAsync();
             //Xác định cuộc hẹn đã có đợt khám tham chiếu hay chưa
@@ -78,59 +82,18 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<AppointmentBasic>> GetPagedResultAsync(AppointmentPaged val)
         {
-            var query = SearchQuery();
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
-                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
-                || x.Partner.Ref.Contains(val.Search));
-
-            if (val.DateTimeFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateTimeFrom);
-
-            if (val.DateTimeTo.HasValue)
-            {
-                var dateTo = val.DateTimeTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Date <= dateTo);
-            }
-
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
-
-            if (val.DotKhamId.HasValue)
-                query = query.Where(x => x.DotKhamId == val.DotKhamId);
-
-            if (!string.IsNullOrEmpty(val.UserId))
-                query = query.Where(x => x.UserId == val.UserId);
-
-            string[] stateList = null;
-            if (!string.IsNullOrEmpty(val.State))
-            {
-                stateList = (val.State).Split(",");
-                query = query.Where(x => stateList.Contains(x.State));
-            }
-
-            if (val.PartnerId.HasValue)
-            {
-                query = query.Where(x => x.PartnerId == val.PartnerId);
-            }
-
-            if (val.SaleOrderId.HasValue)
-            {
-                query = query.Where(x => x.SaleOrderId == val.SaleOrderId);
-            }
-
-            if (val.DoctorId.HasValue)
-                query = query.Where(x => x.DoctorId == val.DoctorId);
+            var query = GetSearchQuery(search: val.Search, state: val.State, isLate: val.IsLate,
+                partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
+                dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, dotKhamId: val.DotKhamId);
 
             query = query.OrderByDescending(x => x.DateCreated);
-
             var totalItems = await query.CountAsync();
-
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
 
             var items = await query
                 .Include(x => x.Partner)
                 .Include(x => x.Doctor)
+                .Include(x => x.AppointmentServices).ThenInclude(x => x.Product)
                 .OrderBy(x => x.Date).ThenBy(x => x.Time)
                 .Skip(val.Offset)
                 .Take(limit)
@@ -203,24 +166,61 @@ namespace Infrastructure.Services
 
         public async Task<long> GetCount(AppointmentGetCountVM val)
         {
+            var query = GetSearchQuery(state: val.State, dateFrom: val.DateFrom, dateTo: val.DateTo, isLate: val.IsLate, doctorId: val.DoctorId, search: val.Search);
+            return await query.LongCountAsync();
+        }
+
+        public IQueryable<Appointment> GetSearchQuery(string search = "", Guid? partnerId = null,
+            string state = "", DateTime? dateTo = null, DateTime? dateFrom = null, Guid? dotKhamId = null,
+            Guid? doctorId = null, bool? isLate = null, string userId = "", Guid? companyId = null)
+        {
             var query = SearchQuery();
-
-            if (!string.IsNullOrEmpty(val.State))
-                query = query.Where(x => x.State == val.State);
-
-            if (val.DateFrom.HasValue)
+            var today = DateTime.Today;
+            if (isLate.HasValue)
             {
-                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.Date >= val.DateFrom);
+                if (isLate.Value)
+                    query = query.Where(x => x.Date < today);
+                else
+                    query = query.Where(x => x.Date >= today);
             }
 
-            if (val.DateTo.HasValue)
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(x => x.Name.Contains(search) || x.Doctor.Name.Contains(search)
+                || x.Partner.Name.Contains(search) || x.Partner.Phone.Contains(search)
+                || x.Partner.Ref.Contains(search));
+
+            if (dateFrom.HasValue)
+                query = query.Where(x => x.Date >= dateFrom.Value);
+
+            if (dateTo.HasValue)
             {
-                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
                 query = query.Where(x => x.Date <= dateTo);
             }
 
-            return await query.LongCountAsync();
+            if (companyId.HasValue)
+                query = query.Where(x => x.CompanyId == companyId.Value);
+
+            if (dotKhamId.HasValue)
+                query = query.Where(x => x.DotKhamId == dotKhamId.Value);
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(x => x.UserId == userId);
+
+            string[] stateList = null;
+            if (!string.IsNullOrEmpty(state))
+            {
+                stateList = state.Split(",");
+                query = query.Where(x => stateList.Contains(x.State));
+            }
+
+            if (partnerId.HasValue)
+                query = query.Where(x => x.PartnerId == partnerId.Value);
+
+            if (doctorId.HasValue)
+                query = query.Where(x => x.DoctorId == doctorId.Value);
+
+            return query;
         }
 
         private async Task InsertAppointmentSequence()
@@ -351,65 +351,116 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<AppointmentBasic>> GetExcelData(AppointmentPaged val)
         {
-            var query = SearchQuery();
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
-                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
-                || x.Partner.Ref.Contains(val.Search));
-
-            if (val.DateTimeFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateTimeFrom);
-
-            if (val.DateTimeTo.HasValue)
-            {
-                var dateTo = val.DateTimeTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Date <= dateTo);
-            }
-
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
-
-            if (val.DotKhamId.HasValue)
-                query = query.Where(x => x.DotKhamId == val.DotKhamId);
-
-            if (!string.IsNullOrEmpty(val.UserId))
-                query = query.Where(x => x.UserId == val.UserId);
-
-            string[] stateList = null;
-            if (!string.IsNullOrEmpty(val.State))
-            {
-                stateList = (val.State).Split(",");
-                query = query.Where(x => stateList.Contains(x.State));
-            }
-
-            if (val.PartnerId.HasValue)
-            {
-                query = query.Where(x => x.PartnerId == val.PartnerId);
-            }
-
-            if (val.SaleOrderId.HasValue)
-            {
-                query = query.Where(x => x.SaleOrderId == val.SaleOrderId);
-            }
-
-            if (val.DoctorId.HasValue)
-                query = query.Where(x => x.DoctorId == val.DoctorId);
+            var query = GetSearchQuery(search: val.Search, state: val.State, isLate: val.IsLate,
+              partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
+              dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, dotKhamId: val.DotKhamId);
 
             query = query.OrderByDescending(x => x.DateCreated);
 
             var totalItems = await query.CountAsync();
-
-            var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
-
             var items = await query
                 .Include(x => x.Partner).Include("Partner.PartnerPartnerCategoryRels.Category")
                 .Include(x => x.Doctor)
+                .Include(x => x.AppointmentServices).ThenInclude(x => x.Product)
                 .OrderBy(x => x.Date).ThenBy(x => x.Time)
-                .Skip(val.Offset)
-                .Take(limit)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<AppointmentBasic>>(items);
+        }
+
+        public async Task<Appointment> CreateAsync(AppointmentDisplay val)
+        {
+            var appointment = _mapper.Map<Appointment>(val);
+            if (val.Services.Any())
+            {
+                foreach (var item in val.Services)
+                {
+                    appointment.AppointmentServices.Add(new ProductAppointmentRel()
+                    {
+                        ProductId = item.Id
+                    });
+                }
+            }
+
+            appointment = await CreateAsync(appointment);
+            return appointment;
+        }
+
+        public async Task UpdateAsync(Guid id, AppointmentDisplay val)
+        {
+            var appointment = await SearchQuery(x => x.Id == id).Include(x => x.AppointmentServices).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+            await ComputeAppointmentService(appointment, val);
+            appointment = _mapper.Map(val, appointment);
+            await UpdateAsync(appointment);
+        }
+
+        public async Task ComputeAppointmentService(Appointment app, AppointmentDisplay appD)
+        {
+            var listAdd = new List<ProductAppointmentRel>();
+            var listRemove = new List<ProductAppointmentRel>();
+            if (app.AppointmentServices.Any())
+            {
+                foreach (var item in app.AppointmentServices)
+                {
+                    if (!appD.Services.Any(x => x.Id == item.ProductId))
+                    {
+                        listRemove.Add(item);
+                    }
+                }
+            }
+
+            if (appD.Services.Any())
+            {
+                foreach (var item in appD.Services)
+                {
+                    if (!app.AppointmentServices.Any(x => x.ProductId == item.Id))
+                    {
+                        var prodApp = new ProductAppointmentRel()
+                        {
+                            AppoinmentId = app.Id,
+                            ProductId = item.Id
+                        };
+                        listAdd.Add(prodApp);
+                    }
+                }
+            }
+            await _productAppointmentRelService.CreateAsync(listAdd);
+            await _productAppointmentRelService.DeleteAsync(listRemove);
+        }
+
+        public void ComputeDataExcel(ExcelWorksheet worksheet, IEnumerable<AppointmentBasic> data, Dictionary<string, string> stateDict)
+        {
+            worksheet.Cells[1, 1].Value = "Khách hàng";
+            worksheet.Cells[1, 2].Value = "Thời gian hẹn";
+            worksheet.Cells[1, 3].Value = "Dịch vụ";
+            worksheet.Cells[1, 4].Value = "Bác sĩ";
+            worksheet.Cells[1, 5].Value = "Trạng thái";
+            worksheet.Cells[1, 6].Value = "Lý do hủy hẹn";
+            worksheet.Cells[1, 7].Value = "Nhãn khách hàng";
+            worksheet.Cells[1, 8].Value = "SĐT";
+            worksheet.Cells[1, 9].Value = "Tuổi";
+            worksheet.Cells[1, 10].Value = "Nội dung";
+
+            worksheet.Cells["A1:P1"].Style.Font.Bold = true;
+
+            var row = 2;
+            foreach (var item in data)
+            {
+                worksheet.Cells[row, 1].Value = item.PartnerDisplayName;
+                worksheet.Cells[row, 2].Value = (item.Date.HasValue ? item.Date.Value.ToString("dd/MM/yyyy") + ", " : "") + item.Time;
+                worksheet.Cells[row, 3].Value = string.Join(", ", item.Services.Select(x => x.Name));
+                worksheet.Cells[row, 4].Value = item.DoctorName;
+                worksheet.Cells[row, 5].Value = !string.IsNullOrEmpty(item.State) && stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";
+                worksheet.Cells[row, 6].Value = item.Reason;
+                worksheet.Cells[row, 7].Value = string.Join(", ", item.Partner.Categories.OrderBy(x => x.Name).Select(x => x.Name));
+                worksheet.Cells[row, 8].Value = item.PartnerPhone;
+                worksheet.Cells[row, 9].Value = item.Partner.Age;
+                worksheet.Cells[row, 10].Value = item.Note;
+
+                row++;
+            }
+            worksheet.Column(4).Style.Numberformat.Format = "@";
+            worksheet.Cells.AutoFitColumns();
         }
     }
 }

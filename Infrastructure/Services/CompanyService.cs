@@ -143,6 +143,9 @@ namespace Infrastructure.Services
 
             //insert những irmodelfield
             await InsertIrModelFieldData();
+
+            var appRoleService = GetService<IApplicationRoleService>();
+            await appRoleService.CreateBaseUserRole();
         }
 
         public async Task AddIrDataForSurvey()
@@ -238,7 +241,7 @@ namespace Infrastructure.Services
             };
             #endregion
 
-            #region for PayrollDiary
+            #region for PayrollDiary And Partner Advance
             var currentLiabilities = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_liabilities");
             var acc334 = new AccountAccount
             {
@@ -255,6 +258,15 @@ namespace Infrastructure.Services
                 Code = "642",
                 InternalType = expensesType.Type,
                 UserTypeId = expensesType.Id,
+                CompanyId = company.Id,
+            };
+
+            var accKHTU = new AccountAccount
+            {
+                Name = "Khách hàng tạm ứng",
+                Code = "KHTU",
+                InternalType = currentLiabilities.Type,
+                UserTypeId = currentLiabilities.Id,
                 CompanyId = company.Id,
             };
             #endregion
@@ -313,7 +325,7 @@ namespace Infrastructure.Services
 
 
 
-            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642 });
+            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU });
 
             #endregion
 
@@ -376,7 +388,18 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal });
+            var journalAdvance = new AccountJournal
+            {
+                Name = "Tạm ứng",
+                Type = "advance",
+                UpdatePosted = true,
+                Code = "ADVANCE",
+                DefaultDebitAccountId = accKHTU.Id,
+                DefaultCreditAccountId = accKHTU.Id,
+                CompanyId = company.Id,
+            };
+
+            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance });
 
             #endregion
         }
@@ -803,6 +826,7 @@ namespace Infrastructure.Services
             var tooth_dict = new Dictionary<string, Tooth>();
             var sequence_dict = new Dictionary<string, IRSequence>();
             var partner_title_dict = new Dictionary<string, PartnerTitle>();
+            var paper_size_dict = new Dictionary<string, PrintPaperSize>();
 
             var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\dental_data.xml");
             XmlDocument doc = new XmlDocument();
@@ -911,6 +935,40 @@ namespace Infrastructure.Services
                     }
                     sequence_dict.Add(id, seq);
                 }
+                else if (model == "print.paper.size")
+                {
+                    var printPaperSize = new PrintPaperSize();
+                    var fields = record.GetElementsByTagName("field");
+                    for (var j = 0; j < fields.Count; j++)
+                    {
+                        XmlElement field = (XmlElement)fields[j];
+                        var field_name = field.GetAttribute("name");
+                        if (field_name == "name")
+                        {
+                            printPaperSize.Name = field.InnerText;
+                        }
+                        else if (field_name == "paperFormat")
+                        {
+                            printPaperSize.PaperFormat = field.InnerText;
+                        }else if (field_name == "topMargin")
+                        {
+                            printPaperSize.TopMargin = int.Parse(field.InnerText);
+                        }
+                        else if (field_name == "bottomMargin")
+                        {
+                            printPaperSize.BottomMargin = int.Parse(field.InnerText);
+                        }
+                        else if (field_name == "leftMargin")
+                        {
+                            printPaperSize.LeftMargin = int.Parse(field.InnerText);
+                        }
+                        else if (field_name == "rightMargin")
+                        {
+                            printPaperSize.RightMargin = int.Parse(field.InnerText);
+                        }
+                    }
+                    paper_size_dict.Add(id, printPaperSize);
+                }
             }
 
             var toothCategoryObj = GetService<IToothCategoryService>();
@@ -927,6 +985,11 @@ namespace Infrastructure.Services
 
             var modelDataObj = GetService<IIRModelDataService>();
             await modelDataObj.CreateAsync(PrepareModelData(partner_title_dict, "res.partner.title"));
+
+            var paperSizeObj = GetService<IPrintPaperSizeService>();
+            await paperSizeObj.CreateAsync(paper_size_dict.Values);
+
+            await modelDataObj.CreateAsync(PrepareModelData(paper_size_dict, "res.paper.size"));
 
         }
 

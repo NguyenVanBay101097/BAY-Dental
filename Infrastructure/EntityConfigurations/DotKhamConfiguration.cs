@@ -39,6 +39,10 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.Doctor)
                 .WithMany()
                 .HasForeignKey(x => x.DoctorId);
+
+            builder.HasOne(x => x.Assistant)
+               .WithMany()
+               .HasForeignKey(x => x.AssistantId);
         }
     }
 }

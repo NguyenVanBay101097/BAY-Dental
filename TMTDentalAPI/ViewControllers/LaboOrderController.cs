@@ -2,21 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.ViewControllers
 {
     public class LaboOrderController : Controller
     {
         private readonly ILaboOrderService _laboOrderService;
+        private readonly IViewToStringRenderService _viewToStringRenderService;
 
-        public LaboOrderController(ILaboOrderService laboOrderService)
+        public LaboOrderController(ILaboOrderService laboOrderService, IViewToStringRenderService viewToStringRenderService)
         {
             _laboOrderService = laboOrderService;
+            _viewToStringRenderService = viewToStringRenderService;
         }
 
+        [CheckAccess(Actions = "Labo.LaboOrder.Read")]
+        [PrinterNameFilterAttribute(Name = AppConstants.LaboOrderPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
             var res = await _laboOrderService.SearchQuery(x => x.Id == id)
@@ -37,6 +44,7 @@ namespace TMTDentalAPI.ViewControllers
                 return NotFound();
 
             return View(res);
+
         }
     }
 }

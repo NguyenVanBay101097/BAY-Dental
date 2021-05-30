@@ -72,5 +72,15 @@ namespace Umbraco.Web.Models.ContentEditing
         /// tiền hoa hồng bác sĩ
         /// </summary>
         public decimal? Amount { get; set; }
+
+        /// <summary>
+        /// Khách hàng
+        /// </summary>
+        public string PartnerName { get; set; }
+
+        /// <summary>
+        /// Nguồn
+        /// </summary>
+        public string InvoiceOrigin { get; set; }
     }
 }

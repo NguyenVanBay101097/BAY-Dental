@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using Umbraco.Web.Models.ContentEditing;
+
+@{
+    var config = ViewData["ConfigPrint"] as ConfigPrintDisplay;
+    var paperDefault = ViewData["PrintPaperSizeDefault"] as PrintPaperSizeDisplay;
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -12,11 +19,16 @@
     <link rel="stylesheet" type="text/css" href="/css/print.css" />
     <style>
         @@page {
-            size: A4 !important;
+            size: @(config.PrintPaperSize != null ? config.PrintPaperSize.PaperFormat : paperDefault.PaperFormat) !important;
+            margin-top: @((config.PrintPaperSize != null ? config.PrintPaperSize.TopMargin : paperDefault.TopMargin) + "mm") ;
+            margin-right: @((config.PrintPaperSize != null ? config.PrintPaperSize.RightMargin : paperDefault.RightMargin) + "mm");
+            margin-bottom: @((config.PrintPaperSize != null ? config.PrintPaperSize.BottomMargin : paperDefault.BottomMargin)  + "mm");
+            margin-left:@((config.PrintPaperSize != null ? config.PrintPaperSize.LeftMargin : paperDefault.LeftMargin) + "mm") ;
         }
+
     </style>
 </head>
-<body>
+<body class="@paperDefault.PaperFormat">
     <div>
         @RenderBody()
     </div>

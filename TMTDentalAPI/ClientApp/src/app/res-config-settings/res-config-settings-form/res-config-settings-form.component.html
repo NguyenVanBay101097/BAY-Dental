@@ -16,7 +16,8 @@
 </div>
 
 <div class="o_content">
-    <div class="o_form_view oe_form_configuration o_base_settings o_form_nosheet o_form_editable" [formGroup]="formGroup">
+    <div class="o_form_view oe_form_configuration o_base_settings o_form_nosheet o_form_editable"
+        [formGroup]="formGroup">
         <div class="o_setting_container">
             <div class="settings">
                 <div class="app_settings_block">
@@ -39,9 +40,12 @@
                         </div> -->
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane">
-                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox" name="module_sale_coupon">
-                                    <input type="checkbox" id="checkbox-975" formControlName="groupSaleCouponPromotion" class="custom-control-input">
-                                    <label for="checkbox-975" class="custom-control-label">​</label></div>
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox"
+                                    name="module_sale_coupon">
+                                    <input type="checkbox" id="checkbox-975" formControlName="groupSaleCouponPromotion"
+                                        class="custom-control-input">
+                                    <label for="checkbox-975" class="custom-control-label">​</label>
+                                </div>
                             </div>
                             <div class="o_setting_right_pane">
                                 <label class="o_form_label" for="o_field_input_705">Coupon
@@ -52,10 +56,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-lg-6 o_setting_box">
+                        <!-- <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane">
-                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox" name="group_discount_per_so_line">
-                                    <input type="checkbox" id="o_field_input_28" formControlName="groupLoyaltyCard" class="custom-control-input">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox"
+                                    name="group_discount_per_so_line">
+                                    <input type="checkbox" id="o_field_input_28" formControlName="groupLoyaltyCard"
+                                        class="custom-control-input">
                                     <label for="o_field_input_28" class="custom-control-label">​</label>
                                 </div>
                             </div>
@@ -66,15 +72,17 @@
                                 </div>
                                 <div *ngIf="groupLoyaltyCard == true">
                                     <label>Số tiền trên 1 điểm</label>
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="loyaltyPointExchangeRate">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                        formControlName="loyaltyPointExchangeRate">
                                     </kendo-numerictextbox>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-12 col-lg-6 o_setting_box">
+                        </div> -->
+                        <!-- <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane">
                                 <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
-                                    <input type="checkbox" id="o_field_input_service_card" formControlName="groupServiceCard" class="custom-control-input">
+                                    <input type="checkbox" id="o_field_input_service_card"
+                                        formControlName="groupServiceCard" class="custom-control-input">
                                     <label for="o_field_input_service_card" class="custom-control-label">​</label>
                                 </div>
                             </div>
@@ -84,11 +92,12 @@
                                     Quản lý thẻ dịch vụ
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane">
                                 <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
-                                    <input type="checkbox" id="o_field_input_dom" formControlName="groupUoM" class="custom-control-input">
+                                    <input type="checkbox" id="o_field_input_dom" formControlName="groupUoM"
+                                        class="custom-control-input">
                                     <label for="o_field_input_dom" class="custom-control-label">​</label>
                                 </div>
                             </div>
@@ -102,7 +111,8 @@
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane">
                                 <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
-                                    <input type="checkbox" id="o_field_input_tcare" formControlName="groupTCare" class="custom-control-input">
+                                    <input type="checkbox" id="o_field_input_tcare" formControlName="groupTCare"
+                                        class="custom-control-input">
                                     <label for="o_field_input_tcare" class="custom-control-label">​</label>
                                 </div>
                             </div>
@@ -116,7 +126,8 @@
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane">
                                 <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
-                                    <input type="checkbox" id="o_field_input_medicine" formControlName="groupMedicine" class="custom-control-input">
+                                    <input type="checkbox" id="o_field_input_medicine" formControlName="groupMedicine"
+                                        class="custom-control-input">
                                     <label for="o_field_input_medicine" class="custom-control-label">​</label>
                                 </div>
                             </div>
@@ -130,7 +141,8 @@
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane">
                                 <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
-                                    <input type="checkbox" id="o_field_input_survey" formControlName="groupSurvey" class="custom-control-input">
+                                    <input type="checkbox" id="o_field_input_survey" formControlName="groupSurvey"
+                                        class="custom-control-input">
                                     <label for="o_field_input_survey" class="custom-control-label">​</label>
                                 </div>
                             </div>
@@ -140,15 +152,17 @@
                                     Quản lý và cấu hình khảo sát đánh giá
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </div>                      
+                    </div>               
                     <div>
                         <h2>Đa chi nhánh</h2>
                         <div class="row mt16 o_settings_container">
                             <div class="col-12 col-lg-6 o_setting_box">
                                 <div class="o_setting_left_pane">
-                                    <div class="o_field_boolean o_field_widget custom-control custom-checkbox" name="group_multi_company">
-                                        <input type="checkbox" id="o_field_input_867" formControlName="groupMultiCompany" class="custom-control-input">
+                                    <div class="o_field_boolean o_field_widget custom-control custom-checkbox"
+                                        name="group_multi_company">
+                                        <input type="checkbox" id="o_field_input_867"
+                                            formControlName="groupMultiCompany" class="custom-control-input">
                                         <label for="o_field_input_867" class="custom-control-label">​</label>
                                     </div>
                                 </div>
@@ -159,24 +173,33 @@
                                     </div>
                                     <div class="content-group" [class.d-none]="groupMultiCompany == false">
                                         <div id="company_share_partner">
-                                            <div class="o_field_boolean o_field_widget custom-control custom-checkbox oe_inline" name="company_share_partner">
-                                                <input type="checkbox" id="o_field_input_869" formControlName="companySharePartner" class="custom-control-input">
+                                            <div class="o_field_boolean o_field_widget custom-control custom-checkbox oe_inline"
+                                                name="company_share_partner">
+                                                <input type="checkbox" id="o_field_input_869"
+                                                    formControlName="companySharePartner" class="custom-control-input">
                                                 <label for="o_field_input_869" class="custom-control-label">​</label>
                                             </div>
                                             <label class="o_form_label o_light_label" for="o_field_input_869">Dùng chung
                                                 danh sách đối tác</label>
                                         </div>
                                         <div>
-                                            <div class="o_field_boolean o_field_widget custom-control custom-checkbox oe_inline" name="company_share_product">
-                                                <input type="checkbox" id="o_field_input_871" class="custom-control-input" formControlName="companyShareProduct" (change)="onChangeCompanyShareProduct()">
+                                            <div class="o_field_boolean o_field_widget custom-control custom-checkbox oe_inline"
+                                                name="company_share_product">
+                                                <input type="checkbox" id="o_field_input_871"
+                                                    class="custom-control-input" formControlName="companyShareProduct"
+                                                    (change)="onChangeCompanyShareProduct()">
                                                 <label for="o_field_input_871" class="custom-control-label">​</label>
                                             </div>
                                             <label class="o_form_label o_light_label" for="o_field_input_871">Dùng chung
                                                 danh sách sản phẩm</label>
                                             <div *ngIf="companyShareProductValue" class="pl-4">
-                                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox oe_inline">
-                                                    <input type="checkbox" id="o_field_input_872" class="custom-control-input" formControlName="productListpriceRestrictCompany">
-                                                    <label for="o_field_input_872" class="custom-control-label">​</label>
+                                                <div
+                                                    class="o_field_boolean o_field_widget custom-control custom-checkbox oe_inline">
+                                                    <input type="checkbox" id="o_field_input_872"
+                                                        class="custom-control-input"
+                                                        formControlName="productListpriceRestrictCompany">
+                                                    <label for="o_field_input_872"
+                                                        class="custom-control-label">​</label>
                                                 </div>
                                                 <label class="o_form_label o_light_label" for="o_field_input_872">Giá
                                                     bán

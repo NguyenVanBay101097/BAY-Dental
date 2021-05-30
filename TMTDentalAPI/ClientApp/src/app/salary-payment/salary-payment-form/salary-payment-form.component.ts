@@ -21,6 +21,7 @@ import { AccountPaymentSave, AccountPaymentService } from 'src/app/account-payme
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
 import { SalaryPaymentDisplay, SalaryPaymentService } from '../salary-payment.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: "app-salary-payment-form",
@@ -42,6 +43,9 @@ export class SalaryPaymentFormComponent implements OnInit {
   @ViewChild("employeeCbx", { static: true }) employeeCbx: ComboBoxComponent;
   submitted = false;
 
+  // permission 
+  canSalaryPaymentUpdate = this.checkPermissionService.check(["Salary.SalaryPayment.Update"]);
+
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -52,7 +56,8 @@ export class SalaryPaymentFormComponent implements OnInit {
     private accountJournalService: AccountJournalService,
     private employeeService: EmployeeService,
     private intlService: IntlService,
-    private printService: PrintService
+    private printService: PrintService, 
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -236,14 +241,16 @@ export class SalaryPaymentFormComponent implements OnInit {
   }
 
   get editable() {
+    if (!this.canSalaryPaymentUpdate)
+      return false;
     return this.salaryPayment.state == 'waiting';
   }
 
   printItem(id) {
     this.salaryPaymentService.getPrint([id]).subscribe(
-      result => {
-        if (result && result['html']) {
-          this.printService.printHtml(result['html']);
+      (result:any) => {
+        if (result) {
+          this.printService.printHtml(result);
         } else {
           alert('Có lỗi xảy ra, thử lại sau');
         }

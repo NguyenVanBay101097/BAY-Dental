@@ -42,6 +42,7 @@ export class PartnerOverviewSaleOrderLineComponent implements OnInit {
       result => {
         this.gridData = {
           data: result && result['value'],
+          
           total: result['@odata.count']
         };
         this.loading = false;

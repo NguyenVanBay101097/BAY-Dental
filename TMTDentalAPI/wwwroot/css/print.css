@@ -1,4 +1,159 @@
-﻿
+﻿@page {
+    margin: 0
+}
+
+body {
+    margin: 0
+}
+
+.sheet {
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    page-break-after: always;
+}
+
+/** Paper sizes **/
+body.A3 .sheet {
+    width: 297mm;
+    height: 419mm
+}
+
+body.A3.landscape .sheet {
+    width: 420mm;
+    height: 296mm
+}
+
+body.A4 .sheet {
+    width: 210mm;
+    height: 296mm
+}
+
+body.A4.landscape .sheet {
+    width: 297mm;
+    height: 209mm
+}
+
+body.A5 .sheet {
+    width: 148mm;
+    height: 209mm
+}
+
+body.A5.landscape .sheet {
+    width: 210mm;
+    height: 147mm
+}
+
+body.letter .sheet {
+    width: 216mm;
+    height: 279mm
+}
+
+body.letter.landscape .sheet {
+    width: 280mm;
+    height: 215mm
+}
+
+body.legal .sheet {
+    width: 216mm;
+    height: 356mm
+}
+
+body.legal.landscape .sheet {
+    width: 357mm;
+    height: 215mm
+}
+
+/** Padding area **/
+.sheet.padding-10mm {
+    padding: 10mm
+}
+
+.sheet.padding-15mm {
+    padding: 15mm
+}
+
+.sheet.padding-20mm {
+    padding: 20mm
+}
+
+.sheet.padding-25mm {
+    padding: 25mm
+}
+
+/** For screen preview **/
+@media screen {
+    body {
+        background: #e0e0e0
+    }
+
+    .sheet {
+        background: white;
+        box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);
+        margin: 5mm auto;
+    }
+}
+
+body.A3.landscape {
+    width: 420mm
+}
+
+body.A3, body.A4.landscape {
+    width: 297mm
+}
+
+body.A4, body.A5.landscape {
+    width: 210mm
+}
+
+body.A5 {
+    width: 148mm
+}
+
+body.letter, body.legal {
+    width: 216mm
+}
+
+    body.letter.landscape {
+        width: 280mm
+    }
+
+    body.legal.landscape {
+        width: 357mm
+    }
+
+/** Fix for Chrome issue #273306 **/
+@media print {
+    body.A3.landscape {
+        width: 420mm
+    }
+
+    body.A3, body.A4.landscape {
+        width: 297mm
+    }
+
+    body.A4, body.A5.landscape {
+        width: 210mm
+    }
+
+    body.A5 {
+        width: 148mm
+    }
+
+    body.letter, body.legal {
+        width: 216mm
+    }
+
+        body.letter.landscape {
+            width: 280mm
+        }
+
+        body.legal.landscape {
+            width: 357mm
+        }
+}
+
 body {
     margin: 0;
     line-height: 1.2;
@@ -353,8 +508,21 @@ label, strong {
 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
     width: 0%;
     padding: 0px 15px 0px 0px;
-    min-width: 100px;
+    min-width: 150px;
 }
+
+
+body.A5 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
+    width: 0%;
+    padding: 0px 5px 5px 0;
+    min-width: 130px;
+}
+
+/*body.A4 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
+    width: 0%;
+    padding: 0px 5px 5px 0;
+    min-width: 100px;
+}*/
 
 @media (min-width: 768px) {
     .o_form_view .o_form_sheet_bg > .o_form_sheet {
@@ -409,17 +577,7 @@ label, strong {
     padding: 0 15px 0px 0;
 }
 
-body.A5 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
-    width: 0%;
-    padding: 0px 5px 5px 0;
-    min-width: 130px;
-}
 
-body.A4 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
-    width: 0%;
-    padding: 0px 5px 5px 0;
-    min-width: 100px;
-}
 
 .o_form_view .o_form_label {
     margin: 0 5px 0 0;
@@ -452,6 +610,14 @@ body.A4 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
 .o_form_view .o_group .o_td_label .o_form_label {
     font-weight: 600;
     margin-right: 0px;
+}
+
+.o_form_view .o_group .o_form_label {
+    margin-bottom: 5px;
+}
+
+.o_form_view .o_field_widget {
+    margin-bottom: 5px;
 }
 
 .o_form_view .o_inner_group.oe_subtotal_footer > tbody > tr > td {

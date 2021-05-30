@@ -1,31 +1,36 @@
 ﻿@model Umbraco.Web.Models.ContentEditing.StockInventoryPrint
+@using Umbraco.Web.Models.ContentEditing;
 @{
+    var configPrint = ViewData["ConfigPrint"] as ConfigPrintDisplay;
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
     Layout = "~/Views/Shared/_PrintLayout.cshtml";
-    var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
 }
 
 <div>
-    <div class="d-flex mb-2">
-        @if (!string.IsNullOrEmpty(Model.Company.Logo))
-        {
-            <img class="img-fluid me-3 w-25" src="@Model.Company.Logo" alt="@Model.Company.Name">
-        }
-        <div>
-            <div class="text-xl font-semibold">@Model.Company.Name</div>
-            @if (!string.IsNullOrEmpty(Model.Company.Address))
+    @if (!configPrint.IsInfoCompany)
+    {
+        <div class="d-flex mb-2">
+            @if (!string.IsNullOrEmpty(Model.Company.Logo))
             {
-                <div>Địa chỉ: @Model.Company.Address</div>
+                <img class="img-fluid me-3 w-25" src="@Model.Company.Logo" alt="@Model.Company.Name">
             }
-            @if (!string.IsNullOrEmpty(Model.Company.Phone))
-            {
-                <div>ĐT: @Model.Company.Phone</div>
-            }
-            @if (!string.IsNullOrEmpty(Model.Company.Email))
-            {
-                <div>Email: @Model.Company.Email</div>
-            }
+            <div>
+                <div class="text-xl font-semibold">@Model.Company.Name</div>
+                @if (!string.IsNullOrEmpty(Model.Company.Address))
+                {
+                    <div>Địa chỉ: @Model.Company.Address</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Company.Phone))
+                {
+                    <div>ĐT: @Model.Company.Phone</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Company.Email))
+                {
+                    <div>Email: @Model.Company.Email</div>
+                }
+            </div>
         </div>
-    </div>
+    }
     <div class="text-center mb-3">
         <div class="text-3xl font-semibold">PHIẾU KIỂM KHO</div>
         <div>Ngày @Model.Date.Day tháng @Model.Date.Month năm @Model.Date.Year </div>
@@ -41,9 +46,9 @@
                                 Ngày kiểm
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">@(string.Format(info, "{0:dd/MM/yyyy}", Model.Date))</td>
+                        <td colspan="1" style="width: 100%;">@(string.Format(culture, "{0:dd/MM/yyyy}", Model.Date))</td>
                     </tr>
-                  
+
                 </tbody>
             </table>
             <table class="o_group o_inner_group col-6">
@@ -55,7 +60,7 @@
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">@Model.Note</td>
-                    </tr>          
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -80,14 +85,14 @@
             @{ var i = 1;}
             @foreach (var item in Model.Lines)
             {
-            <tr>
-                <td>@(i++)</td>
-                <td>@(item.ProductDefaultCode)</td>
-                <td>@(item.ProductName)</td>
-                <td>@(item.ProductUOMName)</td>
-                <td class="text-right">@(item.TheoreticalQty.HasValue ? string.Format(info, "{0:0}", item.TheoreticalQty.Value) : "0")</td>
-                <td class="text-right">@(item.ProductQty.HasValue ? string.Format(info, "{0:0}", item.ProductQty.Value) : "0")</td>
-            </tr>
+                <tr>
+                    <td>@(i++)</td>
+                    <td>@(item.ProductDefaultCode)</td>
+                    <td>@(item.ProductName)</td>
+                    <td>@(item.ProductUOMName)</td>
+                    <td class="text-right">@(item.TheoreticalQty.HasValue ? string.Format(culture, "{0:0}", item.TheoreticalQty.Value) : "0")</td>
+                    <td class="text-right">@(item.ProductQty.HasValue ? string.Format(culture, "{0:0}", item.ProductQty.Value) : "0")</td>
+                </tr>
             }
         </tbody>
     </table>

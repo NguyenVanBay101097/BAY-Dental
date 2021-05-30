@@ -1,0 +1,10 @@
+.service {
+    overflow: hidden;
+    max-width: 400px;
+    text-overflow: ellipsis;
+    white-space: pre;
+}
+
+.o_cp_left_custom {
+    margin-top: 0;
+}

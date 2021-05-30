@@ -45,5 +45,14 @@ namespace Infrastructure.Services
                 Items = items
             };
         }
+
+        public async Task<ToothDisplay> GetDisplay(Guid id)
+        {
+            var tooth = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+
+            var res = _mapper.Map<ToothDisplay>(tooth);
+
+            return res;
+        }
     }
 }

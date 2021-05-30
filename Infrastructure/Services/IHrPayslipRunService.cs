@@ -13,6 +13,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<HrPayslipRunBasic>> GetPagedResultAsync(HrPayslipRunPaged val);
 
         Task<HrPayslipRunDisplay> GetHrPayslipRunForDisplay(Guid id);
+        Task<HrPayslipRunPrintVm> GetHrPayslipRunForPrint(Guid id);
         Task<HrPayslipRun> CreatePayslipRun(HrPayslipRunSave val);
         Task UpdatePayslipRun(Guid id, HrPayslipRunSave val);
         Task ActionConfirm(Guid id);

@@ -14,6 +14,7 @@ import { TenantExtendHistoryComponent } from './tenant-extend-history/tenant-ext
 import { EmployeeAdminService } from 'app/employee-admins/employee-admin.service';
 import { TenantUpdateExpiredV2DialogComponent } from './tenant-update-expired-v2-dialog/tenant-update-expired-v2-dialog.component';
 import { SharedModule } from '@shared/shared.module';
+import { TenantsProcessUpdateComponent } from './tenants-process-update/tenants-process-update.component';
 
 @NgModule({
   imports: [
@@ -31,7 +32,8 @@ import { SharedModule } from '@shared/shared.module';
     TrialRegistrationComponent,
     TenantUpdateInfoDialogComponent,
     TenantExtendHistoryComponent,
-    TenantUpdateExpiredV2DialogComponent
+    TenantUpdateExpiredV2DialogComponent,
+    TenantsProcessUpdateComponent
   ],
   providers: [
     TenantService,

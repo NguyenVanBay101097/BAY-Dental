@@ -149,11 +149,10 @@ namespace Infrastructure.Services
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
-            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
-                                                                                        .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
-
             if (val.ComputeCreditDebit)
             {
+                var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
+                                                                                            .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
                 var partnerBasics = _mapper.Map<List<PartnerBasic>>(items);
                 var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
                 foreach (var item in partnerBasics)
@@ -362,6 +361,27 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(partner.Ref))
                 name = "[" + partner.Ref + "] " + name;
             return name;
+        }
+
+        public async Task<decimal> GetAmountAdvanceBalance(Guid id)
+        {
+            ///lay tu moveline account
+            var moveLineObj = GetService<IAccountMoveLineService>();
+            var accountObj = GetService<IAccountAccountService>();
+            var accountAdvance = await accountObj.GetAccountAdvanceCurrentCompany();
+            var amounBalance = await moveLineObj.SearchQuery(x => x.PartnerId == id && x.AccountId == accountAdvance.Id).SumAsync(x => x.Debit - x.Credit);
+            var sign = -1;
+            return amounBalance * sign;
+        }
+
+        public async Task<decimal> GetAmountAdvanceUsed(Guid id)
+        {
+            ///lay tu moveline journal amount advance used
+            var paymentObj = GetService<IAccountPaymentService>();
+            var journalObj = GetService<IAccountJournalService>();
+            var journalAdvance = await journalObj.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "advance" && x.Active).FirstOrDefaultAsync();
+            var amounAdvance = await paymentObj.SearchQuery(x => x.PartnerId == id && x.JournalId == journalAdvance.Id && x.State != "cancel").Select(x => x.Amount).SumAsync();
+            return Math.Abs(amounAdvance);
         }
 
         public override Task UpdateAsync(Partner entity)
@@ -928,10 +948,11 @@ namespace Infrastructure.Services
                 {
                     partner.Customer = false;
                     partner.Supplier = true;
+                    partner.Fax = item.Fax;
                 }
 
                 partners.Add(partner);
-            } 
+            }
 
             try
             {

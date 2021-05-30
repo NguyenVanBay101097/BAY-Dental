@@ -61,6 +61,44 @@ namespace Infrastructure.Services
             return res;
         }
 
+
+        public async Task<HrPayslipRunPrintVm> GetHrPayslipRunForPrint(Guid id)
+        {
+            var userObj = GetService<IUserService>();
+            var slipObj = GetService<IHrPayslipService>();
+            var res = await SearchQuery(x => x.Id == id).Select(x => new HrPayslipRunPrintVm
+            {
+                Id = x.Id,
+                Name = x.Name,
+                CompanyId = x.CompanyId,
+                Company = new CompanyPrintVM
+                {
+                    Name = x.Company.Name,
+                    Email = x.Company.Email,
+                    Phone = x.Company.Phone,
+                    Logo = x.Company.Logo,
+                    PartnerCityName = x.Company.Partner.CityName,
+                    PartnerDistrictName = x.Company.Partner.DistrictName,
+                    PartnerWardName = x.Company.Partner.WardName,
+                    PartnerStreet = x.Company.Partner.Street,
+                },
+                Date = x.Date,
+                DateStart = x.DateStart,
+                DateEnd = x.DateEnd,
+                State = x.State,
+                CreatedById = x.CreatedById
+            }).FirstOrDefaultAsync();
+
+            if (res == null)
+                throw new NullReferenceException("Đợt lương không tồn tại");
+
+            var user = await userObj.GetByIdAsync(res.CreatedById);
+            res.UserName = user.Name;
+            res.IsExistSalaryPayment = res.Slips.Any(x => x.SalaryPayment != null);
+            res.Slips = _mapper.Map<IEnumerable<HrPayslipDisplay>>(await slipObj.SearchQuery(x => x.PayslipRunId.HasValue ? (x.PayslipRunId.Value == res.Id) : x.PayslipRunId.Value == res.Id).Include(x => x.Employee).Include(x => x.SalaryPayment).ToListAsync());
+            return res;
+        }
+
         public async Task<HrPayslipRun> CreatePayslipRun(HrPayslipRunSave val)
         {
 
@@ -408,7 +446,7 @@ namespace Infrastructure.Services
                 throw new Exception("Đợt lương không tồn tại");
 
 
-            if (!paysliprun.Slips.Any()) 
+            if (!paysliprun.Slips.Any())
                 return;
 
             // get all source
@@ -497,7 +535,7 @@ namespace Infrastructure.Services
                 // lưu phiếu lương, bảng lương
                 await payslipObj.CreateAsync(payslips);
             }
-           
+
         }
     }
 

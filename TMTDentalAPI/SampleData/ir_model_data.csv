@@ -73,6 +73,14 @@ stock.model_product_request,ProductRequest,Product Request,0
 stock.model_stock_inventory,StockInventory,Stock Inventory,0
 stock.model_stock_inventory_line,StockInventoryLine,Stock Inventory Line,0,
 survey.model_survey_assignment,SurveyAssignment,Survey Assignment,0
+partner.model_partner_advance,PartnerAdvance,Partner Advance,0
+sale.model_sale_order_payment,SaleOrderPayment,SaleOrder Payment,0
+base.model_tooth_diagnosis,ToothDiagnosis,Tooth Diagnosis,0
+sale.model_advisory,Advisory,Advisory,0
+sale.model_quotation,Quotation,Quotation,0
+base.model_print_paper_size,PrintPaperSize,Print Paper Size,0
+config.model_config_print,ConfigPrint,Config Print,0
+
 
 
 

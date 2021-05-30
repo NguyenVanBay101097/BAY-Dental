@@ -13,5 +13,19 @@ namespace ApplicationCore.Constants
             host = host.Replace(".", "_");
             return string.Format(LockRequestKeyTemplate, host, name);
         }
+
+        /// <summary>
+        /// code của mẫu in
+        /// </summary>
+        public const string SaleOrderPaperCode = "SaleOrder";
+        public const string PaymentPaperCode = "Payment";
+        public const string SalaryEmployeePaperCode = "SalaryEmployee";
+        public const string SalaryPaymentPaperCode = "SalaryPayment";
+        public const string LaboOrderPaperCode = "LaboOrder";
+        public const string ToaThuocPaperCode = "ToaThuoc";
+        public const string MedicineOrderPaperCode = "MedicineOrder";
+        public const string PhieuThuChiPaperCode = "PhieuThuChi";
+        public const string StockPickingPaperCode = "StockPicking";
+        public const string StockInventoryPaperCode = "StockInventory";
     }
 }

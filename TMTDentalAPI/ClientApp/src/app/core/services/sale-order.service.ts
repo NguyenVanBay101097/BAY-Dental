@@ -12,6 +12,8 @@ import { LaboOrderBasic, LaboOrderDisplay } from '../../labo-orders/labo-order.s
 import { SaleOrderLineBasic } from '../../partners/partner.service';
 import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
 import { SaleOrderLineForProductRequest } from './sale-order-line.service';
+import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
+import { RegisterSaleOrderPayment } from './sale-order-payment.service';
 
 export class SaleOrderPaged {
     limit: number;
@@ -54,6 +56,7 @@ export class SaleOrderToSurveyFilter {
 @Injectable({ providedIn: 'root' })
 export class SaleOrderService {
     apiUrl = 'api/SaleOrders';
+    apiUrlPrint = "SaleOrder";
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<PagedResult2<SaleOrderBasic>> {
@@ -64,11 +67,12 @@ export class SaleOrderService {
         return this.http.get<SaleOrderDisplay>(this.baseApi + this.apiUrl + "/" + id);
     }
 
-    create(val: SaleOrderDisplay): Observable<SaleOrderDisplay> {
+
+    create(val: any): Observable<SaleOrderDisplay> {
         return this.http.post<SaleOrderDisplay>(this.baseApi + this.apiUrl, val);
     }
 
-    update(id: string, val: SaleOrderDisplay) {
+    update(id: string, val: any) {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 
@@ -124,8 +128,8 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyServiceCards', data);
     }
 
-    applyPromotion(id: string) {
-        return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/ApplyPromotion', {});
+    applyPromotion(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotion', val);
     }
 
     applyDiscountDefault(data: DiscountDefault) {
@@ -160,8 +164,8 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/CreateFastSaleOrder', val)
     }
 
-    printSaleOrder(id: string){
-        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrintSaleOrder');
+    printSaleOrder(id: string) {
+        return this.http.get(this.baseApi + this.apiUrlPrint + '/Print' + `?id=${id}`, { responseType: 'text' });
     }
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {
@@ -193,10 +197,22 @@ export class SaleOrderService {
     }
 
     getToSurveyPaged(val: any) {
-        return this.http.post(this.baseApi + this.apiUrl  + '/ToSurvey', val);
+        return this.http.post(this.baseApi + this.apiUrl + '/ToSurvey', val);
     }
 
     getLineForProductRequest(id): Observable<SaleOrderLineForProductRequest[]> {
         return this.http.post<SaleOrderLineForProductRequest[]>(this.baseApi + this.apiUrl + '/' + id + '/GetLineForProductRequest', {});
+    }
+
+    getSaleOrderPaymentBySaleOrderId(id: string): Observable<RegisterSaleOrderPayment>{
+        return this.http.get<RegisterSaleOrderPayment>(this.baseApi + this.apiUrl + '/' + id + '/GetSaleOrderPaymentBySaleOrderId');
+    }
+
+    applyCouponOnOrder(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyCouponOnOrder', val);
+    }
+
+    applyDiscountOnOrder(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnOrder', val);
     }
 }

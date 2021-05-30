@@ -332,6 +332,42 @@
       <field name="global" eval="False"/>
       <field name="group_ids" ref="survey.group_user"/>
     </record>
+
+    <record model="ir.rule" id="partner.partner_advance_comp_rule">
+      <field name="name">Partner Advance multi-company</field>
+      <field name="model_id" ref="partner.model_partner_advance"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="sale.sale_order_payment_comp_rule">
+      <field name="name">SaleOrder Payment multi-company</field>
+      <field name="model_id" ref="sale.model_sale_order_payment"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="tooth.tooth_diagnosis_comp_rule">
+      <field name="name">Tooth Diagnosis company rule</field>
+      <field name="model_id" ref="base.model_tooth_diagnosis"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="advisory.advisory_comp_rule">
+      <field name="name">Advisory company rule</field>
+      <field name="model_id" ref="sale.model_advisory"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="quotation.quotation_comp_rule">
+      <field name="name">Quotation company rule</field>
+      <field name="model_id" ref="sale.model_quotation"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="config.config_print_comp_rule">
+      <field name="name">Config Print multi-company</field>
+      <field name="model_id" ref="config.model_config_print"/>
+      <field name="global" eval="True"/>
+    </record>
   </data>
 </odoo>
 

@@ -29,11 +29,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IProductPricelistService _pricelistService;
         private readonly ISaleOrderLineService _saleLineService;
         private readonly IViewRenderService _viewRenderService;
+        private readonly IViewToStringRenderService _viewToStringRenderService;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService,
             ICardCardService cardService, IProductPricelistService pricelistService,
-            ISaleOrderLineService saleLineService, IViewRenderService viewRenderService)
+            ISaleOrderLineService saleLineService, IViewRenderService viewRenderService,
+            IViewToStringRenderService viewToStringRenderService)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
@@ -43,11 +45,12 @@ namespace TMTDentalAPI.Controllers
             _pricelistService = pricelistService;
             _saleLineService = saleLineService;
             _viewRenderService = viewRenderService;
+            _viewToStringRenderService = viewToStringRenderService;
         }
 
         [HttpGet]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
-        public async Task<IActionResult> Get([FromQuery]SaleOrderPaged val)
+        public async Task<IActionResult> Get([FromQuery] SaleOrderPaged val)
         {
             var result = await _saleOrderService.GetPagedResultAsync(val);
             return Ok(result);
@@ -112,7 +115,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("DefaultGet")]
-        public async Task<IActionResult> DefaultGet([FromQuery]SaleOrderDefaultGet val)
+        public async Task<IActionResult> DefaultGet([FromQuery] SaleOrderDefaultGet val)
         {
             var res = await _saleOrderService.DefaultGet(val);
             return Ok(res);
@@ -177,24 +180,36 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Update")]
-        public async Task<IActionResult> ApplyCoupon(SaleOrderApplyCoupon val)
+        public async Task<IActionResult> ApplyCouponOnOrder(ApplyPromotionUsageCode val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _saleOrderService.ApplyCoupon(val);
+            var res = await _saleOrderService.ApplyCoupon(val);
+            _unitOfWork.Commit();
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
+        public async Task<IActionResult> ApplyDiscountOnOrder(ApplyDiscountViewModel val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ApplyDiscountOnOrder(val);
             _unitOfWork.Commit();
             return NoContent();
         }
 
-        [HttpPost("{id}/[action]")]
+        [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Update")]
-        public async Task<IActionResult> ApplyPromotion(Guid id)
+        public async Task<IActionResult> ApplyPromotion(ApplyPromotionRequest val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _saleOrderService.RecomputeCouponLines(new List<Guid> { id });
+            await _saleOrderService.ApplyPromotionOnOrder(val);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -371,7 +386,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val)
+        public async Task<IActionResult> ApplyDiscountDefault(ApplyDiscountViewModel val)
         {
             await _unitOfWork.BeginTransactionAsync();
             await _saleOrderService.ApplyDiscountDefault(val);
@@ -411,6 +426,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetSaleOrderPaymentBySaleOrderId(Guid id)
+        {
+            var res = await _saleOrderService.GetSaleOrderPaymentBySaleOrderId(id);
+            return Ok(res);
+        }
+
         [AllowAnonymous]
         [HttpGet("{id}/[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
@@ -420,18 +442,19 @@ namespace TMTDentalAPI.Controllers
             if (phieu == null)
                 return NotFound();
 
+            //var html = await _viewToStringRenderService.RenderViewAsync("SaleOrder/Print", phieu);
             var html = _viewRenderService.Render("SaleOrder/Print", phieu);
 
             return Ok(new PrintData() { html = html });
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ToSurvey([FromBody]SaleOrderToSurveyFilter val)
+        public async Task<IActionResult> ToSurvey([FromBody] SaleOrderToSurveyFilter val)
         {
             var paged = await _saleOrderService.GetToSurveyPagedAsync(val);
             return Ok(paged);
         }
-        
+
         [HttpPost("{id}/[action]")]
         public async Task<IActionResult> GetLineForProductRequest(Guid id)
         {

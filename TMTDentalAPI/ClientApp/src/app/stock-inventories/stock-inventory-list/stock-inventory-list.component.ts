@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PrecscriptionPaymentPaged, StockInventoryService } from '../stock-inventory.service';
 
@@ -32,13 +33,14 @@ export class StockInventoryListComponent implements OnInit {
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
-
+  canCreate = false;
   constructor(
     private stockInventorySevice: StockInventoryService,
     private notificationService: NotificationService,
     private intlService: IntlService,
     private router: Router,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -52,6 +54,7 @@ export class StockInventoryListComponent implements OnInit {
         this.offset = 0;
         this.loadDataFromApi();
       });
+    this.checkRole();
     this.loadDataFromApi();
   }
 
@@ -139,6 +142,10 @@ export class StockInventoryListComponent implements OnInit {
       case 'done':
         return 'Hoàn thành';
     }
+  }
+
+  checkRole() {
+    this.canCreate = this.checkPermissionService.check(["Stock.Inventory.Create"]);
   }
 
 }

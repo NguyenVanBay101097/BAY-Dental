@@ -234,6 +234,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
         this.saleOrdersOdataService.createDotkham(this.saleOrderId, dkVal).subscribe((res: any) => {
           this.notify('success', 'Lưu thành công');
           dotkham.Id = res.Id;
+          dotkham.Name = res.Name;
           componentRef.instance.setEditModeActive(false);
           this.activeDotKhamRef = null;
         });

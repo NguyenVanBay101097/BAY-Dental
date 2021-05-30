@@ -20,6 +20,7 @@ import { UserPaged, UserService } from 'src/app/users/user.service';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-appointment-kanban',
@@ -42,6 +43,12 @@ export class AppointmentKanbanComponent implements OnInit {
   listEmployees: EmployeeBasic[] = [];
   filterEmployee: any;
 
+  // permission
+  canAppointmentCreate = this.checkPermissionService.check(["Basic.Appointment.Create"]);
+  canAppointmentEdit = this.checkPermissionService.check(["Basic.Appointment.Edit"]);
+  canAppointmentDelete = this.checkPermissionService.check(["Basic.Appointment.Delete"]);
+  canEmployeeRead = this.checkPermissionService.check(["Catalog.Employee.Read"]);
+  canCustomerLink = this.checkPermissionService.check(["Basic.Partner.Read"]);
 
   public today: Date = new Date(new Date().toDateString());
   public next3days: Date = new Date(new Date(new Date().setDate(new Date().getDate() + 3)).toDateString());
@@ -49,7 +56,9 @@ export class AppointmentKanbanComponent implements OnInit {
   appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
   constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal, private dotkhamService: DotKhamService,
-    private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService) { }
+    private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService, 
+    private checkPermissionService: CheckPermissionService
+  ) { }
 
   ngOnInit() {
     this.dateFrom = this.today;
@@ -66,16 +75,18 @@ export class AppointmentKanbanComponent implements OnInit {
 
     this.loadListEmployees();
 
-    this.employeeCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => this.employeeCbx.loading = true),
-      switchMap(val => this.searchEmployees(val))
-    ).subscribe(
-      rs => {
-        this.listEmployees = rs.items;
-        this.employeeCbx.loading = false;
-      }
-    )
+    if (this.employeeCbx) {
+      this.employeeCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => this.employeeCbx.loading = true),
+        switchMap(val => this.searchEmployees(val))
+      ).subscribe(
+        rs => {
+          this.listEmployees = rs.items;
+          this.employeeCbx.loading = false;
+        }
+      )
+    }
   }
 
   searchEmployees(search?: string) {
@@ -169,6 +180,7 @@ export class AppointmentKanbanComponent implements OnInit {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = appointment.id;
     modalRef.result.then(() => {
+      this.loadData();
       this.appointmentService.getBasic(appointment.id).subscribe(item => {
         var date = new Date(item.date);
         var key = date.toDateString();

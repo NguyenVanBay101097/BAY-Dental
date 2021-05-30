@@ -7,6 +7,7 @@ using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
@@ -70,6 +71,59 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyDiscountOnOrderLine(ApplyDiscountViewModel val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.ApplyDiscountOnOrderLine(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyPromotionUsageCode(ApplyPromotionUsageCode val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            var res = await _saleLineService.ApplyPromotionUsageCodeOnOrderLine(val);
+            _unitOfWork.Commit();
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyPromotion(ApplyPromotionRequest val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.ApplyPromotionOnOrderLine(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPatch("{id}/[action]")]
+        public async Task<IActionResult> PatchIsActive(Guid id, SaleOrderLineIsActivePatch result)
+        {
+            var entity = await _saleLineService.GetByIdAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var patch = new JsonPatchDocument<SaleOrderLineIsActivePatch>();
+            patch.Replace(x => x.IsActive, result.IsActive);
+            var entityMap = _mapper.Map<SaleOrderLineIsActivePatch>(entity);
+            patch.ApplyTo(entityMap);
+
+            entity = _mapper.Map(entityMap, entity);
+            await _saleLineService.UpdateAsync(entity);
+
+            return NoContent();
+        }
+
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetTeeth(Guid id)
         {
@@ -91,9 +145,9 @@ namespace TMTDentalAPI.Controllers
 
             if (val.HasAnyLabo.HasValue)
             {
-                 if (!val.HasAnyLabo.Value)
+                if (!val.HasAnyLabo.Value)
                     query = query.Where(x => !x.Labos.Any());
-                 else
+                else
                     query = query.Where(x => x.Labos.Any());
             }
 

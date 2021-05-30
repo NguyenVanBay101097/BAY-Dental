@@ -38,7 +38,7 @@ export class AppComponent {
         this.loadIrConfigParam();
         this.authService.getGroups().subscribe((result: any) => {
           console.log(result);
-          
+
           this.permissionService.define(result);
         });
       }

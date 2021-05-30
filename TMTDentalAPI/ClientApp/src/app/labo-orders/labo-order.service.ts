@@ -23,6 +23,7 @@ export class LaboOrderPaged {
     state: string;
     saleOrderId: string;
     saleOrderLineId: string;
+    customerId: string;
 }
 
 export class LaboOrderBasic {
@@ -118,6 +119,7 @@ export class ExportLaboPaged {
 @Injectable({ providedIn: 'root' })
 export class LaboOrderService {
     apiUrl = 'api/LaboOrders';
+    apiPrintUrl = 'LaboOrder';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<PagedResult2<LaboOrderBasic>> {
@@ -144,8 +146,12 @@ export class LaboOrderService {
         return this.http.post<LaboOrderDisplay>(this.baseApi + this.apiUrl + '/DefaultGet', val);
     }
 
+    // getPrint(id) {
+    //     return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetPrint');
+    // }
+
     getPrint(id) {
-        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetPrint');
+        return this.http.get(this.baseApi + this.apiPrintUrl  + '/Print' + `?id=${id}`, { responseType: 'text' });
     }
 
     buttonConfirm(ids: string[]) {

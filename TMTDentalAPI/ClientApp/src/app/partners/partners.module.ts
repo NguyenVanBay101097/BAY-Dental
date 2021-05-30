@@ -30,7 +30,6 @@ import { PartnerCustomerAppointmentComponent } from './partner-customer-appointm
 import { PartnerCustomerTreatmentPaymentDetailComponent } from './partner-customer-treatment-payment-detail/partner-customer-treatment-payment-detail.component';
 import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-product-toa-thuoc-list/partner-customer-product-toa-thuoc-list.component';
 import { PartnerCustomerTreatmentPaymentChildComponent } from './partner-customer-treatment-payment-child/partner-customer-treatment-payment-child.component';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { PartnerCustomerCategoriesComponent } from './partner-customer-categories/partner-customer-categories.component';
 import { PartnerCustomerUploadImageComponent } from './partner-customer-upload-image/partner-customer-upload-image.component';
 import { PartnerCustomerQuotationsComponent } from './partner-customer-quotations/partner-customer-quotations.component';
@@ -74,6 +73,22 @@ import { PartnerSupplierFormInforComponent } from './partner-supplier-form-infor
 import { PartnerSupplierFormDebitComponent } from './partner-supplier-form-debit/partner-supplier-form-debit.component';
 import { PartnerSupplierFormPaymentComponent } from './partner-supplier-form-payment/partner-supplier-form-payment.component';
 import { PartnerSupplierFormDebitPaymentDialogComponent } from './partner-supplier-form-debit-payment-dialog/partner-supplier-form-debit-payment-dialog.component';
+import { PartnerCustomerLaboOrdersComponentComponent } from './partner-customer-labo-orders-component/partner-customer-labo-orders-component.component';
+import { PartnerDotkhamListComponent } from './partner-overview/partner-dotkham-list/partner-dotkham-list.component';
+import { PartnerDotkhamDetailComponent } from './partner-overview/partner-dotkham-detail/partner-dotkham-detail.component';
+import { PartnerCustomerTreatmentListComponent } from './partner-customer-treatment/partner-customer-treatment-list/partner-customer-treatment-list.component';
+import { PartnerCustomerTreatmentSaleOrderLineComponent } from './partner-customer-treatment/partner-customer-treatment-sale-order-line/partner-customer-treatment-sale-order-line.component';
+import { PartnerCustomerQuotationListComponent } from './partner-customer-quotation/partner-customer-quotation-list/partner-customer-quotation-list.component';
+import { PartnerCustomerQuotationFormComponent } from './partner-customer-quotation/partner-customer-quotation-form/partner-customer-quotation-form.component';
+import { PartnerAdvancesModule } from '../partner-advances/partner-advances.module';
+
+import { PartnerCustomerAdvisoryListComponent } from './partner-customer-advisory/partner-customer-advisory-list/partner-customer-advisory-list.component';
+import { PartnerCustomerAdvisoryCuDialogComponent } from './partner-customer-advisory/partner-customer-advisory-cu-dialog/partner-customer-advisory-cu-dialog.component';
+import { ToothDiagnosisPopoverComponent } from './partner-customer-advisory/partner-customer-advisory-list/tooth-diagnosis-popover/tooth-diagnosis-popover.component';
+import { PartnerCustomerSaleOrderQuotationsLinesComponent } from './partner-customer-sale-order-quotations-lines/partner-customer-sale-order-quotations-lines.component';
+import { ConsultingServicePopoverComponent } from './partner-customer-advisory/partner-customer-advisory-list/consulting-service-popover/consulting-service-popover.component';
+import { PartnerCustomerTreatmentFastPromotionComponent } from './partner-customer-treatment-fast-promotion/partner-customer-treatment-fast-promotion.component';
+import { PartnerCustomerTreatmentLineFastPromotionComponent } from './partner-customer-treatment-line-fast-promotion/partner-customer-treatment-line-fast-promotion.component';
 
 
 @NgModule({
@@ -135,7 +150,24 @@ import { PartnerSupplierFormDebitPaymentDialogComponent } from './partner-suppli
     PartnerSupplierFormInforComponent,
     PartnerSupplierFormDebitComponent,
     PartnerSupplierFormPaymentComponent,
-    PartnerSupplierFormDebitPaymentDialogComponent
+    PartnerSupplierFormDebitPaymentDialogComponent,
+    PartnerCustomerLaboOrdersComponentComponent,
+    PartnerSupplierFormDebitPaymentDialogComponent,
+    PartnerDotkhamListComponent,
+    PartnerDotkhamDetailComponent,
+    PartnerSupplierFormDebitPaymentDialogComponent,
+    PartnerCustomerTreatmentListComponent,
+    PartnerCustomerTreatmentSaleOrderLineComponent,
+    PartnerCustomerQuotationListComponent,
+    PartnerCustomerQuotationFormComponent,
+    PartnerCustomerTreatmentSaleOrderLineComponent,
+    PartnerCustomerAdvisoryListComponent,
+    PartnerCustomerAdvisoryCuDialogComponent,
+    ToothDiagnosisPopoverComponent,
+    PartnerCustomerSaleOrderQuotationsLinesComponent,
+    ConsultingServicePopoverComponent,
+    PartnerCustomerTreatmentFastPromotionComponent,
+    PartnerCustomerTreatmentLineFastPromotionComponent
   ],
   imports: [
     CommonModule,
@@ -144,13 +176,13 @@ import { PartnerSupplierFormDebitPaymentDialogComponent } from './partner-suppli
     ReactiveFormsModule,
     FormsModule,
     SharedModule,
-    FlexLayoutModule,
     NgbModule,
     AccountCommonPartnerReportsModule,
     SaleOrdersModule,
     PartnerTitlesModule,
     PartnerSourcesModule,
     PartnerCategoriesModule,
+    PartnerAdvancesModule,
     HistoryModule
   ],
   entryComponents: [
@@ -164,7 +196,10 @@ import { PartnerSupplierFormDebitPaymentDialogComponent } from './partner-suppli
     PartnerSupplierFormDebitPaymentDialogComponent,
     SaleOrderApplyDiscountDefaultDialogComponent,
     PartnerCustomerAutoGenerateCodeDialogComponent,
-    PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent
+    PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent,
+    PartnerCustomerAdvisoryCuDialogComponent,
+    PartnerCustomerTreatmentFastPromotionComponent,
+    PartnerCustomerTreatmentLineFastPromotionComponent
   ],
   providers: [SaleCouponProgramService],
   exports: [

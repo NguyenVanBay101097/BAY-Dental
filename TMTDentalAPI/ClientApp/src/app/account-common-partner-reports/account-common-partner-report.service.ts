@@ -100,4 +100,8 @@ export class AccountCommonPartnerReportService {
     getDetail(val: AccountCommonPartnerReportItem): Observable<AccountCommonPartnerReportItemDetail[]> {
         return this.http.post<AccountCommonPartnerReportItemDetail[]>(this.baseApi + this.apiUrl + "/GetDetail", val);
     }
+
+    exportExcelFile(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ExportExcelFile', val, { responseType: 'blob' });
+    }
 }

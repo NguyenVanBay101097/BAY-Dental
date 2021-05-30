@@ -1,33 +1,41 @@
 ﻿@model Umbraco.Web.Models.ContentEditing.SaleOrderPrintVM
+@using Umbraco.Web.Models.ContentEditing;
 @{
-    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+    var configPrint = ViewData["ConfigPrint"] as ConfigPrintDisplay;
     var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+
+
 }
 
 <div class="">
-    <div class="d-flex mb-2">
-        @if (!string.IsNullOrEmpty(Model.Company.Logo))
-        {
-            <img class="img-fluid me-3" style="width: 150px;" src="@Model.Company.Logo" alt="@Model.Company.Name">
-        }
-        <div>
-            <div class="text-xl font-semibold">@Model.Company.Name</div>
-            @if (!string.IsNullOrEmpty(Model.Company.Address))
+    @if (!configPrint.IsInfoCompany)
+    {
+        <div class="d-flex mb-2">
+            @if (!string.IsNullOrEmpty(Model.Company.Logo))
             {
-                <div>Địa chỉ: @Model.Company.Address</div>
+                <img class="img-fluid me-3" style="width: 150px;" src="@Model.Company.Logo" alt="@Model.Company.Name">
             }
-            @if (!string.IsNullOrEmpty(Model.Company.Phone))
-            {
-                <div>ĐT: @Model.Company.Phone</div>
-            }
-            @if (!string.IsNullOrEmpty(Model.Company.Email))
-            {
-                <div>Email: @Model.Company.Email</div>
-            }
+            <div>
+                <div class="text-xl font-semibold">@Model.Company.Name</div>
+                @if (!string.IsNullOrEmpty(Model.Company.Address))
+                {
+                    <div>Địa chỉ: @Model.Company.Address</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Company.Phone))
+                {
+                    <div>ĐT: @Model.Company.Phone</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Company.Email))
+                {
+                    <div>Email: @Model.Company.Email</div>
+                }
+            </div>
         </div>
-    </div>
+    }
+
     <div class="text-center">
-        <div class="text-3xl font-semibold">HỒ SƠ ĐIỀU TRỊ</div>
+        <div class="text-3xl font-semibold">PHIẾU ĐIỀU TRỊ</div>
         <div>Ngày @Model.DateOrder.Day tháng @Model.DateOrder.Month năm @Model.DateOrder.Year </div>
         <div class="font-semibold">Số: @Model.Name</div>
     </div>
@@ -38,24 +46,24 @@
                 <tbody>
                     <tr>
                         <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
+                            <div class="o_form_label o_form_label_help">
                                 Khách hàng
-                            </label>
+                            </div>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            @Model.Partner.Name
+                            <div class="o_field_widget">@Model.Partner.Name</div> 
                         </td>
                     </tr>
                     @if (!string.IsNullOrEmpty(Model.Partner.Phone))
                     {
                         <tr>
                             <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
+                                <div class="o_form_label o_form_label_help">
                                     Điện thoại
-                                </label>
+                                </div>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                @Model.Partner.Phone
+                                <div class="o_field_widget">@Model.Partner.Phone</div>
                             </td>
                         </tr>
                     }
@@ -64,12 +72,12 @@
                     {
                         <tr>
                             <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
+                                <div class="o_form_label o_form_label_help">
                                     Địa chỉ
-                                </label>
+                                </div>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                @Model.Partner.Address
+                                <div class="o_field_widget">@Model.Partner.Address</div>
                             </td>
                         </tr>
                     }
@@ -117,32 +125,32 @@
                 <tbody>
                     <tr>
                         <td colspan="1" class="o_td_label pr-3">
-                            <label class="o_form_label">
+                            <div class="o_form_label">
                                 Tổng tiền
-                            </label>
+                            </div>
                         </td>
                         <td colspan="1" class="text-right pe-0">
-                            <span class="o_form_field o_form_field_number">@string.Format(culture, "{0:0,0}", Model.AmountTotal)</span>
+                            <div class="o_form_field o_form_field_number">@string.Format(culture, "{0:0,0}", Model.AmountTotal)</div>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label pr-3">
-                            <label class="o_form_label">
+                            <div class="o_form_label">
                                 Đã thanh toán
-                            </label>
+                            </div>
                         </td>
                         <td colspan="1" class="text-right pe-0">
-                            <span class="o_form_field o_form_field_number">@((Model.AmountTotal - Model.Residual) == 0 ? "0" : string.Format(culture, "{0:0,0}", (Model.AmountTotal - Model.Residual)))</span>
+                            <div class="o_form_field o_form_field_number">@((Model.AmountTotal - Model.Residual) == 0 ? "0" : string.Format(culture, "{0:0,0}", (Model.AmountTotal - Model.Residual)))</div>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label pr-3">
-                            <label class="o_form_label">
+                            <div class="o_form_label">
                                 Còn lại
-                            </label>
+                            </div>
                         </td>
                         <td colspan="1" class="text-right pe-0">
-                            <span class="o_form_field o_form_field_number">@(Model.Residual == 0 ? "0" : string.Format(culture, "{0:0,0}", Model.Residual) )</span>
+                            <div class="o_form_field o_form_field_number">@(Model.Residual == 0 ? "0" : string.Format(culture, "{0:0,0}", Model.Residual) )</div>
                         </td>
                     </tr>
                 </tbody>
@@ -157,23 +165,29 @@
             <table class="table table-sm table-bordered">
                 <thead>
                     <tr>
-                        <th>Số phiếu</th>
-                        <th>Ngày</th>
+                        <th>Mã thanh toán</th>
+                        <th>Ngày thanh toán</th>
+                        <th>Số tiền</th>
                         <th>Phương thức</th>
-                        <th>Nội dung</th>
                         <th class="text-right">Thanh toán</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var payment in Model.HistoryPayments)
                     {
-                        <tr>
-                            <td>@payment.AccountPaymentName</td>
-                            <td>@payment.Date.Value.ToString("dd/MM/yyyy")</td>
-                            <td>@payment.JournalName</td>
-                            <td>@payment.Communication</td>
-                            <td class="text-right">@string.Format(culture, "{0:0,0}", payment.Amount)</td>
-                        </tr>
+                        @foreach (var item in payment.Payments)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                @if (item.Id == payment.Payments.FirstOrDefault().Id)
+                                {
+                                    <td rowspan="@payment.Payments.Count()">@item.PaymentDate.ToString("dd/MM/yyyy")</td>
+                                    <td rowspan="@payment.Payments.Count()">@string.Format(culture, "{0:0,0}", payment.Amount)</td>
+                                }
+                                <td>@item.JournalName</td>
+                                <td class="text-right">@string.Format(culture, "{0:0,0}", item.Amount)</td>
+                            </tr>
+                        }
                     }
 
                 </tbody>
@@ -214,8 +228,8 @@
                                     <td class="align-middle" style="vertical-align: top" rowspan="@dotkham.Lines.Count()">@dotkham.Reason</td>
                                 }
 
-                                <td  style="vertical-align: top">@line.Product.Name</td>
-                                <td  style="vertical-align: top">@line.NameStep</td>
+                                <td style="vertical-align: top">@line.Product.Name</td>
+                                <td style="vertical-align: top">@line.NameStep</td>
                                 <td class="text-left" style="vertical-align: top">
                                     <span>@String.Join(", ", line.Teeth.Select(x => x.Name).ToArray())</span>
                                     <p>@line.Note</p>

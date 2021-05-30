@@ -57,6 +57,10 @@ namespace Infrastructure.EntityConfigurations
            .WithMany()
            .HasForeignKey(x => x.AssistantId);
 
+            builder.HasOne(x => x.Counselor)
+            .WithMany()
+            .HasForeignKey(x => x.CounselorId);
+
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
             .HasForeignKey(x => x.CreatedById);
@@ -64,6 +68,9 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.WriteBy)
                 .WithMany()
                 .HasForeignKey(x => x.WriteById);
+            builder.HasOne(x => x.Advisory)
+                .WithMany(x => x.OrderLines)
+                .HasForeignKey(x => x.AdvisoryId);
         }
     }
 }

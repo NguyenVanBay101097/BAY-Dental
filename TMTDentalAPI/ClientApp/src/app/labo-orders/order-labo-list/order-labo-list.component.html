@@ -50,13 +50,13 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+    <kendo-grid [class]="'pointer'" (cellClick)="cellClick($event.dataItem)" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="partner" title="NCC Labo" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.partner.displayName}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Phiếu điều trị" width="100">
+        <kendo-grid-column *ngIf="canUpdateSaleOrder" title="Phiếu điều trị" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.saleOrderLine.order.id}">{{dataItem.saleOrderLine.order.name}}</a>
             </ng-template>
@@ -72,7 +72,7 @@
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{GetTeeth(dataItem)}}
             </ng-template>
-        </kendo-grid-column> -->    
+        </kendo-grid-column> -->
         <kendo-grid-column field="quantity" title="Số lượng" width="120" class="text-right">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.quantity | number}}
@@ -99,12 +99,12 @@
             </ng-template>
         </kendo-grid-column>
 
-        <kendo-grid-column field="id" width="100">
+        <kendo-grid-column field="id" width="100" *ngIf="canUpdate">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Nhận labo
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm" title="Sửa" (click)="editItem(dataItem)">
+                <button class="btn btn-success btn-sm" title="Sửa" (click)="$event.stopPropagation(); editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
             </ng-template>
         </kendo-grid-column>

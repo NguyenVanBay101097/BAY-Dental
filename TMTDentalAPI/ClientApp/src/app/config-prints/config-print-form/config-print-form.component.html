@@ -1,0 +1,59 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <div class="o_cp_t_left">
+            <div class="o_cp_buttons">
+                <button type="button" class="btn btn-primary btn-sm" accesskey="c" (click)="onSave()">Áp dụng</button>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_t_right">
+
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="container-fluid">
+            <div class="o_form_sheet">
+                <div class="d-flex">
+                    <div class="mr-3">
+                        <table class="o_group o_inner_group">
+                            <tbody formArrayName="configs" *ngIf="configs">
+                                <ng-container *ngFor="let config of configs.controls; let i=index">
+                                    <tr [formGroupName]="i">
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help">
+                                                {{config.get('name')?.value}}
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 250px;">
+                                            <div class="mb-2">
+                                                <kendo-combobox [data]="filterdPaperSizes" [textField]="'name'"
+                                                    [valueField]="'id'" [filterable]="true" #papersizeCbx
+                                                    formControlName="printPaperSize" [placeholder]="'Khổ giấy'">
+                                                </kendo-combobox>
+                                            </div>
+                                            <div class="mb-2">
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" formControlName="isInfoCompany" id="isInfoCompany-{{i}}">
+                                                    <label class="form-check-label" for="isInfoCompany-{{i}}">Ẩn/hiện thông tin công ty</label>
+                                                  </div>
+                                                <!-- <div class="k-form-field-checkbox-wrap">
+                                                    <input kendoCheckBox id="isInfoCompany" type="checkbox" formControlName="isInfoCompany"/>     
+                                                    <label class="k-checkbox-label" for="isInfoCompany"> Ẩn/hiện thông tin công ty </label>                              
+                                                </div> -->
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

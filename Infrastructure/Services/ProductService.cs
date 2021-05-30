@@ -51,7 +51,7 @@ namespace Infrastructure.Services
         private void _SetNameNoSign(IEnumerable<Product> self)
         {
             foreach (var product in self)
-                product.NameNoSign = product.Name.RemoveSignVietnameseV2();
+                product.NameNoSign = string.Join("|", product.Name, product.Name.RemoveSignVietnameseV2(), product.Name.GetAllFirstChar());
         }
 
         public override async Task UpdateAsync(IEnumerable<Product> entities)
@@ -192,7 +192,7 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val)
         {
             var query = GetQueryPaged(val);
-            query = query.OrderBy(x=> x.Name);
+            query = query.OrderBy(x => x.Name);
 
             var totalItems = await query.CountAsync();
             if (val.Limit > 0)
@@ -403,11 +403,14 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ProductSimple>> GetProductsAutocomplete(string filter = "")
         {
-            return await SearchQuery(domain: x => x.Active && (string.IsNullOrEmpty(filter) || x.Name.Contains(filter)), orderBy: x => x.OrderBy(s => s.Name), limit: 10).Select(x => new ProductSimple
-            {
-                Id = x.Id,
-                Name = x.Name
-            }).ToListAsync();
+            return await SearchQuery(domain: x => x.Active && (string.IsNullOrEmpty(filter) || x.Name.Contains(filter) ||
+            x.NameNoSign.Contains(filter) || x.DefaultCode.Contains(filter)), orderBy: x => x.OrderBy(s => s.Name), limit: 10)
+                .Select(x => new ProductSimple
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    ListPrice = x.ListPrice
+                }).ToListAsync();
         }
 
         public async Task<IEnumerable<ProductSimple>> GetProductsAutocomplete2(ProductPaged val)
@@ -499,6 +502,8 @@ namespace Infrastructure.Services
 
             product = await CreateAsync(product);
 
+            SetStandardPrice(product, val.StandardPrice, force_company: product.CompanyId);
+
             return product;
         }
 
@@ -516,7 +521,7 @@ namespace Infrastructure.Services
 
             _SaveUoMRels(product, val);
 
-            //_SetStandardPrice(product, val.StandardPrice);
+            SetStandardPrice(product, val.StandardPrice, force_company: product.CompanyId);
 
             await _SetListPrice(product, val.ListPrice);
 
@@ -677,7 +682,7 @@ namespace Infrastructure.Services
 
             res.Boms = _mapper.Map<IEnumerable<ProductBomBasic>>(boms);
 
-            //res.StandardPrice = _GetStandardPrice(product);
+            res.StandardPrice = _GetStandardPrice(product);
             res.ListPrice = await _GetListPrice(product);
 
             return res;
@@ -690,7 +695,7 @@ namespace Infrastructure.Services
                 .Include(x => x.UOM)
                 .Include(x => x.UOMPO).Include(x => x.Steps).FirstOrDefaultAsync();
             var res = _mapper.Map<ProductDisplay>(product);
-            //res.StandardPrice = _GetStandardPrice(product);
+            res.StandardPrice = _GetStandardPrice(product);
             res.ListPrice = await _GetListPrice(product);
             return res;
         }

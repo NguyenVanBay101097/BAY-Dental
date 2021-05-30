@@ -74,7 +74,7 @@ export class PrecscriptPaymentLineDisplay {
   quantity: number;
   price: number;
   amountTotal: number;
-  productId:string;
+  productId: string;
 }
 
 export class PrecsriptionPaymentSave {
@@ -105,6 +105,7 @@ export class MedicineOrderService {
 
   constructor(private http: HttpClient, @Inject("BASE_API") private base_api: string) { }
   apiUrl = "api/MedicineOrders";
+  apiPrintUrl = "MedicineOrder";
 
   getPaged(val): Observable<PrescriptionPaymentPagging> {
     return this.http.get<PrescriptionPaymentPagging>(this.base_api + this.apiUrl, { params: val });
@@ -138,7 +139,11 @@ export class MedicineOrderService {
     return this.http.post<PrecscriptionPaymentReport>(this.base_api + this.apiUrl + '/GetReport', val);
   }
 
+  // getPrint(id: string) {
+  //   return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
+  // }
+
   getPrint(id: string) {
-    return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
+    return this.http.get(this.base_api + this.apiPrintUrl + "/Print" + `?id=${id}`, { responseType: 'text' });
   }
 }

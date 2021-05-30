@@ -26,7 +26,7 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.Move)
               .WithMany(x => x.Lines)
               .HasForeignKey(x => x.MoveId)
-              .OnDelete(DeleteBehavior.Restrict);
+              .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.Partner)
                 .WithMany(x => x.AMoveLines)

@@ -255,6 +255,41 @@ namespace Infrastructure.TenantData.Migrations
                     b.ToTable("TenantFacebookPages");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.TenantOldSaleOrderProcessUpdate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("TenantOldSaleOrderProcessUpdates");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -430,6 +465,23 @@ namespace Infrastructure.TenantData.Migrations
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.TenantFacebookPage", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationAdminUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.AppTenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationAdminUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TenantOldSaleOrderProcessUpdate", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationAdminUser", "CreatedBy")
                         .WithMany()

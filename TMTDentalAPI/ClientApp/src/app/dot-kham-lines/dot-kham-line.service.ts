@@ -16,6 +16,21 @@ export class DotKhamLineBasic {
     state: string;
 }
 
+export class DotKhamLinePaging {
+    limit: number;
+    offset: number;
+    search: string;
+    dateFrom: any;
+    dateTo: any;
+}
+
+export class DotKhamLinePagedResult {
+    limit: number;
+    offset: number;
+    items: DotKhamLineBasic[];
+    totalItems: number;
+}
+
 export class DotKhamLineDisplay {
     id: string;
     dotKhamId: string;
@@ -41,6 +56,10 @@ export class DotKhamLineChangeRouting {
 export class DotKhamLineService {
     apiUrl = 'api/dotkhamlines';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
+
+    getPaged(page){
+        return this.http.get<DotKhamLinePagedResult>(this.baseApi + this.apiUrl, {params: new HttpParams({fromObject: page})});
+    }
 
     get(id): Observable<DotKhamLineDisplay> {
         return this.http.get<DotKhamLineDisplay>(this.baseApi + this.apiUrl + "/" + id);
