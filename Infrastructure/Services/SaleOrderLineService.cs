@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
@@ -669,7 +670,10 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateCreated >= val.DateFrom.Value);
 
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.DateCreated <= val.DateTo.Value);
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateCreated <= dateTo);
+            }
 
             var totalItems = await query.CountAsync();
 
