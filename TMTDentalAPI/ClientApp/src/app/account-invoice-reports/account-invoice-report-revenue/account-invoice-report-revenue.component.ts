@@ -45,7 +45,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     private productService: ProductService,
     private accInvService: AccountInvoiceReportService
   ) {
-   
+
   }
 
   ngOnInit() {
@@ -250,7 +250,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
   }
 
   exportsimple() {
-    
+
   }
 
   public onExcelExport(args: any): void {
@@ -267,7 +267,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     // Aternatively set custom styles for the details
     // https://www.telerik.com/kendo-angular-ui/components/excelexport/api/WorkbookSheetRowCell/
     const headerOptions = rows[0].cells[0];
-    
+
     const data = this.allDataInvoice.data;
 
     var val = Object.assign({}, this.filter) as AccountInvoiceReportDetailPaged;
@@ -276,6 +276,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     val.limit = 0;
     val.search = '';
+    val.groupBy = val.groupBy == 'emp-ass' ? this.empFilter : val.groupBy;
 
     // Fetch the data for all details
     for (let idx = 0; idx < data.length; idx++) {
@@ -323,35 +324,47 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
         }
 
         // add the detail header
-        listDetailHeaderIndex.push(idx+2);
+        listDetailHeaderIndex.push(idx + 2);
         rows.splice(idx + 2, 0, {
           cells: [
             {},
-            Object.assign({}, headerOptions, { value: 'Ngày thanh toán',background:'#aabbcc',width:20 }),
-            Object.assign({}, headerOptions, { value: 'Số phiếu',background:'#aabbcc', width:200 }),
-            Object.assign({}, headerOptions, { value: 'Khách hàng',background:'#aabbcc',width:200 }),
-            Object.assign({}, headerOptions, { value: 'Bác sĩ/Phụ tá',background:'#aabbcc',width:200 }),
-            Object.assign({}, headerOptions, { value: 'Dịch vụ',background:'#aabbcc',width:200 }),
-            Object.assign({}, headerOptions, { value: 'Thanh toán',background:'#aabbcc',width:200 })
+            Object.assign({}, headerOptions, { value: 'Ngày thanh toán', background: '#aabbcc', width: 20 }),
+            Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
+            Object.assign({}, headerOptions, { value: 'Khách hàng', background: '#aabbcc', width: 200 }),
+            Object.assign({}, headerOptions, { value: 'Bác sĩ/Phụ tá', background: '#aabbcc', width: 200 }),
+            Object.assign({}, headerOptions, { value: 'Dịch vụ', background: '#aabbcc', width: 200 }),
+            Object.assign({}, headerOptions, { value: 'Thanh toán', background: '#aabbcc', width: 200 })
           ]
         });
       }
-var a = workbook;
-delete a.sheets[0].columns[1].width;
-a.sheets[0].columns[1].autoWidth = true;
-a.sheets[0].columns[2]= {
-width:200
-};
-      rows.forEach((row,index) => {
+      var a = workbook;
+      delete a.sheets[0].columns[1].width;
+      a.sheets[0].columns[1].autoWidth = true;
+      a.sheets[0].columns[2] = {
+        width: 120
+      };
+      a.sheets[0].columns[3] = {
+        width: 200
+      };
+      a.sheets[0].columns[4] = {
+        width: 200
+      };
+      a.sheets[0].columns[5] = {
+        width: 200
+      };
+      a.sheets[0].columns[5] = {
+        width: 150
+      };
+      rows.forEach((row, index) => {
         //colspan
-        if(row.type === 'header'  || row.type == "footer") {
-          row.cells[1].colSpan= 6;
-          if(row.type === 'header') {
-          rows[index+1].cells[1].colSpan= 6;
+        if (row.type === 'header' || row.type == "footer") {
+          row.cells[1].colSpan = 6;
+          if (row.type === 'header') {
+            rows[index + 1].cells[1].colSpan = 6;
           }
         }
         //làm màu
-        if (row.type === "header" ) {
+        if (row.type === "header") {
           row.cells.forEach((cell) => {
             cell.background = "#aabbcc";
           });
@@ -364,7 +377,7 @@ width:200
       });
       // create a Workbook and save the generated data URL
       // https://www.telerik.com/kendo-angular-ui/components/excelexport/api/Workbook/
-     
+
     });
 
   }

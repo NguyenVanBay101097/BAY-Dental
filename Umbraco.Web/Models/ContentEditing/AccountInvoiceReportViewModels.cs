@@ -39,6 +39,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductId { get; set; }
         public Guid? EmployeeId { get; set; }
         public Guid? AssistantId { get; set; }
+        /// <summary>
+        /// InvoiceDate, ProductId, EmployeeId, AssistantId
+        /// </summary>
+        public string GroupBy { get; set; }
     }
 
     public class AccountInvoiceReportDisplay

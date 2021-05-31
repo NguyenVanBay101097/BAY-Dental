@@ -163,11 +163,11 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.ProductId == val.ProductId);
             }
-            else if (val.EmployeeId.HasValue)
+            else if (val.EmployeeId.HasValue || val.GroupBy == "EmployeeId")
             {
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
             }
-            else if (val.AssistantId.HasValue)
+            else if (val.AssistantId.HasValue || val.GroupBy == "AssistantId")
             {
                 query = query.Where(x => x.AssistantId == val.AssistantId);
             }

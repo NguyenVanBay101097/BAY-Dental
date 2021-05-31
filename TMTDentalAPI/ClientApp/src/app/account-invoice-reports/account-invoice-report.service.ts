@@ -24,6 +24,7 @@ export class AccountInvoiceReportDetailPaged{
     productId?: string;
     employeeId?: string;
     assistantId?: string;
+    groupBy: string;
 }
 
 export class AccountInvoiceReportDisplay {

@@ -38,10 +38,10 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
           this.filter.date = moment(this.parent.invoiceDate).format('YYYY/MM/DD')
           break;
         case 'ProductId':
-          this.filter.productId = this.parent.productId;
+          this.filter.productId = this.parent.productId || '';
           break;
         case 'emp-ass':
-          this.empFilter == 'EmployeeId'? this.filter.employeeId =  this.parent.employeeId: this.filter.assistantId = this.parent.assistantId;
+          this.empFilter == 'EmployeeId'? this.filter.employeeId =  this.parent.employeeId || '': this.filter.assistantId = this.parent.assistantId || '';
           break;
         default:
           break;
@@ -55,6 +55,7 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     val.search = '';
+    val.groupBy = val.groupBy == 'emp-ass' ? this.empFilter : val.groupBy;
     this.loading = true;
     this.accInvService.getRevenueReportDetailPaged(val).pipe(
       map(res => {
