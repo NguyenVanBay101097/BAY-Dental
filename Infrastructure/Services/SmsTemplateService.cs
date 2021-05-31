@@ -35,7 +35,8 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 Name = x.Name,
                 Body = JsonConvert.DeserializeObject<SmsTemplateBody>(x.Body).Text,
-                DateCreated = (DateTime)x.DateCreated
+                DateCreated = (DateTime)x.DateCreated,
+                Type = x.Type
             }).ToListAsync();
             return new PagedResult2<SmsTemplateBasic>(totalItems, val.Offset, val.Limit)
             {
