@@ -4,7 +4,7 @@
             <div class="d-flex">
                 <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Ngày" [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
                 </app-tai-date-range-filter-dropdown>
-                <button type="button" class="btn btn-primary btn-sm mx-1" accesskey="c" (click)="createItem()">Tạo phiếu xuất</button>
+                <button type="button" class="btn btn-primary btn-sm mx-1" accesskey="c" (click)="createItem()" *ngIf="canCreate">Tạo phiếu xuất</button>
             </div>
         </div>
         <div class="o_cp_searchview">
@@ -44,14 +44,14 @@
                 {{getState(dataItem)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="id" width="100">
+        <kendo-grid-column field="id" width="100" *ngIf="canUpdate && canDelete">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                <button class="btn btn-success btn-sm mr-2" title="Sửa" *ngIf="canUpdate" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                <button class="btn btn-danger btn-sm" title="Xóa" *ngIf="canDelete" (click)="deleteItem(dataItem)">
                     <span class="far fa-trash-alt"></span></button>
             </ng-template>
         </kendo-grid-column>

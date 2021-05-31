@@ -52,5 +52,12 @@ namespace TMTDentalAPI.Controllers
             await _smsMessageDetailService.RunJobSendSms();
             return Ok();
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetReportTotal([FromQuery] ReportTotalInput val)
+        {
+            var res = await _smsMessageDetailService.GetReportTotal(val);
+            return Ok(res);
+        }
     }
 }

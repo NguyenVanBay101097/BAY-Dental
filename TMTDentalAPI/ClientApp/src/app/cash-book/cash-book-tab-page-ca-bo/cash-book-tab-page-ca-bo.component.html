@@ -52,9 +52,9 @@
     <div>
         <nav>
             <div class="nav nav-tabs">
-                <a class="nav-item nav-link active" data-toggle="tab" (click)="clickTab('cash')">Tiền mặt</a>
+                <a class="nav-item nav-link active" data-toggle="tab" (click)="clickTab('cash_bank')">Tổng sổ quỹ</a>
+                <a class="nav-item nav-link" data-toggle="tab" (click)="clickTab('cash')">Tiền mặt</a>
                 <a class="nav-item nav-link" data-toggle="tab" (click)="clickTab('bank')">Ngân hàng</a>
-                <a class="nav-item nav-link" data-toggle="tab" (click)="clickTab('cash_bank')">Tổng sổ quỹ</a>
             </div>
         </nav>
         <div class="tab-content">
@@ -101,7 +101,8 @@
                                 {{dataItem.date | date: 'shortDate'}}
                             </ng-template>
                         </kendo-grid-column>
-                        <kendo-grid-column field="name" title="Diễn giải" width="150"></kendo-grid-column>
+                        <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="120"></kendo-grid-column>
+                        <kendo-grid-column field="name" title="Nội dung" width="200"></kendo-grid-column>
                         <kendo-grid-column field="journalName" title="Phương thức" width="120"></kendo-grid-column>
                         <kendo-grid-column field="accountName" title="Loại thu chi" width="120"></kendo-grid-column>
                         <kendo-grid-column field="amount" title="Số tiền" width="120" class="text-right">

@@ -8,7 +8,7 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
-import { SmsTemplateService } from '../sms-template.service';
+import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-thanks-form-automatic',
@@ -145,7 +145,10 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   }
 
   searchSmsTemplate(q?: string) {
-    return this.smsTemplateService.getAutoComplete(q);
+    var filter = new SmsTemplateFilter();
+    filter.search = q || "";
+    filter.type = "thanks";
+    return this.smsTemplateService.getAutoComplete(filter);
   }
 
   onSave() {
@@ -176,7 +179,8 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     if (this.isTemplateCopy && val.templateName != '') {
       var valueTemplate = {
         name: val.templateName,
-        body: val.body
+        body: val.body,
+        type: "thanks"
       }
       this.smsTemplateService.create(valueTemplate).subscribe(
         () => {

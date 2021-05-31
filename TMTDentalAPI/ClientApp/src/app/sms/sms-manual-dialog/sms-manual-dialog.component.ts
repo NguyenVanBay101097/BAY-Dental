@@ -11,7 +11,7 @@ import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dia
 import { SmsComposerService } from '../sms-composer.service';
 import { SmsMessageService } from '../sms-message.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
-import { SmsTemplateService } from '../sms-template.service';
+import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-manual-dialog',
@@ -109,7 +109,10 @@ export class SmsManualDialogComponent implements OnInit {
   }
 
   searchSmsTemplate(q?: string) {
-    return this.smsTemplateService.getAutoComplete(q);
+    var filter = new SmsTemplateFilter();
+    filter.search = q || "";
+    filter.type = this.templateTypeTab;
+    return this.smsTemplateService.getAutoComplete(filter);
   }
 
   addTemplate() {
@@ -206,7 +209,8 @@ export class SmsManualDialogComponent implements OnInit {
           if (this.isTemplateCopy && val.templateName != '') {
             var valueTemplate = {
               name: val.templateName,
-              body: val.body
+              body: val.body,
+              type: this.templateTypeTab
             }
             this.smsTemplateService.create(valueTemplate).subscribe(
               () => {

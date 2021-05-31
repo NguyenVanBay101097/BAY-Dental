@@ -96,7 +96,7 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
     if (options.orderby) {
       queryStr = queryStr + "&$orderby=" + options.orderby;
     }
-    
+
     if (queryStr) {
       // encode everything which looks like a GUID
       var guid = /('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')/gi;

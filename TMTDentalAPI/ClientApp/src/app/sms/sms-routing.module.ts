@@ -15,6 +15,7 @@ import { SmsCareAfterOrderFormManualComponent } from './sms-care-after-order-for
 import { SmsCareAfterOrderFormComponent } from './sms-care-after-order-form/sms-care-after-order-form.component';
 import { SmsMessageDetailStatisticComponent } from './sms-message-detail-statistic/sms-message-detail-statistic.component';
 import { SmsMessageStatisticComponent } from './sms-message-statistic/sms-message-statistic.component';
+import { SmsReportComponent } from './sms-report/sms-report.component';
 import { SmsStatisticComponent } from './sms-statistic/sms-statistic.component';
 import { SmsTemplateListComponent } from './sms-template-list/sms-template-list.component';
 import { SmsThanksFormAutomaticComponent } from './sms-thanks-form-automatic/sms-thanks-form-automatic.component';
@@ -63,7 +64,8 @@ const routes: Routes = [
   { path: 'statistic', component: SmsStatisticComponent },
   { path: 'accounts', component: SmsAccountListComponent },
   { path: 'campaign', component: SmsCampaignListComponent, },
-  { path: 'campaign/:id', component: SmsCampaignDetailComponent }
+  { path: 'campaign/:id', component: SmsCampaignDetailComponent },
+  { path: 'report', component: SmsReportComponent }
 ];
 
 @NgModule({

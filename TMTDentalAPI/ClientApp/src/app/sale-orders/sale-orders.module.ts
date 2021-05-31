@@ -35,6 +35,13 @@ import { SaleOrderDotkhamTeethPopoverComponent } from './sale-order-dotkham-teet
 import { ToaThuocsModule } from '../toa-thuocs/toa-thuocs.module';
 import { SaleOrderProductRequestListComponent } from './sale-order-product-request-list/sale-order-product-request-list.component';
 import { SaleOrderProductRequestDialogComponent } from './sale-order-product-request-dialog/sale-order-product-request-dialog.component';
+import { SaleOrderPromotionDialogComponent } from './sale-order-promotion-dialog/sale-order-promotion-dialog.component';
+import { SaleOrderPromotionService } from './sale-order-promotion.service';
+import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-program.service';
+import { SaleOrderLinePromotionDialogComponent } from './sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component';
+import { PromotionDiscountComponent } from './promotion-discount/promotion-discount.component';
+import { SaleOrderApplyCouponComponent } from './sale-order-apply-coupon/sale-order-apply-coupon.component';
+import { SaleOrderLineApplyCouponComponent } from './sale-order-line-apply-coupon/sale-order-line-apply-coupon.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +71,11 @@ import { SaleOrderProductRequestDialogComponent } from './sale-order-product-req
     SaleOrderDotkhamTeethPopoverComponent,
     SaleOrderProductRequestListComponent,
     SaleOrderProductRequestDialogComponent,
+    SaleOrderPromotionDialogComponent,
+    SaleOrderLinePromotionDialogComponent,
+    PromotionDiscountComponent,
+    SaleOrderApplyCouponComponent,
+    SaleOrderLineApplyCouponComponent,
   ],
   imports: [
     CommonModule,
@@ -75,7 +87,7 @@ import { SaleOrderProductRequestDialogComponent } from './sale-order-product-req
     SharedModule,
     NgbModule
   ],
-  providers: [],
+  providers: [SaleOrderPromotionService, SaleCouponProgramService],
   exports: [
     SaleOrderLineDiscountPopoverComponent,
     SaleOrderLineInfoPopoverComponent,
@@ -93,7 +105,9 @@ import { SaleOrderProductRequestDialogComponent } from './sale-order-product-req
     SaleOrderPaymentDialogComponent,
     TreatmentProcessServiceDialogComponent,
     SaleOrdersDotkhamCuComponent,
-    SaleOrderProductRequestDialogComponent
+    SaleOrderProductRequestDialogComponent,
+    SaleOrderPromotionDialogComponent,
+    SaleOrderLinePromotionDialogComponent
   ]
 })
 export class SaleOrdersModule { }

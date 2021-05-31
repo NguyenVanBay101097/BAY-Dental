@@ -24,6 +24,8 @@ export class TenantPaged {
     search: string;
     limit: number;
     offset: number;
+    dateCreatedFrom: string;
+    dateCreatedTo: string;
 }
 
 export class TenantPaging {
@@ -60,5 +62,12 @@ export class TenantService {
 
     updateInfo(id: string, val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/UpdateInfo', val);
+    }
+
+    exportExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportExcel", paged,
+            { responseType: "blob" }
+        );
     }
 }

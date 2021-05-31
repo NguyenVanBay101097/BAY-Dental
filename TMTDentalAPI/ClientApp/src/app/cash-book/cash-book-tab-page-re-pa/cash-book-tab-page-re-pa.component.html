@@ -5,7 +5,7 @@
             <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="dateFrom"
                 [dateTo]="dateTo" (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
-            <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createItem()">
+            <button *ngIf="canPhieuThuChiCreate" type="button" class="btn btn-primary btn-sm mr-2" (click)="createItem()">
                 <i class="fas fa-plus mr-2"></i> {{getType(type)}}
             </button>
             <button type="button" class="btn btn-primary btn-sm mr-2" (click)="exportExcelFile()">
@@ -41,16 +41,16 @@
                     {{getState(dataItem.state)}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="id" width="120">
+            <kendo-grid-column *ngIf="canPhieuThuChiUpdate || canPhieuThuChiDelete" field="id" width="120">
                 <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                     Thao tác
                 </ng-template>
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     <div class="d-flex">
-                        <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                        <button *ngIf="canPhieuThuChiUpdate" class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                             <span class="far fa-edit"></span>
                         </button>
-                        <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                        <button *ngIf="canPhieuThuChiDelete" class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
                             <span class="far fa-trash-alt"></span>
                         </button>
                     </div>

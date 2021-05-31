@@ -4,27 +4,42 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
+
+    public class DotKhamLinePaged
+    {
+        public DotKhamLinePaged()
+        {
+            Limit = 20;
+        }
+        public int Limit { get; set; }
+        public int Offset { get; set; }
+        public string Search { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+    }
     public class DotKhamLineBasic
     {
         public Guid Id { get; set; }
 
+        public DateTime DotKhamDate { get; set; }
+
+        public string DotKhamName { get; set; }
+        public SaleOrderSimple DotKhamSaleOrder { get; set; }
+        public PartnerSimple DotKhamPartner { get; set; }
+
+        public string ProductName { get; set; }
+
+        public string DotKhamDoctorName { get; set; }
+
+        public string NameStep { get; set; }
+        public string Note { get; set; }
+        public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
+    }
+
+    public class ProductDotKhamLineSimple
+    {
+        public Guid Id { get; set; }
         public string Name { get; set; }
-
-        public Guid? ProductId { get; set; }
-        public ProductSimple Product { get; set; }
-
-        public string UserId { get; set; }
-        public ApplicationUserSimple User { get; set; }
-
-        public int? Sequence { get; set; }
-
-        /// <summary>
-        /// Trạng thái: chưa tiến hành, đang tiến hành, hoàn thành
-        /// draft: chưa tiến hành
-        /// progress: đang tiến hành
-        /// done: hoàn thành
-        /// </summary>
-        public string State { get; set; }
     }
 
     public class DotKhamLineDisplay

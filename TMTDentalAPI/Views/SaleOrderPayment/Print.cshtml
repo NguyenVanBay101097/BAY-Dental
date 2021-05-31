@@ -1,0 +1,128 @@
+﻿@model Umbraco.Web.Models.ContentEditing.SaleOrderPaymentPrintVM
+@{
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+    var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+
+<div>
+    <div class="d-flex mb-2">
+        @if (!string.IsNullOrEmpty(Model.Company.Logo))
+        {
+            <img class="img-fluid me-3 w-25" src="@Model.Company.Logo" alt="@Model.Company.Name">
+        }
+        <div>
+            <div class="text-xl font-semibold">@Model.Company.Name</div>
+            @if (!string.IsNullOrEmpty(Model.Company.Address))
+            {
+                <div>Địa chỉ: @Model.Company.Address</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Phone))
+            {
+                <div>ĐT: @Model.Company.Phone</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Email))
+            {
+                <div>Email: @Model.Company.Email</div>
+            }
+        </div>
+    </div>
+    <div class="text-center mb-2">
+        <div class="text-3xl font-semibold">BIÊN LAI THANH TOÁN</div>
+        <div>Ngày @Model.Date.Day tháng @Model.Date.Month năm @Model.Date.Year </div>
+        @*<div class="font-semibold">Số: @Model.Name</div>*@
+    </div>
+    <div class="o_form_view mb-2">
+        <div class="d-flex">
+            <table class="o_group o_inner_group col-12">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <div class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </div>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">@Model.OrderPartner.DisplayName</div>
+                        </td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(Model.OrderPartner.Phone))
+                    {
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <div class="o_form_label o_form_label_help">
+                                    Điện thoại
+                                </div>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <div class="o_field_widget">@(Model.OrderPartner.Phone)</div>
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <div class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </div>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">@Model.OrderPartner.Address</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <div class="o_form_label o_form_label_help">
+                                Ngày thanh toán
+                            </div>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">@(string.Format(info, "{0:dd/MM/yyyy}", Model.Date))</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <div class="o_form_label o_form_label_help">
+                                Phương thức thanh toán
+                            </div>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">@(string.Join(", ",Model.JournalLines.Select(x => x.Journal.Name)))</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <div class="o_form_label o_form_label_help">
+                                Số tiền
+                            </div>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">@(string.Format(info, "{0:0,0}", Model.Amount))</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="d-flex">
+        <div class="col">
+            <div class="text-center">
+                <span class="font-semibold"> Khách hàng</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">@(!string.IsNullOrEmpty(Model.OrderPartner.Name) ? Model.OrderPartner.Name.ToUpper() : "")</span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="text-center">
+                <span class="font-semibold"> Nhân viên</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">@(Model.User == null ? "" : Model.User.Name.ToUpper())</span>
+            </div>
+        </div>
+    </div>
+</div>

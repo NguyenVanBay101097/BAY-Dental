@@ -20,6 +20,7 @@ import { ProductBomDisplay } from '../product-bom';
 import { result } from 'lodash';
 import { Console } from 'console';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-product-service-cu-dialog',
@@ -60,7 +61,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
-    private modalService: NgbModal, private showErrorService: AppSharedShowErrorService, private notificationService: NotificationService) {
+    private modalService: NgbModal, private showErrorService: AppSharedShowErrorService, private notificationService: NotificationService, private authService: AuthService) {
   }
 
   formStepEdit = this.fb.group({
@@ -268,6 +269,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   getBodyData() {
     var data = this.productForm.value;
+    data.companyId = this.authService.userInfo.companyId;
     data.categId = data.categ.id;
     data.stepList = this.stepList;
     data.boms.forEach(bom => {

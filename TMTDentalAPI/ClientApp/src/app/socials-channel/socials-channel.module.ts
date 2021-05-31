@@ -7,7 +7,6 @@ import { FacebookDialogComponent } from './facebook-dialog/facebook-dialog.compo
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { FacebookDashboardComponent } from './facebook-dashboard/facebook-dashboard.component';
 import { FacebookPageManagementComponent } from './facebook-page-management/facebook-page-management.component';
 import { FacebookPageMarketingCampaignsComponent } from './facebook-page-marketing-campaigns/facebook-page-marketing-campaigns.component';
@@ -82,7 +81,6 @@ import { FacebookUserProfileUpdatePhonePartnerPopoverComponent } from './faceboo
     FormsModule,
     NgbModule,
     DropDownsModule,
-    FlexLayoutModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
     AutosizeModule,

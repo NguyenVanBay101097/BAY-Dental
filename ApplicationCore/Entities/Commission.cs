@@ -18,6 +18,13 @@ namespace ApplicationCore.Entities
         public ICollection<CommissionProductRule> CommissionProductRules { get; set; } = new List<CommissionProductRule>();
 
         /// <summary>
+        /// doctor : hoa hồng bác sĩ
+        /// assistant : hoa hồng phụ tá
+        /// counselor : hoa hồng tư vấn
+        /// </summary>
+        public string Type { get; set; }
+
+        /// <summary>
         /// chi nhánh
         /// </summary>
         public Guid? CompanyId { get; set; }

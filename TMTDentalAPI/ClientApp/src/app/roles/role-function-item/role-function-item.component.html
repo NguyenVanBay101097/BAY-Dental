@@ -1,0 +1,16 @@
+
+<a (click)="item.expand = !item.expand">
+    <i class="fas expand" [ngClass]="{'fa-caret-right': !item.expand, 'fa-caret-down': item.expand}"></i>
+</a>
+<a class="prettycheckbox mr-1" (click)="toggle(item)" [ngClass]="{'checked': isAllChildChecked(item), 'prettyShow': atLeastOneChecked(item)}"></a>
+<span (click)="toggle(item)">{{item.name}}</span>
+<ul *ngIf="item.expand && item.ops.length > 1">
+    <li *ngFor="let child of item.ops" class="roleItem">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="child.checked" [id]="child.permission">
+            <label class="form-check-label" [for]="child.permission">
+                {{child.name}}
+            </label>
+        </div>
+    </li>   
+</ul>

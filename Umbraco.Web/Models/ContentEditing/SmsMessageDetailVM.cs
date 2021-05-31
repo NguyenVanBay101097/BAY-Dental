@@ -49,4 +49,19 @@ namespace Umbraco.Web.Models.ContentEditing
         public string SmsCampaignName { get; set; }
         public string SmsMessageName { get; set; }
     }
+
+    public class ReportTotalInput
+    {
+        public DateTime? Date { get; set; }
+        public Guid? SmsAccountId { get; set; }
+        public Guid? SmsCampaignId { get; set; }
+    }
+
+    public class ReportTotalOutputItem
+    {
+        public string State { get; set; }
+        public int Total { get; set; }
+        public float Percentage { get; set; }
+    }
 }
+

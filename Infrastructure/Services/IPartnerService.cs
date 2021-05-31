@@ -68,6 +68,8 @@ namespace Infrastructure.Services
         Task<IEnumerable<AccountMove>> GetUnreconcileInvoices(Guid id, string search = "");
         Task<List<SearchAllViewModel>> SearchAll(PartnerPaged val);
         Task<PagedResult2<PartnerGetDebtPagedItem>> GetDebtPaged(Guid id, PartnerGetDebtPagedFilter val);
+        Task<decimal> GetAmountAdvanceBalance(Guid id);
+        Task<decimal> GetAmountAdvanceUsed(Guid id);
 
         Task<IEnumerable<PartnerBasic>> GetCustomerBirthDay(PartnerPaged val);
         Task<IEnumerable<PartnerBasic>> GetCustomerAppointments(PartnerPaged val);

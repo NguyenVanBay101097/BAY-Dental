@@ -86,8 +86,16 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  // getTeeth(val) {
+  //   return val.teeth.map(x => x.name).join(',');
+  // }
+
   getTeeth(val) {
-    return val.teeth.map(x => x.name).join(',');
+    var list = [];
+    if (val.teeth.length) {
+      list.push(val.teeth.map(x => x.name).join(','));
+    }
+    return list;
   }
 
   stateGet(state) {

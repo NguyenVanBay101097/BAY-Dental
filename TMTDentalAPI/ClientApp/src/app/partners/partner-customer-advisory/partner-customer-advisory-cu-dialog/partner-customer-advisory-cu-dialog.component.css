@@ -1,0 +1,39 @@
+.table-tooth {
+    /* margin-right: 0;
+    margin-left: auto; */
+}
+
+.table-tooth tr td {
+    padding: 0;
+}
+
+.table-tooth tr:first-child td {
+    padding-bottom: .25rem;
+}
+
+.table-tooth tr:last-child td {
+    padding-top: .25rem;
+}
+
+.table-tooth tr td:last-child {
+    padding-left: .25rem;
+}
+
+.tooth-item {
+    padding: .5rem .75rem;
+    cursor: pointer;
+}
+
+.tooth-item:hover {
+    background: rgb(68, 209, 209, .5);
+}
+
+.tooth-item.teethSelected {
+    background: rgb(68, 209, 209, 1);
+}
+
+.tooth-item.disabled {
+    background: none;
+    color: #ccc;
+    border-color: #ccc;
+}

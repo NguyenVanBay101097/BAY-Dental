@@ -45,15 +45,7 @@
                     </div>
                     <div>
                         <h4 class="o_horizontal_separator text-dark">Phân quyền</h4>
-                        <div class="row">
-                            <div class="col-4" *ngFor="let group of featureGroups">
-                                <div hasGroups [groups]="group.groups">
-                                    <kendo-treeview kendoTreeViewExpandable [kendoTreeViewCheckable]="checkableSettings" (childrenLoaded)="onChildrenLoaded($event)" [checkBy]="'permission'" [(checkedKeys)]="checkedKeys" [isChecked]="isChecked" [nodes]="[group]" textField="name" [children]="fetchChildren"
-                                        [hasChildren]="hasChildren">
-                                    </kendo-treeview>
-                                </div>
-                            </div>
-                        </div>
+                        <app-role-form-v2 [listFeature]="featureGroups"></app-role-form-v2>
                     </div>
                 </div>
             </div>

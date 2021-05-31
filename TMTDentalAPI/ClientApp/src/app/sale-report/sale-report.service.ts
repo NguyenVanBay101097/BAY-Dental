@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { SaleOrderLineDisplay } from '../sale-orders/sale-order-line-display';
+import { CheckPermissionService } from '../shared/check-permission.service';
 
 export class SaleReportItem {
     date: string;
@@ -100,7 +101,8 @@ export class SaleReportOldNewPartnerOutput {
 @Injectable({ providedIn: 'root' })
 export class SaleReportService {
     apiUrl = 'api/SaleReports';
-    constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
+    constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string, 
+        private checkPermissionService: CheckPermissionService) { }
 
     getReport(val: SaleReportSearch): Observable<SaleReportItem[]> {
         return this.http.post<SaleReportItem[]>(this.baseApi + this.apiUrl + "/GetReport", val);

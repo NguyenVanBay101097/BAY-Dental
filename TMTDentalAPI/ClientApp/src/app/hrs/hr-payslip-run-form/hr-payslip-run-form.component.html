@@ -22,11 +22,11 @@
                     <div class="o_statusbar_buttons">
                         <!-- <i [routerLink]="'/hr/payslip-runs'" class="fas fa-arrow-circle-left text-primary btn-icon"></i> -->
                         <i (click)="printAllEmpSalary()" class="fas fa-print text-primary btn-icon"></i>
-                        <button type="button" *ngIf="state != 'done'" (click)="onSave()" class="btn btn-sm btn-primary">Lưu</button>
-                        <button *ngIf="state === 'confirm'" type="button" (click)="onConfirm()" class="btn btn-sm btn-primary">Xác nhận</button>
+                        <button type="button" *ngIf="state != 'done' && canAdd" (click)="onSave()" class="btn btn-sm btn-primary">Lưu</button>
+                        <button *ngIf="state === 'confirm' && canUpdate" type="button" (click)="onConfirm()" class="btn btn-sm btn-primary">Xác nhận</button>
                         <button type="button" (click)="onExport()" class="btn btn-sm btn-primary">Xuất file</button>
                         <button *ngIf="state === 'done'" type="button" (click)="onPayment()" class="btn btn-sm btn-primary">Chi lương</button>
-                        <button *ngIf="state === 'confirm'" type="button" (click)="ComputeSalary()" class="btn btn-sm btn-primary">Làm mới</button>
+                        <button *ngIf="state === 'confirm' && canUpdate" type="button" (click)="ComputeSalary()" class="btn btn-sm btn-primary">Làm mới</button>
                         <button *ngIf="state === 'done' && !isExistSalaryPayment" type="button" (click)="actionCancel()" class="btn btn-sm btn-danger">Hủy</button>
                     </div>
                     <div class="o_statusbar_status o_field_widget o_readonly_modifier">

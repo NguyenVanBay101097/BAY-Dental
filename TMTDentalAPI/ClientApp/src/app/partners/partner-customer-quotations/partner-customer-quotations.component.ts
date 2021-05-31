@@ -119,8 +119,10 @@ export class PartnerCustomerQuotationsComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe(res => {
+      
       this.gridData = res;
       this.loading = false;
+      
     }, err => {
       console.log(err);
       this.loading = false;

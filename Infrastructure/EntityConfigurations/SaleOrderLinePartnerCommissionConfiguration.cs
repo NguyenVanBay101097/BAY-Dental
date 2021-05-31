@@ -11,11 +11,6 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<SaleOrderLinePartnerCommission> builder)
         {
-            builder.HasOne(x => x.Partner)
-               .WithMany()
-               .HasForeignKey(x => x.PartnerId)
-               .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasOne(x => x.Employee)
               .WithMany()
               .HasForeignKey(x => x.EmployeeId);

@@ -9,6 +9,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-stock-picking-incoming-list',
@@ -27,11 +28,14 @@ export class StockPickingIncomingListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   dateFrom: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 1);;
   dateTo: Date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-
+  canCreate = false;
+  canUpdate = false;
+  canDelete = false;
   constructor(private route: ActivatedRoute, private stockPickingService: StockPickingService,
     private pickingTypeService: StockPickingTypeService, private router: Router,
     private modalService: NgbModal, private intlService: IntlService, 
-    private notificationService: NotificationService 
+    private notificationService: NotificationService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -44,6 +48,7 @@ export class StockPickingIncomingListComponent implements OnInit {
       });
 
     this.loadDataFromApi();
+    this.checkRole();
   }
 
   getState(item: StockPickingBasic) {
@@ -119,6 +124,12 @@ export class StockPickingIncomingListComponent implements OnInit {
         this.loadDataFromApi();
       });
     });
+  }
+
+  checkRole(){
+    this.canCreate = this.checkPermissionService.check(["Stock.Picking.Create"]);
+    this.canUpdate = this.checkPermissionService.check(["Stock.Picking.Update"]);
+    this.canDelete = this.checkPermissionService.check(["Stock.Picking.Delete"]);
   }
 }
 

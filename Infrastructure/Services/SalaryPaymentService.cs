@@ -256,6 +256,7 @@ namespace Infrastructure.Services
                 Journal = payment.Journal,
                 PartnerId = partnerId,
                 CompanyId = payment.CompanyId,
+                InvoiceOrigin = payment.Name,
             };
 
             var rec_pay_line_name = "/";

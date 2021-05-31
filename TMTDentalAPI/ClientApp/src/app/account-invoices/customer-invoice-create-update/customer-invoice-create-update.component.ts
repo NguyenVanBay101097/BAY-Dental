@@ -20,7 +20,7 @@ import * as _ from 'lodash';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { LaboOrderLineCuDialogComponent } from 'src/app/labo-order-lines/labo-order-line-cu-dialog/labo-order-line-cu-dialog.component';
 import { PrintService } from 'src/app/print.service';
-import { DotKhamLineService } from 'src/app/dot-khams/dot-kham-line.service';
+import { DotKhamLineService } from 'src/app/dot-kham-lines/dot-kham-line.service';
 import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AccountRegisterPaymentDefaultGet, AccountRegisterPaymentService } from 'src/app/account-payments/account-register-payment.service';

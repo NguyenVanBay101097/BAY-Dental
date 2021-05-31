@@ -36,6 +36,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? Residual { get; set; }
     }
 
+    public class SaleOrderSimple
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
+
     public class SaleOrderSmsBasic
     {
         public Guid Id { get; set; }
