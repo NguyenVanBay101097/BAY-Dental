@@ -260,6 +260,8 @@ namespace Infrastructure.Data
         public DbSet<SmsMessageAppointmentRel> SmsMessageAppointmentRels { get; set; }
         public DbSet<SmsMessageSaleOrderRel> SmsMessageSaleOrderRels { get; set; }
         public DbSet<SmsMessageSaleOrderLineRel> SmsMessageSaleOrderLineRels { get; set; }
+        public DbSet<SmsConfigProductCategoryRel> SmsConfigProductCategoryRels { get; set; }
+        public DbSet<SmsConfigProductRel> SmsConfigProductRels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -469,6 +471,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SmsMessageAppointmentRelConfiguration());
             builder.ApplyConfiguration(new SmsMessageSaleOrderLineRelConfiguration());
             builder.ApplyConfiguration(new SmsMessageSaleOrderRelConfiguration());
+            builder.ApplyConfiguration(new SmsConfigProductRelConfiguration());
+            builder.ApplyConfiguration(new SmsConfigProductCategoryRelConfiguration());
 
 
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
@@ -521,7 +525,7 @@ namespace Infrastructure.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+
             if (!optionsBuilder.IsConfigured)
             {
                 if (_tenant != null)

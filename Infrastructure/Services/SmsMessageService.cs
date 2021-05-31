@@ -187,7 +187,7 @@ namespace Infrastructure.Services
             return _mapper.Map<SmsMessageDisplay>(entity);
         }
 
-        public async Task ActionSendSMS(SmsMessage entity)
+        public async Task ActionSendSMSMessage(SmsMessage entity)
         {
             var smsMessageDetailObj = GetService<ISmsMessageDetailService>();
             var hostName = _tenant != null ? _tenant.Hostname : "localhost";

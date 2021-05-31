@@ -4,7 +4,10 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { EventEmitter } from 'events';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
+import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
@@ -22,8 +25,6 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
 
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent
-  @ViewChild("serviceCategoryMlct", { static: true }) serviceCategoryMlct: MultiSelectComponent
-  @ViewChild("serviceMlct", { static: true }) serviceMlct: MultiSelectComponent
   formGroup: FormGroup;
   filteredConfigSMS: any[];
   filteredSmsAccount: any[];
@@ -34,6 +35,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   limit: number = 20;
   type: string;
   filteredTemplate: any[];
+  filter: string = 'productCategory';
   textareaLimit: number = 200;
   isTemplateCopy = false;
   template: any = {
@@ -51,6 +53,8 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     private smsConfigService: SmsConfigService,
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
+    private productCategoryService: ProductCategoryService,
+    private productService: ProductService,
     private notificationService: NotificationService
   ) { }
 
@@ -60,6 +64,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       smsAccount: [null, Validators.required],
       IsCareAfterOrderAutomation: false,
       dateTimeSend: new Date(),
+      filter: this.filter,
       products: [],
       productCategories: [],
       TypeTimeBeforSend: ['day', Validators.required],
@@ -90,14 +95,23 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       this.filteredSmsAccount = result;
       this.smsAccountCbx.loading = false;
     });
+
+    this.loadProductCategory();
+    this.loadProduct();
+
   }
 
   loadDataFormApi() {
-
-    this.smsConfigService.get(this.id).subscribe(
+    this.smsConfigService.getDisplay(this.id).subscribe(
       (res: any) => {
         if (res) {
-          this.id = res.id;
+          if (res.products) {
+            this.filter = "product"
+            res.filter = "product"
+          } else {
+            this.filter = "productCategory"
+            res.filter = "productCategory"
+          }
           this.formGroup.patchValue(res);
           if (res.template) {
             this.template = JSON.parse(res.template.body);
@@ -172,18 +186,20 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.templateId = val.template ? val.template.id : null;
     val.body = this.template ? JSON.stringify(this.template) : '';
+    val.productIds = val.products ? val.products.map(x => x.id) : [];
+    val.productCatgoryIds = val.productCatgories ? val.productCatgories.map(x => x.id) : [];
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(
         res => {
-          // console.log(res);
           this.notify("cập nhật thiết lập thành công", true);
+          this.activeModal.close();
         }
       )
     } else {
       this.smsConfigService.create(val).subscribe(
         res => {
-          // console.log(res);
           this.notify("thiết lập thành công", true);
+          this.activeModal.close();
         }
       )
     }
@@ -216,6 +232,47 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: isSuccess ? 'success' : 'error', icon: true },
     });
+  }
+
+  onChangeRadioButton(event: any) {
+    var filter = event.currentTarget.value;
+    if (filter) {
+      this.filter = filter;
+      this.formGroup.get('products').patchValue(null);
+      this.formGroup.get('productCategories').patchValue(null);
+    }
+  }
+
+
+  loadProductCategory(q?: string) {
+    var val = new ProductCategoryPaged();
+    val.limit = 20;
+    val.offset = 0;
+    val.type = 'service';
+    val.search = q || ''
+    this.productCategoryService.autocomplete(val).subscribe(
+      res => {
+        if (res) {
+          this.filteredProductCategories = res;
+        }
+      }
+    );
+  }
+
+  loadProduct(q?: string) {
+    var val = new ProductPaged();
+    val.limit = 20;
+    val.offset = 0;
+    val.type = "service";
+    val.type2 = "service"
+    val.search = q || ''
+    this.productService.autocomplete2(val).subscribe(
+      res => {
+        if (res) {
+          this.filteredProducts = res;
+        }
+      }
+    );
   }
 
 }

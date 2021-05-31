@@ -7,7 +7,8 @@
                     [valueField]="'value'">
                 </kendo-combobox>
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm ml-2" (click)="setupAutomaic()">Tạo thiết lập gửi tự động</button>
+                    <button type="button" class="btn btn-primary btn-sm ml-2" (click)="setupAutomaic()">Tạo thiết lập
+                        gửi tự động</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -15,25 +16,37 @@
         </div>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên thiết lập" [(ngModel)]="search"
-                    (ngModelChange)="this.searchUpdate.next($event)" />
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên thiết lập"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
             </div>
         </div>
     </div>
 </div>
 
 
-<kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="offset" 
-    [pageable]="true" [pageSize]="limit">
-    <kendo-grid-column field="" title="Tạo thiết lập"></kendo-grid-column>
-    <kendo-grid-column field="" title="Brandname"></kendo-grid-column>
-    <kendo-grid-column field="" title="Thời điểm gửi tin"></kendo-grid-column>
-    <kendo-grid-column field="" title="Thời gian gửi tin"></kendo-grid-column>
-    <kendo-grid-column field="" title="Dịch vụ"></kendo-grid-column>
-    <kendo-grid-column field="status" title="Trạng thái">
+<kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="offset" [pageable]="true"
+    [pageSize]="limit">
+    <kendo-grid-column field="name" title="Tạo thiết lập"></kendo-grid-column>
+    <kendo-grid-column field="brandName" title="Brandname"></kendo-grid-column>
+    <kendo-grid-column field="date" title="Thời điểm gửi tin"></kendo-grid-column>
+    <kendo-grid-column title="Thời gian gửi tin">
         <ng-template kendoGridCellTemplate let-dataItem>
-            <span class="text-success" *ngIf="dataItem.state=='active'">?Kích hoạt</span>
-            <span *ngIf="dataItem.state=='inactive'">Không kích hoạt</span>
+            <span>{{dataItem.timeBeforSend}} 
+                <span *ngIf="dataItem.typeTimeBeforSend == 'day'">Ngày</span>
+                <span *ngIf="dataItem.typeTimeBeforSend == 'month'">Tháng</span>
+            </span>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Nhóm dich vụ/Dịch vụ">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <span *ngIf="dataItem.productNames != ''">{{dataItem.productNames}}</span>
+            <span *ngIf="dataItem.productCategoryNames != ''">{{dataItem.productCategoryNames}}</span>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Trạng thái">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <span class="text-success" *ngIf="dataItem.isCareAfterOrderAutomation">?Kích hoạt</span>
+            <span *ngIf="!dataItem.isCareAfterOrderAutomation">Không kích hoạt</span>
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="id" width="100">

@@ -18,7 +18,7 @@
                                 </td>
                                 <td colspan="1" class="o_td_label" style="width: 80%;">
                                     <label class="switch">
-                                        <input type="checkbox" formControlName="isBirthdayAutomation">
+                                        <input type="checkbox" formControlName="IsCareAfterOrderAutomation">
                                         <span class="slider round"></span>
                                     </label>
                                 </td>
@@ -94,32 +94,36 @@
                                     </label>
                                     <div class="d-flex">
                                         <div class="form-check mr-2">
-                                            <input class="form-check-input" type="radio" name="productCategory"
-                                                id="productCategory" value="productCategory" checked>
+                                            <input (change)="onChangeRadioButton($event)" class="form-check-input"
+                                                formControlName="filter" type="radio" name="filter" id="productCategory"
+                                                value="productCategory" checked>
                                             <label class="form-check-label font-weight-600" for="productCategory">
                                                 Nhóm dịch vụ
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input font-weight-600" type="radio"
-                                                name="exampleRadios" id="exampleRadios2" value="option2">
-                                            <label class="form-check-label" for="exampleRadios2">
+                                            <input (change)="onChangeRadioButton($event)" formControlName="filter"
+                                                class="form-check-input font-weight-600" type="radio" name="filter"
+                                                id="product" value="product">
+                                            <label class="form-check-label" for="product">
                                                 Dịch vụ
                                             </label>
                                         </div>
                                     </div>
                                     <div>
-                                        <div>
-                                            <kendo-multiselect (valueChange)="searchProductCategory($event)"
-                                                #serviceCategoryMlct class="mr-3" [data]="filteredProductCategories"
-                                                [textField]="'name'" [valueField]="'id'"
+                                        <div *ngIf="filter=='productCategory'">
+                                            <kendo-multiselect (filterChange)="loadProductCategory($event)"
+                                                [filterable]="true" style="min-height: 100px;" class="mr-3"
+                                                [data]="filteredProductCategories" [textField]="'name'"
+                                                [placeholder]="'Chọn nhóm dịch vụ'" [valueField]="'id'"
                                                 formControlName="productCategories">
                                             </kendo-multiselect>
                                         </div>
-                                        <div>
-                                            <kendo-multiselect (valueChange)="searchProduct($event)" #serviceMlct
-                                                class="mr-3" [data]="filteredProducts" [textField]="'name'"
-                                                [valueField]="'id'" formControlName="products">
+                                        <div *ngIf="filter=='product'">
+                                            <kendo-multiselect (filterChange)="loadProduct($event)" class="mr-3"
+                                                style="min-height: 100px;" [data]="filteredProducts" [filterable]="true"
+                                                [placeholder]="'Chọn dịch vụ'" [textField]="'name'" [valueField]="'id'"
+                                                formControlName="products">
                                             </kendo-multiselect>
                                         </div>
                                     </div>
