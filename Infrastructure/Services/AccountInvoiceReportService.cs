@@ -98,6 +98,8 @@ namespace Infrastructure.Services
                         InvoiceDate = x.Key as DateTime?,
                         PriceSubTotal = x.Sum(z => z.PriceSubTotal)
                     }).ToListAsync();
+
+                    res = res.OrderByDescending(z => z.InvoiceDate.Value).ToList();
                     break;
 
                 case "ProductId":
@@ -173,6 +175,7 @@ namespace Infrastructure.Services
             }
 
             count = await query.CountAsync();
+            query = query.OrderByDescending(x => x.InvoiceDate);
             if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
             res = await query.Select(x => new AccountInvoiceReportDetailDisplay
             {

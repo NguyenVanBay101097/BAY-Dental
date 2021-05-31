@@ -352,7 +352,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
       a.sheets[0].columns[5] = {
         width: 200
       };
-      a.sheets[0].columns[5] = {
+      a.sheets[0].columns[6] = {
         width: 150
       };
       rows.forEach((row, index) => {
