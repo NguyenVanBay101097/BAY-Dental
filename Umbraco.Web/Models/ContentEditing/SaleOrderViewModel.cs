@@ -51,4 +51,24 @@ namespace Umbraco.Web.Models.ContentEditing
     //    public string Name { get; set; }
     //}
 
+    public class SaleOrderRevenueReportPaged
+    {
+        public int Limit { get; set; }
+        public int Offset { get; set; }
+        public Guid? CompanyId { get; set; }
+        public string Search { get; set; }
+    }
+    /// <summary>
+    /// dự kiến doanh thu
+    /// </summary>
+    public class SaleOrderRevenueReport
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string PartnerName { get; set; }
+        public decimal? AmountTotal { get; set; }
+        public decimal? Residual { get; set; }
+        public decimal? TotalPaid { get; set; }
+    }
+
 }

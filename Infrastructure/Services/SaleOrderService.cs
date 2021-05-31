@@ -2955,5 +2955,26 @@ namespace Infrastructure.Services
 
             return product;
         }
+
+        public async Task<PagedResult2<SaleOrderRevenueReport>> GetRevenueReport(SaleOrderRevenueReportPaged val)
+        {
+            var query = SearchQuery(x => x.State != "Cancelled");
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+            }
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => x.Name.Contains(val.Search));
+            }
+
+            var count = await query.CountAsync();
+
+            if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
+
+            var res = await _mapper.ProjectTo<SaleOrderRevenueReport>(query).ToListAsync();
+
+            return new PagedResult2<SaleOrderRevenueReport>(count, val.Offset, val.Limit) { Items = res };
+        }
     }
 }
