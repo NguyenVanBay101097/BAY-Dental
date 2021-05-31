@@ -32,7 +32,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
 
   dateFrom: Date;
   dateTo: Date;
-  resultSelection = 'cash';
+  resultSelection = 'cash_bank';
 
   constructor(
     private modalService: NgbModal,
@@ -110,6 +110,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
           })
       ).subscribe(
         (res) => {
+          console.log(res);
           this.gridData = res;
           this.loading = false;
         },
@@ -154,16 +155,16 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   }
 
   exportExcelFile() {
-    var page = new AccountPaymentPaged();
-    page.companyId = this.authService.userInfo.companyId;
-    page.journalType = this.resultSelection == "cash_bank" ? '' : this.resultSelection;
-    page.paymentDateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
-    page.paymentDateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
-    page.offset = this.skip;
-    page.limit = this.limit;
-    page.search = this.search || '';
-    page.state = "posted";
-    this.accountPaymentService.exportExcelFile(page).subscribe((res: any) => {
+    var gridPaged = new CashBookDetailFilter();
+    gridPaged.companyId = this.authService.userInfo.companyId;
+    gridPaged.resultSelection = this.resultSelection;
+    gridPaged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
+    gridPaged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
+    gridPaged.offset = this.skip;
+    gridPaged.limit = this.limit;
+    gridPaged.search = this.search || '';
+
+    this.cashBookService.exportExcelFile(gridPaged).subscribe((res: any) => {
       let filename = "TongSoQuy";
       if (this.resultSelection == "cash") {
         filename = "SoQuyTienMat";

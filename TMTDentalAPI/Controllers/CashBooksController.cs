@@ -48,60 +48,62 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        //[HttpGet("[action]")]
-        //[CheckAccess(Actions = "Account.Read")]
-        //public async Task<IActionResult> ExportExcelFile([FromQuery] CashBookSearch val)
-        //{
-        //    var stream = new MemoryStream();
-        //    val.Limit = int.MaxValue;
-        //    val.Offset = 0;
-        //    var services = await _fundBookService.GetExportExcel(val);
-        //    var sheetName = "Tổng sổ quỹ";
-        //    if (val.ResultSelection == "cash")
-        //    {
-        //        sheetName = "Sổ quỹ tiền mặt";
-        //    }
-        //    else if (val.ResultSelection == "bank")
-        //    {
-        //        sheetName = "Sổ quỹ ngân hàng";
-        //    }
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Account.Read")]
+        public async Task<IActionResult> ExportExcelFile(CashBookDetailFilter val)
+        {
+            var stream = new MemoryStream();
+            val.Limit = int.MaxValue;
+            val.Offset = 0;
+            var services = await _cashBookService.GetDetails(val);
+            var sheetName = "Tổng sổ quỹ";
+            if (val.ResultSelection == "cash")
+            {
+                sheetName = "Sổ quỹ tiền mặt";
+            }
+            else if (val.ResultSelection == "bank")
+            {
+                sheetName = "Sổ quỹ ngân hàng";
+            }
 
-        //    byte[] fileContent;
+            byte[] fileContent;
 
-        //    using (var package = new ExcelPackage(stream))
-        //    {
-        //        var worksheet = package.Workbook.Worksheets.Add(sheetName);
+            var items = services.Items.ToList();
 
-        //        worksheet.Cells[1, 1].Value = "Ngày";
-        //        worksheet.Cells[1, 2].Value = "Số phiếu";
-        //        worksheet.Cells[1, 3].Value = "Loại thu chi";
-        //        worksheet.Cells[1, 4].Value = "Tiền chi";
-        //        worksheet.Cells[1, 5].Value = "Tiền thu";
-        //        worksheet.Cells[1, 6].Value = "Người nhận/ nộp";
-        //        for (int row = 2; row < services.Count() + 2; row++)
-        //        {
-        //            var item = services.ToList()[row - 2];
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-        //            worksheet.Cells[row, 1].Value = item.Date;
-        //            worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
-        //            worksheet.Cells[row, 2].Value = item.Name;
-        //            worksheet.Cells[row, 3].Value = item.Ref;
-        //            worksheet.Cells[row, 4].Value = item.Credit;
-        //            worksheet.Cells[row, 5].Value = item.Debit;
-        //            worksheet.Cells[row, 6].Value = item.PartnerName;
-        //        }
+                worksheet.Cells[1, 1].Value = "Ngày";
+                worksheet.Cells[1, 2].Value = "Diễn giải";
+                worksheet.Cells[1, 3].Value = "Phương thức";
+                worksheet.Cells[1, 4].Value = "Loại thu chi";
+                worksheet.Cells[1, 5].Value = "Số tiền";
+                worksheet.Cells[1, 6].Value = "Đối tác";
+                for (int row = 2; row < items.Count + 2; row++)
+                {
+                    var item = items[row - 2];
 
-        //        worksheet.Cells.AutoFitColumns();
+                    worksheet.Cells[row, 1].Value = item.Date;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 3].Value = item.JournalName;
+                    worksheet.Cells[row, 4].Value = item.AccountName;
+                    worksheet.Cells[row, 5].Value = item.Amount;
+                    worksheet.Cells[row, 6].Value = item.PartnerName;
+                }
 
-        //        package.Save();
+                worksheet.Cells.AutoFitColumns();
 
-        //        fileContent = stream.ToArray();
-        //    }
+                package.Save();
 
-        //    string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-        //    stream.Position = 0;
+                fileContent = stream.ToArray();
+            }
 
-        //    return new FileContentResult(fileContent, mimeType);
-        //}
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
     }
 }

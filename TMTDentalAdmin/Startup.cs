@@ -98,6 +98,7 @@ namespace TMTDentalAdmin
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
             services.AddSingleton<IMailSender, SendGridSender>();
             services.AddScoped<ITenantExtendHistoryService, TenantExtendHistoryService>();
+            services.AddScoped<ITenantOldSaleOrderProcessUpdateService, TenantOldSaleOrderProcessUpdateService>();
             services.AddSingleton<UpdateExpiredDateTenantService>();
             services.AddHostedService<UpdateExpiredBackgroundService>();
             //services.AddCronJob<ScheduleJobService>(c =>

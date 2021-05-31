@@ -48,6 +48,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('commissionCbx', { static: false }) commissionCbx: ComboBoxComponent;
+  @ViewChild('assistantCommissionCbx', { static: false }) assistantCommissionCbx: ComboBoxComponent;
+  @ViewChild('counselorCommissionCbx', { static: false }) counselorCommissionCbx: ComboBoxComponent;
   @ViewChild("name", { static: true }) private nameEL: ElementRef;
 
 
@@ -65,6 +67,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   categoriesList2: EmployeeCategoryDisplay[] = [];
   filteredUsers: UserSimple[] = [];
   listCommissions: Commission[] = [];
+  listAssistantCommissions: Commission[] = [];
+  listCounselorCommissions: Commission[] = [];
   listCompanies: CompanyBasic[] = [];
   groupSurvey: any[] = [];
   roles: any[] = [];
@@ -83,6 +87,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       isAssistant: this.isAssistant || false,
       commissionId: null,
       commission: null,
+      assistantCommissionId: null,
+      assistantCommission: null,
+      counselorCommissionId: null,
+      counselorCommission: null,
       userId: null,
       user: null,
       structureTypeId: null,
@@ -111,6 +119,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
     setTimeout(() => {
       this.loadListCommissions();
+      this.loadListcommissionAssistants();
+      this.loadListcommissionCounselors();
       this.getEmployeeInfo();
       // this.loadUsers();
       // this.loadstructureTypes();
@@ -140,6 +150,25 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       this.listCommissions = result.items;
       this.commissionCbx.loading = false;
     });
+
+    this.assistantCommissionCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.assistantCommissionCbx.loading = true)),
+      switchMap(value => this.searchCommissionAssistants(value))
+    ).subscribe(result => {
+      this.listAssistantCommissions = result.items;
+      this.assistantCommissionCbx.loading = false;
+    });
+
+    this.counselorCommissionCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.counselorCommissionCbx.loading = true)),
+      switchMap(value => this.searchCommissionCounselors(value))
+    ).subscribe(result => {
+      this.listCounselorCommissions = result.items;
+      this.counselorCommissionCbx.loading = false;
+    });
+
   }
 
   get isUser() {
@@ -254,6 +283,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     return this.userService.autocompleteSimple(val);
   }
 
+
   loadListCommissions() {
     this.searchCommissions().subscribe(result => {
       this.listCommissions = _.unionBy(this.listCommissions, result.items, 'id');
@@ -263,6 +293,33 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   searchCommissions(q?: string) {
     var val = new CommissionPaged();
     val.search = q || '';
+    val.type = 'doctor';
+    return this.commissionService.getPaged(val);
+  }
+
+  loadListcommissionCounselors() {
+    this.searchCommissionCounselors().subscribe(result => {
+      this.listCounselorCommissions = _.unionBy(this.listCounselorCommissions, result.items, 'id');
+    });
+  }
+
+  searchCommissionCounselors(q?: string) {
+    var val = new CommissionPaged();
+    val.search = q || '';
+    val.type = 'counselor';
+    return this.commissionService.getPaged(val);
+  }
+
+  loadListcommissionAssistants() {
+    this.searchCommissionAssistants().subscribe(result => {
+      this.listAssistantCommissions = _.unionBy(this.listAssistantCommissions, result.items, 'id');
+    });
+  }
+
+  searchCommissionAssistants(q?: string) {
+    var val = new CommissionPaged();
+    val.search = q || '';
+    val.type = 'assistant';
     return this.commissionService.getPaged(val);
   }
 
@@ -272,6 +329,18 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
         (rs: any) => {
           rs.birthDay = rs.birthDay ? new Date(rs.birthDay) : null;
           rs.startWorkDate = rs.startWorkDate ? new Date(rs.startWorkDate) : null;
+          if (rs.commission) {
+            this.listCommissions = _.unionBy(this.listCommissions, [rs.commission], 'id');
+          }
+
+          if (rs.assistantCommission) {
+            this.listAssistantCommissions = _.unionBy(this.listAssistantCommissions, [rs.assistantCommission], 'id');
+          }
+      
+          if (rs.counselorCommission) {
+            this.listCounselorCommissions = _.unionBy(this.listCounselorCommissions, [rs.counselorCommission], 'id');
+          }
+      
           this.formCreate.get('createChangePassword').setValue(false);
           this.onChangeCreateChangePassword(null);
           this.formCreate.patchValue(rs);
@@ -306,9 +375,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       value.userCompanyIds = value.userCompanies.map(x => x.id);
       value.roleIds = value.roles && value.roles.length > 0 ? value.roles.map(x => x.id) : [];
     }
-
+    
     value.commissionId = value.commission ? value.commission.id : null;
-
+    value.counselorCommissionId = value.counselorCommission ? value.counselorCommission.id : null;
+    value.assistantCommissionId = value.assistantCommission ? value.assistantCommission.id : null;
     this.isChange = true;
 
     this.employeeService.createUpdateEmployee(value, this.empId).subscribe(

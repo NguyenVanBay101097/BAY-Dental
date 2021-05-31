@@ -37,7 +37,6 @@ export class PermissionService {
     public hasDefined(permission: string): boolean {
         if (typeof permission !== "string")
             return false;
-
         let index = this._permissionStore.indexOf(permission.toLowerCase());
         return index > -1;
     }

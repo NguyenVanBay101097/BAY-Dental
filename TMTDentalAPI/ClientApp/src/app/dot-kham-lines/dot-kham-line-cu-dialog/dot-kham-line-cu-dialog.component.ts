@@ -7,7 +7,7 @@ import { ProductService, ProductFilter } from 'src/app/products/product.service'
 import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { RoutingSimple, RoutingService, RoutingPaged } from 'src/app/routings/routing.service';
 import { UserSimple } from 'src/app/users/user-simple';
-import { DotKhamLineService } from 'src/app/dot-khams/dot-kham-line.service';
+import { DotKhamLineService } from 'src/app/dot-kham-lines/dot-kham-line.service';
 import { UserService } from 'src/app/users/user.service';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import * as _ from 'lodash';

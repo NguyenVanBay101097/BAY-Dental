@@ -12,6 +12,12 @@ export class SmsMessageDetailPaged {
     smsMessageId: string;
 }
 
+export class ReportTotalInput {
+    date: string;
+    smsAccountId: string;
+    smsCampaignId: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -19,8 +25,6 @@ export class SmsMessageDetailService {
 
     apiUrl: string = 'api/SmsMessageDetails';
     constructor(@Inject('BASE_API') private base_api: string, private http: HttpClient) { }
-
-
 
     getPaged(val) {
         return this.http.get(this.base_api + this.apiUrl, { params: val });
@@ -30,7 +34,11 @@ export class SmsMessageDetailService {
         return this.http.post(this.base_api + this.apiUrl + '/ReSend', ids);
     }
 
-    getPagedStatistic(val){
+    getPagedStatistic(val) {
         return this.http.get(this.base_api + this.apiUrl+'/GetPagedStatistic', { params: val });
+    }
+
+    getReportTotal(val) {
+        return this.http.get(this.base_api + this.apiUrl+'/GetReportTotal', { params: val });
     }
 }

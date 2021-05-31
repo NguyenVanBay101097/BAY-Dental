@@ -49,7 +49,7 @@ namespace TMTDentalAPI.Controllers
                 .Include(x => x.SmsMessagePartnerRels).FirstOrDefaultAsync();
             if (entity == null) return NotFound();
             await _unitOfWorkAsync.BeginTransactionAsync();
-            await _smsMessageService.ActionSendSMS(entity);
+            await _smsMessageService.ActionSendSMSMessage(entity);
             _unitOfWorkAsync.Commit();
             return NoContent();
         }

@@ -13,8 +13,10 @@ namespace Infrastructure.Services
         Task<T> GetByIdAsync(object id);
 
         Task<T> CreateAsync(T entity);
+        Task<IEnumerable<T>> CreateAsync(IEnumerable<T> entities);
 
         Task UpdateAsync(T entity);
+        Task UpdateAsync(IEnumerable<T> entities);
 
         Task DeleteAsync(T entity);
         Task DeleteAsync(IEnumerable<T> entities);

@@ -1,0 +1,7 @@
+<form [formGroup]="formGroup">
+    <div class="d-flex">
+        <input type="text" class="form-control" formControlName="couponCode" />
+        <button type="button" class="btn btn-primary" (click)="onSave()">Áp dụng</button>
+    </div>
+</form>
+<p *ngIf="errorMsg" class="text-danger">{{errorMsg}}</p>

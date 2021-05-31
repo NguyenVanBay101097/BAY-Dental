@@ -12,7 +12,7 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<SmsMessageBasic>> GetPaged(SmsMessagePaged val);
         Task<SmsMessageDisplay> CreateAsync(SmsMessageSave val);
-        Task ActionSendSMS(SmsMessage message);
+        Task ActionSendSMSMessage(SmsMessage message);
         Task ActionCancel(IEnumerable<Guid> messIds);
         Task SetupSendSmsOrderAutomatic(Guid orderId);
     }

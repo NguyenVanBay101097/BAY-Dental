@@ -7,6 +7,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { ServiceCardOrderPaged } from '../service-card-order-paged';
 import { ServiceCardOrderService } from '../service-card-order.service';
 import { Router } from '@angular/router';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-service-card-order-list',
@@ -27,8 +28,13 @@ export class ServiceCardOrderListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   title = 'Đơn bán thẻ tiền mặt';
 
+  // permission 
+  canServiceCardOrderUpdate = this.checkPermissionService.check(["ServiceCard.Order.Update"]);
+  canServiceCardOrderDelete = this.checkPermissionService.check(["ServiceCard.Order.Delete"]);
+
   constructor(private cardOrderService: ServiceCardOrderService,
-    private modalService: NgbModal, private router: Router) { }
+    private modalService: NgbModal, private router: Router, 
+    private checkPermissionService: CheckPermissionService) { }
 
   ngOnInit() {
     

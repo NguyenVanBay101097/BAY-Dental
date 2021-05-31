@@ -20,6 +20,7 @@ import { PhieuThuChiDisplay, PhieuThuChiService } from "src/app/phieu-thu-chi/ph
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { LoaiThuChiFormComponent } from "src/app/shared/loai-thu-chi-form/loai-thu-chi-form.component";
 import { PrintService } from "src/app/shared/services/print.service";
+import { CheckPermissionService } from "../check-permission.service";
 
 @Component({
   selector: "app-cash-book-cu-dialog",
@@ -47,6 +48,10 @@ export class CashBookCuDialogComponent implements OnInit {
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild("partnerCbx", { static: true }) partnerCbx: ComboBoxComponent;
+  @ViewChild("loaiThuChiCbx", { static: true }) loaiThuChiCbx: ComboBoxComponent;
+
+  // permission 
+  canPhieuThuChiUpdate = this.checkPermissionService.check(["Account.PhieuThuChi.Update"]);
 
   constructor(
     private fb: FormBuilder,
@@ -59,7 +64,8 @@ export class CashBookCuDialogComponent implements OnInit {
     private intlService: IntlService,
     private printService: PrintService,
     private phieuThuChiService: PhieuThuChiService,
-    private partnerService: PartnerService,
+    private partnerService: PartnerService, 
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -90,6 +96,15 @@ export class CashBookCuDialogComponent implements OnInit {
         this.filteredPartners = result.items;
         this.partnerCbx.loading = false;
       });
+
+      this.loaiThuChiCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.loaiThuChiCbx.loading = true)),
+        switchMap(value => this.searchLoaiThuChis(value))
+      ).subscribe(result => {
+        this.loaiThuChiList = result.items;
+        this.loaiThuChiCbx.loading = false;
+      });
     });
   }
 
@@ -118,8 +133,10 @@ export class CashBookCuDialogComponent implements OnInit {
   }
 
   get formReadonly() {
-    var val = this.phieuThuChiDisplay.state == 'posted' || this.phieuThuChiDisplay.state == 'cancel';
-    return val;
+    if (!this.canPhieuThuChiUpdate) {
+      return true;
+    }
+    return this.phieuThuChiDisplay.state == 'posted' || this.phieuThuChiDisplay.state == 'cancel';
   }
 
   getValueForm(key) {
@@ -177,6 +194,13 @@ export class CashBookCuDialogComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  searchLoaiThuChis(search?: string) {
+    var val = new loaiThuChiPaged();
+    val.type = this.type;
+    val.search = search || '';
+    return this.loaiThuChiService.getPaged(val);
   }
 
   loadFilteredJournals() {

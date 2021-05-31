@@ -20,8 +20,10 @@ namespace Infrastructure.Services
         void UpdateOrderInfo(ICollection<SaleOrderLine> orderLines, SaleOrder order);
         Task<SaleOrderLineOnChangeProductResult> OnChangeProduct(SaleOrderLineOnChangeProduct val);
         void _GetToInvoiceQty(IEnumerable<SaleOrderLine> lines);
+        void _GetToInvoiceAmount(IEnumerable<SaleOrderLine> lines);
         void _ComputeInvoiceStatus(IEnumerable<SaleOrderLine> lines);
         void _GetInvoiceQty(IEnumerable<SaleOrderLine> lines);
+        void _GetInvoiceAmount(IEnumerable<SaleOrderLine> self);
         AccountInvoiceLine _PrepareInvoiceLine(SaleOrderLine line, decimal qty, AccountAccount account);
         Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val);
         Task Unlink(IEnumerable<Guid> ids);
@@ -47,6 +49,22 @@ namespace Infrastructure.Services
         void ComputeResidual(IEnumerable<SaleOrderLine> self);
 
         Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids);
+
+        void _ComputeAmountDiscountTotal(IEnumerable<SaleOrderLine> self);
+
+        void RecomputePromotionLine(IEnumerable<SaleOrderLine> self);
+
+        SaleOrderPromotion _GetRewardLineValues(SaleOrderLine self, SaleCouponProgram program);
+
+        SaleOrderPromotion _GetRewardValuesDiscount(SaleOrderLine self, SaleCouponProgram program);
+
+        Task ApplyDiscountOnOrderLine(ApplyDiscountViewModel val);
+
+        Task<SaleCouponProgramResponse> ApplyPromotionUsageCodeOnOrderLine(ApplyPromotionUsageCode val);
+
+        Task ApplyPromotionOnOrderLine(ApplyPromotionRequest val);
+
+        decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line);
 
         Task<PagedResult2<SmsCareAfterOrder>> GetPagedSmsCareAfterOrderAsync(SmsCareAfterOrderPaged val);
     }

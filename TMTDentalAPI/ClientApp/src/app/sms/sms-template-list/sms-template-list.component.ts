@@ -57,6 +57,8 @@ export class SmsTemplateListComponent implements OnInit {
         (res) => {
           this.gridData = res;
           this.loading = false;
+          console.log(res);
+          
         },
         (err) => {
           console.log(err);
@@ -107,5 +109,20 @@ export class SmsTemplateListComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: isSuccess ? 'success' : 'error', icon: true },
     });
+  }
+
+  getTemplateType(type) {
+    switch (type) {
+      case "birthday":
+        return "Chúc mừng sinh nhật";
+      case "appointment":
+        return "Nhắc lịch hẹn";
+      case "care_after_order":
+        return "Chăm sóc sau điều trị";
+      case "thanks":
+        return "Cám ơn";
+      case "campaign":
+        return "Chiến dịch khác";
+    }
   }
 }

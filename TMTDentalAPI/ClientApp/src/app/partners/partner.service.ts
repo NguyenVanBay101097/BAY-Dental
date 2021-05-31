@@ -520,6 +520,14 @@ export class PartnerService {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetDebtPaged', { params: new HttpParams({ fromObject: val }) });
     }
 
+    getAmountAdvanceBalance(id){
+        return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceBalance');
+    }
+
+    getAmountAdvanceUsed(id){
+        return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceUsed');
+    }
+
     getCustomerBirthDay(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/GetCustomerBirthDay', val);
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAdmin.Controllers
@@ -35,12 +37,14 @@ namespace TMTDentalAdmin.Controllers
         private readonly AdminAppSettings _appSettings;
         private readonly IConfiguration _configuration;
         private readonly ITenantExtendHistoryService _tenantExtendHistoryService;
+        private readonly ITenantOldSaleOrderProcessUpdateService _tenantOldSaleOrderProcessUpdateService;
         public TenantsController(ITenantService tenantService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork,
             UserManager<ApplicationAdminUser> userManager,
             IConfiguration configuration,
             IOptions<AdminAppSettings> appSettings,
-            ITenantExtendHistoryService tenantExtendHistoryService
+            ITenantExtendHistoryService tenantExtendHistoryService,
+            ITenantOldSaleOrderProcessUpdateService tenantOldSaleOrderProcessUpdateService
             )
         {
             _tenantService = tenantService;
@@ -50,6 +54,7 @@ namespace TMTDentalAdmin.Controllers
             _userManager = userManager;
             _appSettings = appSettings?.Value;
             _configuration = configuration;
+            _tenantOldSaleOrderProcessUpdateService = tenantOldSaleOrderProcessUpdateService;
         }
 
         [HttpGet]
@@ -220,6 +225,92 @@ namespace TMTDentalAdmin.Controllers
             await _tenantService.UpdateAsync(tenant);
 
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ProcessUpdateOldSaleOrder(IEnumerable<Guid> ids)
+        {
+            if (ids == null || ids.Count() == 0)
+                return BadRequest();
+            var notSuccessUpdates = await _tenantOldSaleOrderProcessUpdateService.SearchQuery(x => ids.Contains(x.TenantId) && (x.State == "draft" || x.State == "exception")).ToListAsync();
+            var successUpdates = await _tenantOldSaleOrderProcessUpdateService.SearchQuery(x => ids.Contains(x.TenantId) && x.State == "done").ToListAsync();
+            var toCreateUpdateIds = ids.Except(successUpdates.Select(x => x.TenantId).Except(notSuccessUpdates.Select(x => x.TenantId).ToList()).ToList());
+
+            var createUpdates = new List<TenantOldSaleOrderProcessUpdate>();
+            foreach (var id in toCreateUpdateIds)
+                createUpdates.Add(new TenantOldSaleOrderProcessUpdate { TenantId = id });
+
+            await _tenantOldSaleOrderProcessUpdateService.CreateAsync(createUpdates);
+            var processIds = (createUpdates.Concat(notSuccessUpdates)).Select(x => x.Id).Distinct().ToList();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ExportExcel(TenantPaged val)
+        {
+            val.Limit = int.MaxValue;
+            var stream = new MemoryStream();
+            var data = await _tenantService.GetPagedResultAsync(val);
+            byte[] fileContent;
+
+            var gender_dict = new Dictionary<string, string>()
+            {
+                { "male", "Nam" },
+                { "female", "Nữ" },
+                { "other", "Khác" }
+            };
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+
+                worksheet.Cells[1, 1].Value = "Ngày tạo";
+                worksheet.Cells[1, 2].Value = "Khách hàng";
+                worksheet.Cells[1, 3].Value = "Email";
+                worksheet.Cells[1, 4].Value = "Điện thoại";
+                worksheet.Cells[1, 5].Value = "Phòng khám";
+                worksheet.Cells[1, 6].Value = "Tên miền";
+                worksheet.Cells[1, 7].Value = "Ngày hết hạn";
+                worksheet.Cells[1, 8].Value = "Số chi nhánh";
+                worksheet.Cells[1, 9].Value = "Nguồn khách hàng";
+                worksheet.Cells[1, 10].Value = "Địa chỉ";
+                worksheet.Cells[1, 11].Value = "Người triển khai";
+               
+
+                worksheet.Cells["A1:K1"].Style.Font.Bold = true;
+
+                var row = 2;
+                foreach (var item in data.Items)
+                {
+                    worksheet.Cells[row, 1].Value = item.DateCreated;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 3].Value = item.Email;
+                    worksheet.Cells[row, 4].Value = item.Phone;
+                    worksheet.Cells[row, 5].Value = item.CompanyName;
+                    worksheet.Cells[row, 6].Value = item.Hostname;
+                    worksheet.Cells[row, 7].Value = item.DateExpired;
+                    worksheet.Cells[row, 7].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 8].Value = item.ActiveCompaniesNbr;
+                    worksheet.Cells[row, 9].Value = item.CustomerSource;
+                    worksheet.Cells[row, 10].Value = item.Address;
+                    worksheet.Cells[row, 11].Value = item.EmployeeAdmin != null ? item.EmployeeAdmin.Name : "";
+
+                    row++;
+                }
+
+                worksheet.Column(4).Style.Numberformat.Format = "@";
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
         }
     }
 }

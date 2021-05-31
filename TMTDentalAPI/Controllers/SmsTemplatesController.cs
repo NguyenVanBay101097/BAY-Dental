@@ -67,9 +67,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("Autocomplete")]
-        public async Task<IActionResult> GetTemplateAutocomplete(string filter = "")
+        public async Task<IActionResult> GetTemplateAutocomplete([FromQuery] SmsTemplateFilter val)
         {
-            var res = await _smsTemplateService.GetTemplateAutocomplete(filter);
+            var res = await _smsTemplateService.GetTemplateAutocomplete(val);
             return Ok(res);
         }
     }

@@ -1,0 +1,44 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+      <ol class="breadcrumb">
+        <li class="active">Process Update</li>
+      </ol>
+      <div class="o_cp_searchview">
+        <div class="o_cp_searchview_group">
+          <div class="o_searchview">
+            <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
+              (ngModelChange)="this.searchUpdate.next($event)">
+          </div>
+        </div>
+      </div>
+      <div class="o_cp_left">
+        <div class="o_cp_buttons">
+          <a routerLink="register" class="btn btn-primary btn-sm" accesskey="c">
+            Thêm
+          </a>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+      </div>
+      <div class="o_cp_right">
+      </div>
+    </div>
+  </div>
+  
+  
+  <div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+      (pageChange)="pageChange($event)">
+      <kendo-grid-column field="companyName" title="Tên phòng khám" width="150">
+      </kendo-grid-column>
+      <kendo-grid-column field="hostname" title="Hostname" width="100">
+      </kendo-grid-column>
+      <kendo-grid-column field="activeCompaniesNbr" class="text-right" title="Số chi nhánh" width="120">
+      </kendo-grid-column>
+      <kendo-grid-column field="dateExpired" title="Ngày hết hạn" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+          {{dataItem.dateExpired | date : 'short'}}
+        </ng-template>
+      </kendo-grid-column>
+    </kendo-grid>
+  </div>

@@ -73,6 +73,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<AccountInvoicePaymentRel> AccountInvoicePaymentRels { get; set; } = new List<AccountInvoicePaymentRel>();
 
+        public ICollection<SaleOrderPaymentAccountPaymentRel> SaleOrderPaymentAccountPaymentRels { get; set; } = new List<SaleOrderPaymentAccountPaymentRel>();
+
         public ICollection<AccountMoveLine> MoveLines { get; set; }
 
         /// <summary>

@@ -1,0 +1,86 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="myform">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group" style="width:100%">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Hoa hồng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <div class="w-100 mr-2">
+                                            <kendo-numerictextbox class="form-control" formControlName="percent" [format]="'n0'" [min]="0" [autoCorrect]="true" required>
+                                            </kendo-numerictextbox>
+                                            <div *ngIf="f.percent.errors && (f.percent.touched || f.percent.dirty || submitted)"
+                                                class="text-danger">
+                                                <div *ngIf="f.percent.errors.required">Nhập hoa hồng</div>
+                                            </div>
+                                        </div>
+                                        <b>%</b>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Hoa hồng bác sĩ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <div class="w-100 mr-2">
+                                            <kendo-numerictextbox class="form-control" formControlName="percentDoctor" [format]="'n0'" [min]="0" [autoCorrect]="true" required>
+                                            </kendo-numerictextbox>
+                                            <div *ngIf="f.percentDoctor.errors && (f.percentDoctor.touched || f.percentDoctor.dirty || submitted)"
+                                                class="text-danger">
+                                                <div *ngIf="f.percentDoctor.errors.required">Nhập hoa hồng bác sĩ</div>
+                                            </div>
+                                        </div>
+                                        <b>%</b>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Hoa hồng phụ tá
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <div class="w-100 mr-2">
+                                            <kendo-numerictextbox class="form-control" formControlName="percentAssistant" [format]="'n0'" [min]="0" [autoCorrect]="true" required>
+                                            </kendo-numerictextbox>
+                                            <div *ngIf="f.percentAssistant.errors && (f.percentAssistant.touched || f.percentAssistant.dirty || submitted)"
+                                                class="text-danger">
+                                                <div *ngIf="f.percentAssistant.errors.required">Nhập hoa hồng phụ tá</div>
+                                            </div>
+                                        </div>
+                                        <b>%</b>
+                                    </div>
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSet()" accesskey="s">Áp dụng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>
