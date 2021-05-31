@@ -1,0 +1,51 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a routerLink="/agents/commission">Hoa hồng người giới thiệu</a>
+            </li>
+            <li *ngIf="agent" class="active">
+                <a>{{agent.name}}</a>
+            </li>
+        </ol>
+      
+        <div> 
+            <div class="report-prescription-payment">
+                <div class="revenue">
+                    <div class="title">
+                        <h6>Tổng doanh thu</h6>
+                    </div>
+                    <h4 class="text-primary">
+                        {{(amountInComeAgent | number) || 0}}
+                    </h4>
+                </div>
+                <div class="revenue">
+                    <div class="title">
+                        <h6>Tổng chi hoa hồng</h6>
+                    </div>
+                    <h4 class="text-primary">
+                        {{(amountCommissionAgent | number) || 0}}
+                    </h4>
+                </div>          
+            </div>
+            <div class="o_cp_buttons">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a routerLink="detail" class="nav-link px-3 py-1" routerLinkActive="active" >Danh Sách</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="history" class="nav-link px-3 py-1" routerLinkActive="active" [queryParams]="{partnerId: agent?.partnerId}" skipLocationChange>Lịch sử chi hoa hồng</a>
+                    </li>               
+                </ul>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <router-outlet ></router-outlet>
+</div>

@@ -54,6 +54,52 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Catalog.Agent.Read")]
+        public async Task<IActionResult> GetCommissionAgentDetail([FromQuery] CommissionAgentDetailFilter val)
+        {
+            var result = await _agentService.GetCommissionAgentDetail(val);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Catalog.Agent.Read")]
+        public async Task<IActionResult> GetCommissionAgentDetailItem([FromQuery] CommissionAgentDetailItemFilter val)
+        {
+            var result = await _agentService.GetCommissionAgentDetailItem(val);
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetCommissionAmountAgent(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var amountCommissionTotal = await _agentService.GetCommissionAmountAgent(id);
+            _unitOfWork.Commit();
+
+            return Ok(amountCommissionTotal);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetInComeAmountAgent(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var amountInComeTotal = await _agentService.GetInComeAmountAgent(id);
+            _unitOfWork.Commit();
+
+            return Ok(amountInComeTotal);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetCommissionAgentBalance(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var amountCommissionTotal = await _agentService.GetCommissionAgentBalance(id);
+            _unitOfWork.Commit();
+
+            return Ok(amountCommissionTotal);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "Catalog.Agent.Create")]
         public async Task<IActionResult> Create(AgentSave val)

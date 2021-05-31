@@ -1,21 +1,23 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { PrintService } from 'src/app/print.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
-import { AgentService, CommissionAgentFilter } from '../agent.service';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { AgentCommmissionPaymentDialogComponent } from '../agent-commmission-payment-dialog/agent-commmission-payment-dialog.component';
+import { AgentService, CommissionAgentDetailFilter } from '../agent.service';
 
 @Component({
-  selector: 'app-agent-commission-list',
-  templateUrl: './agent-commission-list.component.html',
-  styleUrls: ['./agent-commission-list.component.css']
+  selector: 'app-agent-commmission-form-detail',
+  templateUrl: './agent-commmission-form-detail.component.html',
+  styleUrls: ['./agent-commmission-form-detail.component.css']
 })
-export class AgentCommissionListComponent implements OnInit {
+export class AgentCommmissionFormDetailComponent implements OnInit {
 
+  id: string;
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
@@ -27,7 +29,6 @@ export class AgentCommissionListComponent implements OnInit {
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
-
   constructor(private route: ActivatedRoute, private modalService: NgbModal,
     private agentService: AgentService, private router: Router,
     private intlService: IntlService,
@@ -35,7 +36,7 @@ export class AgentCommissionListComponent implements OnInit {
     private printService: PrintService) { }
 
   ngOnInit() {
-
+    this.id = this.route.parent.snapshot.paramMap.get('id');
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd; 
 
@@ -51,13 +52,14 @@ export class AgentCommissionListComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var val = new CommissionAgentFilter();
+    var val = new CommissionAgentDetailFilter();
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
+    val.agentId = this.id;
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
-    this.agentService.getCommissionAgent(val).pipe(
+    this.agentService.getCommissionAgentDetail(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -69,7 +71,6 @@ export class AgentCommissionListComponent implements OnInit {
       this.loading = false;
     })
   }
-
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
@@ -83,11 +84,16 @@ export class AgentCommissionListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  clickItem(item) {
-    if (item && item.dataItem) {
-      var id = item.dataItem.agent.id;
-      this.router.navigate(['agents/commission', id]);
-    }
+  actionPayment(item) {
+    const modalRef = this.modalService.open(AgentCommmissionPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Chi hoa hồng';
+    modalRef.componentInstance.type = 'chi';
+    modalRef.componentInstance.agentId = this.id;
+    modalRef.componentInstance.customerId = item.partner.id;
+    modalRef.result.then(() => {
+      this.notifyService.notify('success', 'Thanh toán thành công');
+      this.loadDataFromApi();
+    }, er => { })
   }
 
 }

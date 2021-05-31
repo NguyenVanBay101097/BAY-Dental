@@ -1,0 +1,24 @@
+<kendo-grid  [data]="gridData" [pageSize]="limit" [skip]="skip"
+    [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+<kendo-grid-column title="Ngày thanh toán" width="135">
+    <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+        {{dataItem.date | date:'shortDate'}}
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-column title="Số phiếu" width="135">
+    <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+        {{dataItem.orderName}}
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-column title="Dịch vụ" width="135">
+    <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+        {{dataItem.productName}}
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-column title="Thanh toán" class="text-right" width="100">
+    <ng-template kendoGridCellTemplate let-dataItem let-column="column">    
+          {{dataItem.amount | number}} 
+    </ng-template>
+</kendo-grid-column>  
+
+</kendo-grid>

@@ -111,6 +111,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string Reason { get; set; }
 
-        public Guid? PartnerId { get; set; }
+        public Guid? AgentId { get; set; }
+        public Guid? CustomerId { get; set; }
     }
 }

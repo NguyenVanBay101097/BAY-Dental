@@ -1,3 +1,4 @@
+import { PartnerSimple } from './../partners/partner-simple';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -16,17 +17,62 @@ export class CommissionAgentFilter {
   dateTo: string;
 }
 
+export class CommissionAgentDetailFilter {
+  limit: number;
+  offset: number;
+  search: string;
+  dateFrom: string;
+  dateTo: string;
+  agentId: string;
+}
+
+export class CommissionAgentDetailItemFilter {
+  limit: number;
+  offset: number;
+  dateFrom: string;
+  dateTo: string;
+  agentId: string;
+  partnerId: string;
+}
+
 export class CommissionAgentPagging {
   limit: number;
   offset: number;
   totalItems: number;
-  items: AgentBasic[];
+  items: CommissionAgentResult[];
 }
 
 export class CommissionAgentResult {
   agent: AgentBasic;
   amountTotal: number;
   amountCommissionTotal: number;
+}
+
+export class CommissionAgentDetailPagging {
+  limit: number;
+  offset: number;
+  totalItems: number;
+  items: CommissionAgentDetailResult[];
+}
+
+export class CommissionAgentDetailItemPagging {
+  limit: number;
+  offset: number;
+  totalItems: number;
+  items: CommissionAgentDetailItemResult[];
+}
+
+export class CommissionAgentDetailResult {
+  partner: PartnerSimple;
+  amountTotal: number;
+  amountCommissionTotal: number;
+}
+
+export class CommissionAgentDetailItemResult {
+  date: Date;
+  orderName: string;
+  productName: string;
+  amount: number;
 }
 
 export class AgentBasic {
@@ -82,6 +128,26 @@ export class AgentService {
 
   getCommissionAgent(val): Observable<CommissionAgentPagging> {
     return this.http.get<CommissionAgentPagging>(this.base_api + this.apiUrl + '/GetCommissionAgent', { params: new HttpParams({ fromObject: val }) });
+  }
+
+  getCommissionAgentDetail(val): Observable<CommissionAgentDetailPagging> {
+    return this.http.get<CommissionAgentDetailPagging>(this.base_api + this.apiUrl + '/GetCommissionAgentDetail', { params: new HttpParams({ fromObject: val }) });
+  }
+
+  getCommissionAgentDetailItem(val): Observable<CommissionAgentDetailItemPagging> {
+    return this.http.get<CommissionAgentDetailItemPagging>(this.base_api + this.apiUrl + '/GetCommissionAgentDetailItem', { params: new HttpParams({ fromObject: val }) });
+  }
+
+  getAmountCommissionAgentBalance(id){
+    return this.http.get<number>(this.base_api + this.apiUrl + '/' + id + '/GetCommissionAgentBalance');
+  }
+
+  getAmountCommissionAgent(id){
+    return this.http.get<number>(this.base_api + this.apiUrl + '/' + id + '/GetCommissionAmountAgent');
+  }
+
+  getAmountInComeAgent(id){
+    return this.http.get<number>(this.base_api + this.apiUrl + '/' + id + '/GetInComeAmountAgent');
   }
 
   get(id): Observable<AgentDisplay> {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -7,26 +7,25 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { PrintService } from 'src/app/print.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
-import { AgentService, CommissionAgentFilter } from '../agent.service';
+import { AgentService, CommissionAgentDetailItemFilter } from '../agent.service';
 
 @Component({
-  selector: 'app-agent-commission-list',
-  templateUrl: './agent-commission-list.component.html',
-  styleUrls: ['./agent-commission-list.component.css']
+  selector: 'app-agent-commmission-form-detail-item',
+  templateUrl: './agent-commmission-form-detail-item.component.html',
+  styleUrls: ['./agent-commmission-form-detail-item.component.css']
 })
-export class AgentCommissionListComponent implements OnInit {
+export class AgentCommmissionFormDetailItemComponent implements OnInit {
+  @Input() public partnerId: string;
+  @Input() public dateFrom: Date;
+  @Input() public dateTo: Date;
 
+  agentId: string;
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
-  dateFrom: Date;
-  dateTo: Date;
-
-  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
-  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
   constructor(private route: ActivatedRoute, private modalService: NgbModal,
     private agentService: AgentService, private router: Router,
@@ -35,9 +34,7 @@ export class AgentCommissionListComponent implements OnInit {
     private printService: PrintService) { }
 
   ngOnInit() {
-
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd; 
+    this.agentId = this.route.parent.snapshot.paramMap.get('id');
 
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -51,13 +48,14 @@ export class AgentCommissionListComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var val = new CommissionAgentFilter();
+    var val = new CommissionAgentDetailItemFilter();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.search = this.search || '';
+    val.agentId = this.agentId;
+    val.partnerId = this.partnerId;
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
-    this.agentService.getCommissionAgent(val).pipe(
+    this.agentService.getCommissionAgentDetailItem(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -70,24 +68,9 @@ export class AgentCommissionListComponent implements OnInit {
     })
   }
 
-
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
-  }
-
-  onSearchDateChange(data) {
-    this.dateFrom = data.dateFrom;
-    this.dateTo = data.dateTo;
-    this.skip = 0;
-    this.loadDataFromApi();
-  }
-
-  clickItem(item) {
-    if (item && item.dataItem) {
-      var id = item.dataItem.agent.id;
-      this.router.navigate(['agents/commission', id]);
-    }
   }
 
 }

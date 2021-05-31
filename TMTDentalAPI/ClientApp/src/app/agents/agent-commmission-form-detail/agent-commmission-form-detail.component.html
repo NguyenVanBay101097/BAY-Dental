@@ -1,0 +1,51 @@
+<div class="o_control_panel">
+    <div class="o_cp_t_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <div class="d-flex">
+                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom"
+                        [title]="'Thời gian'" [dateTo]="dateTo"
+                        (searchChange)="onSearchDateChange($event)">
+                    </app-tai-date-range-filter-dropdown>                  
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+
+        </div>
+    </div>
+    <div class="o_cp_t_right">
+        <input class="o_searchview_input o_searchview"
+            placeholder="Tìm kiếm theo khách hàng" type="text" [(ngModel)]="search"
+            (ngModelChange)="this.searchUpdate.next($event)">
+    </div>
+</div>
+<kendo-grid  [data]="gridData" [pageSize]="limit" [skip]="skip"
+    [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+<div *kendoGridDetailTemplate="let dataItem" width="50">
+    <app-agent-commmission-form-detail-item [partnerId]="dataItem.partner.id" [dateFrom]="dateFrom" [dateTo]="dateTo">
+    </app-agent-commmission-form-detail-item>
+ </div>
+<kendo-grid-column title="Khách hàng" width="135">
+    <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+        {{dataItem.partner.name }}
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-column title="Doanh thu" class="text-right" width="100">
+    <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+        <!-- <a class="text-primary" *ngFor="let order of dataItem.orders" (click)="getFormSaleOrder(order.id)">{{order.name}}</a>-->
+          {{dataItem.amountTotal | number}} 
+    </ng-template>
+</kendo-grid-column>  
+<kendo-grid-column title="Chi hoa hồng" class="text-right" width="135">
+    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.amountCommissionTotal | number}}
+    </ng-template>
+</kendo-grid-column>
+<kendo-grid-command-column title="Thao tác" width="80">
+    <ng-template kendoGridCellTemplate let-dataItem>
+        <button class="btn btn-sm mr-1" title="Chi hoa hồng" (click)="actionPayment(dataItem)">
+            <i class="fas fa-money-bill-alt"></i></button>
+    </ng-template>
+</kendo-grid-command-column>
+</kendo-grid>

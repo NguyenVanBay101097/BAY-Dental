@@ -3,30 +3,31 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PartnerService } from 'src/app/partners/partner.service';
 import { PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
-import { PartnerService } from '../partner.service';
+import { AgentService } from '../agent.service';
 
 @Component({
-  selector: 'app-partner-customer-debt-payment-dialog',
-  templateUrl: './partner-customer-debt-payment-dialog.component.html',
-  styleUrls: ['./partner-customer-debt-payment-dialog.component.css']
+  selector: 'app-agent-commmission-payment-dialog',
+  templateUrl: './agent-commmission-payment-dialog.component.html',
+  styleUrls: ['./agent-commmission-payment-dialog.component.css']
 })
-export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
+export class AgentCommmissionPaymentDialogComponent implements OnInit {
   title: string;
   type: string;
-  partnerId: string;
+  agentId: string;
+  customerId: string;
   formGroup: FormGroup;
   submitted: boolean = false;
+  amountTotalBalance = 0;
   filteredJournals: any = [];
-  amountDebtBalanceTotal = 0;
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
   
-  constructor(private phieuthuchiService: PhieuThuChiService, private fb: FormBuilder, private intlService: IntlService,
+  constructor(private phieuthuchiService: PhieuThuChiService, private fb: FormBuilder, private intlService: IntlService, private agentService: AgentService,
     public activeModal: NgbActiveModal, private accountJournalService: AccountJournalService, private partnerService: PartnerService,
      private authService: AuthService) { }
 
@@ -37,9 +38,10 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
       journal: [null, Validators.required],
       reason: null,
     });
+    
     this.loadDefault();
     this.loadFilteredJournals();
-    this.loadAmountDebtBalanceTotal();
+    this.loadAmountCommissionAgentBalance();
   }
 
   loadDefault(){
@@ -69,6 +71,18 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
     );
   }
 
+  loadAmountCommissionAgentBalance(){
+    if(this.agentId){
+      this.agentService.getAmountCommissionAgentBalance(this.agentId).subscribe((res)=>{
+        this.amountTotalBalance = res;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+    }
+  }
+
   get f() { return this.formGroup.controls; }
 
   actionPayment(){
@@ -80,20 +94,17 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
 
     var val = this.formGroup.value;
     val.journalId = val.journal ? val.journal.id : null;
-    val.partnerId = this.partnerId ? this.partnerId : null;
+    val.agentId = this.agentId ? this.agentId : null;
+    val.customerId = this.customerId ? this.customerId : null;
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
-    this.phieuthuchiService.actionPaymentCustomerDebt(val).subscribe(
+    this.phieuthuchiService.actionPaymentOfCommissionAgent(val).subscribe(
       () => {
         this.activeModal.close(true);
       },
     )
   }
 
-  loadAmountDebtBalanceTotal() {
-    this.partnerService.getAmountDebtBalance(this.partnerId).subscribe(rs => {
-      this.amountDebtBalanceTotal = rs;
-    });
-  }
+ 
 
   onClose() {
     this.activeModal.dismiss();

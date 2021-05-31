@@ -61,7 +61,7 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            var items = await query.Include(x => x.LoaiThuChi).Include(x => x.Journal).ToListAsync();
+            var items = await query.Include(x => x.LoaiThuChi).Include(x => x.Journal).Include(x => x.Customer).ToListAsync();
 
             return new PagedResult2<PhieuThuChiBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -292,45 +292,49 @@ namespace Infrastructure.Services
             var agentObj = GetService<IAgentService>();
             var accountObj = GetService<IAccountAccountService>();
             var journalObj = GetService<IAccountJournalService>();
-            var debt = _mapper.Map<PhieuThuChi>(val);
-            debt.PartnerType = "agent";
-            debt.AccountType = "commission";
-            if (string.IsNullOrEmpty(debt.Name))
+            var commAgent = _mapper.Map<PhieuThuChi>(val);
+            commAgent.PartnerType = "agent";
+            commAgent.AccountType = "commission";
+            if (string.IsNullOrEmpty(commAgent.Name))
             {
                 var seqObj = GetService<IIRSequenceService>();
-                debt.Name = await seqObj.NextByCode("phieu.chihh");
-                if (string.IsNullOrEmpty(debt.Name))
+                commAgent.Name = await seqObj.NextByCode("phieu.chihh");
+                if (string.IsNullOrEmpty(commAgent.Name))
                 {
                     await _InsertCommissionAgentSequence();
-                    debt.Name = await seqObj.NextByCode("phieu.chihh");
+                    commAgent.Name = await seqObj.NextByCode("phieu.chihh");
                 }
             }
 
 
-            if (val.PartnerId.HasValue)
+            if (val.AgentId.HasValue)
             {
-                var agent = await agentObj.SearchQuery(x => x.PartnerId == val.PartnerId).FirstOrDefaultAsync();
+                var agent = await agentObj.SearchQuery(x => x.Id == val.AgentId).FirstOrDefaultAsync();
 
                 if (agent == null)
                     throw new Exception("Không tìm thấy người giới thiệu");
-                debt.PayerReceiver = agent.Name;
-                debt.Address = agent.Address;
+                commAgent.PayerReceiver = agent.Name;
+                commAgent.Address = agent.Address;
+                commAgent.PartnerId = agent.PartnerId;
             }
+
+            if (val.CustomerId.HasValue)
+                commAgent.CustomerId = val.CustomerId;
 
 
             var journal = await journalObj.GetJournalWithDebitCreditAccount(val.JournalId);
-            debt.Journal = journal;
+            commAgent.Journal = journal;
 
             ///account debt
             var acountCommAgent = await accountObj.GetAccountCommissionAgentCompany();
             if (acountCommAgent != null)
-                debt.AccountId = acountCommAgent.Id;
+                commAgent.AccountId = acountCommAgent.Id;
 
-            await CreateAsync(debt);
+            await CreateAsync(commAgent);
 
             ///ghi hóa đơn
             var moveObj = GetService<IAccountMoveService>();
-            var moves = _PreparePhieuThuChiMoves(new List<PhieuThuChi> { debt });
+            var moves = _PreparePhieuThuChiMoves(new List<PhieuThuChi> { commAgent });
 
             var amlObj = GetService<IAccountMoveLineService>();
             foreach (var move in moves)
@@ -342,8 +346,9 @@ namespace Infrastructure.Services
             foreach (var move in moves)
                 amlObj.ComputeMoveNameState(move.Lines);
 
-            await UpdateAsync(debt);
+            await UpdateAsync(commAgent);
         }
+
         public async Task<string> CheckSequenceCode(string code, string name, string suffix)
         {
             var seqObj = GetService<IIRSequenceService>();
@@ -373,7 +378,7 @@ namespace Infrastructure.Services
             var journalObj = GetService<IAccountJournalService>();
             var loaiObj = GetService<ILoaiThuChiService>();
             entity.Journal = await journalObj.SearchQuery(x => x.Id == entity.JournalId).FirstOrDefaultAsync();
-            if(entity.LoaiThuChiId.HasValue)
+            if (entity.LoaiThuChiId.HasValue)
                 entity.LoaiThuChi = await loaiObj.SearchQuery(x => x.Id == entity.LoaiThuChiId).FirstOrDefaultAsync();
 
             ComputeProps(entity);
@@ -498,7 +503,7 @@ namespace Infrastructure.Services
             if (phieuthuchi.State == "cancel" && (phieuthuchi.AccountType == "other" || string.IsNullOrEmpty(phieuthuchi.AccountType)))
                 throw new Exception("Bạn không thể xóa phiếu khi đã hủy");
 
-            if(phieuthuchi.AccountType != "other")
+            if (phieuthuchi.AccountType != "other")
             {
                 var move_ids = phieuthuchi.MoveLines.Select(x => x.MoveId).Distinct().ToList();
                 await moveObj.ButtonCancel(move_ids);
@@ -513,7 +518,7 @@ namespace Infrastructure.Services
             var res = await (SearchQuery(x => x.Id == id).Include(x => x.Company.Partner)
                 .Include(x => x.Partner)
                 .Include(x => x.CreatedBy)
-                .Include(x=>x.Journal)
+                .Include(x => x.Journal)
                 ).FirstOrDefaultAsync();
 
             var result = _mapper.Map<PrintVM>(res);

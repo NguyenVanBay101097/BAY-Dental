@@ -81,6 +81,7 @@ export class CommissionAgentSave {
   amount: number;
   reason: string;
   partnerId: string;
+  customerId: string;
 }
 
 export class PhieuThuChiDisplay {
@@ -127,6 +128,10 @@ export class PhieuThuChiService {
 
   actionPaymentCustomerDebt(val) {
     return this.http.post(this.baseApi + this.apiUrl + '/ActionPaymentCustomerDebt', val);
+  }
+
+  actionPaymentOfCommissionAgent(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ActionPaymentOfCommissionAgent', val);
   }
 
 

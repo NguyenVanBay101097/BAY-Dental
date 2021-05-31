@@ -9,10 +9,14 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../shared/shared.module';
 import { AgentService } from './agent.service';
 import { AgentCommissionListComponent } from './agent-commission-list/agent-commission-list.component';
-import { AgentCommissionFormDetailComponent } from './agent-commission-form-detail/agent-commission-form-detail.component';
+import { AgentCommissionFormComponent } from './agent-commission-form/agent-commission-form.component';
+import { AgentCommmissionFormDetailComponent } from './agent-commmission-form-detail/agent-commmission-form-detail.component';
+import { AgentCommmissionHistoryComponent } from './agent-commmission-history/agent-commmission-history.component';
+import { AgentCommmissionPaymentDialogComponent } from './agent-commmission-payment-dialog/agent-commmission-payment-dialog.component';
+import { AgentCommmissionFormDetailItemComponent } from './agent-commmission-form-detail-item/agent-commmission-form-detail-item.component';
 
 @NgModule({
-  declarations: [AgentListComponent, AgentCreateUpdateDialogComponent, AgentCommissionListComponent, AgentCommissionFormDetailComponent],
+  declarations: [AgentListComponent, AgentCreateUpdateDialogComponent, AgentCommissionListComponent, AgentCommissionFormComponent, AgentCommmissionFormDetailComponent, AgentCommmissionHistoryComponent, AgentCommmissionPaymentDialogComponent, AgentCommmissionFormDetailItemComponent],
   imports: [
     CommonModule,
     AgentRoutingModule,
@@ -25,7 +29,8 @@ import { AgentCommissionFormDetailComponent } from './agent-commission-form-deta
     AgentService
   ], entryComponents:
   [
-    AgentCreateUpdateDialogComponent
+    AgentCreateUpdateDialogComponent,
+    AgentCommmissionPaymentDialogComponent
   ]
 })
 export class AgentsModule { }

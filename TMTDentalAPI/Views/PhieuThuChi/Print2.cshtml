@@ -34,7 +34,7 @@
         }
         else
         {
-            <div class="text-3xl font-semibold">PHIẾU CHI LƯƠNG</div>
+            <div class="text-3xl font-semibold">PHIẾU CHI HOA HỒNG</div>
         }
         <div>Ngày @Model.Date.Day tháng @Model.Date.Month năm @Model.Date.Year </div>
         <div class="font-semibold">Số: @Model.Name</div>
@@ -159,7 +159,7 @@
         <div class="col">
             <div class="text-center">
                 <span> @(string.Format(culture, "{0:dddd}", DateTime.Now)), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year </span> <br />
-                <span class="font-semibold"> Người nộp tiền</span> <br />
+                <span class="font-semibold">@(Model.AccountType == "customer_debt" ? "Người nộp tiền"  : "Người nhận tiền") </span> <br />
                 <i>(Ký, họ tên)</i> <br />
                 <span></span> <br />
                 <span></span> <br />
