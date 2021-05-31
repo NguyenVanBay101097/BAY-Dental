@@ -1,0 +1,14 @@
+.table-report-total {
+    width: 100%;
+    margin-bottom: .5rem;
+}
+.table-report-total td {
+    padding: .5rem;
+    padding-bottom: 0;
+}
+.table-title {
+    width: 100px;
+}
+.table-datepicker {
+    max-width: 150px;
+}

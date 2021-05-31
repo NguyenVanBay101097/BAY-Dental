@@ -37,6 +37,7 @@ import { SmsCareAfterOrderFormAutomaticComponent } from './sms-care-after-order-
 import { SmsCareAfterOrderFormManualComponent } from './sms-care-after-order-form-manual/sms-care-after-order-form-manual.component';
 import { SmsCareAfterOrderFormAutomaticDialogComponent } from './sms-care-after-order-form-automatic-dialog/sms-care-after-order-form-automatic-dialog.component';
 import { SmsTooltipsContentComponent } from './sms-tooltips-content/sms-tooltips-content.component';
+import { SmsReportComponent } from './sms-report/sms-report.component';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { SmsTooltipsContentComponent } from './sms-tooltips-content/sms-tooltips
     SmsCareAfterOrderFormManualComponent,
     SmsTooltipsContentComponent,
     SmsCareAfterOrderFormAutomaticDialogComponent,
+    SmsReportComponent,
   ],
   imports: [
     CommonModule,

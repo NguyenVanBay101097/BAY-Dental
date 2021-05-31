@@ -513,6 +513,23 @@ namespace Infrastructure.Services
             return query;
         }
 
+        public async Task<IEnumerable<ReportTotalOutputItem>> GetReportTotal(ReportTotalInput val)
+        {
+            var query = SearchQuery();
+
+            if (val.Date.HasValue)
+                query = query.Where(x => x.DateCreated.Value.Month == val.Date.Value.Month);
+
+            var res = await query.GroupBy(x => new { x.State })
+                .Select(x => new ReportTotalOutputItem
+                {
+                    State = x.Key.State,
+                    Total = x.Count(),
+                    Percentage = x.Count() * 100f / query.Count()
+                }).ToListAsync();
+            return res;
+        }
+
         protected Guid CompanyId
         {
             get
