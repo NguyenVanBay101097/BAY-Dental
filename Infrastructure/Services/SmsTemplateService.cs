@@ -27,6 +27,8 @@ namespace Infrastructure.Services
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
+            if (!string.IsNullOrEmpty(val.Type))
+                query = query.Where(x => x.Type == val.Type);
             var totalItems = await query.CountAsync();
             var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SmsTemplateBasic
             {
@@ -40,13 +42,13 @@ namespace Infrastructure.Services
                 Items = _mapper.Map<IEnumerable<SmsTemplateBasic>>(items)
             };
         }
-        public async Task<IEnumerable<SmsTemplateBasic>> GetTemplateAutocomplete(string filter = "")
+        public async Task<IEnumerable<SmsTemplateBasic>> GetTemplateAutocomplete(SmsTemplateFilter val)
         {
             var query = SearchQuery();
-            if (!string.IsNullOrEmpty(filter))
-            {
-                query = query.Where(x => x.Name.Contains(filter));
-            }
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+            if (!string.IsNullOrEmpty(val.Type))
+                query = query.Where(x => x.Type == val.Type);
             var res = await query.OrderBy(x => x.Name).Select(x => new SmsTemplateBasic
             {
                 Id = x.Id,

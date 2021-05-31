@@ -11,7 +11,7 @@ import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dia
 import { SmsConfigService } from '../sms-config.service';
 import { SmsMessageService } from '../sms-message.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
-import { SmsTemplateService } from '../sms-template.service';
+import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-care-after-order-form-automatic-dialog',
@@ -160,7 +160,10 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   }
 
   searchSmsTemplate(q?: string) {
-    return this.smsTemplateService.getAutoComplete(q);
+    var filter = new SmsTemplateFilter();
+    filter.search = q || "";
+    filter.type = "care_after_order";
+    return this.smsTemplateService.getAutoComplete(filter);
   }
 
   onSave() {
@@ -190,7 +193,8 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     if (this.isTemplateCopy && val.templateName != '') {
       var valueTemplate = {
         name: val.templateName,
-        body: val.body
+        body: val.body,
+        type: "care_after_order"
       }
       this.smsTemplateService.create(valueTemplate).subscribe(
         () => {

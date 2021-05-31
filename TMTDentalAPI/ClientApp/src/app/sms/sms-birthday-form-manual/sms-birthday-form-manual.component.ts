@@ -6,7 +6,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
-import { SmsTemplateService } from '../sms-template.service';
+import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-birthday-form-manual',
@@ -78,7 +78,10 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   }
 
   searchSmsTemplate(q?: string) {
-    return this.smsTemplateService.getAutoComplete(q);
+    var filter = new SmsTemplateFilter();
+    filter.search = q || "";
+    filter.type = "birthday";
+    return this.smsTemplateService.getAutoComplete(filter);
   }
 
   pageChange(event) {

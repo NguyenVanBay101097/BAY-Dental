@@ -13,7 +13,7 @@ import { SmsConfigService } from '../sms-config.service';
 import { SmsMessageService } from '../sms-message.service';
 import { SmsPartnerListDialogComponent } from '../sms-partner-list-dialog/sms-partner-list-dialog.component';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
-import { SmsTemplateService } from '../sms-template.service';
+import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-message-dialog',
@@ -166,7 +166,10 @@ export class SmsMessageDialogComponent implements OnInit {
   }
 
   searchSmsTemplate(q?: string) {
-    return this.smsTemplateService.getAutoComplete(q);
+    var filter = new SmsTemplateFilter();
+    filter.search = q || "";
+    filter.type = this.templateTypeTab;
+    return this.smsTemplateService.getAutoComplete(filter);
   }
 
   notify(title, isSuccess = true) {

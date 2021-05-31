@@ -15,10 +15,15 @@ export class SmsTemplatePaging {
   items: SmsTemplateBasic[];
 }
 
-export class SmsTemplatePaged{
+export class SmsTemplatePaged {
   offset: number;
   limit: number;
   search: string;
+  type: string;
+}
+export class SmsTemplateFilter {
+  search: string;
+  type: string;
 }
 
 @Injectable({
@@ -49,6 +54,6 @@ export class SmsTemplateService {
   }
 
   getAutoComplete(val) {
-    return this.http.get(this.base_api + this.apiUrl + '/Autocomplete', val);
+    return this.http.get(this.base_api + this.apiUrl + '/Autocomplete', { params: new HttpParams({fromObject: val}) });
   }
 }

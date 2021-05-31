@@ -11,6 +11,6 @@ namespace Infrastructure.Services
     public interface ISmsTemplateService : IBaseService<SmsTemplate>
     {
         Task<PagedResult2<SmsTemplateBasic>> GetPaged(SmsTemplatePaged val);
-        Task<IEnumerable<SmsTemplateBasic>> GetTemplateAutocomplete(string filter);
+        Task<IEnumerable<SmsTemplateBasic>> GetTemplateAutocomplete(SmsTemplateFilter var);
     }
 }

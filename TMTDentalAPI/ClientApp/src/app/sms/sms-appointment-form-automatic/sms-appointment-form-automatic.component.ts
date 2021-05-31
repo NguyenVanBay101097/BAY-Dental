@@ -8,7 +8,7 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
-import { SmsTemplateService } from '../sms-template.service';
+import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-appointment-form-automatic',
@@ -147,7 +147,10 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
   }
 
   searchSmsTemplate(q?: string) {
-    return this.smsTemplateService.getAutoComplete(q);
+    var filter = new SmsTemplateFilter();
+    filter.search = q || "";
+    filter.type = "appointment";
+    return this.smsTemplateService.getAutoComplete(filter);
   }
 
   onSave() {
@@ -178,7 +181,8 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     if (this.isTemplateCopy && val.templateName != '') {
       var valueTemplate = {
         name: val.templateName,
-        body: val.body
+        body: val.body,
+        type: "appointment"
       }
       this.smsTemplateService.create(valueTemplate).subscribe(
         () => {
