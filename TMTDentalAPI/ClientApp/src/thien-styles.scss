@@ -516,3 +516,10 @@ $rose-900: #881337;
 .t-tooltip + .bs-tooltip-left .arrow::before {
   border-left-color: #6c757d;
 }
+
+.t-tooltip-500 + .tooltip > .tooltip-inner {
+    min-width: 500px;
+    background-color: white;
+    border-color: #06B6D4;
+    padding:0;
+}

@@ -41,12 +41,12 @@
                                         </tr>
                                         <tr>
                                             <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label o_form_label_help">
+                                                <label class="o_form_label o_form_label_help mt-2 mb-2">
                                                     Chọn brandname
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
+                                                <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus class="mb-2 mt-2"
                                                     [textField]="'brandName'" formControlName="smsAccount"
                                                     [filterable]="true" #smsAccountCbx [valueField]="'id'">
                                                     <ng-template kendoComboBoxItemTemplate let-dataItem>
@@ -76,12 +76,12 @@
                                         </tr>
                                         <tr>
                                             <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label o_form_label_help">
+                                                <label class="o_form_label o_form_label_help mt-2">
                                                     Thời điểm gửi tin
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-timepicker formControlName="dateTimeSend"></kendo-timepicker>
+                                                <kendo-timepicker formControlName="dateTimeSend" class="mt-2"></kendo-timepicker>
                                             </td>
                                         </tr>
                                     </table>
@@ -92,24 +92,15 @@
                                     <label class="o_form_label o_form_label_help font-weight-bolder">
                                         Gửi cho khách hàng sử dụng
                                     </label>
-                                    <div class="d-flex">
-                                        <div class="form-check mr-2">
-                                            <input class="form-check-input" type="radio" name="productCategory"
-                                                id="productCategory" value="productCategory" checked>
-                                            <label class="form-check-label font-weight-600" for="productCategory">
-                                                Nhóm dịch vụ
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input font-weight-600" type="radio"
-                                                name="exampleRadios" id="exampleRadios2" value="option2">
-                                            <label class="form-check-label" for="exampleRadios2">
-                                                Dịch vụ
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div>
+                                    <div class="ml-5">
                                         <div>
+                                            <div class="form-check mr-2">
+                                                <input class="form-check-input" type="radio" name="productCategory"
+                                                    id="productCategory" value="productCategory" checked>
+                                                <label class="form-check-label font-weight-600" for="productCategory">
+                                                    Nhóm dịch vụ
+                                                </label>
+                                            </div>
                                             <kendo-multiselect (valueChange)="searchProductCategory($event)"
                                                 #serviceCategoryMlct class="mr-3" [data]="filteredProductCategories"
                                                 [textField]="'name'" [valueField]="'id'"
@@ -117,6 +108,13 @@
                                             </kendo-multiselect>
                                         </div>
                                         <div>
+                                            <div class="form-check">
+                                                <input class="form-check-input font-weight-600" type="radio"
+                                                    name="exampleRadios" id="exampleRadios2" value="option2">
+                                                <label class="form-check-label" for="exampleRadios2">
+                                                    Dịch vụ
+                                                </label>
+                                            </div>
                                             <kendo-multiselect (valueChange)="searchProduct($event)" #serviceMlct
                                                 class="mr-3" [data]="filteredProducts" [textField]="'name'"
                                                 [valueField]="'id'" formControlName="products">
@@ -133,32 +131,29 @@
                                     <table class="ml-5">
                                         <tr>
                                             <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label o_form_label_help">
+                                                <label class="o_form_label o_form_label_help mb-2">
                                                     Tin nhắn mẫu
                                                 </label>
                                             </td>
-                                            <td colspan="1" class="d-flex" style="width: 80%;">
+                                            <td colspan="1" style="width: 80%;">
                                                 <kendo-combobox [data]="filteredTemplate" ngbAutofocus
                                                     [textField]="'name'" formControlName="template" [filterable]="true"
                                                     #smsTemplateCbx (valueChange)="onChangeTemplate($event)"
-                                                    [valueField]="'id'">
+                                                    [valueField]="'id'" class="mb-2">
                                                 </kendo-combobox>
-                                                <a class="btn btn-sm btn-light" (click)="addTemplate()">
+                                                <!-- <a class="btn btn-sm btn-light" (click)="addTemplate()">
                                                     <span class="k-icon k-i-plus"></span>
-                                                </a>
+                                                </a> -->
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="1" class="o_td_label">
+                                            <!-- <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Nội dung</label>
-                                            </td>
-                                            <td colspan="1" style="width: 80%;">
+                                            </td> -->
+                                            <td colspan="2" style="width: 80%;">
                                                 <app-sms-template-content [type]="'birthday'"
                                                     [textareaLength]="textareaLimit" [template]="template">
                                                 </app-sms-template-content>
-                                                <p class="color-custom">(Lưu ý: Không nhập ký tự đặc biệt hoặc các từ
-                                                    khóa
-                                                    quảng cáo)</p>
                                             </td>
                                         </tr>
                                         <tr>
@@ -172,7 +167,7 @@
                                                 </div>
                                             </td>
                                             <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                                <input type="text" class="form-control" formControlName="templateName">
+                                                <input type="text" class="form-control mt-2" formControlName="templateName">
                                                 <span class="text-danger"
                                                     *ngIf="formGroup.controls.templateName.value==''">
                                                     Nhập tiêu đề tin nhắn mẫu

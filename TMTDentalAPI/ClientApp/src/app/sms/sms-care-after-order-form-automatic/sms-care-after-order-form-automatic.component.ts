@@ -64,8 +64,8 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   }
 
   setupAutomaic() {
-    var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
-    modalRef.componentInstance.title = "Tin nhắn chúc mừng sinh nhật";
+    var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "md", windowClass: "o_technical_modal" });
+    modalRef.componentInstance.title = "Thiết lập gửi tin nhắn tự động";
     modalRef.componentInstance.templateTypeTab = "care_after_order";
     modalRef.result.then(
       result => {

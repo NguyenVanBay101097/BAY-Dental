@@ -40,6 +40,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     text: '',
     templateType: 'text'
   };
+  title: string;
   public today: Date = new Date;
   public timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
   public timeRunJob: Date = new Date();

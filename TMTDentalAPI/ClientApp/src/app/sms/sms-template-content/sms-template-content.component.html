@@ -7,8 +7,9 @@
             <div *ngIf="textControl.errors.required">Nhập nội dung tin nhắn</div>
             <div *ngIf="textControl.errors.maxlength">Số kí tự đã vượt quá cho phép !</div>
         </div>
-        <p class="color-custom">(Lưu ý: Không nhập ký tự đặc biệt hoặc các từ khóa quảng cáo)
-            <span class="text-primary t-tooltip ml-1" placement="top" [ngbTooltip]="tipContent" tooltipClass="my_class">
+        <p class="color-custom">
+            (Lưu ý: Không nhập ký tự đặc biệt hoặc các từ khóa quảng cáo)
+            <span class="text-primary t-tooltip t-tooltip-500 ml-1" placement="top" [ngbTooltip]="tipContent">
                 <i class="fas fa-exclamation-circle"></i>
             </span>
 

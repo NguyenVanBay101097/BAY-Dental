@@ -9,19 +9,26 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="d-flex">
-                    <div class="btn-group-sm btn-group-toggle " data-toggle="buttons">
-                        <label class="btn-sm btn btn-outline-primary active mr-2" (click)="onItemChange('esms')">
-                            <input type="radio" checked autocomplete="off">E-SMS
-                        </label>
-                        <!-- <label class="btn-sm btn btn-outline-success" (click)="onItemChange('fpt')">
-                            <input type="radio" autocomplete="off">FPT
-                        </label> -->
+                    <!-- <label class="btn-sm btn btn-outline-primary active mr-2" (click)="onItemChange('esms')">
+                        <input type="radio" checked autocomplete="off">E-SMS
+                    </label>
+                    <label class="btn-sm btn btn-outline-success" (click)="onItemChange('fpt')">
+                        <input type="radio" autocomplete="off">FPT
+                    </label>
+                -->
+
+                    <div style="width:165px; margin-left:16px;">
+                        <label class="o_form_label">Nhà cung cấp</label>
                     </div>
+                    <select (change)="onItemChange($event.target.value)" class="form-control" style="width: 372px;">
+                        <option selected value="fpt">FPT</option>
+                        <option selected value="esms">ESMS</option>
+                    </select>
                 </div>
                 <div class="o_group">
                     <div *ngIf="switchBrand">
                         <ng-template [ngIf]="switchBrand=='fpt'">
-                            <table class="o_group o_inner_group o_group_col_6 modal-body">
+                            <table class="o_group o_inner_group o_group_col_12 modal-body m-0">
                                 <tbody>
                                     <tr>
                                         <td colspan="1" class="o_td_label">
@@ -61,7 +68,7 @@
                         </ng-template>
 
                         <ng-template [ngIf]="switchBrand=='esms'">
-                            <table class="o_group o_inner_group o_group_col_12 modal-body">
+                            <table class="o_group o_inner_group o_group_col_12 modal-body m-0">
                                 <tbody>
                                     <tr>
                                         <td colspan="1" class="o_td_label">

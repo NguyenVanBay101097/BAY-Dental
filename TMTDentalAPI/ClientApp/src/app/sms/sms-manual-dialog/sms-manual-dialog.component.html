@@ -18,12 +18,13 @@
                                     <table class="ml-5">
                                         <tr>
                                             <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label o_form_label_help">
+                                                <label class="o_form_label o_form_label_help mb-2">
                                                     Tên tin nhắn
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <input type="text" class="form-control" required formControlName="name">
+                                                <input type="text" class="form-control mb-2" required
+                                                    formControlName="name">
                                             </td>
                                         </tr>
                                         <tr *ngIf="campaign">
@@ -33,7 +34,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <input type="text" [attr.disabled]="isThanksCustomer" [value]="campaign.name">
+                                                <input type="text" [attr.disabled]="isThanksCustomer"
+                                                    [value]="campaign.name">
                                             </td>
                                         </tr>
                                         <tr>
@@ -85,11 +87,11 @@
                                                     Chọn tin nhắn mẫu
                                                 </label>
                                             </td>
-                                            <td colspan="1" class="d-flex" style="width: 80%;">
+                                            <td colspan="1" style="width: 80%;">
                                                 <kendo-combobox [data]="filteredTemplate" ngbAutofocus
                                                     [textField]="'name'" formControlName="template" [filterable]="true"
                                                     #smsTemplateCbx (valueChange)="onChangeTemplate($event)"
-                                                    [valueField]="'id'">
+                                                    [valueField]="'id'" class="mb-2">
                                                 </kendo-combobox>
                                                 <!-- <a class="btn btn-sm btn-light" (click)="addTemplate()">
                                                     <span class="k-icon k-i-plus"></span>
@@ -97,17 +99,13 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="1" class="o_td_label">
+                                            <!-- <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Nội dung</label>
-                                            </td>
-                                            <td colspan="1" style="width: 80%;">
-                                                <app-sms-template-content 
-                                                    [type]="templateTypeTab"
-                                                    [textareaLength]="textareaLimit"
-                                                    [template]="template">
+                                            </td> -->
+                                            <td colspan="2" style="width: 80%;">
+                                                <app-sms-template-content [type]="templateTypeTab"
+                                                    [textareaLength]="textareaLimit" [template]="template">
                                                 </app-sms-template-content>
-                                                <p class="color-custom">(Note: Không nhập ký tự đặc biệt hoặc các từ
-                                                    khóa quảng cáo)</p>
                                             </td>
                                         </tr>
                                         <tr>
@@ -121,7 +119,8 @@
                                                 </div>
                                             </td>
                                             <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                                <input type="text" class="form-control" formControlName="templateName">
+                                                <input type="text" class="form-control" formControlName="templateName"
+                                                    style="height:36px;">
                                                 <span class="text-danger"
                                                     *ngIf="formGroup.controls.templateName.value==''">
                                                     Nhập tiêu đề tin nhắn mẫu

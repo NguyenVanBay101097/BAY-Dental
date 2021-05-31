@@ -3,7 +3,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons d-flex">
                 <div>
-                    <select name="" id="" (change)="selectMonthChange($event)" class="form-control btn-sm">
+                    <select name="" id="" (change)="selectMonthChange($event)" class="form-control btn-sm" style="height: 32px;">
                         <option selected value="0"><i class="fas fa-filter"></i> Tháng sinh</option>
                         <option [value]="item.value" *ngFor="let item of months">{{item.name}}</option>
                     </select>
