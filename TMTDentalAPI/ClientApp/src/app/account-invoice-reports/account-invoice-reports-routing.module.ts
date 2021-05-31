@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AccountInvoiceReportRevenueComponent } from './account-invoice-report-revenue/account-invoice-report-revenue.component';
+import { AccountInvoiceReportRevenueManageComponent } from './account-invoice-report-revenue-manage/account-invoice-report-revenue-manage.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'time', pathMatch: 'full' },
-  { path: 'revenue', component:  AccountInvoiceReportRevenueComponent}
+  { path: 'revenue', component:  AccountInvoiceReportRevenueManageComponent}
 ];
 
 @NgModule({

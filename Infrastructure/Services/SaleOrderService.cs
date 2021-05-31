@@ -2972,7 +2972,7 @@ namespace Infrastructure.Services
 
             if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
 
-            var res = await _mapper.ProjectTo<SaleOrderRevenueReport>(query).ToListAsync();
+            var res = await _mapper.ProjectTo<SaleOrderRevenueReport>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
 
             return new PagedResult2<SaleOrderRevenueReport>(count, val.Offset, val.Limit) { Items = res };
         }

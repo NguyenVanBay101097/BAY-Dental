@@ -52,6 +52,22 @@ export class SaleOrderToSurveyFilter {
     dateFrom: string;
     dateTo: string;
 }
+// report doanh thu dự kiến
+export class SaleOrderReportRevenuePaged {
+	limit: number;
+	offset: number;
+	companyId: string;
+	search: string;
+}
+
+export class SaleOrderReportRevenue {
+	id: string;
+	name: string;
+	partnerName: string;
+	amountTotal: number;
+	residual: number;
+	totalPaid?: any;
+}
 
 @Injectable({ providedIn: 'root' })
 export class SaleOrderService {
@@ -213,5 +229,9 @@ export class SaleOrderService {
 
     applyDiscountOnOrder(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnOrder', val);
+    }
+
+    getRevenueReport(val: SaleOrderReportRevenuePaged) {
+        return this.http.post<PagedResult2<SaleOrderReportRevenue>>(this.baseApi + this.apiUrl + '/GetRevenueReport', val);
     }
 }

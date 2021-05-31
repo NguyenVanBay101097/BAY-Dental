@@ -1,54 +1,54 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { ExcelExportData, Workbook } from '@progress/kendo-angular-excel-export';
+import { Workbook } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import { DataResult } from '@progress/kendo-data-query';
-import { debounce } from 'lodash';
 import * as moment from 'moment';
-import { from, Observable, of, zip } from 'rxjs';
-import { debounceTime, delay, map, switchMap, tap } from 'rxjs/operators';
-import { AccountInvoiceDisplay } from 'src/app/account-invoices/account-invoice.service';
+import { Observable } from 'rxjs';
+import { debounceTime, map, switchMap, tap, zip } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { AccountInvoiceReportDetailPaged, AccountInvoiceReportDisplay, AccountInvoiceReportPaged, AccountInvoiceReportService } from '../account-invoice-report.service';
+import { AccountInvoiceReportDetailPaged, AccountInvoiceReportPaged, AccountInvoiceReportService } from '../account-invoice-report.service';
 import { saveAs } from '@progress/kendo-file-saver';
-import { State } from "@progress/kendo-data-query";
 
 @Component({
   selector: 'app-account-invoice-report-revenue',
   templateUrl: './account-invoice-report-revenue.component.html',
   styleUrls: ['./account-invoice-report-revenue.component.css']
 })
-export class AccountInvoiceReportRevenueComponent implements OnInit {
+export class AccountInvoiceReportRevenueComponent implements OnInit, AfterViewInit {
 
+ @Input() groupBy = 'InvoiceDate';
   filter = new AccountInvoiceReportPaged();
   empFilter = 'EmployeeId';
   companies: CompanySimple[] = [];
   listEmployee: EmployeeSimple[] = [];
   listProduct: ProductSimple[] = [];
   allDataInvoice: any;
-
   gridData: GridDataResult;
   loading = false;
 
   @ViewChild("emp", { static: true }) empVC: ComboBoxComponent;
   @ViewChild("pro", { static: true }) productVC: ComboBoxComponent;
-
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
-
+  
   constructor(
     private companyService: CompanyService,
     private employeeService: EmployeeService,
     private productService: ProductService,
     private accInvService: AccountInvoiceReportService
-  ) {
-
-  }
+  ) { }
 
   ngOnInit() {
+   
+  }
+
+  ngAfterViewInit(): void {
+    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+    //Add 'implements AfterViewInit' to the class.
     this.initFilterData();
     this.loadReport();
     this.loadCompanies();
@@ -58,7 +58,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     this.FilterCombobox();
   }
 
-
+  
   FilterCombobox() {
     this.empVC.filterChange
       .asObservable()
@@ -88,6 +88,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
   }
 
   initFilterData() {
+    this.filter.groupBy = this.groupBy;
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
     this.filter.dateFrom = new Date(y, m, 1);
     this.filter.dateTo = new Date(y, m + 1, 0);
@@ -206,6 +207,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
 
   onChangeGroupBy() {
     this.initFilterData();
+    this.loadReport();
   }
 
   pageChange(e) {
@@ -214,7 +216,6 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
   }
 
   public allData = (): any => {
-    from([]);
     var val = Object.assign({}, this.filter);
     val.companyId = val.companyId == 'all' ? '' : val.companyId;
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
@@ -247,10 +248,6 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
   }
   exportExcel(grid: GridComponent) {
     grid.saveAsExcel();
-  }
-
-  exportsimple() {
-
   }
 
   public onExcelExport(args: any): void {
@@ -381,4 +378,5 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     });
 
   }
+
 }

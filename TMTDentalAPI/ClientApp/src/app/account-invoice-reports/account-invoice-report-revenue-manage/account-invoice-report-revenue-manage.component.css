@@ -1,0 +1,19 @@
+.type label:hover,
+.type input[type="radio"]:checked+label {
+    color: white;
+    border-radius: 1rem;
+    background: hsl(199deg 89% 74%);
+    cursor: pointer;
+}
+
+.bg-gray {
+    background-color: hsl(0deg 0% 95%);
+}
+
+.o_web_client {
+    background-color: white !important;
+}
+
+.k-grid-footer-wrap table tfoot tr td {
+    border: none;
+}

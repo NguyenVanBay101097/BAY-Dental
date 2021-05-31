@@ -1,0 +1,20 @@
+<div class="h-100 w-100 bg-white">
+    <h5 class="p-2 bg-gray">Báo cáo doanh thu</h5>
+    <div class="content d-flex px-2 bg-white">
+        <div class="left flex-0-0-auto">
+            <div class=" d-flex flex-column border type p-1">
+                <input [(ngModel)]="groupBy" (ngModelChange)="onChangeGroupBy()" value="InvoiceDate" type="radio" class="btn-check hidden" name="type" id="type-time" autocomplete="off" [checked]="true">
+                <label class="mb-0 p-2" for="type-time"><i class="far fa-clock"></i> Thời gian</label>
+                <input [(ngModel)]="groupBy" (ngModelChange)="onChangeGroupBy()" value="ProductId" type="radio" class="btn-check hidden" name="type" id="type-service" autocomplete="off">
+                <label class="mb-0 p-2" for="type-service"><i class="fas fa-bars"></i> Doanh thu dịch vụ</label>
+                <input [(ngModel)]="groupBy" (ngModelChange)="onChangeGroupBy()" value="emp-ass" type="radio" class="btn-check hidden" name="type" id="type-emp" autocomplete="off">
+                <label class="mb-0 p-2" for="type-emp"> <i class="fas fa-user-alt"></i> Doanh thu nhân viên</label>
+                <input [(ngModel)]="groupBy" (ngModelChange)="onChangeGroupBy()" value="expect" type="radio" class="btn-check hidden" name="type" id="type-expect" autocomplete="off">
+                <label class="mb-0 p-2" for="type-expect"><i class="fas fa-money-bill-alt"></i> Dự kiến doanh thu</label>
+            </div>
+
+        </div>
+        <!-- right -->
+        <ng-container #container></ng-container>
+    </div>
+</div>
