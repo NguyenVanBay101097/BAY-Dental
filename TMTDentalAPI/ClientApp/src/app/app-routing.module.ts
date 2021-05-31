@@ -337,6 +337,11 @@ const routes: Routes = [
         canActivate:[AuthGuard]
       },
       {
+        path: 'sms',
+        loadChildren: () => import('./sms/sms.module').then(m => m.SmsModule),
+        canActivate: [AuthGuard]
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',
@@ -352,7 +357,7 @@ const routes: Routes = [
         path: 'customer-statistics',
         loadChildren: () => import('./customer-statistics/customer-statistics.module').then(m => m.CustomerStatisticsModule),
         canActivate: [AuthGuard]
-      },
+      }
     ]
   },
 

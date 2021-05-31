@@ -1,7 +1,7 @@
-@for $i from 0 through 20 {
-    .w-#{$i * 5} {width: #{$i * 5 + '%'};}
-    .h-#{$i * 5} {height: #{$i * 5 + '%'};}
-}
+// @for $i from 0 through 20 {
+//     .w-#{$i * 5} {width: #{$i * 5 + '%'};}
+//     .h-#{$i * 5} {height: #{$i * 5 + '%'};}
+// }
 .w-fit-content {width: fit-content !important;}
 .cursor-pointer {cursor: pointer;}
 // -- table -- //
@@ -498,7 +498,7 @@ $rose-900: #881337;
 a.disabled {
     pointer-events: none;
 }
-}
+
 .t-tooltip + .tooltip > .tooltip-inner {
     background-color: white;
     border: 1px solid #6c757d;
