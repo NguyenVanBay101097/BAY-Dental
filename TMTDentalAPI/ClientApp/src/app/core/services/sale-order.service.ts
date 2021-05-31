@@ -234,4 +234,8 @@ export class SaleOrderService {
     getRevenueReport(val: SaleOrderReportRevenuePaged) {
         return this.http.post<PagedResult2<SaleOrderReportRevenue>>(this.baseApi + this.apiUrl + '/GetRevenueReport', val);
     }
+
+    getSumTotal(val){
+        return this.http.post(this.baseApi + this.apiUrl + '/GetSumTotal', val);
+    }
 }

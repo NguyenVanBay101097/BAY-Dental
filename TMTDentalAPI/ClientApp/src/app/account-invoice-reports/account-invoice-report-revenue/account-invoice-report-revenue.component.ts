@@ -4,8 +4,8 @@ import { Workbook } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import { DataResult } from '@progress/kendo-data-query';
 import * as moment from 'moment';
-import { Observable } from 'rxjs';
-import { debounceTime, map, switchMap, tap, zip } from 'rxjs/operators';
+import { Observable, zip } from "rxjs";
+import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -315,7 +315,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit, AfterViewIn
               { value: line.partnerName },
               { value: line.employeeName || line.assistantName },
               { value: line.productName },
-              { value: line.priceSubTotal.toLocaleString('vi') }
+              { value: line.priceSubTotal.toLocaleString('vi'),textAlign:'right' }
             ]
           });
         }

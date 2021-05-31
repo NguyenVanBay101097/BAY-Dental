@@ -2958,7 +2958,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SaleOrderRevenueReport>> GetRevenueReport(SaleOrderRevenueReportPaged val)
         {
-            var query = SearchQuery(x => x.State != "Cancelled");
+            var query = SearchQuery(x => x.State != "cancel");
             if (val.CompanyId.HasValue)
             {
                 query = query.Where(x => x.CompanyId == val.CompanyId);
@@ -2975,6 +2975,22 @@ namespace Infrastructure.Services
             var res = await _mapper.ProjectTo<SaleOrderRevenueReport>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
 
             return new PagedResult2<SaleOrderRevenueReport>(count, val.Offset, val.Limit) { Items = res };
+        }
+
+        public async Task<decimal> GetSumTotal(GetSumTotalParam val)
+        {
+            var query = SearchQuery(x => x.State != "cancel");
+            switch (val.Column)
+            {
+                case "AmountTotal":
+                    return await query.SumAsync(x=> x.AmountTotal.Value);
+                case "TotalPaid":
+                    return await query.SumAsync(x => x.TotalPaid.Value);
+                case "Residual":
+                    return await query.SumAsync(x => x.Residual.Value);
+                default:
+                    return 0;
+            }
         }
     }
 }
