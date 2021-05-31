@@ -63,11 +63,11 @@ namespace Infrastructure.Services
                                     if (!employee.Wage.HasValue) throw new Exception("Chưa thiết lập lương cho nhân viên " + employee.Name);
                                     line.Amount = Math.Round(payslip.WorkedDaysLines.Sum(x => x.Amount) ?? 0);
                                     break;
-                                case "hoa_hong":
-                                    var hoa_hong = await commissionSettlementObj.SearchQuery(x => x.EmployeeId == payslip.EmployeeId &&
-                                    x.Payment.PaymentDate >= payslip.DateFrom && x.Payment.PaymentDate <= payslip.DateTo).SumAsync(x => x.Amount);
-                                    line.Amount = Math.Round(hoa_hong.Value);
-                                    break;
+                                //case "hoa_hong":
+                                //    var hoa_hong = await commissionSettlementObj.SearchQuery(x => x.EmployeeId == payslip.EmployeeId &&
+                                //    x.Payment.PaymentDate >= payslip.DateFrom && x.Payment.PaymentDate <= payslip.DateTo).SumAsync(x => x.Amount);
+                                //    line.Amount = Math.Round(hoa_hong.Value);
+                                //    break;
                                 case "luong_thang13":
                                     if (!employee.StartWorkDate.HasValue) { line.Amount = 0; break; }
                                     var sothang = (payslip.DateTo.Year - employee.StartWorkDate.Value.Year) + payslip.DateTo.Month - employee.StartWorkDate.Value.Month;

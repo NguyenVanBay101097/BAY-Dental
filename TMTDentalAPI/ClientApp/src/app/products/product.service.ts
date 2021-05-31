@@ -47,6 +47,14 @@ export class ProductBasic2 {
   uom: UoMBasic;
 }
 
+export class ProductBasic3 {
+  id: string;
+  name: string;
+  defaultCode: string;
+  categId: string;
+  categName: string;
+}
+
 export class ProductUoMBasic {
   id: string;
   name: string;

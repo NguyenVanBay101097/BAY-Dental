@@ -100,8 +100,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
-
-
     public class PartnerPaged
     {
         public PartnerPaged()
@@ -248,14 +246,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Phone { get; set; }
         public int? BirthYear { get; set; }
 
-        public int? Age
-        {
-            get
-            {
-                return BirthYear.HasValue ? DateTime.Now.Year - BirthYear.Value : (int?)null;
-            }
-            set { }
-        }
+       
+        
 
         public string DisplayGender
         {

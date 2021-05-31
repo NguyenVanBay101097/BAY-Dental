@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-card-card-cu-dialog',
@@ -31,13 +32,24 @@ export class CardCardCuDialogComponent implements OnInit {
 
   isChanged = false;
 
+  canConfirm = false;
+  canActive = false;
+  canCancel = false;
+  canReset = false;
+  canRenew = false;
+  canUpgrade = false;
+  canLock = false;
+  canUnLock = false;
   constructor(private fb: FormBuilder, private cardCardService: CardCardService, private partnerService: PartnerService,
-    private cardTypeService: CardTypeService, public activeModal: NgbActiveModal, private errorService: AppSharedShowErrorService) { }
+    private cardTypeService: CardTypeService, public activeModal: NgbActiveModal, private errorService: AppSharedShowErrorService,
+    private checkPermissionService: CheckPermissionService
+    ) { }
 
   ngOnInit() {
     this.card = new CardCardDisplay();
     this.card.state = "draft";
 
+    this.checkRole();
     this.formGroup = this.fb.group({
       barcode: null,
       partner: [this.partner, Validators.required],
@@ -257,5 +269,10 @@ export class CardCardCuDialogComponent implements OnInit {
     } else {
       this.activeModal.dismiss();
     }
+  }
+
+  checkRole(){
+    this.canUpgrade=this.canRenew=this.canActive=this.canCancel=this.canLock=this.canUnLock=this.canReset=this.canConfirm = this.checkPermissionService.check(["LoyaltyCard.CardCard.Update"]);
+
   }
 }

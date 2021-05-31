@@ -17,6 +17,7 @@ import { HrSalaryPaymentComponent } from '../hr-salary-payment/hr-salary-payment
 import { SalaryPaymentSave } from 'src/app/shared/services/salary-payment.service';
 import { PrintService } from "src/app/shared/services/print.service";
 import { SalaryPaymentService } from 'src/app/salary-payment/salary-payment.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-hr-payslip-run-form',
@@ -30,7 +31,8 @@ export class HrPayslipRunFormComponent implements OnInit {
   isExistSalaryPayment: boolean = false;
   payslipRun: any;
   checkAll = false;
-
+  canAdd = false;
+  canUpdate = false;
   constructor(private fb: FormBuilder,
     private hrPaysliprunService: HrPaysliprunService,
     private route: ActivatedRoute, private modalService: NgbModal,
@@ -38,7 +40,9 @@ export class HrPayslipRunFormComponent implements OnInit {
     private hrPayslipService: HrPayslipService,
     private printService: PrintService,
     private paymentService: SalaryPaymentService,
-    private router: Router, private intlService: IntlService) { }
+    private router: Router, private intlService: IntlService,
+    private checkPermissionService: CheckPermissionService
+    ) { }
 
   ngOnInit() {
     this.FormGroup = this.fb.group({
@@ -50,6 +54,7 @@ export class HrPayslipRunFormComponent implements OnInit {
       slips: this.fb.array([])
     });
     this.checkExist();
+    this.checkRole();
   }
 
   get state() { return this.FormGroup.get('state').value; }
@@ -338,5 +343,10 @@ export class HrPayslipRunFormComponent implements OnInit {
       this.checkAll = false;
     }
     this.slipsFormArray.controls[i].get('isCheck').setValue(val);
+  }
+
+  checkRole() {
+    this.canAdd = this.checkPermissionService.check(['Salary.HrPayslipRun.Create']);
+    this.canUpdate = this.checkPermissionService.check(['Salary.HrPayslipRun.Update']);
   }
 }

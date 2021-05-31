@@ -33,6 +33,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid? EmployeeId { get; set; }
         public EmployeeAdminDisplay EmployeeAdmin { get; set; }
+
+        public string Email { get; set; }
+
+        public string Address { get; set; }
     }
 
     public class TenantDisplay
@@ -143,5 +147,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
 
         public int Offset { get; set; }
+
+        public DateTime? DateCreatedFrom { get; set; }
+
+        public DateTime? DateCreatedTo { get; set; }
     }
 }

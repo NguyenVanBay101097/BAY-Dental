@@ -27,12 +27,19 @@ import { PartnerSupplierFormDebitComponent } from './partner-supplier-form-debit
 import { PartnerSupplierFormPaymentComponent } from './partner-supplier-form-payment/partner-supplier-form-payment.component';
 import { PartnerCustomerLaboOrdersComponentComponent } from './partner-customer-labo-orders-component/partner-customer-labo-orders-component.component';
 import { PartnerCustomerTreatmentListComponent } from './partner-customer-treatment/partner-customer-treatment-list/partner-customer-treatment-list.component';
+import { PartnerCustomerQuotationListComponent } from './partner-customer-quotation/partner-customer-quotation-list/partner-customer-quotation-list.component';
+import { PartnerCustomerAdvisoryListComponent } from './partner-customer-advisory/partner-customer-advisory-list/partner-customer-advisory-list.component';
+import { PartnerAdvanceListComponent } from '../partner-advances/partner-advance-list/partner-advance-list.component';
+import { AuthGuard } from '../auth/auth.guard';
 
 const routes: Routes = [
   {
-    path: 'customers', component: PartnerCustomerListComponent
+    path: 'customers', component: PartnerCustomerListComponent,
+    canActivate: [AuthGuard],
+    data: {
+      permissions: ['Basic.Partner.Read']
+    }
   },
-
   {
     path: 'treatment-paymentfast/from',
     component: PartnerCustomerTreatmentPaymentFastComponent
@@ -47,8 +54,11 @@ const routes: Routes = [
       { path: 'appointment', component: PartnerCustomerAppointmentComponent },
       { path: 'prescription', component: PartnerCustomerProductToaThuocListComponent },
       { path: 'categories', component: PartnerCustomerCategoriesComponent },
+      { path: 'advances', component: PartnerAdvanceListComponent },
       { path: 'partner-images', component: PartnerCustomerUploadImageComponent },
-      { path: 'quotations', component: PartnerCustomerQuotationsComponent },
+      { path: 'quotations', component: PartnerCustomerQuotationListComponent },
+      //{ path: 'quotations', component: PartnerCustomerQuotationsComponent },
+      { path: 'advisories', component: PartnerCustomerAdvisoryListComponent },
       { path: 'treatment-histories', component: PartnerCustomerTreatmentHistoryComponent },
       { path: 'treatment-histories/form', component: PartnerCustomerTreatmentHistoryFormComponent },
       { path: 'overview', component: PartnerOverviewComponent },
@@ -71,7 +81,7 @@ const routes: Routes = [
   {
     path: 'suppliers', component: PartnerSupplierListComponent
   },
-  
+
   {
     path: 'supplier/:id',
     component: PartnerSupplierFormComponent,
@@ -82,7 +92,6 @@ const routes: Routes = [
       { path: 'payment', component: PartnerSupplierFormPaymentComponent },
     ]
   }
-
 ];
 
 @NgModule({

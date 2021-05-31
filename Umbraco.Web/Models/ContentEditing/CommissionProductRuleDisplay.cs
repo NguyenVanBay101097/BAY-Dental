@@ -19,7 +19,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// dịch vụ
         /// </summary>
         public Guid? ProductId { get; set; }
-        public ProductSimple Product { get; set; }
+        public ProductBasic2 Product { get; set; }
 
         /// <summary>
         /// nhóm dịch vụ
@@ -27,10 +27,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CategId { get; set; }
         public ProductCategorySimple Categ { get; set; }
 
-        public decimal? PercentFixed { get; set; }
+        /// <summary>
+        /// % hoa hồng 
+        /// </summary>
+        public decimal? Percent { get; set; }
 
         public Guid? CompanyId { get; set; }
 
-
+        public Guid CommissionId { get; set; }
     }
 }

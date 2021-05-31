@@ -291,7 +291,8 @@ namespace Infrastructure.Services
             var items = await query.Skip(0).Take(20).Select(x => new AccountJournalSimple()
             {
                 Id = x.Id,
-                Name = x.Name
+                Name = x.Name,
+                Type = x.Type
             }).ToListAsync();
 
             return items;

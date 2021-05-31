@@ -1,0 +1,80 @@
+input[type="radio"].btn-radio {
+    display: none;
+}
+
+table td {
+    min-width: 150px;
+}
+
+.o_form_sheet{
+    max-width: none !important;
+    background: none !important;
+    border: none !important;
+}
+
+.block_left {
+    flex: 1;
+    padding-right: 30px;
+    width: 100%;
+}
+
+.block_right {
+    flex: 0 0 30%;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.block_right .header {
+    background-color: #dee2e6;
+}
+
+.left_header {
+    border-bottom: 1px solid;
+    min-height: 50px;
+    width: 100%;
+}
+
+.left_header .left {
+    min-width: 80%;
+    border-right: 1px solid !important;
+}
+
+.o_field_radio.o_vertical.o_field_widget {
+    width: 100%;
+}
+
+.cus-kendo-multiselect {
+    min-height: 100px;
+}
+
+.button-radio {
+    min-width: 150px;
+}
+
+.btn-check {
+    position: absolute;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+
+.btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show, .btn-outline-primary:active {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.o_stat_value {
+    color: green !important;
+}
+
+.hide {
+    opacity: 0;
+}
+.o_td_label {
+    min-width: 200px !important;
+}
+
+
+

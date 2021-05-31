@@ -15,6 +15,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { StockInventoryCriteriaBasic, StockInventoryCriteriaPaged, StockInventoryCriteriaService } from '../stock-inventory-criteria.service';
 import { StockInventoryLineByProductId, StockInventoryService } from '../stock-inventory.service';
 import { StockInventoryLineService, StockInventoryLineOnChangeCreateLine } from '../stock-inventory-line.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-stock-inventory-form',
@@ -39,6 +40,13 @@ export class StockInventoryFormComponent implements OnInit {
   public maxDateTime: Date = new Date(new Date(this.monthEnd.setHours(23, 59, 59)).toString());
   submitted = false;
 
+  canCreateUpdate = false;
+  canCreate = false;
+  canprepareInventory = false;
+  canActionDone = false;
+  canCancel = false;
+  canPrint = false;
+
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('criteriaCbx', { static: true }) criteriaCbx: ComboBoxComponent;
 
@@ -62,7 +70,8 @@ export class StockInventoryFormComponent implements OnInit {
     private intlService: IntlService,
     private criteriaService: StockInventoryCriteriaService,
     private printService: PrintService,
-    private stockInventoryLineService: StockInventoryLineService
+    private stockInventoryLineService: StockInventoryLineService,
+    private checkPermissionRole: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -85,7 +94,7 @@ export class StockInventoryFormComponent implements OnInit {
       moves: this.fb.array([])
     });
 
-
+    this.checkRole();
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get('id');
       this.loadDataFromApi();
@@ -413,5 +422,13 @@ export class StockInventoryFormComponent implements OnInit {
     }
   }
 
+  checkRole(){
+    this.canCreate = this.checkPermissionRole.check(["Stock.Inventory.Create"]);
+    this.canCreateUpdate = this.checkPermissionRole.check(["Stock.Inventory.Create","Stock.Inventory.Update"]);
+    this.canPrint = this.checkPermissionRole.check(["Stock.Inventory.Read"]);
+    this.canprepareInventory = this.checkPermissionRole.check(["Stock.Inventory.Update"]);
+    this.canCancel = this.checkPermissionRole.check(["Stock.Inventory.Update"]);
+    this.canActionDone = this.checkPermissionRole.check(["Stock.Inventory.Update"]);
+  }
 
 }

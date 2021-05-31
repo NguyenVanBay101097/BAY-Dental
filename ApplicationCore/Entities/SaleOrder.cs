@@ -78,6 +78,10 @@ namespace ApplicationCore.Entities
 
         public ICollection<DotKham> DotKhams { get; set; } = new List<DotKham>();
 
+        public ICollection<SaleOrderPayment> SaleOrderPayments { get; set; } = new List<SaleOrderPayment>();
+
+        public ICollection<SaleOrderPaymentRel> SaleOrderPaymentRels { get; set; } = new List<SaleOrderPaymentRel>();
+
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
 
@@ -142,5 +146,18 @@ namespace ApplicationCore.Entities
         /// list phân việc khảo sát
         /// </summary>
         public ICollection<SurveyAssignment> Assignments { get; set; } = new List<SurveyAssignment>();
+
+        /// <summary>
+        /// danh sách chương trình ưu đãi
+        /// </summary>
+        public ICollection<SaleOrderPromotion> Promotions { get; set; } = new List<SaleOrderPromotion>();
+
+        public Guid? QuotationId { get; set; }
+        public Quotation Quotation { get; set; }
+
+        /// <summary>
+        /// Tổng thanh toán
+        /// </summary>
+        public decimal? TotalPaid { get; set; }
     }
 }

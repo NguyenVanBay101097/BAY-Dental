@@ -1,11 +1,15 @@
 import { PartnerDisplay } from './../partners/partner-simple';
 import { AccountJournalSimple } from 'src/app/account-journals/account-journal.service';
 import { UserSimple } from '../users/user-simple';
-import { SaleOrderLineDisplay } from './sale-order-line-display';
 import { PartnerSimple } from '../partners/partner-simple';
 import { ProductPriceListBasic } from '../price-list/price-list';
 import { SaleOrderBasic } from './sale-order-basic';
 import { EmployeeSimple } from '../employees/employee';
+import { ProductSimple } from '../products/product-simple';
+import { ToothDisplay } from '../teeth/tooth.service';
+import { ToothCategoryBasic } from '../tooth-categories/tooth-category.service';
+import { SaleOrderLineDisplay } from './sale-order-line-display';
+import { QuotationSimple } from '../quotations/quotation.service';
 
 export class SaleOrderDisplay {
     id: string;
@@ -22,6 +26,7 @@ export class SaleOrderDisplay {
     orderLines: SaleOrderLineDisplay[];
     name: string;
     paid: number;
+    note: string;
     pricelist: ProductPriceListBasic;
     journalId: string;
     journal: AccountJournalSimple;
@@ -30,6 +35,10 @@ export class SaleOrderDisplay {
     order: SaleOrderBasic;
     invoiceCount: number;
     paidTotal: number;
+    quotationId: string;
+    quotation: QuotationSimple;
+    promotions: any[];
+    totalPaid: number;
 }
 
 export class SaleOrderDisplayVm {

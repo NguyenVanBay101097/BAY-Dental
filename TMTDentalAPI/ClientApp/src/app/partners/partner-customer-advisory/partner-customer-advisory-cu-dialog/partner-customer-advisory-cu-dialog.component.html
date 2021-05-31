@@ -1,0 +1,141 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group mb-2 row">
+                    <div class="d-flex">
+                        <table class="o_group o_inner_group o_group_col_6" style="width:100%">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label o_td_label_left">
+                                        <label class="o_form_label">
+                                            Khách hàng
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;" class=".o_td_control_left">
+                                        <a class="text-primary" (click)="viewPartner()">{{f.customer?.value?.displayName}}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label o_td_label_left">
+                                        <label class="o_form_label">
+                                            Người tư vấn
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;" class=".o_td_control_left">
+                                        <kendo-combobox formControlName="employeeAdvisory" [filterable]="true" #empCbx class="kendo-combobox-sm mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
+                                        </kendo-combobox>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group o_group_col_6 ml-auto" style="width:100%">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ngày tư vấn
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj">
+                                        </kendo-datepicker>
+                                         <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.dateObj.errors.required">Chọn ngày tư vấn</div>
+                                        </div> 
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mb-2">
+                        <h5>BẢN ĐỒ RĂNG NHA</h5>
+                        <div class="mb-3">
+                            <span *ngFor="let item of filteredToothCategories">
+                                <button type="button" class="btn btn-sm mr-2" 
+                                    [ngClass]="cateId == item.id ? 'btn-primary' : 'btn-outline-primary'"
+                                    (click)="onChangeToothCategory(item)" accesskey="s">{{item.name}}</button>
+                            </span>
+                            <div  class="text-danger">
+                            </div> 
+                        </div>
+                        <div class="mb-2">
+                            <div class="teeth-map mb-2 row mx-0 w-100">
+                                <!-- loại răng chọn -->
+                                <div class="col-sm-3 row">
+                                    <ng-container *ngFor="let item of toothTypeDict; let toothTypeIndex = index">
+                                        <div class="col-6 pl-0">
+                                            <input (change)="onChangeToothType(item.value)" [value]="item.value" [checked]="item.value === getValueFormControl('toothType')" class="btn-check hide" type="radio" name="toothType" formControlName="toothType" [id]="'toothType' + toothTypeIndex">
+                                            <label class="btn btn-sm w-100 mb-0" [ngClass]="item.value === getValueFormControl('toothType') ? 'btn-primary' : 'btn-outline-primary'" [for]="'toothType' + toothTypeIndex">{{item.name}}</label>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <!-- răng -->
+                                <div class="col-sm-9">
+                                    <table class="table-tooth table table-sm w-auto mw-100">
+                                        <tr *ngFor="let ham of hamList | keyvalue">
+                                            <td *ngFor="let vitri of ham.value | keyvalue" [ngClass]="{'text-right' : vitri.key === '0_right'}">
+                                                <div class="tooth-wrapper">
+                                                    <div *ngFor="let rang of vitri.value" class="tooth-item" 
+                                                        [ngClass]="{'teethSelected' : isSelected(rang), 'disabled' : getValueFormControl('toothType') != 'manual'}" 
+                                                        (click)="onSelected(rang)">
+                                                        {{rang.name}}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div *ngIf="getValueFormControl('toothType') == 'manual'
+                                    && (getValueFormControl('teeth') && getValueFormControl('teeth').length == 0) 
+                                    && submitted" 
+                                    class="text-danger">
+                                    Chọn răng
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <h5>Chẩn đoán răng</h5>
+                        <div>
+                            <app-tooth-diagnosis-popover [tags]="f.toothDiagnosis.value" (onSave)="updateDiagnosis($event)">
+                            </app-tooth-diagnosis-popover>
+                            <div *ngIf = "f.toothDiagnosis.value.length == 0 && submitted" class="text-danger">
+                                Chọn chẩn đoán răng
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <h5>Dịch vụ tư vấn</h5>
+                        <div>
+                            <app-consulting-service-popover [tags]="f.product.value" (onSave)="updateProduct($event)">
+                            </app-consulting-service-popover>
+                            <div *ngIf = "f.product.value.length == 0 && submitted" class="text-danger">
+                                Chọn dịch vụ tư vấn
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="mb-2">
+                        <h5>Ghi chú tư vấn</h5>
+                        <textarea formControlName="note" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-primary" (click)="resetForm()" accesskey="s">Nhập lại</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

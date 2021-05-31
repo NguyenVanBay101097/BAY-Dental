@@ -131,6 +131,8 @@ namespace Infrastructure.Data
         public DbSet<IrModuleCategory> IrModuleCategories { get; set; }
         public DbSet<IrConfigParameter> IrConfigParameters { get; set; }
         public DbSet<SaleCouponProgramProductRel> SaleCouponProgramProductRels { get; set; }
+        public DbSet<SaleCouponProgramProductCategoryRel> SaleCouponProgramProductCategoryRels { get; set; }
+        public DbSet<SaleCouponProgramPartnerRel> SaleCouponProgramPartnerRels { get; set; }
         public DbSet<SaleOrderNoCodePromoProgram> SaleOrderNoCodePromoPrograms { get; set; }
         public DbSet<ZaloOAConfig> ZaloOAConfigs { get; set; }
         public DbSet<IRModelField> IRModelFields { get; set; }
@@ -237,12 +239,38 @@ namespace Infrastructure.Data
         public DbSet<ProductRequest> ProductRequests { get; set; }
         public DbSet<ProductRequestLine> ProductRequestLines { get; set; }
         public DbSet<SaleOrderLineProductRequested> SaleOrderLineProductRequesteds { get; set; }
-
+        public DbSet<ProductAppointmentRel> ProductAppointmentRels { get; set; }
         //public DbSet<StockInventory> StockInventories { get; set; }
         //public DbSet<StockInventoryLine> StockInventoryLines { get; set; }
         public DbSet<StockInventoryCriteria> StockInventoryCriterias { get; set; }
         public DbSet<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; }
-        public DbSet<ProductAppointmentRel> ProductAppointmentRels { get; set; }
+        public DbSet<Quotation> Quotations { get; set; }
+        public DbSet<QuotationLine> QuotationLines { get; set; }
+        public DbSet<QuotationLineToothRel> QuotationLineToothRels { get; set; }
+        public DbSet<PaymentQuotation> PaymentQuotations { get; set; }
+
+
+        public DbSet<Advisory> Advisory { get; set; }
+        public DbSet<AdvisoryToothRel> AdvisoryToothRels { get; set; }
+        public DbSet<AdvisoryToothDiagnosisRel> AdvisoryToothDiagnosisRels { get; set; }
+        public DbSet<AdvisoryProductRel> AdvisoryProductRels { get; set; }
+        public DbSet<ToothDiagnosis> ToothDiagnosis { get; set; }
+        public DbSet<ToothDiagnosisProductRel> ToothDiagnosisProductRels { get; set; }
+
+
+        public DbSet<PartnerAdvance> PartnerAdvances { get; set; }
+
+        public DbSet<SaleOrderPayment> SaleOrderPayments { get; set; }
+        public DbSet<SaleOrderPaymentHistoryLine> SaleOrderPaymentHistoryLines { get; set; }
+        public DbSet<SaleOrderPaymentJournalLine> SaleOrderPaymentJournalLines { get; set; }
+
+        public DbSet<SaleOrderPaymentAccountPaymentRel> SaleOrderPaymentAccountPaymentRels { get; set; }
+
+        public DbSet<SaleOrderPromotion> SaleOrderPromotions { get; set; }
+        public DbSet<SaleOrderPromotionLine> SaleOrderPromotionLines { get; set; }
+
+        public DbSet<QuotationPromotion> QuotationPromotions { get; set; }
+        public DbSet<QuotationPromotionLine> QuotationPromotionLines { get; set; }
 
         public DbSet<ConfigPrint> ConfigPrints { get; set; }
         public DbSet<PrintPaperSize> PrintPaperSizes { get; set; }
@@ -299,6 +327,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new RoutingConfiguration());
             builder.ApplyConfiguration(new RoutingLineConfiguration());
             builder.ApplyConfiguration(new DotKhamConfiguration());
+            builder.ApplyConfiguration(new SaleCouponProgramProductCategoryRelConfiguration());
             builder.ApplyConfiguration(new DotKhamLineConfiguration());
             builder.ApplyConfiguration(new DotKhamLineOperationConfiguration());
             builder.ApplyConfiguration(new ToaThuocConfiguration());
@@ -456,6 +485,28 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ProductBomConfiguration());
             builder.ApplyConfiguration(new ProductRequestConfiguration());
             builder.ApplyConfiguration(new ProductRequestLineConfiguration());
+            builder.ApplyConfiguration(new QuotationConfiguration());
+            builder.ApplyConfiguration(new QuotationLineConfiguration());
+            builder.ApplyConfiguration(new QuotationLineToothRelConfiguration());
+            builder.ApplyConfiguration(new PaymentQuotationConfiguration());
+
+            builder.ApplyConfiguration(new AdvisoryConfiguration());
+            builder.ApplyConfiguration(new AdvisoryToothRelConfiguration());
+            builder.ApplyConfiguration(new AdvisoryToothDiagnosisRelConfiguration());
+            builder.ApplyConfiguration(new AdvisoryProductRelConfiguration());
+            builder.ApplyConfiguration(new ToothDiagnosisConfiguration());
+            builder.ApplyConfiguration(new ToothDiagnosisProductRelConfiguration());
+            builder.ApplyConfiguration(new PartnerAdvanceConfiguration());
+
+            builder.ApplyConfiguration(new SaleOrderPaymentConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPaymentHistoryLineConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPaymentJournalLineConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPaymentAccountPaymentRelConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPromotionConfiguration());
+            builder.ApplyConfiguration(new SaleOrderPromotionLineConfiguration());
+            builder.ApplyConfiguration(new QuotationPromotionConfiguration());
+            builder.ApplyConfiguration(new QuotationPromotionLineConfiguration());
+            builder.ApplyConfiguration(new SaleCouponProgramPartnerRelConfiguration());
             builder.ApplyConfiguration(new ConfigPrintConfiguration());
             builder.ApplyConfiguration(new PrintPaperSizeConfigution());
 

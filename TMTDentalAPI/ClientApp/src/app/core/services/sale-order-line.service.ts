@@ -95,6 +95,22 @@ export class SaleOrderLineService {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetListLineIsLabo', { params: new HttpParams({ fromObject: val }) });
     }
 
+    applyDiscountOnOrderLine(val){
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnOrderLine', val);
+    }
+
+    applyPromotion(val){
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotion', val);
+    }
+
+    patchIsActive(id, active){
+        return this.http.patch(this.baseApi + this.apiUrl + '/' + id + '/PatchIsActive',{active: active})
+    }
+
+    applyPromotionUsageCode(val){
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotionUsageCode', val);
+    }
+
     getSmsCareAfterOrderManual(val: any):Observable<PagedResult2<any>> {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetSmsCareAfterOrderManual', { params: new HttpParams({ fromObject: val }) });
     }

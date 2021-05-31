@@ -191,6 +191,11 @@ namespace ApplicationCore.Entities
 
         public ICollection<DotKham> DotKhams { get; set; } = new List<DotKham>();
 
+        /// <summary>
+        /// khách hàng tạm ứng
+        /// </summary>
+        public ICollection<PartnerAdvance> PartnerAdvances { get; set; } = new List<PartnerAdvance>();
+
         public string GetAddress()
         {
             var list = new List<string>();

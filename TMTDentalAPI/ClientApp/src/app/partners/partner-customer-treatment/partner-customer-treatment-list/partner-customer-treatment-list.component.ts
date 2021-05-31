@@ -40,8 +40,6 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd;
     this.activeRoute.parent.params.subscribe(
       params => {
         this.partnerId = params.id;
@@ -64,6 +62,10 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
 
   onDeleteSaleOrder(){
     this.getSaleOrders();
+  }
+
+  getFormSaleOrder(id){
+    this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
   }
 
   getSaleOrders() {

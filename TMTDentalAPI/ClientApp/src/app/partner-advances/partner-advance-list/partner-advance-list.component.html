@@ -1,0 +1,119 @@
+<div class="o_content">
+    <div class="o_form_view h-100">
+        <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column h-100">
+            <div class="report-prescription-payment">
+                <div class="revenue" *ngFor="let type of types">
+                    <div class="title">
+                        <h6>{{type.text}}</h6>
+                    </div>
+                    <h4 class="text-primary">
+                        {{(typeAmount[type.value] | number) || 0}}
+                    </h4>
+                </div>
+                <div class="revenue">
+                    <div class="title">
+                        <h6>Tạm ứng đã dùng</h6>
+                    </div>
+                    <h4 class="text-primary">
+                        {{(amountAdvanceUsed | number) || 0}}
+                    </h4>
+                </div>
+                <div class="revenue">
+                    <div class="title">
+                        <h6>Tạm ứng còn lại</h6>
+                    </div>
+                    <h4 class="text-primary">
+                        {{(amountBalance | number) || 0}}
+                    </h4>
+                </div>
+            </div>
+            <div class="o_notebook flex-1-1-100 overflow-hidden d-flex flex-column">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs flex-0-0-auto" id="myTab" role="tablist">
+                    <li class="nav-item ml-1">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                            aria-controls="home" aria-selected="true">Danh sách</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment" role="tab"
+                            aria-controls="payment" aria-selected="false">Lịch sử tạm ứng</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="o_control_panel">
+                            <div class="o_cp_t_left">
+                                <div class="o_cp_buttons">
+                                    <div class="o_form_buttons_view">
+                                        <div class="d-flex">
+                                            <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom"
+                                                [title]="'Thời gian'" [dateTo]="dateTo"
+                                                (searchChange)="onSearchDateChange($event)">
+                                            </app-tai-date-range-filter-dropdown>
+                                            <button class="btn btn-primary btn-sm mr-2 " title="Đóng tạm ứng"
+                                                (click)="createAdvanceModal()">Đóng tạm ứng</button>
+                                            <button class="btn btn-primary btn-sm mr-2" *ngIf="amountBalance != 0"
+                                                title="Hoàn tạm ứng" (click)="createRefundModal()">Hoàn tạm
+                                                ứng</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_cp_sidebar">
+
+                                </div>
+                            </div>
+                            <div class="o_cp_t_right">
+                                <input class="o_searchview_input o_searchview"
+                                    placeholder="Tìm kiếm theo số phiếu tạm ứng" type="text" [(ngModel)]="search"
+                                    (ngModelChange)="this.searchUpdate.next($event)">
+                            </div>
+                        </div>
+
+                        <kendo-grid [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset"
+                            [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [navigable]="true">
+                            <kendo-grid-column field="name" title="Số phiếu tạm ứng" width="120">
+                            </kendo-grid-column>
+                            <kendo-grid-column field="date" title="Ngày tạm ứng" width="135">
+                                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                    {{dataItem.date | date:'shortDate'}}
+                                </ng-template>
+                            </kendo-grid-column>
+                            <kendo-grid-column field="journalName" title="Phương thức" width="115">
+                            </kendo-grid-column>
+                            <kendo-grid-column title="Loại tạm ứng" width="100">
+                                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                    {{getType(dataItem.type)}}
+                                </ng-template>
+                            </kendo-grid-column>
+                            <kendo-grid-column title="Số tiền" class="text-right" width="135">
+                                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                    {{dataItem.amount | number}}
+                                </ng-template>
+                            </kendo-grid-column>
+                            <kendo-grid-column title="Trạng thái" width="110">
+                                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                    {{getState(dataItem.state)}}
+                                </ng-template>
+                            </kendo-grid-column>
+                            <kendo-grid-command-column title="Thao tác" width="100">
+                                <ng-template kendoGridCellTemplate let-dataItem>
+                                    <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)"><i
+                                            class="fas fa-edit"></i></button>
+                                    <button type="button" class="btn btn-sm btn-danger" (click)="deleteItem(dataItem)">
+                                        <i class="far fa-trash-alt"></i>
+                                    </button>
+                                </ng-template>
+                            </kendo-grid-command-column>
+                        </kendo-grid>
+                    </div>
+
+                    <div class="tab-pane" id="payment" role="tabpanel" aria-labelledby="payment-tab">
+                        <app-partner-advance-history-list [partnerId]="partnerId"></app-partner-advance-history-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

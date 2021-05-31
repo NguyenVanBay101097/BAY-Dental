@@ -28,6 +28,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
+        public bool IsDoctor { get; set; }
+
+        public bool IsAssistant { get; set; }
+
         /// <summary>
         /// Mã
         /// </summary>
@@ -114,6 +118,19 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid? CommissionId { get; set; }
         public CommissionBasic Commission { get; set; }
+
+        /// <summary>
+        /// kết nối hoa hồng phụ tá
+        /// </summary>
+        public Guid? AssistantCommissionId { get; set; }
+        public CommissionBasic AssistantCommission { get; set; }
+
+
+        /// <summary>
+        /// kết nối hoa hồng tư vấn
+        /// </summary>
+        public Guid? CounselorCommissionId { get; set; }
+        public CommissionBasic CounselorCommission { get; set; }
 
         public decimal? Wage { get; set; }
         public decimal? HourlyWage { get; set; }
@@ -204,6 +221,16 @@ namespace Umbraco.Web.Models.ContentEditing
         /// hoa hồng
         /// </summary>
         public Guid? CommissionId { get; set; }
+
+        /// <summary>
+        /// kết nối hoa hồng phụ tá
+        /// </summary>
+        public Guid? AssistantCommissionId { get; set; }
+
+        /// <summary>
+        /// kết nối hoa hồng tư vấn
+        /// </summary>
+        public Guid? CounselorCommissionId { get; set; }
 
         public decimal? Wage { get; set; }
 

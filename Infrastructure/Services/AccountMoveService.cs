@@ -249,12 +249,12 @@ namespace Infrastructure.Services
                 move.State = "posted";
 
                 //Compute 'ref' for 'out_invoice'.
-                if (move.Type == "out_invoice" && string.IsNullOrEmpty(move.InvoicePaymentRef))
-                {
-                    var invoice_payment_ref = _GetInvoiceComputedReference(move);
-                    foreach (var line in move.Lines.Where(x => x.Account.InternalType == "receivable" || x.Account.InternalType == "payable"))
-                        line.Name = invoice_payment_ref;
-                }
+                //if (move.Type == "out_invoice" && string.IsNullOrEmpty(move.InvoicePaymentRef))
+                //{
+                //    var invoice_payment_ref = _GetInvoiceComputedReference(move);
+                //    foreach (var line in move.Lines.Where(x => x.Account.InternalType == "receivable" || x.Account.InternalType == "payable"))
+                //        line.Name = invoice_payment_ref;
+                //}
             }
 
             await UpdateAsync(self);
@@ -342,7 +342,9 @@ namespace Infrastructure.Services
 
             var amlObj = GetService<IAccountMoveLineService>();
             var line_ids = self.SelectMany(x => x.Lines).Select(x => x.Id).ToList();
-            await amlObj.RemoveMoveReconcile(line_ids);
+            var lines = amlObj.SearchQuery(x => line_ids.Contains(x.Id)).Include(x => x.MatchedDebits)
+                .Include(x => x.MatchedCredits).ToList();
+            await amlObj.RemoveMoveReconcile(lines);
 
             foreach (var move in self)
                 move.State = "draft";
@@ -471,6 +473,7 @@ namespace Infrastructure.Services
                 line.PartnerId = self.PartnerId;
                 line.Date = self.Date;
                 line.Move = self;
+                line.CompanyId = self.CompanyId;
                 line.Account = await moveLineObj._GetComputedAccount(line);
 
                 if (line.Account == null)
@@ -508,7 +511,8 @@ namespace Infrastructure.Services
         {
             var today = DateTime.Today;
 
-            DateTime _GetPaymentTermsComputationDate() {
+            DateTime _GetPaymentTermsComputationDate()
+            {
                 return self.InvoiceDate ?? today;
             }
 
@@ -519,7 +523,7 @@ namespace Infrastructure.Services
                 else
                 {
                     var accountObj = GetService<IAccountAccountService>();
-                    var companyId = CompanyId;
+                    var companyId = self.CompanyId;
                     var types = new List<string>() { "out_invoice", "out_refund", "out_receipt" };
                     var type = types.Contains(self.Type) ? "receivable" : "payable";
                     return accountObj.SearchQuery(x => x.CompanyId == companyId && x.InternalType == type).FirstOrDefault();
@@ -580,7 +584,6 @@ namespace Infrastructure.Services
             var computation_date = _GetPaymentTermsComputationDate();
             var account = _GetPaymentTermsAccount(existing_terms_lines);
             var new_terms_lines = _ComputeDiffPaymentTermsLines(existing_terms_lines, account, total_balance, computation_date);
-
             self.Lines = self.Lines.Except(existing_terms_lines).Concat(new_terms_lines).ToList();
         }
 

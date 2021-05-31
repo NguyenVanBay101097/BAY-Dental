@@ -28,6 +28,17 @@ export class ApplicationRolePaging {
     items: ApplicationRoleBasic[];
 }
 
+export class PermissionTreeViewModel {
+    name: string;
+    permisstion: string;
+    children: PermissionTreeViewModel;
+    groups: string;
+    groupName: string;
+    checked: boolean =false;
+    expand: boolean = false;
+    amount_checked: number = 0;
+}
+
 @Injectable()
 export class RoleService {
     apiUrl = 'api/ApplicationRoles';
@@ -55,5 +66,13 @@ export class RoleService {
 
     permissionTree() {
         return this.http.get(this.baseApi + this.apiUrl + "/PermissionTree");
+    }
+
+    getPermissionTree(id?: string) {
+        if (id) {
+            return this.http.get(this.baseApi + this.apiUrl + "/GetPermissionTree?id=" + id);
+        } else {
+            return this.http.get(this.baseApi + this.apiUrl + "/GetPermissionTree");
+        }
     }
 }

@@ -127,7 +127,10 @@ namespace Infrastructure.Services
 
             var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
             query = query.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
-            
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Move.InvoiceOrigin.Contains(val.Search));
+
             var totalItems = await query.CountAsync();
             var items = await query.OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit).Select(x => new CashBookReportDetail
             {
@@ -136,7 +139,8 @@ namespace Infrastructure.Services
                 Date = x.Date,
                 JournalName = x.Journal.Name,
                 Name = x.Name,
-                PartnerName = x.Partner.Name
+                PartnerName = x.Partner.Name,
+                InvoiceOrigin = x.Move.InvoiceOrigin
             }).ToListAsync();
 
             return new PagedResult2<CashBookReportDetail>(totalItems, val.Offset, val.Limit)
