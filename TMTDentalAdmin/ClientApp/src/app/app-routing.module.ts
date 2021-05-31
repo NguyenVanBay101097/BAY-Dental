@@ -25,6 +25,11 @@ const routes: Routes = [
         loadChildren: () =>
           import('./employee-admins/employee-admins.module').then(m => m.EmployeeAdminModule)
       },
+      {
+        path: 'sale-order-process-updates',
+        loadChildren: () =>
+          import('./tenant-sale-order-process-updates/tenant-sale-order-process-updates.module').then(m => m.TenantSaleOrderProcessUpdatesModule)
+      },
     ]
   },
   {

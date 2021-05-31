@@ -8,7 +8,7 @@ namespace ApplicationCore.Entities
     {
         public SaleCouponProgram()
         {
-            Active = true;
+            Active = false;
             RewardType = "discount";
             PromoApplicability = "on_current_order";
             ProgramType = "coupon_program";
@@ -17,6 +17,7 @@ namespace ApplicationCore.Entities
             RuleMinimumAmount = 0;
             DiscountMaxAmount = 0;
             DiscountApplyOn = "on_order";
+            NotIncremental = false;
         }
 
         /// <summary>
@@ -26,6 +27,8 @@ namespace ApplicationCore.Entities
 
         public bool Active { get; set; }
 
+        public bool IsPaused { get; set; }
+
         /// <summary>
         /// Coupon program will be applied based on given sequence if multiple programs are
         /// defined on same condition(For minimum amount)
@@ -34,10 +37,6 @@ namespace ApplicationCore.Entities
 
         public int? MaximumUseNumber { get; set; }
 
-        /// <summary>
-        /// Số tiền mua tối thiểu
-        /// </summary>
-        public decimal? RuleMinimumAmount { get; set; }
 
         public int? RuleMinQuantity { get; set; }
 
@@ -65,7 +64,22 @@ namespace ApplicationCore.Entities
         /// </summary>
         public int? ValidityDuration { get; set; }
 
+        /// <summary>
+        /// Không áp dụng cộng dồn khuyến mãi
+        /// </summary>
+        public bool? NotIncremental { get; set; }
         public ICollection<SaleCouponProgramProductRel> DiscountSpecificProducts { get; set; } = new List<SaleCouponProgramProductRel>();
+        public ICollection<SaleCouponProgramProductCategoryRel> DiscountSpecificProductCategories { get; set; } = new List<SaleCouponProgramProductCategoryRel>();
+
+        /// <summary>
+        /// all : tất cả
+        /// specific_partners: khách hàng
+        /// </summary>
+        public string ApplyPartnerOn { get; set; }
+
+        public ICollection<SaleCouponProgramPartnerRel> DiscountSpecificPartners { get; set; } = new List<SaleCouponProgramPartnerRel>();
+
+        public ICollection<SaleOrderPromotion> Promotions { get; set; } = new List<SaleOrderPromotion>();
 
         public ICollection<SaleCoupon> Coupons { get; set; } = new List<SaleCoupon>();
 
@@ -102,6 +116,24 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string PromoApplicability { get; set; }
 
+        /// <summary>
+        /// áp dụng mức giảm tối thiểu
+        /// </summary>
+        public bool IsApplyMinimumDiscount { get; set; }
+
+        /// <summary>
+        /// Số tiền mua tối thiểu
+        /// </summary>
+        public decimal? RuleMinimumAmount { get; set; }
+
+        /// <summary>
+        /// áp dụng mức giảm tối đa
+        /// </summary>
+        public bool IsApplyMaxDiscount { get; set; }
+
+        /// <summary>
+        /// Mức giảm tối đa
+        /// </summary>
         public decimal? DiscountMaxAmount { get; set; }
 
         public Guid? RewardProductId { get; set; }
@@ -109,12 +141,33 @@ namespace ApplicationCore.Entities
 
         public int? RewardProductQuantity { get; set; }
 
+        /// <summary>
+        /// Ngày bắt đầu
+        /// </summary>
         public DateTime? RuleDateFrom { get; set; }
 
+        /// <summary>
+        /// Ngày kết thúc
+        /// </summary>
         public DateTime? RuleDateTo { get; set; }
 
         public string RewardDescription { get; set; }
 
+        /// <summary>
+        /// on_order : phiếu điều trị
+        /// specific_product_categories: nhóm dịch vụ
+        /// specific_products: dịch vụ
+        /// </summary>
         public string DiscountApplyOn { get; set; }
+
+        /// <summary>
+        /// áp dụng thứ trong tuần
+        /// </summary>
+        public bool IsApplyDayOfWeek { get; set; }
+
+        /// <summary>
+        /// Chọn các thứ trong tuần
+        /// </summary>
+        public string Days { get; set; }
     }
 }

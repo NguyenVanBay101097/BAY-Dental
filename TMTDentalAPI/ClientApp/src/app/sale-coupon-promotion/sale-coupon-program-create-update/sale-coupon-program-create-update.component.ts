@@ -13,6 +13,7 @@ import { SaleCouponProgramGenerateCouponsDialogComponent } from '../sale-coupon-
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
 import { SaleCouponListDialogComponent } from '../sale-coupon-list-dialog/sale-coupon-list-dialog.component';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-sale-coupon-program-create-update',
@@ -33,9 +34,15 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
   listProducts: ProductSimple[];
   @ViewChild('productMultiSelect', { static: true }) productMultiSelect: MultiSelectComponent;
 
+  // permission
+  canSaleCouponProgramCreate = this.checkPermissionService.check(["SaleCoupon.SaleCouponProgram.Create"]);
+  canSaleCouponsCreate = this.checkPermissionService.check(["SaleCoupon.SaleCoupons.Create"]);
+
   constructor(private fb: FormBuilder, private programService: SaleCouponProgramService,
     private router: Router, private route: ActivatedRoute, private notificationService: NotificationService,
-    private modalService: NgbModal, private productService: ProductService) { }
+    private modalService: NgbModal, private productService: ProductService, 
+    private checkPermissionService: CheckPermissionService
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({

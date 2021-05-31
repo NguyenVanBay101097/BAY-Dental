@@ -6,6 +6,7 @@ import {
     Router,
     Route
 } from '@angular/router';
+import { CheckPermissionService } from '../shared/check-permission.service';
 
 import { AuthService } from './auth.service';
 
@@ -13,19 +14,32 @@ import { AuthService } from './auth.service';
     providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-    constructor(private authService: AuthService, private router: Router) { }
+    constructor(private authService: AuthService, 
+        private router: Router, 
+        private checkPermissionService: CheckPermissionService
+    ) { }
 
     canActivate(
         next: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ): boolean {
         let url: string = state.url;
-
-        return this.checkLogin(url);
+        let permissions = null;
+        if (next.data && next.data['permissions']) {
+            permissions = next.data['permissions'];
+        }
+        return this.checkLogin(url, permissions);
     }
 
-    checkLogin(url: string): boolean {
+    checkLogin(url: string, permissions): boolean {
         if (this.authService.isAuthenticated()) {
+            if (permissions) {
+                const hasPermission = this.checkPermissionService.check(permissions);
+                if (!hasPermission) {
+                    this.router.navigate(['/']);
+                }
+                return hasPermission;
+            }
             return true;
         }
 
@@ -39,6 +53,6 @@ export class AuthGuard implements CanActivate {
 
     canLoad(route: Route): boolean {
         let url = `/${route.path}`;
-        return this.checkLogin(url);
+        return this.checkLogin(url, null);
     }
 }

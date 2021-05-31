@@ -29,6 +29,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Catalog.SurveyTag.Read")]
         public async Task<IActionResult> Get([FromQuery] SurveyTagPaged val)
         {
             var result = await _surveyTagService.GetPagedResultAsync(val);
@@ -36,12 +37,15 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Catalog.SurveyTag.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _surveyTagService.GetByIdAsync(id);
             return Ok(res);
         }
+
         [HttpPost]
+        [CheckAccess(Actions = "Catalog.SurveyTag.Create")]
         public async Task<IActionResult> Create(SurveyTagSave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -56,6 +60,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Catalog.SurveyTag.Update")]
         public async Task<IActionResult> Update(Guid id, SurveyTagSave val)
         {
             if (!ModelState.IsValid)
@@ -73,6 +78,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Catalog.SurveyTag.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var surveyTag = await _surveyTagService.GetByIdAsync(id);

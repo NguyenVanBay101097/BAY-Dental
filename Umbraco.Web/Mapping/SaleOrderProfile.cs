@@ -18,7 +18,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrder, SaleOrderViewModel>();
 
             CreateMap<SaleOrder, SaleOrderDisplay>()
-                .ForMember(x => x.OrderLines, x => x.Ignore());
+                .ForMember(x => x.OrderLines, x => x.Ignore())
+                .ForMember(x => x.AmountDiscountTotal, x => x.MapFrom(s => Math.Round(s.OrderLines.Sum(z => ((decimal)z.AmountDiscountTotal) * z.ProductUOMQty))));
             CreateMap<SaleOrderDisplay, SaleOrder>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.InvoiceStatus, x => x.Ignore())
@@ -41,6 +42,7 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrder, SaleOrderPrintVM>();
             CreateMap<SaleOrder, SaleOrderSurveyBasic>();
+            CreateMap<SaleOrder, SaleOrderSimple>();
         }
     }
 }

@@ -29,6 +29,7 @@ import { SidebarNavComponent } from './layout/sidebar/sidebar-nav/sidebar-nav.co
 import { SidebarNavItemComponent } from './layout/sidebar/sidebar-nav-item/sidebar-nav-item.component';
 import { AsideToggleDirective, HtmlAttributesDirective, SidebarToggleDirective, SidebarMinimizeDirective, MobileSidebarToggleDirective, SidebarOffCanvasCloseDirective, BrandMinimizeDirective } from './layout/shared/layout.directive';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -55,7 +56,8 @@ registerLocaleData(localeVi, 'vi');
     BrandMinimizeDirective
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    // BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
     AppRoutingModule,

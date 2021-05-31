@@ -25,7 +25,7 @@
         </div>
         <div class="o_cp_right">
             <div class="btn-group o_search_options">
-                <kendo-combobox [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)"
+                <kendo-combobox *ngIf="canEmployeeRead" [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)"
                     class="kendo-combobox-sm mr-2" [filterable]="true" [data]="listEmployees" #employeeCbx
                     [valueField]="'id'" [textField]="'name'" style="min-width: 200px;"
                     [popupSettings]="{width: 'auto'}">
@@ -79,7 +79,8 @@
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
                     <a class="text-primary" title="Xem hồ sơ khách hàng"
-                        [routerLink]="['/partners/customer/' + dataItem.partner?.id]">
+                        [routerLink]="['/partners/customer/' + dataItem.partner?.id]"
+                        [class.disabled]="!canCustomerLink">
                         {{dataItem.partnerDisplayName}}
                     </a>
                 </div>
@@ -112,12 +113,12 @@
         </kendo-grid-column>
         <kendo-grid-column field="reason" title="Lý do" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="id" width="100">
+        <kendo-grid-column field="id" width="100" *ngIf="canAppointmentEdit">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" (click)="editAppointment(dataItem)">
+                <button *ngIf="canAppointmentEdit" class="btn btn-success btn-sm mr-2" (click)="editAppointment(dataItem)">
                     <i class="far fa-edit"></i></button>
             </ng-template>
         </kendo-grid-column>

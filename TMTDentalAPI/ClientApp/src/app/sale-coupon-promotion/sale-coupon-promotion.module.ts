@@ -15,16 +15,19 @@ import { SalePromotionProgramListComponent } from './sale-promotion-program-list
 import { SalePromotionProgramCreateUpdateComponent } from './sale-promotion-program-create-update/sale-promotion-program-create-update.component';
 import { SaleCouponProgramFilterActiveComponent } from './sale-coupon-program-filter-active/sale-coupon-program-filter-active.component';
 import { SaleCouponListDialogComponent } from './sale-coupon-list-dialog/sale-coupon-list-dialog.component';
+import { DiscountPricePopoverComponent } from './sale-promotion-program-create-update/discount-price-popover/discount-price-popover.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-  declarations: [SaleCouponProgramListComponent, SaleCouponProgramCreateUpdateComponent, SaleCouponProgramGenerateCouponsDialogComponent, SaleCouponListComponent, SalePromotionProgramListComponent, SalePromotionProgramCreateUpdateComponent, SaleCouponProgramFilterActiveComponent, SaleCouponListDialogComponent],
+  declarations: [SaleCouponProgramListComponent, SaleCouponProgramCreateUpdateComponent, SaleCouponProgramGenerateCouponsDialogComponent, SaleCouponListComponent, SalePromotionProgramListComponent, SalePromotionProgramCreateUpdateComponent, SaleCouponProgramFilterActiveComponent, SaleCouponListDialogComponent, DiscountPricePopoverComponent],
   imports: [
     CommonModule,
     SaleCouponPromotionRoutingModule,
     ReactiveFormsModule,
     FormsModule,
     MyCustomKendoModule,
-    NgbModule
+    NgbModule,
+    SharedModule
   ],
   providers: [
     SaleCouponProgramService,
@@ -32,7 +35,8 @@ import { SaleCouponListDialogComponent } from './sale-coupon-list-dialog/sale-co
   ],
   entryComponents: [
     SaleCouponProgramGenerateCouponsDialogComponent,
-    SaleCouponListDialogComponent
+    SaleCouponListDialogComponent,
+    DiscountPricePopoverComponent
   ]
 })
 export class SaleCouponPromotionModule { }

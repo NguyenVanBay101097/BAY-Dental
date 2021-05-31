@@ -30,6 +30,14 @@ namespace Infrastructure.EntityConfigurations
                  .WithMany()
                  .HasForeignKey(x => x.CommissionId);
 
+            builder.HasOne(x => x.AssistantCommission)
+             .WithMany()
+             .HasForeignKey(x => x.AssistantCommissionId);
+
+            builder.HasOne(x => x.CounselorCommission)
+             .WithMany()
+             .HasForeignKey(x => x.CounselorCommissionId);
+
             builder.HasOne(x => x.User)
                  .WithMany()
                  .HasForeignKey(x => x.UserId);

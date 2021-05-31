@@ -12,7 +12,11 @@ export class SaleCouponProgramPaged {
     search: string;
     programType: string;
     active: boolean;
+    status: string;
     ids: string[];
+    discountApplyOn: string;
+    promoCodeUsage: string;
+    productId: string;
 }
 
 export class SaleCouponProgramBasic {
@@ -23,11 +27,22 @@ export class SaleCouponProgramBasic {
 export class SaleCouponProgramDisplay {
     id: string;
     name: string;
+    active: boolean;
     couponCount: number;
     orderCount: number;
     rewardProduct: ProductSimple;
     ruleDateFrom: string;
     ruleDateTo: string;
+    discountType: string;
+    discountPercentage: number;
+    discountFixedAmount: number;
+    days: string;
+    notIncremental: boolean;
+    saleOrderMinimumAmount: number;
+    discountSpecificProducts: any;
+    discountSpecificProductCategories: any;
+    statusDisplay: string;
+    promoCode: string;
 }
 
 export class SaleCouponProgramSave {
@@ -35,10 +50,36 @@ export class SaleCouponProgramSave {
     name: string;
 }
 
+export class SaleCouponProgramGetListPagedRequest {
+    limit: number;
+    offset: number;
+    search: string;
+    programType: string;
+    active: boolean;
+    status: string;
+    ruleDateFromBegin: string;
+    ruleDateFromEnd: string;
+}
+
+export class SaleCouponProgramGetListPagedResponse {
+    id: string;
+    name: string;
+    ruleDateFrom: string;
+    ruleDateTo: string;
+    maximumUseNumber: number;
+    active: boolean;
+    isPaused: boolean;
+    statusDisplay: string;
+}
+
 @Injectable()
 export class SaleCouponProgramService {
     apiUrl = 'api/SaleCouponPrograms';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
+
+    getListPaged(val: any): Observable<PagedResult2<SaleCouponProgramGetListPagedResponse>> {
+        return this.http.get<PagedResult2<SaleCouponProgramGetListPagedResponse>>(this.baseApi + this.apiUrl + "/GetListPaged", { params: new HttpParams({ fromObject: val }) });
+    }
 
     getPaged(val: any): Observable<PagedResult2<SaleCouponProgramBasic>> {
         return this.http.get<PagedResult2<SaleCouponProgramBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
@@ -48,11 +89,11 @@ export class SaleCouponProgramService {
         return this.http.get<SaleCouponProgramDisplay>(this.baseApi + this.apiUrl + "/" + id);
     }
 
-    create(val: SaleCouponProgramSave): Observable<SaleCouponProgramBasic> {
+    create(val: any): Observable<SaleCouponProgramBasic> {
         return this.http.post<SaleCouponProgramBasic>(this.baseApi + this.apiUrl, val);
     }
 
-    update(id: string, val: SaleCouponProgramSave) {
+    update(id: string, val: any) {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 
@@ -78,5 +119,33 @@ export class SaleCouponProgramService {
 
     generateCoupons(data: any) {
         return this.http.post(this.baseApi + this.apiUrl + "/GenerateCoupons", data);
+    }
+
+    getPromotionUsageCode(code: string,productId?: string): Observable<any> {
+        return this.http.get<any>(this.baseApi + this.apiUrl + '/GetPromotionUsageCode?code='+ code + (productId? '&productId='+ productId : ''));
+    }
+
+    getPromotionBySaleOrder(partnerId) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetPromotionBySaleOrder?partnerId="+partnerId);
+    }
+
+    getPromotionBySaleOrderLine(id, partnerId) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetPromotionBySaleOrderLine?productId=" + id + '&partnerId='+partnerId);
+    }
+
+    getAmountTotalUsagePromotion(id){
+        return this.http.get(this.baseApi + this.apiUrl +'/'+id+ "/GetAmountTotalUsagePromotion");
+    }
+
+    defaultGet(programType: string){
+        return this.http.get(this.baseApi + this.apiUrl + '/DefaultGet?programType=' + programType);
+    }
+
+    checkPromoCodeExist(code: any){
+        return this.http.get(this.baseApi + this.apiUrl + '/CheckPromoCodeExist?code=' + code);
+    }
+
+    getPromotionByFastSaleOrder() {
+        return this.http.get<SaleCouponProgramDisplay[]>(this.baseApi + this.apiUrl + '/GetPromotionByFastSaleOrder');
     }
 }

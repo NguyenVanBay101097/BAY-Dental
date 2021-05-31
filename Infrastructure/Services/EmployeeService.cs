@@ -112,7 +112,7 @@ namespace Infrastructure.Services
 
             var totalItem = await query.CountAsync();
 
-            if (val.Limit > 0 )
+            if (val.Limit > 0)
             {
                 query = query.Skip(val.Offset).Take(val.Limit);
             }
@@ -144,7 +144,7 @@ namespace Infrastructure.Services
                 EmployeeId = x.Key,
                 Total = x.Sum(o => 1),
                 Done = x.Sum(o => o.Status == "done" ? 1 : 0)
-            }).ToDictionaryAsync(x=> x.EmployeeId, x=> new { x.Done, x.Total});
+            }).ToDictionaryAsync(x => x.EmployeeId, x => new { x.Done, x.Total });
 
             foreach (var item in employees)
             {
@@ -188,7 +188,10 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.IsDoctor == false && x.IsAssistant == true);
             }
-            var items = await query.Where(x => x.Active == true).Skip(val.Offset).Take(val.Limit)
+
+            if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await query.Where(x => x.Active == true)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<EmployeeSimple>>(items);
@@ -323,11 +326,11 @@ namespace Infrastructure.Services
             var partnerObj = GetService<IPartnerService>();
             var listPartnerUpdate = new List<Partner>();
 
-            var entity = SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x => x.User).ThenInclude(x=> x.Partner).FirstOrDefault();
+            var entity = SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x => x.User).ThenInclude(x => x.Partner).FirstOrDefault();
             if (entity == null) throw new Exception("Không tìm thấy nhân viên!");
             entity.Active = val.Active;
 
-            if(entity.User != null)
+            if (entity.User != null)
             {
                 entity.User.Active = val.Active;
                 if (entity.User.Partner != null)
@@ -336,7 +339,7 @@ namespace Infrastructure.Services
 
             await UpdateAsync(entity);
 
-            if(entity.Partner != null)
+            if (entity.Partner != null)
                 listPartnerUpdate.Add(entity.Partner);
 
             if (listPartnerUpdate.Any())
@@ -358,7 +361,7 @@ namespace Infrastructure.Services
             if (empl.IsAllowSurvey == true && empl.GroupId == null)
                 throw new Exception("Phải chọn nhóm nhân viên khảo sát");
 
-            if (empl.UserId == null) 
+            if (empl.UserId == null)
                 return;
 
             var user = await _userManager.Users.Where(x => x.Id == empl.UserId)
@@ -383,7 +386,7 @@ namespace Infrastructure.Services
             //add lại cái nó chọn
             if (empl.GroupId.HasValue && !user.ResGroupsUsersRels.Any(x => x.GroupId == empl.GroupId))
                 user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = empl.GroupId.Value });
-        
+
             await _userManager.UpdateAsync(user);
 
             //clear cache

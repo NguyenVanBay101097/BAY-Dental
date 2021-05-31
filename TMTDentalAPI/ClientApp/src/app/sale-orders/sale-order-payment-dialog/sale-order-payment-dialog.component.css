@@ -1,0 +1,35 @@
+.flex-0-0-auto {
+    flex: 0 0 auto;
+}
+
+.flex-1-1-100 {
+    flex: 1 1 100%;
+}
+
+.delete-icon {
+    border: 1px solid transparent;
+}
+
+.delete-icon:hover {
+    border: 1px solid hsl(0deg 0% 0% / 13%);
+    color: red;
+    cursor: pointer;
+}
+
+.active {
+    border-color: #007BFF !important;
+    background-color: #F5FAFF;
+}
+
+.pointer:hover {
+    cursor: pointer;
+}
+
+.payment-methods {
+    display: flex;
+}
+
+.payment-methods button {
+    flex: 0 0 150px;
+}
+

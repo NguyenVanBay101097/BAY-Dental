@@ -23,17 +23,17 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task CreateSettlements(AccountPayment val)
-        {
-            var settlements = new List<CommissionSettlement>();
-            var rels = val.SaleOrderLinePaymentRels;
-            foreach (var rel in rels)
-                settlements.Add(await _GetSettlement(rel));
+        //public async Task CreateSettlements(AccountPayment val)
+        //{
+        //    var settlements = new List<CommissionSettlement>();
+        //    var rels = val.SaleOrderLinePaymentRels;
+        //    foreach (var rel in rels)
+        //        settlements.Add(await _GetSettlement(rel));
 
-            ComputeAmount(settlements);
+        //    ComputeAmount(settlements);
 
-            await CreateAsync(settlements);
-        }
+        //    await CreateAsync(settlements);
+        //}
 
         public async Task<CommissionSettlement> _GetSettlement(SaleOrderLinePaymentRel val)
         {
@@ -53,45 +53,84 @@ namespace Infrastructure.Services
                 return null;
 
             var partnerCommissionObj = GetService<ISaleOrderLinePartnerCommissionService>();
-            var partnerCommission = await partnerCommissionObj.SearchQuery(x => x.SaleOrderLineId == linePaymentRel.SaleOrderLineId && x.CommissionId == employee.CommissionId && x.PartnerId == user.PartnerId).FirstOrDefaultAsync();
+            var partnerCommission = await partnerCommissionObj.SearchQuery(x => x.SaleOrderLineId == linePaymentRel.SaleOrderLineId && x.CommissionId == employee.CommissionId).FirstOrDefaultAsync();
             if (partnerCommission == null)
                 return null;
 
             var res = new CommissionSettlement
             {
-                Partner = user.Partner,
-                PartnerId = user.PartnerId,
+
                 Employee = employee,
                 EmployeeId = employee.Id,
-                SaleOrderLine = linePaymentRel.SaleOrderLine,
-                SaleOrderLineId = linePaymentRel.SaleOrderLineId,
-                Payment = linePaymentRel.Payment,
-                PaymentId = linePaymentRel.PaymentId,
                 BaseAmount = linePaymentRel.AmountPrepaid,
-                Percentage = partnerCommission.Percentage
             };
 
             return res;
 
         }
 
-        public IEnumerable<CommissionSettlement> ComputeAmount(IEnumerable<CommissionSettlement> val)
+        public override async Task UpdateAsync(IEnumerable<CommissionSettlement> entities)
         {
-            foreach (var item in val)
-                item.Amount = (item.BaseAmount * item.Percentage) / 100;
-
-            return val;
-
+            await ComputeAmount(entities);
+            await base.UpdateAsync(entities);
         }
 
-        public async Task Unlink(IEnumerable<Guid> paymentIds)
+        public async Task ComputeAmount(IEnumerable<CommissionSettlement> val)
         {
-            var res = await SearchQuery(x => paymentIds.Contains(x.PaymentId.Value)).ToListAsync();
+            var commisstionProductRuleObj = GetService<ICommissionProductRuleService>();
+            foreach (var settlement in val)
+            {
+                var percent = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == settlement.CommissionId && x.ProductId == settlement.ProductId).Select(x => x.Percent).FirstOrDefaultAsync();
+                if (percent <= 0)
+                    continue;
+
+                var total = settlement.MoveLine.PriceSubtotal;              
+                settlement.TotalAmount = total;
+                settlement.BaseAmount = total;
+                settlement.Percentage = percent ?? 0;
+                settlement.Amount = ((total * (percent ?? 0)) / 100);
+            }         
+        }
+
+
+        //public override Task<IEnumerable<CommissionSettlement>> CreateAsync(IEnumerable<CommissionSettlement> entities)
+        //{
+        //    // tạo (AccountMove -> AccountMoveLine -> add Settlement), lấy ra list sett
+        //    ComputeAmount(entities);
+        //    return base.CreateAsync(entities);
+        //}
+
+        //public IEnumerable<CommissionSettlement> ComputeAmount(IEnumerable<CommissionSettlement> self)
+        //{
+        //    foreach (var item in self)
+        //    {
+        //        //Lấy ra số tiền thanh toán dựa trên AccountMoveLine
+
+        //        //Lấy ra tổng tiền vốn = số lượng * giá vốn SaleOrderLine
+
+        //        //Tính tổng thanh toán của các lần thanh toán trước dựa vào SaleOrderLine có list AccountMoveLines
+        //        //Tính tổng lợi nhuận từ các lần thanh toán trước
+
+        //        //Tính ra số tiền lợi nhuận = số tiền thanh toán + tổng thanh toán các lần trước - tổng tiền vốn - tổng lợi nhuận của các lần thanh toán trước
+
+
+        //        //item.Amount = ???;
+        //        //var amount = item.BaseAmount * amountPayment / item.TotalAmount;
+        //        //item.Amount = Math.Abs((decimal)((amount * item.Percentage.Value) / 100));
+        //    }
+        //    return self;
+
+        //}
+
+        public async Task Unlink(IEnumerable<Guid> moveLineIds)
+        {
+            var res = await SearchQuery(x => moveLineIds.Contains(x.MoveLineId.Value)).ToListAsync();
             if (res == null)
                 throw new Exception("Null CommissionSettlement");
 
             await DeleteAsync(res);
         }
+
 
         public override ISpecification<CommissionSettlement> RuleDomainGet(IRRule rule)
         {
@@ -113,17 +152,15 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
             {
                 val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.Payment.PaymentDate >= val.DateFrom);
+                query = query.Where(x => x.Date >= val.DateFrom);
             }
 
             if (val.DateTo.HasValue)
             {
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Payment.PaymentDate <= val.DateTo);
+                query = query.Where(x => x.Date <= val.DateTo);
             }
-
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.SaleOrderLine.CompanyId == val.CompanyId);
+       
 
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
@@ -156,28 +193,29 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
             {
                 val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.Payment.PaymentDate >= val.DateFrom);
+                query = query.Where(x => x.Date >= val.DateFrom);
             }
 
             if (val.DateTo.HasValue)
             {
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Payment.PaymentDate <= val.DateTo);
+                query = query.Where(x => x.Date <= val.DateTo);
             }
 
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.SaleOrderLine.CompanyId == val.CompanyId);
 
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
 
-            var items = await query.OrderBy(x => x.Payment.PaymentDate).Skip(val.Offset).Take(val.Limit)
-                .Select(x => new CommissionSettlementReportDetailOutput { 
+            var items = await query.OrderBy(x => x.Date).Skip(val.Offset).Take(val.Limit)
+                .Select(x => new CommissionSettlementReportDetailOutput
+                {
                     Amount = x.Amount,
                     BaseAmount = x.BaseAmount,
-                    Date = x.Payment.PaymentDate,
+                    Date = x.Date,
                     Percentage = x.Percentage,
-                    ProductName = x.SaleOrderLine.Name
+                    ProductName = x.Product.Name,
+                    PartnerName = x.MoveLine.Partner.Name,
+                    InvoiceOrigin = x.MoveLine.Move.InvoiceOrigin
                 }).ToListAsync();
 
             var totalItems = await query.CountAsync();
@@ -186,6 +224,13 @@ namespace Infrastructure.Services
             {
                 Items = items
             };
+        }
+
+        public decimal GetStandardPrice(Guid id, Guid? force_company_id = null)
+        {
+            var propertyObj = GetService<IIRPropertyService>();
+            var val = propertyObj.get("standard_price", "product.product", res_id: $"product.product,{id}", force_company: force_company_id);
+            return Convert.ToDecimal(val == null ? 0 : val);
         }
     }
 }

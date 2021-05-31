@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -7,6 +8,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -30,7 +32,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet]
         [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
-        public async Task<IActionResult> Get([FromQuery]SaleCouponProgramPaged val)
+        public async Task<IActionResult> Get([FromQuery] SaleCouponProgramPaged val)
         {
             var result = await _programService.GetPagedResultAsync(val);
             return Ok(result);
@@ -47,6 +49,50 @@ namespace TMTDentalAPI.Controllers
             return Ok(display);
         }
 
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
+        public async Task<IActionResult> GetListPaged([FromQuery] SaleCouponProgramGetListPagedRequest val)
+        {
+            var result = await _programService.GetListPaged(val);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
+        public async Task<IActionResult> GetPromotionBySaleOrder([FromQuery] Guid? partnerId)
+        {
+            var result = await _programService.GetPromotionBySaleOrder(partnerId);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
+        public async Task<IActionResult> GetPromotionBySaleOrderLine([FromQuery] Guid productId, Guid? partnerId)
+        {
+            var result = await _programService.GetPromotionBySaleOrderLine(productId, partnerId);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
+        public async Task<IActionResult> GetPromotionByFastSaleOrder()
+        {
+            var result = await _programService.GetPromotionByFastSaleOrder();
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
+        public async Task<IActionResult> GetAmountTotalUsagePromotion(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var amountTotal = await _programService.GetAmountTotal(id);
+            _unitOfWork.Commit();
+
+            return Ok(amountTotal);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Create")]
         public async Task<IActionResult> Create(SaleCouponProgramSave val)
@@ -58,7 +104,7 @@ namespace TMTDentalAPI.Controllers
             var program = await _programService.CreateProgram(val);
             _unitOfWork.Commit();
 
-            var basic = _mapper.Map<SaleCouponProgramBasic>(program);
+            var basic = _mapper.Map<SaleCouponProgramSimple>(program);
             return Ok(basic);
         }
 
@@ -134,6 +180,25 @@ namespace TMTDentalAPI.Controllers
             await _programService.ActionUnArchive(ids);
             _unitOfWork.Commit();
             return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult DefaultGet(string programType)
+        {
+            var result = new SaleCouponProgramDisplay();
+            result.ProgramType = programType;
+            result.CompanyId = CompanyId;
+            result.ApplyPartnerOn = "all";
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult CheckPromoCodeExist(string code)
+        {
+            var promoCode = _programService.SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == code).FirstOrDefault();
+            if (promoCode != null)
+                return Ok(true);
+            return Ok(false);
         }
     }
 }

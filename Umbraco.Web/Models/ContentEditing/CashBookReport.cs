@@ -32,5 +32,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string JournalName { get; set; }
 
         public string Name { get; set; }
+
+        public string InvoiceOrigin { get; set; }
     }
 }

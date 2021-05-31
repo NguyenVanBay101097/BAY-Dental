@@ -235,6 +235,7 @@ namespace Infrastructure.Services
                     Journal = phieu.Journal,
                     CompanyId = phieu.CompanyId,
                     PartnerId = phieu.PartnerId,
+                    InvoiceOrigin = phieu.Name
                 };
 
                 var lines = new List<AccountMoveLine>()

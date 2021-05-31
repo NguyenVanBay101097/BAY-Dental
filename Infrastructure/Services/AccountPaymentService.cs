@@ -33,7 +33,7 @@ namespace Infrastructure.Services
         public async Task Post(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.AccountMovePaymentRels)
+                .Include(x => x.AccountMovePaymentRels).ThenInclude(x => x.Move)
                 .Include(x => x.SaleOrderPaymentRels)
                 .Include(x => x.SaleOrderLinePaymentRels)
                 .Include(x => x.CardOrderPaymentRels)
@@ -166,12 +166,10 @@ namespace Infrastructure.Services
                 {
                     var settlement = new CommissionSettlement
                     {
-                        SaleOrderLineId = agent.SaleOrderLineId,
-                        PaymentId = self.Id,
+                     
                         EmployeeId = agent.EmployeeId,
                         BaseAmount = (rel.AmountPrepaid ?? 0),
-                        Percentage = agent.Percentage,
-                        Amount = Math.Round((rel.AmountPrepaid ?? 0) * (agent.Percentage ?? 0) / 100)
+                    
                     };
 
                     settlements.Add(settlement);
@@ -260,13 +258,11 @@ namespace Infrastructure.Services
                         rec_pay_line_name += "Thanh toán nhà cung cấp";
                 }
 
-                //if (payment.AccountMovePaymentRels.Any())
-                //{
-                //    var moveObj = GetService<IAccountMoveService>();
-                //    var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId);
-                //    var move_names = await moveObj.SearchQuery(x => move_ids.Contains(x.Id)).Select(x => x.Name).ToListAsync();
-                //    rec_pay_line_name += $": {string.Join(", ", move_names)}";
-                //}
+                if (payment.AccountMovePaymentRels.Any())
+                {
+                    var move_origins = payment.AccountMovePaymentRels.Select(x => x.Move.InvoiceOrigin).ToList();
+                    rec_pay_line_name += $": {string.Join(", ", move_origins)}";
+                }
 
                 var liquidity_line_name = "";
                 if (payment.PaymentType == "transfer")
@@ -282,13 +278,14 @@ namespace Infrastructure.Services
                     Journal = payment.Journal,
                     PartnerId = payment.PartnerId,
                     CompanyId = payment.CompanyId,
+                    InvoiceOrigin = payment.Name,
                 };
 
                 var lines = new List<AccountMoveLine>()
                 {
                     new AccountMoveLine
                     {
-                        Name = rec_pay_line_name,
+                        Name = !string.IsNullOrEmpty(payment.Communication) ? payment.Communication : rec_pay_line_name,
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         DateMaturity = payment.PaymentDate,
@@ -848,15 +845,18 @@ namespace Infrastructure.Services
             var orderlineObj = GetService<ISaleOrderLineService>();
             var linePaymentRelObj = GetService<ISaleOrderLinePaymentRelService>();
             var order = await orderObj.SearchQuery(x => x.Id == saleOrderId && x.Residual > 0).Include(x => x.OrderLines).FirstOrDefaultAsync();
-            foreach (var line in order.OrderLines)
+            if (order != null)
             {
-                var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id && x.Payment.State != "draft" && x.Payment.State != "cancel")
-                    .SumAsync(x => x.AmountPrepaid.Value);
-                line.AmountPaid = amountPaid;
-                line.AmountResidual = line.PriceSubTotal - amountPaid;
-            }
+                foreach (var line in order.OrderLines)
+                {
+                    var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id && x.Payment.State != "draft" && x.Payment.State != "cancel")
+                        .SumAsync(x => x.AmountPrepaid.Value);
+                    line.AmountPaid = amountPaid;
+                    line.AmountResidual = line.PriceSubTotal - amountPaid;
+                }
 
-            await orderlineObj.UpdateAsync(order.OrderLines);
+                await orderlineObj.UpdateAsync(order.OrderLines);
+            }
         }
 
         public IDictionary<string, string> MAP_INVOICE_TYPE_PARTNER_TYPE
@@ -1091,10 +1091,7 @@ namespace Infrastructure.Services
         public async Task CancelAsync(IEnumerable<Guid> ids)
         {
             await CancelAsync(SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.MoveLines).ThenInclude(x => x.Move)
-                .Include(x => x.MoveLines).ThenInclude(x => x.Move).ThenInclude(x => x.Lines)
-                .Include(x => x.AccountMovePaymentRels)
-                .Include(x => x.SaleOrderPaymentRels)
+                .Include(x => x.MoveLines)
                 .ToList());
         }
 
@@ -1102,35 +1099,39 @@ namespace Infrastructure.Services
         {
             var moveObj = GetService<IAccountMoveService>();
             var moveLineObj = GetService<IAccountMoveLineService>();
+            var moveIds = payments.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList();
+            var moves = await moveObj.ButtonDraft(moveIds);
+            //await moveObj.Unlink(moveIds);
+            await moveObj.DeleteAsync(moves);
             foreach (var rec in payments)
             {
-                foreach (var move in rec.MoveLines.Select(x => x.Move).Distinct().ToList())
-                {
-                    if (rec.AccountMovePaymentRels.Any())
-                        await moveLineObj.RemoveMoveReconcile(move.Lines.Select(x => x.Id).ToList());
-                    else
-                        await moveLineObj.RemoveMoveReconcile(rec.MoveLines.Select(x => x.Id).ToList());
+                //foreach (var move in rec.MoveLines.Select(x => x.Move).Distinct().ToList())
+                //{
+                //    if (rec.AccountMovePaymentRels.Any())
+                //        await moveLineObj.RemoveMoveReconcile(move.Lines.Select(x => x.Id).ToList());
+                //    else
+                //        await moveLineObj.RemoveMoveReconcile(rec.MoveLines.Select(x => x.Id).ToList());
 
-                    await moveObj.ButtonCancel(new List<Guid>() { move.Id });
-                    await moveObj.Unlink(new List<Guid>() { move.Id });
-                }
+                //    await moveObj.ButtonCancel(new List<Guid>() { move.Id });
+                //    await moveObj.Unlink(new List<Guid>() { move.Id });
+                //}
 
                 rec.State = "cancel";
             }
 
             await UpdateAsync(payments);
 
-            //delete commission
-            var settlementObj = GetService<ICommissionSettlementService>();
-            await settlementObj.Unlink(payments.Select(x => x.Id).ToList());
+            ////delete commission
+            //var settlementObj = GetService<ICommissionSettlementService>();
+            //await settlementObj.Unlink(payments.Select(x => x.Id).ToList());
 
-            //update saleorderline
-            var saleOrderIds = payments.SelectMany(x => x.SaleOrderPaymentRels).Select(x => x.SaleOrderId).ToList();
-            if (saleOrderIds.Any())
-            {
-                foreach (var saleOrderId in saleOrderIds)
-                    await _ComputeSaleOrderLines(saleOrderId);
-            }
+            ////update saleorderline
+            //var saleOrderIds = payments.SelectMany(x => x.SaleOrderPaymentRels).Select(x => x.SaleOrderId).ToList();
+            //if (saleOrderIds.Any())
+            //{
+            //    foreach (var saleOrderId in saleOrderIds)
+            //        await _ComputeSaleOrderLines(saleOrderId);
+            //}
         }
 
         public async Task UnlinkAsync(IEnumerable<Guid> ids)

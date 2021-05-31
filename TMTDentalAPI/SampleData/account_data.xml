@@ -55,16 +55,28 @@
       <field eval="False" name="company_id"/>
       <field name="padding">4</field>
     </record>
-
-    <record id="sequence_payment_customer_refund" model="ir.sequence">
-      <field name="name">Payments customer refunds sequence</field>
-      <field name="code">account.payment.customer.refund</field>
-      <field name="prefix">CUST.OUT/{yyyy}/</field>
+    
+     <!--<record id="sequence_payment_customer_invoice" model="ir.sequence">
+      <field name="name">Payments customer invoices sequence</field>
+      <field name="code">account.payment.customer.invoice</field>
+      <field name="prefix">CUST.IN/{yyyy}/</field>
       <field eval="1" name="number_next"/>
       <field eval="1" name="number_increment"/>
       <field eval="False" name="company_id"/>
       <field name="padding">4</field>
+    </record>-->
+    
+    <!-- Quotation -->
+    <record id="quotation" model="ir.sequence">
+      <field name="name">Quotation</field>
+      <field name="code">quotation</field>
+      <field name="prefix">BG</field>
+      <field eval="1" name="number_next"/>
+      <field eval="1" name="number_increment"/>
+      <field eval="False" name="company_id"/>
+      <field name="padding">5</field>
     </record>
+    
     <record id="sequence_payment_supplier_invoice" model="ir.sequence">
       <field name="name">Payments supplier invoices sequence</field>
       <field name="code">account.payment.supplier.invoice</field>
@@ -242,6 +254,12 @@
       <field name="user_type_id" ref="account.data_account_type_expenses" />
     </record>
 
+    <record model="account.account" id="data_account_KHTU">
+      <field name="name">Khách hàng tạm ứng</field>
+      <field name="code">KHTU</field>
+      <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
+    </record>
+
     <!-- account.journal -->
     <record model="account.journal" id="data_account_journal_cash">
       <field name="name">Tiền mặt</field>
@@ -302,6 +320,15 @@
       <field name="update_posted" eval="True" />
       <field name="default_debit_account_id" ref="account.data_account_642" />
       <field name="default_credit_account_id" ref="account.data_account_642" />
+    </record>
+
+    <record model="account.journal" id="data_account_journal_advance">
+      <field name="name">Nhật ký khách hàng tạm ứng</field>
+      <field name="type">advance</field>
+      <field name="code">ADVANCE</field>
+      <field name="update_posted" eval="True" />
+      <field name="default_debit_account_id" ref="account.data_account_KHTU" />
+      <field name="default_credit_account_id" ref="account.data_account_KHTU" />
     </record>
 
 

@@ -28,8 +28,10 @@ namespace ApplicationCore.Entities
         public Guid? CategId { get; set; }
         public ProductCategory Categ { get; set; }
 
-        public decimal? PercentFixed { get; set; }
-
+        /// <summary>
+        /// % hoa hồng 
+        /// </summary>
+        public decimal? Percent { get; set; }
 
         public Guid CommissionId { get; set; }
         public Commission Commission { get; set; }

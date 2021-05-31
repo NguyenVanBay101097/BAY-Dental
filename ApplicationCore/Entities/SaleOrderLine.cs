@@ -20,6 +20,8 @@ namespace ApplicationCore.Entities
             QtyInvoiced = 0;
             AmountPaid = 0;
             AmountResidual = 0;
+            AmountInvoiced = 0;
+            AmountDiscountTotal = 0;
         }
 
         public SaleOrderLine(SaleOrderLine line)
@@ -106,8 +108,18 @@ namespace ApplicationCore.Entities
 
         public ICollection<SaleOrderLineInvoiceRel> SaleOrderLineInvoiceRels { get; set; } = new List<SaleOrderLineInvoiceRel>();
 
+        public ICollection<SaleOrderPaymentHistoryLine> PaymentHistoryLines { get; set; } = new List<SaleOrderPaymentHistoryLine>();
+
         public Guid? ToothCategoryId { get; set; }
         public ToothCategory ToothCategory { get; set; }
+
+        /// <summary>
+        /// whole_jaw: nguyên hàm
+        /// upper_jaw : hàm trên
+        /// lower_jaw : hàm dưới
+        /// manual :  thủ công
+        /// </summary>
+        public string ToothType { get; set; }
 
         /// <summary>
         /// Chẩn đoán
@@ -149,9 +161,14 @@ namespace ApplicationCore.Entities
         public decimal? AmountPaid { get; set; }
 
         /// <summary>
-        /// Tiền còn nợ
+        /// Không sử dụng
         /// </summary>
         public decimal? AmountResidual { get; set; }
+
+        /// <summary>
+        /// Tổng đơn giá giảm của dịch vụ
+        /// </summary>
+        public double? AmountDiscountTotal { get; set; }
 
         /// <summary>
         /// bác sĩ được hưởng hoa hồng
@@ -168,21 +185,42 @@ namespace ApplicationCore.Entities
         public ICollection<LaboOrder> Labos { get; set; } = new List<LaboOrder>();
 
         /// <summary>
+        /// danh sách chương trình ưu đãi
+        /// </summary>
+        public ICollection<SaleOrderPromotion> Promotions { get; set; } = new List<SaleOrderPromotion>();
+
+        public ICollection<SaleOrderPromotionLine> PromotionLines { get; set; } = new List<SaleOrderPromotionLine>();
+
+        /// <summary>
         /// Xác định line bị hủy bỏ
         /// </summary>
         public bool IsCancelled { get; set; }
 
         /// <summary>
-        /// Bac si
+        /// Bác sĩ
         /// </summary>
         public Guid? EmployeeId { get; set; }
         public Employee Employee { get; set; }
 
         /// <summary>
-        /// phu ta
+        /// Phụ tá
         /// </summary>
         public Guid? AssistantId { get; set; }
         public Employee Assistant { get; set; }
+
+        /// <summary>
+        /// người tư vấn
+        /// </summary>
+        public Guid? CounselorId { get; set; }
+        public Employee Counselor { get; set; }
+
+        public Guid? AdvisoryId { get; set; }
+        public Advisory Advisory { get; set; }
+
+        /// <summary>
+        /// ngừng hoạt động
+        /// </summary>
+        public bool IsActive { get; set; }
 
     }
 }

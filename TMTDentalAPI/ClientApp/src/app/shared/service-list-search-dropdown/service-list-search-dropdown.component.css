@@ -1,0 +1,39 @@
+/* .dropdown-menu {
+    max-width: 410px;
+    width: 100%;
+    min-width: 300px;
+}
+
+.dropdown-menu .dropdown-item {
+    padding: 0 !important;
+} */
+
+.search-icon {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: hsl(208deg 7% 46%);
+    padding: 10px;
+}
+
+.input-search {
+    padding-left: 36px;
+}
+
+._wrapper {
+    max-width: 400px;
+}
+
+._wrapper .input-search {
+    box-shadow: none;
+}
+
+._wrapper .dropdown-menu {
+    width: 100%;
+    overflow: auto;
+    max-height: 400px;
+}
+
+._wrapper .dropdown-menu .service-name {
+    white-space: normal;
+}

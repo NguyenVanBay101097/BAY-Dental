@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleCouponProgramService, SaleCouponProgramPaged, SaleCouponProgramBasic } from '../sale-coupon-program.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-sale-coupon-program-list',
@@ -25,8 +26,15 @@ export class SaleCouponProgramListComponent implements OnInit {
   selectedIds: string[] = [];
   filterActive = true;
 
+  // permission
+  canSaleCouponProgramCreate = this.checkPermissionService.check(["SaleCoupon.SaleCouponProgram.Create"]);
+  canSaleCouponProgramUpdate = this.checkPermissionService.check(["SaleCoupon.SaleCouponProgram.Update"]);
+  canSaleCouponProgramDelete = this.checkPermissionService.check(["SaleCoupon.SaleCouponProgram.Delete"]);
+
   constructor(private programService: SaleCouponProgramService, private route: ActivatedRoute,
-    private router: Router, private modalService: NgbModal) { }
+    private router: Router, private modalService: NgbModal, 
+    private checkPermissionService: CheckPermissionService
+  ) { }
 
   ngOnInit() {
     this.loadDataFromApi();

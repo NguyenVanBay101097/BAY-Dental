@@ -33,12 +33,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IApplicationRoleFunctionService _roleFunctionService;
         private readonly IMyCache _cache;
         private readonly AppTenant _tenant;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public ApplicationRolesController(RoleManager<ApplicationRole> roleManager,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
             UserManager<ApplicationUser> userManager,
             IApplicationRoleFunctionService roleFunctionService, ITenant<AppTenant> tenant,
-            IMyCache cache)
+            IMyCache cache, IWebHostEnvironment webHostEnvironment)
         {
             _roleManager = roleManager;
             _mapper = mapper;
@@ -48,13 +49,14 @@ namespace TMTDentalAPI.Controllers
             _roleFunctionService = roleFunctionService;
             _cache = cache;
             _tenant = tenant?.Value;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet]
         [CheckAccess(Actions = "System.ApplicationRole.Read")]
-        public async Task<IActionResult> Get([FromQuery]ApplicationRolePaged val)
+        public async Task<IActionResult> Get([FromQuery] ApplicationRolePaged val)
         {
-            var query = _roleManager.Roles;
+            var query = _roleManager.Roles.Where(x => x.Hidden == false);
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NormalizedName.Contains(val.Search));
             query = query.OrderBy(x => x.Name);
@@ -89,14 +91,37 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
             var role = _mapper.Map<ApplicationRole>(val);
-           
-            foreach(var function in val.Functions)
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\additionalFeatures.json");
+            using (var reader = new StreamReader(filePath))
             {
-                role.Functions.Add(new ApplicationRoleFunction()
+                var fileContent = reader.ReadToEnd();
+                var additionalFeatures = JsonConvert.DeserializeObject<List<AdditionalPermissionViewModel>>(fileContent);
+
+                foreach (var function in val.Functions)
                 {
-                    Func = function
-                });
+                    role.Functions.Add(new ApplicationRoleFunction()
+                    {
+                        Func = function
+                    });
+                    foreach (var feature in additionalFeatures)
+                    {
+                        if (feature.Permissions.Contains(function))
+                        {
+                            foreach (var item in feature.Additionals)
+                            {
+                                role.Functions.Add(new ApplicationRoleFunction()
+                                {
+                                    Func = item
+                                });
+                            }
+                        }
+                    }
+
+                }
+
+
             }
+
 
             try
             {
@@ -131,10 +156,10 @@ namespace TMTDentalAPI.Controllers
 
         private void ClearPermissionsCache(IEnumerable<string> userIds)
         {
-            foreach(var userId in userIds) 
-            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{userId}");
+            foreach (var userId in userIds)
+                _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{userId}");
         }
-       
+
         [HttpPut("{id}")]
         [CheckAccess(Actions = "System.ApplicationRole.Update")]
         public async Task<IActionResult> Update(string id, ApplicationRoleSave val)
@@ -155,14 +180,40 @@ namespace TMTDentalAPI.Controllers
                 });
             }
 
+            //thêm cái quyền bổ sung
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\additionalFeatures.json");
+            using (var reader = new StreamReader(filePath))
+            {
+                var fileContent = reader.ReadToEnd();
+                var additionalFunctions = JsonConvert.DeserializeObject<List<AdditionalPermissionViewModel>>(fileContent);
+
+                foreach (var function in role.Functions.ToList())
+                {
+                    var items = additionalFunctions.Where(x => x.Permissions.Contains(function.Func));
+                    foreach (var item in items)
+                    {
+                        foreach(var additionalFunction in item.Additionals)
+                        {
+                            if (!role.Functions.Any(x => x.Func == additionalFunction))
+                            {
+                                role.Functions.Add(new ApplicationRoleFunction()
+                                {
+                                    Func = additionalFunction
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
             try
             {
                 var result = await _roleManager.UpdateAsync(role);
-            
-            if (!result.Succeeded)
-            {
-                throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
-            }
+
+                if (!result.Succeeded)
+                {
+                    throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
+                }
             }
             catch (Exception)
             {
@@ -214,6 +265,33 @@ namespace TMTDentalAPI.Controllers
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
             }
             return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetPermissionTree(string id)
+        {
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\features.json");
+            using (var reader = new StreamReader(filePath))
+            {
+                var fileContent = reader.ReadToEnd();
+                var groups = JsonConvert.DeserializeObject<List<PermissionTreeV2GroupViewModel>>(fileContent);
+                if (!string.IsNullOrEmpty(id))
+                {
+                    var role = await _roleManager.Roles.Where(x => x.Id == id).Include(x => x.Functions).FirstOrDefaultAsync();
+                    foreach (var group in groups)
+                    {
+                        foreach (var funct in group.Functions)
+                        {
+                            foreach (var op in funct.Ops)
+                            {
+                                op.Checked = role.Functions.Any(x => x.Func == op.Permission);
+                            }
+                        }
+                    }
+                }
+
+                return Ok(groups);
+            }
         }
     }
 }

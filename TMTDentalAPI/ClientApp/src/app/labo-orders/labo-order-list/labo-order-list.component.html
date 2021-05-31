@@ -62,7 +62,7 @@
                 {{dataItem.orderPartner.displayName }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="orderName" title="Phiếu điều trị" width="100">
+        <kendo-grid-column *ngIf="canUpdateSaleOrder" field="orderName" title="Phiếu điều trị" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.order.id}"> {{dataItem.order.name}}</a>
             </ng-template>
