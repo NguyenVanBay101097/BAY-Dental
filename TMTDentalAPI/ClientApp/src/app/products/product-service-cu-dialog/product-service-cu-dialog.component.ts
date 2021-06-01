@@ -21,6 +21,7 @@ import { result } from 'lodash';
 import { Console } from 'console';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AuthService } from 'src/app/auth/auth.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-product-service-cu-dialog',
@@ -52,6 +53,8 @@ export class ProductServiceCuDialogComponent implements OnInit {
   lengthStepList: number = 0; // độ dài step list
   filteredProducts: any[] = [];
   isExist: boolean = false;
+  showStandardPrice = false; // ẩn hiện giá vốn theo phân quyền
+
   @Input() productDefaultVal: Product;
 
   @ViewChild('form', { static: true }) formView: any;
@@ -61,7 +64,11 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
-    private modalService: NgbModal, private showErrorService: AppSharedShowErrorService, private notificationService: NotificationService, private authService: AuthService) {
+    private modalService: NgbModal, 
+    private showErrorService: AppSharedShowErrorService, 
+    private notificationService: NotificationService, 
+    private authService: AuthService,
+    private checkPermissionService: CheckPermissionService) {
   }
 
   formStepEdit = this.fb.group({
@@ -112,7 +119,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
     } else {
       this.loadDefault();
     }
-
+    this.checkPermission();
     this.categCbxFilterChange();
     this.productCbxFilterChange();
    
@@ -507,6 +514,10 @@ export class ProductServiceCuDialogComponent implements OnInit {
     else {
       this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
     }
+  }
+
+  checkPermission(){
+    this.showStandardPrice = this.checkPermissionService.check(['Catalog.Products.StandardPrice']);
   }
 }
 
