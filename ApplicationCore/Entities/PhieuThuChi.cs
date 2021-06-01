@@ -63,7 +63,7 @@ namespace ApplicationCore.Entities
         public decimal Amount { get; set; }
 
         /// <summary>
-        /// Kèm theo
+        /// Kèm theo, bỏ ko xài
         /// </summary>
         public string Communication { get; set; }
 
@@ -73,12 +73,12 @@ namespace ApplicationCore.Entities
         public string Reason { get; set; }
 
         /// <summary>
-        /// Người nộp tiền/Người nhận tiền
+        /// Người nộp tiền/Người nhận tiền, bỏ ko xài
         /// </summary>
         public string PayerReceiver { get; set; }
 
         /// <summary>
-        /// Địa chỉ
+        /// Địa chỉ, bỏ ko xài
         /// </summary>
         public string Address { get; set; }
 
@@ -104,11 +104,8 @@ namespace ApplicationCore.Entities
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
 
-        /// <summary>
-        /// khách hàng : phần chi hoa hồng
-        /// </summary>
-        public Guid? CustomerId { get; set; }
-        public Partner Customer { get; set; }
+        public Guid? AgentId { get; set; }
+        public Agent Agent { get; set; }
 
         public Guid? AccountId { get; set; }
         public AccountAccount Account { get; set; }

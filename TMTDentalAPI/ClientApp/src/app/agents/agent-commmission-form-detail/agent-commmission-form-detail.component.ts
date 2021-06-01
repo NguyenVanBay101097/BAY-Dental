@@ -26,6 +26,7 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
   searchUpdate = new Subject<string>();
   dateFrom: Date;
   dateTo: Date;
+  updateSubject: Subject<boolean> = new Subject<boolean>();
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -88,11 +89,13 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
     const modalRef = this.modalService.open(AgentCommmissionPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Chi hoa hồng';
     modalRef.componentInstance.type = 'chi';
+    modalRef.componentInstance.accountType = 'commission';
     modalRef.componentInstance.agentId = this.id;
-    modalRef.componentInstance.customerId = item.partner.id;
+    modalRef.componentInstance.partnerId = item.partner.id;
     modalRef.result.then(() => {
       this.notifyService.notify('success', 'Thanh toán thành công');
       this.loadDataFromApi();
+      this.updateSubject.next(true);
     }, er => { })
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -14,7 +14,7 @@ export class AgentCommissionFormComponent implements OnInit {
   agent: any;
   amountInComeAgent = 0;
   amountCommissionAgent = 0;
-  public isRefresh = new Subject<boolean>();
+  @Input() updateSubject: Subject<boolean> = new Subject<boolean>();
   constructor(private agentService: AgentService, private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -22,30 +22,42 @@ export class AgentCommissionFormComponent implements OnInit {
     this.loadDataFromApi();
     this.loadAmountInComeAgent();
     this.loadAmountCommissionAgent();
+
+    this.updateSubject.subscribe(response => {
+      
+      if (response) {
+        this.reload();
+      }
+    });
   }
 
   loadDataFromApi() {
     if (this.id) {
       this.agentService.get(this.id).subscribe((result) => {
-        this.agent = result;      
+        this.agent = result;
       });
     }
   }
 
-  loadAmountCommissionAgent(){
-    if(this.id){
+  loadAmountCommissionAgent() {
+    if (this.id) {
       this.agentService.getAmountCommissionAgent(this.id).subscribe((result) => {
-        this.amountCommissionAgent = result;      
+        this.amountCommissionAgent = result;
       });
     }
   }
 
-  loadAmountInComeAgent(){
-    if(this.id){
+  loadAmountInComeAgent() {
+    if (this.id) {
       this.agentService.getAmountInComeAgent(this.id).subscribe((result) => {
-        this.amountInComeAgent = result;      
+        this.amountInComeAgent = result;
       });
     }
+  }
+
+  reload() {
+      this.loadAmountCommissionAgent();
+      this.loadAmountInComeAgent();
   }
 
 }

@@ -44,6 +44,9 @@ namespace Infrastructure.Services
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId);
 
+            if (val.AgentId.HasValue)
+                query = query.Where(x => x.AgentId == val.AgentId);
+
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateFrom.Value);
 
@@ -61,7 +64,7 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            var items = await query.Include(x => x.LoaiThuChi).Include(x => x.Journal).Include(x => x.Customer).ToListAsync();
+            var items = await query.Include(x => x.LoaiThuChi).Include(x => x.Journal).Include(x => x.Partner).ToListAsync();
 
             return new PagedResult2<PhieuThuChiBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -76,63 +79,90 @@ namespace Infrastructure.Services
 
         public async Task<PhieuThuChi> CreatePhieuThuChi(PhieuThuChiSave val)
         {
-            var partnerObj = GetService<IPartnerService>();
-            var loaiThuChiObj = GetService<ILoaiThuChiService>();
-
             var phieuThuChi = _mapper.Map<PhieuThuChi>(val);
 
-            if (string.IsNullOrEmpty(phieuThuChi.Name))
-            {
-                var seqObj = GetService<IIRSequenceService>();
-                if (phieuThuChi.Type == "thu")
-                {
-                    phieuThuChi.Name = await seqObj.NextByCode("phieu.thu");
-                    if (string.IsNullOrEmpty(phieuThuChi.Name))
-                    {
-                        await _InsertPhieuThuSequence();
-                        phieuThuChi.Name = await seqObj.NextByCode("phieu.thu");
-                    }
-                }
-                else if (phieuThuChi.Type == "chi")
-                {
-                    phieuThuChi.Name = await seqObj.NextByCode("phieu.chi");
-                    if (string.IsNullOrEmpty(phieuThuChi.Name))
-                    {
-                        await _InsertPhieuChiSequence();
-                        phieuThuChi.Name = await seqObj.NextByCode("phieu.chi");
-                    }
-                }
-                else
-                    throw new Exception("Not support");
-            }
-
-            if (val.PartnerId.HasValue)
-            {
-                var partner = await partnerObj.SearchQuery(x => x.Id == val.PartnerId).FirstOrDefaultAsync();
-                if (partner == null) throw new Exception("Không tìm thấy người");
-                phieuThuChi.PayerReceiver = partner.Name;
-                phieuThuChi.Address = partner.GetAddress();
-            }
-
-            if (val.LoaiThuChiId.HasValue)
-            {
-                var loaithuchi = await loaiThuChiObj.SearchQuery(x => x.Id == val.LoaiThuChiId).FirstOrDefaultAsync();
-                phieuThuChi.AccountId = loaithuchi.AccountId;
-            }
-
-            phieuThuChi.AccountType = "other";
-
+            await GenerateNamePhieuThuChi(phieuThuChi);
+            await ComputeProps(phieuThuChi);
             return await CreateAsync(phieuThuChi);
         }
 
-        public void ComputeProps(PhieuThuChi self)
+        public async Task ComputeProps(PhieuThuChi self)
         {
-            self.CompanyId = self.Journal.CompanyId;
-            if (!self.AccountId.HasValue && self.LoaiThuChiId.HasValue)
-                self.AccountId = self.LoaiThuChi.AccountId;
+            var journalObj = GetService<IAccountJournalService>();
+            var journal = await journalObj.GetJournalWithDebitCreditAccount(self.JournalId);
+            self.CompanyId = journal.CompanyId;
+            var account = await ComputeDestinationAccount(self);
+            self.AccountId = account.Id;
         }
 
-        private async Task _InsertPhieuThuSequence()
+        public async Task<AccountAccount> ComputeDestinationAccount(PhieuThuChi self)
+        {
+            var accountObj = GetService<IAccountAccountService>();
+            var loaithuchiObj = GetService<ILoaiThuChiService>();
+            var account = new AccountAccount();
+            //nếu là thu chi ngoài: lấy account trong loai thu chi
+            //nếu là thu chi công nợ: lấy account công nợ
+            //nếu là thu chi hoa hồng: lấy account hoa hồng
+
+            if (self.AccountType == "other" && self.LoaiThuChiId.HasValue)
+                account = await loaithuchiObj.SearchQuery(x => x.Id == self.LoaiThuChiId && x.AccountId.HasValue).Select(x => x.Account).FirstOrDefaultAsync();
+            else if (self.AccountType == "customer_debt")
+                account = await accountObj.GetAccountCustomerDebtCompany();
+            else if (self.AccountType == "commission")
+                account = await accountObj.GetAccountCommissionAgentCompany();
+
+            return account;
+        }
+
+        public async Task GenerateNamePhieuThuChi(PhieuThuChi self)
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            if (string.IsNullOrEmpty(self.Name))
+            {
+                if (self.AccountType == "other" || string.IsNullOrEmpty(self.AccountType))
+                {
+                    if (self.Type == "thu")
+                    {
+                        self.Name = await seqObj.NextByCode("phieu.thu");
+                        if (string.IsNullOrEmpty(self.Name))
+                        {
+                            await _InsertPhieuThuSequence();
+                            self.Name = await seqObj.NextByCode("phieu.thu");
+                        }
+                    }
+                    else if (self.Type == "chi")
+                    {
+                        self.Name = await seqObj.NextByCode("phieu.chi");
+                        if (string.IsNullOrEmpty(self.Name))
+                        {
+                            await _InsertPhieuChiSequence();
+                            self.Name = await seqObj.NextByCode("phieu.chi");
+                        }
+                    }
+
+                }
+                else if (self.AccountType == "customer_debt")
+                {
+                    self.Name = await seqObj.NextByCode("phieu.thucn");
+                    if (string.IsNullOrEmpty(self.Name))
+                    {
+                        await _InsertDebtCustomerSequence();
+                        self.Name = await seqObj.NextByCode("phieu.thucn");
+                    }
+                }
+                else if (self.AccountType == "commission")
+                {
+                    self.Name = await seqObj.NextByCode("phieu.chihh");
+                    if (string.IsNullOrEmpty(self.Name))
+                    {
+                        await _InsertCommissionAgentSequence();
+                        self.Name = await seqObj.NextByCode("phieu.chihh");
+                    }
+                }
+            }
+        }
+
+        public async Task _InsertPhieuThuSequence()
         {
             var seqObj = GetService<IIRSequenceService>();
             await seqObj.CreateAsync(new IRSequence
@@ -181,7 +211,7 @@ namespace Infrastructure.Services
 
         public async Task UpdatePhieuThuChi(Guid id, PhieuThuChiSave val)
         {
-            var phieuthuchi = await SearchQuery(x => x.Id == id).Include(x => x.Journal).Include(x => x.Account).Include(x => x.LoaiThuChi).FirstOrDefaultAsync();
+            var phieuthuchi = await SearchQuery(x => x.Id == id).Include(x => x.Journal).Include(x => x.Agent).Include(x => x.Account).Include(x => x.LoaiThuChi).FirstOrDefaultAsync();
             if (phieuthuchi == null)
                 throw new Exception("Phiếu không tồn tại");
 
@@ -203,7 +233,10 @@ namespace Infrastructure.Services
                  .Include(x => x.Journal.DefaultCreditAccount)
                  .Include(x => x.LoaiThuChi)
                  .Include(x => x.LoaiThuChi.Account)
+                 .Include(x => x.Agent)
+                 .Include(x => x.Partner)
                  .Include(x => x.MoveLines)
+                 .Include(x => x.Account)
                  .ToListAsync();
 
             var moveObj = GetService<IAccountMoveService>();
@@ -318,8 +351,6 @@ namespace Infrastructure.Services
                 commAgent.PartnerId = agent.PartnerId;
             }
 
-            if (val.CustomerId.HasValue)
-                commAgent.CustomerId = val.CustomerId;
 
 
             var journal = await journalObj.GetJournalWithDebitCreditAccount(val.JournalId);
@@ -373,23 +404,23 @@ namespace Infrastructure.Services
             return namePhieu;
         }
 
-        public override async Task<PhieuThuChi> CreateAsync(PhieuThuChi entity)
-        {
-            var journalObj = GetService<IAccountJournalService>();
-            var loaiObj = GetService<ILoaiThuChiService>();
-            entity.Journal = await journalObj.SearchQuery(x => x.Id == entity.JournalId).FirstOrDefaultAsync();
-            if (entity.LoaiThuChiId.HasValue)
-                entity.LoaiThuChi = await loaiObj.SearchQuery(x => x.Id == entity.LoaiThuChiId).FirstOrDefaultAsync();
+        //public override async Task<PhieuThuChi> CreateAsync(PhieuThuChi entity)
+        //{
+        //    var journalObj = GetService<IAccountJournalService>();
+        //    var loaiObj = GetService<ILoaiThuChiService>();
+        //    entity.Journal = await journalObj.SearchQuery(x => x.Id == entity.JournalId).FirstOrDefaultAsync();
+        //    if (entity.LoaiThuChiId.HasValue)
+        //        entity.LoaiThuChi = await loaiObj.SearchQuery(x => x.Id == entity.LoaiThuChiId).FirstOrDefaultAsync();
 
-            ComputeProps(entity);
-            return await base.CreateAsync(entity);
-        }
+        //    ComputeProps(entity);
+        //    return await base.CreateAsync(entity);
+        //}
 
-        public override Task UpdateAsync(PhieuThuChi entity)
-        {
-            ComputeProps(entity);
-            return base.UpdateAsync(entity);
-        }
+        //public override Task UpdateAsync(PhieuThuChi entity)
+        //{
+        //    ComputeProps(entity);
+        //    return base.UpdateAsync(entity);
+        //}
 
 
         //public AccountAccount ComputeAccount()
@@ -421,14 +452,15 @@ namespace Infrastructure.Services
                 var balance = counterpart_amount;
                 var liquidity_line_name = phieu.Name;
 
+                var partner = GetPartnerGhiSoSach(phieu);
+
                 var move_vals = new AccountMove
                 {
                     Date = phieu.Date,
-                    Ref = phieu.Communication,
                     JournalId = phieu.JournalId,
                     Journal = phieu.Journal,
                     CompanyId = phieu.CompanyId,
-                    PartnerId = phieu.PartnerId,
+                    PartnerId = partner.Id,
                     InvoiceOrigin = phieu.Name
                 };
 
@@ -444,7 +476,7 @@ namespace Infrastructure.Services
                         Account = phieu.Account,
                         PhieuThuChiId = phieu.Id,
                         Move = move_vals,
-                        PartnerId = phieu.PartnerId,
+                        PartnerId = partner.Id,
                     },
                     new AccountMoveLine
                     {
@@ -456,7 +488,7 @@ namespace Infrastructure.Services
                         Account = liquidity_line_account,
                         PhieuThuChiId = phieu.Id,
                         Move = move_vals,
-                        PartnerId = phieu.PartnerId,
+                        PartnerId = partner.Id,
                     },
                 };
 
@@ -465,6 +497,13 @@ namespace Infrastructure.Services
             }
 
             return all_move_vals;
+        }
+
+        private Partner GetPartnerGhiSoSach(PhieuThuChi phieu)
+        {
+            if (phieu.PartnerType == "agent")
+                return phieu.Agent.Partner;
+            return phieu.Partner;
         }
 
         /// <summary>
@@ -503,12 +542,12 @@ namespace Infrastructure.Services
             if (phieuthuchi.State == "cancel" && (phieuthuchi.AccountType == "other" || string.IsNullOrEmpty(phieuthuchi.AccountType)))
                 throw new Exception("Bạn không thể xóa phiếu khi đã hủy");
 
-            if (phieuthuchi.AccountType != "other")
-            {
-                var move_ids = phieuthuchi.MoveLines.Select(x => x.MoveId).Distinct().ToList();
-                await moveObj.ButtonCancel(move_ids);
-                await moveObj.Unlink(move_ids);
-            }
+            //if (phieuthuchi.AccountType != "other")
+            //{
+            //    var move_ids = phieuthuchi.MoveLines.Select(x => x.MoveId).Distinct().ToList();
+            //    await moveObj.ButtonCancel(move_ids);
+            //    await moveObj.Unlink(move_ids);
+            //}
 
             await DeleteAsync(phieuthuchi);
         }

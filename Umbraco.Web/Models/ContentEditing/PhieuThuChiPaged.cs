@@ -37,6 +37,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? PartnerId { get; set; }
 
+        public Guid? AgentId { get; set; }
+
         /// <summary>
         /// commission
         /// customer_debt

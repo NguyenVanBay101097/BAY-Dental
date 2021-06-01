@@ -26,7 +26,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// tên khach hang
         /// </summary>
-        public string CustomerName { get; set; }
+        public string PartnerName { get; set; }
 
         /// <summary>
         /// Số tiền

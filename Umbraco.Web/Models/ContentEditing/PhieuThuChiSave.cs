@@ -28,17 +28,35 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Amount { get; set; }
 
         /// <summary>
-        /// Lý do nộp
+        /// Nội dung
         /// </summary>
         public string Reason { get; set; }
 
         /// <summary>
-        /// Loại thu/Loại chi
+        /// commission
+        /// customer_debt
+        /// other:
+        /// </summary>
+        public string AccountType { get; set; }
+
+        /// <summary>
+        /// Loại thu/Loại chi nếu AccountType = other
         /// </summary>
         public Guid? LoaiThuChiId { get; set; }
 
+        /// <summary>
+        /// Bắt buộc có giá trị khi AccountType = commission
+        /// </summary>
+        public Guid? AgentId { get; set; }
+
+        /// <summary>
+        /// Thu chi ngoài
+        /// </summary>
         public string PartnerType { get; set; }
 
+        /// <summary>
+        /// Thu chi ngoài, customer_debt, commission
+        /// </summary>
         public Guid? PartnerId { get; set; }
     }
 

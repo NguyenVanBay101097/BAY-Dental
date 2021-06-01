@@ -19,7 +19,7 @@ import { PrintService } from 'src/app/shared/services/print.service';
 export class AgentCommmissionHistoryComponent implements OnInit {
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
-  partnerId : string;
+  agentId : string;
   search: string;
   limit = 20;
   offset = 0;
@@ -40,7 +40,7 @@ export class AgentCommmissionHistoryComponent implements OnInit {
     private notifyService: NotifyService) { }
 
   ngOnInit() {
-    this.partnerId = this.route.parent.snapshot.queryParamMap.get('partnerId');
+    this.agentId = this.route.parent.snapshot.paramMap.get('id');
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 
@@ -63,7 +63,7 @@ export class AgentCommmissionHistoryComponent implements OnInit {
     var paged = new PhieuThuChiPaged();
     paged.limit = this.limit;
     paged.offset = this.offset;
-    paged.partnerId = this.partnerId;
+    paged.agentId = this.agentId;
     paged.accountType = 'commission';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");

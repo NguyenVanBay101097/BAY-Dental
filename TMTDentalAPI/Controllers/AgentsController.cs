@@ -133,11 +133,23 @@ namespace TMTDentalAPI.Controllers
 
             agent = _mapper.Map(val, agent);
 
+            await UpdatePartnerToAgent(agent);
+
             await _agentService.UpdateAsync(agent);
 
             _unitOfWork.Commit();
 
             return NoContent();
+        }
+
+        private async Task UpdatePartnerToAgent(Agent agent)
+        {
+            if (agent.Partner == null)
+                return;
+            var pn = agent.Partner;
+            pn.Name = agent.Name;
+            pn.Phone = agent.Phone;
+            await _partnerService.UpdateAsync(pn);
         }
 
         [HttpDelete("{id}")]

@@ -11,6 +11,7 @@ export class PhieuThuChiPaged {
   dateTo: string;
   accountType: string;
   partnerId: string;
+  agentId: string;
   companyId: string;
 }
 

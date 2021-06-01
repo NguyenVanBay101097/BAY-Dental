@@ -4,6 +4,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
+import { mergeMap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerService } from 'src/app/partners/partner.service';
@@ -19,7 +20,8 @@ export class AgentCommmissionPaymentDialogComponent implements OnInit {
   title: string;
   type: string;
   agentId: string;
-  customerId: string;
+  partnerId: string;
+  accountType: string;
   formGroup: FormGroup;
   submitted: boolean = false;
   amountTotalBalance = 0;
@@ -95,16 +97,17 @@ export class AgentCommmissionPaymentDialogComponent implements OnInit {
     var val = this.formGroup.value;
     val.journalId = val.journal ? val.journal.id : null;
     val.agentId = this.agentId ? this.agentId : null;
-    val.customerId = this.customerId ? this.customerId : null;
+    val.partnerId = this.partnerId ? this.partnerId : null;
+    val.accountType = this.accountType;
+    val.type = this.type;
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
-    this.phieuthuchiService.actionPaymentOfCommissionAgent(val).subscribe(
-      () => {
-        this.activeModal.close(true);
-      },
-    )
+    this.phieuthuchiService.create(val).pipe(mergeMap((res: any) => {
+        return this.phieuthuchiService.actionConfirm([res.id]);
+      }))
+    .subscribe(r => {
+      this.activeModal.close(true);
+    }); 
   }
-
- 
 
   onClose() {
     this.activeModal.dismiss();

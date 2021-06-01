@@ -31,10 +31,10 @@
             <div class="o_cp_buttons">
                 <ul class="nav nav-pills">
                     <li class="nav-item">
-                        <a routerLink="detail" class="nav-link px-3 py-1" routerLinkActive="active" >Danh Sách</a>
+                        <a routerLink="detail" class="nav-link px-3 py-1" routerLinkActive="active" >Danh sách</a>
                     </li>
                     <li class="nav-item">
-                        <a routerLink="history" class="nav-link px-3 py-1" routerLinkActive="active" [queryParams]="{partnerId: agent?.partnerId}" skipLocationChange>Lịch sử chi hoa hồng</a>
+                        <a routerLink="history" class="nav-link px-3 py-1" routerLinkActive="active">Lịch sử chi hoa hồng</a>
                     </li>               
                 </ul>
             </div>
@@ -47,5 +47,5 @@
 </div>
 
 <div class="o_content">
-    <router-outlet ></router-outlet>
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
 </div>
