@@ -60,7 +60,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(
       result => {
-
+        this.loadDataFromApi();
       }
     )
   }

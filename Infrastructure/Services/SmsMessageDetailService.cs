@@ -137,39 +137,213 @@ namespace Infrastructure.Services
 
         public async Task CreateSmsMessageDetail(SmsMessage smsMessage, IEnumerable<Guid> ids, Guid companyId)
         {
+            //await CreateSmsMessageDetailV2(smsMessage, companyId);
+
+            //var listSms = new List<SmsMessageDetail>();
+            //var listSmsErrors = new List<SmsMessageDetail>();
+            //var dictAppointmentPartner = new Dictionary<Guid, Appointment>();
+            //var dictOrderLinePartner = new Dictionary<Guid, SaleOrderLine>();
+            //var partnerIds = new List<Guid>();
+
+            //if (smsMessage.SmsMessagePartnerRels.Any() && smsMessage.ResModel == "partner")
+            //{
+            //    partnerIds = smsMessage.SmsMessagePartnerRels.Select(x => x.PartnerId).ToList();
+            //}
+            //else if (smsMessage.SmsMessageSaleOrderRels.Any() && smsMessage.ResModel == "sale-order")
+            //{
+            //    partnerIds = smsMessage.SmsMessageSaleOrderRels.Select(x => x.SaleOrder.PartnerId).ToList();
+            //}
+            //else if (smsMessage.SmsMessageSaleOrderLineRels.Any() && smsMessage.ResModel == "sale-order-line")
+            //{
+            //    partnerIds = smsMessage.SmsMessageSaleOrderLineRels.Select(x => x.SaleOrderLine.OrderPartnerId.Value).ToList();
+            //}
+            //else if (smsMessage.SmsMessageAppointmentRels.Any() && smsMessage.ResModel == "appointment")
+            //{
+            //    partnerIds = smsMessage.SmsMessageAppointmentRels.Select(x => x.Appointment.PartnerId).ToList();
+            //}
+            //var partners = await _context.Partners.Where(x => ids.Contains(x.Id)).Include(x => x.Title).ToListAsync();
+            //if (smsMessage.ResModel == "appointment")
+            //{
+            //    var appIds = smsMessage.SmsMessageAppointmentRels.Select(x => x.AppointmentId).ToList();
+            //    dictAppointmentPartner = await _context.Appointments.Where(x => appIds.Contains(x.Id)).Include(x => x.Doctor).ToDictionaryAsync(x => x.PartnerId, x => x);
+            //}
+
+            //var company = await _context.Companies.Where(x => x.Id == companyId).FirstOrDefaultAsync();
+            //var listCharactorSpecial = SpecialCharactors.Split(",");
+            //var listStringSpecial = SpecialString.Split(",");
+            //foreach (var partner in partners)
+            //{
+            //    var content = await PersonalizedContent(smsMessage.Body, partner, company, null, null);
+            //    var sms = new SmsMessageDetail();
+            //    sms.Id = GuidComb.GenerateComb();
+            //    sms.Body = content;
+            //    sms.Number = !string.IsNullOrEmpty(partner.Phone) ? partner.Phone : "";
+            //    sms.PartnerId = partner.Id;
+            //    sms.State = "sending";
+            //    sms.SmsAccountId = smsMessage.SmsAccountId.Value;
+            //    sms.SmsMessageId = smsMessage.Id;
+            //    sms.SmsCampaignId = smsMessage.SmsCampaignId;
+
+            //    if (listStringSpecial.Any(x => content.Contains(x)) || listCharactorSpecial.Any(x => content.Contains(x)))
+            //    {
+            //        sms.State = "fails";
+            //        sms.ErrorCode = "199"; ///199 chua ky tu dac biet
+            //        listSmsErrors.Add(sms);
+            //    }
+            //    else
+            //        listSms.Add(sms);
+            //}
+
+            //smsMessage.State = "success";
+            //_context.Entry(smsMessage).State = EntityState.Modified;
+            //await _context.SmsMessageDetails.AddRangeAsync(listSms);
+            //await _context.SmsMessageDetails.AddRangeAsync(listSmsErrors);
+            //await _context.SaveChangesAsync();
+
+            //var smsIds = listSms.Select(x => x.Id).ToList();
+
+            //await SendSMS(smsIds, smsMessage.SmsAccountId.Value);
+
+        }
+
+
+        public async Task CreateSmsMessageDetailV2(SmsMessage smsMessage, Guid companyId)
+        {
             var listSms = new List<SmsMessageDetail>();
             var listSmsErrors = new List<SmsMessageDetail>();
-            var dictApp = new Dictionary<Guid, Appointment>();
-            var partners = await _context.Partners.Where(x => ids.Contains(x.Id)).Include(x => x.Title).ToListAsync();
-            if (smsMessage.ResModel == "appointment")
-            {
-                var appIds = smsMessage.SmsMessageAppointmentRels.Select(x => x.AppointmentId).ToList();
-                dictApp = await _context.Appointments.Where(x => appIds.Contains(x.Id)).Include(x => x.Doctor).ToDictionaryAsync(x => x.PartnerId, x => x);
-            }
+            var dictAppointmentPartner = new Dictionary<Guid, Appointment>();
+            var dictOrderLinePartner = new Dictionary<Guid, SaleOrderLine>();
+            var partnerIds = new List<Guid>();
             var company = await _context.Companies.Where(x => x.Id == companyId).FirstOrDefaultAsync();
             var listCharactorSpecial = SpecialCharactors.Split(",");
             var listStringSpecial = SpecialString.Split(",");
-            foreach (var partner in partners)
-            {
-                var content = await PersonalizedContent(smsMessage.Body, partner, company, dictApp);
-                var sms = new SmsMessageDetail();
-                sms.Id = GuidComb.GenerateComb();
-                sms.Body = content;
-                sms.Number = !string.IsNullOrEmpty(partner.Phone) ? partner.Phone : "";
-                sms.PartnerId = partner.Id;
-                sms.State = "sending";
-                sms.SmsAccountId = smsMessage.SmsAccountId.Value;
-                sms.SmsMessageId = smsMessage.Id;
-                sms.SmsCampaignId = smsMessage.SmsCampaignId;
 
-                if (listStringSpecial.Any(x => content.Contains(x)) || listCharactorSpecial.Any(x => content.Contains(x)))
+            if (smsMessage.SmsMessagePartnerRels.Any() && smsMessage.ResModel == "partner")
+            {
+                partnerIds = smsMessage.SmsMessagePartnerRels.Select(x => x.PartnerId).ToList();
+                var partnerDicts = await _context.Partners.Where(x => partnerIds.Contains(x.Id)).Include(x => x.Title).ToDictionaryAsync(x => x.Id, x => x);
+                var partnerRels = smsMessage.SmsMessagePartnerRels.ToList();
+                foreach (var rel in partnerRels)
                 {
-                    sms.State = "fails";
-                    sms.ErrorCode = "199"; ///199 chua ky tu dac biet
-                    listSmsErrors.Add(sms);
+                    if (partnerDicts.ContainsKey(rel.PartnerId))
+                    {
+                        var content = await PersonalizedContent(smsMessage.Body, partnerDicts[rel.PartnerId], company, null, null);
+                        var sms = new SmsMessageDetail();
+                        sms.Id = GuidComb.GenerateComb();
+                        sms.Body = content;
+                        sms.Number = !string.IsNullOrEmpty(partnerDicts[rel.PartnerId].Phone) ? partnerDicts[rel.PartnerId].Phone : "";
+                        sms.PartnerId = partnerDicts[rel.PartnerId].Id;
+                        sms.State = "sending";
+                        sms.SmsAccountId = smsMessage.SmsAccountId.Value;
+                        sms.SmsMessageId = smsMessage.Id;
+                        sms.SmsCampaignId = smsMessage.SmsCampaignId;
+
+                        if (listStringSpecial.Any(x => content.Contains(x)) || listCharactorSpecial.Any(x => content.Contains(x)))
+                        {
+                            sms.State = "fails";
+                            sms.ErrorCode = "199"; ///199 chua ky tu dac biet
+                            listSmsErrors.Add(sms);
+                        }
+                        else
+                            listSms.Add(sms);
+                    }
                 }
-                else
-                    listSms.Add(sms);
+            }
+            else if (smsMessage.SmsMessageSaleOrderRels.Any() && smsMessage.ResModel == "sale-order")
+            {
+                partnerIds = smsMessage.SmsMessageSaleOrderRels.Select(x => x.SaleOrder.PartnerId).ToList();
+                var partnerDicts = await _context.Partners.Where(x => partnerIds.Contains(x.Id)).Include(x => x.Title).ToDictionaryAsync(x => x.Id, x => x);
+                var orderIds = smsMessage.SmsMessageSaleOrderRels.Select(x => x.SaleOrderId).ToList();
+                var orders = await _context.SaleOrders.Where(x => orderIds.Contains(x.Id)).ToListAsync();
+                foreach (var order in orders)
+                {
+                    if (partnerDicts.ContainsKey(order.PartnerId))
+                    {
+                        var content = await PersonalizedContent(smsMessage.Body, partnerDicts[order.PartnerId], company, null, null);
+                        var sms = new SmsMessageDetail();
+                        sms.Id = GuidComb.GenerateComb();
+                        sms.Body = content;
+                        sms.Number = !string.IsNullOrEmpty(partnerDicts[order.PartnerId].Phone) ? partnerDicts[order.PartnerId].Phone : "";
+                        sms.PartnerId = partnerDicts[order.PartnerId].Id;
+                        sms.State = "sending";
+                        sms.SmsAccountId = smsMessage.SmsAccountId.Value;
+                        sms.SmsMessageId = smsMessage.Id;
+                        sms.SmsCampaignId = smsMessage.SmsCampaignId;
+
+                        if (listStringSpecial.Any(x => content.Contains(x)) || listCharactorSpecial.Any(x => content.Contains(x)))
+                        {
+                            sms.State = "fails";
+                            sms.ErrorCode = "199"; ///199 chua ky tu dac biet
+                            listSmsErrors.Add(sms);
+                        }
+                        else
+                            listSms.Add(sms);
+                    }
+                }
+            }
+            else if (smsMessage.SmsMessageSaleOrderLineRels.Any() && smsMessage.ResModel == "sale-order-line")
+            {
+                partnerIds = smsMessage.SmsMessageSaleOrderLineRels.Select(x => x.SaleOrderLine.OrderPartnerId.Value).ToList();
+                var partnerDicts = await _context.Partners.Where(x => partnerIds.Contains(x.Id)).Include(x => x.Title).ToDictionaryAsync(x => x.Id, x => x);
+                var orderLineIds = smsMessage.SmsMessageSaleOrderLineRels.Select(x => x.SaleOrderLineId).ToList();
+                var orderLines = await _context.SaleOrderLines.Where(x => orderLineIds.Contains(x.Id)).ToListAsync();
+                foreach (var line in orderLines)
+                {
+                    if (line.OrderPartnerId.HasValue && partnerDicts.ContainsKey(line.OrderPartnerId.Value))
+                    {
+                        var content = await PersonalizedContent(smsMessage.Body, partnerDicts[line.OrderPartnerId.Value], company, null, null);
+                        var sms = new SmsMessageDetail();
+                        sms.Id = GuidComb.GenerateComb();
+                        sms.Body = content;
+                        sms.Number = !string.IsNullOrEmpty(partnerDicts[line.OrderPartnerId.Value].Phone) ? partnerDicts[line.OrderPartnerId.Value].Phone : "";
+                        sms.PartnerId = partnerDicts[line.OrderPartnerId.Value].Id;
+                        sms.State = "sending";
+                        sms.SmsAccountId = smsMessage.SmsAccountId.Value;
+                        sms.SmsMessageId = smsMessage.Id;
+                        sms.SmsCampaignId = smsMessage.SmsCampaignId;
+
+                        if (listStringSpecial.Any(x => content.Contains(x)) || listCharactorSpecial.Any(x => content.Contains(x)))
+                        {
+                            sms.State = "fails";
+                            sms.ErrorCode = "199"; ///199 chua ky tu dac biet
+                            listSmsErrors.Add(sms);
+                        }
+                        else
+                            listSms.Add(sms);
+                    }
+                }
+            }
+            else if (smsMessage.SmsMessageAppointmentRels.Any() && smsMessage.ResModel == "appointment")
+            {
+                partnerIds = smsMessage.SmsMessageAppointmentRels.Select(x => x.Appointment.PartnerId).ToList();
+                var partnerDicts = await _context.Partners.Where(x => partnerIds.Contains(x.Id)).Include(x => x.Title).ToDictionaryAsync(x => x.Id, x => x);
+                var appIds = smsMessage.SmsMessageAppointmentRels.Select(x => x.AppointmentId).ToList();
+                var appointments = await _context.Appointments.Where(x => appIds.Contains(x.Id)).ToListAsync();
+                foreach (var app in appointments)
+                {
+                    if (partnerDicts.ContainsKey(app.PartnerId))
+                    {
+                        var content = await PersonalizedContent(smsMessage.Body, partnerDicts[app.PartnerId], company, app, null);
+                        var sms = new SmsMessageDetail();
+                        sms.Id = GuidComb.GenerateComb();
+                        sms.Body = content;
+                        sms.Number = !string.IsNullOrEmpty(partnerDicts[app.PartnerId].Phone) ? partnerDicts[app.PartnerId].Phone : "";
+                        sms.PartnerId = partnerDicts[app.PartnerId].Id;
+                        sms.State = "sending";
+                        sms.SmsAccountId = smsMessage.SmsAccountId.Value;
+                        sms.SmsMessageId = smsMessage.Id;
+                        sms.SmsCampaignId = smsMessage.SmsCampaignId;
+
+                        if (listStringSpecial.Any(x => content.Contains(x)) || listCharactorSpecial.Any(x => content.Contains(x)))
+                        {
+                            sms.State = "fails";
+                            sms.ErrorCode = "199"; ///199 chua ky tu dac biet
+                            listSmsErrors.Add(sms);
+                        }
+                        else
+                            listSms.Add(sms);
+                    }
+                }
             }
 
             smsMessage.State = "success";
@@ -181,10 +355,10 @@ namespace Infrastructure.Services
             var smsIds = listSms.Select(x => x.Id).ToList();
 
             await SendSMS(smsIds, smsMessage.SmsAccountId.Value);
-
         }
 
-        private async Task<string> PersonalizedContent(string body, Partner partner, Company company, Dictionary<Guid, Appointment> dictApp)
+
+        private async Task<string> PersonalizedContent(string body, Partner partner, Company company, Appointment app, SaleOrderLine line)
         {
             var content = JsonConvert.DeserializeObject<Body>(body);
             var messageContent = content.text
@@ -194,12 +368,12 @@ namespace Infrastructure.Services
                 .Replace("{ngay_sinh}", partner.GetDateOfBirth().Split(' ').Last())
                 .Replace("{danh_xung}", partner.Title != null ? partner.Title.Name.Split(' ').Last() : "")
 
-                .Replace("{gio_hen}", dictApp.ContainsKey(partner.Id) ? dictApp[partner.Id].Time.Split(' ').Last() : "")
-                .Replace("{ngay_hen}", dictApp.ContainsKey(partner.Id) ? dictApp[partner.Id].Date.ToString("dd/MM/yyyy").Split(' ').Last() : "")
-                .Replace("{bac_si_lich_hen}", dictApp.ContainsKey(partner.Id) && dictApp[partner.Id].DoctorId.HasValue ? dictApp[partner.Id].Doctor.Name.Split(' ').Last() : "")
-                .Replace("{bac_si_chi_tiet_dieu_tri}", partner.Name)
-                .Replace("{so_phieu_dieu_tri}", partner.Name)
-                .Replace("{dich_vu}", partner.Name);
+                .Replace("{gio_hen}", app != null ? app.Time.Split(' ').Last() : "")
+                .Replace("{ngay_hen}", app != null ? app.Date.ToString("dd/MM/yyyy").Split(' ').Last() : "")
+                .Replace("{bac_si_lich_hen}", app != null && app.DoctorId.HasValue ? app.Doctor.Name.Split(' ').Last() : "")
+                .Replace("{bac_si_chi_tiet_dieu_tri}", line != null && line.Employee != null ? line.Employee.Name : "")
+                .Replace("{so_phieu_dieu_tri}", line != null && line.Order != null ? line.Order.Name : "")
+                .Replace("{dich_vu}", line != null ? line.Name : "");
             return messageContent;
         }
 

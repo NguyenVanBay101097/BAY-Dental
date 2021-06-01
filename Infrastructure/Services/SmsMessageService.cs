@@ -194,38 +194,9 @@ namespace Infrastructure.Services
             await using var context = DbContextHelper.GetCatalogDbContext(hostName, _configuration);
             try
             {
-                var partnerIds = new List<Guid>();
-                switch (entity.ResModel)
-                {
-                    case "partner":
-                        partnerIds = entity.SmsMessagePartnerRels.Select(x => x.PartnerId).ToList();
-                        break;
-                    case "appointment":
-                        var appointmentIds = entity.SmsMessageAppointmentRels.Select(x => x.AppointmentId);
-                        var appObj = GetService<IAppointmentService>();
-                        partnerIds = await appObj.SearchQuery(x => appointmentIds.Contains(x.Id)).Select(x => x.PartnerId).ToListAsync();
-                        break;
-                    case "sale-order":
-                        var saleOrderObj = GetService<ISaleOrderService>();
-                        var orderIds = entity.SmsMessageSaleOrderRels.Select(s => s.SaleOrderId).ToList();
-                        partnerIds = await saleOrderObj.SearchQuery(x => orderIds.Contains(x.Id)).Select(x => x.PartnerId).ToListAsync();
-                        break;
-                    case "sale-order-line":
-                        var saleOrderLineObj = GetService<ISaleOrderLineService>();
-                        var orderLineIds = entity.SmsMessageSaleOrderLineRels.Select(s => s.SaleOrderLineId);
-                        partnerIds = await saleOrderLineObj.SearchQuery(x => x.OrderPartnerId.HasValue && orderLineIds.Contains(x.Id)).Select(x => x.OrderPartnerId.Value).ToListAsync();
-                        break;
-                    default:
-                        break;
-                }
-
-
-                if (partnerIds.Any())
-                {
-                    var companyId = CompanyId;
-                    await smsMessageDetailObj.CreateSmsMessageDetail(entity, partnerIds, companyId);
-                    entity.State = "success";
-                }
+                var companyId = CompanyId;
+                await smsMessageDetailObj.CreateSmsMessageDetailV2(entity, companyId);
+                entity.State = "success";
                 await UpdateAsync(entity);
             }
             catch (Exception ex)
