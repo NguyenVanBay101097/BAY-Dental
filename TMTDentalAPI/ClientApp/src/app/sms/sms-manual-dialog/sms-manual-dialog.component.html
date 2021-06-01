@@ -18,34 +18,37 @@
                                     <table class="ml-5">
                                         <tr>
                                             <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label o_form_label_help mb-2">
+                                                <label class="o_form_label o_form_label_help">
                                                     Tên tin nhắn
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <input type="text" class="form-control mb-2" required
-                                                    formControlName="name">
+                                                <input type="text" class="form-control" formControlName="name">
+                                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                                    class="text-danger">
+                                                    <div *ngIf="f.name.errors.required">Nhập tên tin nhắn</div>
+                                                </div>
                                             </td>
                                         </tr>
                                         <tr *ngIf="campaign">
                                             <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label o_form_label_help">
+                                                <label class="o_form_label o_form_label_help mt-2">
                                                     Tên chiến dịch
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
                                                 <input type="text" [attr.disabled]="isThanksCustomer"
-                                                    [value]="campaign.name">
+                                                    [value]="campaign.name" class="mt-2">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label o_form_label_help">
+                                                <label class="o_form_label o_form_label_help mt-2">
                                                     Chọn brandname
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
+                                                <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus class="mt-2"
                                                     [textField]="'brandName'" formControlName="smsAccount"
                                                     [filterable]="true" #smsAccountCbx [valueField]="'id'">
                                                     <ng-template kendoComboBoxItemTemplate let-dataItem>
@@ -119,8 +122,8 @@
                                                 </div>
                                             </td>
                                             <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                                <input type="text" class="form-control" formControlName="templateName"
-                                                    style="height:36px;">
+                                                <input type="text" class="form-control mt-2"
+                                                    formControlName="templateName" style="height:36px;">
                                                 <span class="text-danger"
                                                     *ngIf="formGroup.controls.templateName.value==''">
                                                     Nhập tiêu đề tin nhắn mẫu

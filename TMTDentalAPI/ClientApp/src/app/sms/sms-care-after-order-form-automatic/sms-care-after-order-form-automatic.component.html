@@ -3,7 +3,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons d-flex">
                 <kendo-combobox (selectionChange)="onStatusChange($event)" placeholder="Trạng thái"
-                    class="kendo-combobox-sm" style="width: auto;" [data]="filterStatus" [textField]="'name'"
+                    class="kendo-combobox-sm" style="width: 200px;" [data]="filterStatus" [textField]="'name'"
                     [valueField]="'value'">
                 </kendo-combobox>
                 <div class="o_form_buttons_view">
@@ -26,7 +26,7 @@
 
 <kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="offset" [pageable]="true"
     [pageSize]="limit">
-    <kendo-grid-column field="name" title="Tạo thiết lập"></kendo-grid-column>
+    <kendo-grid-column field="name" title="Tên thiết lập"></kendo-grid-column>
     <kendo-grid-column field="brandName" title="Brandname"></kendo-grid-column>
     <kendo-grid-column field="date" title="Thời điểm gửi tin"></kendo-grid-column>
     <kendo-grid-column title="Thời gian gửi tin">
@@ -45,7 +45,7 @@
     </kendo-grid-column>
     <kendo-grid-column title="Trạng thái">
         <ng-template kendoGridCellTemplate let-dataItem>
-            <span class="text-success" *ngIf="dataItem.isCareAfterOrderAutomation">?Kích hoạt</span>
+            <span class="text-success" *ngIf="dataItem.isCareAfterOrderAutomation">Kích hoạt</span>
             <span *ngIf="!dataItem.isCareAfterOrderAutomation">Không kích hoạt</span>
         </ng-template>
     </kendo-grid-column>

@@ -160,9 +160,6 @@
                                                     [textareaLength]="textareaLimit"
                                                     [template]="template">
                                                 </app-sms-template-content>
-                                                <span class="color-custom">
-                                                    (Note: Không nhập ký tự đặc biệt hoặc các từ khóa quảng cáo)
-                                                </span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -177,7 +174,7 @@
                                             </td>
                                             <td class="o_td_value">
                                                 <div *ngIf="isTemplateCopy">
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control mt-2"
                                                         formControlName="templateName"
                                                         placeholder="Tiêu đề tin nhắn mẫu" required>
                                                     <span class="text-danger"

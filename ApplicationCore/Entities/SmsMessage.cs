@@ -26,6 +26,7 @@ namespace ApplicationCore.Entities
         /// success: Thành công
         /// </summary>
         public string State { get; set; }
+
         /// <summary>
         /// Partner, Appointment, SaleOrder, SaleOrderLine
         /// </summary>

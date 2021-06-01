@@ -90,3 +90,11 @@ input:checked+.slider:before {
     padding: 0 31px 15px 31px !important;
     border: none;
 }
+
+.o_form_view .o_group{
+    margin: 0!important;
+}
+
+.container{
+    padding: 15px!important;
+}

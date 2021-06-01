@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AppointmentPaged } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
+import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 
 @Component({
@@ -27,6 +28,7 @@ export class SmsAppointmentFormManualComponent implements OnInit {
   searchUpdate = new Subject<string>();
   dateFrom: Date;
   dateTo: Date;
+  campaign: any;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   public today: Date = new Date();
@@ -36,13 +38,15 @@ export class SmsAppointmentFormManualComponent implements OnInit {
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private intlService: IntlService,
-    private appointmentService: AppointmentService
+    private appointmentService: AppointmentService,
+    private smsCampaignService: SmsCampaignService,
   ) { }
 
   ngOnInit() {
     this.dateFrom = this.today;
     this.dateTo = this.next7days;
     this.loadDataFromApi();
+    this.loadDefaultCampaignAppointmentReminder();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -86,6 +90,15 @@ export class SmsAppointmentFormManualComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  loadDefaultCampaignAppointmentReminder() {
+    this.smsCampaignService.getDefaultCampaignAppointmentReminder().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
+      })
+  }
+
   onSend() {
     if (this.selectedIds.length == 0) {
       this.notify("Bạn phải chọn khách hàng trước khi gửi tin", false);
@@ -96,6 +109,7 @@ export class SmsAppointmentFormManualComponent implements OnInit {
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
       modalRef.componentInstance.isAppointmentReminder = true;
       modalRef.componentInstance.templateTypeTab = "appointment";
+      modalRef.componentInstance.campaign = this.campaign;
       modalRef.result.then(
         result => {
         }

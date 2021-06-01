@@ -49,7 +49,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: [null, Validators.required],
+      template: null,
       smsAccount: [null, Validators.required],
       isAppointmentAutomation: false,
       TypeTimeBeforSend: 'hour',

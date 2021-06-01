@@ -88,11 +88,11 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="1" class="o_td_label">
+                                        <!-- <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">Nội dung</label>
-                                        </td>
-                                        <td colspan="1" style="width: 80%;">
-                                            <app-sms-template-content [type]="'thanks'" [textareaLength]="textareaLimit"
+                                        </td> -->
+                                        <td colspan="2" style="width: 80%;">
+                                            <app-sms-template-content [type]="'partnerCampaign'" [textareaLength]="textareaLimit"
                                                 [template]="template">
                                             </app-sms-template-content>
                                         </td>
@@ -108,7 +108,7 @@
                                             </div>
                                         </td>
                                         <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                            <input type="text" class="form-control" formControlName="templateName">
+                                            <input type="text" class="form-control mt-2" formControlName="templateName">
                                             <span class="text-danger" *ngIf="formGroup.controls.templateName.value==''">
                                                 Nhập tiêu đề tin nhắn mẫu
                                             </span>

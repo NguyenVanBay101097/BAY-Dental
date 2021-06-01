@@ -73,7 +73,7 @@ export class SmsTemplateListComponent implements OnInit {
   }
 
   createItem() {
-    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'md', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Thêm tin nhắn mẫu';
     modalRef.result.then((val) => {
       this.loadDataFromApi();
@@ -81,7 +81,7 @@ export class SmsTemplateListComponent implements OnInit {
   }
 
   editItem(dataItem) {
-    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'md', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = "Sửa tin nhắn mẫu";
     modalRef.componentInstance.id = dataItem.id;
     modalRef.result.then(() => {
@@ -113,16 +113,16 @@ export class SmsTemplateListComponent implements OnInit {
 
   getTemplateType(type) {
     switch (type) {
-      case "birthday":
-        return "Chúc mừng sinh nhật";
+      case "partner":
+        return "Khách hàng";
       case "appointment":
-        return "Nhắc lịch hẹn";
-      case "care_after_order":
-        return "Chăm sóc sau điều trị";
-      case "thanks":
-        return "Cám ơn";
-      case "campaign":
-        return "Chiến dịch khác";
+        return "Lịch hẹn";
+      case "saleOrderLine":
+        return "Chi tiết điều trị";
+      case "saleOrder":
+        return "Phiếu điều trị";
+      case "partnerCampaign":
+        return "Chiến dịch";
     }
   }
 }

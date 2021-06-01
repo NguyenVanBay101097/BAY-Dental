@@ -23,7 +23,6 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   searchUpdate = new Subject<string>();
   search: string;
   states: string = "false,true";
-  state: string;
   filterStatus = [
     { name: "Kích hoạt", value: "active" },
     { name: "Không kích hoạt", value: "inactive" }
@@ -48,7 +47,15 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   }
 
   onStatusChange(event) {
-    this.state = event ? event.value : '';
+    if (event && event.value === "active") {
+      this.states = "true";
+    }
+    else if (event && event.value === "inactive") {
+      this.states = "false";
+    }
+    else {
+      this.states = "false,true";
+    }
     this.offset = 0;
     this.loadDataFromApi();
   }
@@ -66,7 +73,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   }
 
   deleteItem(item) {
-    var modalRef = this.modalService.open(ConfirmDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
+    var modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
     modalRef.componentInstance.title = "Xóa thiết lập gửi tự động";
     modalRef.componentInstance.body = "Bạn có muốn xóa thiết lập gửi tin tự động không?";
     modalRef.result.then(
@@ -104,7 +111,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   }
 
   setupAutomaic() {
-    var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
+    var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "md", windowClass: "o_technical_modal" });
     modalRef.componentInstance.title = "Thiết lập tin nhắn gửi tự động";
     modalRef.componentInstance.templateTypeTab = "care_after_order";
     modalRef.result.then(

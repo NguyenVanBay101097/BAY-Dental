@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 
@@ -26,6 +27,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   selectedIds: string[] = [];
   month: any;
   searchUpdate = new Subject<string>();
+  campaign: any;
   months = [
     { name: 'Tháng 1', value: 1 },
     { name: 'Tháng 2', value: 2 },
@@ -44,12 +46,13 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     private partnerService: PartnerService,
     private smsTemplateService: SmsTemplateService,
     private modalService: NgbModal,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private smsCampaignService: SmsCampaignService,
   ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
-
+    this.loadDefaultCampaignThanksCustomer();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -80,13 +83,22 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   searchSmsTemplate(q?: string) {
     var filter = new SmsTemplateFilter();
     filter.search = q || "";
-    filter.type = "birthday";
+    filter.type = "partner";
     return this.smsTemplateService.getAutoComplete(filter);
   }
 
   pageChange(event) {
     this.skip = event.skip;
     this.loadDataFromApi();
+  }
+
+  loadDefaultCampaignThanksCustomer() {
+    this.smsCampaignService.getDefaultCampaignBirthday().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
+      })
   }
 
   onSend() {
@@ -98,7 +110,8 @@ export class SmsBirthdayFormManualComponent implements OnInit {
       modalRef.componentInstance.title = "Tin nhắn chúc mừng sinh nhật";
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
       modalRef.componentInstance.isBirthDayManual = true;
-      modalRef.componentInstance.templateTypeTab = "birthday";
+      modalRef.componentInstance.templateTypeTab = "partner";
+      modalRef.componentInstance.campaign = this.campaign;
       modalRef.result.then(
         result => {
 

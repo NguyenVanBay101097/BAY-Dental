@@ -5,7 +5,7 @@
 </header>
 <div class="modal-body o_act_window">
     <form class="container o_form_view h-100" [formGroup]="formGroup">
-        <div class="o_form_sheet_bg">
+        <div class="">
             <div class="o_form_sheet">
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_12">
@@ -92,7 +92,7 @@
                                     <label class="o_form_label o_form_label_help font-weight-bolder">
                                         Gửi cho khách hàng sử dụng
                                     </label>
-                                    <div class="d-flex">
+                                    <div class="d-flex ml-5">
                                         <div class="form-check mr-2">
                                             <input (change)="onChangeRadioButton($event)" class="form-check-input"
                                                 formControlName="filter" type="radio" name="filter" id="productCategory"
@@ -110,7 +110,7 @@
                                             </label>
                                         </div>
                                     </div>
-                                    <div>
+                                    <div class="ml-5">
                                         <div *ngIf="filter=='productCategory'">
                                             <kendo-multiselect (filterChange)="loadProductCategory($event)"
                                                 [filterable]="true" style="min-height: 100px;" class="mr-3"
@@ -157,7 +157,7 @@
                                                 <label class="o_form_label">Nội dung</label>
                                             </td> -->
                                             <td colspan="2" style="width: 80%;">
-                                                <app-sms-template-content [type]="'birthday'"
+                                                <app-sms-template-content [type]="'saleOrderLine'"
                                                     [textareaLength]="textareaLimit" [template]="template">
                                                 </app-sms-template-content>
                                             </td>

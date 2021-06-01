@@ -9,6 +9,7 @@ import { SaleOrderLineService, SmsCareAfterOrderPaged } from 'src/app/core/servi
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ProductsOdataService } from 'src/app/shared/services/ProductsOdata.service';
+import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 
 @Component({
@@ -35,6 +36,7 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
   limit = 20;
   skip = 0;
   loading = false;
+  campaign: any;
 
   constructor(
     private notificationService: NotificationService,
@@ -42,11 +44,12 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     private saleOrderLineService: SaleOrderLineService,
     private modalService: NgbModal,
     private intlService: IntlService,
+    private smsCampaignService: SmsCampaignService,
   ) { }
 
   ngOnInit() {
     this.loadProducts();
-
+    this.loadDefaultCampaignCareAfterOrder();
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 
@@ -114,14 +117,23 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     })
   }
 
-  notify(type, content) {
+  notify(title, isSuccess = true) {
     this.notificationService.show({
-      content: content,
+      content: title,
       hideAfter: 3000,
       position: { horizontal: 'center', vertical: 'top' },
       animation: { type: 'fade', duration: 400 },
-      type: { style: type, icon: true }
+      type: { style: isSuccess ? 'success' : 'error', icon: true },
     });
+  }
+
+  loadDefaultCampaignCareAfterOrder() {
+    this.smsCampaignService.getDefaultCareAfterOrder().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
+      })
   }
 
   onSend() {
@@ -129,11 +141,12 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
       this.notify("Bạn phải chọn khách hàng trước khi gửi tin", false);
     }
     else {
-      var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
+      var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "md", windowClass: "o_technical_modal" });
       modalRef.componentInstance.title = "Tin nhắn chăm sóc sau điều trị";
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
       modalRef.componentInstance.isCareAfterOrder = true;
-      modalRef.componentInstance.templateTypeTab = "care_after_order";
+      modalRef.componentInstance.templateTypeTab = "saleOrderLine";
+      modalRef.componentInstance.campaign = this.campaign;
       modalRef.result.then(
         result => {
         }

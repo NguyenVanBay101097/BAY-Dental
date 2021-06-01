@@ -1,24 +1,30 @@
 <div class="o_cp_controller ">
-    <div class="o_control_panel">
+    <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li class="mb-2">Thống kê tin nhắn đã gửi</li>
         </ol>
+        <div class="o_cp_left">
+            <div class="d-flex o_cp_buttons">
+                <kendo-combobox #campaignCbx [filterable]="true" class="kendo-combobox-sm mr-2"
+                    placeholder="Lọc chiến dịch" [data]="campaignData" [textField]="'name'" [valueField]="'id'"
+                    (valueChange)="onChangeCampaign($event)">
+                </kendo-combobox>
+                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                    (searchChange)="onSearchDateChange($event)">
+                </app-tai-date-range-filter-dropdown>
+                <kendo-combobox (valueChange)="onChangeState($event)" placeholder="Tất cả trạng thái"
+                    class="kendo-combobox-sm ml-2" [data]="filteredState" [textField]="'name'" [valueField]="'value'">
+                </kendo-combobox>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
         <div class="o_cp_searchview">
             <div class="o_searchview">
                 <input type="text" class="o_searchview_input"
                     placeholder="Tìm kiếm theo họ tên, số điện thoại, tên tin nhắn" [(ngModel)]="search"
                     (ngModelChange)="this.searchUpdate.next($event)" />
             </div>
-        </div>
-    </div>
-    <div class="o_control_panel d-flex justify-content-between">
-        <div class="d-flex">
-            <kendo-combobox #campaignCbx [filterable]="true" class="kendo-combobox-sm mr-2" placeholder="Lọc chiến dịch" [data]="campaignData" [textField]="'name'" [valueField]="'id'" (valueChange)="onChangeCampaign($event)">
-            </kendo-combobox>
-            <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
-            </app-tai-date-range-filter-dropdown>
-            <kendo-combobox (valueChange)="onChangeState($event)" placeholder="Tất cả trạng thái" class="kendo-combobox-sm ml-2" [data]="filteredState" [textField]="'name'" [valueField]="'value'">
-            </kendo-combobox>
         </div>
     </div>
 </div>

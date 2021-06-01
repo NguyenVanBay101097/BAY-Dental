@@ -79,7 +79,7 @@ export class SmsCampaignListComponent implements OnInit {
   }
 
   createCampaign() {
-    const modalRef = this.modalService.open(SmsCampaignCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(SmsCampaignCrUpComponent, { size: 'md', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Thêm chiến dịch';
     modalRef.result.then((val) => {
       this.loadDataFromApi();
@@ -87,9 +87,9 @@ export class SmsCampaignListComponent implements OnInit {
   }
 
   createMessage() {
-    const modalRef = this.modalService.open(SmsMessageDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(SmsMessageDialogComponent, { size: 'md', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo tin nhắn';
-    modalRef.componentInstance.templateTypeTab = "campaign";
+    modalRef.componentInstance.templateTypeTab = "partnerCampaign";
     modalRef.result.then((val) => {
       this.loadDataFromApi();
     })

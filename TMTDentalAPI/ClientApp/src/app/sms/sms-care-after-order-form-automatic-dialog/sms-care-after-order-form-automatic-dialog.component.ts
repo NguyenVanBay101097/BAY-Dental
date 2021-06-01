@@ -61,7 +61,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: [null, Validators.required],
+      template: null,
       smsAccount: [null, Validators.required],
       IsCareAfterOrderAutomation: false,
       dateTimeSend: new Date(),
@@ -72,7 +72,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       timeBeforSend: 1,
       name: ['', Validators.required],
       templateName: '',
-      type: 'care-after-order',
+      type: 'saleOrderLine',
     })
     if (this.id) {
       this.loadDataFormApi();
@@ -177,7 +177,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   searchSmsTemplate(q?: string) {
     var filter = new SmsTemplateFilter();
     filter.search = q || "";
-    filter.type = "care_after_order";
+    filter.type = "saleOrderLine";
     return this.smsTemplateService.getAutoComplete(filter);
   }
 
@@ -221,14 +221,14 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     }
   }
 
-  addTemplate() {
-    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Tạo mẫu tin';
-    modalRef.componentInstance.templateTypeTab = "birthday";
-    modalRef.result.then((val) => {
-      this.loadSmsTemplate();
-    })
-  }
+  // addTemplate() {
+  //   const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+  //   modalRef.componentInstance.title = 'Tạo mẫu tin';
+  //   modalRef.componentInstance.templateTypeTab = "saleOrderLine";
+  //   modalRef.result.then((val) => {
+  //     this.loadSmsTemplate();
+  //   })
+  // }
   notify(title, isSuccess = true) {
     this.notificationService.show({
       content: title,
