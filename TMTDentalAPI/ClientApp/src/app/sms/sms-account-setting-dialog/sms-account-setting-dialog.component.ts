@@ -19,7 +19,7 @@ export class SmsAccountSettingDialogComponent implements OnInit {
     private fb: FormBuilder,
     private notificationService: NotificationService,
     private smsAccountService: SmsAccountService,
-    private activeModal: NgbActiveModal
+    public activeModal: NgbActiveModal
   ) { }
 
   ngOnInit() {

@@ -49,7 +49,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private smsTemplateService: SmsTemplateService,
     private smsConfigService: SmsConfigService,
     private intlService: IntlService,

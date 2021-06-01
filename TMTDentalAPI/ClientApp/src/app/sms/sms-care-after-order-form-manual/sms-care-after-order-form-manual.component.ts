@@ -140,4 +140,9 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
       )
     }
   }
+
+  pageChange(event) {
+    this.skip = event.skip;
+    this.loadDataFromApi();
+  }
 }

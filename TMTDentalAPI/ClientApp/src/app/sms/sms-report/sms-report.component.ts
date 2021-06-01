@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
@@ -15,18 +16,24 @@ export class SmsReportComponent implements OnInit {
 
   @ViewChild("smsBrandnameCbx", { static: true }) smsBrandnameCbx: ComboBoxComponent;
   @ViewChild("smsCampaignCbx", { static: true }) smsCampaignCbx: ComboBoxComponent;
-
+  gridData: GridDataResult
   date_reportTotal: Date = new Date();
   filteredSmsBrandname: any[];
   filteredSmsCampaign: any[];
+  limit: number = 20;
+  offset: number = 0;
+  loading: boolean = false;
   smsBrandname_reportTotal;
   smsCampaign_reportTotal;
+  labelContent: any;
+  categories: any;
+  series: any[];
   pieData_reportTotal: any[];
 
   constructor(
-    private intlService: IntlService, 
-    private smsAccountService: SmsAccountService, 
-    private smsCampaignService: SmsCampaignService, 
+    private intlService: IntlService,
+    private smsAccountService: SmsAccountService,
+    private smsCampaignService: SmsCampaignService,
     private smsMessageDetailService: SmsMessageDetailService
   ) { }
 
@@ -98,8 +105,13 @@ export class SmsReportComponent implements OnInit {
     this.smsMessageDetailService.getReportTotal(ReportTotalInput).subscribe(
       (result: any) => {
         console.log(result);
-        
+
       }
     )
+  }
+
+  pageChange(event) {
+    this.offset = event.skip;
+    // this.loadDataFromApi();
   }
 }

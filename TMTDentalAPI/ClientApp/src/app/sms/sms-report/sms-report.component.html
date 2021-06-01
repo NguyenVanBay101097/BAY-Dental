@@ -28,22 +28,23 @@
                     <table class="table-report-total">
                         <tr>
                             <td class="table-title">
-                                <span>Brandname</span> 
+                                <span>Brandname</span>
                             </td>
                             <td>
-                                <kendo-combobox class="w-100" [data]="filteredSmsBrandname" [(value)]="smsBrandname_reportTotal" 
-                                    [textField]="'brandName'" [valueField]="'id'" [filterable]="true"
-                                    placeholder="Tất cả" #smsBrandnameCbx>
+                                <kendo-combobox class="w-100" [data]="filteredSmsBrandname"
+                                    [(value)]="smsBrandname_reportTotal" [textField]="'brandName'" [valueField]="'id'"
+                                    [filterable]="true" placeholder="Tất cả" #smsBrandnameCbx>
                                     <ng-template kendoComboBoxItemTemplate let-dataItem>
                                         <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
                                     </ng-template>
                                 </kendo-combobox>
                             </td>
                             <td class="table-title">
-                                <span>Thời gian</span> 
+                                <span>Thời gian</span>
                             </td>
                             <td class="table-datepicker">
-                                <kendo-datepicker class="w-100" [(value)]="date_reportTotal" [bottomView]="'year'" [format]="'MM yyyy'">
+                                <kendo-datepicker class="w-100" [(value)]="date_reportTotal" [bottomView]="'year'"
+                                    [format]="'MM yyyy'">
                                 </kendo-datepicker>
                             </td>
                         </tr>
@@ -52,9 +53,9 @@
                                 <span>Chiến dịch</span>
                             </td>
                             <td>
-                                <kendo-combobox class="w-100" [data]="filteredSmsCampaign" [(value)]="smsCampaign_reportTotal"
-                                    [textField]="'name'" [valueField]="'id'" [filterable]="true"
-                                    placeholder="Tất cả" #smsCampaignCbx>
+                                <kendo-combobox class="w-100" [data]="filteredSmsCampaign"
+                                    [(value)]="smsCampaign_reportTotal" [textField]="'name'" [valueField]="'id'"
+                                    [filterable]="true" placeholder="Tất cả" #smsCampaignCbx>
                                 </kendo-combobox>
                             </td>
                             <td>
@@ -63,17 +64,12 @@
                             <td></td>
                         </tr>
                     </table>
-                    
+
                     <kendo-chart title="">
                         <kendo-chart-legend position="bottom"></kendo-chart-legend>
                         <kendo-chart-series>
-                            <kendo-chart-series-item
-                                type="pie"
-                                [data]="pieData_reportTotal"
-                                field="value"
-                                categoryField="category"
-                                [labels]="{ visible: true, content: labelContent }"
-                            >
+                            <kendo-chart-series-item type="pie" [data]="pieData_reportTotal" field="value"
+                                categoryField="category" [labels]="{ visible: true, content: labelContent }">
                             </kendo-chart-series-item>
                         </kendo-chart-series>
                     </kendo-chart>
@@ -89,12 +85,8 @@
                         <kendo-chart-legend position="bottom" orientation="horizontal"></kendo-chart-legend>
                         <kendo-chart-tooltip format="{0}%"></kendo-chart-tooltip>
                         <kendo-chart-series>
-                            <kendo-chart-series-item
-                                *ngFor="let item of series"
-                                type="line"
-                                [data]="item.data"
-                                [name]="item.name"
-                            >
+                            <kendo-chart-series-item *ngFor="let item of series" type="line" [data]="item.data"
+                                [name]="item.name">
                             </kendo-chart-series-item>
                         </kendo-chart-series>
                     </kendo-chart>
@@ -102,7 +94,8 @@
             </div>
         </div>
     </div>
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
         <kendo-grid-column field="" title="Chiến dịch"></kendo-grid-column>
         <kendo-grid-column field="" title="Tổng tin nhắn"></kendo-grid-column>
         <kendo-grid-column field="" title="Thành công"></kendo-grid-column>
