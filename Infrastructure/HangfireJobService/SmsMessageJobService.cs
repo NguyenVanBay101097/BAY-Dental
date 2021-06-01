@@ -56,7 +56,7 @@ namespace Infrastructure.HangfireJobService
                     }
 
                     if (partnerIds.Any())
-                        await smsMessageDetailService.CreateSmsMessageDetail(item, partnerIds, companyId);
+                        await smsMessageDetailService.CreateSmsMessageDetailV2(item, companyId);
 
                 }
                 transaction.Commit();

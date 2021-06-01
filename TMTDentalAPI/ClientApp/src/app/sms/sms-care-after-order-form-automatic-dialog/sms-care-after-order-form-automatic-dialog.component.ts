@@ -63,12 +63,12 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       template: null,
       smsAccount: [null, Validators.required],
-      IsCareAfterOrderAutomation: false,
+      isCareAfterOrderAutomation: false,
       dateTimeSend: new Date(),
       filter: this.filter,
       products: [],
       productCategories: [],
-      TypeTimeBeforSend: ['day', Validators.required],
+      typeTimeBeforSend: ['day', Validators.required],
       timeBeforSend: 1,
       name: ['', Validators.required],
       templateName: '',
@@ -106,10 +106,11 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     this.smsConfigService.getDisplay(this.id).subscribe(
       (res: any) => {
         if (res) {
-          if (res.products) {
+          if (res.products && res.products.length > 0) {
             this.filter = "product"
             res.filter = "product"
-          } else {
+          }
+          if (res.productCategories && res.productCategories.length > 0) {
             this.filter = "productCategory"
             res.filter = "productCategory"
           }
@@ -191,7 +192,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     val.templateId = val.template ? val.template.id : null;
     val.body = this.template ? JSON.stringify(this.template) : '';
     val.productIds = val.products ? val.products.map(x => x.id) : [];
-    val.productCatgoryIds = val.productCatgories ? val.productCatgories.map(x => x.id) : [];
+    val.productCategoryIds = val.productCategories ? val.productCategories.map(x => x.id) : [];
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(
         res => {

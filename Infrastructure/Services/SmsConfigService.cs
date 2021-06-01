@@ -78,14 +78,13 @@ namespace Infrastructure.Services
             var hostName = _tenant != null ? _tenant.Hostname : "localhost";
             var jobIdApp = $"{hostName}_Sms_AppointmentAutomaticReminder";
             var jobIdBir = $"{hostName}_Sms_BirthdayAutomaticReminder";
-            var jobIdThanksCustomer = $"{hostName}_Sms_ThanksCustomerAutomaticReminder";
-            var jobIdCareAfterOrder = $"{hostName}_Sms_CareAfterTreatmentAutomaticReminder";
+            var jobIdCareAfterOrder = $"{hostName}_Sms_CareAfterTreatmentAutomaticReminder_{model.Id}";
 
             if (model.Type == "appointment")
             {
                 if (model.IsAppointmentAutomation)
                 {
-                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunJob(hostName, model.Id), $"*/5 * * * *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunAppointmentAutomatic(hostName, model.Id), $"*/10 * * * *", TimeZoneInfo.Local);
                 }
                 else
                 {
@@ -93,23 +92,23 @@ namespace Infrastructure.Services
                 }
             }
 
-            //if (model.Type == "care-after-order")
-            //{
-            //    if (model.IsCareAfterOrderAutomation)
-            //    {
-            //        RecurringJob.AddOrUpdate<ISmsJobService>(jobIdCareAfterOrder, x => x.RunJob(hostName, model.Id), $"*/10 * * * *", TimeZoneInfo.Local);
-            //    }
-            //    else
-            //    {
-            //        ActionStopJob(jobIdApp);
-            //    }
-            //}
+            if (model.Type == "care-after-order")
+            {
+                if (model.IsCareAfterOrderAutomation && model.DateSend.HasValue)
+                {
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdCareAfterOrder, x => x.RunCareAfterOrderAutomatic(hostName, model.Id), $"{model.DateSend.Value.Minute} {model.DateSend.Value.Hour} * * *", TimeZoneInfo.Local);
+                }
+                else
+                {
+                    ActionStopJob(jobIdCareAfterOrder);
+                }
+            }
 
-            if (model.Type == "birthday")
+            if (model.Type == "birthday" && model.DateSend.HasValue)
             {
                 if (model.IsBirthdayAutomation)
                 {
-                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunJob(hostName, model.Id), $"8 * * * *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunBirthdayAutomatic(hostName, model.Id), $"{model.DateSend.Value.Minute} {model.DateSend.Value.Hour} * * *", TimeZoneInfo.Local);
                 }
                 else
                 {
@@ -135,6 +134,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => stateBools.Contains(x.IsCareAfterOrderAutomation));
             }
 
+            if (!string.IsNullOrEmpty(val.Type))
+                query = query.Where(x => x.Type == val.Type);
+
             var totalItems = await query.CountAsync();
             var items = await query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x => x.DateCreated).Select(x => new SmsConfigGrid
             {
@@ -159,11 +161,11 @@ namespace Infrastructure.Services
         {
             var entity = await SearchQuery(x => x.Id == id)
                 .Include(x => x.SmsConfigProductRels)
-                .Include(x => x.SmsConfigProductRels).FirstOrDefaultAsync();
+                .Include(x => x.SmsConfigProductCategoryRels).FirstOrDefaultAsync();
             entity = _mapper.Map(val, entity);
             if (val.ProductIds.Any())
             {
-                entity.SmsConfigProductRels = ComputeProduct(val.ProductIds, entity.SmsConfigProductRels.ToList());
+                entity.SmsConfigProductRels = ComputeProduct(val.ProductIds, entity);
             }
             else
             {
@@ -172,7 +174,7 @@ namespace Infrastructure.Services
 
             if (val.ProductCategoryIds.Any())
             {
-                entity.SmsConfigProductCategoryRels = ComputeProductCategory(val.ProductIds, entity.SmsConfigProductCategoryRels.ToList());
+                entity.SmsConfigProductCategoryRels = ComputeProductCategory(val.ProductCategoryIds, entity);
             }
             else
             {
@@ -182,10 +184,11 @@ namespace Infrastructure.Services
             await UpdateAsync(entity);
         }
 
-        public ICollection<SmsConfigProductRel> ComputeProduct(IEnumerable<Guid> productIds, List<SmsConfigProductRel> smsConfigProductRels)
+        public ICollection<SmsConfigProductRel> ComputeProduct(IEnumerable<Guid> productIds, SmsConfig smsConfig)
         {
-            if (smsConfigProductRels != null && smsConfigProductRels.Any())
+            if (smsConfig.SmsConfigProductRels != null && smsConfig.SmsConfigProductRels.Any())
             {
+                var smsConfigProductRels = smsConfig.SmsConfigProductRels.ToList();
                 for (int i = 0; i < smsConfigProductRels.Count(); i++)
                 {
                     var item = smsConfigProductRels[i];
@@ -198,37 +201,40 @@ namespace Infrastructure.Services
 
             foreach (var id in productIds)
             {
-                if (!smsConfigProductRels.Any(x => x.ProductId == id))
-                    smsConfigProductRels.Add(new SmsConfigProductRel
+                if (!smsConfig.SmsConfigProductRels.Any(x => x.ProductId == id))
+                    smsConfig.SmsConfigProductRels.Add(new SmsConfigProductRel
                     {
-                        ProductId = id
+                        ProductId = id,
+                        SmsConfigId = smsConfig.Id
                     });
             }
-            return smsConfigProductRels;
+            return smsConfig.SmsConfigProductRels;
         }
 
-        public ICollection<SmsConfigProductCategoryRel> ComputeProductCategory(IEnumerable<Guid> productIds, List<SmsConfigProductCategoryRel> smsConfigProducCategorytRels)
+        public ICollection<SmsConfigProductCategoryRel> ComputeProductCategory(IEnumerable<Guid> ProductCategoryIds, SmsConfig smsConfig)
         {
-            if (smsConfigProducCategorytRels != null && smsConfigProducCategorytRels.Any())
+            if (smsConfig.SmsConfigProductCategoryRels != null && smsConfig.SmsConfigProductCategoryRels.Any())
             {
-                foreach (var item in smsConfigProducCategorytRels)
+                var smsConfigProductCategoryRels = smsConfig.SmsConfigProductCategoryRels.ToList();
+                foreach (var item in smsConfigProductCategoryRels)
                 {
-                    if (!productIds.Any(x => x == item.ProductCategoryId))
+                    if (!ProductCategoryIds.Any(x => x == item.ProductCategoryId))
                     {
-                        smsConfigProducCategorytRels.Remove(item);
+                        smsConfigProductCategoryRels.Remove(item);
                     }
                 }
             }
 
-            foreach (var id in productIds)
+            foreach (var id in ProductCategoryIds)
             {
-                if (!smsConfigProducCategorytRels.Any(x => x.ProductCategoryId == id))
-                    smsConfigProducCategorytRels.Add(new SmsConfigProductCategoryRel
+                if (!smsConfig.SmsConfigProductCategoryRels.Any(x => x.ProductCategoryId == id))
+                    smsConfig.SmsConfigProductCategoryRels.Add(new SmsConfigProductCategoryRel
                     {
-                        ProductCategoryId = id
+                        ProductCategoryId = id,
+                        SmsConfigId = smsConfig.Id
                     });
             }
-            return smsConfigProducCategorytRels;
+            return smsConfig.SmsConfigProductCategoryRels;
         }
     }
 }
