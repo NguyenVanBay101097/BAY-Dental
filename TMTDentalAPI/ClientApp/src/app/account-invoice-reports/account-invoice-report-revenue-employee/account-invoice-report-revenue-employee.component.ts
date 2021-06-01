@@ -12,29 +12,33 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
 import { saveAs } from '@progress/kendo-file-saver';
-import { AccountInvoiceReportService, RevenueTimeReportPaged } from '../account-invoice-report.service';
+import { AccountInvoiceReportService, RevenueEmployeeReportDisplay, RevenueEmployeeReportPaged, RevenueReportDetailPaged } from '../account-invoice-report.service';
 import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
 
-@Component({
-  selector: 'app-account-invoice-report-revenue',
-  templateUrl: './account-invoice-report-revenue.component.html',
-  styleUrls: ['./account-invoice-report-revenue.component.css']
-})
-export class AccountInvoiceReportRevenueComponent implements OnInit {
 
-  filter = new RevenueTimeReportPaged();
+@Component({
+  selector: 'app-account-invoice-report-revenue-employee',
+  templateUrl: './account-invoice-report-revenue-employee.component.html',
+  styleUrls: ['./account-invoice-report-revenue-employee.component.css']
+})
+export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
+  empFilter = 'EmployeeId';
+  filter = new RevenueEmployeeReportPaged();
   companies: CompanySimple[] = [];
+  listEmployee: EmployeeSimple[] = [];
   allDataInvoice: any;
   gridData: GridDataResult;
   loading = false;
 
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
+  @ViewChild("emp", { static: true }) empVC: ComboBoxComponent;
 
   constructor(
     private companyService: CompanyService,
     private accInvService: AccountInvoiceReportService,
-    private revenueManageService: RevenueManageService
+    private revenueManageService: RevenueManageService,
+    private employeeService: EmployeeService,
 
   ) { }
 
@@ -43,6 +47,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     this.loadReport();
     this.loadCompanies();
     this.FilterCombobox();
+    this.loadEmployees();
   }
   
   FilterCombobox() {
@@ -58,6 +63,20 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
         this.companies = x.items;
         this.companyVC.loading = false;
       });
+
+      this.empVC.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.empVC.loading = true)),
+        switchMap((value) => this.searchEmployee$(value)
+        )
+      )
+      .subscribe((x) => {
+        this.listEmployee = x.items;
+        this.empVC.loading = false;
+      });
+
   }
 
   initFilterData() {
@@ -66,6 +85,20 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     this.filter.dateTo = this.filter.dateTo || new Date(y, m + 1, 0);
     this.filter.limit = 20;
     this.filter.offset = 0;
+    this.filter.employeeGroup = this.empFilter == 'EmployeeId' ? true: false;
+  }
+
+  loadEmployees() {
+    this.searchEmployee$().subscribe(res => {
+      this.listEmployee = res.items;
+    });
+  }
+
+  searchEmployee$(search?) {
+    var val = new EmployeePaged();
+    val.search = search || '';
+    val.active = true;
+    return this.employeeService.getEmployeePaged(val);
   }
 
   searchCompany$(search?) {
@@ -82,12 +115,12 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
   }
 
   loadReport() {
-    var val = Object.assign({}, this.filter) as RevenueTimeReportPaged;
+    var val = Object.assign({}, this.filter) as RevenueEmployeeReportPaged;
     val.companyId = val.companyId || '';
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
-    this.accInvService.getRevenueTimeReportPaged(val).pipe(
+    this.accInvService.getRevenueEmployeeReportPaged(val).pipe(
       map(res => {
         return <DataResult>{
           data: res.items,
@@ -129,17 +162,16 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
   }
 
   public allData = (): any => {
-    var val = Object.assign({}, this.filter) as RevenueTimeReportPaged;
+    var val = Object.assign({}, this.filter) as RevenueEmployeeReportPaged;
     val.companyId = val.companyId || '';
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     val.limit = 0;
 
-    const observable = this.accInvService.getRevenueTimeReportPaged(val).pipe(
+    const observable = this.accInvService.getRevenueEmployeeReportPaged(val).pipe(
       map(res => {
-        res.items.forEach((acc: any) => {
-          acc.date = acc.invoiceDate;
-          acc.invoiceDate = acc.invoiceDate ? moment(acc.invoiceDate).format('DD/MM/YYYY') : '';
+        res.items.forEach((acc: RevenueEmployeeReportDisplay) => {
+          acc.employeeName = acc.employeeName || 'Không xác định';
           acc.priceSubTotal = acc.priceSubTotal.toLocaleString('vi') as any;
         });
         return {
@@ -167,8 +199,21 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     this.revenueManageService.emitChange({
        data : data,
        args : args,
-       filter : this.filter
+       filter : this.filter,
+       employeeFilter: this.empFilter
     })
+  }
+
+  
+  onSelectEmployee(e) {
+    this.filter.employeeId = e? e.id : null;
+    this.filter.offset = 0;
+    this.loadReport();
+  }
+
+  onChangeEmployeeFilter() {
+    this.filter.employeeGroup = this.empFilter == 'EmployeeId'? true: false;
+    this.loadReport();
   }
 
 }

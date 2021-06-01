@@ -1,9 +1,15 @@
-.type label:hover,
-.type input[type="radio"]:checked+label {
+.type a:hover,
+.type .active {
     color: white;
     border-radius: 1rem;
     background: hsl(199deg 89% 74%);
     cursor: pointer;
+    text-decoration: none;
+}
+
+.type a {
+    padding: .5rem;
+    color: black;
 }
 
 .bg-gray {

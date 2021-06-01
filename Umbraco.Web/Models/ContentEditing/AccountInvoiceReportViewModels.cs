@@ -5,59 +5,109 @@ using System.Text;
 namespace Umbraco.Web.Models.ContentEditing
 {
 
-    public class AccountInvoiceReportPaged
+    public class RevenueReportQueryCommon
     {
-        public AccountInvoiceReportPaged()
+        public RevenueReportQueryCommon(DateTime? dateFrom, DateTime? dateTo, Guid? companyId)
+        {
+            this.DateFrom = dateFrom;
+            this.DateFrom = dateFrom;
+            this.CompanyId = companyId;
+        }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class RevenueTimeReportPaged
+    {
+        public RevenueTimeReportPaged()
         {
             Limit = 20;
         }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
-        public string Search { get; set; }
         public Guid? CompanyId { get; set; }
-        /// <summary>
-        /// InvoiceDate, ProductId, EmployeeId, AssistantId
-        /// </summary>
-        public string GroupBy { get; set; }
         public int Limit { get; set; }
         public int Offset { get; set; }
     }
 
-    public class AccountInvoiceReportDetailPaged
+    public class RevenueServiceReportPaged
     {
-        public AccountInvoiceReportDetailPaged()
+        public RevenueServiceReportPaged()
         {
             Limit = 20;
         }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
-        public string Search { get; set; }
+        public Guid? ProductId { get; set; }
+        public Guid? CompanyId { get; set; }
+        public int Limit { get; set; }
+        public int Offset { get; set; }
+    }
+
+    public class RevenueEmployeeReportPaged
+    {
+        public RevenueEmployeeReportPaged()
+        {
+            Limit = 20;
+        }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
+        public bool EmployeeGroup { get; set; }
+        public Guid? EmployeeId { get; set; }
+
+        public int Limit { get; set; }
+        public int Offset { get; set; }
+    }
+
+    public class EmployeeAssistantKeyGroup
+    {
+        public Guid? Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class RevenueTimeReportDisplay
+    {
+        public DateTime? InvoiceDate { get; set; }
+        public decimal PriceSubTotal { get; set; }
+    }
+
+    public class RevenueServiceReportDisplay
+    {
+        public string ProductName { get; set; }
+        public Guid? ProductId { get; set; }
+        public decimal PriceSubTotal { get; set; }
+    }
+
+    public class RevenueEmployeeReportDisplay
+    {
+        public string EmployeeName { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public decimal PriceSubTotal { get; set; }
+    }
+
+
+    public class RevenueReportDetailPaged
+    {
+        public RevenueReportDetailPaged()
+        {
+            Limit = 20;
+        }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
         public Guid? CompanyId { get; set; }
         public int Limit { get; set; }
         public int Offset { get; set; }
         public DateTime? Date { get; set; }
         public Guid? ProductId { get; set; }
+        public bool EmployeeGroup { get; set; }
         public Guid? EmployeeId { get; set; }
+        public bool AssistantGroup { get; set; }
         public Guid? AssistantId { get; set; }
-        /// <summary>
-        /// InvoiceDate, ProductId, EmployeeId, AssistantId
-        /// </summary>
-        public string GroupBy { get; set; }
     }
 
-    public class AccountInvoiceReportDisplay
-    {
-        public DateTime? InvoiceDate { get; set; }
-        public string ProductName { get; set; }
-        public Guid? ProductId { get; set; }
-        public string EmployeeName { get; set; }
-        public Guid? EmployeeId { get; set; }
-        public string AssistantName { get; set; }
-        public Guid? AssistantId { get; set; }
-        public decimal PriceSubTotal { get; set; }
-    }
-
-    public class AccountInvoiceReportDetailDisplay
+    public class RevenueReportDetailDisplay
     {
         public DateTime? InvoiceDate { get; set; }
         public string InvoiceOrigin { get; set; }
@@ -67,11 +117,5 @@ namespace Umbraco.Web.Models.ContentEditing
         public string ProductName { get; set; }
         public decimal PriceSubTotal { get; set; }
     }
-
-    public class AccountInvoiceReportExcel : AccountInvoiceReportDisplay
-    {
-        public IEnumerable<AccountInvoiceReportDetailDisplay> Lines { get; set; } = new List<AccountInvoiceReportDetailDisplay>();
-    }
-
 
 }

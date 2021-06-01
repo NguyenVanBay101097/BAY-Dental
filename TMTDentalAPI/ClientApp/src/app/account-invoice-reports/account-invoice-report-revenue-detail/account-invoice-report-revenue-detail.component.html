@@ -10,7 +10,7 @@
     </kendo-grid-column>
     <kendo-grid-column field="employeeName" title="Bác sĩ/Phụ tá" width="120">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{parentFilter.groupBy != 'emp-ass'? dataItem.employeeName : (empFilter == 'EmployeeId'? dataItem.employeeName : dataItem.assistantName)}}
+            {{empFilter == 'EmployeeId'? dataItem.employeeName : dataItem.assistantName}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="productName" title="Dịch vụ" width="120">

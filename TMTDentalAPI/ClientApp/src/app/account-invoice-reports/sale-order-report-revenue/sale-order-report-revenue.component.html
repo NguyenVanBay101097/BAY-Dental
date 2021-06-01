@@ -5,7 +5,7 @@
             <label class="mb-0">Tổng điều trị</label>
             <h5 class="text-info">{{amountTotal | number}}</h5>
         </div>
-        <div class="border mr-2 px-5 py-2 text-center" >
+        <div class="border mr-2 px-5 py-2 text-center">
             <label class="mb-0">Tổng thanh toán</label>
             <h5 class="text-success">{{amountPaid | number}}</h5>
         </div>
@@ -16,10 +16,8 @@
 
     </div>
     <div class="filter d-flex flex-0-0-auto mt-2">
-        <select [(ngModel)]="filter.companyId" (change)="loadReport()" class="form-control w-auto mr-1" aria-label="Default select example">
-            <option value="all" selected>Tất cả chi nhánh</option>
-            <option *ngFor="let item of companies" [value]="item.id">{{item.name}}</option>
-        </select>
+        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+        </kendo-combobox>
         <button class="btn btn-primary" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
             file</button>
         <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo số phiếu" class="ml-auto form-control w-50">

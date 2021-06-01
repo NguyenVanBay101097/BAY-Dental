@@ -10,7 +10,9 @@ namespace Infrastructure.Services
     public interface IAccountInvoiceReportService
     {
 
-        Task<PagedResult2<AccountInvoiceReportDisplay>> GetRevenueReportPaged(AccountInvoiceReportPaged val);
-        Task<PagedResult2<AccountInvoiceReportDetailDisplay>> GetRevenueReportDetailPaged(AccountInvoiceReportDetailPaged val);
+        Task<PagedResult2<RevenueTimeReportDisplay>> GetRevenueTimeReportPaged(RevenueTimeReportPaged val);
+        Task<PagedResult2<RevenueServiceReportDisplay>> GetRevenueServiceReportPaged(RevenueServiceReportPaged val);
+        Task<PagedResult2<RevenueEmployeeReportDisplay>> GetRevenueEmployeeReportPaged(RevenueEmployeeReportPaged val);
+        Task<PagedResult2<RevenueReportDetailDisplay>> GetRevenueReportDetailPaged(RevenueReportDetailPaged val);
     }
 }

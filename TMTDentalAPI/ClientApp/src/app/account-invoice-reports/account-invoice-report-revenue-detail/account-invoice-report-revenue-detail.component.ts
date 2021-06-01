@@ -3,7 +3,7 @@ import { GridDataResult } from '@progress/kendo-angular-grid';
 import { DataResult } from '@progress/kendo-data-query';
 import * as moment from 'moment';
 import { map } from 'rxjs/operators';
-import { AccountInvoiceReportDetailPaged, AccountInvoiceReportDisplay, AccountInvoiceReportPaged, AccountInvoiceReportService } from '../account-invoice-report.service';
+import { AccountInvoiceReportService, RevenueReportDetailPaged } from '../account-invoice-report.service';
 
 @Component({
   selector: 'app-account-invoice-report-revenue-detail',
@@ -12,15 +12,15 @@ import { AccountInvoiceReportDetailPaged, AccountInvoiceReportDisplay, AccountIn
 })
 export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
 
-  filter = new AccountInvoiceReportDetailPaged();
-  @Input() parent: AccountInvoiceReportDisplay;
-  @Input() parentFilter: AccountInvoiceReportPaged;
+  filter = new RevenueReportDetailPaged();
+  @Input() parent: any;
+  @Input() parentFilter: any;
   @Input() empFilter = 'EmployeeId';
   gridData: GridDataResult;
   loading = false;
 
   constructor(
-    private accInvService: AccountInvoiceReportService
+    private accInvService: AccountInvoiceReportService,
   ) { }
 
   ngOnInit() {
@@ -29,24 +29,17 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
   }
 
   initFilterData() {
-    Object.assign(this.filter, this.parentFilter);
+    this.filter.dateFrom = this.parentFilter.dateFrom ? moment(this.parentFilter.dateFrom).format('YYYY/MM/DD') : '';
+    this.filter.dateTo = this.parentFilter.dateTo ? moment(this.parentFilter.dateTo).format('YYYY/MM/DD') : '';
+    this.filter.companyId = this.parentFilter.companyId || '';
     this.filter.limit = 20;
     this.filter.offset = 0;
-    if (this.parent) {
-      switch (this.parentFilter.groupBy) {
-        case 'InvoiceDate':
-          this.filter.date = moment(this.parent.invoiceDate).format('YYYY/MM/DD')
-          break;
-        case 'ProductId':
-          this.filter.productId = this.parent.productId || '';
-          break;
-        case 'emp-ass':
-          this.empFilter == 'EmployeeId'? this.filter.employeeId =  this.parent.employeeId || '': this.filter.assistantId = this.parent.assistantId || '';
-          break;
-        default:
-          break;
-      }
-    }
+    this.filter.date = this.parent.invoiceDate ?  moment(this.parent.invoiceDate).format('YYYY/MM/DD'): '';
+    this.filter.productId = this.parent.productId  || '';
+    this.filter.employeeGroup = this.parentFilter.employeeGroup || false;
+    this.filter.employeeId = this.parent.employeeId || '';
+    this.filter.assistantGroup = !this.parentFilter.employeeGroup ? true : false;
+    this.filter.assistantId = this.parent.employeeId || '';
   }
 
   loadReport() {
@@ -54,8 +47,6 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
     val.companyId = val.companyId == 'all' ? '' : val.companyId;
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
-    val.search = '';
-    val.groupBy = val.groupBy == 'emp-ass' ? this.empFilter : val.groupBy;
     this.loading = true;
     this.accInvService.getRevenueReportDetailPaged(val).pipe(
       map(res => {

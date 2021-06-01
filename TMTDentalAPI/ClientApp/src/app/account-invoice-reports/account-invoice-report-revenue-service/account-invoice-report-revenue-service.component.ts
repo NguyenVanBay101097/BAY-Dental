@@ -12,30 +12,30 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
 import { saveAs } from '@progress/kendo-file-saver';
-import { AccountInvoiceReportService, RevenueTimeReportPaged } from '../account-invoice-report.service';
+import { AccountInvoiceReportService, RevenueServiceReportPaged } from '../account-invoice-report.service';
 import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
 
 @Component({
-  selector: 'app-account-invoice-report-revenue',
-  templateUrl: './account-invoice-report-revenue.component.html',
-  styleUrls: ['./account-invoice-report-revenue.component.css']
+  selector: 'app-account-invoice-report-revenue-service',
+  templateUrl: './account-invoice-report-revenue-service.component.html',
+  styleUrls: ['./account-invoice-report-revenue-service.component.css']
 })
-export class AccountInvoiceReportRevenueComponent implements OnInit {
-
-  filter = new RevenueTimeReportPaged();
+export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
+  filter = new RevenueServiceReportPaged();
   companies: CompanySimple[] = [];
+  listProduct: ProductSimple[] = [];
   allDataInvoice: any;
   gridData: GridDataResult;
   loading = false;
 
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
+  @ViewChild("pro", { static: true }) productVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
-
   constructor(
     private companyService: CompanyService,
     private accInvService: AccountInvoiceReportService,
-    private revenueManageService: RevenueManageService
-
+    private revenueManageService: RevenueManageService,
+    private productService: ProductService,
   ) { }
 
   ngOnInit() {
@@ -43,8 +43,9 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     this.loadReport();
     this.loadCompanies();
     this.FilterCombobox();
+    this.loadProducts();
   }
-  
+
   FilterCombobox() {
     this.companyVC.filterChange
       .asObservable()
@@ -58,6 +59,19 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
         this.companies = x.items;
         this.companyVC.loading = false;
       });
+
+      this.productVC.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.productVC.loading = true)),
+        switchMap(value => this.searchProduct$(value)
+        )
+      )
+      .subscribe((res) => {
+        this.listProduct = res;
+        this.productVC.loading = false;
+      });
   }
 
   initFilterData() {
@@ -66,6 +80,21 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     this.filter.dateTo = this.filter.dateTo || new Date(y, m + 1, 0);
     this.filter.limit = 20;
     this.filter.offset = 0;
+  }
+
+  searchProduct$(search?) {
+    var val = new ProductFilter();
+    val.limit = 20;
+    val.offset = 0;
+    val.type2 = 'service,medicine';
+    val.search = search || '';
+    return this.productService.autocomplete2(val);
+  }
+
+  loadProducts() {
+    this.searchProduct$().subscribe(res => {
+      this.listProduct = res;
+    });
   }
 
   searchCompany$(search?) {
@@ -82,12 +111,12 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
   }
 
   loadReport() {
-    var val = Object.assign({}, this.filter) as RevenueTimeReportPaged;
+    var val = Object.assign({}, this.filter) as RevenueServiceReportPaged;
     val.companyId = val.companyId || '';
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
-    this.accInvService.getRevenueTimeReportPaged(val).pipe(
+    this.accInvService.getRevenueServiceReportPaged(val).pipe(
       map(res => {
         return <DataResult>{
           data: res.items,
@@ -120,6 +149,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
 
   onSelectCompany(e){
     this.filter.companyId = e? e.id : null;
+    this.filter.offset = 0;
     this.loadReport();
   }
 
@@ -129,17 +159,15 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
   }
 
   public allData = (): any => {
-    var val = Object.assign({}, this.filter) as RevenueTimeReportPaged;
+    var val = Object.assign({}, this.filter) as RevenueServiceReportPaged;
     val.companyId = val.companyId || '';
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     val.limit = 0;
 
-    const observable = this.accInvService.getRevenueTimeReportPaged(val).pipe(
+    const observable = this.accInvService.getRevenueServiceReportPaged(val).pipe(
       map(res => {
         res.items.forEach((acc: any) => {
-          acc.date = acc.invoiceDate;
-          acc.invoiceDate = acc.invoiceDate ? moment(acc.invoiceDate).format('DD/MM/YYYY') : '';
           acc.priceSubTotal = acc.priceSubTotal.toLocaleString('vi') as any;
         });
         return {
@@ -170,5 +198,12 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
        filter : this.filter
     })
   }
+
+  onSelectProduct(e) {
+    this.filter.productId = e? e.id : null;
+    this.filter.offset = 0;
+    this.loadReport();
+  }
+
 
 }

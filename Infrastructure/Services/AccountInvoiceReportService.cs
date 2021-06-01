@@ -27,7 +27,7 @@ namespace Infrastructure.Services
             _context = context;
         }
 
-        private async Task<IQueryable<AccountInvoiceReport>> GetRevenueReportQuery(AccountInvoiceReportPaged val)
+        private async Task<IQueryable<AccountInvoiceReport>> GetRevenueReportQuery(RevenueReportQueryCommon val)
         {
 
             var accObj = GetService<IAccountAccountService>();
@@ -58,103 +58,98 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
             }
 
-            if (!string.IsNullOrEmpty(val.Search))
-            {
-                switch (val.GroupBy)
-                {
-                    case "InvoiceDate":
-                        break;
-                    case "ProductId":
-                        query = query.Where(x => x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search));
-                        break;
-                    case "EmployeeId":
-                        query = query.Where(x => x.Employee.Name.Contains(val.Search));
-                        break;
-                    case "AssistantId":
-                        query = query.Where(x => x.Assistant.Name.Contains(val.Search));
-                        break;
-                    default:
-                        break;
-                }
-            }
-
             return query;
         }
 
-        public async Task<PagedResult2<AccountInvoiceReportDisplay>> GetRevenueReportPaged(AccountInvoiceReportPaged val)
+        public async Task<PagedResult2<RevenueTimeReportDisplay>> GetRevenueTimeReportPaged(RevenueTimeReportPaged val)
         {
-            var query = await GetRevenueReportQuery(val);
+            var query = await GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
+            var queryRes = query.GroupBy(x => x.InvoiceDate.Value.Date);
 
-            var res = new List<AccountInvoiceReportDisplay>();
-            var count = 0;
-            switch (val.GroupBy)
+            var res = new List<RevenueTimeReportDisplay>();
+            var count = await queryRes.Select(x => x.Key).CountAsync();
+            if (val.Limit > 0) queryRes = queryRes.Skip(val.Offset).Take(val.Limit);
+            res = await queryRes.Select(x => new RevenueTimeReportDisplay
             {
-                case "InvoiceDate":
-                    var queryDate = query.GroupBy(x => x.InvoiceDate.Value.Date);
-                    count = await queryDate.Select(x => x.Key).CountAsync();
-                    if (val.Limit > 0) queryDate = queryDate.Skip(val.Offset).Take(val.Limit);
-                    res = await queryDate.Select(x => new AccountInvoiceReportDisplay
-                    {
-                        InvoiceDate = x.Key as DateTime?,
-                        PriceSubTotal = x.Sum(z => z.PriceSubTotal)
-                    }).ToListAsync();
+                InvoiceDate = x.Key as DateTime?,
+                PriceSubTotal = x.Sum(z => z.PriceSubTotal)
+            }).ToListAsync();
 
-                    res = res.OrderByDescending(z => z.InvoiceDate.Value).ToList();
-                    break;
+            res = res.OrderByDescending(z => z.InvoiceDate.Value).ToList();
 
-                case "ProductId":
-                    var queryPr = query.GroupBy(x => new { x.ProductId, x.Product.Name });
-                    count = await queryPr.Select(x => x.Key).CountAsync();
-                    if (val.Limit > 0) queryPr = queryPr.Skip(val.Offset).Take(val.Limit);
-                    res = await queryPr.Select(x => new AccountInvoiceReportDisplay
-                    {
-                        ProductId = x.Key.ProductId.Value,
-                        ProductName = x.Key.Name,
-                        PriceSubTotal = x.Sum(z => z.PriceSubTotal)
-                    }).ToListAsync();
-                    break;
-                case "EmployeeId":
-                    var queryEmp = query.GroupBy(x => new { x.EmployeeId, x.Employee.Name });
-                    count = await queryEmp.Select(x => x.Key).CountAsync();
-                    if (val.Limit > 0) queryEmp = queryEmp.Skip(val.Offset).Take(val.Limit);
-                    res = await queryEmp.Select(x => new AccountInvoiceReportDisplay
-                    {
-                        EmployeeId = x.Key.EmployeeId,
-                        EmployeeName = x.Key.Name,
-                        PriceSubTotal = x.Sum(z => z.PriceSubTotal)
-                    }).ToListAsync();
-                    break;
-                case "AssistantId":
-                    var queryAss = query.GroupBy(x => new { x.AssistantId, x.Assistant.Name });
-                    count = await queryAss.Select(x => x.Key).CountAsync();
-                    if (val.Limit > 0) queryAss = queryAss.Skip(val.Offset).Take(val.Limit);
-                    res = await queryAss.Select(x => new AccountInvoiceReportDisplay
-                    {
-                        AssistantId = x.Key.AssistantId,
-                        AssistantName = x.Key.Name,
-                        PriceSubTotal = x.Sum(z => z.PriceSubTotal)
-                    }).ToListAsync();
-                    break;
-                default:
-                    break;
-            }
-
-            return new PagedResult2<AccountInvoiceReportDisplay>(count, val.Offset, val.Limit)
+            return new PagedResult2<RevenueTimeReportDisplay>(count, val.Offset, val.Limit)
             {
                 Items = res
             };
         }
 
-        public async Task<PagedResult2<AccountInvoiceReportDetailDisplay>> GetRevenueReportDetailPaged(AccountInvoiceReportDetailPaged val)
+        public async Task<PagedResult2<RevenueServiceReportDisplay>> GetRevenueServiceReportPaged(RevenueServiceReportPaged val)
         {
-            var query = await GetRevenueReportQuery(new AccountInvoiceReportPaged()
+            var query = await GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
+            if(val.ProductId.HasValue)
             {
-                CompanyId = val.CompanyId,
-                DateFrom = val.DateFrom,
-                DateTo = val.DateTo,
-            });
+                query = query.Where(x => x.ProductId == val.ProductId);
+            }
+            var queryRes = query.GroupBy(x => new { x.ProductId, x.Product.Name});
 
-            var res = new List<AccountInvoiceReportDetailDisplay>();
+            var res = new List<RevenueServiceReportDisplay>();
+            var count = await queryRes.Select(x => x.Key).CountAsync();
+            if (val.Limit > 0) queryRes = queryRes.Skip(val.Offset).Take(val.Limit);
+            res = await queryRes.Select(x => new RevenueServiceReportDisplay
+            {
+                ProductId = x.Key.ProductId.Value,
+                ProductName = x.Key.Name,
+                PriceSubTotal = x.Sum(z => z.PriceSubTotal)
+            }).ToListAsync();
+
+            return new PagedResult2<RevenueServiceReportDisplay>(count, val.Offset, val.Limit)
+            {
+                Items = res
+            };
+        }
+
+        public async Task<PagedResult2<RevenueEmployeeReportDisplay>> GetRevenueEmployeeReportPaged(RevenueEmployeeReportPaged val)
+        {
+            var query = await GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
+            IQueryable<IGrouping<object,AccountInvoiceReport>> queryRes;
+            if(val.EmployeeGroup)
+            {
+                if (val.EmployeeId.HasValue)
+                {
+                    query = query.Where(x => x.EmployeeId == val.EmployeeId);
+                }
+                 queryRes = query.GroupBy(x => new EmployeeAssistantKeyGroup {Id = x.EmployeeId, Name = x.Employee.Name});
+            }
+            else
+            {
+                if (val.EmployeeId.HasValue)
+                {
+                    query = query.Where(x => x.AssistantId == val.EmployeeId);
+                }
+                 queryRes = query.GroupBy(x => new EmployeeAssistantKeyGroup { Id = x.AssistantId, Name = x.Assistant.Name });
+            }
+
+            var res = new List<RevenueEmployeeReportDisplay>();
+            var count = await queryRes.Select(x => x.Key).CountAsync();
+            if (val.Limit > 0) queryRes = queryRes.Skip(val.Offset).Take(val.Limit);
+            res = await queryRes.Select(x => new RevenueEmployeeReportDisplay
+            {
+                EmployeeId = (x.Key as EmployeeAssistantKeyGroup).Id,
+                EmployeeName = (x.Key as EmployeeAssistantKeyGroup).Name,
+                PriceSubTotal = x.Sum(z => z.PriceSubTotal)
+            }).ToListAsync();
+
+            return new PagedResult2<RevenueEmployeeReportDisplay>(count, val.Offset, val.Limit)
+            {
+                Items = res
+            };
+        }
+
+        public async Task<PagedResult2<RevenueReportDetailDisplay>> GetRevenueReportDetailPaged(RevenueReportDetailPaged val)
+        {
+            var query = await GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
+
+            var res = new List<RevenueReportDetailDisplay>();
             var count = 0;
 
             if (val.Date.HasValue)
@@ -165,11 +160,11 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.ProductId == val.ProductId);
             }
-            else if (val.EmployeeId.HasValue || val.GroupBy == "EmployeeId")
+            else if (val.EmployeeGroup)
             {
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
             }
-            else if (val.AssistantId.HasValue || val.GroupBy == "AssistantId")
+            else if (val.AssistantGroup)
             {
                 query = query.Where(x => x.AssistantId == val.AssistantId);
             }
@@ -177,7 +172,7 @@ namespace Infrastructure.Services
             count = await query.CountAsync();
             query = query.OrderByDescending(x => x.InvoiceDate);
             if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
-            res = await query.Select(x => new AccountInvoiceReportDetailDisplay
+            res = await query.Select(x => new RevenueReportDetailDisplay
             {
                 InvoiceDate = x.InvoiceDate,
                 AssistantName = x.Assistant.Name,
@@ -188,11 +183,13 @@ namespace Infrastructure.Services
                 ProductName = x.Product.Name
             }).ToListAsync();
 
-            return new PagedResult2<AccountInvoiceReportDetailDisplay>(count, val.Offset, val.Limit)
+            return new PagedResult2<RevenueReportDetailDisplay>(count, val.Offset, val.Limit)
             {
                 Items = res
             };
         }
+
+      
 
         //public override ISpecification<AccountInvoiceReport> RuleDomainGet(IRRule rule)
         //{

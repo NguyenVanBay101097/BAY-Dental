@@ -11,9 +11,14 @@ import { AccountInvoiceReportRevenueDetailComponent } from './account-invoice-re
 import { SaleOrderReportRevenueComponent } from './sale-order-report-revenue/sale-order-report-revenue.component';
 import { AccountInvoiceReportRevenueComponent } from './account-invoice-report-revenue/account-invoice-report-revenue.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AccountInvoiceReportRevenueServiceComponent } from './account-invoice-report-revenue-service/account-invoice-report-revenue-service.component';
+import { AccountInvoiceReportRevenueEmployeeComponent } from './account-invoice-report-revenue-employee/account-invoice-report-revenue-employee.component';
 
 @NgModule({
-  declarations: [AccountInvoiceReportRevenueDetailComponent, SaleOrderReportRevenueComponent, AccountInvoiceReportRevenueComponent,AccountInvoiceReportRevenueManageComponent ],
+  declarations: [AccountInvoiceReportRevenueDetailComponent, SaleOrderReportRevenueComponent, AccountInvoiceReportRevenueComponent,AccountInvoiceReportRevenueManageComponent,
+    AccountInvoiceReportRevenueServiceComponent,
+    AccountInvoiceReportRevenueEmployeeComponent
+  ],
   imports: [
     CommonModule,
     AccountInvoiceReportsRoutingModule,

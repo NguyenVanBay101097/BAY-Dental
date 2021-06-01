@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Workbook } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import { DataResult } from '@progress/kendo-data-query';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { SaleOrderReportRevenuePaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { saveAs } from '@progress/kendo-file-saver';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 
 @Component({
   selector: 'app-sale-order-report-revenue',
@@ -25,6 +26,7 @@ export class SaleOrderReportRevenueComponent implements OnInit {
   amountTotal = 0;
    residual= 0;
   amountPaid = 0;
+  @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
 
   constructor(
     private companyService: CompanyService,
@@ -41,6 +43,41 @@ export class SaleOrderReportRevenueComponent implements OnInit {
     this.sumTotalAmount();
     this.sumTotalPaid();
     this.sumTotalResidual();
+    this.loadCompanies();
+    this.FilterCombobox();
+  }
+
+  FilterCombobox() {
+    this.companyVC.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.companyVC.loading = true)),
+        switchMap((value) => this.searchCompany$(value)
+        )
+      )
+      .subscribe((x) => {
+        this.companies = x.items;
+        this.companyVC.loading = false;
+      });
+  }
+
+  searchCompany$(search?) {
+    var val = new CompanyPaged();
+    val.active = true;
+    val.search = search || '';
+   return  this.companyService.getPaged(val);
+  } 
+
+  loadCompanies() {
+    this.searchCompany$().subscribe(res => {
+      this.companies = res.items;
+    });
+  }
+  
+  onSelectCompany(e){
+    this.filter.companyId = e? e.id : null;
+    this.loadReport();
   }
 
   searchChange() {
@@ -53,14 +90,6 @@ export class SaleOrderReportRevenueComponent implements OnInit {
       });
   }
 
-
-  loadCompanies() {
-    var val = new CompanyPaged();
-    val.active = true;
-    this.companyService.getPaged(val).subscribe(res => {
-      this.companies = res.items;
-    });
-  }
 
   initFilterData() {
     this.filter.companyId = 'all';
