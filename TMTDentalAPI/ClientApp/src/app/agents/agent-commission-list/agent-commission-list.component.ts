@@ -36,8 +36,8 @@ export class AgentCommissionListComponent implements OnInit {
 
   ngOnInit() {
 
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd;
+    // this.dateFrom = this.monthStart;
+    // this.dateTo = this.monthEnd;
 
     this.searchUpdate.pipe(
       debounceTime(400),
