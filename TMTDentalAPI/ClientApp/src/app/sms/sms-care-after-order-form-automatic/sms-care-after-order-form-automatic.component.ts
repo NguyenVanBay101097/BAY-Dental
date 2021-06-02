@@ -61,9 +61,9 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   }
 
   editItem(item) {
-    var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
+    var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "md", windowClass: "o_technical_modal" });
     modalRef.componentInstance.title = "Thiết lập tin nhắn gửi tự động";
-    modalRef.componentInstance.templateTypeTab = "care_after_order";
+    // modalRef.componentInstance.templateTypeTab = "care_after_order";
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(
       result => {
@@ -80,7 +80,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
       result => {
         this.smsConfigService.delete(item.id).subscribe(
           () => {
-
+            this.loadDataFromApi();
           }
         )
       }
@@ -113,7 +113,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   setupAutomaic() {
     var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "md", windowClass: "o_technical_modal" });
     modalRef.componentInstance.title = "Thiết lập tin nhắn gửi tự động";
-    modalRef.componentInstance.templateTypeTab = "care_after_order";
+    // modalRef.componentInstance.templateTypeTab = "care_after_order";
     modalRef.result.then(
       result => {
         this.loadDataFromApi();

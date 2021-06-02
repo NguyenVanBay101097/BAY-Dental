@@ -93,6 +93,7 @@ namespace TMTDentalAPI.Controllers
             var entity = await _smsMessageService.GetByIdAsync(id);
             if (!ModelState.IsValid || entity == null) return BadRequest();
             entity = _mapper.Map(val, entity);
+            entity.CompanyId = CompanyId;
             await _smsMessageService.UpdateAsync(entity);
             var res = _mapper.Map<SmsMessageDisplay>(entity);
             return Ok(res);

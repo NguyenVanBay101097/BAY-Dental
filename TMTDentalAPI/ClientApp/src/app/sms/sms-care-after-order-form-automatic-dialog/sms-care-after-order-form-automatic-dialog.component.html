@@ -37,6 +37,9 @@
                                             </td>
                                             <td colspan="1" style="width: 80%;">
                                                 <input class="form-control" formControlName="name" />
+                                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                                                    <div *ngIf="f.name.errors.required">Nhập tên tin nhắn</div>
+                                                </div>
                                             </td>
                                         </tr>
                                         <tr>
@@ -118,6 +121,9 @@
                                                 [placeholder]="'Chọn nhóm dịch vụ'" [valueField]="'id'"
                                                 formControlName="productCategories">
                                             </kendo-multiselect>
+                                            <div *ngIf="f.productCategories.errors && (f.productCategories.touched || f.productCategories.dirty || submitted)" class="text-danger">
+                                                <div *ngIf="f.productCategories.errors.required">Chọn nhóm dịch vụ</div>
+                                            </div>
                                         </div>
                                         <div *ngIf="filter=='product'">
                                             <kendo-multiselect (filterChange)="loadProduct($event)" class="mr-3"
@@ -125,6 +131,9 @@
                                                 [placeholder]="'Chọn dịch vụ'" [textField]="'name'" [valueField]="'id'"
                                                 formControlName="products">
                                             </kendo-multiselect>
+                                            <div *ngIf="f.products.errors && (f.products.touched || f.products.dirty || submitted)" class="text-danger">
+                                                <div *ngIf="f.products.errors.required">Chọn dịch vụ</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>

@@ -52,7 +52,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
       smsAccount: [null, Validators.required],
       isThanksCustomerAutomation: false,
       TypeTimeBeforSend: 'hour',
-      timeBeforSend: 1,
+      timeBeforSend: [1, Validators.required],
       templateName: '',
       type: 'sale-order',
       dateTimeSend: null

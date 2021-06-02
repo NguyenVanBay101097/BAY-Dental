@@ -84,6 +84,7 @@ export class SmsTemplateListComponent implements OnInit {
     const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'md', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = "Sửa tin nhắn mẫu";
     modalRef.componentInstance.id = dataItem.id;
+    modalRef.componentInstance.templateTypeTab = dataItem.type;
     modalRef.result.then(() => {
       this.loadDataFromApi();
     });

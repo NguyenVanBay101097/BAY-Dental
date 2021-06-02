@@ -43,9 +43,13 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     templateType: 'text'
   };
   title: string;
+  submitted: boolean = false;
   public today: Date = new Date;
   public timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
   public timeRunJob: Date = new Date();
+  get f() {
+    return this.formGroup.controls;
+  }
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -67,9 +71,9 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       dateTimeSend: new Date(),
       filter: this.filter,
       products: [],
-      productCategories: [],
+      productCategories: [[], Validators.required],
       typeTimeBeforSend: ['day', Validators.required],
-      timeBeforSend: 1,
+      timeBeforSend: [1, Validators.required],
       name: ['', Validators.required],
       templateName: '',
       type: 'sale-order-line',
@@ -183,6 +187,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid) return;
     if (!this.template.text) return;
     var val = this.formGroup.value;
@@ -246,6 +251,18 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       this.filter = filter;
       this.formGroup.get('products').patchValue(null);
       this.formGroup.get('productCategories').patchValue(null);
+      if(filter == 'product') {
+        this.f.productCategories.clearValidators();
+        this.f.productCategories.updateValueAndValidity();
+        this.f.products.setValidators(Validators.required);
+        this.f.products.updateValueAndValidity();
+      }
+      else if(filter == 'productCategory') {
+        this.f.products.clearValidators();
+        this.f.products.updateValueAndValidity();
+        this.f.productCategories.setValidators(Validators.required);
+        this.f.productCategories.updateValueAndValidity();
+      }
     }
   }
 

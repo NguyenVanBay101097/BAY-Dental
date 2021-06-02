@@ -23,13 +23,13 @@ namespace Infrastructure.Services
 
         public async Task<SmsAccountBasic> GetDefault()
         {
-            var smsAccount = await SearchQuery().OrderByDescending(x => x.DateCreated).FirstOrDefaultAsync();
+            var smsAccount = await SearchQuery(x => x.CompanyId == CompanyId).OrderByDescending(x => x.DateCreated).FirstOrDefaultAsync();
             return _mapper.Map<SmsAccountBasic>(smsAccount);
         }
 
         public async Task<PagedResult2<SmsAccountBasic>> GetPaged(SmsAccountPaged val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.BrandName.Contains(val.Search));
             var totalItems = await query.CountAsync();
@@ -42,7 +42,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<SmsSupplierBasic>> SmsSupplierAutocomplete(string search)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(x => x.Name.Contains(search));
             var items = await query.Select(x => new SmsSupplierBasic

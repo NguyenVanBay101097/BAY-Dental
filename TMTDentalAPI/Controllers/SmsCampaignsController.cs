@@ -92,6 +92,7 @@ namespace TMTDentalAPI.Controllers
         {
             var entity = await _smsCampaignService.GetByIdAsync(id);
             if (entity == null) return NotFound();
+            entity.CompanyId = CompanyId;
             await _smsCampaignService.UpdateAsync(id, val);
             return NoContent();
         }
