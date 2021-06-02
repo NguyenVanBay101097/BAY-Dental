@@ -67,10 +67,10 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetReportSupplier([FromQuery] ReportSupplierInput val)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetReportSupplierSumaryChart(ReportSupplierPaged val)
         {
-            var res = await _smsMessageDetailService.GetReportSupplier(val);
+            var res = await _smsMessageDetailService.GetReportSupplierSumary(val);
             return Ok(res);
         }
     }

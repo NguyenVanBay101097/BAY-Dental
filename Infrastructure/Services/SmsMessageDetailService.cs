@@ -233,6 +233,7 @@ namespace Infrastructure.Services
                         sms.Body = content;
                         sms.Number = !string.IsNullOrEmpty(partnerDicts[rel.PartnerId].Phone) ? partnerDicts[rel.PartnerId].Phone : "";
                         sms.PartnerId = partnerDicts[rel.PartnerId].Id;
+                        sms.Date = DateTime.Now;
                         sms.State = "sending";
                         sms.SmsAccountId = smsMessage.SmsAccountId.Value;
                         sms.SmsMessageId = smsMessage.Id;
@@ -267,6 +268,7 @@ namespace Infrastructure.Services
                         sms.PartnerId = partnerDicts[order.PartnerId].Id;
                         sms.State = "sending";
                         sms.SmsAccountId = smsMessage.SmsAccountId.Value;
+                        sms.Date = DateTime.Now;
                         sms.SmsMessageId = smsMessage.Id;
                         sms.SmsCampaignId = smsMessage.SmsCampaignId;
 
@@ -300,6 +302,7 @@ namespace Infrastructure.Services
                         sms.State = "sending";
                         sms.SmsAccountId = smsMessage.SmsAccountId.Value;
                         sms.SmsMessageId = smsMessage.Id;
+                        sms.Date = DateTime.Now;
                         sms.SmsCampaignId = smsMessage.SmsCampaignId;
 
                         if (listStringSpecial.Any(x => content.Contains(x)) || listCharactorSpecial.Any(x => content.Contains(x)))
@@ -330,6 +333,7 @@ namespace Infrastructure.Services
                         sms.Number = !string.IsNullOrEmpty(partnerDicts[app.PartnerId].Phone) ? partnerDicts[app.PartnerId].Phone : "";
                         sms.PartnerId = partnerDicts[app.PartnerId].Id;
                         sms.State = "sending";
+                        sms.Date = DateTime.Now;
                         sms.SmsAccountId = smsMessage.SmsAccountId.Value;
                         sms.SmsMessageId = smsMessage.Id;
                         sms.SmsCampaignId = smsMessage.SmsCampaignId;
@@ -691,7 +695,7 @@ namespace Infrastructure.Services
         {
             var query = SearchQuery();
             if (val.Date.HasValue)
-                query = query.Where(x => x.DateCreated.Value.Month == val.Date.Value.Month);
+                query = query.Where(x => x.Date.Value.Month == val.Date.Value.Month);
             if (val.SmsAccountId.HasValue)
                 query = query.Where(x => x.SmsAccountId == val.SmsAccountId.Value);
             if (val.SmsCampaignId.HasValue)
@@ -714,9 +718,9 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.SmsCampaign.Name.Contains(val.Search) || (x.SmsCampaignId.HasValue && x.SmsCampaign.Name.Contains(val.Search)));
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.DateCreated.HasValue && val.DateFrom.Value <= x.DateCreated.Value);
+                query = query.Where(x => x.Date.HasValue && val.DateFrom.Value <= x.Date.Value);
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.DateCreated.HasValue && val.DateTo.Value >= x.DateCreated.Value);
+                query = query.Where(x => x.Date.HasValue && val.DateTo.Value >= x.Date.Value);
 
             var items = await query.Include(x => x.SmsCampaign).ToListAsync();
 
@@ -740,30 +744,44 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ReportSupplierOutputItem>> GetReportSupplier(ReportSupplierInput val)
         {
-            var query = SearchQuery();
-            if (!string.IsNullOrEmpty(val.SmsSupplierCode))
-                query = query.Where(x => x.SmsAccount.Provider == val.SmsSupplierCode);
+            //var query = SearchQuery();
+            //if (!string.IsNullOrEmpty(val.SmsSupplierCode))
+            //    query = query.Where(x => x.SmsAccount.Provider == val.SmsSupplierCode);
 
-            var res = await query.GroupBy(x => new { x.State })
-                .Select(x => new
-                {
-                    State = x.Key.State,
-                    StateDisplay = x.Key.State == "success" ? "Thành công" : "Thất bại",
-                    Data = x.GroupBy(y => y.DateCreated)
-                    .Select(z => new ReportSupplierOutputItemData
-                    {
-                        Date = z.Key.Value,
-                        Total = z.Count()
-                    }).ToList()
-                }).ToListAsync();
+            //var res = await query.GroupBy(x => new { x.State })
+            //    .Select(x => new
+            //    {
+            //        State = x.Key.State,
+            //        StateDisplay = x.Key.State == "success" ? "Thành công" : "Thất bại",
+            //        Data = x.GroupBy(y => y.DateCreated)
+            //        .Select(z => new ReportSupplierOutputItemData
+            //        {
+            //            Date = z.Key.Value,
+            //            Total = z.Count()
+            //        }).ToList()
+            //    }).ToListAsync();
 
             return null;
         }
 
-        //public async Task GetReportSumary(ReportSupplierInput val)
-        //{
-        //    var items = SearchQuery(x=>x.)
-        //}
+        public async Task<IEnumerable<ReportSupplierChart>> GetReportSupplierSumary(ReportSupplierPaged val)
+        {
+            var total =await SearchQuery().CountAsync();
+            var query = SearchQuery().Where(x => x.SmsAccountId == val.AccountId && x.State == val.State && x.Date.HasValue);
+            var items = await query
+                .GroupBy(x => new
+                {
+                    Month = x.Date.Value.Month,
+                    Year = x.Date.Value.Year
+                }).Select(x => new ReportSupplierChart
+                {
+                    Month = x.Key.Month,
+                    Year = x.Key.Year,
+                    Count = x.Count(),
+                    Total = total
+                }).ToListAsync();
+            return items;
+        }
 
         protected Guid CompanyId
         {

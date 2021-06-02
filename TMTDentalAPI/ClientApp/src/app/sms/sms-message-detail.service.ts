@@ -47,18 +47,23 @@ export class SmsMessageDetailService {
     }
 
     getPagedStatistic(val) {
-        return this.http.get(this.base_api + this.apiUrl+'/GetPagedStatistic', { params: val });
+        return this.http.get(this.base_api + this.apiUrl + '/GetPagedStatistic', { params: val });
     }
 
     getReportTotal(val) {
-        return this.http.get(this.base_api + this.apiUrl+'/GetReportTotal', { params: val });
+        return this.http.get(this.base_api + this.apiUrl + '/GetReportTotal', { params: val });
     }
 
     getReportCampaign(val) {
-        return this.http.get(this.base_api + this.apiUrl+'/GetReportCampaign', { params: val });
+        return this.http.get(this.base_api + this.apiUrl + '/GetReportCampaign', { params: val });
     }
 
     getReportSupplier(val) {
-        return this.http.get(this.base_api + this.apiUrl+'/GetReportSupplier', { params: val });
+        return this.http.get(this.base_api + this.apiUrl + '/GetReportSupplier', { params: val });
+    }
+
+
+    getReportSupplierSumaryChart(val) {
+        return this.http.post(this.base_api + this.apiUrl + '/GetReportSupplierSumaryChart', val)
     }
 }

@@ -84,7 +84,9 @@ namespace Umbraco.Web.Models.ContentEditing
     
     public class SmsSupplierBasic
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
+        public string BrandName { get; set; }
         public string Provider { get; set; }
     }
 }

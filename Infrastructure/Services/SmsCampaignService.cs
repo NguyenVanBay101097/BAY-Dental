@@ -60,7 +60,7 @@ namespace Infrastructure.Services
             }
 
             var totalItems = await query.CountAsync();
-            var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SmsCampaignBasic
+            var items = await query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x => x.DateCreated).Select(x => new SmsCampaignBasic
             {
                 Id = x.Id,
                 Name = x.Name,
@@ -73,9 +73,9 @@ namespace Infrastructure.Services
                 TotalFailedMessages = dictTotalFailedMessage.ContainsKey(x.Id) ? dictTotalFailedMessage[x.Id] : 0,
                 TotalSuccessfulMessages = dictTotalSuccessfulMessage.ContainsKey(x.Id) ? dictTotalSuccessfulMessage[x.Id] : 0,
                 TotalMessage =
-                (ditcTotalWaitedMessage.ContainsKey(x.Id) ? ditcTotalWaitedMessage[x.Id] : 0) +
-                 (dictTotalFailedMessage.ContainsKey(x.Id) ? dictTotalFailedMessage[x.Id] : 0) +
-                 (dictTotalSuccessfulMessage.ContainsKey(x.Id) ? dictTotalSuccessfulMessage[x.Id] : 0)
+                  (ditcTotalWaitedMessage.ContainsKey(x.Id) ? ditcTotalWaitedMessage[x.Id] : 0) +
+                   (dictTotalFailedMessage.ContainsKey(x.Id) ? dictTotalFailedMessage[x.Id] : 0) +
+                   (dictTotalSuccessfulMessage.ContainsKey(x.Id) ? dictTotalSuccessfulMessage[x.Id] : 0)
             }).ToListAsync();
             return new PagedResult2<SmsCampaignBasic>(totalItems, val.Offset, val.Limit)
             {

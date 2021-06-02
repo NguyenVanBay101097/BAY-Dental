@@ -22,5 +22,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<ReportTotalOutputItem>> GetReportTotal(ReportTotalInput val);
         Task<PagedResult2<ReportCampaignOutputItem>> GetReportCampaign(ReportCampaignPaged val);
         Task<IEnumerable<ReportSupplierOutputItem>> GetReportSupplier(ReportSupplierInput val);
+        Task<IEnumerable<ReportSupplierChart>> GetReportSupplierSumary(ReportSupplierPaged val);
     }
 }
