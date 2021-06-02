@@ -78,5 +78,12 @@ namespace TMTDentalAPI.Controllers
             await _smsAccountService.DeleteAsync(entity);
             return NoContent();
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> SmsSupplierAutocomplete(string search)
+        {
+            var res = await _smsAccountService.SmsSupplierAutocomplete(search);
+            return Ok(res);
+        }
     }
 }

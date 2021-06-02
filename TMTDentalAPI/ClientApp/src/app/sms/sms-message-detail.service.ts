@@ -18,6 +18,18 @@ export class ReportTotalInput {
     smsCampaignId: string;
 }
 
+export class ReportCampaignPaged {
+    limit: number;
+    offset: number;
+    search: string;
+    dateFrom: string;
+    dateTo: string;
+}
+
+export class ReportSupplierInput {
+    smsSupplierCode: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -40,5 +52,13 @@ export class SmsMessageDetailService {
 
     getReportTotal(val) {
         return this.http.get(this.base_api + this.apiUrl+'/GetReportTotal', { params: val });
+    }
+
+    getReportCampaign(val) {
+        return this.http.get(this.base_api + this.apiUrl+'/GetReportCampaign', { params: val });
+    }
+
+    getReportSupplier(val) {
+        return this.http.get(this.base_api + this.apiUrl+'/GetReportSupplier', { params: val });
     }
 }

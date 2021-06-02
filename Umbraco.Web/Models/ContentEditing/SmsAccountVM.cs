@@ -81,6 +81,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public string ApiKey { get; set; }
         public string Secretkey { get; set; }
     }
-
-
+    
+    public class SmsSupplierBasic
+    {
+        public string Name { get; set; }
+        public string Provider { get; set; }
+    }
 }

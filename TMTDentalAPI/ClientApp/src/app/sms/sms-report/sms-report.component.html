@@ -43,7 +43,8 @@
                                 <span>Thời gian</span> 
                             </td>
                             <td class="table-datepicker">
-                                <kendo-datepicker class="w-100" [(value)]="date_reportTotal" [bottomView]="'year'" [format]="'MM yyyy'">
+                                <kendo-datepicker class="w-100" [(value)]="date_reportTotal" [bottomView]="'year'" 
+                                    [format]="'MM yyyy'">
                                 </kendo-datepicker>
                             </td>
                         </tr>
@@ -58,25 +59,48 @@
                                 </kendo-combobox>
                             </td>
                             <td>
-                                <button class="btn btn-primary btn-sm px-2">Báo cáo</button>
+                                <button class="btn btn-primary btn-sm px-2" (click)="getReportTotal()">Báo cáo</button>
                             </td>
                             <td></td>
                         </tr>
                     </table>
-                    
-                    <kendo-chart title="">
-                        <kendo-chart-legend position="bottom"></kendo-chart-legend>
-                        <kendo-chart-series>
-                            <kendo-chart-series-item
-                                type="pie"
-                                [data]="pieData_reportTotal"
-                                field="value"
-                                categoryField="category"
-                                [labels]="{ visible: true, content: labelContent }"
-                            >
-                            </kendo-chart-series-item>
-                        </kendo-chart-series>
-                    </kendo-chart>
+                    <div>
+                        <kendo-chart *ngIf="pieData_reportTotal.length" title="">
+                            <kendo-chart-legend [visible]="false"></kendo-chart-legend>
+                            <kendo-chart-series>
+                                <kendo-chart-series-item
+                                    [autoFit]="autofit"
+                                    type="pie"
+                                    [data]="pieData_reportTotal"
+                                    field="total"
+                                    categoryField="stateDisplay"
+                                    colorField="color"
+                                    [labels]="{ visible: true, content: labelContentReportTotal }"
+                                >
+                                </kendo-chart-series-item>
+                            </kendo-chart-series>
+                        </kendo-chart>
+                        <div class="no-data-report" *ngIf="!pieData_reportTotal.length">
+                            Không có dữ liệu
+                        </div>
+                        <div class="d-flex justify-content-around bg-white py-2">
+                            <div class="legend-report-total legend-total">
+                                <div class="color"></div>
+                                <span>Tổng tin nhắn</span>
+                                <div class="num">{{total_reportTotal}}</div>
+                            </div>
+                            <div class="legend-report-total legend-success">
+                                <div class="color"></div>
+                                <span>Gửi thành công</span>
+                                <div class="num">{{success_reportTotal}}</div>
+                            </div>
+                            <div class="legend-report-total legend-fails">
+                                <div class="color"></div>
+                                <span>Gửi thất bại</span>
+                                <div class="num">{{fails_reportTotal}}</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-6 py-3">
@@ -84,28 +108,51 @@
                     <div class="bg-light border-bottom p-2 font-weight-bold">
                         Báo cáo theo nhà cung cấp
                     </div>
-                    <kendo-chart [categoryAxis]="{ categories: categories }">
+                    <div class="p-2">
+                        <span class="mr-2">Nhà cung cấp</span>
+                        <kendo-combobox [data]="filteredSmsSupplier" [(value)]="smsSupplier_reportSupplier" 
+                            [textField]="'name'" [valueField]="'provider'" [filterable]="true"
+                            placeholder="Tất cả" #smsSupplierCbx>
+                        </kendo-combobox>
+                    </div>
+                    <kendo-chart *ngIf="lineData_reportSupplier.length" [categoryAxis]="{ categories: categories }">
                         <kendo-chart-title text=""></kendo-chart-title>
                         <kendo-chart-legend position="bottom" orientation="horizontal"></kendo-chart-legend>
                         <kendo-chart-tooltip format="{0}%"></kendo-chart-tooltip>
                         <kendo-chart-series>
                             <kendo-chart-series-item
-                                *ngFor="let item of series"
                                 type="line"
-                                [data]="item.data"
-                                [name]="item.name"
+                                [style]="'smooth'"
+                                [dashType]="longDash"
+                                [data]="lineData_reportSupplier"
+                                field="data"
+                                categoryField="day"
+                                [name]="name"
                             >
                             </kendo-chart-series-item>
                         </kendo-chart-series>
                     </kendo-chart>
+                    <div class="no-data-report" *ngIf="!lineData_reportSupplier.length">
+                        Không có dữ liệu
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
-        <kendo-grid-column field="" title="Chiến dịch"></kendo-grid-column>
-        <kendo-grid-column field="" title="Tổng tin nhắn"></kendo-grid-column>
-        <kendo-grid-column field="" title="Thành công"></kendo-grid-column>
-        <kendo-grid-column field="" title="Thất bại"></kendo-grid-column>
-    </kendo-grid>
+    <div class="px-3">
+        <div class="d-flex justify-content-between mb-2">
+            <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFromReportCampaign" [dateTo]="dateToReportCampaign"
+                (searchChange)="dateChangeReportCampaign($event)">
+            </app-tai-date-range-filter-dropdown>
+            <input class="form-control form-control-sm w-50" type="text" placeholder="Tìm kiếm theo tên chiến dịch" [(ngModel)]="searchReportCampaign"
+                (ngModelChange)="this.searchUpdateReportCampaign.next($event)"/>
+        </div>
+        <kendo-grid [data]="gridDataReportCampaign" [pageSize]="limitReportCampaign" [skip]="offsetReportCampaign" 
+            [pageable]="true" [loading]="loadingReportCampaign" (pageChange)="pageChangeReportTotal($event)">
+            <kendo-grid-column field="smsCampaignName" title="Chiến dịch"></kendo-grid-column>
+            <kendo-grid-column field="totalMessages" title="Tổng tin nhắn"></kendo-grid-column>
+            <kendo-grid-column field="totalSuccessfulMessages" title="Thành công"></kendo-grid-column>
+            <kendo-grid-column field="totalFailedMessages" title="Thất bại"></kendo-grid-column>
+        </kendo-grid>
+    </div>
 </div>
