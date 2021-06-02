@@ -49,7 +49,9 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
 
   ngOnInit() {
     this.loadProducts();
-    this.loadDefaultCampaignCareAfterOrder();
+    setTimeout(() => {
+      this.loadDefaultCampaignCareAfterOrder();
+    }, 300);
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 

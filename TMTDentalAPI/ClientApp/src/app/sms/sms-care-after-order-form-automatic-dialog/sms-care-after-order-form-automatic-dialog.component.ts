@@ -72,7 +72,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       timeBeforSend: 1,
       name: ['', Validators.required],
       templateName: '',
-      type: 'saleOrderLine',
+      type: 'sale-order-line',
     })
     if (this.id) {
       this.loadDataFormApi();

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,13 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ISmsCampaignService _smsCampaignService;
+        private readonly IUnitOfWorkAsync _unitOfWorkAsync;
 
-        public SmsCampaignsController(IMapper mapper, ISmsCampaignService smsCampaignService)
+        public SmsCampaignsController(IUnitOfWorkAsync unitOfWorkAsync, IMapper mapper, ISmsCampaignService smsCampaignService)
         {
             _smsCampaignService = smsCampaignService;
             _mapper = mapper;
+            _unitOfWorkAsync = unitOfWorkAsync;
         }
 
         [HttpPost]
@@ -57,7 +60,9 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetDefaultCampaignAppointmentReminder()
         {
+            await _unitOfWorkAsync.BeginTransactionAsync();
             var res = await _smsCampaignService.GetDefaultCampaignAppointmentReminder();
+            _unitOfWorkAsync.Commit();
             return Ok(res);
         }
 
@@ -72,6 +77,13 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetDefaultCareAfterOrder()
         {
             var res = await _smsCampaignService.GetDefaultCareAfterOrder();
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDefaultCampaign()
+        {
+            var res = await _smsCampaignService.GetDefaultCampaign();
             return Ok(res);
         }
 

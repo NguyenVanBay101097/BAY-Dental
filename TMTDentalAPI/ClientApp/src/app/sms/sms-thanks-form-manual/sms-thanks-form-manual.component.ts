@@ -45,7 +45,9 @@ export class SmsThanksFormManualComponent implements OnInit {
     this.dateFrom = this.yesterday;
     this.dateTo = this.today;
     this.loadDataFromApi();
-    this.loadDefaultCampaignThanksCustomer();
+    setTimeout(() => {
+      this.loadDefaultCampaignThanksCustomer();
+    }, 300);
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())

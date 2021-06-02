@@ -52,7 +52,9 @@ export class SmsBirthdayFormManualComponent implements OnInit {
 
   ngOnInit() {
     this.loadDataFromApi();
-    this.loadDefaultCampaignThanksCustomer();
+    setTimeout(() => {
+      this.loadDefaultCampaignThanksCustomer();
+    }, 300);
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())

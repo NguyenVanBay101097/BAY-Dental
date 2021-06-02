@@ -39,6 +39,10 @@ export class SmsCampaignService {
         return this.http.get(this.base_api + this.apiUrl + '/GetDefaultCampaignAppointmentReminder')
     }
 
+    getDefaultCampaign() {
+        return this.http.get(this.base_api + this.apiUrl + '/GetDefaultCampaign')
+    }
+
     getDefaultCampaignBirthday() {
         return this.http.get(this.base_api + this.apiUrl + '/GetDefaultCampaignBirthday')
     }

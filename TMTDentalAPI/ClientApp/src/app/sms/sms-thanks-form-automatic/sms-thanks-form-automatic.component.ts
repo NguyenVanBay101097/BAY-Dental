@@ -54,7 +54,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
       TypeTimeBeforSend: 'hour',
       timeBeforSend: 1,
       templateName: '',
-      type: 'saleOrder',
+      type: 'sale-order',
       dateTimeSend: null
     })
     this.loadDataFormApi();

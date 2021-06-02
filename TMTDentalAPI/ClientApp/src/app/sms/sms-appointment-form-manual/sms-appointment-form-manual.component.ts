@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -33,11 +34,11 @@ export class SmsAppointmentFormManualComponent implements OnInit {
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   public today: Date = new Date();
   public next7days: Date = new Date(new Date(new Date().setDate(new Date().getDate() + 7)).toDateString());
-
   constructor(
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private intlService: IntlService,
+    private activedRoute: ActivatedRoute,
     private appointmentService: AppointmentService,
     private smsCampaignService: SmsCampaignService,
   ) { }
@@ -46,7 +47,6 @@ export class SmsAppointmentFormManualComponent implements OnInit {
     this.dateFrom = this.today;
     this.dateTo = this.next7days;
     this.loadDataFromApi();
-    this.loadDefaultCampaignAppointmentReminder();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -54,6 +54,10 @@ export class SmsAppointmentFormManualComponent implements OnInit {
         this.skip = 0;
         this.loadDataFromApi();
       });
+
+    setTimeout(() => {
+      this.loadDefaultCampaignAppointmentReminder()
+    }, 300);
   }
 
   loadDataFromApi() {
@@ -97,6 +101,7 @@ export class SmsAppointmentFormManualComponent implements OnInit {
           this.campaign = result;
         }
       })
+    return this.campaign;
   }
 
   onSend() {
@@ -104,6 +109,7 @@ export class SmsAppointmentFormManualComponent implements OnInit {
       this.notify("Bạn phải chọn khách hàng trước khi gửi tin", false);
     }
     else {
+      this.loadDefaultCampaignAppointmentReminder();
       var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
       modalRef.componentInstance.title = "Tin nhắn nhắc lịch hẹn";
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];

@@ -29,11 +29,12 @@ export class SmsCampaignListComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private smsCampaignService: SmsCampaignService, 
+    private smsCampaignService: SmsCampaignService,
     private router: Router,
   ) { }
 
   ngOnInit() {
+    this.loadDefaultCampaign();
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(
@@ -43,6 +44,13 @@ export class SmsCampaignListComponent implements OnInit {
         this.offset = 0;
         this.loadDataFromApi();
       });
+
+  }
+
+  loadDefaultCampaign() {
+    this.smsCampaignService.getDefaultCampaign().subscribe(
+      () => { }
+    )
   }
 
   loadDataFromApi() {

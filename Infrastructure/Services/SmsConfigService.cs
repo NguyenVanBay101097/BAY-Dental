@@ -27,7 +27,7 @@ namespace Infrastructure.Services
         }
         public override async Task<SmsConfig> CreateAsync(SmsConfig entity)
         {
-            if (!entity.SmsCampaignId.HasValue && entity.Type == "birthday")
+            if (!entity.SmsCampaignId.HasValue && entity.Type == "partner")
             {
                 var smsCampaignObj = GetService<ISmsCampaignService>();
                 var campaign = await smsCampaignObj.GetDefaultCampaignBirthday();
@@ -39,13 +39,13 @@ namespace Infrastructure.Services
                 var campaign = await smsCampaignObj.GetDefaultCampaignAppointmentReminder();
                 entity.SmsCampaignId = campaign.Id;
             }
-            else if (!entity.SmsCampaignId.HasValue && entity.Type == "thanks-customer")
+            else if (!entity.SmsCampaignId.HasValue && entity.Type == "sale-order")
             {
                 var smsCampaignObj = GetService<ISmsCampaignService>();
                 var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
                 entity.SmsCampaignId = campaign.Id;
             }
-            else if (!entity.SmsCampaignId.HasValue && entity.Type == "care-after-order")
+            else if (!entity.SmsCampaignId.HasValue && entity.Type == "sale-order-line")
             {
                 var smsCampaignObj = GetService<ISmsCampaignService>();
                 var campaign = await smsCampaignObj.GetDefaultCareAfterOrder();
@@ -92,7 +92,7 @@ namespace Infrastructure.Services
                 }
             }
 
-            if (model.Type == "care-after-order")
+            if (model.Type == "sale-order-line")
             {
                 if (model.IsCareAfterOrderAutomation && model.DateSend.HasValue)
                 {
@@ -104,7 +104,7 @@ namespace Infrastructure.Services
                 }
             }
 
-            if (model.Type == "birthday" && model.DateSend.HasValue)
+            if (model.Type == "partner" && model.DateSend.HasValue)
             {
                 if (model.IsBirthdayAutomation)
                 {
