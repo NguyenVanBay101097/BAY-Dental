@@ -84,7 +84,7 @@ namespace Infrastructure.Services
             {
                 if (model.IsAppointmentAutomation)
                 {
-                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunAppointmentAutomatic(hostName, model.Id), $"*/10 * * * *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunAppointmentAutomatic(hostName, model.Id), $"*/30 * * * *", TimeZoneInfo.Local);
                 }
                 else
                 {

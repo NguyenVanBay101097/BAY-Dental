@@ -51,7 +51,7 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     this.loadProducts();
     setTimeout(() => {
       this.loadDefaultCampaignCareAfterOrder();
-    }, 300);
+    }, 1000);
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 

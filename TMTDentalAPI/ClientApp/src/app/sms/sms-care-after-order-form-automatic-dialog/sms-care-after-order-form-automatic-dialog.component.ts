@@ -115,8 +115,8 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
             res.filter = "productCategory"
           }
           this.formGroup.patchValue(res);
-          if (res.template) {
-            this.template = JSON.parse(res.template.body);
+          if (res.body) {
+            this.template = JSON.parse(res.body);
           }
           if (res.dateSend) {
             this.formGroup.get('dateTimeSend').patchValue(new Date(res.dateSend))

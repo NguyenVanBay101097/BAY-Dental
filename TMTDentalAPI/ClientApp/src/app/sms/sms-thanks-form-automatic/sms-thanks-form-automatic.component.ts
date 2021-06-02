@@ -89,7 +89,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   }
 
   loadDataFormApi() {
-    var type = "saleOrder"
+    var type = "sale-order"
     this.smsConfigService.get(type).subscribe(
       (res: any) => {
         if (res) {

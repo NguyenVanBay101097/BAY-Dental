@@ -57,7 +57,7 @@ export class SmsAppointmentFormManualComponent implements OnInit {
 
     setTimeout(() => {
       this.loadDefaultCampaignAppointmentReminder()
-    }, 300);
+    }, 1000);
   }
 
   loadDataFromApi() {

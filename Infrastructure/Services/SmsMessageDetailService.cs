@@ -130,7 +130,7 @@ namespace Infrastructure.Services
         {
             var hostName = _tenant != null ? _tenant.Hostname : "localhost";
             var jobId = $"{hostName}_Send_Sms_message_detail";
-            RecurringJob.AddOrUpdate<ISmsMessageJobService>(jobId, x => x.RunJobFindSmsMessage(hostName, CompanyId), $"*/5 * * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate<ISmsMessageJobService>(jobId, x => x.RunJobFindSmsMessage(hostName, CompanyId), $"*/30 * * * *", TimeZoneInfo.Local);
         }
 
         #region Gui tin nhan cho toi tac
@@ -291,7 +291,7 @@ namespace Infrastructure.Services
                 {
                     if (line.OrderPartnerId.HasValue && partnerDicts.ContainsKey(line.OrderPartnerId.Value))
                     {
-                        var content = await PersonalizedContent(smsMessage.Body, partnerDicts[line.OrderPartnerId.Value], company, null, null);
+                        var content = await PersonalizedContent(smsMessage.Body, partnerDicts[line.OrderPartnerId.Value], company, null, line);
                         var sms = new SmsMessageDetail();
                         sms.Id = GuidComb.GenerateComb();
                         sms.Body = content;

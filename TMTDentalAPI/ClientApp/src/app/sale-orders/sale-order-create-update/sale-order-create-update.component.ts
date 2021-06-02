@@ -58,6 +58,7 @@ import { SaleOrderLinePromotionDialogComponent } from '../sale-order-line-promot
 import { Location } from '@angular/common';
 import { SaleOrderPromotionService } from '../sale-order-promotion.service';
 import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
+import { SmsMessageService } from 'src/app/sms/sms-message.service';
 declare var $: any;
 
 @Component({
@@ -133,7 +134,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private toothService: ToothService,
     private employeeService: EmployeeService,
     private saleOrderPromotionService: SaleOrderPromotionService,
-    private differs: KeyValueDiffers,
+    private smsMessageService: SmsMessageService,
     private saleOrderPaymentService: SaleOrderPaymentService
   ) {
   }
@@ -324,6 +325,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.saleOrderService.actionDone([this.saleOrderId]).subscribe(() => {
         this.loadSaleOrder();
         this.notify('success', 'Hoàn thành phiếu điều trị');
+        this.smsMessageService.SetupSendSmsOrderAutomatic(this.saleOrderId).subscribe(
+          () => { }
+        )
       });
     }
   }

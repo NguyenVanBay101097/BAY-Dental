@@ -93,7 +93,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
       limit: this.limit,
       offset: this.offset,
       search: this.search,
-      type: 'care-after-order',
+      type: 'sale-order-line',
       states: this.states,
     }
     this.smsConfigService.getPaged(val).pipe(

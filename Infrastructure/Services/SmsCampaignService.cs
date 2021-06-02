@@ -247,7 +247,7 @@ namespace Infrastructure.Services
                     CompanyId = CompanyId,
                     TypeDate = "unlimited",
                     State = "running",
-                    DefaultType = "sms_thanks_customer"
+                    DefaultType = "sms_campaign_thanks_customer"
                 };
 
                 await CreateAsync(campaign);
@@ -282,7 +282,7 @@ namespace Infrastructure.Services
 
                 await modelDataObj.CreateAsync(new IRModelData
                 {
-                    Name = "sms_care_after_order",
+                    Name = "sms_campaign_care_after_order",
                     Module = "base",
                     Model = "res.sms.campaign",
                     ResId = campaign.Id.ToString()

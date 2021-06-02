@@ -47,7 +47,7 @@ export class SmsThanksFormManualComponent implements OnInit {
     this.loadDataFromApi();
     setTimeout(() => {
       this.loadDefaultCampaignThanksCustomer();
-    }, 300);
+    }, 1000);
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())

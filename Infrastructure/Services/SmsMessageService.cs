@@ -219,7 +219,7 @@ namespace Infrastructure.Services
             var configObj = GetService<ISmsConfigService>();
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleOrder = await saleOrderObj.SearchQuery(x => x.Id == orderId).FirstOrDefaultAsync();
-            var config = await configObj.SearchQuery(x => x.Type == "thanks-customer").FirstOrDefaultAsync();
+            var config = await configObj.SearchQuery(x => x.Type == "sale-order").FirstOrDefaultAsync();
             if (config != null && config.IsThanksCustomerAutomation && saleOrder.State == "done" && saleOrder.DateDone.HasValue)
             {
                 var entity = new SmsMessage();
