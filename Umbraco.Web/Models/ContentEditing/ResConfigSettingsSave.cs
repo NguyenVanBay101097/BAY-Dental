@@ -29,6 +29,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool? GroupUoM { get; set; }
 
+        public bool? GroupSms { get; set; }
+
         public bool? GroupTCare { get; set; }
 
         public DateTime? TCareRunAt { get; set; }
