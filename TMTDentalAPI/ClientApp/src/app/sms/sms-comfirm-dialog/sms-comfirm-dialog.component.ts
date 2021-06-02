@@ -18,6 +18,7 @@ export class SmsComfirmDialogComponent implements OnInit {
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
+    debugger
   }
 
   onConfirm() {

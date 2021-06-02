@@ -181,6 +181,7 @@ export class SmsManualDialogComponent implements OnInit {
     val.isCareAfterOrder = this.isCareAfterOrder;
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
+    modalRef.componentInstance.campaign = this.campaign;
     modalRef.componentInstance.brandName = val.smsAccount.brandName;
     modalRef.componentInstance.timeSendSms = "Gửi ngay";
     modalRef.componentInstance.body = this.template ? this.template.text : '';
