@@ -27,8 +27,8 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync(SmsAccountSave val)
         {
-            if (!ModelState.IsValid || val == null) return BadRequest();
             var entity = _mapper.Map<SmsAccount>(val);
+            if (!ModelState.IsValid || val == null) return BadRequest();
             entity.CompanyId = CompanyId;
             entity = await _smsAccountService.CreateAsync(entity);
             var res = _mapper.Map<SmsAccountBasic>(entity);
@@ -38,7 +38,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string provider)
         {
-            var res = await _smsAccountService.SearchQuery(x => x.Provider == provider).FirstOrDefaultAsync();
+            var res = await _smsAccountService.SearchQuery(x => x.Provider == provider && x.CompanyId == CompanyId).FirstOrDefaultAsync();
 
             return Ok(_mapper.Map<SmsAccountDisplay>(res));
         }

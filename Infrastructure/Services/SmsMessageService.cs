@@ -34,7 +34,7 @@ namespace Infrastructure.Services
 
         private IQueryable<SmsMessage> GetQueryable(SmsMessagePaged val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.State))
@@ -72,6 +72,7 @@ namespace Infrastructure.Services
         public async Task<SmsMessageDisplay> CreateAsync(SmsMessageSave val)
         {
             var entity = _mapper.Map<SmsMessage>(val);
+            entity.CompanyId = CompanyId;
             if (entity.TypeSend == "manual")
                 entity.State = "sending";
             else
@@ -207,7 +208,7 @@ namespace Infrastructure.Services
 
         public async Task ActionCancel(IEnumerable<Guid> messIds)
         {
-            var messes = await SearchQuery(x => messIds.Contains(x.Id)).ToListAsync();
+            var messes = await SearchQuery(x => messIds.Contains(x.Id) && x.CompanyId == CompanyId).ToListAsync();
             if (messes.Any())
             {
                 await DeleteAsync(messes);
@@ -234,11 +235,11 @@ namespace Infrastructure.Services
                 entity.State = "waiting";
                 entity.TypeSend = "automatic";
                 entity.Name = $"Tin nhắn cảm ơn khách hàng ngày {DateTime.Now.ToString("dd-MM-yyyy HH:mm")}";
-
                 entity.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
                 {
                     SaleOrderId = saleOrder.Id
                 });
+                entity.CompanyId = CompanyId;
 
                 await CreateAsync(entity);
             }

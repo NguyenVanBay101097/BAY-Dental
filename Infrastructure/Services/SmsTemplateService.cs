@@ -24,7 +24,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SmsTemplateBasic>> GetPaged(SmsTemplatePaged val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.Type))
@@ -45,7 +45,7 @@ namespace Infrastructure.Services
         }
         public async Task<IEnumerable<SmsTemplateBasic>> GetTemplateAutocomplete(SmsTemplateFilter val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.Type))

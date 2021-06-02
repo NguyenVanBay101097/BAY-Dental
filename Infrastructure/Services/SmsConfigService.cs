@@ -124,7 +124,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SmsConfigGrid>> GetPaged(SmsConfigPaged val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.States))

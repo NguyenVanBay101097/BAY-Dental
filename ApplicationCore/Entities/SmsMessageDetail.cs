@@ -19,5 +19,7 @@ namespace ApplicationCore.Entities
         public SmsMessage SmsMessage { get; set; }
         public Guid? SmsCampaignId { get; set; }
         public SmsCampaign SmsCampaign { get; set; }
+        public Guid CompanyId { get; set; }
+        public Company Company { get; set; }
     }
 }

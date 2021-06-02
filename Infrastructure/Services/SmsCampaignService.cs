@@ -23,7 +23,7 @@ namespace Infrastructure.Services
 
         private IQueryable<SmsCampaign> GetQueryable(SmsCampaignPaged val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.State))
@@ -43,17 +43,17 @@ namespace Infrastructure.Services
             var dictTotalFailedMessage = new Dictionary<Guid, int>();
 
             var ditcTotalWaitedMessage = await smsMessageObj
-                .SearchQuery(x => x.SmsCampaignId.HasValue && x.State == "waiting")
+                .SearchQuery(x => x.SmsCampaignId.HasValue && x.State == "waiting" && x.CompanyId == CompanyId)
                 .Include(x => x.SmsMessagePartnerRels)
                 .ToDictionaryAsync(x => x.SmsCampaignId.Value, x => x.SmsMessagePartnerRels.Count());
 
-            var listSuccess = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "success").ToListAsync();
+            var listSuccess = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "success" && x.CompanyId == CompanyId).ToListAsync();
             if (listSuccess.Any())
             {
                 dictTotalSuccessfulMessage = listSuccess.GroupBy(x => x.SmsCampaignId.Value).ToDictionary(x => x.Key, x => x.Count());
             }
 
-            var listFails = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "fails").ToListAsync();
+            var listFails = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "fails" && x.CompanyId == CompanyId).ToListAsync();
             if (listFails.Any())
             {
                 dictTotalFailedMessage = listFails.GroupBy(x => x.SmsCampaignId.Value).ToDictionary(x => x.Key, x => x.Count());
@@ -124,9 +124,9 @@ namespace Infrastructure.Services
         {
             var smsMessageObj = GetService<ISmsMessageService>();
             var smsMessageDetailObj = GetService<ISmsMessageDetailService>();
-            var TotalWait = await smsMessageObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "waiting").SelectMany(x => x.SmsMessagePartnerRels).CountAsync();
-            var TotalSuccess = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "success").CountAsync();
-            var TotalFails = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "fails").CountAsync();
+            var TotalWait = await smsMessageObj.SearchQuery(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "waiting" && x.CompanyId == CompanyId).SelectMany(x => x.SmsMessagePartnerRels).CountAsync();
+            var TotalSuccess = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "success" && x.CompanyId == CompanyId).CountAsync();
+            var TotalFails = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "fails" && x.CompanyId == CompanyId).CountAsync();
 
             var campaign = await SearchQuery(x => x.Id == id).Select(x => new SmsCampaignBasic
             {

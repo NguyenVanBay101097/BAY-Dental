@@ -52,7 +52,7 @@ namespace Infrastructure.Services
 
         public IQueryable<SmsMessageDetail> GetQueryable(SmsMessageDetailPaged val)
         {
-            var query = _repository.SearchQuery();
+            var query = _repository.SearchQuery(x => x.CompanyId == CompanyId);
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId.Value);
             if (!string.IsNullOrEmpty(val.Search))
@@ -689,7 +689,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ReportTotalOutputItem>> GetReportTotal(ReportTotalInput val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery().Where(x => x.CompanyId == CompanyId);
             if (val.Date.HasValue)
                 query = query.Where(x => x.DateCreated.Value.Month == val.Date.Value.Month);
             if (val.SmsAccountId.HasValue)
@@ -710,7 +710,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<ReportCampaignOutputItem>> GetReportCampaign(ReportCampaignPaged val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery().Where(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.SmsCampaign.Name.Contains(val.Search) || (x.SmsCampaignId.HasValue && x.SmsCampaign.Name.Contains(val.Search)));
             if (val.DateFrom.HasValue)
@@ -740,7 +740,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ReportSupplierOutputItem>> GetReportSupplier(ReportSupplierInput val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery().Where(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrEmpty(val.SmsSupplierCode))
                 query = query.Where(x => x.SmsAccount.Provider == val.SmsSupplierCode);
 

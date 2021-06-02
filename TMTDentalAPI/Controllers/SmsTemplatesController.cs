@@ -28,6 +28,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> CreateAsync(SmsTemplateSave val)
         {
             var entity = _mapper.Map<SmsTemplate>(val);
+            entity.CompanyId = CompanyId;
             entity = await _smsTemplateService.CreateAsync(entity);
             return Ok(_mapper.Map<SmsTemplateBasic>(entity));
         }
@@ -39,6 +40,7 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid || entity == null)
                 return BadRequest();
             entity = _mapper.Map(val, entity);
+            entity.CompanyId = CompanyId;
             await _smsTemplateService.UpdateAsync(entity);
             return Ok(_mapper.Map<SmsTemplateBasic>(entity));
         }
