@@ -7,6 +7,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 
 @Component({
@@ -26,6 +27,7 @@ export class SmsThanksFormManualComponent implements OnInit {
   searchUpdate = new Subject<string>();
   dateFrom: Date;
   dateTo: Date;
+  campaign: any;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   public yesterday: Date = new Date(new Date(new Date().setDate(new Date().getDate() - 1)).toDateString());
@@ -35,13 +37,17 @@ export class SmsThanksFormManualComponent implements OnInit {
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private intlService: IntlService,
-    private saleOrderService: SaleOrderService
+    private saleOrderService: SaleOrderService,
+    private smsCampaignService: SmsCampaignService,
   ) { }
 
   ngOnInit() {
     this.dateFrom = this.yesterday;
     this.dateTo = this.today;
     this.loadDataFromApi();
+    setTimeout(() => {
+      this.loadDefaultCampaignThanksCustomer();
+    }, 1000);
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -84,7 +90,14 @@ export class SmsThanksFormManualComponent implements OnInit {
     this.skip = 0;
     this.loadDataFromApi();
   }
-
+  loadDefaultCampaignThanksCustomer() {
+    this.smsCampaignService.getDefaultThanksCustomer().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
+      })
+  }
   onSend() {
     if (this.selectedIds.length == 0) {
       this.notify("Bạn phải chọn khách hàng trước khi gửi tin", false);
@@ -94,7 +107,8 @@ export class SmsThanksFormManualComponent implements OnInit {
       modalRef.componentInstance.title = "Tin nhắn cám ơn";
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
       modalRef.componentInstance.isThanksCustomer = true;
-      modalRef.componentInstance.templateTypeTab = "thanks";
+      modalRef.componentInstance.templateTypeTab = "saleOrder";
+      modalRef.componentInstance.campaign = this.campaign;
       modalRef.result.then(
         result => {
 

@@ -238,7 +238,7 @@ namespace Infrastructure.Services
         public async Task<SmsCampaign> GetDefaultThanksCustomer()
         {
             var modelDataObj = GetService<IIRModelDataService>();
-            var campaign = await modelDataObj.GetRef<SmsCampaign>("base.sms_thanks_customer");
+            var campaign = await modelDataObj.GetRef<SmsCampaign>("base.sms_campaign_thanks_customer");
             if (campaign == null)
             {
                 campaign = new SmsCampaign
@@ -247,14 +247,14 @@ namespace Infrastructure.Services
                     CompanyId = CompanyId,
                     TypeDate = "unlimited",
                     State = "running",
-                    DefaultType = "sms_thanks_customer"
+                    DefaultType = "sms_campaign_thanks_customer"
                 };
 
                 await CreateAsync(campaign);
 
                 await modelDataObj.CreateAsync(new IRModelData
                 {
-                    Name = "sms_thanks_customer",
+                    Name = "sms_campaign_thanks_customer",
                     Module = "base",
                     Model = "res.sms.campaign",
                     ResId = campaign.Id.ToString()
@@ -266,7 +266,7 @@ namespace Infrastructure.Services
         public async Task<SmsCampaign> GetDefaultCareAfterOrder()
         {
             var modelDataObj = GetService<IIRModelDataService>();
-            var campaign = await modelDataObj.GetRef<SmsCampaign>("base.sms_care_after_order");
+            var campaign = await modelDataObj.GetRef<SmsCampaign>("base.sms_campaign_care_after_order");
             if (campaign == null)
             {
                 campaign = new SmsCampaign
@@ -275,14 +275,14 @@ namespace Infrastructure.Services
                     CompanyId = CompanyId,
                     TypeDate = "unlimited",
                     State = "running",
-                    DefaultType = "sms_care_after_order"
+                    DefaultType = "sms_campaign_care_after_order"
                 };
 
                 await CreateAsync(campaign);
 
                 await modelDataObj.CreateAsync(new IRModelData
                 {
-                    Name = "sms_care_after_order",
+                    Name = "sms_campaign_care_after_order",
                     Module = "base",
                     Model = "res.sms.campaign",
                     ResId = campaign.Id.ToString()

@@ -50,13 +50,13 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: [null, Validators.required],
+      template: null,
       smsAccount: [null, Validators.required],
       isBirthdayAutomation: false,
       dateTimeSend: new Date(),
       timeBeforSend: 0,
       templateName: '',
-      type: 'birthday',
+      type: 'partner',
     })
     this.loadDataFormApi();
     this.loadSmsTemplate();
@@ -81,14 +81,14 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   }
 
   loadDataFormApi() {
-    var type = "birthday"
+    var type = "partner"
     this.smsConfigService.get(type).subscribe(
       (res: any) => {
         if (res) {
           this.id = res.id;
           this.formGroup.patchValue(res);
-          if (res.template) {
-            this.template = JSON.parse(res.template.body);
+          if (res.body) {
+            this.template = JSON.parse(res.body);
           }
           if (res.dateSend) {
             this.formGroup.get('dateTimeSend').patchValue(new Date(res.dateSend))
@@ -150,7 +150,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   searchSmsTemplate(q?: string) {
     var filter = new SmsTemplateFilter();
     filter.search = q || "";
-    filter.type = "birthday";
+    filter.type = "partner";
     return this.smsTemplateService.getAutoComplete(filter);
   }
 
@@ -182,7 +182,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
       var valueTemplate = {
         name: val.templateName,
         body: val.body,
-        type: "birthday"
+        type: "partner"
       }
       this.smsTemplateService.create(valueTemplate).subscribe(
         () => {
@@ -192,14 +192,14 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     }
   }
 
-  addTemplate() {
-    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Tạo mẫu tin';
-    modalRef.componentInstance.templateTypeTab = "birthday";
-    modalRef.result.then((val) => {
-      this.loadSmsTemplate();
-    })
-  }
+  // addTemplate() {
+  //   const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+  //   modalRef.componentInstance.title = 'Tạo mẫu tin';
+  //   modalRef.componentInstance.templateTypeTab = "birthday";
+  //   modalRef.result.then((val) => {
+  //     this.loadSmsTemplate();
+  //   })
+  // }
   notify(title, isSuccess = true) {
     this.notificationService.show({
       content: title,

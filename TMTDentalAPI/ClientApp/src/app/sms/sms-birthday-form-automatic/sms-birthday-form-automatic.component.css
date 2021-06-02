@@ -79,3 +79,7 @@ input:checked+.slider:before {
     color: #9a9a9a;
     font-size: 12px;
 }
+.o_form_view .o_form_sheet_bg .o_form_sheet{
+    max-width: 800px !important;
+    padding: 0 31px 15px 31px !important;
+}

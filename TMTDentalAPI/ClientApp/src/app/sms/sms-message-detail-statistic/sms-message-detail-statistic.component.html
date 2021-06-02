@@ -35,12 +35,12 @@
             {{dataItem.smsAccount ? dataItem.smsAccount.brandName :''}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Nguyên nhân" width="120">
+    <kendo-grid-column title="Nguyên nhân" width="250">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{stranslateCodeResponse(dataItem.errorCode)}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Trạng thái" width="120">
+    <kendo-grid-column title="Trạng thái" width="100">
         <ng-template kendoGridCellTemplate let-dataItem>
             <span *ngIf="dataItem.state=='fails'">Thất bại</span>
             <span *ngIf="dataItem.state=='sending'">Đang gửi</span>

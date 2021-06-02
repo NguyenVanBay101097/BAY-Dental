@@ -28,19 +28,19 @@
                     <table class="table-report-total">
                         <tr>
                             <td class="table-title">
-                                <span>Brandname</span> 
+                                <span>Brandname</span>
                             </td>
                             <td>
-                                <kendo-combobox class="w-100" [data]="filteredSmsBrandname" [(value)]="smsBrandname_reportTotal" 
-                                    [textField]="'brandName'" [valueField]="'id'" [filterable]="true"
-                                    placeholder="Tất cả" #smsBrandnameCbx>
+                                <kendo-combobox class="w-100" [data]="filteredSmsBrandname"
+                                    [(value)]="smsBrandname_reportTotal" [textField]="'brandName'" [valueField]="'id'"
+                                    [filterable]="true" placeholder="Tất cả" #smsBrandnameCbx>
                                     <ng-template kendoComboBoxItemTemplate let-dataItem>
                                         <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
                                     </ng-template>
                                 </kendo-combobox>
                             </td>
                             <td class="table-title">
-                                <span>Thời gian</span> 
+                                <span>Thời gian</span>
                             </td>
                             <td class="table-datepicker">
                                 <kendo-datepicker class="w-100" [(value)]="date_reportTotal" [bottomView]="'year'" 
@@ -53,9 +53,9 @@
                                 <span>Chiến dịch</span>
                             </td>
                             <td>
-                                <kendo-combobox class="w-100" [data]="filteredSmsCampaign" [(value)]="smsCampaign_reportTotal"
-                                    [textField]="'name'" [valueField]="'id'" [filterable]="true"
-                                    placeholder="Tất cả" #smsCampaignCbx>
+                                <kendo-combobox class="w-100" [data]="filteredSmsCampaign"
+                                    [(value)]="smsCampaign_reportTotal" [textField]="'name'" [valueField]="'id'"
+                                    [filterable]="true" placeholder="Tất cả" #smsCampaignCbx>
                                 </kendo-combobox>
                             </td>
                             <td>

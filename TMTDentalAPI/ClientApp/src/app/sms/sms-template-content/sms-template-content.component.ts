@@ -18,7 +18,7 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
   tabs: Array<{name: string, value: string}> = [];
 
   listTabs = {
-    "birthday": [
+    "partner": [
       { name: 'Danh xưng', value: '{danh_xung}' },
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
       { name: 'Ngày sinh', value: '{ngay_sinh}' }
@@ -38,18 +38,18 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
     //   { name: 'Ngày hẹn', value: '{ngay_hen}' },
     //   { name: 'Bác sĩ', value: '{bac_si}' }
     // ], 
-    "care_after_order": [
+    "saleOrderLine": [
       { name: 'Danh xưng', value: '{danh_xung}' },
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
       { name: 'Số phiếu điều trị', value: '{so_phieu_dieu_tri}' },
       { name: 'Dịch vụ', value: '{dich_vu}' },
       { name: 'Bác sĩ', value: '{bac_si}' }
     ], 
-    "thanks": [
+    "saleOrder": [
       { name: 'Danh xưng', value: '{danh_xung}' },
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
     ], 
-    "campaign": [
+    "partnerCampaign": [
       { name: 'Danh xưng', value: '{danh_xung}' },
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
     ]

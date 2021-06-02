@@ -47,12 +47,13 @@
                                 (click)="cancelSend()">
                                 Hủy gửi
                             </button>
-                            <app-tai-date-range-filter-dropdown *ngIf="state=='success'" title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" 
-                                (searchChange)="onSearchDateChange($event)">
+                            <app-tai-date-range-filter-dropdown *ngIf="state=='success'" title="Thời gian"
+                                [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
                             </app-tai-date-range-filter-dropdown>
-                            <kendo-combobox [class.d-none]="state!='success'" class="kendo-combobox-sm ml-2" placeholder="Brandname"
-                                [data]="filteredSmsAccount" [textField]="'brandName'" [valueField]="'id'"
-                                [filterable]="true" #smsAccountCbx (valueChange)="onChangeAccount($event)">
+                            <kendo-combobox [class.d-none]="state!='success'" class="kendo-combobox-sm ml-2"
+                                placeholder="Brandname" [data]="filteredSmsAccount" [textField]="'brandName'"
+                                [valueField]="'id'" [filterable]="true" #smsAccountCbx
+                                (valueChange)="onChangeAccount($event)">
                             </kendo-combobox>
                         </div>
                         <div class="o_cp_t_right">
@@ -62,9 +63,9 @@
                     </div>
                 </div>
                 <div class="o_content">
-                    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading"
-                        (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds"
-                        (cellClick)="cellClick($event.dataItem)">
+                    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
+                        [loading]="loading" (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'"
+                        [selectedKeys]="selectedIds" (cellClick)="cellClick($event.dataItem)">
                         <kendo-grid-checkbox-column *ngIf="state=='waiting'" showSelectAll="true" width="50">
                         </kendo-grid-checkbox-column>
                         <kendo-grid-column field="name" title="Tên tin nhắn">
@@ -152,7 +153,12 @@
                 </tr>
                 <tr>
                     <td class="o_td_label">
-                        <label class="o_form_label">Hạn mức gửi tin</label>
+                        <div class="d-flex align-items-center">
+                            <label class="o_form_label">Hạn mức gửi tin</label>
+                            <span class="text-primary t-tooltip" placement="right" ngbTooltip="0 là không giới hạn">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </span>
+                        </div>
                     </td>
                     <td class="o_td_value">
                         <div class="d-flex align-items-center">
@@ -160,9 +166,6 @@
                                 class="w-fit-content" [min]="0" [format]="'n0'" formControlName="limitMessage">
                             </kendo-numerictextbox>
                             <div class="mx-2">SMS</div>
-                            <span class="text-primary t-tooltip" placement="right" ngbTooltip="0 là không giới hạn">
-                                <i class="fas fa-exclamation-circle"></i>
-                            </span>
                         </div>
                         <div *ngIf="f.limitMessage.errors && (f.limitMessage.touched || f.limitMessage.dirty)"
                             class="text-danger">

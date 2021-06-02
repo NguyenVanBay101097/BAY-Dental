@@ -1,12 +1,3 @@
 .textarea-required.ng-touched.ng-dirty.ng-invalid {
     border: 1px solid red;
 }
-
-.my_class{
-    /* width: 500px !important; */
-}
-
-.tooltip{
-    background-color: red !important;
-    width:600px !important;
-}

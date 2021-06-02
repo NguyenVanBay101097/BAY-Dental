@@ -4,7 +4,10 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { EventEmitter } from 'events';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
+import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
@@ -22,8 +25,6 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
 
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent
-  @ViewChild("serviceCategoryMlct", { static: true }) serviceCategoryMlct: MultiSelectComponent
-  @ViewChild("serviceMlct", { static: true }) serviceMlct: MultiSelectComponent
   formGroup: FormGroup;
   filteredConfigSMS: any[];
   filteredSmsAccount: any[];
@@ -34,39 +35,44 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   limit: number = 20;
   type: string;
   filteredTemplate: any[];
+  filter: string = 'productCategory';
   textareaLimit: number = 200;
   isTemplateCopy = false;
   template: any = {
     text: '',
     templateType: 'text'
   };
+  title: string;
   public today: Date = new Date;
   public timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
   public timeRunJob: Date = new Date();
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private smsTemplateService: SmsTemplateService,
     private smsConfigService: SmsConfigService,
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
+    private productCategoryService: ProductCategoryService,
+    private productService: ProductService,
     private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: [null, Validators.required],
+      template: null,
       smsAccount: [null, Validators.required],
-      IsCareAfterOrderAutomation: false,
+      isCareAfterOrderAutomation: false,
       dateTimeSend: new Date(),
+      filter: this.filter,
       products: [],
       productCategories: [],
-      TypeTimeBeforSend: ['day', Validators.required],
+      typeTimeBeforSend: ['day', Validators.required],
       timeBeforSend: 1,
       name: ['', Validators.required],
       templateName: '',
-      type: 'care-after-order',
+      type: 'sale-order-line',
     })
     if (this.id) {
       this.loadDataFormApi();
@@ -90,17 +96,27 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       this.filteredSmsAccount = result;
       this.smsAccountCbx.loading = false;
     });
+
+    this.loadProductCategory();
+    this.loadProduct();
+
   }
 
   loadDataFormApi() {
-
-    this.smsConfigService.get(this.id).subscribe(
+    this.smsConfigService.getDisplay(this.id).subscribe(
       (res: any) => {
         if (res) {
-          this.id = res.id;
+          if (res.products && res.products.length > 0) {
+            this.filter = "product"
+            res.filter = "product"
+          }
+          if (res.productCategories && res.productCategories.length > 0) {
+            this.filter = "productCategory"
+            res.filter = "productCategory"
+          }
           this.formGroup.patchValue(res);
-          if (res.template) {
-            this.template = JSON.parse(res.template.body);
+          if (res.body) {
+            this.template = JSON.parse(res.body);
           }
           if (res.dateSend) {
             this.formGroup.get('dateTimeSend').patchValue(new Date(res.dateSend))
@@ -162,7 +178,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   searchSmsTemplate(q?: string) {
     var filter = new SmsTemplateFilter();
     filter.search = q || "";
-    filter.type = "care_after_order";
+    filter.type = "saleOrderLine";
     return this.smsTemplateService.getAutoComplete(filter);
   }
 
@@ -175,18 +191,20 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.templateId = val.template ? val.template.id : null;
     val.body = this.template ? JSON.stringify(this.template) : '';
+    val.productIds = val.products ? val.products.map(x => x.id) : [];
+    val.productCategoryIds = val.productCategories ? val.productCategories.map(x => x.id) : [];
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(
         res => {
-          // console.log(res);
           this.notify("cập nhật thiết lập thành công", true);
+          this.activeModal.close();
         }
       )
     } else {
       this.smsConfigService.create(val).subscribe(
         res => {
-          // console.log(res);
           this.notify("thiết lập thành công", true);
+          this.activeModal.close();
         }
       )
     }
@@ -194,7 +212,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       var valueTemplate = {
         name: val.templateName,
         body: val.body,
-        type: "care_after_order"
+        type: "saleOrderLine"
       }
       this.smsTemplateService.create(valueTemplate).subscribe(
         () => {
@@ -204,14 +222,14 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     }
   }
 
-  addTemplate() {
-    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Tạo mẫu tin';
-    modalRef.componentInstance.templateTypeTab = "birthday";
-    modalRef.result.then((val) => {
-      this.loadSmsTemplate();
-    })
-  }
+  // addTemplate() {
+  //   const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+  //   modalRef.componentInstance.title = 'Tạo mẫu tin';
+  //   modalRef.componentInstance.templateTypeTab = "saleOrderLine";
+  //   modalRef.result.then((val) => {
+  //     this.loadSmsTemplate();
+  //   })
+  // }
   notify(title, isSuccess = true) {
     this.notificationService.show({
       content: title,
@@ -220,6 +238,47 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: isSuccess ? 'success' : 'error', icon: true },
     });
+  }
+
+  onChangeRadioButton(event: any) {
+    var filter = event.currentTarget.value;
+    if (filter) {
+      this.filter = filter;
+      this.formGroup.get('products').patchValue(null);
+      this.formGroup.get('productCategories').patchValue(null);
+    }
+  }
+
+
+  loadProductCategory(q?: string) {
+    var val = new ProductCategoryPaged();
+    val.limit = 20;
+    val.offset = 0;
+    val.type = 'service';
+    val.search = q || ''
+    this.productCategoryService.autocomplete(val).subscribe(
+      res => {
+        if (res) {
+          this.filteredProductCategories = res;
+        }
+      }
+    );
+  }
+
+  loadProduct(q?: string) {
+    var val = new ProductPaged();
+    val.limit = 20;
+    val.offset = 0;
+    val.type = "service";
+    val.type2 = "service"
+    val.search = q || ''
+    this.productService.autocomplete2(val).subscribe(
+      res => {
+        if (res) {
+          this.filteredProducts = res;
+        }
+      }
+    );
   }
 
 }

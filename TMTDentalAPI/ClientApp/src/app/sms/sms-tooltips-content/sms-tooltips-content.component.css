@@ -71,3 +71,23 @@ th {
     border: 1px solid #dee2e6;
     z-index: 3;
 }
+
+.tooltip_title{
+    border-bottom:1px solid #06B6D4;
+    padding:2px;
+    color: #3120C9;
+    font-weight: 800;
+}
+
+.table-sm td, .table-sm th {
+    padding: 0 0 0 5px !important;
+}
+.table td, .table th {
+    padding: 0 0 0 5px !important;
+}
+
+.b-table-text{
+    border-top: 1px solid #dee2e6;
+    font-size:12px; 
+    font-weight: 400;
+}

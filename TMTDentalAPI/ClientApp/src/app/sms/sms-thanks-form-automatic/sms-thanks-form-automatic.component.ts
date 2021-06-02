@@ -48,13 +48,14 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: [null, Validators.required],
+      template: null,
       smsAccount: [null, Validators.required],
       isThanksCustomerAutomation: false,
       TypeTimeBeforSend: 'hour',
       timeBeforSend: 1,
       templateName: '',
-      type: 'thanks-customer',
+      type: 'sale-order',
+      dateTimeSend: null
     })
     this.loadDataFormApi();
     this.loadSmsTemplate();
@@ -88,14 +89,14 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   }
 
   loadDataFormApi() {
-    var type = "thanks-customer"
+    var type = "sale-order"
     this.smsConfigService.get(type).subscribe(
       (res: any) => {
         if (res) {
           this.id = res.id;
           this.formGroup.patchValue(res);
-          if (res.template) {
-            this.template = JSON.parse(res.template.body);
+          if (res.body) {
+            this.template = JSON.parse(res.body);
           }
           if (res.dateSend) {
             this.formGroup.get('dateTimeSend').patchValue(new Date(res.dateSend))
@@ -147,7 +148,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   searchSmsTemplate(q?: string) {
     var filter = new SmsTemplateFilter();
     filter.search = q || "";
-    filter.type = "thanks";
+    filter.type = "saleOrder";
     return this.smsTemplateService.getAutoComplete(filter);
   }
 
@@ -180,7 +181,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
       var valueTemplate = {
         name: val.templateName,
         body: val.body,
-        type: "thanks"
+        type: "saleOrder"
       }
       this.smsTemplateService.create(valueTemplate).subscribe(
         () => {
@@ -193,7 +194,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   addTemplate() {
     const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo mẫu tin';
-    modalRef.componentInstance.templateTypeTab = "thanks";
+    modalRef.componentInstance.templateTypeTab = "saleOrder";
     modalRef.result.then((val) => {
       this.loadSmsTemplate();
     })

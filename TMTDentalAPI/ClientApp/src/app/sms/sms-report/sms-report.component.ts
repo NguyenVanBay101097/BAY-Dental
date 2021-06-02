@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { LegendLabelsContentArgs } from '@progress/kendo-angular-charts';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';

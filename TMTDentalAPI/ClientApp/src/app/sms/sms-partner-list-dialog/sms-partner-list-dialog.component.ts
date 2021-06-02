@@ -16,6 +16,7 @@ export class SmsPartnerListDialogComponent implements OnInit {
   gridData: GridDataResult;
   loading = false;
   offset = 0;
+  title: string;
   search: string;
   searchUpdate = new Subject<string>();
   selectedIds: any = [];
@@ -24,7 +25,7 @@ export class SmsPartnerListDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private notificationService: NotificationService,
     private partnerService: PartnerService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -44,7 +45,7 @@ export class SmsPartnerListDialogComponent implements OnInit {
     this.partnerService.getCustomerBirthDay(val).subscribe(
       (res: any[]) => {
         this.gridData = {
-          data: res, 
+          data: res,
           total: res.length
         }
         this.loading = false;
@@ -54,6 +55,11 @@ export class SmsPartnerListDialogComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  pageChange(event) {
+    this.offset = event.skip;
+    this.loadDataFromApi();
   }
 
   onSave() {

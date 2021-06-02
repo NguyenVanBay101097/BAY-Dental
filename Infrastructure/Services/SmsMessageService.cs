@@ -187,45 +187,16 @@ namespace Infrastructure.Services
             return _mapper.Map<SmsMessageDisplay>(entity);
         }
 
-        public async Task ActionSendSMS(SmsMessage entity)
+        public async Task ActionSendSMSMessage(SmsMessage entity)
         {
             var smsMessageDetailObj = GetService<ISmsMessageDetailService>();
             var hostName = _tenant != null ? _tenant.Hostname : "localhost";
             await using var context = DbContextHelper.GetCatalogDbContext(hostName, _configuration);
             try
             {
-                var partnerIds = new List<Guid>();
-                switch (entity.ResModel)
-                {
-                    case "partner":
-                        partnerIds = entity.SmsMessagePartnerRels.Select(x => x.PartnerId).ToList();
-                        break;
-                    case "appointment":
-                        var appointmentIds = entity.SmsMessageAppointmentRels.Select(x => x.AppointmentId);
-                        var appObj = GetService<IAppointmentService>();
-                        partnerIds = await appObj.SearchQuery(x => appointmentIds.Contains(x.Id)).Select(x => x.PartnerId).ToListAsync();
-                        break;
-                    case "sale-order":
-                        var saleOrderObj = GetService<ISaleOrderService>();
-                        var orderIds = entity.SmsMessageSaleOrderRels.Select(s => s.SaleOrderId).ToList();
-                        partnerIds = await saleOrderObj.SearchQuery(x => orderIds.Contains(x.Id)).Select(x => x.PartnerId).ToListAsync();
-                        break;
-                    case "sale-order-line":
-                        var saleOrderLineObj = GetService<ISaleOrderLineService>();
-                        var orderLineIds = entity.SmsMessageSaleOrderLineRels.Select(s => s.SaleOrderLineId);
-                        partnerIds = await saleOrderLineObj.SearchQuery(x => x.OrderPartnerId.HasValue && orderLineIds.Contains(x.Id)).Select(x => x.OrderPartnerId.Value).ToListAsync();
-                        break;
-                    default:
-                        break;
-                }
-
-
-                if (partnerIds.Any())
-                {
-                    var companyId = CompanyId;
-                    await smsMessageDetailObj.CreateSmsMessageDetail(entity, partnerIds, companyId);
-                    entity.State = "success";
-                }
+                var companyId = CompanyId;
+                await smsMessageDetailObj.CreateSmsMessageDetailV2(entity, companyId);
+                entity.State = "success";
                 await UpdateAsync(entity);
             }
             catch (Exception ex)
@@ -248,7 +219,7 @@ namespace Infrastructure.Services
             var configObj = GetService<ISmsConfigService>();
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleOrder = await saleOrderObj.SearchQuery(x => x.Id == orderId).FirstOrDefaultAsync();
-            var config = await configObj.SearchQuery(x => x.Type == "thanks-customer").FirstOrDefaultAsync();
+            var config = await configObj.SearchQuery(x => x.Type == "sale-order").FirstOrDefaultAsync();
             if (config != null && config.IsThanksCustomerAutomation && saleOrder.State == "done" && saleOrder.DateDone.HasValue)
             {
                 var entity = new SmsMessage();

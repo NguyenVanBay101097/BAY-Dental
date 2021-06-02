@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {SmsCampaignService} from '../sms-campaign.service';
+import { SmsCampaignService } from '../sms-campaign.service';
 
 @Component({
   selector: 'app-sms-appointment-form',
@@ -13,7 +13,7 @@ export class SmsAppointmentFormComponent implements OnInit {
   campaignId: string;
 
   constructor(
-    private smsCampaignService: SmsCampaignService, 
+    private smsCampaignService: SmsCampaignService,
     private route: ActivatedRoute
   ) { }
 
@@ -21,11 +21,10 @@ export class SmsAppointmentFormComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.campaignId = params.get('id');
     });
-
-    this.loadCampaignBirthday();
+    this.LoadCampaignAppointmentReminder()
   }
 
-  loadCampaignBirthday() {
+  LoadCampaignAppointmentReminder() {
     this.smsCampaignService.getDefaultCampaignAppointmentReminder().subscribe(
       result => {
         if (result) {

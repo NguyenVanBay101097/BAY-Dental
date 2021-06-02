@@ -77,8 +77,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? SmsCampaignId { get; set; }
         public string State { get; set; }
         public IEnumerable<Guid> GuidIds { get; set; } = new List<Guid>();
-        public bool? IsBirthDayManual { get; set; }
         public string ResModel { get; set; }
+        public bool? IsBirthDayManual { get; set; }
         public bool? IsAppointmentReminder { get; set; }
         public bool? IsThanksCustomer { get; set; }
         public bool? IsCareAfterOrder { get; set; }

@@ -41,25 +41,20 @@
                                     </tr>
                                     <tr>
                                         <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help">
+                                            <label class="o_form_label o_form_label_help mt-2 mb-2">
                                                 Thời gian gửi tin
                                             </label>
                                         </td>
-                                        <td colspan="1" class="d-flex tr-send" style="width: 100%;">
-                                            <select formControlName="timeBeforSend" class="form-control">
-                                                <option class="form-control" value="0">0 Ngày trước ngày sinh nhật
-                                                </option>
-                                                <option class="form-control" value="1">1 Ngày trước ngày sinh nhật
-                                                </option>
-                                                <option class="form-control" value="2">2 Ngày trước ngày sinh nhật
-                                                </option>
-                                                <option class="form-control" value="3">3 Ngày trước ngày sinh nhật
-                                                </option>
-                                                <option class="form-control" value="4">4 Ngày trước ngày sinh nhật
-                                                </option>
-                                                <option class="form-control" value="5">5 Ngày trước ngày sinh nhật
-                                                </option>
+                                        <td colspan="1" class="d-flex align-items-center tr-send" style="width: 100%;">
+                                            <select formControlName="timeBeforSend" class="form-control mt-2 mb-2" style="width:197px;">
+                                                <option class="form-control" value="0">0 ngày</option>
+                                                <option class="form-control" value="1">1 ngày</option>
+                                                <option class="form-control" value="2">2 ngày</option>
+                                                <option class="form-control" value="3">3 ngày</option>
+                                                <option class="form-control" value="4">4 ngày</option>
+                                                <option class="form-control" value="5">5 ngày</option>
                                             </select>
+                                            <span>&nbsp;trước khi sinh nhật</span>
                                         </td>
                                     </tr>
                                     <tr>
@@ -84,32 +79,30 @@
                                 <table class="ml-5">
                                     <tr>
                                         <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help">
-                                                Tin nhắn mẫu
+                                            <label class="o_form_label o_form_label_help mb-2">
+                                                Chọn tin nhắn mẫu
                                             </label>
                                         </td>
-                                        <td colspan="1" class="d-flex" style="width: 80%;">
+                                        <td colspan="1" style="width: 100%;">
                                             <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
                                                 formControlName="template" [filterable]="true" #smsTemplateCbx
-                                                (valueChange)="onChangeTemplate($event)" [valueField]="'id'">
+                                                (valueChange)="onChangeTemplate($event)" [valueField]="'id'" class="mb-2">
                                             </kendo-combobox>
-                                            <a class="btn btn-sm btn-light" (click)="addTemplate()">
+                                            <!-- <a class="btn btn-sm btn-light" (click)="addTemplate()">
                                                 <span class="k-icon k-i-plus"></span>
-                                            </a>
+                                            </a> -->
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="1" class="o_td_label">
+                                        <!-- <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">Nội dung</label>
-                                        </td>
-                                        <td colspan="1" style="width: 80%;">
+                                        </td> -->
+                                        <td colspan="2" style="width: 80%;">
                                             <app-sms-template-content 
-                                                [type]="'birthday'"
+                                                [type]="'partner'"
                                                 [textareaLength]="textareaLimit"
                                                 [template]="template">
                                             </app-sms-template-content>
-                                            <p class="color-custom">(Lưu ý: Không nhập ký tự đặc biệt hoặc các từ khóa
-                                                quảng cáo)</p>
                                         </td>
                                     </tr>
                                     <tr>
@@ -123,7 +116,7 @@
                                             </div>
                                         </td>
                                         <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                            <input type="text" class="form-control" formControlName="templateName">
+                                            <input type="text" class="form-control mt-2" formControlName="templateName">
                                             <span class="text-danger" *ngIf="formGroup.controls.templateName.value==''">
                                                 Nhập tiêu đề tin nhắn mẫu
                                             </span>

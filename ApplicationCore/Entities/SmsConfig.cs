@@ -6,6 +6,7 @@ namespace ApplicationCore.Entities
 {
     public class SmsConfig : BaseEntity
     {
+        public string Name { get; set; }
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
 
@@ -33,5 +34,8 @@ namespace ApplicationCore.Entities
 
         public Guid? TemplateId { get; set; }
         public SmsTemplate Template { get; set; }
+
+        public ICollection<SmsConfigProductCategoryRel> SmsConfigProductCategoryRels { get; set; } = new List<SmsConfigProductCategoryRel>();
+        public ICollection<SmsConfigProductRel> SmsConfigProductRels { get; set; } = new List<SmsConfigProductRel>();
     }
 }

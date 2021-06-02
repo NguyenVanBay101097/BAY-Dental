@@ -25,11 +25,11 @@ export class SmsTemplateCrUpComponent implements OnInit {
     templateType: 'text'
   };
   listTemplates = [
-    { name: 'Chúc mừng sinh nhật', value: 'birthday' },
-    { name: 'Nhắc lịch hẹn', value: 'appointment' },
-    { name: 'Chăm sóc sau điều trị', value: 'care_after_order' },
-    { name: 'Cám ơn', value: 'thanks' },
-    { name: 'Chiến dịch khác', value: 'campaign' },
+    { name: 'Khách hàng', value: 'partner' },
+    { name: 'Lịch hẹn', value: 'appointment' },
+    { name: 'Chi tiết điều trị', value: 'saleOrderLine' },
+    { name: 'Phiếu điều trị', value: 'saleOrder' },
+    { name: 'Chiến dịch', value: 'partnerCampaign' },
   ]
   constructor(
     public activeModal: NgbActiveModal,

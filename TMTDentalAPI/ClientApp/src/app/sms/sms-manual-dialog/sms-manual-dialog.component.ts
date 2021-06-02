@@ -35,12 +35,13 @@ export class SmsManualDialogComponent implements OnInit {
   isCareAfterOrder = false;
   campaign: any;
   isTemplateCopy = false;
-  templateTypeTab;
+  templateTypeTab: string;
   template: any = {
     templateType: 'text',
     text: ''
   }
   textareaLimit: number = 459;
+  get f() { return this.formGroup.controls; }
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -49,14 +50,13 @@ export class SmsManualDialogComponent implements OnInit {
     private modalService: NgbModal,
     private fb: FormBuilder,
     private smsAccountService: SmsAccountService,
-    private smsCampaignService: SmsCampaignService,
     private notificationService: NotificationService,
     private intlService: IntlService
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: [null, Validators.required],
+      template: null,
       smsAccount: [null, Validators.required],
       typeSend: 'manual',
       name: ['', Validators.required],
@@ -74,9 +74,6 @@ export class SmsManualDialogComponent implements OnInit {
       this.smsTemplateCbx.loading = false;
     });
 
-    if (this.isThanksCustomer) {
-      this.loadDefaultCampaignThanksCustomer();
-    }
 
     this.smsAccountCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -99,14 +96,6 @@ export class SmsManualDialogComponent implements OnInit {
 
   }
 
-  loadDefaultCampaignThanksCustomer() {
-    this.smsCampaignService.getDefaultThanksCustomer().subscribe(
-      result => {
-        if (result) {
-          this.campaign = result;
-        }
-      })
-  }
 
   searchSmsTemplate(q?: string) {
     var filter = new SmsTemplateFilter();
@@ -131,7 +120,6 @@ export class SmsManualDialogComponent implements OnInit {
       }
     )
   }
-  get f() { return this.formGroup.controls; }
 
   onChangeTemplate(event) {
     if (event && event.body) {

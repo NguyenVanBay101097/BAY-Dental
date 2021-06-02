@@ -36,6 +36,29 @@ namespace TMTDentalAPI.Controllers
         //    return Ok(_mapper.Map<SmsConfigBasic>(res));
         //}
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetPaged(SmsConfigPaged val)
+        {
+            var res = await _smsConfigService.GetPaged(val);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var res = await _smsConfigService.GetDisplay(id);
+            return Ok(res);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var entity = await _smsConfigService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            if (entity == null) return NotFound();
+            await _smsConfigService.DeleteAsync(entity);
+            return NoContent();
+        }
+
         [HttpGet]
         public async Task<IActionResult> Get(string type)
         {
@@ -51,6 +74,26 @@ namespace TMTDentalAPI.Controllers
         {
             var entity = _mapper.Map<SmsConfig>(val);
             entity.CompanyId = CompanyId;
+            if (val.ProductCategoryIds.Any())
+            {
+                foreach (var id in val.ProductCategoryIds)
+                {
+                    entity.SmsConfigProductCategoryRels.Add(new SmsConfigProductCategoryRel
+                    {
+                        ProductCategoryId = id
+                    });
+                }
+            }
+            else if (val.ProductIds.Any())
+            {
+                foreach (var id in val.ProductIds)
+                {
+                    entity.SmsConfigProductRels.Add(new SmsConfigProductRel
+                    {
+                        ProductId = id
+                    });
+                }
+            }
             await _unitOfWorkAsync.BeginTransactionAsync();
             entity = await _smsConfigService.CreateAsync(entity);
             _unitOfWorkAsync.Commit();
@@ -63,10 +106,8 @@ namespace TMTDentalAPI.Controllers
             var entity = await _smsConfigService.GetByIdAsync(id);
             if (entity == null || !ModelState.IsValid)
                 return NotFound();
-            entity = _mapper.Map(val, entity);
-            entity.CompanyId = CompanyId;
             await _unitOfWorkAsync.BeginTransactionAsync();
-            await _smsConfigService.UpdateAsync(entity);
+            await _smsConfigService.UpdateAsync(id, val);
             _unitOfWorkAsync.Commit();
             return Ok(_mapper.Map<SmsConfigBasic>(entity));
         }

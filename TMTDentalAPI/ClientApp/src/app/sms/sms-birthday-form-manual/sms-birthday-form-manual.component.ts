@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 
@@ -26,6 +27,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   selectedIds: string[] = [];
   month: any;
   searchUpdate = new Subject<string>();
+  campaign: any;
   months = [
     { name: 'Tháng 1', value: 1 },
     { name: 'Tháng 2', value: 2 },
@@ -44,12 +46,15 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     private partnerService: PartnerService,
     private smsTemplateService: SmsTemplateService,
     private modalService: NgbModal,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private smsCampaignService: SmsCampaignService,
   ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
-
+    setTimeout(() => {
+      this.loadDefaultCampaignThanksCustomer();
+    }, 1000);
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -80,7 +85,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   searchSmsTemplate(q?: string) {
     var filter = new SmsTemplateFilter();
     filter.search = q || "";
-    filter.type = "birthday";
+    filter.type = "partner";
     return this.smsTemplateService.getAutoComplete(filter);
   }
 
@@ -89,16 +94,26 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  loadDefaultCampaignThanksCustomer() {
+    this.smsCampaignService.getDefaultCampaignBirthday().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
+      })
+  }
+
   onSend() {
     if (this.selectedIds.length == 0) {
       this.notify("Bạn phải chọn khách hàng trước khi gửi tin", false);
     }
     else {
-      var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "lg", windowClass: "o_technical_modal" });
+      var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
       modalRef.componentInstance.title = "Tin nhắn chúc mừng sinh nhật";
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
       modalRef.componentInstance.isBirthDayManual = true;
-      modalRef.componentInstance.templateTypeTab = "birthday";
+      modalRef.componentInstance.templateTypeTab = "partner";
+      modalRef.componentInstance.campaign = this.campaign;
       modalRef.result.then(
         result => {
 

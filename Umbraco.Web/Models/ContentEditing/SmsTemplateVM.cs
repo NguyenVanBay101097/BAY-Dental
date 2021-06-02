@@ -8,6 +8,9 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Name { get; set; }
         public string Body { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public string Type { get; set; }
     }
 

@@ -42,14 +42,14 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ActionSendSms(Guid id)
         {
             var entity = await _smsMessageService.SearchQuery(x => x.Id == id)
-                .Include(x => x.SmsMessageAppointmentRels)
-                .Include(x => x.SmsMessageSaleOrderLineRels)
-                .Include(x => x.SmsMessageSaleOrderRels)
+                .Include(x => x.SmsMessageAppointmentRels).ThenInclude(x => x.Appointment)
+                .Include(x => x.SmsMessageSaleOrderLineRels).ThenInclude(x => x.SaleOrderLine)
+                .Include(x => x.SmsMessageSaleOrderRels).ThenInclude(x => x.SaleOrder)
                 .Include(x => x.SmsAccount)
                 .Include(x => x.SmsMessagePartnerRels).FirstOrDefaultAsync();
             if (entity == null) return NotFound();
             await _unitOfWorkAsync.BeginTransactionAsync();
-            await _smsMessageService.ActionSendSMS(entity);
+            await _smsMessageService.ActionSendSMSMessage(entity);
             _unitOfWorkAsync.Commit();
             return NoContent();
         }

@@ -27,7 +27,7 @@ export class SmsMessageDialogComponent implements OnInit {
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent;
 
   formGroup: FormGroup;
-
+  title: string;
   filteredSmsCampaign: any[];
   filteredSmsAccount: any[];
   filteredTemplate: any[];
