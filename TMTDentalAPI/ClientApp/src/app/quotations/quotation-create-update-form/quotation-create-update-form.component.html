@@ -213,7 +213,9 @@
                                     {{i + 1}}
                                 </td>
                                 <td class="d-flex">
-                                    <kendo-numerictextbox class="form-control" [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" [(ngModel)]="payment_item.payment" [name]="'payments[' + i + '].payment'">
+                                    <kendo-numerictextbox *ngIf="payment_item.discountPercentType == 'cash'" class="form-control" [min]="0"[format]="'n0'" [spinners]="false" [(ngModel)]="payment_item.payment" [name]="'payments[' + i + '].payment'">
+                                    </kendo-numerictextbox>
+                                    <kendo-numerictextbox *ngIf="payment_item.discountPercentType == 'percent'" class="form-control" [min]="0" [max]="100" [autoCorrect]="true" [format]="'n0'" [spinners]="false" [(ngModel)]="payment_item.payment" [name]="'payments[' + i + '].payment'">
                                     </kendo-numerictextbox>
                                     <div class="mt-1 ml-2 d-flex">
                                         <div class="form-check form-check-inline">

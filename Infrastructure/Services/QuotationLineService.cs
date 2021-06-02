@@ -181,7 +181,7 @@ namespace Infrastructure.Services
             }
             else
             {
-                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };
+                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không chính xác", Success = false, SaleCouponProgram = null };
 
             }
         }
