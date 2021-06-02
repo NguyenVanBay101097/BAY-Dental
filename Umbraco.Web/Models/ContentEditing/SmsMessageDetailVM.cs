@@ -60,8 +60,49 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ReportTotalOutputItem
     {
         public string State { get; set; }
+        public string StateDisplay { get; set; }
         public int Total { get; set; }
         public float Percentage { get; set; }
+    }
+
+    public class ReportCampaignPaged
+    {
+        public ReportCampaignPaged()
+        {
+            Limit = 20;
+            Offset = 0;
+        }
+        public int Limit { get; set; }
+        public int Offset { get; set; }
+        public string Search { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+    }
+
+    public class ReportCampaignOutputItem
+    {
+        public string SmsCampaignName { get; set; }
+        public int TotalMessages { get; set; }
+        public int TotalSuccessfulMessages { get; set; }
+        public int TotalFailedMessages { get; set; }
+    }
+
+    public class ReportSupplierInput
+    {
+        public string SmsSupplierCode { get; set; }
+    }
+
+    public class ReportSupplierOutputItem
+    {
+        public string State { get; set; }
+        public string StateDisplay { get; set; }
+        public IEnumerable<ReportSupplierOutputItemData> Data { get; set; } = new List<ReportSupplierOutputItemData>();
+    }
+
+    public class ReportSupplierOutputItemData
+    {
+        public DateTime Date { get; set; }
+        public int Total { get; set; }
     }
 }
 

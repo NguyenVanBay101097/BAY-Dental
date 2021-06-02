@@ -59,5 +59,19 @@ namespace TMTDentalAPI.Controllers
             var res = await _smsMessageDetailService.GetReportTotal(val);
             return Ok(res);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetReportCampaign([FromQuery] ReportCampaignPaged val)
+        {
+            var res = await _smsMessageDetailService.GetReportCampaign(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetReportSupplier([FromQuery] ReportSupplierInput val)
+        {
+            var res = await _smsMessageDetailService.GetReportSupplier(val);
+            return Ok(res);
+        }
     }
 }

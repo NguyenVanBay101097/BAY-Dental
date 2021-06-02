@@ -101,7 +101,6 @@ export class SmsAppointmentFormManualComponent implements OnInit {
           this.campaign = result;
         }
       })
-    return this.campaign;
   }
 
   onSend() {
@@ -109,7 +108,6 @@ export class SmsAppointmentFormManualComponent implements OnInit {
       this.notify("Bạn phải chọn khách hàng trước khi gửi tin", false);
     }
     else {
-      this.loadDefaultCampaignAppointmentReminder();
       var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
       modalRef.componentInstance.title = "Tin nhắn nhắc lịch hẹn";
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];

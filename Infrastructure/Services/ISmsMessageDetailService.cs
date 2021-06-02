@@ -20,5 +20,7 @@ namespace Infrastructure.Services
         Task CreateSmsMessageDetail(SmsMessage smsMessage, IEnumerable<Guid> ids, Guid companyId);
         Task CreateSmsMessageDetailV2(SmsMessage smsMessage, Guid companyId);
         Task<IEnumerable<ReportTotalOutputItem>> GetReportTotal(ReportTotalInput val);
+        Task<PagedResult2<ReportCampaignOutputItem>> GetReportCampaign(ReportCampaignPaged val);
+        Task<IEnumerable<ReportSupplierOutputItem>> GetReportSupplier(ReportSupplierInput val);
     }
 }

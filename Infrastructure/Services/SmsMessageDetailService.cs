@@ -690,19 +690,80 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<ReportTotalOutputItem>> GetReportTotal(ReportTotalInput val)
         {
             var query = SearchQuery();
-
             if (val.Date.HasValue)
                 query = query.Where(x => x.DateCreated.Value.Month == val.Date.Value.Month);
+            if (val.SmsAccountId.HasValue)
+                query = query.Where(x => x.SmsAccountId == val.SmsAccountId.Value);
+            if (val.SmsCampaignId.HasValue)
+                query = query.Where(x => x.SmsCampaignId.Value == val.SmsCampaignId.Value);
 
             var res = await query.GroupBy(x => new { x.State })
                 .Select(x => new ReportTotalOutputItem
                 {
                     State = x.Key.State,
+                    StateDisplay = x.Key.State == "success" ? "Thành công" : "Thất bại",
                     Total = x.Count(),
                     Percentage = x.Count() * 100f / query.Count()
                 }).ToListAsync();
             return res;
         }
+
+        public async Task<PagedResult2<ReportCampaignOutputItem>> GetReportCampaign(ReportCampaignPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.SmsCampaign.Name.Contains(val.Search) || (x.SmsCampaignId.HasValue && x.SmsCampaign.Name.Contains(val.Search)));
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateCreated.HasValue && val.DateFrom.Value <= x.DateCreated.Value);
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.DateCreated.HasValue && val.DateTo.Value >= x.DateCreated.Value);
+
+            var items = await query.Include(x => x.SmsCampaign).ToListAsync();
+
+            var itemsOutput = items.GroupBy(x => x.SmsCampaignId)
+            .Select(y => new ReportCampaignOutputItem
+            {
+                SmsCampaignName = y.First().SmsCampaignId.HasValue ? y.First().SmsCampaign.Name : "",
+                TotalMessages = y.Count(),
+                TotalSuccessfulMessages = y.Count(z => z.State == "success"),
+                TotalFailedMessages = y.Count(z => z.State == "fails")
+            }).ToList();
+
+            var totalItems = itemsOutput.Count();
+            var itemsResult = itemsOutput.Skip(val.Offset).Take(val.Limit).ToList();
+
+            return new PagedResult2<ReportCampaignOutputItem>(totalItems: totalItems, limit: val.Limit, offset: val.Offset)
+            {
+                Items = itemsResult
+            };
+        }
+
+        public async Task<IEnumerable<ReportSupplierOutputItem>> GetReportSupplier(ReportSupplierInput val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.SmsSupplierCode))
+                query = query.Where(x => x.SmsAccount.Provider == val.SmsSupplierCode);
+
+            var res = await query.GroupBy(x => new { x.State })
+                .Select(x => new
+                {
+                    State = x.Key.State,
+                    StateDisplay = x.Key.State == "success" ? "Thành công" : "Thất bại",
+                    Data = x.GroupBy(y => y.DateCreated)
+                    .Select(z => new ReportSupplierOutputItemData
+                    {
+                        Date = z.Key.Value,
+                        Total = z.Count()
+                    }).ToList()
+                }).ToListAsync();
+
+            return null;
+        }
+
+        //public async Task GetReportSumary(ReportSupplierInput val)
+        //{
+        //    var items = SearchQuery(x=>x.)
+        //}
 
         protected Guid CompanyId
         {

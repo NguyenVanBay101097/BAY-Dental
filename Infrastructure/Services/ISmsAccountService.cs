@@ -12,5 +12,6 @@ namespace Infrastructure.Services
     {
         Task<SmsAccountBasic> GetDefault();
         Task<PagedResult2<SmsAccountBasic>> GetPaged(SmsAccountPaged val);
+        Task<IEnumerable<SmsSupplierBasic>> SmsSupplierAutocomplete(string Search);
     }
 }

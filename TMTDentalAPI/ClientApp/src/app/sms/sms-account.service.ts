@@ -57,4 +57,8 @@ export class SmsAccountService {
   delete(id: string) {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
   }
+
+  smsSupplierAutocomplete(search: string) {
+    return this.http.get(this.base_api + this.apiUrl + '/SmsSupplierAutocomplete', { params: new HttpParams().set('search', search) })
+  }
 }

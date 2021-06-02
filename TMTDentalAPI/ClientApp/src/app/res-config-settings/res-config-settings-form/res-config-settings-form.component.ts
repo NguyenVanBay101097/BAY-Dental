@@ -19,7 +19,7 @@ import * as _ from 'lodash';
 export class ResConfigSettingsFormComponent implements OnInit {
   formGroup: FormGroup;
   filterdPaperSizes: PrintPaperSizeBasic[] = [];
-  
+
   @ViewChild('papersizeCbx', { static: true }) papersizeCbx: ComboBoxComponent;
   constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService, private printPaperSizeService: PrintPaperSizeService,
     private authService: AuthService, private notificationService: NotificationService, private intlService: IntlService) {
@@ -35,6 +35,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
       companySharePartner: false,
       companyShareProduct: false,
       groupUoM: false,
+      groupSms: false,
       groupServiceCard: false,
       productListpriceRestrictCompany: false,
       groupTCare: false,
@@ -46,13 +47,13 @@ export class ResConfigSettingsFormComponent implements OnInit {
 
     this.configSettingsService.defaultGet().subscribe((result: any) => {
       this.formGroup.patchValue(result);
-      
+
       if (result.tCareRunAt) {
         var tCareRunAt = new Date(result.tCareRunAt);
         this.formGroup.get('tCareRunAtObj').patchValue(tCareRunAt);
       }
-     
-      
+
+
     });
   }
 
@@ -71,7 +72,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
 
   searchPaperSizes(q?: string) {
     var val = new PrintPaperSizePaged();
-    val.search = q || '';  
+    val.search = q || '';
     return this.printPaperSizeService.getPaged(val);
   }
 
