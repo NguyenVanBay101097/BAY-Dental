@@ -212,7 +212,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       var valueTemplate = {
         name: val.templateName,
         body: val.body,
-        type: "care_after_order"
+        type: "saleOrderLine"
       }
       this.smsTemplateService.create(valueTemplate).subscribe(
         () => {
