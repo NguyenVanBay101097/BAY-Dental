@@ -127,15 +127,6 @@ export class PhieuThuChiService {
     return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
   }
 
-  actionPaymentCustomerDebt(val) {
-    return this.http.post(this.baseApi + this.apiUrl + '/ActionPaymentCustomerDebt', val);
-  }
-
-  actionPaymentOfCommissionAgent(val) {
-    return this.http.post(this.baseApi + this.apiUrl + '/ActionPaymentOfCommissionAgent', val);
-  }
-
-
   actionConfirm(ids: string[]) {
     return this.http.post(this.baseApi + this.apiUrl + '/ActionConfirm', ids);
   }

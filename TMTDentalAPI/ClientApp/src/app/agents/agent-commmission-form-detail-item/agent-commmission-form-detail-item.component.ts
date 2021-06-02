@@ -43,7 +43,7 @@ export class AgentCommmissionFormDetailItemComponent implements OnInit {
         this.loadDataFromApi();
       });
 
-      this.loadDataFromApi();
+    this.loadDataFromApi();
   }
 
   loadDataFromApi() {

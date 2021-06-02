@@ -1,103 +1,71 @@
-
-<div class="o_content">
-    <div class="o_form_view h-100">
-        <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column h-100">
-            <div class="report-prescription-payment">
-                <div class="revenue">
-                    <div class="title">
-                        <h6>Tổng công nợ</h6>
-                    </div>
-                    <h4 class="text-primary">
-                        {{(amountDebtTotal | number) || 0}}
-                    </h4>
-                </div>
-                <div class="revenue">
-                    <div class="title">
-                        <h6>Tổng thanh toán</h6>
-                    </div>
-                    <h4 class="text-primary">
-                        {{(amountDebtPaidTotal | number) || 0}}
-                    </h4>
-                </div>
-                <div class="revenue">
-                    <div class="title">
-                        <h6>Tổng còn nợ</h6>
-                    </div>
-                    <h4 class="text-primary">
-                        {{(amountDebtBalanceTotal | number) || 0}}
-                    </h4>
-                </div>
-            </div>
-            <div class="o_notebook flex-1-1-100 overflow-hidden d-flex flex-column">
-                <!-- Nav tabs -->
-                <ul class="nav nav-tabs flex-0-0-auto" id="myTab" role="tablist">
-                    <li class="nav-item ml-1">
-                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                            aria-controls="home" aria-selected="true">Danh sách công nợ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment" role="tab"
-                            aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
-                    </li>
-                </ul>
-
-                <!-- Tab panes -->
-                <div class="tab-content">
-                    <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <div class="o_control_panel">
-                            <div class="o_cp_t_left">
-                                <div class="o_cp_buttons">
-                                    <div class="o_form_buttons_view">
-                                        <div class="d-flex">
-                                            <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom"
-                                                [title]="'Thời gian'" [dateTo]="dateTo"
-                                                (searchChange)="onSearchDateChange($event)">
-                                            </app-tai-date-range-filter-dropdown>
-                                            <button class="btn btn-primary btn-sm mr-2 " title="Thu nợ"
-                                                (click)="createItem()">Thu nợ</button>
-                                            <button class="btn btn-primary btn-sm mr-2" 
-                                                title="xuất file" (click)="exportExcelFile()"> <i class="fas fa-download mr-2"></i>Xuất file</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="o_cp_sidebar">
-
-                                </div>
-                            </div>
-                            <div class="o_cp_t_right">
-                                <input class="o_searchview_input o_searchview"
-                                    placeholder="Tìm kiếm theo nguồn, số phiếu" type="text" [(ngModel)]="search"
-                                    (ngModelChange)="this.searchUpdate.next($event)">
-                            </div>
-                        </div>
-
-                        <kendo-grid [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
-                        [loading]="loading" (pageChange)="pageChange($event)" [navigable]="true">
-                        <kendo-grid-column title="Ngày ghi nợ" width="135">
-                            <ng-template kendoGridCellTemplate let-dataItem let-column="column">
-                                {{dataItem.paymentDate | date:'shortDate'}}
-                            </ng-template>
-                        </kendo-grid-column>
-                        <kendo-grid-column title="Số phiếu" width="100">
-                            <ng-template kendoGridCellTemplate let-dataItem let-column="column">
-                                <a class="text-primary" *ngFor="let order of dataItem.orders" (click)="getFormSaleOrder(order.id)">{{order.name}}</a>
-                            </ng-template>
-                        </kendo-grid-column>
-                        <kendo-grid-column field="paymentName" title="Nguồn" width="120">
-                        </kendo-grid-column>
-                        <kendo-grid-column title="Số tiền" class="text-right" width="135">
-                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                {{dataItem.paymentAmount | number}}
-                            </ng-template>
-                        </kendo-grid-column>
-                    </kendo-grid>
-                    </div>
-
-                    <div class="tab-pane" id="payment" role="tabpanel" aria-labelledby="payment-tab">
-                        <app-partner-customer-debt-payment-history-list [partnerId]="partnerId"></app-partner-customer-debt-payment-history-list>
-                    </div>
+<div class="report-prescription-payment">
+    <div class="revenue">
+        <div class="title">
+            <h6>Tổng công nợ</h6>
+        </div>
+        <h4 class="text-primary">
+            {{(amountDebtTotal | number) || 0}}
+        </h4>
+    </div>
+    <div class="revenue">
+        <div class="title">
+            <h6>Tổng thanh toán</h6>
+        </div>
+        <h4 class="text-primary">
+            {{(amountDebtPaidTotal | number) || 0}}
+        </h4>
+    </div>
+    <div class="revenue">
+        <div class="title">
+            <h6>Tổng còn nợ</h6>
+        </div>
+        <h4 class="text-primary">
+            {{(amountDebtBalanceTotal | number) || 0}}
+        </h4>
+    </div>
+</div>
+<div class="o_control_panel">
+    <div class="o_cp_t_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <div class="d-flex">
+                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
+                        (searchChange)="onSearchDateChange($event)">
+                    </app-tai-date-range-filter-dropdown>
+                    <button class="btn btn-primary btn-sm mr-2 " title="Thu nợ" (click)="createItem()">Thu nợ</button>
+                    <button class="btn btn-primary btn-sm mr-2" title="xuất file" (click)="exportExcelFile()"> <i
+                            class="fas fa-download mr-2"></i>Xuất file</button>
                 </div>
             </div>
         </div>
+        <div class="o_cp_sidebar">
+
+        </div>
+    </div>
+    <div class="o_cp_t_right">
+        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo nguồn, số phiếu" type="text"
+            [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
 </div>
+
+<kendo-grid [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
+    [loading]="loading" (pageChange)="pageChange($event)" [navigable]="true">
+    <kendo-grid-column title="Ngày ghi nợ" width="135">
+        <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+            {{dataItem.paymentDate | date:'shortDate'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Số phiếu" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+            <a class="text-primary" *ngFor="let order of dataItem.orders"
+                (click)="getFormSaleOrder(order.id)">{{order.name}}</a>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="paymentName" title="Nguồn" width="120">
+    </kendo-grid-column>
+    <kendo-grid-column title="Số tiền" class="text-right" width="135">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.paymentAmount | number}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

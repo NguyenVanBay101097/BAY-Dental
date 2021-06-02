@@ -56,7 +56,7 @@ export class PartnerAdvanceListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.partnerId = this.route.parent.snapshot.paramMap.get('id');
+    this.partnerId = this.route.parent.parent.snapshot.paramMap.get('id');
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 

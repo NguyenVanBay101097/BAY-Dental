@@ -92,6 +92,7 @@ import { PartnerCustomerTreatmentLineFastPromotionComponent } from './partner-cu
 import { PartnerCustomerDebtListComponent } from './partner-customer-debt-list/partner-customer-debt-list.component';
 import { PartnerCustomerDebtPaymentDialogComponent } from './partner-customer-debt-payment-dialog/partner-customer-debt-payment-dialog.component';
 import { PartnerCustomerDebtPaymentHistoryListComponent } from './partner-customer-debt-payment-history-list/partner-customer-debt-payment-history-list.component';
+import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-management/partner-customer-debt-management.component';
 
 
 @NgModule({
@@ -173,7 +174,8 @@ import { PartnerCustomerDebtPaymentHistoryListComponent } from './partner-custom
     PartnerCustomerTreatmentLineFastPromotionComponent,
     PartnerCustomerDebtListComponent,
     PartnerCustomerDebtPaymentDialogComponent,
-    PartnerCustomerDebtPaymentHistoryListComponent
+    PartnerCustomerDebtPaymentHistoryListComponent,
+    PartnerCustomerDebtManagementComponent
   ],
   imports: [
     CommonModule,

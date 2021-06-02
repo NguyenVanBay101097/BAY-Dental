@@ -138,8 +138,8 @@ export class AgentService {
     return this.http.get<CommissionAgentDetailItemPagging>(this.base_api + this.apiUrl + '/GetCommissionAgentDetailItem', { params: new HttpParams({ fromObject: val }) });
   }
 
-  getAmountCommissionAgentBalance(id){
-    return this.http.get<number>(this.base_api + this.apiUrl + '/' + id + '/GetCommissionAgentBalance');
+  getAmountCommissionAgentBalance(id , partnerId){
+    return this.http.get<number>(this.base_api + this.apiUrl + '/' + id + '/GetCommissionAgentBalance', {params: new HttpParams().set('partnerId', partnerId)});
   }
 
   getAmountCommissionAgent(id){

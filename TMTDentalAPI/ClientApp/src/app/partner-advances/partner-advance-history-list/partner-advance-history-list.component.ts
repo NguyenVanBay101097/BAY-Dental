@@ -17,7 +17,7 @@ import { PartnerService } from 'src/app/partners/partner.service';
   styleUrls: ['./partner-advance-history-list.component.css']
 })
 export class PartnerAdvanceHistoryListComponent implements OnInit {
-  @Input() partnerId: string;
+  partnerId: string;
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
   
@@ -41,6 +41,7 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
     private saleOrderPaymentService: SaleOrderPaymentService) { }
 
   ngOnInit() {
+    this.partnerId = this.route.parent.parent.snapshot.paramMap.get('id');
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 

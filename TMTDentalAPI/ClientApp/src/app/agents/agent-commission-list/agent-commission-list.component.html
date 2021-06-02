@@ -18,30 +18,29 @@
         </div>
     </div>
     <div class="o_cp_right">
-       
+
     </div>
 </div>
 
 <div class="o_content">
-    <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="skip"
-    [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true"
-    (cellClick)="clickItem($event)">
-    <kendo-grid-column title="Người giới thiệu" width="135">
-        <ng-template kendoGridCellTemplate let-dataItem let-column="column">
-            {{dataItem.agent.name }}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column title="Tổng doanh thu" class="text-right" width="100">
-        <ng-template kendoGridCellTemplate let-dataItem let-column="column">
-            <!-- <a class="text-primary" *ngFor="let order of dataItem.orders" (click)="getFormSaleOrder(order.id)">{{order.name}}</a>-->
-              {{dataItem.amountTotal | number}} 
-        </ng-template>
-    </kendo-grid-column>  
-    <kendo-grid-column title="Tổng chi hoa hồng" class="text-right" width="135">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.amountCommissionTotal | number}}
-        </ng-template>
-    </kendo-grid-column>
-</kendo-grid>
+    <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)" [selectable]="true" (cellClick)="clickItem($event)">
+        <kendo-grid-column title="Người giới thiệu" width="135">
+            <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                {{dataItem.agent.name }}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Tổng doanh thu" class="text-right" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                <!-- <a class="text-primary" *ngFor="let order of dataItem.orders" (click)="getFormSaleOrder(order.id)">{{order.name}}</a>-->
+                {{dataItem.amountTotal | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Tổng chi hoa hồng" class="text-right" width="135">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amountCommissionTotal | number}}
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
 
 </div>

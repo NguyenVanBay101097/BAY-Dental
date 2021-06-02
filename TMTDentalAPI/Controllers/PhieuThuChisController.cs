@@ -81,27 +81,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
 
-        [HttpPost("[action]")]
-        [CheckAccess(Actions = "Account.PhieuThuChi.Update")]
-        public async Task<IActionResult> ActionPaymentCustomerDebt(CustomerDebtSave val)
-        {
-            await _unitOfWork.BeginTransactionAsync();
-            await _phieuThuChiService.ActionPaymentOfDebtCustomer(val);
-            _unitOfWork.Commit();
-            return NoContent();
-        }
-
-
-        [HttpPost("[action]")]
-        [CheckAccess(Actions = "Account.PhieuThuChi.Update")]
-        public async Task<IActionResult> ActionPaymentOfCommissionAgent(CommissionAgentSave val)
-        {
-            await _unitOfWork.BeginTransactionAsync();
-            await _phieuThuChiService.ActionPaymentOfCommissionAgent(val);
-            _unitOfWork.Commit();
-            return NoContent();
-        }
-
         //api update
         [HttpPut("{id}")]
         [CheckAccess(Actions = "Account.PhieuThuChi.Update")]

@@ -28,66 +28,66 @@ export class AgentCommmissionPaymentDialogComponent implements OnInit {
   filteredJournals: any = [];
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
-  
+
   constructor(private phieuthuchiService: PhieuThuChiService, private fb: FormBuilder, private intlService: IntlService, private agentService: AgentService,
     public activeModal: NgbActiveModal, private accountJournalService: AccountJournalService, private partnerService: PartnerService,
-     private authService: AuthService) { }
+    private authService: AuthService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      amount: 0,
+      amount: [0, Validators.required],
       dateObj: [null, Validators.required],
       journal: [null, Validators.required],
       reason: null,
     });
-    
+
     this.loadDefault();
     this.loadFilteredJournals();
     this.loadAmountCommissionAgentBalance();
   }
 
-  loadDefault(){
-    this.phieuthuchiService.defaultGet({ type: this.type }).subscribe((rs:any) =>{
+  loadDefault() {
+    this.phieuthuchiService.defaultGet({ type: this.type }).subscribe((rs: any) => {
       this.formGroup.patchValue(rs);
       var paymentDate = new Date(rs.date);
       this.formGroup.get('dateObj').setValue(paymentDate);
 
-      if(rs.journal){
+      if (rs.journal) {
         this.filteredJournals = _.unionBy(this.filteredJournals, rs.journal, 'id');
       }
 
     })
   }
- 
+
 
   loadFilteredJournals() {
     var val = new AccountJournalFilter();
     val.type = "bank,cash";
     val.companyId = this.authService.userInfo.companyId;
     this.accountJournalService.autocomplete(val).subscribe((res) => {
-      this.filteredJournals = _.unionBy(this.filteredJournals, res, 'id');      
-      },
+      this.filteredJournals = _.unionBy(this.filteredJournals, res, 'id');
+    },
       (error) => {
         console.log(error);
       }
     );
   }
 
-  loadAmountCommissionAgentBalance(){
-    if(this.agentId){
-      this.agentService.getAmountCommissionAgentBalance(this.agentId).subscribe((res)=>{
+  loadAmountCommissionAgentBalance() {
+    if (this.agentId) {
+      this.agentService.getAmountCommissionAgentBalance(this.agentId, this.partnerId).subscribe((res) => {
         this.amountTotalBalance = res;
       },
-      (error) => {
-        console.log(error);
-      }
-    );
+        (error) => {
+          console.log(error);
+        }
+      );
     }
   }
 
   get f() { return this.formGroup.controls; }
 
-  actionPayment(){
+  actionPayment() {
     this.submitted = true;
 
     if (!this.formGroup.valid) {
@@ -102,11 +102,11 @@ export class AgentCommmissionPaymentDialogComponent implements OnInit {
     val.type = this.type;
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
     this.phieuthuchiService.create(val).pipe(mergeMap((res: any) => {
-        return this.phieuthuchiService.actionConfirm([res.id]);
-      }))
-    .subscribe(r => {
-      this.activeModal.close(true);
-    }); 
+      return this.phieuthuchiService.actionConfirm([res.id]);
+    }))
+      .subscribe(r => {
+        this.activeModal.close(true);
+      });
   }
 
   onClose() {

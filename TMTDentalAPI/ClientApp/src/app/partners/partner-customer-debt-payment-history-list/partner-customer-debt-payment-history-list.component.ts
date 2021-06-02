@@ -41,7 +41,7 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
     private notifyService: NotifyService,) { }
 
   ngOnInit() {
-    this.partnerId = this.route.parent.snapshot.paramMap.get('id');
+    this.partnerId = this.route.parent.parent.snapshot.paramMap.get('id');
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 
@@ -104,11 +104,13 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa thanh toán công nợ';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa thanh toán công nợ ?';
     modalRef.result.then(() => {
-      this.phieuthuchiService.delete(item.id).subscribe(() => {
-        this.notifyService.notify('success','Xóa thành công');
-        this.loadDataFromApi();
-      }, () => {
-      });
+      this.phieuthuchiService.actionCancel([item.id]).subscribe(() =>{
+        this.phieuthuchiService.delete(item.id).subscribe(() => {
+          this.notifyService.notify('success','Xóa thành công');
+          this.loadDataFromApi();
+        }, () => {
+        });
+      })
     }, () => {
     });
   }

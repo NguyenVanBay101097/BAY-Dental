@@ -104,11 +104,13 @@ export class AgentCommmissionHistoryComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa phiếu chi hoa hồng';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa phiếu chi hoa hồng ?';
     modalRef.result.then(() => {
-      this.phieuthuchiService.delete(item.id).subscribe(() => {
-        this.notifyService.notify('success','Xóa thành công');
-        this.loadDataFromApi();
-      }, () => {
-      });
+      this.phieuthuchiService.actionCancel([item.id]).subscribe(() =>{
+        this.phieuthuchiService.delete(item.id).subscribe(() => {
+          this.notifyService.notify('success','Xóa thành công');
+          this.loadDataFromApi();
+        }, () => {
+        });
+      })
     }, () => {
     });
   }

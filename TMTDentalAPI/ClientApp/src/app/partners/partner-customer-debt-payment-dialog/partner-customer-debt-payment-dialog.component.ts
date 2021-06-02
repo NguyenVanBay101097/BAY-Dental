@@ -5,6 +5,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
+import { mergeMap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
@@ -19,20 +20,22 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
   title: string;
   type: string;
   partnerId: string;
+  accountType: string;
   formGroup: FormGroup;
   submitted: boolean = false;
   filteredJournals: any = [];
   amountDebtBalanceTotal = 0;
 
+
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
-  
+
   constructor(private phieuthuchiService: PhieuThuChiService, private fb: FormBuilder, private intlService: IntlService,
     public activeModal: NgbActiveModal, private accountJournalService: AccountJournalService, private partnerService: PartnerService,
-     private authService: AuthService) { }
+    private authService: AuthService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      amount: 0,
+      amount: [0, Validators.required],
       dateObj: [null, Validators.required],
       journal: [null, Validators.required],
       reason: null,
@@ -42,27 +45,27 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
     this.loadAmountDebtBalanceTotal();
   }
 
-  loadDefault(){
-    this.phieuthuchiService.defaultGet({ type: this.type }).subscribe((rs:any) =>{
+  loadDefault() {
+    this.phieuthuchiService.defaultGet({ type: this.type }).subscribe((rs: any) => {
       this.formGroup.patchValue(rs);
       var paymentDate = new Date(rs.date);
       this.formGroup.get('dateObj').setValue(paymentDate);
 
-      if(rs.journal){
+      if (rs.journal) {
         this.filteredJournals = _.unionBy(this.filteredJournals, rs.journal, 'id');
       }
 
     })
   }
- 
+
 
   loadFilteredJournals() {
     var val = new AccountJournalFilter();
     val.type = "bank,cash";
     val.companyId = this.authService.userInfo.companyId;
     this.accountJournalService.autocomplete(val).subscribe((res) => {
-      this.filteredJournals = _.unionBy(this.filteredJournals, res, 'id');      
-      },
+      this.filteredJournals = _.unionBy(this.filteredJournals, res, 'id');
+    },
       (error) => {
         console.log(error);
       }
@@ -71,7 +74,7 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
 
   get f() { return this.formGroup.controls; }
 
-  actionPayment(){
+  actionPayment() {
     this.submitted = true;
 
     if (!this.formGroup.valid) {
@@ -81,12 +84,15 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
     var val = this.formGroup.value;
     val.journalId = val.journal ? val.journal.id : null;
     val.partnerId = this.partnerId ? this.partnerId : null;
+    val.accountType = this.accountType;
+    val.type = this.type;
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
-    this.phieuthuchiService.actionPaymentCustomerDebt(val).subscribe(
-      () => {
+    this.phieuthuchiService.create(val).pipe(mergeMap((res: any) => {
+      return this.phieuthuchiService.actionConfirm([res.id]);
+    }))
+      .subscribe(r => {
         this.activeModal.close(true);
-      },
-    )
+      });
   }
 
   loadAmountDebtBalanceTotal() {

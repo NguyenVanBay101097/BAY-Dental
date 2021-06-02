@@ -26,6 +26,8 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
   searchUpdate = new Subject<string>();
   dateFrom: Date;
   dateTo: Date;
+  amountInComeAgent = 0;
+  amountCommissionAgent = 0;
   updateSubject: Subject<boolean> = new Subject<boolean>();
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
@@ -39,7 +41,7 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
   ngOnInit() {
     this.id = this.route.parent.snapshot.paramMap.get('id');
     this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd; 
+    this.dateTo = this.monthEnd;
 
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -48,7 +50,9 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
         this.loadDataFromApi();
       });
 
-      this.loadDataFromApi();
+    this.loadDataFromApi();
+    this.loadAmountInComeAgent();
+    this.loadAmountCommissionAgent();
   }
 
   loadDataFromApi() {
@@ -85,6 +89,22 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  loadAmountCommissionAgent() {
+    if (this.id) {
+      this.agentService.getAmountCommissionAgent(this.id).subscribe((result) => {
+        this.amountCommissionAgent = result;
+      });
+    }
+  }
+
+  loadAmountInComeAgent() {
+    if (this.id) {
+      this.agentService.getAmountInComeAgent(this.id).subscribe((result) => {
+        this.amountInComeAgent = result;
+      });
+    }
+  }
+
   actionPayment(item) {
     const modalRef = this.modalService.open(AgentCommmissionPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Chi hoa hồng';
@@ -95,7 +115,8 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
     modalRef.result.then(() => {
       this.notifyService.notify('success', 'Thanh toán thành công');
       this.loadDataFromApi();
-      this.updateSubject.next(true);
+      this.loadAmountCommissionAgent();
+      this.loadAmountInComeAgent();
     }, er => { })
   }
 

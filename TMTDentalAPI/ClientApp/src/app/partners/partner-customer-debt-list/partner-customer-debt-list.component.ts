@@ -45,7 +45,7 @@ export class PartnerCustomerDebtListComponent implements OnInit {
 
 
   ngOnInit() {
-    this.partnerId = this.route.parent.snapshot.paramMap.get('id');
+    this.partnerId = this.route.parent.parent.snapshot.paramMap.get('id');
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 
@@ -125,6 +125,7 @@ export class PartnerCustomerDebtListComponent implements OnInit {
     modalRef.componentInstance.title = 'Thu công nợ khách hàng';
     modalRef.componentInstance.type = 'thu';
     modalRef.componentInstance.partnerId = this.partnerId;
+    modalRef.componentInstance.accountType = "customer_debt";
     modalRef.result.then(() => {
       this.notifyService.notify('success', 'Thanh toán thành công');
       this.loadDataFromApi();

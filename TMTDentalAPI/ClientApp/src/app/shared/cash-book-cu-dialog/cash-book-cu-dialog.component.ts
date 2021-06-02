@@ -265,6 +265,7 @@ export class CashBookCuDialogComponent implements OnInit {
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
     val.partnerId = val.partner ? val.partner.id : null;
     val.type = this.type;
+    val.accountType = "other";
 
     if (!this.id) {
       this.phieuThuChiService.create(val).subscribe(
@@ -325,6 +326,7 @@ export class CashBookCuDialogComponent implements OnInit {
     val.partnerId = val.partner ? val.partner.id : null;
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
     val.type = this.type;
+    val.accountType = "other";
 
     if (!this.id) {
       this.phieuThuChiService.create(val).subscribe(
