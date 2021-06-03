@@ -77,7 +77,7 @@ namespace Infrastructure.HangfireJobService
                         smsMessage = await context.SmsMessages.Where(x => x.Id == smsMessage.Id)
                             .Include(x => x.SmsMessageAppointmentRels)
                             .Include(x => x.SmsAccount).FirstOrDefaultAsync();
-                        await smsSendMessageService.CreateSmsMessageDetailV2(smsMessage, config.CompanyId);
+                        await smsSendMessageService.CreateSmsMessageDetailV2(smsMessage, (Guid)config.CompanyId);
                         foreach (var appointment in listAppointments)
                         {
                             appointment.DateAppointmentReminder = now;
@@ -138,7 +138,7 @@ namespace Infrastructure.HangfireJobService
                     smsMessage = await context.SmsMessages.Where(x => x.Id == smsMessage.Id)
                             .Include(x => x.SmsMessagePartnerRels)
                             .Include(x => x.SmsAccount).FirstOrDefaultAsync();
-                    await smsSendMessageService.CreateSmsMessageDetailV2(smsMessage, config.CompanyId);
+                    await smsSendMessageService.CreateSmsMessageDetailV2(smsMessage, (Guid)config.CompanyId);
                     await context.SaveChangesAsync();
                     transaction.Commit();
                 }
@@ -212,7 +212,7 @@ namespace Infrastructure.HangfireJobService
                             .Include(x => x.SmsAccount)
                             .Include(x => x.SmsMessageSaleOrderLineRels).ThenInclude(x => x.SaleOrderLine)
                             .FirstOrDefaultAsync();
-                        await smsSendMessageService.CreateSmsMessageDetailV2(smsMessage, config.CompanyId);
+                        await smsSendMessageService.CreateSmsMessageDetailV2(smsMessage, (Guid)config.CompanyId);
                     }
                     transaction.Commit();
                 }
