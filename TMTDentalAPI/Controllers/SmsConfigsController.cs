@@ -9,6 +9,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -37,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         //}
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "SMS.Config.Read")]
         public async Task<IActionResult> GetPaged(SmsConfigPaged val)
         {
             var res = await _smsConfigService.GetPaged(val);
@@ -44,6 +46,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "SMS.Config.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _smsConfigService.GetDisplay(id);
@@ -51,6 +54,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "SMS.Config.Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var entity = await _smsConfigService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
@@ -60,6 +64,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "SMS.Config.Read")]
         public async Task<IActionResult> Get(string type)
         {
             var res = await _smsConfigService.SearchQuery(x => x.CompanyId == CompanyId && x.Type == type)
@@ -70,6 +75,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "SMS.Config.Create")]
         public async Task<IActionResult> CreateAsync(SmsConfigSave val)
         {
             var entity = _mapper.Map<SmsConfig>(val);
@@ -101,6 +107,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "SMS.Config.Update")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsConfigSave val)
         {
             var entity = await _smsConfigService.GetByIdAsync(id);

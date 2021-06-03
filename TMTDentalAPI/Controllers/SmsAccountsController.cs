@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -24,7 +25,35 @@ namespace TMTDentalAPI.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "SMS.Account.Read")]
+        public async Task<IActionResult> GetPaged([FromQuery] SmsAccountPaged val)
+        {
+            var res = await _smsAccountService.GetPaged(val);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}")]
+        [CheckAccess(Actions = "SMS.Account.Read")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var res = await _smsAccountService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+
+            return Ok(_mapper.Map<SmsAccountDisplay>(res));
+        }
+
+        [HttpGet]
+        [CheckAccess(Actions = "SMS.Account.Read")]
+        public async Task<IActionResult> Get(string provider)
+        {
+            var res = await _smsAccountService.SearchQuery(x => x.Provider == provider && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+
+            return Ok(_mapper.Map<SmsAccountDisplay>(res));
+        }
+
+     
         [HttpPost]
+        [CheckAccess(Actions = "SMS.Account.Create")]
         public async Task<IActionResult> CreateAsync(SmsAccountSave val)
         {
             var entity = _mapper.Map<SmsAccount>(val);
@@ -35,30 +64,8 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string provider)
-        {
-            var res = await _smsAccountService.SearchQuery(x => x.Provider == provider && x.CompanyId == CompanyId).FirstOrDefaultAsync();
-
-            return Ok(_mapper.Map<SmsAccountDisplay>(res));
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
-        {
-            var res = await _smsAccountService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-
-            return Ok(_mapper.Map<SmsAccountDisplay>(res));
-        }
-
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetPaged([FromQuery] SmsAccountPaged val)
-        {
-            var res = await _smsAccountService.GetPaged(val);
-            return Ok(res);
-        }
-
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "SMS.Account.Update")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsAccountSave val)
         {
             var entity = await _smsAccountService.GetByIdAsync(id);
@@ -71,6 +78,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "SMS.Account.Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var entity = await _smsAccountService.GetByIdAsync(id);
@@ -80,6 +88,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "SMS.Account.Read")]
         public async Task<IActionResult> SmsSupplierAutocomplete(string search)
         {
             var res = await _smsAccountService.SmsSupplierAutocomplete(search);

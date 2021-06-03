@@ -9,6 +9,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -28,29 +29,28 @@ namespace TMTDentalAPI.Controllers
             _unitOfWorkAsync = unitOfWorkAsync;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync(SmsCampaignSave val)
-        {
-            if (!ModelState.IsValid || val == null) return BadRequest();
-            var res = await _smsCampaignService.CreateAsync(val);
-            return Ok(res);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
-        {
-            var res = await _smsCampaignService.GetDisplay(id);
-            return Ok(res);
-        }
-
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetPaged([FromQuery] SmsCampaignPaged val)
         {
             var res = await _smsCampaignService.GetPaged(val);
             return Ok(res);
         }
 
+     
+
+        [HttpGet("{id}")]
+        [CheckAccess(Actions = "SMS.Campaign.Read")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var res = await _smsCampaignService.GetDisplay(id);
+            return Ok(res);
+        }
+
+       
+
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetDefaultCampaignBirthday()
         {
             var res = await _smsCampaignService.GetDefaultCampaignBirthday();
@@ -58,6 +58,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetDefaultCampaignAppointmentReminder()
         {
             await _unitOfWorkAsync.BeginTransactionAsync();
@@ -67,6 +68,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetDefaultThanksCustomer()
         {
             var res = await _smsCampaignService.GetDefaultThanksCustomer();
@@ -74,6 +76,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetDefaultCareAfterOrder()
         {
             var res = await _smsCampaignService.GetDefaultCareAfterOrder();
@@ -81,13 +84,24 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetDefaultCampaign()
         {
             var res = await _smsCampaignService.GetDefaultCampaign();
             return Ok(res);
         }
 
+        [HttpPost]
+        [CheckAccess(Actions = "SMS.Campaign.Create")]
+        public async Task<IActionResult> CreateAsync(SmsCampaignSave val)
+        {
+            if (!ModelState.IsValid || val == null) return BadRequest();
+            var res = await _smsCampaignService.CreateAsync(val);
+            return Ok(res);
+        }
+
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "SMS.Campaign.Update")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsCampaignSave val)
         {
             var entity = await _smsCampaignService.GetByIdAsync(id);
@@ -98,6 +112,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        //[CheckAccess(Actions = "SMS.Campaign.Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var entity = await _smsCampaignService.GetByIdAsync(id);

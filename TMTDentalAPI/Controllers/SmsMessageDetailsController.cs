@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -31,6 +32,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "SMS.Report.Read")]
         public async Task<IActionResult> GetPagedStatistic([FromQuery] SmsMessageDetailPaged val)
         {
             var res = await _smsMessageDetailService.GetPagedStatistic(val);
@@ -54,6 +56,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "SMS.Report.Read")]
         public async Task<IActionResult> GetReportTotal([FromQuery] ReportTotalInput val)
         {
             var res = await _smsMessageDetailService.GetReportTotal(val);
@@ -61,6 +64,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "SMS.Report.Read")]
         public async Task<IActionResult> GetReportCampaign([FromQuery] ReportCampaignPaged val)
         {
             var res = await _smsMessageDetailService.GetReportCampaign(val);
@@ -68,6 +72,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "SMS.Report.Read")]
         public async Task<IActionResult> GetReportSupplierSumaryChart(ReportSupplierPaged val)
         {
             var res = await _smsMessageDetailService.GetReportSupplierSumary(val);

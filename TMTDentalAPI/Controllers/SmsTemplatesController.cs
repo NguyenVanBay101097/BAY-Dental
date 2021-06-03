@@ -7,6 +7,7 @@ using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -24,7 +25,32 @@ namespace TMTDentalAPI.Controllers
             _smsTemplateService = smsTemplateService;
         }
 
+        [HttpGet]
+        [CheckAccess(Actions = "SMS.Template.Read")]
+        public async Task<IActionResult> Get([FromQuery] SmsTemplatePaged val)
+        {
+            var res = await _smsTemplateService.GetPaged(val);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}")]
+        [CheckAccess(Actions = "SMS.Template.Read")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var res = await _smsTemplateService.GetByIdAsync(id);
+            return Ok(_mapper.Map<SmsTemplateBasic>(res));
+        }
+
+        [HttpGet("Autocomplete")]
+        [CheckAccess(Actions = "SMS.Template.Read")]
+        public async Task<IActionResult> GetTemplateAutocomplete([FromQuery] SmsTemplateFilter val)
+        {
+            var res = await _smsTemplateService.GetTemplateAutocomplete(val);
+            return Ok(res);
+        }
+
         [HttpPost]
+        [CheckAccess(Actions = "SMS.Template.Create")]
         public async Task<IActionResult> CreateAsync(SmsTemplateSave val)
         {
             var entity = _mapper.Map<SmsTemplate>(val);
@@ -34,6 +60,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "SMS.Template.Update")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsTemplateSave val)
         {
             var entity = await _smsTemplateService.GetByIdAsync(id);
@@ -45,21 +72,9 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<SmsTemplateBasic>(entity));
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
-        {
-            var res = await _smsTemplateService.GetByIdAsync(id);
-            return Ok(_mapper.Map<SmsTemplateBasic>(res));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] SmsTemplatePaged val)
-        {
-            var res = await _smsTemplateService.GetPaged(val);
-            return Ok(res);
-        }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "SMS.Template.Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var res = await _smsTemplateService.GetByIdAsync(id);
@@ -68,11 +83,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<SmsTemplateBasic>(res));
         }
 
-        [HttpGet("Autocomplete")]
-        public async Task<IActionResult> GetTemplateAutocomplete([FromQuery] SmsTemplateFilter val)
-        {
-            var res = await _smsTemplateService.GetTemplateAutocomplete(val);
-            return Ok(res);
-        }
+       
     }
 }

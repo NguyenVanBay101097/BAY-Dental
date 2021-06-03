@@ -9,6 +9,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -28,7 +29,26 @@ namespace TMTDentalAPI.Controllers
             _unitOfWorkAsync = unitOfWorkAsync;
         }
 
+        [HttpGet]
+        [CheckAccess(Actions = "SMS.Message.Read")]
+        public async Task<IActionResult> GetPaged([FromQuery] SmsMessagePaged val)
+        {
+            var res = await _smsMessageService.GetPaged(val);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}")]
+        [CheckAccess(Actions = "SMS.Message.Read")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var res = await _smsMessageService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            return Ok(_mapper.Map<SmsMessageDisplay>(res));
+        }
+
+
+
         [HttpPost]
+        [CheckAccess(Actions = "SMS.Message.Create")]
         public async Task<IActionResult> CreateAsync(SmsMessageSave val)
         {
             if (!ModelState.IsValid || val == null) return BadRequest();
@@ -39,6 +59,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]/{id}")]
+        [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> ActionSendSms(Guid id)
         {
             var entity = await _smsMessageService.SearchQuery(x => x.Id == id)
@@ -55,6 +76,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "SMS.Message.Update")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             await _unitOfWorkAsync.BeginTransactionAsync();
@@ -64,6 +86,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]/{orderId}")]
+        [CheckAccess(Actions = "SMS.Message.Update")]
         public async Task<IActionResult> SetupSendSmsOrderAutomatic(Guid orderId)
         {
             if (!ModelState.IsValid) return BadRequest();
@@ -73,21 +96,10 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
-        {
-            var res = await _smsMessageService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            return Ok(_mapper.Map<SmsMessageDisplay>(res));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetPaged([FromQuery] SmsMessagePaged val)
-        {
-            var res = await _smsMessageService.GetPaged(val);
-            return Ok(res);
-        }
+       
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "SMS.Message.Update")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsAccountSave val)
         {
             var entity = await _smsMessageService.GetByIdAsync(id);
@@ -100,6 +112,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        //[CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var entity = await _smsMessageService.GetByIdAsync(id);
