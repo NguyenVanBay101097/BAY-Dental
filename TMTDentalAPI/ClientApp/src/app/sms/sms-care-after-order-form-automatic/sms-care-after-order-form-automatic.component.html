@@ -28,7 +28,11 @@
     [pageSize]="limit">
     <kendo-grid-column field="name" title="Tên thiết lập"></kendo-grid-column>
     <kendo-grid-column field="brandName" title="Brandname"></kendo-grid-column>
-    <kendo-grid-column field="date" title="Thời điểm gửi tin"></kendo-grid-column>
+    <kendo-grid-column title="Thời điểm gửi tin">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.date | date: 'HH:mm'}}
+        </ng-template>
+    </kendo-grid-column>
     <kendo-grid-column title="Thời gian gửi tin">
         <ng-template kendoGridCellTemplate let-dataItem>
             <span>{{dataItem.timeBeforSend}}

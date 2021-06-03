@@ -39,7 +39,7 @@ export class SmsCampaignDetailComponent implements OnInit {
   filteredSmsAccount: any[];
   smsAccountId: string = "";
   submitted = false;
-
+  campaignName: string = '';
   get f() { return this.formGroup.controls; }
 
   constructor(
@@ -48,8 +48,8 @@ export class SmsCampaignDetailComponent implements OnInit {
     private smsCampaignService: SmsCampaignService,
     private fb: FormBuilder,
     private notificationService: NotificationService,
-    private intlService: IntlService, 
-    private modalService: NgbModal, 
+    private intlService: IntlService,
+    private modalService: NgbModal,
     private smsAccountService: SmsAccountService
   ) { }
 
@@ -76,7 +76,7 @@ export class SmsCampaignDetailComponent implements OnInit {
         this.offset = 0;
         this.loadDataFromApi();
       });
-    
+
     this.smsAccountCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.smsAccountCbx.loading = true)),
@@ -113,8 +113,6 @@ export class SmsCampaignDetailComponent implements OnInit {
         (res) => {
           this.gridData = res;
           this.loading = false;
-          console.log(res);
-
         },
         (err) => {
           console.log(err);
@@ -134,8 +132,6 @@ export class SmsCampaignDetailComponent implements OnInit {
         (res: any) => {
           if (res) {
             this.campaign = res;
-            console.log(res);
-
             if (res.state == "running") {
               this.formGroup.get('stateCheck').setValue(true);
             } else {
@@ -147,6 +143,7 @@ export class SmsCampaignDetailComponent implements OnInit {
               res.endDateObj = new Date(res.dateEnd);
             }
             this.formGroup.patchValue(res);
+            this.campaignName = res.name;
           }
         },
         (err) => {
@@ -159,7 +156,7 @@ export class SmsCampaignDetailComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  onSearchDateChange(data){
+  onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.offset = 0;
@@ -205,6 +202,7 @@ export class SmsCampaignDetailComponent implements OnInit {
         this.isEdit = false;
       }
     )
+    this.campaignName = val.name;
   }
 
   getValueFormControl(key) {

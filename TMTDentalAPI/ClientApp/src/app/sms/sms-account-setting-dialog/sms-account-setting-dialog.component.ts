@@ -14,6 +14,7 @@ export class SmsAccountSettingDialogComponent implements OnInit {
   formGroup: FormGroup;
   switchBrand: string = "esms";
   id: string;
+  submitted: boolean = false;
   title: string;
   constructor(
     private fb: FormBuilder,
@@ -26,12 +27,12 @@ export class SmsAccountSettingDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       provider: [this.switchBrand, Validators.required],
       brandName: ['', Validators.required],
-      clientId: '',
-      clientSecret: '',
-      userName: '',
-      password: '',
-      apiKey: '',
-      secretkey: '',
+      clientId: ['', Validators.required],
+      clientSecret: ['', Validators.required],
+      userName: ['', Validators.required],
+      password: ['', Validators.required],
+      apiKey: ['', Validators.required],
+      secretkey: ['', Validators.required],
     });
     this.loadDataFromApi();
   }
@@ -74,6 +75,7 @@ export class SmsAccountSettingDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid) return false;
     var val = this.getFormGroup();
     if (!val) return;

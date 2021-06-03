@@ -73,6 +73,10 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   }
 
   deleteItem(item) {
+    if (item.isCareAfterOrderAutomation) {
+      this.notify("Không thể xóa thiết lập đang kích hoạt", false);
+      return;
+    }
     var modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
     modalRef.componentInstance.title = "Xóa thiết lập gửi tự động";
     modalRef.componentInstance.body = "Bạn có muốn xóa thiết lập gửi tin tự động không?";

@@ -30,7 +30,7 @@
                                             </label>
                                         </td>
                                         <td colspan="1" style="width: 80%;">
-                                            <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus class="mb-2"
+                                            <kendo-combobox [data]="filteredSmsAccount" class="mb-2"
                                                 [textField]="'brandName'" formControlName="smsAccount"
                                                 [filterable]="true" #smsAccountCbx [valueField]="'id'">
                                                 <ng-template kendoComboBoxItemTemplate let-dataItem>
@@ -77,7 +77,7 @@
                                             </label>
                                         </td>
                                         <td colspan="1" style="width: 80%;">
-                                            <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
+                                            <kendo-combobox [data]="filteredTemplate" [textField]="'name'"
                                                 formControlName="template" [filterable]="true" #smsTemplateCbx
                                                 (valueChange)="onChangeTemplate($event)" [valueField]="'id'" class="mb-2">
                                             </kendo-combobox>
@@ -109,7 +109,7 @@
                                             </div>
                                         </td>
                                         <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                            <input type="text" class="form-control" formControlName="templateName">
+                                            <input type="text" class="form-control mt-2" formControlName="templateName">
                                             <span class="text-danger" *ngIf="formGroup.controls.templateName.value==''">
                                                 Nhập tiêu đề tin nhắn mẫu
                                             </span>
