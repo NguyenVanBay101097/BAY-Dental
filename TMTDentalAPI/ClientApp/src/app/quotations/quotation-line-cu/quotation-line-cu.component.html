@@ -40,7 +40,7 @@
                     </ng-template>
 
                     <ng-template #popContent let-greeting="greeting">
-                        <kendo-numerictextbox style="width:100%;" [format]="'n0'" [spinners]="false" formControlName="subPrice">
+                        <kendo-numerictextbox style="width:100%;" [format]="'n0'" [min]="0" [spinners]="false" formControlName="subPrice">
                         </kendo-numerictextbox>
                     </ng-template>
                     <ng-template #popTitle let-language="language">Giá gốc</ng-template>

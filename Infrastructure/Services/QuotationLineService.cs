@@ -135,7 +135,7 @@ namespace Infrastructure.Services
             var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
             if (program != null)
             {
-                var error_status =  programObj._CheckPromotionApplyQuotationLine(program, quotationLine);
+                var error_status = await  programObj._CheckPromotionApplyQuotationLine(program, quotationLine);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
                     await _CreateRewardLine(quotationLine, program);
@@ -168,7 +168,7 @@ namespace Infrastructure.Services
             var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).Include(x => x.DiscountSpecificProducts).FirstOrDefaultAsync();
             if (program != null)
             {
-                var error_status = programObj._CheckPromotionApplyQuotationLine(program, quotationLine);
+                var error_status = await programObj._CheckPromotionApplyQuotationLine(program, quotationLine);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
                     await _CreateRewardLine(quotationLine, program);
