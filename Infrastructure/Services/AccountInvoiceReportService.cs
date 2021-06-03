@@ -162,7 +162,7 @@ namespace Infrastructure.Services
                 EmployeeName = x.Employee.Name,
                 InvoiceOrigin = x.InvoiceOrigin,
                 PartnerName = x.Partner.Name,
-                PriceSubTotal = x.PriceSubTotal,
+                PriceSubTotal = Math.Abs(x.PriceSubTotal),
                 ProductName = x.Product.Name
             }).ToListAsync();
 
