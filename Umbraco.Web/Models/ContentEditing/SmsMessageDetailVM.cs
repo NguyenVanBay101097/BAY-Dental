@@ -92,11 +92,26 @@ namespace Umbraco.Web.Models.ContentEditing
         public string SmsSupplierCode { get; set; }
     }
 
+    public class ReportSupplierPaged
+    {
+        public Guid AccountId { get; set; }
+        public string State { get; set; }
+        public string Provider { get; set; }
+    }
+
     public class ReportSupplierOutputItem
     {
         public string State { get; set; }
         public string StateDisplay { get; set; }
         public IEnumerable<ReportSupplierOutputItemData> Data { get; set; } = new List<ReportSupplierOutputItemData>();
+    }
+
+    public class ReportSupplierChart
+    {
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public int Count { get; set; }
+        public int Total { get; set; }
     }
 
     public class ReportSupplierOutputItemData

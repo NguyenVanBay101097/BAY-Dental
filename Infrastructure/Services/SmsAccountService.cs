@@ -47,7 +47,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(search));
             var items = await query.Select(x => new SmsSupplierBasic
             {
-                Name = x.Name, 
+                Id = x.Id,
+                Name = x.Name,
+                BrandName = x.BrandName,
                 Provider = x.Provider
             }).Distinct().OrderBy(x => x.Name).ToListAsync();
 

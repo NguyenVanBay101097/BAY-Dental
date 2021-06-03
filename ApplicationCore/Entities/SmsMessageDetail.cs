@@ -9,6 +9,7 @@ namespace ApplicationCore.Entities
         public string Body { get; set; }
         public string Number { get; set; }
         public decimal Cost { get; set; }
+        public DateTime? Date { get; set; }
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
         public Guid SmsAccountId { get; set; }

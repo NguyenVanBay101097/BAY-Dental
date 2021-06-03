@@ -80,29 +80,8 @@ namespace Infrastructure.Services
                 entity.State = "waiting";
             }
 
-            if (!entity.SmsCampaignId.HasValue && val.IsBirthDayManual.HasValue && val.IsBirthDayManual.Value)
+            if (val.IsCareAfterOrder.HasValue && val.IsCareAfterOrder.Value)
             {
-                var smsCampaignObj = GetService<ISmsCampaignService>();
-                var campaign = await smsCampaignObj.GetDefaultCampaignBirthday();
-                entity.SmsCampaignId = campaign.Id;
-                entity.ResModel = "partner";
-                if (val.GuidIds.Any())
-                {
-                    foreach (var id in val.GuidIds)
-                    {
-                        entity.SmsMessagePartnerRels.Add(new SmsMessagePartnerRel()
-                        {
-                            PartnerId = id
-                        });
-                    }
-                }
-            }
-
-            else if (!entity.SmsCampaignId.HasValue && val.IsCareAfterOrder.HasValue && val.IsCareAfterOrder.Value)
-            {
-                var smsCampaignObj = GetService<ISmsCampaignService>();
-                var campaign = await smsCampaignObj.GetDefaultCareAfterOrder();
-                entity.SmsCampaignId = campaign.Id;
                 entity.ResModel = "sale-order-line";
                 if (val.GuidIds.Any())
                 {
@@ -116,11 +95,8 @@ namespace Infrastructure.Services
                 }
             }
 
-            else if (!entity.SmsCampaignId.HasValue && val.IsThanksCustomer.HasValue && val.IsThanksCustomer.Value)
+            else if (val.IsThanksCustomer.HasValue && val.IsThanksCustomer.Value)
             {
-                var smsCampaignObj = GetService<ISmsCampaignService>();
-                var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
-                entity.SmsCampaignId = campaign.Id;
                 entity.ResModel = "sale-order";
                 if (val.GuidIds.Any())
                 {
@@ -134,11 +110,8 @@ namespace Infrastructure.Services
                 }
             }
 
-            else if (!entity.SmsCampaignId.HasValue && val.IsAppointmentReminder.HasValue && val.IsAppointmentReminder.Value)
+            else if (val.IsAppointmentReminder.HasValue && val.IsAppointmentReminder.Value)
             {
-                var smsCampaignObj = GetService<ISmsCampaignService>();
-                var campaign = await smsCampaignObj.GetDefaultCampaignAppointmentReminder();
-                entity.SmsCampaignId = campaign.Id;
                 entity.ResModel = "appointment";
                 if (val.GuidIds.Any())
                 {
@@ -147,24 +120,6 @@ namespace Infrastructure.Services
                         entity.SmsMessageAppointmentRels.Add(new SmsMessageAppointmentRel()
                         {
                             AppointmentId = id
-                        });
-                    }
-                }
-            }
-
-            else if (!entity.SmsCampaignId.HasValue)
-            {
-                var smsCampaignObj = GetService<ISmsCampaignService>();
-                var campaign = await smsCampaignObj.GetDefaultCampaign();
-                entity.SmsCampaignId = campaign.Id;
-                entity.ResModel = "partner";
-                if (val.GuidIds.Any())
-                {
-                    foreach (var id in val.GuidIds)
-                    {
-                        entity.SmsMessagePartnerRels.Add(new SmsMessagePartnerRel()
-                        {
-                            PartnerId = id
                         });
                     }
                 }
