@@ -277,6 +277,9 @@ namespace Infrastructure.Data
 
         public DbSet<MemberLevel> MemberLevels { get; set; }
         public DbSet<SaleCouponProgramMemberLevelRel> SaleCouponProgramMemberLevelRels {get; set;}
+        public DbSet<AccountFinancialRevenueReport> AccountFinancialRevenueReports  {get; set; }
+        public DbSet<AccountFinancialRevenueReportAccountAccountRel> AccountFinancialRevenueReportAccountAccountRels { get; set; }
+        public DbSet<AccountFinancialRevenueReportAccountAccountTypeRel> AccountFinancialRevenueReportAccountAccountTypeRels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -500,6 +503,9 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new PrintPaperSizeConfigution());
             builder.ApplyConfiguration(new MemberLevelConfiguration());
             builder.ApplyConfiguration(new SaleCouponProgramMemberLevelRelConfiguration());
+            builder.ApplyConfiguration(new AccountFinancialRevenueReportConfiguration());
+            builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountTypeRelConfiguration());
+            builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountRelConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

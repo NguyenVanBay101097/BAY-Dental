@@ -341,6 +341,7 @@ namespace TMTDentalAPI
 
             services.AddScoped<IQuotationPromotionService, QuotationPromotionService>();
             services.AddScoped<IQuotationPromotionLineService, QuotationPromotionLineService>();
+            services.AddScoped<IAccountFinancialRevenueReportService, AccountFinancialRevenueReportService>();
 
             services.AddMemoryCache();
 
