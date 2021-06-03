@@ -119,7 +119,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "Catalog.Agent.Update")]
-        public async Task<IActionResult> Update(Guid id, AgentDisplay val)
+        public async Task<IActionResult> Update(Guid id, AgentSave val)
         {
 
             var agent = await _agentService.SearchQuery(x => x.Id == id)

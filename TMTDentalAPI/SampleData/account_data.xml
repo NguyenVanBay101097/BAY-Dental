@@ -336,15 +336,6 @@
     </record>
 
     <record model="account.journal" id="data_account_journal_advance">
-      <field name="name">Nhật ký khách hàng tạm ứng</field>
-      <field name="type">advance</field>
-      <field name="code">ADVANCE</field>
-      <field name="update_posted" eval="True" />
-      <field name="default_debit_account_id" ref="account.data_account_KHTU" />
-      <field name="default_credit_account_id" ref="account.data_account_KHTU" />
-    </record>
-
-    <record model="account.journal" id="data_account_journal_advance">
       <field name="name">Tạm ứng</field>
       <field name="type">advance</field>
       <field name="code">ADVANCE</field>
