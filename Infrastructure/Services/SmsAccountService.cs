@@ -45,13 +45,11 @@ namespace Infrastructure.Services
             var query = SearchQuery(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(x => x.Name.Contains(search));
-            var items = await query.Select(x => new SmsSupplierBasic
+            var items = await query.GroupBy(x => new { Provider = x.Provider, Name = x.Name }).Select(x => new SmsSupplierBasic
             {
-                Id = x.Id,
-                Name = x.Name,
-                BrandName = x.BrandName,
-                Provider = x.Provider
-            }).Distinct().OrderBy(x => x.Name).ToListAsync();
+                Name = x.Key.Name,
+                Provider = x.Key.Provider
+            }).OrderBy(x => x.Name).ToListAsync();
 
             return items;
         }

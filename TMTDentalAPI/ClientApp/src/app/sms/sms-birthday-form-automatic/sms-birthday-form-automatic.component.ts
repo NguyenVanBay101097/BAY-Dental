@@ -75,7 +75,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
       tap(() => (this.smsAccountCbx.loading = true)),
       switchMap(value => this.searchAccount(value))
     ).subscribe((result: any) => {
-      this.filteredSmsAccount = result;
+      this.filteredSmsAccount = result ? result.items : [];
       this.smsAccountCbx.loading = false;
     });
   }

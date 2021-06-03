@@ -39,7 +39,7 @@ export class SmsReportComponent implements OnInit {
   searchUpdateReportCampaign = new Subject<string>();
   dateFromReportCampaign: Date;
   dateToReportCampaign: Date;
-  accountId: any;
+  accountProvider: any;
   gridDataReportCampaign: GridDataResult;
 
   constructor(
@@ -112,7 +112,7 @@ export class SmsReportComponent implements OnInit {
       (result: any) => {
         this.filteredSmsSupplier = result;
         if (result && result[0]) {
-          this.accountId = result[0].id;
+          this.accountProvider = result[0].provider;
           this.getReportSumarySupplier();
         }
       }
@@ -205,8 +205,8 @@ export class SmsReportComponent implements OnInit {
   }
 
   getReportSumarySupplier() {
-    var requestSuccess = this.smsMessageDetailService.getReportSupplierSumaryChart({ accountId: this.accountId || null, state: "success" });
-    var requestFails = this.smsMessageDetailService.getReportSupplierSumaryChart({ accountId: this.accountId || null, state: "fails" });
+    var requestSuccess = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: "success" });
+    var requestFails = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: "fails" });
     forkJoin(requestSuccess, requestFails).subscribe((result: any) => {
       this.lineData_reportSupplierSuccess = result[0] || [];
       this.lineData_reportSupplierFails = result[1] || [];
@@ -214,7 +214,7 @@ export class SmsReportComponent implements OnInit {
   }
 
   onChangeSupplier(event) {
-    this.accountId = event ? event.currentTarget.value : null;
+    this.accountProvider = event ? event.currentTarget.value : null;
     this.getReportSumarySupplier();
   }
 }

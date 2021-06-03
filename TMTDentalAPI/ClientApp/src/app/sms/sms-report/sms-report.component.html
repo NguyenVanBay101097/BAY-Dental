@@ -107,8 +107,7 @@
                         <div class="form-group">
                             <select class="form-control" (change)="onChangeSupplier($event)"
                                 id="exampleFormControlSelect1">
-                                <option *ngFor="let item of filteredSmsSupplier" [value]="item.id">{{item.name}}
-                                    ({{item.brandName}})
+                                <option *ngFor="let item of filteredSmsSupplier" [value]="item.provider">{{item.name}}
                                 </option>
                             </select>
                         </div>

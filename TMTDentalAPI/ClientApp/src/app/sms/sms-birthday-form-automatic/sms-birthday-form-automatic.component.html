@@ -30,11 +30,12 @@
                                             </label>
                                         </td>
                                         <td colspan="1" style="width: 80%;">
-                                            <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
-                                                [textField]="'brandName'" formControlName="smsAccount"
-                                                [filterable]="true" #smsAccountCbx [valueField]="'id'">
+                                            <kendo-combobox [data]="filteredSmsAccount" [textField]="'brandName'"
+                                                formControlName="smsAccount" [filterable]="true" #smsAccountCbx
+                                                [valueField]="'id'">
                                                 <ng-template kendoComboBoxItemTemplate let-dataItem>
-                                                    <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
+                                                    <span>{{dataItem ? dataItem.brandName :''}}
+                                                        ({{dataItem ? dataItem.name : ''}})</span>
                                                 </ng-template>
                                             </kendo-combobox>
                                         </td>
@@ -46,7 +47,8 @@
                                             </label>
                                         </td>
                                         <td colspan="1" class="d-flex align-items-center tr-send" style="width: 100%;">
-                                            <select formControlName="timeBeforSend" class="form-control mt-2 mb-2" style="width:197px;">
+                                            <select formControlName="timeBeforSend" class="form-control mt-2 mb-2"
+                                                style="width:197px;">
                                                 <option class="form-control" value="0">0 ngày</option>
                                                 <option class="form-control" value="1">1 ngày</option>
                                                 <option class="form-control" value="2">2 ngày</option>
@@ -86,7 +88,8 @@
                                         <td colspan="1" style="width: 100%;">
                                             <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
                                                 formControlName="template" [filterable]="true" #smsTemplateCbx
-                                                (valueChange)="onChangeTemplate($event)" [valueField]="'id'" class="mb-2">
+                                                (valueChange)="onChangeTemplate($event)" [valueField]="'id'"
+                                                class="mb-2">
                                             </kendo-combobox>
                                             <!-- <a class="btn btn-sm btn-light" (click)="addTemplate()">
                                                 <span class="k-icon k-i-plus"></span>
@@ -98,10 +101,8 @@
                                             <label class="o_form_label">Nội dung</label>
                                         </td> -->
                                         <td colspan="2" style="width: 80%;">
-                                            <app-sms-template-content 
-                                                [type]="'partner'"
-                                                [textareaLength]="textareaLimit"
-                                                [template]="template">
+                                            <app-sms-template-content [type]="'partner'"
+                                                [textareaLength]="textareaLimit" [template]="template">
                                             </app-sms-template-content>
                                         </td>
                                     </tr>

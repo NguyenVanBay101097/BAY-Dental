@@ -94,7 +94,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ReportSupplierPaged
     {
-        public Guid AccountId { get; set; }
+        public Guid? AccountId { get; set; }
         public string State { get; set; }
         public string Provider { get; set; }
     }

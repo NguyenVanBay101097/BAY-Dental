@@ -674,11 +674,18 @@ namespace Infrastructure.Services
             };
         }
 
-        
+
         public async Task<IEnumerable<ReportSupplierChart>> GetReportSupplierSumary(ReportSupplierPaged val)
         {
             var total = await SearchQuery().CountAsync();
-            var query = SearchQuery().Where(x => x.SmsAccount.Provider == val.Provider && x.State == val.State && x.Date.HasValue);
+            var query = SearchQuery().Where(x => x.Date.HasValue);
+            if (!string.IsNullOrEmpty(val.Provider))
+                query = query.Where(x => x.SmsAccount.Provider == val.Provider && x.State == val.State && x.Date.HasValue);
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State == val.State);
+            if (val.AccountId.HasValue)
+                query = query.Where(x => x.SmsAccountId == val.AccountId.Value);
+
             var items = await query
                 .GroupBy(x => new
                 {
