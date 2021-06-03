@@ -86,6 +86,8 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
       this.loading = false;
       if (res.data) {
         this.listMessageDetails = res.data;
+        console.log(res.data);
+        
       }
     }, err => {
       console.log(err);

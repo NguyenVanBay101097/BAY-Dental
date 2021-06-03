@@ -43,8 +43,8 @@
                 <div class="o_cp_controller">
                     <div class="o_control_panel">
                         <div class="o_cp_t_left">
-                            <button type="button" *ngIf="state=='waiting'" class="btn btn-danger btn-sm"
-                                (click)="cancelSend()">
+                            <button type="button" *ngIf="state=='waiting' && gridData && gridData.total > 0 "
+                                class="btn btn-danger btn-sm" (click)="cancelSend()">
                                 Hủy gửi
                             </button>
                             <app-tai-date-range-filter-dropdown *ngIf="state=='success'" title="Thời gian"

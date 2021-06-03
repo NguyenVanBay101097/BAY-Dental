@@ -46,13 +46,6 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> RunJobSendSms()
-        {
-            await _smsMessageDetailService.RunJobSendSms();
-            return Ok();
-        }
-
         [HttpGet("[action]")]
         public async Task<IActionResult> GetReportTotal([FromQuery] ReportTotalInput val)
         {

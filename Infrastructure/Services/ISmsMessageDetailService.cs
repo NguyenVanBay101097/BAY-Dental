@@ -13,7 +13,6 @@ namespace Infrastructure.Services
     public interface ISmsMessageDetailService
     {
         Task<PagedResult2<SmsMessageDetailBasic>> GetPaged(SmsMessageDetailPaged val);
-        Task RunJobSendSms();
         Task ReSendSms(IEnumerable<SmsMessageDetail> details);
         Task<PagedResult2<SmsMessageDetailStatistic>> GetPagedStatistic(SmsMessageDetailPaged val);
         IQueryable<SmsMessageDetail> SearchQuery();
