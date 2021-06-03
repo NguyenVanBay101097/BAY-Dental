@@ -126,9 +126,12 @@
                                                         Chọn khách hàng
                                                     </button>
                                                 </div>
-                                                <span class="text-danger" *ngIf="errorSendLimit && !noLimit">
+                                                <div class="text-danger" *ngIf="errorSendLimit">
                                                     Vượt hạn mức gửi tin cho phép
-                                                </span>
+                                                </div>
+                                                <div class="text-danger" *ngIf="submitted && partnerIds.length == 0">
+                                                    Chọn khách hàng
+                                                </div>
                                             </td>
                                         </tr>
                                     </table>

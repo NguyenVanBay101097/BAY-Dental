@@ -53,7 +53,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
       smsAccount: [null, Validators.required],
       isAppointmentAutomation: false,
       TypeTimeBeforSend: 'hour',
-      timeBeforSend: 1,
+      timeBeforSend: [1, Validators.required],
       templateName: '',
       type: 'appointment',
     })

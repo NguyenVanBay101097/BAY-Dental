@@ -195,6 +195,9 @@ export class SmsMessageDialogComponent implements OnInit {
         this.partnerIds = [];
         this.errorSendLimit = true;
       }
+      else {
+        this.errorSendLimit = false;
+      }
     })
   }
 
@@ -216,6 +219,7 @@ export class SmsMessageDialogComponent implements OnInit {
     this.submitted = true;
     if (this.formGroup.invalid) return;
     if (!this.template.text) return;
+    if ((this.errorSendLimit && !this.noLimit) || this.partnerIds.length == 0) return;
     var val = this.GetValueFormGroup();
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.campaign = val.smsCampaign;
@@ -254,7 +258,6 @@ export class SmsMessageDialogComponent implements OnInit {
       if (event.limitMessage == 0) {
         this.noLimit = true;
       }
-
       if (event.state == 'draft' || event.state == 'shutdown') {
         this.notify('Chiến dịch này chưa được kích hoạt hoặc đã bị dừng. Vui lòng kiểm tra lại chiến dịch', false);
         this.formGroup.get('smsCampaign').setValue(null);
@@ -265,6 +268,16 @@ export class SmsMessageDialogComponent implements OnInit {
       }
       this.limitMessage = event.limitMessage;
       this.sendLimit = this.limitMessage - event.totalMessage;
+      if (this.sendLimit > 0) {
+        this.noLimit = false;
+      }
+      if (this.partnerIds.length == this.sendLimit) {
+        this.errorSendLimit = false;
+      }
+      if (this.partnerIds.length > this.sendLimit && this.sendLimit > 0) {
+        this.partnerIds.length = 0;
+        this.errorSendLimit = true;
+      }
     }
   }
 }
