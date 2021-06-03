@@ -187,7 +187,7 @@
             </table>
             <div class="float-right">
                 <button class="btn btn-sm btn-primary"
-                    *ngIf="!isEdit && campaign"
+                    *ngIf="!isEdit && campaign  && (campaign.defaultType=='' || !campaign.defaultType)"
                     (click)="onEditCampaign()">Sửa</button>
                 <button class="btn btn-sm btn-primary mr-2" *ngIf="isEdit" (click)="onSaveCampaign()">Lưu</button>
                 <button class="btn btn-sm btn-secondary" *ngIf="isEdit" (click)="onClose()">Đóng</button>
