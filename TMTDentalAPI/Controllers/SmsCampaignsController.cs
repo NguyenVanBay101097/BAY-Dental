@@ -39,6 +39,7 @@ namespace TMTDentalAPI.Controllers
             var hostName = _tenant != null ? _tenant.Hostname : "localhost";
             var jobId = $"{hostName}_Send_Sms_message_detail";
             RecurringJob.AddOrUpdate<ISmsMessageJobService>(jobId, x => x.RunJobFindSmsMessage(hostName, CompanyId), $"*/30 * * * *", TimeZoneInfo.Local);
+            
             return NoContent();
         }
 
