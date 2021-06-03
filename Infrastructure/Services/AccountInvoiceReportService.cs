@@ -38,6 +38,7 @@ namespace Infrastructure.Services
             var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
 
             var query = _context.AccountInvoiceReports.Where(x=> (x.Type == "out_invoice" || x.Type == "out_refund") && x.State == "posted"
+            && x.AccountInternalType == "receivable"
             && (!x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value))
             ).AsQueryable();
 
@@ -69,7 +70,7 @@ namespace Infrastructure.Services
            var res = await query.Select(x => new RevenueTimeReportDisplay
             {
                 InvoiceDate = x.Key as DateTime?,
-                PriceSubTotal = x.Sum(z => z.PriceSubTotal)
+                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal))
             }).ToListAsync();
 
             res = res.OrderByDescending(z => z.InvoiceDate.Value).ToList();
@@ -90,7 +91,7 @@ namespace Infrastructure.Services
             {
                 ProductId = x.Key.ProductId.Value,
                 ProductName = x.Key.Name,
-                PriceSubTotal = x.Sum(z => z.PriceSubTotal)
+                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal))
             }).ToListAsync();
 
             return res;
@@ -121,7 +122,7 @@ namespace Infrastructure.Services
             {
                 EmployeeId = (x.Key as EmployeeAssistantKeyGroup).Id,
                 EmployeeName = (x.Key as EmployeeAssistantKeyGroup).Name,
-                PriceSubTotal = x.Sum(z => z.PriceSubTotal)
+                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal))
             }).ToListAsync();
 
             return res;

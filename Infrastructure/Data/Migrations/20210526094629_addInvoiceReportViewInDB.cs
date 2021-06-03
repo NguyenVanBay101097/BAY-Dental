@@ -21,6 +21,7 @@ AS (
 					aml.EmployeeId,
 					aml.AssistantId,
                     am.Type as Type,
+					aml.AccountInternalType as AccountInternalType,
 					am.State as State,
 					aml.AccountId as AccountId,
 					SUM ((aml.Quantity)) AS Quantity,
@@ -55,7 +56,8 @@ AS (
 					am.State ,
 					aml.AccountId,
 					aml.EmployeeId,
-					aml.AssistantId
+					aml.AssistantId,
+					aml.AccountInternalType
 					)
 
 ");
