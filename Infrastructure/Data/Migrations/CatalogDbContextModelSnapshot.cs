@@ -4855,6 +4855,48 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("MedicineOrderLines");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.MemberLevel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Point")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("MemberLevels");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Partner", b =>
                 {
                     b.Property<Guid>("Id")
@@ -7436,6 +7478,21 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("SaleCouponPrograms");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramMemberLevelRel", b =>
+                {
+                    b.Property<Guid>("ProgramId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MemberLevelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProgramId", "MemberLevelId");
+
+                    b.HasIndex("MemberLevelId");
+
+                    b.ToTable("SaleCouponProgramMemberLevelRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramPartnerRel", b =>
@@ -12787,6 +12844,23 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.MemberLevel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Partner", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
@@ -13884,6 +13958,21 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramMemberLevelRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.MemberLevel", "MemberLevel")
+                        .WithMany()
+                        .HasForeignKey("MemberLevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "Program")
+                        .WithMany("DiscountMemberLevels")
+                        .HasForeignKey("ProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramPartnerRel", b =>

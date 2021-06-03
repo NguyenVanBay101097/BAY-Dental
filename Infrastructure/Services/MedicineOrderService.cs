@@ -6,6 +6,7 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MyERP.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -212,9 +213,60 @@ namespace Infrastructure.Services
             var toaThuocObj = GetService<IToaThuocService>();
             await toaThuocObj.ComputeToInvoiceQuantityLines(medicineOrder.ToathuocId);
 
+            //Tich diem va cap nhat hang
+            //await ComputePointAndUpdateLevel(saleOrderPayment, saleOrderPayment.Order.PartnerId, "payment");
+            var loyaltyPoints = await ConvertAmountToPoint(medicineOrder.Amount);
+            var propertyObj = GetService<IIRPropertyService>();
+            var partnerPointsProp = propertyObj.get("loyalty_points", "res.partner", res_id: $"res.partner,{medicineOrder.PartnerId}", force_company: medicineOrder.CompanyId);
+            var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
+
+            partnerPoints += loyaltyPoints;
+            var pointValuesDict = new Dictionary<string, object>()
+                {
+                    { $"res.partner,{medicineOrder.PartnerId}", partnerPoints }
+                };
+
+            propertyObj.set_multi("loyalty_points", "res.partner", pointValuesDict, force_company: medicineOrder.CompanyId);
+
+            //lấy hạng thành viên hiện tại của partner
+            var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{medicineOrder.PartnerId}", force_company: medicineOrder.CompanyId);
+            var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
+            var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
+
+            //cập nhật hạng
+            var mbObj = GetService<IMemberLevelService>();
+            var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
+            MemberLevel type = null;
+            if (partnerLevel != null)
+                type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Point >= partnerLevel.Point && x.Id != partnerLevel.Id, orderBy: x => x.OrderByDescending(s => s.Point))
+                    .FirstOrDefaultAsync();
+            else
+                type = await mbObj.SearchQuery(x => x.Point <= partnerPoints, orderBy: x => x.OrderByDescending(s => s.Point))
+                      .FirstOrDefaultAsync();
+
+            if (type != null)
+            {
+                var levelValuesDict = new Dictionary<string, object>()
+                    {
+                        { $"res.partner,{medicineOrder.PartnerId}", type.Id }
+                    };
+                propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: medicineOrder.CompanyId);
+            }
+
             var basic = _mapper.Map<MedicineOrderBasic>(medicineOrder);
             return basic;
 
+        }
+
+        public async Task<decimal> ConvertAmountToPoint(decimal amount)
+        {
+            //var prate = await GetLoyaltyPointExchangeRate();
+            var prate = 10000;
+            if (prate < 0)
+                return 0;
+            var points = amount / prate;
+            var res = FloatUtils.FloatRound((double)points, precisionRounding: 1);
+            return (decimal)res;
         }
 
         private async Task _CreatePicking(IEnumerable<MedicineOrder> self, bool cancel = false)
@@ -436,6 +488,45 @@ namespace Infrastructure.Services
 
                 //update invoice status toa thuoc
                 await toaThuocObj.ComputeToInvoiceQuantityLines(order.ToathuocId);
+
+                //Trừ điểm tích lũy và cập nhật lại hạng thành viên
+                var loyaltyPoints = await ConvertAmountToPoint(order.Amount);
+                var propertyObj = GetService<IIRPropertyService>();
+                var partnerPointsProp = propertyObj.get("loyalty_points", "res.partner", res_id: $"res.partner,{order.PartnerId}", force_company: order.CompanyId);
+                var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
+
+                partnerPoints -= loyaltyPoints;
+                var pointValuesDict = new Dictionary<string, object>()
+                {
+                    { $"res.partner,{order.PartnerId}", partnerPoints }
+                };
+
+                propertyObj.set_multi("loyalty_points", "res.partner", pointValuesDict, force_company: order.CompanyId);
+
+                //lấy hạng thành viên hiện tại của partner
+                var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{order.PartnerId}", force_company: order.CompanyId);
+                var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
+                var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
+
+                //cập nhật hạng
+                var mbObj = GetService<IMemberLevelService>();
+                var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
+                MemberLevel type = null;
+                if (partnerLevel != null)
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Id != partnerLevel.Id, orderBy: x => x.OrderByDescending(s => s.Point))
+                        .FirstOrDefaultAsync();
+                else
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints, orderBy: x => x.OrderByDescending(s => s.Point))
+                          .FirstOrDefaultAsync();
+
+                if (type != null)
+                {
+                    var levelValuesDict = new Dictionary<string, object>()
+                    {
+                        { $"res.partner,{order.PartnerId}", type.Id }
+                    };
+                    propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: order.CompanyId);
+                }
             }
 
             if (move_ids.Any())

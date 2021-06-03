@@ -95,7 +95,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<string> Days { get; set; }
         public IEnumerable<ProductSimple> DiscountSpecificProducts { get; set; } = new List<ProductSimple>();
         public IEnumerable<ProductCategorySimple> DiscountSpecificProductCategories { get; set; } = new List<ProductCategorySimple>();
-
+        public IEnumerable<MemberLevelBasic> DiscountMemberLevels { get; set; } = new List<MemberLevelBasic>();
         /// <summary>
         /// all : tất cả
         /// specific_partners: khách hàng

@@ -784,6 +784,7 @@ namespace Infrastructure.Services
               .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
               .Include(x => x.Order).ThenInclude(x => x.Promotions)
               .Include(x => x.Order).ThenInclude(x => x.OrderLines)
+              .Include(x => x.Order).ThenInclude(x => x.Partner)
               .Include(x => x.PromotionLines)
               .Include(x => x.SaleOrderLineInvoice2Rels)
               .FirstOrDefaultAsync();
@@ -792,6 +793,7 @@ namespace Infrastructure.Services
                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
                 .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
                 .Include(x => x.DiscountSpecificPartners)
+                .Include(x => x.DiscountMemberLevels)
                 .FirstOrDefaultAsync();
 
             if (program != null)
@@ -823,6 +825,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
                 .Include(x => x.Order).ThenInclude(x => x.Promotions)
                 .Include(x => x.Order).ThenInclude(x => x.OrderLines)
+                .Include(x => x.Order).ThenInclude(x => x.Partner)
                 .Include(x => x.SaleOrderLineInvoice2Rels)
                 .FirstOrDefaultAsync();
 
@@ -831,6 +834,7 @@ namespace Infrastructure.Services
                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
                 .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
                 .Include(x => x.DiscountSpecificPartners)
+                .Include(x => x.DiscountMemberLevels)
                 .FirstOrDefaultAsync();
             if (program != null)
             {

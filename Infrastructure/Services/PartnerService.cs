@@ -383,7 +383,6 @@ namespace Infrastructure.Services
             var amounAdvance = await paymentObj.SearchQuery(x => x.PartnerId == id && x.JournalId == journalAdvance.Id && x.State != "cancel").Select(x => x.Amount).SumAsync();
             return Math.Abs(amounAdvance);
         }
-
         public override Task UpdateAsync(Partner entity)
         {
             entity.DisplayName = _NameGet(entity);
@@ -2015,6 +2014,34 @@ namespace Infrastructure.Services
                 Items = items
             };
         }
+
+        public string _GetLevel(decimal? point, IEnumerable<MemberLevel> levels)
+        {
+            if (levels == null)
+                throw new Exception("Không có danh sách hạng thành viên");
+            for (int i = 0; i < levels.Count(); i++)
+            {
+                var pointValue = levels.ElementAt(i).Point;
+                if (point >= pointValue)
+                    return levels.ElementAt(i).Id.ToString();
+                else
+                    continue;
+
+            }
+            return null;
+
+        }
+
+        public async Task<decimal> _GetDebit(Partner partner)
+        {
+            var moveLineObj = GetService<IAccountMoveLineService>();
+            var accountObj = GetService<IAccountAccountService>();
+            var account = await accountObj.SearchQuery(x => x.Code == "5111" && x.CompanyId == partner.CompanyId).FirstOrDefaultAsync();
+            var amounBalance = await moveLineObj.SearchQuery(x => x.PartnerId == partner.Id && x.AccountId == account.Id).SumAsync(x => x.Debit - x.Credit);
+            var sign = -1;
+            return amounBalance * sign;
+        }
+
     }
 
     public class PartnerCreditDebitItem

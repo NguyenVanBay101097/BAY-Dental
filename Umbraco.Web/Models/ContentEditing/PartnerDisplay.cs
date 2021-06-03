@@ -247,5 +247,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid? ConsultantId { get; set; }
         public EmployeeSimple Consultant { get; set; }
+        public decimal? Point { get; set; }
+        public MemberLevelBasic MemberLevel { get; set; }
     }
 }

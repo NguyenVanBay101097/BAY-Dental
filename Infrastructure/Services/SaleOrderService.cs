@@ -456,6 +456,7 @@ namespace Infrastructure.Services
             var program = await programObj.SearchQuery(x => x.PromoCode == couponCode && x.Active).Include(x => x.DiscountSpecificProducts)
                 .Include(x => x.DiscountSpecificProductCategories)
                 .Include(x => x.DiscountSpecificPartners)
+                .Include(x => x.DiscountMemberLevels)
                 .FirstOrDefaultAsync();
 
             if (program != null)
@@ -1096,6 +1097,7 @@ namespace Infrastructure.Services
                 .Include(x => x.DiscountSpecificPartners)
                 .Include(x => x.DiscountSpecificProductCategories)
                 .Include(x => x.DiscountSpecificProducts)
+                .Include(x => x.DiscountMemberLevels)
                 .FirstOrDefaultAsync();
 
             if (program != null)
@@ -2454,7 +2456,10 @@ namespace Infrastructure.Services
                         }
                         else if (item.Type == "code_usage_program" || item.Type == "promotion_program")
                         {
-                            var program = await programObj.SearchQuery(x => x.Id == item.SaleCouponProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+                            var program = await programObj.SearchQuery(x => x.Id == item.SaleCouponProgramId)
+                                .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
+                                .Include(x => x.DiscountMemberLevels)
+                                .FirstOrDefaultAsync();
                             if (program != null)
                             {
                                 var error_status = await programObj._CheckPromotionApplySaleLine(program, saleLine);
@@ -2513,7 +2518,10 @@ namespace Infrastructure.Services
                     else if (promotion.Type == "code_usage_program" || promotion.Type == "promotion_program")
                     {
                         var error_status = new CheckPromoCodeMessage();
-                        var program = await programObj.SearchQuery(x => x.Id == promotion.SaleCouponProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+                        var program = await programObj.SearchQuery(x => x.Id == promotion.SaleCouponProgramId)
+                            .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
+                            .Include(x => x.DiscountMemberLevels)
+                            .FirstOrDefaultAsync();
                         if (program != null)
                         {
                             if (program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode))

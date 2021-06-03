@@ -70,10 +70,11 @@ namespace ApplicationCore.Entities
         public bool? NotIncremental { get; set; }
         public ICollection<SaleCouponProgramProductRel> DiscountSpecificProducts { get; set; } = new List<SaleCouponProgramProductRel>();
         public ICollection<SaleCouponProgramProductCategoryRel> DiscountSpecificProductCategories { get; set; } = new List<SaleCouponProgramProductCategoryRel>();
-
+        public ICollection<SaleCouponProgramMemberLevelRel> DiscountMemberLevels { get; set; } = new List<SaleCouponProgramMemberLevelRel>();
         /// <summary>
         /// all : tất cả
         /// specific_partners: khách hàng
+        /// member_levels: hạng thành viên
         /// </summary>
         public string ApplyPartnerOn { get; set; }
 

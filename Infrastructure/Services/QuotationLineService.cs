@@ -129,10 +129,14 @@ namespace Infrastructure.Services
               .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
               .Include(x => x.Quotation).ThenInclude(x => x.Promotions)
               .Include(x => x.Quotation).ThenInclude(x => x.Lines)
+              .Include(x => x.Quotation).ThenInclude(x => x.Partner)
               .Include(x => x.PromotionLines)
               .FirstOrDefaultAsync();
 
-            var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId).Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+            var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId)
+                .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
+                .Include(x => x.DiscountMemberLevels)
+                .FirstOrDefaultAsync();
             if (program != null)
             {
                 var error_status =  programObj._CheckPromotionApplyQuotationLine(program, quotationLine);
@@ -162,10 +166,14 @@ namespace Infrastructure.Services
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
                 .Include(x => x.Quotation).ThenInclude(x => x.Promotions)
                 .Include(x => x.Quotation).ThenInclude(x => x.Lines)
+                .Include(x => x.Quotation).ThenInclude(x => x.Partner)
                 .FirstOrDefaultAsync();
 
             //Chương trình khuyến mãi sử dụng mã
-            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).Include(x => x.DiscountSpecificProducts).FirstOrDefaultAsync();
+            var program = await programObj.SearchQuery(x => x.PromoCode == couponCode)
+                .Include(x => x.DiscountSpecificProducts)
+                .Include(x => x.DiscountMemberLevels)
+                .FirstOrDefaultAsync();
             if (program != null)
             {
                 var error_status = programObj._CheckPromotionApplyQuotationLine(program, quotationLine);

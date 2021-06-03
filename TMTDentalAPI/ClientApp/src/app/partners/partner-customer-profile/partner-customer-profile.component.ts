@@ -46,7 +46,7 @@ export class PartnerCustomerProfileComponent implements OnInit {
   }
 
   loadCustomerInfo() {
-    this.partnerService.getPartner(this.id).subscribe(result => {
+    this.partnerService.getCustomerInfo(this.id).subscribe((result: any) => {
       this.customerInfo = result;
     })
   }

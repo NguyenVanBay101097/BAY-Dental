@@ -587,6 +587,7 @@ namespace Infrastructure.Services
             var couponObj = GetService<ISaleCouponService>();
             var orderLineObj = GetService<ISaleOrderLineService>();
             var quotation = await SearchQuery(x => x.Id == val.Id)
+              .Include(x => x.Partner)
               .Include(x => x.Promotions).ThenInclude(x => x.Lines)
               .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
               .Include(x => x.Lines).ThenInclude(x => x.Promotions)
@@ -602,6 +603,7 @@ namespace Infrastructure.Services
                 .Include(x => x.DiscountSpecificProducts)
                 .Include(x => x.DiscountSpecificProductCategories)
                 .Include(x => x.DiscountSpecificPartners)
+                .Include(x => x.DiscountMemberLevels)
                 .FirstOrDefaultAsync();
 
             if (program != null)
@@ -627,6 +629,7 @@ namespace Infrastructure.Services
             var couponObj = GetService<ISaleCouponService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var quotation = await SearchQuery(x => x.Id == val.Id)
+             .Include(x => x.Partner)
              .Include(x => x.Promotions).ThenInclude(x => x.Lines)
              .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
              .Include(x => x.Lines).ThenInclude(x => x.Promotions)
@@ -638,6 +641,7 @@ namespace Infrastructure.Services
                 .Include(x => x.DiscountSpecificProducts)
                 .Include(x => x.DiscountSpecificProductCategories)
                 .Include(x => x.DiscountSpecificPartners)
+                .Include(x => x.DiscountMemberLevels)
                 .FirstOrDefaultAsync();
 
             if (program != null)

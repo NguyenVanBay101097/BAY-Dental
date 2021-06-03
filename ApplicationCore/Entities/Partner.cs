@@ -232,5 +232,6 @@ namespace ApplicationCore.Entities
 
             return (DateTime.Now.Year - BirthYear.Value).ToString();
         }
+
     }
 }

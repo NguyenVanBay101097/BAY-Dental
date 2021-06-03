@@ -21,6 +21,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { DiscountPricePopoverComponent } from './discount-price-popover/discount-price-popover.component';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
+import { MemberLevelService } from 'src/app/member-level/member-level.service';
 
 @Component({
   selector: 'app-sale-promotion-program-create-update',
@@ -49,6 +50,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   listProducts: ProductSimple[];
   listProductCategories: ProductCategory[];
   listPartner: PartnerSimple[];
+  listMemberLevel: any[] = [];
+  filterMemberLevel: any[] = []; 
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   @ViewChild('productMultiSelect', { static: true }) productMultiSelect: MultiSelectComponent;
   @ViewChild('productCategoriesMultiSelect', { static: true }) productCategoriesMultiSelect: MultiSelectComponent;
@@ -56,7 +59,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
 
   constructor(private fb: FormBuilder, private programService: SaleCouponProgramService,
-    private router: Router, private route: ActivatedRoute, private notificationService: NotificationService, private partnerService: PartnerService,
+    private router: Router, private route: ActivatedRoute, private notificationService: NotificationService, private partnerService: PartnerService, private memberLevelService: MemberLevelService,
     private modalService: NgbModal, private productService: ProductService, private productCategoryService: ProductCategoryService, private intlService: IntlService,
   ) { }
 
@@ -89,9 +92,10 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       applyPartnerOn: 'all',
       discountSpecificPartners: null,
       isApplyMinimumDiscount: false,
-      isApplyMaxDiscount: false
-    }, {
-      validators: DateInvalid('ruleDateFromObj', 'ruleDateToObj')
+      isApplyMaxDiscount: false,
+      discountMemberLevels: null
+    },{
+      validators: DateInvalid('ruleDateFromObj','ruleDateToObj')
     });
 
     this.route.queryParamMap.subscribe(params => {
@@ -112,7 +116,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     this.loadListProducts();
     this.loadListProductCategories();
     this.loadListPartner();
-
+    this.loadListMemberLevels();
     this.productMultiSelect.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.productMultiSelect.loading = true)),
@@ -214,7 +218,20 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.listPartner = _.unionBy(this.listPartner, result, 'id');
     })
   }
+  loadListMemberLevels() {
+    this.memberLevelService.get().subscribe(result => {
+      this.listMemberLevel = result;
+      this.filterMemberLevel = this.listMemberLevel;
+      console.log(result);
+      console.log(this.filterMemberLevel);
+      
+    })
+  }
 
+  onChangeMemberLevel(value) {
+    this.filterMemberLevel = this.listMemberLevel.filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
+      .slice(0, 20);
+  }
   searchProductCategories(search?: string) {
     var val = new ProductCategoryPaged();
     val.search = search || '';
@@ -287,9 +304,10 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     this.program.ruleDateFrom = value.ruleDateFromObj ? this.intlService.formatDate(value.ruleDateFromObj, 'g', 'en-US') : null;
     this.program.ruleDateTo = value.ruleDateToObj ? this.intlService.formatDate(value.ruleDateToObj, 'g', 'en-US') : null;
     var result = Object.assign({}, this.program);
-    result.discountSpecificProductIds = result.discountSpecificProducts ? result.discountSpecificProducts.map(x => x.id) : [];
-    result.discountSpecificProductCategoryIds = result.discountSpecificProductCategories ? result.discountSpecificProductCategories.map(x => x.id) : [];
-    result.DiscountSpecificPartnerIds = result.discountSpecificPartners ? result.discountSpecificPartners.map(x => x.id) : [];
+    result.discountSpecificProductIds = result.discountSpecificProducts ? result.discountSpecificProducts.map(x => x.id):[];
+    result.discountSpecificProductCategoryIds = result.discountSpecificProductCategories ? result.discountSpecificProductCategories.map(x => x.id):[];
+    result.DiscountSpecificPartnerIds = result.discountSpecificPartners ? result.discountSpecificPartners.map(x=>x.id):[];
+    result.discountMemberLevelIds = result.discountMemberLevels ? result.discountMemberLevels.map(x=>x.id):[];
     result.days = result.daysSelected;
     return result;
   }
@@ -429,6 +447,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     this.f.ruleMinimumAmount.disable();
     this.f.applyPartnerOn.disable();
     this.f.discountSpecificPartners.disable();
+    this.f.discountMemberLevels.disable();
     this.f.isApplyMinimumDiscount.disable();
     this.f.isApplyMaxDiscount.disable();
   }
@@ -439,7 +458,9 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-    if (this.formGroup.invalid) {
+    if (!this.formGroup.valid) {
+      console.log(this.formGroup);
+      
       return false;
     }
 
@@ -588,9 +609,25 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     if (val == "specific_partners") {
       this.f.discountSpecificPartners.setValidators(Validators.required);
       this.f.discountSpecificPartners.updateValueAndValidity();
+      this.f.discountMemberLevels.clearValidators();
+      this.f.discountMemberLevels.updateValueAndValidity();
     }
-    else {
-      this.f.discountSpecificPartners.setValue(null);
+    else if(val == "member_levels"){
+      if(!this.id)
+        this.f.discountSpecificPartners.setValue(null);
+      this.f.discountMemberLevels.setValidators(Validators.required);
+      this.f.discountMemberLevels.updateValueAndValidity();
+      this.f.discountSpecificPartners.clearValidators();
+      this.f.discountSpecificPartners.updateValueAndValidity();
+    }
+    else{
+      if(!this.id){
+        this.f.discountSpecificPartners.setValue(null);
+        this.f.discountMemberLevels.setValue(null);
+      }
+      
+      this.f.discountMemberLevels.clearValidators();
+      this.f.discountMemberLevels.updateValueAndValidity();
       this.f.discountSpecificPartners.clearValidators();
       this.f.discountSpecificPartners.updateValueAndValidity();
     }

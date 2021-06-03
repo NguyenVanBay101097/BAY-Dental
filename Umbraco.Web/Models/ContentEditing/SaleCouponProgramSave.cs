@@ -72,5 +72,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> DiscountSpecificProductIds { get; set; } = new List<Guid>();
         public IEnumerable<Guid> DiscountSpecificProductCategoryIds { get; set; } = new List<Guid>();
         public IEnumerable<Guid> DiscountSpecificPartnerIds { get; set; } = new List<Guid>();
+        public IEnumerable<Guid> DiscountMemberLevelIds { get; set; } = new List<Guid>();
     }
 }

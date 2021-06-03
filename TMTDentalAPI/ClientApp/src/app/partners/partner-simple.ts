@@ -64,6 +64,8 @@ export class PartnerDisplay extends PartnerBasic {
     titleId: string;
     title: PartnerTitle;
     consultant: EmployeeSimple;
+    point: number;
+    memberLevel: any;
 }
 
 export class PartnerSimpleInfo {

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ResConfigSettingsService } from '../res-config-settings.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -17,6 +17,7 @@ import * as _ from 'lodash';
   }
 })
 export class ResConfigSettingsFormComponent implements OnInit {
+  submitted: boolean = false;
   formGroup: FormGroup;
   filterdPaperSizes: PrintPaperSizeBasic[] = [];
   
@@ -30,7 +31,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
       groupDiscountPerSOLine: false,
       groupLoyaltyCard: false,
       groupSaleCouponPromotion: false,
-      loyaltyPointExchangeRate: 0,
+      loyaltyPointExchangeRate: [0, Validators.required],
       groupMultiCompany: false,
       companySharePartner: false,
       companyShareProduct: false,
@@ -41,6 +42,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
       tCareRunAtObj: new Date(2000, 2, 10, 0, 0, 0),
       groupMedicine: false,
       groupSurvey: false,
+      // conversionRate: [0, Validators.required]
     });
 
 
@@ -55,6 +57,8 @@ export class ResConfigSettingsFormComponent implements OnInit {
       
     });
   }
+
+  get f() { return this.formGroup.controls; }
 
   onChangeCompanyShareProduct() {
     var companyShareProduct = this.companyShareProductValue;
@@ -76,6 +80,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     var val = this.formGroup.value;
     val.tCareRunAt = val.tCareRunAtObj ? this.intlService.formatDate(val.tCareRunAtObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     if (val.groupServiceCard) {

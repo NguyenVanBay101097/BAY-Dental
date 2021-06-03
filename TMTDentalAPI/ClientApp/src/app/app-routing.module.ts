@@ -14,6 +14,11 @@ const routes: Routes = [
     component: AppHomeComponent,
     children: [
       {
+        path: 'member-level',
+        loadChildren: () => import('./member-level/member-level.module').then(m => m.MemberLevelModule),
+        canActivate: [AuthGuard],
+      },
+      {
         path: 'quotations',
         loadChildren: () => import('./quotations/quotations.module').then(m => m.QuotationsModule),
         canActivate: [AuthGuard],
