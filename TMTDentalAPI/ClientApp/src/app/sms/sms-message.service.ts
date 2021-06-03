@@ -39,4 +39,12 @@ export class SmsMessageService {
     SetupSendSmsOrderAutomatic(orderId) {
         return this.http.get(this.base_api + this.apiUrl + '/SetupSendSmsOrderAutomatic/' + orderId);
     }
+
+    actionStartJobAutomatic() {
+        return this.http.get(this.base_api + this.apiUrl + '/ActionStartJobAutomatic');
+    }
+
+    actionStopJobAutomatic() {
+        return this.http.get(this.base_api + this.apiUrl + '/ActionStopJobAutomatic');
+    }
 }

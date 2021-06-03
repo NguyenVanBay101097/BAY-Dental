@@ -11,6 +11,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Body { get; set; }
         public string Number { get; set; }
         public Partner Partner { get; set; }
+        public DateTime? Date { get; set; }
         public SmsAccountBasic smsAccount { get; set; }
         public string State { get; set; }
         public DateTime? DateCreated { get; set; }

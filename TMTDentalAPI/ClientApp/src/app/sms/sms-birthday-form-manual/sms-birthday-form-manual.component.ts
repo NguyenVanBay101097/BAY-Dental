@@ -51,6 +51,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
     this.loadDataFromApi();
     setTimeout(() => {
       this.loadDefaultCampaignThanksCustomer();
@@ -113,10 +114,9 @@ export class SmsBirthdayFormManualComponent implements OnInit {
       modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
       modalRef.componentInstance.isBirthDayManual = true;
       modalRef.componentInstance.templateTypeTab = "partner";
-      modalRef.componentInstance.campaign = this.campaign;
+      modalRef.componentInstance.campaign = this.campaign ? this.campaign : null;
       modalRef.result.then(
-        result => {
-
+        () => {
         }
       )
     }

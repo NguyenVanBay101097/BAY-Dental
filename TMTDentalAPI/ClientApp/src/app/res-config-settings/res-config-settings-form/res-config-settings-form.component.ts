@@ -7,6 +7,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { PrintPaperSizeBasic, PrintPaperSizePaged, PrintPaperSizeService } from 'src/app/config-prints/print-paper-size.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
+import { SmsMessageService } from 'src/app/sms/sms-message.service';
 
 @Component({
   selector: 'app-res-config-settings-form',
@@ -22,7 +23,9 @@ export class ResConfigSettingsFormComponent implements OnInit {
 
   @ViewChild('papersizeCbx', { static: true }) papersizeCbx: ComboBoxComponent;
   constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService, private printPaperSizeService: PrintPaperSizeService,
-    private authService: AuthService, private notificationService: NotificationService, private intlService: IntlService) {
+    private authService: AuthService,
+    private smsMessageService: SmsMessageService
+    , private notificationService: NotificationService, private intlService: IntlService) {
   }
 
   ngOnInit() {
@@ -52,7 +55,12 @@ export class ResConfigSettingsFormComponent implements OnInit {
         var tCareRunAt = new Date(result.tCareRunAt);
         this.formGroup.get('tCareRunAtObj').patchValue(tCareRunAt);
       }
-
+      debugger
+      if (result.groupSms) {
+        this.actionStartJobSmsMessage();
+      } else {
+        this.actionStopJobSmsMessage();
+      }
 
     });
   }
@@ -74,6 +82,18 @@ export class ResConfigSettingsFormComponent implements OnInit {
     var val = new PrintPaperSizePaged();
     val.search = q || '';
     return this.printPaperSizeService.getPaged(val);
+  }
+
+  actionStartJobSmsMessage() {
+    this.smsMessageService.actionStartJobAutomatic().subscribe(
+      res => { }
+    )
+  }
+
+  actionStopJobSmsMessage() {
+    this.smsMessageService.actionStopJobAutomatic().subscribe(
+      res => { }
+    )
   }
 
   onSave() {

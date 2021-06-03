@@ -122,19 +122,7 @@ namespace Infrastructure.Services
 
         }
 
-        /// <summary>
-        /// de tam
-        /// </summary>
-        /// <returns></returns>
-        public async Task RunJobSendSms()
-        {
-            var hostName = _tenant != null ? _tenant.Hostname : "localhost";
-            var jobId = $"{hostName}_Send_Sms_message_detail";
-            RecurringJob.AddOrUpdate<ISmsMessageJobService>(jobId, x => x.RunJobFindSmsMessage(hostName, CompanyId), $"*/30 * * * *", TimeZoneInfo.Local);
-        }
-
         #region Gui tin nhan cho toi tac
-
         public async Task CreateSmsMessageDetailV2(SmsMessage smsMessage, Guid companyId)
         {
             var listSms = new List<SmsMessageDetail>();

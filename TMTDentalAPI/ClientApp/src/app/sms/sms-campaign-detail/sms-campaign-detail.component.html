@@ -2,7 +2,7 @@
     <div class="o_control_panel">
         <ol class="breadcrumb">
             <li class="active">
-                <a [routerLink]="['/sms/campaign']">Quản lý chiến dịch </a>/ {{campaign ? campaign.name : ''}}
+                <a [routerLink]="['/sms/campaign']">Quản lý chiến dịch </a>/ {{campaignName}}
             </li>
         </ol>
         <div class="o_cp_searchview">
@@ -43,8 +43,8 @@
                 <div class="o_cp_controller">
                     <div class="o_control_panel">
                         <div class="o_cp_t_left">
-                            <button type="button" *ngIf="state=='waiting'" class="btn btn-danger btn-sm"
-                                (click)="cancelSend()">
+                            <button type="button" *ngIf="state=='waiting' && gridData && gridData.total > 0 "
+                                class="btn btn-danger btn-sm" (click)="cancelSend()">
                                 Hủy gửi
                             </button>
                             <app-tai-date-range-filter-dropdown *ngIf="state=='success'" title="Thời gian"
@@ -190,7 +190,7 @@
                     *ngIf="!isEdit && campaign  && (campaign.defaultType=='' || !campaign.defaultType)"
                     (click)="onEditCampaign()">Sửa</button>
                 <button class="btn btn-sm btn-primary mr-2" *ngIf="isEdit" (click)="onSaveCampaign()">Lưu</button>
-                <button class="btn btn-sm btn-secondary" *ngIf="isEdit" (click)="onClose()">Đóng</button>
+                <!-- <button class="btn btn-sm btn-secondary" *ngIf="isEdit" (click)="onClose()">Đóng</button> -->
             </div>
         </div>
     </div>

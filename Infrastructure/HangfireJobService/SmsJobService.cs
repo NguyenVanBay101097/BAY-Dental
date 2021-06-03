@@ -50,6 +50,11 @@ namespace Infrastructure.HangfireJobService
                     if (listAppointments.Any())
                     {
                         var smsSendMessageService = new SmsMessageDetailService(null, null, null, context, null);
+                        var smsMessageService = new SmsMessageService(context, null, new EfRepository<SmsMessage>(context),
+                            new EfRepository<Partner>(context),
+                            new EfRepository<SmsMessageDetail>(context),
+                            new EfRepository<Appointment>(context));
+
                         var smsMessage = new SmsMessage();
                         smsMessage.SmsAccountId = config.SmsAccountId;
                         smsMessage.SmsCampaignId = config.SmsCampaignId;
@@ -77,7 +82,13 @@ namespace Infrastructure.HangfireJobService
                         smsMessage = await context.SmsMessages.Where(x => x.Id == smsMessage.Id)
                             .Include(x => x.SmsMessageAppointmentRels)
                             .Include(x => x.SmsAccount).FirstOrDefaultAsync();
-                        await smsSendMessageService.CreateSmsMessageDetailV2(smsMessage, (Guid)config.CompanyId);
+
+
+
+                        //await smsSendMessageService.CreateSmsMessageDetailV2(smsMessage, (Guid)config.CompanyId);
+
+                        await smsMessageService.ActionSend(smsMessage);
+
                         foreach (var appointment in listAppointments)
                         {
                             appointment.DateAppointmentReminder = now;

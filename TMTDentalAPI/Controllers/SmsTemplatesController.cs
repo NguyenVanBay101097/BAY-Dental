@@ -56,7 +56,7 @@ namespace TMTDentalAPI.Controllers
             var entity = _mapper.Map<SmsTemplate>(val);
             entity.CompanyId = CompanyId;
             entity = await _smsTemplateService.CreateAsync(entity);
-            return Ok(_mapper.Map<SmsTemplateBasic>(entity));
+            return NoContent();
         }
 
         [HttpPut("{id}")]
@@ -69,7 +69,7 @@ namespace TMTDentalAPI.Controllers
             entity = _mapper.Map(val, entity);
             entity.CompanyId = CompanyId;
             await _smsTemplateService.UpdateAsync(entity);
-            return Ok(_mapper.Map<SmsTemplateBasic>(entity));
+            return NoContent();
         }
 
 
@@ -80,7 +80,7 @@ namespace TMTDentalAPI.Controllers
             var res = await _smsTemplateService.GetByIdAsync(id);
             if (res == null) return NotFound();
             await _smsTemplateService.DeleteAsync(res);
-            return Ok(_mapper.Map<SmsTemplateBasic>(res));
+            return NoContent();
         }
 
        

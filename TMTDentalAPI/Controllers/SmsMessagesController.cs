@@ -62,12 +62,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> ActionSendSms(Guid id)
         {
-            var entity = await _smsMessageService.SearchQuery(x => x.Id == id)
-                .Include(x => x.SmsMessageAppointmentRels).ThenInclude(x => x.Appointment)
-                .Include(x => x.SmsMessageSaleOrderLineRels).ThenInclude(x => x.SaleOrderLine)
-                .Include(x => x.SmsMessageSaleOrderRels).ThenInclude(x => x.SaleOrder)
-                .Include(x => x.SmsAccount)
-                .Include(x => x.SmsMessagePartnerRels).FirstOrDefaultAsync();
+            var entity = await _smsMessageService.SearchQuery().Where(x => x.Id == id).FirstOrDefaultAsync();
             if (entity == null) return NotFound();
             await _unitOfWorkAsync.BeginTransactionAsync();
             await _smsMessageService.ActionSendSMSMessage(entity);
@@ -102,21 +97,21 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "SMS.Message.Update")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsAccountSave val)
         {
-            var entity = await _smsMessageService.GetByIdAsync(id);
-            if (!ModelState.IsValid || entity == null) return BadRequest();
-            entity = _mapper.Map(val, entity);
-            entity.CompanyId = CompanyId;
-            await _smsMessageService.UpdateAsync(entity);
-            var res = _mapper.Map<SmsMessageDisplay>(entity);
-            return Ok(res);
+            //var entity = await _smsMessageService.GetByIdAsync(id);
+            //if (!ModelState.IsValid || entity == null) return BadRequest();
+            //entity = _mapper.Map(val, entity);
+            //entity.CompanyId = CompanyId;
+            //await _smsMessageService.UpdateAsync(entity);
+            //var res = _mapper.Map<SmsMessageDisplay>(entity);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
         //[CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var entity = await _smsMessageService.GetByIdAsync(id);
-            if (entity == null) return NotFound();
+            //var entity = await _smsMessageService.GetByIdAsync(id);
+            //if (entity == null) return NotFound();
             return NoContent();
         }
     }

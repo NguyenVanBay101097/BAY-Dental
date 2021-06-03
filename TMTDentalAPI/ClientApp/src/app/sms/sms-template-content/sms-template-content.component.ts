@@ -13,23 +13,23 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
   @Input() type: any;
   @Input() template: any;
   @Input() textareaLength: any;
-  @ViewChild('textarea', {static: false}) textarea: ElementRef;
+  @ViewChild('textarea', { static: false }) textarea: ElementRef;
 
-  tabs: Array<{name: string, value: string}> = [];
+  tabs: Array<{ name: string, value: string }> = [];
 
   listTabs = {
     "partner": [
       { name: 'Danh xưng', value: '{danh_xung}' },
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
       { name: 'Ngày sinh', value: '{ngay_sinh}' }
-    ], 
+    ],
     "appointment": [
       { name: 'Danh xưng', value: '{danh_xung}' },
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
       { name: 'Giờ hẹn', value: '{gio_hen}' },
       { name: 'Ngày hẹn', value: '{ngay_hen}' },
       { name: 'Bác sĩ', value: '{bac_si_lich_hen}' }
-    ], 
+    ],
     // "template": [
     //   { name: 'Danh xưng', value: '{danh_xung}' },
     //   { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
@@ -44,11 +44,11 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
       { name: 'Số phiếu điều trị', value: '{so_phieu_dieu_tri}' },
       { name: 'Dịch vụ', value: '{dich_vu}' },
       { name: 'Bác sĩ', value: '{bac_si}' }
-    ], 
+    ],
     "saleOrder": [
       { name: 'Danh xưng', value: '{danh_xung}' },
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
-    ], 
+    ],
     "partnerCampaign": [
       { name: 'Danh xưng', value: '{danh_xung}' },
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
@@ -58,7 +58,7 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
   constructor(
     private fb: FormBuilder
   ) { }
-  
+
   ngOnChanges(changes: SimpleChanges): void {
     this.ngOnInit();
   }
@@ -78,7 +78,7 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
 
   get textControl() { return this.formGroup.get('text'); }
   get textValue() { return this.formGroup.get('text').value; }
-
+  get f() { return this.formGroup.controls; }
   onTextChange() {
     this.template.text = this.textValue;
   }
@@ -92,13 +92,13 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
     const selectionEnd = this.textarea.nativeElement.selectionEnd;
     var tabValueNew = tabValue;
     if (this.textValue) {
-      tabValueNew = ((selectionStart > 0 && this.textValue[selectionStart - 1] == ' ') ? "" : " ") 
-                    + tabValue 
-                    + ((selectionEnd < this.textareaLength && this.textValue[selectionEnd] == ' ') ? "" : " ");
+      tabValueNew = ((selectionStart > 0 && this.textValue[selectionStart - 1] == ' ') ? "" : " ")
+        + tabValue
+        + ((selectionEnd < this.textareaLength && this.textValue[selectionEnd] == ' ') ? "" : " ");
       this.formGroup.patchValue({
-        text: this.textValue.slice(0, selectionStart) 
-              + tabValueNew
-              + this.textValue.slice(this.textarea.nativeElement.selectionEnd)
+        text: this.textValue.slice(0, selectionStart)
+          + tabValueNew
+          + this.textValue.slice(this.textarea.nativeElement.selectionEnd)
       });
     } else {
       this.formGroup.patchValue({ text: tabValue });
