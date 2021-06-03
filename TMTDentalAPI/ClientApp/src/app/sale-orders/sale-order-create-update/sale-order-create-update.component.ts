@@ -690,17 +690,19 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     });
   }
   createProductToaThuoc() {
-    let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: Đơn Thuốc';
-    modalRef.componentInstance.defaultVal = { partnerId: (this.partnerId || this.partner.id), saleOrderId: this.saleOrderId };
-    modalRef.result.then((result: any) => {
-      this.notify('success', 'Tạo toa thuốc thành công');
-      this.toathuocComp.loadData();
-      if (result.print) {
-        this.printToaThuoc(result.item);
-      }
-    }, () => {
-    });
+    if (this.saleOrder) {
+      let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Thêm: Đơn Thuốc';
+      modalRef.componentInstance.defaultVal = { partnerId: this.saleOrder.partnerId, saleOrderId: this.saleOrder.id };
+      modalRef.result.then((result: any) => {
+        this.notify('success', 'Tạo toa thuốc thành công');
+        this.toathuocComp.loadData();
+        if (result.print) {
+          this.printToaThuoc(result.item);
+        }
+      }, () => {
+      });
+    }
   }
 
   dialogAppointment() {

@@ -22,7 +22,7 @@ import 'moment/locale/vi';
 import { MyErrorHandler } from './my-error-handler';
 import { FacebookModule } from 'ngx-facebook';
 import { NoCacheInterceptor } from './http-interceptors/no-cache.interceptor';
-// import { ServiceWorkerModule } from '@angular/service-worker';
+import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { PartnerGeneralSettingsComponent } from './partner-general-settings/partner-general-settings.component';
 import { AppHomeComponent } from './app-home/app-home.component';
@@ -61,7 +61,7 @@ registerLocaleData(localeVi, "vi");
       },
     }),
     FacebookModule.forRoot(),
-    // ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor
