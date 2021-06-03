@@ -59,7 +59,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]/{id}")]
-        [CheckAccess(Actions = "SMS.Campaign.Read")]
+        [CheckAccess(Actions = "SMS.Message.Update")]
         public async Task<IActionResult> ActionSendSms(Guid id)
         {
             var entity = await _smsMessageService.SearchQuery().Where(x => x.Id == id).FirstOrDefaultAsync();

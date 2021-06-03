@@ -1385,9 +1385,13 @@
         "Name": "Báo cáo",
         "Ops": [
           {
-            "Name": "Xem",
-            "Permission": "SMS.Report.Read"
+            "Name": "Xem thống kê tin nhắn",
+            "Permission": "SMS.Report.AllMessage"
           },
+          {
+            "Name": "Xem báo cáo",
+            "Permission": "SMS.Report.AllSMS"
+          }
           //{
           //  "Name": "Thêm",
           //  "Permission": "SMS.Report.Create"

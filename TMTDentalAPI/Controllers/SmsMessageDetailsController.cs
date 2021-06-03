@@ -25,6 +25,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "SMS.Message.Read")]
         public async Task<IActionResult> GetPagedResult([FromQuery] SmsMessageDetailPaged val)
         {
             var res = await _smsMessageDetailService.GetPaged(val);
@@ -32,7 +33,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        [CheckAccess(Actions = "SMS.Report.Read")]
+        [CheckAccess(Actions = "SMS.Report.AllMessage")]
         public async Task<IActionResult> GetPagedStatistic([FromQuery] SmsMessageDetailPaged val)
         {
             var res = await _smsMessageDetailService.GetPagedStatistic(val);
@@ -40,6 +41,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "SMS.Message.Update")]
         public async Task<IActionResult> ReSend(IEnumerable<Guid> ids)
         {
             var details = await _smsMessageDetailService.SearchQuery().Where(x => ids.Contains(x.Id) && x.CompanyId == CompanyId).Include(x => x.SmsAccount).ToListAsync();
@@ -49,7 +51,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        [CheckAccess(Actions = "SMS.Report.Read")]
+        [CheckAccess(Actions = "SMS.Report.AllSMS")]
         public async Task<IActionResult> GetReportTotal([FromQuery] ReportTotalInput val)
         {
             var res = await _smsMessageDetailService.GetReportTotal(val);
@@ -57,7 +59,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        [CheckAccess(Actions = "SMS.Report.Read")]
+        [CheckAccess(Actions = "SMS.Report.AllSMS")]
         public async Task<IActionResult> GetReportCampaign([FromQuery] ReportCampaignPaged val)
         {
             var res = await _smsMessageDetailService.GetReportCampaign(val);
@@ -65,7 +67,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "SMS.Report.Read")]
+        [CheckAccess(Actions = "SMS.Report.AllSMS")]
         public async Task<IActionResult> GetReportSupplierSumaryChart(ReportSupplierPaged val)
         {
             var res = await _smsMessageDetailService.GetReportSupplierSumary(val);
