@@ -31,8 +31,8 @@ namespace ApplicationCore.Entities
 
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
-        public string type { get; set; }
-        public string state { get; set; }
+        public string Type { get; set; }
+        public string State { get; set; }
         public Guid? AccountId { get; set; }
         public AccountAccount Account { get; set; }
 

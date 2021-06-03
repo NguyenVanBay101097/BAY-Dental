@@ -23,23 +23,23 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetRevenueTimeReportPaged([FromQuery] RevenueTimeReportPaged val)
+        public async Task<IActionResult> GetRevenueTimeReportPaged([FromQuery] RevenueTimeReportPar val)
         {
-            var res = await _invoiceReportService.GetRevenueTimeReportPaged(val);
+            var res = await _invoiceReportService.GetRevenueTimeReport(val);
             return Ok(res);
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetRevenueServiceReportPaged([FromQuery] RevenueServiceReportPaged val)
+        public async Task<IActionResult> GetRevenueServiceReportPaged([FromQuery] RevenueServiceReportPar val)
         {
-            var res = await _invoiceReportService.GetRevenueServiceReportPaged(val);
+            var res = await _invoiceReportService.GetRevenueServiceReport(val);
             return Ok(res);
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetRevenueEmployeeReportPaged([FromQuery] RevenueEmployeeReportPaged val)
+        public async Task<IActionResult> GetRevenueEmployeeReportPaged([FromQuery] RevenueEmployeeReportPar val)
         {
-            var res = await _invoiceReportService.GetRevenueEmployeeReportPaged(val);
+            var res = await _invoiceReportService.GetRevenueEmployeeReport(val);
             return Ok(res);
         }
 

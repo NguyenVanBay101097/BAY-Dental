@@ -2,29 +2,23 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, Inject } from '@angular/core';
 import { PagedResult2 } from '../employee-categories/emp-category';
 
-export class RevenueTimeReportPaged{
+export class RevenueTimeReportPar{
     dateFrom?: any;
     dateTo?: any;
     companyId?: string;
-    limit: number;
-    offset: number;
 }
 
-export class RevenueServiceReportPaged{
+export class RevenueServiceReportPar{
     dateFrom?: any;
     dateTo?: any;
     productId: string;
     companyId?: string;
-    limit: number;
-    offset: number;
 }
 
-export class RevenueEmployeeReportPaged{
+export class RevenueEmployeeReportPar{
     dateFrom?: any;
     dateTo?: any;
     companyId?: string;
-    limit: number;
-    offset: number;
     employeeGroup: boolean;
     employeeId: string;
 }
@@ -77,16 +71,16 @@ export class AccountInvoiceReportService {
     apiUrl = 'api/AccountInvoiceReports';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-    getRevenueTimeReportPaged(val:any ) {
-        return this.http.get<PagedResult2<RevenueTimeReportDisplay>>(this.baseApi + this.apiUrl + "/GetRevenueTimeReportPaged", {params: new HttpParams({fromObject: val})});
+    getRevenueTimeReport(val:any ) {
+        return this.http.get<RevenueTimeReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenueTimeReportPaged", {params: new HttpParams({fromObject: val})});
     }
 
-    getRevenueServiceReportPaged(val:any ) {
-        return this.http.get<PagedResult2<RevenueServiceReportDisplay>>(this.baseApi + this.apiUrl + "/GetRevenueServiceReportPaged", {params: new HttpParams({fromObject: val})});
+    getRevenueServiceReport(val:any ) {
+        return this.http.get<RevenueServiceReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenueServiceReportPaged", {params: new HttpParams({fromObject: val})});
     }
 
-    getRevenueEmployeeReportPaged(val:any ) {
-        return this.http.get<PagedResult2<RevenueEmployeeReportDisplay>>(this.baseApi + this.apiUrl + "/GetRevenueEmployeeReportPaged", {params: new HttpParams({fromObject: val})});
+    getRevenueEmployeeReport(val:any ) {
+        return this.http.get<RevenueEmployeeReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenueEmployeeReportPaged", {params: new HttpParams({fromObject: val})});
     }
 
     getRevenueReportDetailPaged(val:any ) {
