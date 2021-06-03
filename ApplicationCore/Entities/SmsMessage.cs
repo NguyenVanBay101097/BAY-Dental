@@ -7,7 +7,7 @@ namespace ApplicationCore.Entities
     public class SmsMessage : BaseEntity
     {
         public string Name { get; set; }
-        public Guid CompanyId { get; set; }
+        public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
         public Guid? SmsCampaignId { get; set; }
         public SmsCampaign SmsCampaign { get; set; }
