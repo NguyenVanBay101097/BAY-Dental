@@ -28,6 +28,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string PartnerName { get; set; }
 
+        public string Reason { get; set; }
+
         /// <summary>
         /// Số tiền
         /// </summary>

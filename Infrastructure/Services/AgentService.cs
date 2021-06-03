@@ -69,12 +69,16 @@ namespace Infrastructure.Services
             var accountObj = GetService<IAccountAccountService>();
             var accountIncome = await accountObj.GetAccountIncomeCurrentCompany();
             var accountCommAgent = await accountObj.GetAccountCommissionAgentCompany();
-            ///lây ra doanh thu các khách hàng có người giới thiệu
-            //var query = commSettlementObj.SearchQuery(x => x.PartnerId.HasValue && x.MoveLine.AccountId == accountIncome.Id);
-            var query = movelineObj.SearchQuery(x => (x.CommissionSettlements.Any(x => x.PartnerId.HasValue) && x.AccountId == accountIncome.Id) || (x.PhieuThuChiId.HasValue && x.PhieuThuChi.AgentId.HasValue && x.AccountId == accountCommAgent.Id));
 
+            var query_agent = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Partner.Name.Contains(val.Search));
+                query_agent = query_agent.Where(x => x.Name.Contains(val.Search));
+
+            //filter agent
+            var agents = await query_agent.OrderByDescending(x => x.DateCreated).ToListAsync();
+
+            ///lây ra doanh thu các khách hàng có người giới thiệu
+            var query = movelineObj.SearchQuery(x => (x.CommissionSettlements.Any(x => x.PartnerId.HasValue && agents.Select(s => s.PartnerId).Contains(x.PartnerId.Value))) || (x.PhieuThuChiId.HasValue && x.PhieuThuChi.AgentId.HasValue && agents.Select(s=>s.Id).Contains(x.PhieuThuChi.AgentId.Value)));
 
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateFrom.Value);
@@ -90,25 +94,23 @@ namespace Infrastructure.Services
                 query = query.Skip(val.Offset).Take(val.Limit);
 
 
-
-            var agents = await SearchQuery(x => x.CompanyId == CompanyId).OrderByDescending(x => x.DateCreated).ToListAsync();
-            var agent_PartnerIds = agents.Select(x => x.PartnerId).ToList();
-            var agent_dict = SearchQuery(x => agent_PartnerIds.Contains(x.PartnerId)).ToDictionary(x => x.PartnerId, x => x);
-            var totalItems = agent_PartnerIds.Count();
-
             var movelines = await query.Include(x => x.PhieuThuChi).ThenInclude(x => x.Agent).Include(x => x.CommissionSettlements).ThenInclude(x => x.MoveLine).ToListAsync();
+            var agent_dict = agents.ToDictionary(x => x.PartnerId, x => x);
+            var totalItems = agents.Count();
+
+
             var sign = -1;
 
             ///group by chi hoa hồng cho người giới thiêu
             var commAgent_dict = movelines.Where(x => x.PhieuThuChiId.HasValue && agents.Select(x => x.Id).Contains(x.PhieuThuChi.AgentId.Value))
                 .Select(x => x.PhieuThuChi).GroupBy(x => x.Agent.PartnerId).Select(x => new
-            {
-                Id = x.Key,
-                Amount = x.Sum(s => s.Amount)
-            }).ToDictionary(x => x.Id, x => x.Amount);
+                {
+                    Id = x.Key,
+                    Amount = x.Sum(s => s.Amount)
+                }).ToDictionary(x => x.Id, x => x.Amount);
 
             ///group by doanh thu người giới thiêu
-            var incomeAgent_dict = movelines.Where(x => x.AccountId == accountIncome.Id && x.CommissionSettlements.Any(s => s.PartnerId.HasValue && agent_PartnerIds.Contains(s.PartnerId.Value)))
+            var incomeAgent_dict = movelines.Where(x => x.AccountId == accountIncome.Id && x.CommissionSettlements.Any(s => s.PartnerId.HasValue && agents.Select(s=>s.PartnerId).Contains(s.PartnerId.Value)))
                 .SelectMany(x => x.CommissionSettlements)
              .GroupBy(x => x.PartnerId.Value).Select(x => new
              {
@@ -148,7 +150,7 @@ namespace Infrastructure.Services
             var agent = await SearchQuery(x => x.Id == val.AgentId).FirstOrDefaultAsync();
 
             ///lây ra doanh thu các khách hàng có người giới thiệu
-            var query = movelineObj.SearchQuery(x => (x.AccountId == accountIncome.Id && x.CommissionSettlements.Any(x => x.PartnerId == agent.PartnerId)) || (x.PhieuThuChi.AgentId == agent.Id && x.AccountId == accountCommAgent.Id) );
+            var query = movelineObj.SearchQuery(x => (x.AccountId == accountIncome.Id && x.CommissionSettlements.Any(x => x.PartnerId == agent.PartnerId)) || (x.PhieuThuChi.AgentId == agent.Id && x.AccountId == accountCommAgent.Id));
 
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Partner.Name.Contains(val.Search));
@@ -171,7 +173,7 @@ namespace Infrastructure.Services
             var sign = -1;
             var partnerIds = query.Where(x => x.CommissionSettlements.Any(s => s.PartnerId.HasValue && s.PartnerId == agent.PartnerId) && !x.PhieuThuChiId.HasValue).Select(x => x.PartnerId);
             var partner_dict = partnrtObj.SearchQuery(x => partnerIds.Contains(x.Id) && x.Customer).ToDictionary(x => x.Id, x => x.Name);
-            var moveline_commAgents = await query.Where(x => x.PhieuThuChiId.HasValue && x.PhieuThuChi.AgentId.HasValue).Include(x=>x.PhieuThuChi).ToListAsync();
+            var moveline_commAgents = await query.Where(x => x.PhieuThuChiId.HasValue && x.PhieuThuChi.AgentId.HasValue).Include(x => x.PhieuThuChi).ToListAsync();
             var commAgent_dict = moveline_commAgents.GroupBy(x => x.PhieuThuChi.PartnerId.Value).Select(x => new
             {
                 Id = x.Key,
@@ -253,7 +255,7 @@ namespace Infrastructure.Services
             return paged;
         }
 
-        public async Task<decimal> GetCommissionAgentBalance(Guid id , Guid partnerId)
+        public async Task<decimal> GetCommissionAgentBalance(Guid id, Guid partnerId)
         {
             var movelineObj = GetService<IAccountMoveLineService>();
             var accountObj = GetService<IAccountAccountService>();
