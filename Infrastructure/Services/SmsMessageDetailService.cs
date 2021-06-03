@@ -135,78 +135,6 @@ namespace Infrastructure.Services
 
         #region Gui tin nhan cho toi tac
 
-        public async Task CreateSmsMessageDetail(SmsMessage smsMessage, IEnumerable<Guid> ids, Guid companyId)
-        {
-            //await CreateSmsMessageDetailV2(smsMessage, companyId);
-
-            //var listSms = new List<SmsMessageDetail>();
-            //var listSmsErrors = new List<SmsMessageDetail>();
-            //var dictAppointmentPartner = new Dictionary<Guid, Appointment>();
-            //var dictOrderLinePartner = new Dictionary<Guid, SaleOrderLine>();
-            //var partnerIds = new List<Guid>();
-
-            //if (smsMessage.SmsMessagePartnerRels.Any() && smsMessage.ResModel == "partner")
-            //{
-            //    partnerIds = smsMessage.SmsMessagePartnerRels.Select(x => x.PartnerId).ToList();
-            //}
-            //else if (smsMessage.SmsMessageSaleOrderRels.Any() && smsMessage.ResModel == "sale-order")
-            //{
-            //    partnerIds = smsMessage.SmsMessageSaleOrderRels.Select(x => x.SaleOrder.PartnerId).ToList();
-            //}
-            //else if (smsMessage.SmsMessageSaleOrderLineRels.Any() && smsMessage.ResModel == "sale-order-line")
-            //{
-            //    partnerIds = smsMessage.SmsMessageSaleOrderLineRels.Select(x => x.SaleOrderLine.OrderPartnerId.Value).ToList();
-            //}
-            //else if (smsMessage.SmsMessageAppointmentRels.Any() && smsMessage.ResModel == "appointment")
-            //{
-            //    partnerIds = smsMessage.SmsMessageAppointmentRels.Select(x => x.Appointment.PartnerId).ToList();
-            //}
-            //var partners = await _context.Partners.Where(x => ids.Contains(x.Id)).Include(x => x.Title).ToListAsync();
-            //if (smsMessage.ResModel == "appointment")
-            //{
-            //    var appIds = smsMessage.SmsMessageAppointmentRels.Select(x => x.AppointmentId).ToList();
-            //    dictAppointmentPartner = await _context.Appointments.Where(x => appIds.Contains(x.Id)).Include(x => x.Doctor).ToDictionaryAsync(x => x.PartnerId, x => x);
-            //}
-
-            //var company = await _context.Companies.Where(x => x.Id == companyId).FirstOrDefaultAsync();
-            //var listCharactorSpecial = SpecialCharactors.Split(",");
-            //var listStringSpecial = SpecialString.Split(",");
-            //foreach (var partner in partners)
-            //{
-            //    var content = await PersonalizedContent(smsMessage.Body, partner, company, null, null);
-            //    var sms = new SmsMessageDetail();
-            //    sms.Id = GuidComb.GenerateComb();
-            //    sms.Body = content;
-            //    sms.Number = !string.IsNullOrEmpty(partner.Phone) ? partner.Phone : "";
-            //    sms.PartnerId = partner.Id;
-            //    sms.State = "sending";
-            //    sms.SmsAccountId = smsMessage.SmsAccountId.Value;
-            //    sms.SmsMessageId = smsMessage.Id;
-            //    sms.SmsCampaignId = smsMessage.SmsCampaignId;
-
-            //    if (listStringSpecial.Any(x => content.Contains(x)) || listCharactorSpecial.Any(x => content.Contains(x)))
-            //    {
-            //        sms.State = "fails";
-            //        sms.ErrorCode = "199"; ///199 chua ky tu dac biet
-            //        listSmsErrors.Add(sms);
-            //    }
-            //    else
-            //        listSms.Add(sms);
-            //}
-
-            //smsMessage.State = "success";
-            //_context.Entry(smsMessage).State = EntityState.Modified;
-            //await _context.SmsMessageDetails.AddRangeAsync(listSms);
-            //await _context.SmsMessageDetails.AddRangeAsync(listSmsErrors);
-            //await _context.SaveChangesAsync();
-
-            //var smsIds = listSms.Select(x => x.Id).ToList();
-
-            //await SendSMS(smsIds, smsMessage.SmsAccountId.Value);
-
-        }
-
-
         public async Task CreateSmsMessageDetailV2(SmsMessage smsMessage, Guid companyId)
         {
             var listSms = new List<SmsMessageDetail>();
@@ -231,6 +159,7 @@ namespace Infrastructure.Services
                         var sms = new SmsMessageDetail();
                         sms.Id = GuidComb.GenerateComb();
                         sms.Body = content;
+                        sms.CompanyId = companyId;
                         sms.Number = !string.IsNullOrEmpty(partnerDicts[rel.PartnerId].Phone) ? partnerDicts[rel.PartnerId].Phone : "";
                         sms.PartnerId = partnerDicts[rel.PartnerId].Id;
                         sms.Date = DateTime.Now;
@@ -267,6 +196,7 @@ namespace Infrastructure.Services
                         sms.Number = !string.IsNullOrEmpty(partnerDicts[order.PartnerId].Phone) ? partnerDicts[order.PartnerId].Phone : "";
                         sms.PartnerId = partnerDicts[order.PartnerId].Id;
                         sms.State = "sending";
+                        sms.CompanyId = companyId;
                         sms.SmsAccountId = smsMessage.SmsAccountId.Value;
                         sms.Date = DateTime.Now;
                         sms.SmsMessageId = smsMessage.Id;
@@ -300,6 +230,7 @@ namespace Infrastructure.Services
                         sms.Number = !string.IsNullOrEmpty(partnerDicts[line.OrderPartnerId.Value].Phone) ? partnerDicts[line.OrderPartnerId.Value].Phone : "";
                         sms.PartnerId = partnerDicts[line.OrderPartnerId.Value].Id;
                         sms.State = "sending";
+                        sms.CompanyId = companyId;
                         sms.SmsAccountId = smsMessage.SmsAccountId.Value;
                         sms.SmsMessageId = smsMessage.Id;
                         sms.Date = DateTime.Now;
@@ -333,6 +264,7 @@ namespace Infrastructure.Services
                         sms.Number = !string.IsNullOrEmpty(partnerDicts[app.PartnerId].Phone) ? partnerDicts[app.PartnerId].Phone : "";
                         sms.PartnerId = partnerDicts[app.PartnerId].Id;
                         sms.State = "sending";
+                        sms.CompanyId = companyId;
                         sms.Date = DateTime.Now;
                         sms.SmsAccountId = smsMessage.SmsAccountId.Value;
                         sms.SmsMessageId = smsMessage.Id;
@@ -742,32 +674,11 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<IEnumerable<ReportSupplierOutputItem>> GetReportSupplier(ReportSupplierInput val)
-        {
-            //var query = SearchQuery();
-            //if (!string.IsNullOrEmpty(val.SmsSupplierCode))
-            //    query = query.Where(x => x.SmsAccount.Provider == val.SmsSupplierCode);
-
-            //var res = await query.GroupBy(x => new { x.State })
-            //    .Select(x => new
-            //    {
-            //        State = x.Key.State,
-            //        StateDisplay = x.Key.State == "success" ? "Thành công" : "Thất bại",
-            //        Data = x.GroupBy(y => y.DateCreated)
-            //        .Select(z => new ReportSupplierOutputItemData
-            //        {
-            //            Date = z.Key.Value,
-            //            Total = z.Count()
-            //        }).ToList()
-            //    }).ToListAsync();
-
-            return null;
-        }
-
+        
         public async Task<IEnumerable<ReportSupplierChart>> GetReportSupplierSumary(ReportSupplierPaged val)
         {
-            var total =await SearchQuery().CountAsync();
-            var query = SearchQuery().Where(x => x.SmsAccountId == val.AccountId && x.State == val.State && x.Date.HasValue);
+            var total = await SearchQuery().CountAsync();
+            var query = SearchQuery().Where(x => x.SmsAccount.Provider == val.Provider && x.State == val.State && x.Date.HasValue);
             var items = await query
                 .GroupBy(x => new
                 {

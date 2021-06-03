@@ -351,7 +351,6 @@ namespace TMTDentalAPI
             services.AddScoped<ISmsTemplateService, SmsTemplateService>();
             services.AddScoped<ISmsJobService, SmsJobService>();
             services.AddScoped<ISmsMessageJobService, SmsMessageJobService>();
-            services.AddScoped<ISmsSendMessageService, SmsSendMessageService>();
             services.AddScoped<ISmsMessageService, SmsMessageService>();
             services.AddScoped<ISmsCampaignService, SmsCampaignService>();
 

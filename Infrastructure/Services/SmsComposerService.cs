@@ -14,14 +14,12 @@ namespace Infrastructure.Services
 {
     public class SmsComposerService : BaseService<SmsComposer>, ISmsComposerService
     {
-        private readonly ISmsSendMessageService _smsSendMessageService;
         private readonly IConfiguration _configuration;
         private readonly AppTenant _tenant;
-        public SmsComposerService(ISmsSendMessageService smsSendMessageService, IConfiguration configuration, ITenant<AppTenant> tenant, IAsyncRepository<SmsComposer> repository, IHttpContextAccessor httpContextAccessor) : base(repository, httpContextAccessor)
+        public SmsComposerService( IConfiguration configuration, ITenant<AppTenant> tenant, IAsyncRepository<SmsComposer> repository, IHttpContextAccessor httpContextAccessor) : base(repository, httpContextAccessor)
         {
             _tenant = tenant?.Value;
             _configuration = configuration;
-            _smsSendMessageService = smsSendMessageService;
         }
 
         public async Task ActionSendSms(SmsComposer entity)
