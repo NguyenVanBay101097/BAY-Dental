@@ -150,7 +150,7 @@ namespace Infrastructure.Services
                 .Select(x => new ReportTotalOutputItem
                 {
                     State = x.Key.State,
-                    StateDisplay = x.Key.State == "sent" ? "Thành công" : "Thất bại",
+                    StateDisplay = x.Key.State == "sent" ? "Thành công" : (x.Key.State == "canceled" ? "Hủy" : (x.Key.State == "error" ? "Thất bại" : "Đang gửi")),
                     Total = x.Count(),
                     Percentage = x.Count() * 100f / query.Count()
                 }).ToListAsync();
@@ -175,7 +175,9 @@ namespace Infrastructure.Services
                 SmsCampaignName = y.First().SmsCampaignId.HasValue ? y.First().SmsCampaign.Name : "",
                 TotalMessages = y.Count(),
                 TotalSuccessfulMessages = y.Count(z => z.State == "sent"),
-                TotalFailedMessages = y.Count(z => z.State != "sent")
+                TotalCancelMessages = y.Count(z => z.State == "canceled"),
+                TotalOutgoingdMessages = y.Count(z => z.State == "outgoing"),
+                TotalErrorMessages = y.Count(z => z.State == "error")
             }).ToList();
 
             var totalItems = itemsOutput.Count();
@@ -196,8 +198,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.SmsAccount.Provider == val.Provider && x.Date.HasValue);
             if (!string.IsNullOrEmpty(val.State))
             {
-                var states = val.State.Split(",");
-                query = query.Where(x => states.Contains(x.State));
+                query = query.Where(x => x.State == val.State);
             }
             if (val.AccountId.HasValue)
                 query = query.Where(x => x.SmsAccountId == val.AccountId.Value);

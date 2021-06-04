@@ -83,15 +83,12 @@
                                 <span>Tổng tin nhắn</span>
                                 <div class="num">{{total_reportTotal}}</div>
                             </div>
-                            <div class="legend-report-total legend-success">
-                                <div class="color"></div>
-                                <span>Gửi thành công</span>
-                                <div class="num">{{success_reportTotal}}</div>
-                            </div>
-                            <div class="legend-report-total legend-fails">
-                                <div class="color"></div>
-                                <span>Gửi thất bại</span>
-                                <div class="num">{{fails_reportTotal}}</div>
+                            <div *ngFor="let item of pieData_reportTotal" class="legend-report-total legend-success">
+                                <div class="color" [ngStyle]="{'background-color': item ? item.color : '#007bff'}">
+                                </div>
+                                <span>{{item.stateDisplay}}</span>
+                                <div class="num" [ngStyle]="{'color': item ? item.color : '#007bff'}">{{item.total}}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -112,15 +109,13 @@
                             </select>
                         </div>
                     </div>
-                    <kendo-chart *ngIf="lineData_reportSupplierFails && lineData_reportSupplierFails.length > 0
-                        || lineData_reportSupplierSuccess && lineData_reportSupplierSuccess.length > 0">
+                    <kendo-chart *ngIf="reportChartLinesAccounts && reportChartLinesAccounts.length > 0">
                         <kendo-chart-legend position="bottom" orientation="horizontal"></kendo-chart-legend>
                         <kendo-chart-tooltip format="{0}%"></kendo-chart-tooltip>
                         <kendo-chart-series>
-                            <ng-container
-                                *ngIf="lineData_reportSupplierSuccess && lineData_reportSupplierSuccess.length > 0">
+                            <ng-container *ngFor="let reportLine of reportChartLinesAccounts; let i = index">
                                 <kendo-chart-series-item type="line" [style]="'smooth'" [dashType]="longDash"
-                                    [data]="lineData_reportSupplierSuccess" field="count" categoryField="month"
+                                    [data]="reportLine[i]" color="#007bff" field="count" categoryField="month"
                                     [name]="name">
                                     <kendo-chart-series-item-tooltip>
                                         <ng-template let-dataItem="dataItem">
@@ -130,11 +125,11 @@
                                     </kendo-chart-series-item-tooltip>
                                 </kendo-chart-series-item>
                             </ng-container>
-                            <ng-container
+                            <!-- <ng-container
                                 *ngIf="lineData_reportSupplierFails && lineData_reportSupplierFails.length > 0">
                                 <kendo-chart-series-item type="line" [style]="'smooth'" [dashType]="longDash"
-                                    [data]="lineData_reportSupplierFails" field="count" categoryField="month"
-                                    [name]="name">
+                                    [data]="lineData_reportSupplierFails" field="count" color="#ff0018"
+                                    categoryField="month" [name]="name">
                                     <kendo-chart-series-item-tooltip>
                                         <ng-template let-dataItem="dataItem">
                                             <span><b>Tổng tin nhắn: {{dataItem.total}}</b></span><br>
@@ -142,10 +137,11 @@
                                         </ng-template>
                                     </kendo-chart-series-item-tooltip>
                                 </kendo-chart-series-item>
-                            </ng-container>
+                            </ng-container> -->
                         </kendo-chart-series>
                     </kendo-chart>
-                    <div class="no-data-report" *ngIf="!lineData_reportSupplierFails && !lineData_reportSupplierSuccess">
+                    <div class="no-data-report"
+                        *ngIf="!reportChartLinesAccounts || reportChartLinesAccounts.length < 0">
                         Không có dữ liệu
                     </div>
                 </div>
