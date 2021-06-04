@@ -1,4 +1,5 @@
-<div class="input-group" ngxDaterangepickerMd (datesUpdated)="onApply($event)" [showClearButton]="true" [(ngModel)]="selected" [opens]="'right'" [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" [ranges]="ranges" [linkedCalendars]="true" [showCancel]="true">
+<div class="input-group" ngxDaterangepickerMd (datesUpdated)="onApply($event)" [showClearButton]="true" [(ngModel)]="selected" [opens]="opens" [drops]="drops" [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" [ranges]="ranges" [linkedCalendars]="true"
+    [showCancel]="true">
     <span *ngIf="selected?.startDate && selected?.endDate" class="form-control custom-input border-right-0">
         {{ selected.startDate | date:'dd/MM/yyyy' }} - {{ selected.endDate| date:'dd/MM/yyyy' }}
     </span>

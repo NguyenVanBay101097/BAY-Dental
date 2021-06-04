@@ -12,6 +12,8 @@ export class DateRangePickerFilterComponent implements OnInit {
   @Input() startDate: any;
   @Input() endDate: any;
   @Output() searchChange = new EventEmitter<any>();
+  @Input() opens: string = 'right';
+  @Input() drops: string = 'auto';
 
   selected: any;
   ranges: any = {
