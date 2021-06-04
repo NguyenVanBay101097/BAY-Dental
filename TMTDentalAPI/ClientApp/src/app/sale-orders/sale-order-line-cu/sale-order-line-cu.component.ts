@@ -52,7 +52,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Input() initialListTeeths: any[] = [];
   toothTypeDict = [
     { name: "Hàm trên", value: "upper_jaw" },
-    { name: "Nguyên Hàm", value: "whole_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
     { name: "Hàm dưới", value: "lower_jaw" },
     { name: "Chọn răng", value: "manual" },
   ];
