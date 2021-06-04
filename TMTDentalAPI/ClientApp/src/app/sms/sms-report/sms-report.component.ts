@@ -100,8 +100,6 @@ export class SmsReportComponent implements OnInit {
       (result: any) => {
         if (result && result.items) {
           this.filteredSmsBrandname = result.items
-          console.log(this.filteredSmsBrandname);
-
         }
       }
     )

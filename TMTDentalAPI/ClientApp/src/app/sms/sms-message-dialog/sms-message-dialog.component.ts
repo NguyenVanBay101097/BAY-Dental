@@ -221,6 +221,7 @@ export class SmsMessageDialogComponent implements OnInit {
     if (!this.template.text) return;
     if ((this.errorSendLimit && !this.noLimit) || this.partnerIds.length == 0) return;
     var val = this.GetValueFormGroup();
+    val.body = this.template ? this.template.text : '';
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.campaign = val.smsCampaign;
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";

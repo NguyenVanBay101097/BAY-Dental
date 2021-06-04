@@ -27,7 +27,7 @@
     <kendo-grid-column field="number" title="Số điện thoại" width="120"></kendo-grid-column>
     <kendo-grid-column title="Thời gian gửi" width="120">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{dataItem.date | date:'HH:mm, dd/MM/yyyy'}}
+            {{dataItem.date | date:'short'}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column title="Brandname" width="120">

@@ -61,6 +61,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     })
     this.loadDataFormApi();
     this.loadSmsTemplate();
+    this.loadDefaultCampaignThanksCustomer();
     this.loadAccount();
     this.smsTemplateCbx.filterChange.asObservable().pipe(
       debounceTime(300),

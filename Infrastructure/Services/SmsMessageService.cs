@@ -332,7 +332,9 @@ namespace Infrastructure.Services
                 var content = template
                     .Replace("{gio_hen}", app.Time.Split(' ').Last())
                     .Replace("{ngay_hen}", app.Date.ToString("dd/MM/yyyy").Split(' ').Last())
-                    .Replace("{bac_si_lich_hen}", app.Doctor != null ? app.Doctor.Name.Split(' ').Last() : "");
+                    .Replace("{bac_si_lich_hen}", app.Doctor != null ? app.Doctor.Name.Split(' ').Last() : "")
+                    .Replace("{ten_khach_hang}", app.Partner != null ? app.Partner.Name.Split(' ').Last() : "")
+                    .Replace("{danh_xung}", app.Partner != null && app.Partner.Title != null ? app.Partner.Title.Name.Split(' ').Last() : "");
 
                 dict.Add(app.Id, content);
             }
