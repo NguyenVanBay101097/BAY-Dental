@@ -34,7 +34,8 @@ namespace ApplicationCore.Entities
         public int? Level { get; set; }
         public int? Sequence { get; set; }
 
-        // ('sum', 'View'),
+        // ('sum', 'View') tổng,
+        //('difference', 'View') hiệu,
         //('account_type', 'Account Type'),
         //('account_account', 'Account Account'),
         public string Type { get; set; }

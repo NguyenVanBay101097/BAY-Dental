@@ -16,14 +16,14 @@ namespace Infrastructure.Services
     {
         public AccountFinancialRevenueReportService(IAsyncRepository<AccountFinancialRevenueReport> repository, IHttpContextAccessor httpContextAccessor) : base(repository, httpContextAccessor)
         {
-           
+
         }
 
         public async Task<IEnumerable<AccountFinancialRevenueReport>> GetChildren(AccountFinancialRevenueReport report)
         {
             var res = new List<AccountFinancialRevenueReport>() { report };
             var children = await SearchQuery(x => x.ParentId == report.Id, orderBy: x => x.OrderBy(s => s.Sequence))
-                .Include(x=> x.FinancialRevenueReportAccountRels)
+                .Include(x => x.FinancialRevenueReportAccountRels)
                 .Include(x => x.FinancialRevenueReportAccountTypeRels).ToListAsync();
             if (children.Count() > 0)
             {
@@ -45,51 +45,42 @@ namespace Infrastructure.Services
             {
                 var account_type_thu = await accountTypeObj.GetDefaultAccountTypeThu();
 
-                var acc_revenues = await accountObj.SearchQuery(x => x.Code == "131").ToListAsync();
+                var acc_revenue = await accountObj.SearchQuery(x => x.Code == "131").FirstOrDefaultAsync();
                 var revenuesRel = new List<AccountFinancialRevenueReportAccountAccountRel>();
-                foreach (var acc in acc_revenues)
+                revenuesRel.Add(new AccountFinancialRevenueReportAccountAccountRel()
                 {
-                    revenuesRel.Add(new AccountFinancialRevenueReportAccountAccountRel()
-                    {
-                        AccountId = acc.Id,
-                    });
-                }
+                    AccountCode = acc_revenue.Code,
+                    Column = 1
+                });
 
-                var acc_advances = await accountObj.SearchQuery(x => x.Code == "KHTU").ToListAsync();
+                var acc_advance = await accountObj.SearchQuery(x => x.Code == "KHTU").FirstOrDefaultAsync();
                 var advanceRel = new List<AccountFinancialRevenueReportAccountAccountRel>();
-                foreach (var acc in acc_advances)
+                advanceRel.Add(new AccountFinancialRevenueReportAccountAccountRel()
                 {
-                    advanceRel.Add(new AccountFinancialRevenueReportAccountAccountRel()
-                    {
-                        AccountId = acc.Id,
-                    });
-                }
+                    AccountCode = acc_advance.Code,
+                    Column = 1
+                });
 
-                var acc_advances2 = await accountObj.SearchQuery(x => x.Code == "KHTU").ToListAsync();
-                var advanceRel2 = new List<AccountFinancialRevenueReportAccountAccountRel>();
-                foreach (var acc in acc_advances2)
+                var advanceRelDebit = new List<AccountFinancialRevenueReportAccountAccountRel>();
+                advanceRelDebit.Add(new AccountFinancialRevenueReportAccountAccountRel()
                 {
-                    advanceRel2.Add(new AccountFinancialRevenueReportAccountAccountRel()
-                    {
-                        AccountId = acc.Id,
-                    });
-                }
+                    AccountCode = acc_advance.Code,
+                    Column = 2
+                });
 
-                var acc_RefSuppliers = await accountObj.SearchQuery(x => x.Code == "331").ToListAsync();
+                var acc_RefSupplier = await accountObj.SearchQuery(x => x.Code == "331").FirstOrDefaultAsync();
                 var refSupplierRel = new List<AccountFinancialRevenueReportAccountAccountRel>();
-                foreach (var acc in acc_RefSuppliers)
+                refSupplierRel.Add(new AccountFinancialRevenueReportAccountAccountRel()
                 {
-                    refSupplierRel.Add(new AccountFinancialRevenueReportAccountAccountRel()
-                    {
-                        AccountId = acc.Id,
-                    });
-                }
+                    AccountCode = acc_RefSupplier.Code,
+                    Column = 1
+                });
 
                 report = new AccountFinancialRevenueReport()
                 {
                     Name = "Báo cáo nguồn thu",
                     Level = 0,
-                    Type = "sum",
+                    Type = "difference",
                     DisplayDetail = "detail_flat",
                     Sequence = 1,
                     Sign = -1,
@@ -147,7 +138,7 @@ namespace Infrastructure.Services
                         },
                              new AccountFinancialRevenueReport()
                         {
-                            Name = "Nhà cung cấp hoàn tiền",
+                            Name = "Thu ngoài",
                             Level = 2,
                             Type = "account_type",
                             DisplayDetail = "detail_with_hierarchy",
@@ -158,6 +149,7 @@ namespace Infrastructure.Services
                                 new AccountFinancialRevenueReportAccountAccountTypeRel()
                                 {
                                     AccountTypeId = account_type_thu.Id,
+                                    Column = 1
                                 },
                             }
                         },
@@ -181,7 +173,7 @@ namespace Infrastructure.Services
                             DisplayDetail = "detail_with_hierarchy",
                             Sequence = 1,
                             Sign = -1,
-                            FinancialRevenueReportAccountRels = advanceRel2
+                            FinancialRevenueReportAccountRels = advanceRelDebit
                         },
                                    new AccountFinancialRevenueReport()
                         {
@@ -212,38 +204,88 @@ namespace Infrastructure.Services
             return report;
         }
 
+        private FinancialRevenueReportItem FinancialRevenueReportRes(AccountFinancialRevenueReport report, IDictionary<Guid, decimal> dict)
+        {
+            var res = new FinancialRevenueReportItem()
+            {
+                Balance = dict[report.Id],
+                Level = report.Level,
+                Name = report.Name,
+                Sequence = report.Sequence,
+                Type = report.Type,
+            };
+            foreach (var child in report.Childs)
+            {
+                var childRes = FinancialRevenueReportRes(child, dict);
+                childRes.ParentId = report.Id;
+                res.Childs.Add(childRes);
+            }
+            return res;
+        }
+
         public async Task<FinancialRevenueReportItem> getRevenueReport(RevenueReportPar val)
         {
             //lấy ra đối tượng revenue record
             var report = await GetRevenueRecord();
             // biến thành list revenue  include accounttype and acocunt account and childs
-            //foreach listRevenue : tính balance
-            // response kết quả 
-            throw new NotImplementedException();
+            var childReports = await GetChildren(report);
+            //foreach listRevenue : tính balance và response kết quả
+            var chilReportBalanceDict = await this._ComputeReportBalance(childReports, val);
+            var res = FinancialRevenueReportRes(report, chilReportBalanceDict);
+            return res;
         }
 
-        public async Task<IDictionary<Guid, ComputeReportBalanceDictValue>> _ComputeReportBalance(IEnumerable<AccountFinancialRevenueReport> reports, RevenueReportPar data)
+        private decimal SumComputeAccountBalanceResColumn(IEnumerable<ComputeAccountBalanceRes> datas, int column)
         {
-            var res = new Dictionary<Guid, ComputeReportBalanceDictValue>();
+            var res = 0.0M;
+            foreach (var data in datas)
+            {
+                switch (column)
+                {
+                    case 1:
+                        res += data.Credit.Value;
+                        break;
+                    case 2:
+                        res += data.Debit.Value;
+                        break;
+                    case 3:
+                        res += data.Balance.Value;
+                        break;
+                    default:
+                        res += 0;
+                        break;
+                }
+            }
+            return res;
+        }
+
+        public async Task<IDictionary<Guid, decimal>> _ComputeReportBalance(IEnumerable<AccountFinancialRevenueReport> reports, RevenueReportPar data)
+        {
+            var res = new Dictionary<Guid, decimal>();
             foreach (var report in reports)
             {
                 if (res.ContainsKey(report.Id))
                     continue;
-                res.Add(report.Id, new ComputeReportBalanceDictValue());
+                res.Add(report.Id, 0);
 
                 if (report.Type == "account_type")
                 {
                     var accountObj = GetService<IAccountAccountService>();
-                    var accountTypeIds = report.FinancialRevenueReportAccountTypeRels.Where(x => x.FinancialReportId == report.Id).Select(x => x.AccountTypeId).ToList();
-                    var spec = new InitialSpecification<AccountAccount>(x => accountTypeIds.Contains(x.UserTypeId) && !x.IsExcludedProfitAndLossReport);
-                    var accounts = await accountObj.SearchQuery(spec.AsExpression()).ToListAsync();
-                    res[report.Id].Account = await ComputeAccountBalance(accounts, data);
-
-                    foreach (var value in res[report.Id].Account.Values)
+                    foreach (var accTypeRel in report.FinancialRevenueReportAccountTypeRels)
                     {
-                        res[report.Id].Debit += value.Debit;
-                        res[report.Id].Credit += value.Credit;
-                        res[report.Id].Balance += value.Balance;
+                        var accounts = await accountObj.SearchQuery(x => accTypeRel.AccountTypeId == x.UserTypeId && !x.IsExcludedProfitAndLossReport).ToListAsync();
+                        var valueDict = await ComputeAccountBalance(accounts, data);
+                        res[report.Id] += SumComputeAccountBalanceResColumn(valueDict.Values, accTypeRel.Column);
+                    }
+                }
+                else if (report.Type == "account_account")
+                {
+                    var accountObj = GetService<IAccountAccountService>();
+                    foreach (var accAccRel in report.FinancialRevenueReportAccountRels)
+                    {
+                        var accounts = await accountObj.SearchQuery(x => x.Code == accAccRel.AccountCode && !x.IsExcludedProfitAndLossReport).ToListAsync();
+                        var valueDict = await ComputeAccountBalance(accounts, data);
+                        res[report.Id] += SumComputeAccountBalanceResColumn(valueDict.Values, accAccRel.Column);
                     }
                 }
                 else if (report.Type == "sum")
@@ -252,12 +294,20 @@ namespace Infrastructure.Services
                     var res2 = await _ComputeReportBalance(report.Childs, data);
                     foreach (var item in res2.Values)
                     {
-                        foreach (var value in item.Account.Values)
-                        {
-                            res[report.Id].Debit += value.Debit;
-                            res[report.Id].Credit += value.Credit;
-                            res[report.Id].Balance += value.Balance;
-                        }
+                        res[report.Id] += item;
+                    }
+                }
+                else if (report.Type == "difference")
+                {
+                    //it's the difference of the children of this account.report
+                    var res2 = await _ComputeReportBalance(report.Childs, data);
+                    var valueArr = res2.Values.ToList();
+                    for (int i = 0; i < valueArr.Count; i++)
+                    {
+                        if (i == 0)
+                            res[report.Id] += valueArr[i];
+                        else
+                            res[report.Id] -= valueArr[i];
                     }
                 }
             }

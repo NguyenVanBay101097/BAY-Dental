@@ -51,24 +51,36 @@ namespace Infrastructure.Data.Migrations
                 name: "AccountFinancialRevenueReportAccountAccountRels",
                 columns: table => new
                 {
-                    AccountId = table.Column<Guid>(nullable: false),
-                    FinancialReportId = table.Column<Guid>(nullable: false)
+                    Id = table.Column<Guid>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    WriteById = table.Column<string>(nullable: true),
+                    DateCreated = table.Column<DateTime>(nullable: true),
+                    LastUpdated = table.Column<DateTime>(nullable: true),
+                    AccountCode = table.Column<string>(nullable: true),
+                    FinancialRevenueReportId = table.Column<Guid>(nullable: false),
+                    Column = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AccountFinancialRevenueReportAccountAccountRels", x => new { x.AccountId, x.FinancialReportId });
+                    table.PrimaryKey("PK_AccountFinancialRevenueReportAccountAccountRels", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AccountFinancialRevenueReportAccountAccountRels_AccountAccounts_AccountId",
-                        column: x => x.AccountId,
-                        principalTable: "AccountAccounts",
+                        name: "FK_AccountFinancialRevenueReportAccountAccountRels_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AccountFinancialRevenueReportAccountAccountRels_AccountFinancialRevenueReports_AccountId",
-                        column: x => x.AccountId,
+                        name: "FK_AccountFinancialRevenueReportAccountAccountRels_AccountFinancialRevenueReports_FinancialRevenueReportId",
+                        column: x => x.FinancialRevenueReportId,
                         principalTable: "AccountFinancialRevenueReports",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AccountFinancialRevenueReportAccountAccountRels_AspNetUsers_WriteById",
+                        column: x => x.WriteById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -76,12 +88,12 @@ namespace Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     AccountTypeId = table.Column<Guid>(nullable: false),
-                    FinancialReportId = table.Column<Guid>(nullable: false),
+                    FinancialRevenueReportId = table.Column<Guid>(nullable: false),
                     Column = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AccountFinancialRevenueReportAccountAccountTypeRels", x => new { x.AccountTypeId, x.FinancialReportId });
+                    table.PrimaryKey("PK_AccountFinancialRevenueReportAccountAccountTypeRels", x => new { x.AccountTypeId, x.FinancialRevenueReportId });
                     table.ForeignKey(
                         name: "FK_AccountFinancialRevenueReportAccountAccountTypeRels_AccountAccountTypes_AccountTypeId",
                         column: x => x.AccountTypeId,
@@ -89,17 +101,32 @@ namespace Infrastructure.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AccountFinancialRevenueReportAccountAccountTypeRels_AccountFinancialRevenueReports_FinancialReportId",
-                        column: x => x.FinancialReportId,
+                        name: "FK_AccountFinancialRevenueReportAccountAccountTypeRels_AccountFinancialRevenueReports_FinancialRevenueReportId",
+                        column: x => x.FinancialRevenueReportId,
                         principalTable: "AccountFinancialRevenueReports",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AccountFinancialRevenueReportAccountAccountTypeRels_FinancialReportId",
+                name: "IX_AccountFinancialRevenueReportAccountAccountRels_CreatedById",
+                table: "AccountFinancialRevenueReportAccountAccountRels",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AccountFinancialRevenueReportAccountAccountRels_FinancialRevenueReportId",
+                table: "AccountFinancialRevenueReportAccountAccountRels",
+                column: "FinancialRevenueReportId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AccountFinancialRevenueReportAccountAccountRels_WriteById",
+                table: "AccountFinancialRevenueReportAccountAccountRels",
+                column: "WriteById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AccountFinancialRevenueReportAccountAccountTypeRels_FinancialRevenueReportId",
                 table: "AccountFinancialRevenueReportAccountAccountTypeRels",
-                column: "FinancialReportId");
+                column: "FinancialRevenueReportId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AccountFinancialRevenueReports_CreatedById",

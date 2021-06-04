@@ -239,13 +239,38 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.AccountFinancialRevenueReportAccountAccountRel", b =>
                 {
-                    b.Property<Guid>("AccountId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FinancialReportId")
+                    b.Property<string>("AccountCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Column")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FinancialRevenueReportId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("AccountId", "FinancialReportId");
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("FinancialRevenueReportId");
+
+                    b.HasIndex("WriteById");
 
                     b.ToTable("AccountFinancialRevenueReportAccountAccountRels");
                 });
@@ -255,15 +280,15 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("AccountTypeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FinancialReportId")
+                    b.Property<Guid>("FinancialRevenueReportId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Column")
                         .HasColumnType("int");
 
-                    b.HasKey("AccountTypeId", "FinancialReportId");
+                    b.HasKey("AccountTypeId", "FinancialRevenueReportId");
 
-                    b.HasIndex("FinancialReportId");
+                    b.HasIndex("FinancialRevenueReportId");
 
                     b.ToTable("AccountFinancialRevenueReportAccountAccountTypeRels");
                 });
@@ -10981,17 +11006,19 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.AccountFinancialRevenueReportAccountAccountRel", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.AccountAccount", "Account")
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatedById");
 
                     b.HasOne("ApplicationCore.Entities.AccountFinancialRevenueReport", "FinancialRevenueReport")
                         .WithMany("FinancialRevenueReportAccountRels")
-                        .HasForeignKey("AccountId")
+                        .HasForeignKey("FinancialRevenueReportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.AccountFinancialRevenueReportAccountAccountTypeRel", b =>
@@ -11004,7 +11031,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("ApplicationCore.Entities.AccountFinancialRevenueReport", "FinancialRevenueReport")
                         .WithMany("FinancialRevenueReportAccountTypeRels")
-                        .HasForeignKey("FinancialReportId")
+                        .HasForeignKey("FinancialRevenueReportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

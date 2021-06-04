@@ -5,17 +5,14 @@
                 BÁO CÁO TỔNG QUAN
             </div>
             <div class="header-filter">
-                <kendo-combobox (valueChange)="changeCompany()" class="form-control" [data]="filteredCompanies"
-                    [textField]="'name'" [filterable]="true" #companyCbx formControlName="company" [valueField]="'id'"
-                    [placeholder]="'Tất cả chi nhánh'">
+                <kendo-combobox (valueChange)="changeCompany($event)" class="form-control" [data]="filteredCompanies" [textField]="'name'" [filterable]="true" #companyCbx formControlName="company" [valueField]="'id'" [placeholder]="'Tất cả chi nhánh'">
                 </kendo-combobox>
             </div>
         </div>
         <div class="row">
             <div class="col-8 pt-3">
                 <div class="border border-secondary rounded bg-white">
-                    <app-sale-dashboard-report-chart-flow-year
-                        [companyId]="formGroup.get('company') && formGroup.get('company').value ? formGroup.get('company').value.id : ''">
+                    <app-sale-dashboard-report-chart-flow-year [companyId]="formGroup.get('company') && formGroup.get('company').value ? formGroup.get('company').value.id : ''">
                     </app-sale-dashboard-report-chart-flow-year>
                 </div>
             </div>
@@ -99,16 +96,14 @@
             <div class="header-filter">
                 <div class="float-right">
                     <b class="mr-2">Thời gian</b>
-                    <kendo-datepicker (valueChange)="changeMonth()" [format]="'MM-yyyy'" formControlName="month"
-                        [bottomView]="'year'"></kendo-datepicker>
+                    <kendo-datepicker (valueChange)="changeMonth()" [format]="'MM-yyyy'" formControlName="month" [bottomView]="'year'"></kendo-datepicker>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-12 pt-3">
                 <div class="border border-secondary rounded">
-                    <app-sale-dashboard-report-chart-flow-month [dateTo]="dateTo" [dateFrom]="dateFrom"
-                        [companyId]="formGroup.get('company') && formGroup.get('company').value ? formGroup.get('company').value.id : ''">
+                    <app-sale-dashboard-report-chart-flow-month [dateTo]="dateTo" [dateFrom]="dateFrom" [companyId]="formGroup.get('company') && formGroup.get('company').value ? formGroup.get('company').value.id : ''">
                     </app-sale-dashboard-report-chart-flow-month>
                 </div>
             </div>
@@ -141,8 +136,7 @@
                                 <div class="text-top font-weight-bold">THỰC THU</div>
                                 <div class="text-bottom font-weight-bold text-success">
                                     {{(totalThu ? totalThu : 0) | number}}</div>
-                                <a (click)="redirectTo('thu-report')" style="bottom: -20px;"
-                                    class="position-absolute btn text-info">Chi tiết
+                                <a (click)="redirectTo('thu-report')" style="bottom: -20px;" class="position-absolute btn text-info">Chi tiết
                                     >></a>
                             </div>
                         </div>
@@ -150,8 +144,7 @@
                             <div class="text-top font-weight-bold">THỰC CHI</div>
                             <div class="text-bottom font-weight-bold text-danger">
                                 {{(totalChi ? totalChi : 0) | number}}</div>
-                            <a (click)="redirectTo('chi-report')" style="bottom: -20px;"
-                                class="position-absolute btn text-info">Chi tiết
+                            <a (click)="redirectTo('chi-report')" style="bottom: -20px;" class="position-absolute btn text-info">Chi tiết
                                 >></a>
                         </div>
                     </div>
@@ -189,6 +182,11 @@
                     <a (click)="redirectTo('hoa-hong-report')" class="position-absolute btn text-info">Chi tiết >></a>
                 </div>
 
+            </div>
+
+            <!-- báo cáo nguồn thu -->
+            <div class="col-12 mt-3">
+                <app-financial-revenue-report [companyChangeSubject]="companyChangeSubject"></app-financial-revenue-report>
             </div>
         </div>
     </div>

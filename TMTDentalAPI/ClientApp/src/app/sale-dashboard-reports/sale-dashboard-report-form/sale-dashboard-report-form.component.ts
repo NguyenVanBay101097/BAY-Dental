@@ -5,7 +5,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { values } from 'lodash';
-import { forkJoin, observable, Observable } from 'rxjs';
+import { forkJoin, observable, Observable, Subject } from 'rxjs';
 import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { AccountCommonPartnerReportSearch, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { AccountFinancialReportBasic, AccountFinancialReportService } from 'src/app/account-financial-report/account-financial-report.service';
@@ -69,6 +69,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
 
   currentYear = new Date().getFullYear();
   oldYear = this.currentYear - 1;
+  companyChangeSubject = new Subject();
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -121,9 +122,10 @@ export class SaleDashboardReportFormComponent implements OnInit {
     this.loadCommissionSettlementReport();
   }
 
-  changeCompany() {
+  changeCompany(e) {
     this.companyId = this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
     this.loadAllData();
+    this.companyChangeSubject.next(e);
   }
 
   loadCompany() {

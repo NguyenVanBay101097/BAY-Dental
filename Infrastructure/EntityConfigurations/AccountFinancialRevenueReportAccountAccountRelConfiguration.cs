@@ -8,16 +8,17 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<AccountFinancialRevenueReportAccountAccountRel> builder)
         {
-            builder.HasKey(x => new { x.AccountId, x.FinancialReportId });
-
-            builder.HasOne(x => x.Account)
-                 .WithMany()
-                 .HasForeignKey(x => x.AccountId);
-
             builder.HasOne(x => x.FinancialRevenueReport)
                 .WithMany(x => x.FinancialRevenueReportAccountRels)
-                .HasForeignKey(x => x.AccountId);
+                .HasForeignKey(x => x.FinancialRevenueReportId);
 
+            builder.HasOne(x => x.CreatedBy)
+            .WithMany()
+            .HasForeignKey(x => x.CreatedById);
+
+            builder.HasOne(x => x.WriteBy)
+                .WithMany()
+                .HasForeignKey(x => x.WriteById);
         }
     }
 }

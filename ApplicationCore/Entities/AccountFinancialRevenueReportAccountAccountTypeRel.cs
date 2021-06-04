@@ -9,7 +9,7 @@ namespace ApplicationCore.Entities
         public Guid AccountTypeId { get; set; }
         public AccountAccountType AccountType { get; set; }
 
-        public Guid FinancialReportId { get; set; }
+        public Guid FinancialRevenueReportId { get; set; }
         public AccountFinancialRevenueReport FinancialRevenueReport { get; set; }
         /// <summary>
         /// cột sẽ được response from acount move line
