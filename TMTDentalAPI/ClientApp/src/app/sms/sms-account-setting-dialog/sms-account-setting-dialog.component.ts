@@ -27,10 +27,10 @@ export class SmsAccountSettingDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       provider: [this.switchBrand, Validators.required],
       brandName: ['', Validators.required],
-      clientId: ['', Validators.required],
-      clientSecret: ['', Validators.required],
-      userName: ['', Validators.required],
-      password: ['', Validators.required],
+      clientId: '',
+      clientSecret: '',
+      userName: '',
+      password: '',
       apiKey: ['', Validators.required],
       secretkey: ['', Validators.required],
     });

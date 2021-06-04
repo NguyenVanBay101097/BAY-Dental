@@ -32,7 +32,13 @@ namespace Infrastructure.HangfireJobService
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var smsMessageDetailService = new SmsMessageDetailService(null, null, null, context, null);
+                var smsMessageService = new SmsMessageService(context, null, null,
+                            new EfRepository<SaleOrderLine>(context),
+                            new EfRepository<SaleOrder>(context),
+                            new EfRepository<SmsMessage>(context),
+                            new EfRepository<Partner>(context),
+                            new EfRepository<SmsMessageDetail>(context),
+                            new EfRepository<Appointment>(context));
                 var now = DateTime.Now;
                 var query = context.SmsMessages.Where(
                     x => x.TypeSend == "automatic" &&
@@ -46,17 +52,7 @@ namespace Infrastructure.HangfireJobService
                 var partnerIds = new List<Guid>();
                 foreach (var item in smsMessages)
                 {
-                    if (item.SmsMessagePartnerRels.Any() && item.ResModel == "partner")
-                    {
-                        partnerIds = item.SmsMessagePartnerRels.Select(x => x.PartnerId).ToList();
-                    }
-                    else if (item.SmsMessageSaleOrderRels.Any() && item.ResModel == "sale-order")
-                    {
-                        partnerIds = item.SmsMessageSaleOrderRels.Select(x => x.SaleOrder.PartnerId).ToList();
-                    }
-
-                    if (partnerIds.Any())
-                        await smsMessageDetailService.CreateSmsMessageDetailV2(item, companyId);
+                    await smsMessageService.ActionSend(item);
 
                 }
                 transaction.Commit();

@@ -27,6 +27,9 @@ namespace Infrastructure.Services
         private readonly IAsyncRepository<SmsMessage> _messageRepository;
         private readonly IAsyncRepository<SmsMessageDetail> _messageDetailRepository;
         private readonly IAsyncRepository<Appointment> _appointmentRepository;
+        private readonly IAsyncRepository<SaleOrderLine> _saleLineRepository;
+        private readonly IAsyncRepository<SaleOrder> _saleOrderRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly string SpecialCharactors = "@,_,{,},[,],|,~,\\,\\,$";
         private readonly string BacklistString = "khuyen mai,uu dai,tang,chiet khau,co hoi nhan ngay,co hoi boc tham,rut tham,trung thuong,giam***%,sale***upto,mua* tang*,giamgia,giam d," +
@@ -34,6 +37,9 @@ namespace Infrastructure.Services
 
         public SmsMessageService(CatalogDbContext context,
             IMapper mapper,
+            IHttpContextAccessor httpContextAccessor,
+            IAsyncRepository<SaleOrderLine> saleLineRepository,
+             IAsyncRepository<SaleOrder> saleOrderRepository,
             IAsyncRepository<SmsMessage> repository,
             IAsyncRepository<Partner> partnerRepository,
             IAsyncRepository<SmsMessageDetail> messageDetailRepository,
@@ -41,7 +47,10 @@ namespace Infrastructure.Services
         {
             _mapper = mapper;
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
             _messageRepository = repository;
+            _saleOrderRepository = saleOrderRepository;
+            _saleLineRepository = saleLineRepository;
             _partnerRepository = partnerRepository;
             _messageDetailRepository = messageDetailRepository;
             _appointmentRepository = appointmentRepository;
@@ -49,20 +58,20 @@ namespace Infrastructure.Services
 
         private IQueryable<SmsMessage> GetQueryable(SmsMessagePaged val)
         {
-            //var query = _messageRepository.SearchQuery(x => x.CompanyId == CompanyId);
-            //if (!string.IsNullOrEmpty(val.Search))
-            //    query = query.Where(x => x.Name.Contains(val.Search));
-            //if (!string.IsNullOrEmpty(val.State))
-            //    query = query.Where(x => x.State == val.State);
-            //if (val.CampaignId.HasValue)
-            //    query = query.Where(x => x.SmsCampaignId.Value == val.CampaignId.Value);
-            //if (val.SmsAccountId.HasValue)
-            //    query = query.Where(x => x.SmsAccountId.HasValue && x.SmsAccountId == val.SmsAccountId.Value);
-            //if (val.DateFrom.HasValue)
-            //    query = query.Where(x => x.DateCreated.HasValue && val.DateFrom.Value <= x.Date.Value);
-            //if (val.DateTo.HasValue)
-            //    query = query.Where(x => x.DateCreated.HasValue && val.DateTo.Value >= x.Date.Value);
-            //return query;
+            var query = _messageRepository.SearchQuery(x => x.CompanyId == CompanyId);
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State == val.State);
+            if (val.CampaignId.HasValue)
+                query = query.Where(x => x.SmsCampaignId.Value == val.CampaignId.Value);
+            if (val.SmsAccountId.HasValue)
+                query = query.Where(x => x.SmsAccountId.HasValue && x.SmsAccountId == val.SmsAccountId.Value);
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateCreated.HasValue && val.DateFrom.Value <= x.Date.Value);
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.DateCreated.HasValue && val.DateTo.Value >= x.Date.Value);
+            return query;
             return null;
         }
 
@@ -88,7 +97,7 @@ namespace Infrastructure.Services
         public async Task<SmsMessageDisplay> CreateAsync(SmsMessageSave val)
         {
             var entity = _mapper.Map<SmsMessage>(val);
-            //entity.CompanyId = CompanyId;
+            entity.CompanyId = CompanyId;
             if (entity.TypeSend == "manual")
                 entity.State = "sending";
             else
@@ -159,27 +168,6 @@ namespace Infrastructure.Services
             return _mapper.Map<SmsMessageDisplay>(entity);
         }
 
-        public async Task ActionSendSMSMessage(SmsMessage entity)
-        {
-            await ActionSend(entity);
-            //var smsMessageDetailObj = GetService<ISmsMessageDetailService>();
-            //var hostName = _tenant != null ? _tenant.Hostname : "localhost";
-            //await using var context = DbContextHelper.GetCatalogDbContext(hostName, _configuration);
-            //try
-            //{
-            //    var companyId = CompanyId;
-
-            //    await smsMessageDetailObj.CreateSmsMessageDetailV2(entity, companyId);
-
-            //    entity.State = "success";
-            //    await UpdateAsync(entity);
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new Exception(ex.Message);
-            //}
-        }
-
         private IDictionary<string, string> ESmsErrorCode
         {
             get
@@ -209,14 +197,33 @@ namespace Infrastructure.Services
 
                 dict = XuLyNoiDungLichHen(self.Body, (IEnumerable<Appointment>)objs);
             }
-            else if (self.ResModel == "saleorderline")
+            else if (self.ResModel == "sale-order-line")
             {
+                _context.Entry(self).Collection(s => s.SmsMessageSaleOrderLineRels).Load();
+                var saleLinesIds = self.SmsMessageSaleOrderLineRels.Select(x => x.SaleOrderLineId).ToList();
+                objs = await _saleLineRepository.SearchQuery(x => saleLinesIds.Contains(x.Id))
+                    .Include(x => x.OrderPartner).ThenInclude(x => x.Title)
+                    .ToListAsync();
+
+                dict = XuLyNoiDungChiTietDieuTri(self.Body, (IEnumerable<SaleOrderLine>)objs);
             }
             else if (self.ResModel == "partner")
             {
+                _context.Entry(self).Collection(s => s.SmsMessagePartnerRels).Load();
+                var partnerIds = self.SmsMessagePartnerRels.Select(x => x.PartnerId).ToList();
+                objs = await _partnerRepository.SearchQuery(x => partnerIds.Contains(x.Id))
+                    .Include(x => x.Title)
+                    .ToListAsync();
+                dict = XuLyNoiDungKhachHang(self.Body, (IEnumerable<Partner>)objs);
             }
             else if (self.ResModel == "sale-order")
             {
+                _context.Entry(self).Collection(s => s.SmsMessageSaleOrderRels).Load();
+                var saleOrderIds = self.SmsMessageSaleOrderRels.Select(x => x.SaleOrderId).ToList();
+                objs = await _saleOrderRepository.SearchQuery(x => saleOrderIds.Contains(x.Id))
+                    .Include(x => x.Partner).Select(x => x.Partner)
+                    .ToListAsync();
+                dict = XuLyNoiDungKhachHang(self.Body, (IEnumerable<Partner>)objs);
             }
             else
                 throw new Exception("not support");
@@ -231,6 +238,7 @@ namespace Infrastructure.Services
                     Body = dict[itemId],
                     CompanyId = self.CompanyId,
                     PartnerId = partner.Id,
+                    Date = DateTime.Now,
                     Number = partner.Phone,
                     SmsAccountId = self.SmsAccountId.Value,
                     SmsMessageId = self.Id,
@@ -241,6 +249,7 @@ namespace Infrastructure.Services
 
             await _messageDetailRepository.InsertAsync(details);
 
+            _context.Entry(self).Reference(s => s.SmsAccount).Load();
             var account = self.SmsAccount;
             var senderService = new ESmsSenderService(account.BrandName, account.ApiKey, account.Secretkey);
             var backlists = BacklistString.Split(",");
@@ -275,6 +284,9 @@ namespace Infrastructure.Services
                 }
             }
 
+            self.State = "success";
+
+            await _messageRepository.UpdateAsync(self);
             await _messageDetailRepository.UpdateAsync(details);
         }
 
@@ -320,69 +332,30 @@ namespace Infrastructure.Services
             return dict;
         }
 
-        public async Task SendSMSDetails(List<SmsMessageDetail> details)
+        public IDictionary<Guid, string> XuLyNoiDungChiTietDieuTri(string template, IEnumerable<SaleOrderLine> lines)
         {
-            //var account = await _context.SmsAccounts.Where(x => x.Id == accountId).FirstOrDefaultAsync();
-            //if (account.Provider == "fpt")
-            //{
-            //    var modelToken = await FptGetAccessToken(account);
-            //    var requestFpt = new List<FPTSendSMSRequestModel>();
-            //    foreach (var line in lines)
-            //    {
-            //        var fpt = new FPTSendSMSRequestModel();
-            //        fpt.Phone = line.Partner.Phone;
-            //        fpt.access_token = modelToken.access_token;
-            //        fpt.BrandName = account.BrandName;
-            //        fpt.Message = line.Body;
-            //        fpt.session_id = "789dC48b88e54f58ece5939f14a";
-            //        requestFpt.Add(fpt);
-            //    }
-            //    var responses = await FptSendSMS(requestFpt);
-            //    if (responses != null && responses.Any())
-            //    {
-            //        foreach (var res in responses)
-            //        {
-            //            if (res.SmsId.HasValue)
-            //            {
-            //                //dict.Add(res.SmsId.Value, res);
-            //            }
-            //        }
-            //    }
-            //}
-            //else if (account.Provider == "esms")
-            //{
-            //    foreach (var line in lines)
-            //    {
-            //        var esms = new ESMSSendMessageRequestModel();
-            //        esms.Phone = line.Number;
-            //        esms.ApiKey = account.ApiKey;
-            //        esms.SecretKey = account.Secretkey;
-            //        esms.Brandname = account.BrandName;
-            //        esms.Content = line.Body;
-            //        esms.SmsType = "2";
-            //        esms.IsUnicode = 1;
-            //        var res = await ESmsSendSMS(esms);
-            //        if (res != null)
-            //        {
-            //            line.ErrorCode = res.CodeResult;
-            //            line.State = res.Message;
-            //        }
-            //        _context.Entry(line).State = EntityState.Modified;
-            //    }
-            //    await _context.SaveChangesAsync();
-            //}
+            var dict = new Dictionary<Guid, string>();
+            foreach (var line in lines)
+            {
+                var content = template
+                    .Replace("{bac_si}", line != null && line.Employee != null ? line.Employee.Name : "")
+                    .Replace("{so_phieu_dieu_tri}", line != null && line.Order != null ? line.Order.Name : "")
+                    .Replace("{dich_vu}", line != null ? line.Name : "")
+                    .Replace("{ten_khach_hang}", line.OrderPartner != null ? line.OrderPartner.Name.Split(' ').Last() : "")
+                    .Replace("{danh_xung}", line.OrderPartner != null && line.OrderPartner.Title != null ? line.OrderPartner.Title.Name.Split(' ').Last() : "");
+                dict.Add(line.Id, content);
+            }
 
+            return dict;
         }
 
-
-        public IDictionary<Guid, string> XuLyNoiDung(string template, IEnumerable<Partner> partners)
+        public IDictionary<Guid, string> XuLyNoiDungKhachHang(string template, IEnumerable<Partner> partners)
         {
             var dict = new Dictionary<Guid, string>();
             foreach (var partner in partners)
             {
                 var content = template
                 .Replace("{ten_khach_hang}", partner.Name.Split(' ').Last())
-                .Replace("{ho_ten_khach_hang}", partner.DisplayName.Split(' ').Last())
                 .Replace("{ngay_sinh}", partner.GetDateOfBirth().Split(' ').Last())
                 .Replace("{danh_xung}", partner.Title != null ? partner.Title.Name.Split(' ').Last() : "");
 
@@ -392,50 +365,66 @@ namespace Infrastructure.Services
             return dict;
         }
 
-
         public async Task ActionCancel(IEnumerable<Guid> messIds)
         {
-            //var messes = await SearchQuery(x => messIds.Contains(x.Id) && x.CompanyId == CompanyId).ToListAsync();
-            //if (messes.Any())
-            //{
-            //    await DeleteAsync(messes);
-            //}
+            var messes = await SearchQuery().Where(x => messIds.Contains(x.Id) && x.CompanyId == CompanyId).ToListAsync();
+            if (messes.Any())
+            {
+                await _messageRepository.DeleteAsync(messes);
+            }
         }
 
         public async Task SetupSendSmsOrderAutomatic(Guid orderId)
         {
-            //var configObj = GetService<ISmsConfigService>();
-            //var saleOrderObj = GetService<ISaleOrderService>();
-            //var saleOrder = await saleOrderObj.SearchQuery(x => x.Id == orderId).FirstOrDefaultAsync();
-            //var config = await configObj.SearchQuery(x => x.Type == "sale-order").FirstOrDefaultAsync();
-            //if (config != null && config.IsThanksCustomerAutomation && saleOrder.State == "done" && saleOrder.DateDone.HasValue)
-            //{
-            //    var entity = new SmsMessage();
-            //    var smsCampaignObj = GetService<ISmsCampaignService>();
-            //    var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
-            //    entity.SmsCampaignId = campaign.Id;
-            //    entity.ResModel = "sale-order";
-            //    entity.Body = config.Body;
-            //    entity.Date = config.TypeTimeBeforSend == "hour" ? saleOrder.DateDone.Value.AddHours(config.TimeBeforSend) : saleOrder.DateDone.Value.AddDays(config.TimeBeforSend);
-            //    entity.SmsAccountId = config.SmsAccountId;
-            //    entity.SmsTemplateId = config.TemplateId;
-            //    entity.State = "waiting";
-            //    entity.TypeSend = "automatic";
-            //    entity.Name = $"Tin nhắn cảm ơn khách hàng ngày {DateTime.Now.ToString("dd-MM-yyyy HH:mm")}";
-            //    entity.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
-            //    {
-            //        SaleOrderId = saleOrder.Id
-            //    });
-            //    entity.CompanyId = CompanyId;
+            var configObj = GetService<ISmsConfigService>();
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var saleOrder = await saleOrderObj.SearchQuery(x => x.Id == orderId).FirstOrDefaultAsync();
+            var config = await configObj.SearchQuery(x => x.Type == "sale-order").FirstOrDefaultAsync();
+            if (config != null && config.IsThanksCustomerAutomation && saleOrder.State == "done" && saleOrder.DateDone.HasValue)
+            {
+                var entity = new SmsMessage();
+                var smsCampaignObj = GetService<ISmsCampaignService>();
+                var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
+                entity.SmsCampaignId = campaign.Id;
+                entity.ResModel = "sale-order";
+                entity.Body = config.Body;
+                entity.Date = config.TypeTimeBeforSend == "hour" ? saleOrder.DateDone.Value.AddHours(config.TimeBeforSend) : saleOrder.DateDone.Value.AddDays(config.TimeBeforSend);
+                entity.SmsAccountId = config.SmsAccountId;
+                entity.SmsTemplateId = config.TemplateId;
+                entity.CompanyId = config.CompanyId;
+                entity.State = "waiting";
+                entity.TypeSend = "automatic";
+                entity.Name = $"Tin nhắn cảm ơn khách hàng ngày {DateTime.Now.ToString("dd-MM-yyyy HH:mm")}";
+                entity.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
+                {
+                    SaleOrderId = saleOrder.Id
+                });
+                entity.CompanyId = CompanyId;
 
-            //    await CreateAsync(entity);
-            //}
+                await _messageRepository.InsertAsync(entity);
+            }
 
         }
 
         public IQueryable<SmsMessage> SearchQuery()
         {
             return _messageRepository.SearchQuery();
+        }
+
+        protected T GetService<T>()
+        {
+            return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
+        }
+
+        protected Guid CompanyId
+        {
+            get
+            {
+                if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+                    return Guid.Empty;
+                var claim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "company_id");
+                return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
+            }
         }
     }
 }

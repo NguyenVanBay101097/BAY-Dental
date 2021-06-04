@@ -33,6 +33,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   skip: number = 0;
   id: string;
   limit: number = 20;
+  campaign: any;
   type: string;
   filteredTemplate: any[];
   filter: string = 'productCategory';
@@ -60,7 +61,8 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     private smsAccountService: SmsAccountService,
     private productCategoryService: ProductCategoryService,
     private productService: ProductService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private smsCampaignService: SmsCampaignService
   ) { }
 
   ngOnInit() {
@@ -80,9 +82,12 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     })
     if (this.id) {
       this.loadDataFormApi();
+    } else {
+      this.loadDefaultCampaignCareAfterOrder();
     }
     this.loadSmsTemplate();
     this.loadAccount();
+
     this.smsTemplateCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.smsTemplateCbx.loading = true)),
@@ -106,6 +111,15 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
 
   }
 
+  loadDefaultCampaignCareAfterOrder() {
+    this.smsCampaignService.getDefaultCareAfterOrder().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
+      })
+  }
+
   loadDataFormApi() {
     this.smsConfigService.getDisplay(this.id).subscribe(
       (res: any) => {
@@ -120,7 +134,10 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
           }
           this.formGroup.patchValue(res);
           if (res.body) {
-            this.template = JSON.parse(res.body);
+            this.template = {
+              text: res.body,
+              templateType: 'text'
+            }
           }
           if (res.dateSend) {
             this.formGroup.get('dateTimeSend').patchValue(new Date(res.dateSend))
@@ -195,7 +212,8 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     val.dateSend = this.intlService.formatDate(val.dateTimeSend, "yyyy-MM-ddTHH:mm");
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.templateId = val.template ? val.template.id : null;
-    val.body = this.template ? JSON.stringify(this.template) : '';
+    val.body = this.template ? this.template.text : '';
+    val.campaignId = this.campaign ? this.campaign.id : null;
     val.productIds = val.products ? val.products.map(x => x.id) : [];
     val.productCategoryIds = val.productCategories ? val.productCategories.map(x => x.id) : [];
     if (this.id) {
@@ -251,13 +269,13 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       this.filter = filter;
       this.formGroup.get('products').patchValue(null);
       this.formGroup.get('productCategories').patchValue(null);
-      if(filter == 'product') {
+      if (filter == 'product') {
         this.f.productCategories.clearValidators();
         this.f.productCategories.updateValueAndValidity();
         this.f.products.setValidators(Validators.required);
         this.f.products.updateValueAndValidity();
       }
-      else if(filter == 'productCategory') {
+      else if (filter == 'productCategory') {
         this.f.products.clearValidators();
         this.f.products.updateValueAndValidity();
         this.f.productCategories.setValidators(Validators.required);

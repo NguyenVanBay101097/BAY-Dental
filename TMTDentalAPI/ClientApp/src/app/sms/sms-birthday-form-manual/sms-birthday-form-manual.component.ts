@@ -54,7 +54,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
 
     this.loadDataFromApi();
     setTimeout(() => {
-      this.loadDefaultCampaignThanksCustomer();
+      this.loadDefaultCampaignBirthday();
     }, 1000);
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -95,7 +95,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  loadDefaultCampaignThanksCustomer() {
+  loadDefaultCampaignBirthday() {
     this.smsCampaignService.getDefaultCampaignBirthday().subscribe(
       result => {
         if (result) {

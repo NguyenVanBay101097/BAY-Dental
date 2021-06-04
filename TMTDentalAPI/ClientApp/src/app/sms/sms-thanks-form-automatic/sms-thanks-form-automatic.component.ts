@@ -27,10 +27,10 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   filteredTemplate: any[];
   textareaLimit: number = 200;
   template: any =
-  {
-    text: '',
-    templateType: 'text'
-  };
+    {
+      text: '',
+      templateType: 'text'
+    };
   isTemplateCopy = false;
   today: Date = new Date;
   timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
@@ -96,7 +96,10 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
           this.id = res.id;
           this.formGroup.patchValue(res);
           if (res.body) {
-            this.template = JSON.parse(res.body);
+            this.template = {
+              text: res.body,
+              templateType: 'text'
+            }
           }
           if (res.dateSend) {
             this.formGroup.get('dateTimeSend').patchValue(new Date(res.dateSend))
@@ -160,7 +163,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     val.dateSend = this.intlService.formatDate(val.dateTimeSend, "yyyy-MM-ddTHH:mm");
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.templateId = val.template ? val.template.id : null;
-    val.body = this.template ? JSON.stringify(this.template) : '';
+    val.body = this.template ? this.template.text : '';
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(
         res => {

@@ -28,6 +28,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Body { get; set; }
 
+        public Guid? CampaignId { get; set; }
+
         public IEnumerable<Guid> ProductIds { get; set; } = new List<Guid>();
         public IEnumerable<Guid> ProductCategoryIds { get; set; } = new List<Guid>();
     }
@@ -64,6 +66,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? SmsAccountId { get; set; }
         public SmsAccountBasic SmsAccount { get; set; }
 
+        public Guid? SmsCampaignId { get; set; }
+        public SmsCampaignSimple SmsCampaign { get; set; }
+
         public DateTime? DateSend { get; set; }
         public int TimeBeforSend { get; set; }
         public string TypeTimeBeforSend { get; set; }
@@ -89,6 +94,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? SmsAccountId { get; set; }
         public SmsAccountBasic SmsAccount { get; set; }
+
+        public Guid? SmsCampaignId { get; set; }
+        public SmsCampaignSimple SmsCampaign { get; set; }
+
 
         public DateTime? DateSend { get; set; }
         public int TimeBeforSend { get; set; }

@@ -41,7 +41,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "SMS.Message.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var res = await _smsMessageService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var res = await _smsMessageService.SearchQuery().Where(x => x.Id == id).FirstOrDefaultAsync();
             return Ok(_mapper.Map<SmsMessageDisplay>(res));
         }
 
@@ -65,7 +65,7 @@ namespace TMTDentalAPI.Controllers
             var entity = await _smsMessageService.SearchQuery().Where(x => x.Id == id).FirstOrDefaultAsync();
             if (entity == null) return NotFound();
             await _unitOfWorkAsync.BeginTransactionAsync();
-            await _smsMessageService.ActionSendSMSMessage(entity);
+            await _smsMessageService.ActionSend(entity);
             _unitOfWorkAsync.Commit();
             return NoContent();
         }
@@ -91,7 +91,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-       
+
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "SMS.Message.Update")]

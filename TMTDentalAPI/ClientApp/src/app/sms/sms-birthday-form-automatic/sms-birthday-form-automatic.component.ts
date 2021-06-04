@@ -7,6 +7,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { validator } from 'fast-json-patch';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
+import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
@@ -30,6 +31,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   type: string;
   filteredTemplate: any[];
   textareaLimit: number = 200;
+  campaign: any;
   isTemplateCopy = false;
   template: any = {
     text: '',
@@ -45,7 +47,8 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     private smsConfigService: SmsConfigService,
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private smsCampaignService: SmsCampaignService
   ) { }
 
   ngOnInit() {
@@ -60,6 +63,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     })
     this.loadDataFormApi();
     this.loadSmsTemplate();
+    this.loadDefaultCampaignBirthday();
     this.loadAccount();
     this.smsTemplateCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -80,6 +84,16 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     });
   }
 
+  loadDefaultCampaignBirthday() {
+    this.smsCampaignService.getDefaultCampaignBirthday().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
+      })
+  }
+
+
   loadDataFormApi() {
     var type = "partner"
     this.smsConfigService.get(type).subscribe(
@@ -88,7 +102,10 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
           this.id = res.id;
           this.formGroup.patchValue(res);
           if (res.body) {
-            this.template = JSON.parse(res.body);
+            this.template = {
+              text: res.body,
+              templateType: 'text'
+            }
           }
           if (res.dateSend) {
             this.formGroup.get('dateTimeSend').patchValue(new Date(res.dateSend))
@@ -162,7 +179,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     val.dateSend = this.intlService.formatDate(val.dateTimeSend, "yyyy-MM-ddTHH:mm");
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.templateId = val.template ? val.template.id : null;
-    val.body = this.template ? JSON.stringify(this.template) : '';
+    val.body = this.template ? this.template.text : '';
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(
         res => {

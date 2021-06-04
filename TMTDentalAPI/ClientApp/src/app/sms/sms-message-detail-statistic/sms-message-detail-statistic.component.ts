@@ -87,7 +87,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
       if (res.data) {
         this.listMessageDetails = res.data;
         console.log(res.data);
-        
+
       }
     }, err => {
       console.log(err);
@@ -97,21 +97,15 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
 
   stranslateCodeResponse(code) {
     switch (code) {
-      case "100":
+      case "":
         return "Gửi thành công";
-      case "99":
-        return "Lỗi không xác định , thử lại sau";
-      case "101":
-        return "Đăng nhập thất bại (api key hoặc secrect key không đúng)";
-      case "102":
-        return "Tài khoản đã bị khóa";
-      case "103":
-        return "Số dư tài khoản không đủ dể gửi tin";
-      case "104":
-        return "Brandname không tồn tại hoặc đã bị hủy";
-      case "118":
-        return "Loại tin nhắn không hợp lệ";
-      case "199":
+      case "sms_server":
+        return "Lỗi hệ thống đối tác";
+      case "sms_acc":
+        return "Lỗi tài khoản của bạn";
+      case "sms_credit":
+        return "Số dư không đủ";
+      case "sms_blacklist":
         return "Tin nhắn chứa các ký tự đặc biệt";
       default:
         return "Lý do khác";
