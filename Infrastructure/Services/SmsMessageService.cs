@@ -204,6 +204,8 @@ namespace Infrastructure.Services
                 var saleLinesIds = self.SmsMessageSaleOrderLineRels.Select(x => x.SaleOrderLineId).ToList();
                 objs = await _saleLineRepository.SearchQuery(x => saleLinesIds.Contains(x.Id))
                     .Include(x => x.OrderPartner).ThenInclude(x => x.Title)
+                    .Include(x=>x.Order)
+                    .Include(x=>x.Employee)
                     .ToListAsync();
 
                 dict = XuLyNoiDungChiTietDieuTri(self.Body, (IEnumerable<SaleOrderLine>)objs);

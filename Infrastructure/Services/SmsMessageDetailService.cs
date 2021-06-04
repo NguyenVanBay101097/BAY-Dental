@@ -217,7 +217,7 @@ namespace Infrastructure.Services
                     Year = x.Key.Year,
                     Count = x.Count(),
                     Total = total
-                }).ToListAsync();
+                }).OrderBy(x=>x.Month).ToListAsync();
             return items;
         }
 
