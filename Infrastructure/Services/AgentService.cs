@@ -102,11 +102,11 @@ namespace Infrastructure.Services
             var sign = -1;
 
             ///group by chi hoa hồng cho người giới thiêu
-            var commAgent_dict = movelines.Where(x => x.PhieuThuChiId.HasValue && agents.Select(x => x.Id).Contains(x.PhieuThuChi.AgentId.Value))
-                .Select(x => x.PhieuThuChi).GroupBy(x => x.Agent.PartnerId).Select(x => new
+            var commAgent_dict = movelines.Where(x => x.AccountId == accountCommAgent.Id && x.PhieuThuChiId.HasValue && agents.Select(x => x.Id).Contains(x.PhieuThuChi.AgentId.Value))
+                .GroupBy(x => x.PhieuThuChi.Agent.PartnerId).Select(x => new
                 {
                     Id = x.Key,
-                    Amount = x.Sum(s => s.Amount)
+                    Amount = x.Sum(s => s.PhieuThuChi.Amount)
                 }).ToDictionary(x => x.Id, x => x.Amount);
 
             ///group by doanh thu người giới thiêu
