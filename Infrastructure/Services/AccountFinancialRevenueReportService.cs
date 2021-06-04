@@ -38,43 +38,11 @@ namespace Infrastructure.Services
         public async Task<AccountFinancialRevenueReport> GetRevenueRecord()
         {
             var irModelDataObj = GetService<IIRModelDataService>();
-            var accountObj = GetService<IAccountAccountService>();
             var accountTypeObj = GetService<IAccountAccountTypeService>();
             var report = await irModelDataObj.GetRef<AccountFinancialRevenueReport>("report.CreditRevenueReport");
             if (report == null)
             {
                 var account_type_thu = await accountTypeObj.GetDefaultAccountTypeThu();
-
-                var acc_revenue = await accountObj.SearchQuery(x => x.Code == "131").FirstOrDefaultAsync();
-                var revenuesRel = new List<AccountFinancialRevenueReportAccountAccountRel>();
-                revenuesRel.Add(new AccountFinancialRevenueReportAccountAccountRel()
-                {
-                    AccountCode = acc_revenue.Code,
-                    Column = 1
-                });
-
-                var acc_advance = await accountObj.SearchQuery(x => x.Code == "KHTU").FirstOrDefaultAsync();
-                var advanceRel = new List<AccountFinancialRevenueReportAccountAccountRel>();
-                advanceRel.Add(new AccountFinancialRevenueReportAccountAccountRel()
-                {
-                    AccountCode = acc_advance.Code,
-                    Column = 1
-                });
-
-                var advanceRelDebit = new List<AccountFinancialRevenueReportAccountAccountRel>();
-                advanceRelDebit.Add(new AccountFinancialRevenueReportAccountAccountRel()
-                {
-                    AccountCode = acc_advance.Code,
-                    Column = 2
-                });
-
-                var acc_RefSupplier = await accountObj.SearchQuery(x => x.Code == "331").FirstOrDefaultAsync();
-                var refSupplierRel = new List<AccountFinancialRevenueReportAccountAccountRel>();
-                refSupplierRel.Add(new AccountFinancialRevenueReportAccountAccountRel()
-                {
-                    AccountCode = acc_RefSupplier.Code,
-                    Column = 1
-                });
 
                 report = new AccountFinancialRevenueReport()
                 {
@@ -104,7 +72,14 @@ namespace Infrastructure.Services
                             DisplayDetail = "detail_with_hierarchy",
                             Sequence = 1,
                             Sign = -1,
-                            FinancialRevenueReportAccountRels = revenuesRel
+                            FinancialRevenueReportAccountRels = new List<AccountFinancialRevenueReportAccountAccountRel>()
+                                {
+                                     new AccountFinancialRevenueReportAccountAccountRel()
+                                     {
+                                        AccountCode = "131",
+                                         Column = 1
+                                      }
+                                 }
                         },
                         new AccountFinancialRevenueReport()
                         {
@@ -114,7 +89,13 @@ namespace Infrastructure.Services
                             DisplayDetail = "detail_with_hierarchy",
                             Sequence = 2,
                             Sign = -1,
-                            FinancialRevenueReportAccountRels = advanceRel
+                            FinancialRevenueReportAccountRels = new List<AccountFinancialRevenueReportAccountAccountRel>() {
+                                           new AccountFinancialRevenueReportAccountAccountRel()
+                                           {
+                                               AccountCode = "KHTU",
+                                               Column = 1
+                                           }
+                                           }
                         },
                          new AccountFinancialRevenueReport()
                         {
@@ -124,7 +105,7 @@ namespace Infrastructure.Services
                             DisplayDetail = "detail_with_hierarchy",
                             Sequence = 3,
                             Sign = -1,
-                            //FinancialRevenueReportAccountAccountRels = chờ
+                            //FinancialRevenueReportAccountAccountRels = chờ column cộng
                         },
                           new AccountFinancialRevenueReport()
                         {
@@ -134,8 +115,13 @@ namespace Infrastructure.Services
                             DisplayDetail = "detail_with_hierarchy",
                             Sequence = 4,
                             Sign = -1,
-                            FinancialRevenueReportAccountRels = refSupplierRel
-                        },
+                            FinancialRevenueReportAccountRels = new List<AccountFinancialRevenueReportAccountAccountRel>(){
+                                                    new AccountFinancialRevenueReportAccountAccountRel()
+                                                {
+                                                    AccountCode = "331",
+                                                    Column = 1
+                                                } }
+                         },
                              new AccountFinancialRevenueReport()
                         {
                             Name = "Thu ngoài",
@@ -173,7 +159,13 @@ namespace Infrastructure.Services
                             DisplayDetail = "detail_with_hierarchy",
                             Sequence = 1,
                             Sign = -1,
-                            FinancialRevenueReportAccountRels = advanceRelDebit
+                            FinancialRevenueReportAccountRels =  new List<AccountFinancialRevenueReportAccountAccountRel>() {
+                                           new AccountFinancialRevenueReportAccountAccountRel()
+                                           {
+                                               AccountCode = "KHTU",
+                                               Column = 2
+                                           }
+                                           }
                         },
                                    new AccountFinancialRevenueReport()
                         {
@@ -183,7 +175,7 @@ namespace Infrastructure.Services
                             DisplayDetail = "detail_with_hierarchy",
                             Sequence = 2,
                             Sign = -1,
-                            //FinancialRevenueReportAccountAccountRels = chờ
+                            //FinancialRevenueReportAccountAccountRels = chờ column trừ
                         }
                             }
                         }
