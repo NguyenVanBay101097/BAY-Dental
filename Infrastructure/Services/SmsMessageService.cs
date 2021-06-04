@@ -256,6 +256,7 @@ namespace Infrastructure.Services
             await ActionSendSmsMessageDetail(details, account);
 
             self.State = "success";
+            self.Date = DateTime.Now;
             await _messageRepository.UpdateAsync(self);
 
         }
@@ -422,6 +423,22 @@ namespace Infrastructure.Services
         protected T GetService<T>()
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
+        }
+
+        public async Task UpdateAsync(SmsMessage entity)
+        {
+            await _messageRepository.UpdateAsync(entity);
+        }
+
+        public async Task DeleteAsync(SmsMessage entity)
+        {
+            await _messageRepository.DeleteAsync(entity);
+        }
+
+        public async Task<SmsMessage> GetByIdAsync(Guid id)
+        {
+            var entity = await _messageRepository.GetByIdAsync(id);
+            return entity;
         }
 
         protected Guid CompanyId

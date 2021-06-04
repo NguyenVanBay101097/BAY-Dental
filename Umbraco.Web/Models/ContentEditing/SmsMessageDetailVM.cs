@@ -46,6 +46,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string BrandName { get; set; }
         public string State { get; set; }
         public DateTime? DateCreated { get; set; }
+        public DateTime? Date { get; set; }
         public string ErrorCode { get; set; }
         public string SmsCampaignName { get; set; }
         public string SmsMessageName { get; set; }
@@ -111,7 +112,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ReportSupplierChart
     {
+        public string Color { get; set; }
         public int Month { get; set; }
+        public string StateName { get; set; }
         public int Year { get; set; }
         public int Count { get; set; }
         public int Total { get; set; }

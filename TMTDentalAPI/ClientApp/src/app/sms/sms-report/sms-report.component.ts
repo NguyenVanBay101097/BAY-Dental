@@ -228,6 +228,8 @@ export class SmsReportComponent implements OnInit {
     var requestOutgoing = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: 'outgoing' });
     forkJoin(requestSent, requestError, requestCancel, requestOutgoing).subscribe((results: any[]) => {
       this.reportChartLinesAccounts = results ? results : [];
+      console.log(this.reportChartLinesAccounts);
+      
     })
   }
 

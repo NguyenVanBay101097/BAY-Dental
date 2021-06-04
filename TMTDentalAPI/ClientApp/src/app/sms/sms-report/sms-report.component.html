@@ -113,31 +113,18 @@
                         <kendo-chart-legend position="bottom" orientation="horizontal"></kendo-chart-legend>
                         <kendo-chart-tooltip format="{0}%"></kendo-chart-tooltip>
                         <kendo-chart-series>
-                            <ng-container *ngFor="let reportLine of reportChartLinesAccounts; let i = index">
+                            <ng-container *ngFor="let reportLine of reportChartLinesAccounts;">
                                 <kendo-chart-series-item type="line" [style]="'smooth'" [dashType]="longDash"
-                                    [data]="reportLine[i]" color="#007bff" field="count" categoryField="month"
-                                    [name]="name">
+                                    [data]="reportLine" [color]="color" field="count" categoryField="month"
+                                    [name]="stateName">
                                     <kendo-chart-series-item-tooltip>
                                         <ng-template let-dataItem="dataItem">
                                             <span><b>Tổng tin nhắn: {{dataItem.total}}</b></span><br>
-                                            <span><b>Gửi thành công: {{dataItem.count}}</b></span>
+                                            <span><b>{{dataItem.stateName}}: {{dataItem.count}}</b></span>
                                         </ng-template>
                                     </kendo-chart-series-item-tooltip>
                                 </kendo-chart-series-item>
                             </ng-container>
-                            <!-- <ng-container
-                                *ngIf="lineData_reportSupplierFails && lineData_reportSupplierFails.length > 0">
-                                <kendo-chart-series-item type="line" [style]="'smooth'" [dashType]="longDash"
-                                    [data]="lineData_reportSupplierFails" field="count" color="#ff0018"
-                                    categoryField="month" [name]="name">
-                                    <kendo-chart-series-item-tooltip>
-                                        <ng-template let-dataItem="dataItem">
-                                            <span><b>Tổng tin nhắn: {{dataItem.total}}</b></span><br>
-                                            <span><b>Gửi thất bại: {{dataItem.count}}</b></span>
-                                        </ng-template>
-                                    </kendo-chart-series-item-tooltip>
-                                </kendo-chart-series-item>
-                            </ng-container> -->
                         </kendo-chart-series>
                     </kendo-chart>
                     <div class="no-data-report"
@@ -165,7 +152,9 @@
                 <kendo-grid-column field="smsCampaignName" title="Chiến dịch"></kendo-grid-column>
                 <kendo-grid-column field="totalMessages" title="Tổng tin nhắn"></kendo-grid-column>
                 <kendo-grid-column field="totalSuccessfulMessages" title="Thành công"></kendo-grid-column>
-                <kendo-grid-column field="totalFailedMessages" title="Thất bại"></kendo-grid-column>
+                <kendo-grid-column field="totalCancelMessages" title="Hủy"></kendo-grid-column>
+                <kendo-grid-column field="totalOutgoingdMessages" title="Đang gửi"></kendo-grid-column>
+                <kendo-grid-column field="totalErrorMessages" title="Thất bại"></kendo-grid-column>
             </kendo-grid>
         </div>
     </div>

@@ -84,6 +84,7 @@ namespace Infrastructure.Services
                 DateCreated = x.DateCreated,
                 ErrorCode = x.ErrorCode,
                 Number = x.Number,
+                Date = x.Date,
                 PartnerName = x.Partner.DisplayName,
                 SmsCampaignName = x.SmsCampaignId.HasValue ? x.SmsCampaign.Name : "",
                 SmsMessageName = x.SmsMessageId.HasValue ? x.SmsMessage.Name : "",
@@ -210,6 +211,8 @@ namespace Infrastructure.Services
                     Year = x.Date.Value.Year
                 }).Select(x => new ReportSupplierChart
                 {
+                    StateName = val.State == "sent" ? "Thành công" : (val.State == "canceled" ? "Hủy" : (val.State == "error" ? "Thất bại" : "Đang gửi")),
+                    Color = val.State == "sent" ? "#007bff" : (val.State == "canceled" ? "#ff0000" : (val.State == "error" ? "#ffab00" : "#020202")),
                     Month = x.Key.Month,
                     Year = x.Key.Year,
                     Count = x.Count(),

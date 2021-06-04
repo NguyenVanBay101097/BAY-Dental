@@ -97,21 +97,21 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "SMS.Message.Update")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsAccountSave val)
         {
-            //var entity = await _smsMessageService.GetByIdAsync(id);
-            //if (!ModelState.IsValid || entity == null) return BadRequest();
-            //entity = _mapper.Map(val, entity);
-            //entity.CompanyId = CompanyId;
-            //await _smsMessageService.UpdateAsync(entity);
-            //var res = _mapper.Map<SmsMessageDisplay>(entity);
-            return Ok();
+            var entity = await _smsMessageService.SearchQuery().Where(x=>x.Id ==id).FirstOrDefaultAsync();
+            if (!ModelState.IsValid || entity == null) return BadRequest();
+            entity = _mapper.Map(val, entity);
+            entity.CompanyId = CompanyId;
+            await _smsMessageService.UpdateAsync(entity);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        //[CheckAccess(Actions = "SMS.Campaign.Read")]
+        [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            //var entity = await _smsMessageService.GetByIdAsync(id);
-            //if (entity == null) return NotFound();
+            var entity = await _smsMessageService.GetByIdAsync(id);
+            if (entity == null) return NotFound();
+            await _smsMessageService.DeleteAsync(entity);
             return NoContent();
         }
     }

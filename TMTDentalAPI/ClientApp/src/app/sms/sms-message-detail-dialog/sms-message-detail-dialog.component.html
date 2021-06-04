@@ -33,7 +33,7 @@
             </kendo-grid-column>
             <kendo-grid-column title="Thời gian gửi">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.dateCreated | date:'HH:mm, dd/MM/yyyy'}}
+                    {{dataItem.date | date:'HH:mm, dd/MM/yyyy'}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="brandName" title="Brandname">
@@ -47,8 +47,10 @@
             </kendo-grid-column>
             <kendo-grid-column title="Trạng thái">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    <span *ngIf="dataItem.state=='success'" class="text-success" >Thành công</span>
-                    <span *ngIf="dataItem.state=='fails'" class="text-danger">Thất bại</span>
+                    <span *ngIf="dataItem.state=='outgoing'">Đang gửi</span>
+                    <span *ngIf="dataItem.state=='canceled'">Hủy</span>
+                    <span *ngIf="dataItem.state=='error'">Thất bại</span>
+                    <span *ngIf="dataItem.state=='sent'">Thành công</span>
                 </ng-template>
             </kendo-grid-column>
         </kendo-grid>
