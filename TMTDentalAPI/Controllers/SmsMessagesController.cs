@@ -37,13 +37,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        //[HttpGet("{id}")]
-        //[CheckAccess(Actions = "SMS.Message.Read")]
-        //public async Task<IActionResult> Get(Guid id)
-        //{
-        //    var res = await _smsMessageService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-        //    return Ok(_mapper.Map<SmsMessageDisplay>(res));
-        //}
+        [HttpGet("{id}")]
+        [CheckAccess(Actions = "SMS.Message.Read")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var res = await _smsMessageService.SearchQuery().Where(x => x.Id == id).FirstOrDefaultAsync();
+            return Ok(_mapper.Map<SmsMessageDisplay>(res));
+        }
 
 
 
@@ -65,7 +65,7 @@ namespace TMTDentalAPI.Controllers
             var entity = await _smsMessageService.SearchQuery().Where(x => x.Id == id).FirstOrDefaultAsync();
             if (entity == null) return NotFound();
             await _unitOfWorkAsync.BeginTransactionAsync();
-            await _smsMessageService.ActionSendSMSMessage(entity);
+            await _smsMessageService.ActionSend(entity);
             _unitOfWorkAsync.Commit();
             return NoContent();
         }
@@ -91,27 +91,27 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-       
+
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "SMS.Message.Update")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsAccountSave val)
         {
-            //var entity = await _smsMessageService.GetByIdAsync(id);
-            //if (!ModelState.IsValid || entity == null) return BadRequest();
-            //entity = _mapper.Map(val, entity);
-            //entity.CompanyId = CompanyId;
-            //await _smsMessageService.UpdateAsync(entity);
-            //var res = _mapper.Map<SmsMessageDisplay>(entity);
-            return Ok();
+            var entity = await _smsMessageService.SearchQuery().Where(x=>x.Id ==id).FirstOrDefaultAsync();
+            if (!ModelState.IsValid || entity == null) return BadRequest();
+            entity = _mapper.Map(val, entity);
+            entity.CompanyId = CompanyId;
+            await _smsMessageService.UpdateAsync(entity);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        //[CheckAccess(Actions = "SMS.Campaign.Read")]
+        [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            //var entity = await _smsMessageService.GetByIdAsync(id);
-            //if (entity == null) return NotFound();
+            var entity = await _smsMessageService.GetByIdAsync(id);
+            if (entity == null) return NotFound();
+            await _smsMessageService.DeleteAsync(entity);
             return NoContent();
         }
     }

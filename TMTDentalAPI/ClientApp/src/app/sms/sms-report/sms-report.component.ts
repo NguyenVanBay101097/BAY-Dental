@@ -26,10 +26,13 @@ export class SmsReportComponent implements OnInit {
   filteredSmsSupplier: any[] = [];
   smsBrandname_reportTotal;
   smsCampaign_reportTotal;
+  reportChartLinesAccounts: any[] = [];
   pieData_reportTotal: any[] = [];
   total_reportTotal;
   success_reportTotal;
-  fails_reportTotal;
+  error_reportTotal;
+  cancel_reportTotal;
+  outgoing_reportTotal;
   lineData_reportSupplierSuccess: any[] = [];
   lineData_reportSupplierFails: any[] = [];
   loadingReportCampaign = false;
@@ -100,8 +103,6 @@ export class SmsReportComponent implements OnInit {
       (result: any) => {
         if (result && result.items) {
           this.filteredSmsBrandname = result.items
-          console.log(this.filteredSmsBrandname);
-
         }
       }
     )
@@ -148,12 +149,26 @@ export class SmsReportComponent implements OnInit {
     this.smsMessageDetailService.getReportTotal(reportTotalInput).subscribe(
       (result: any) => {
         this.pieData_reportTotal = result;
-        this.pieData_reportTotal = this.pieData_reportTotal.map(x => ({ ...x, color: (x.state == "success" ? "DeepSkyBlue" : "DarkSlateGrey") }))
-        const success = this.pieData_reportTotal.find(x => x.state == "success");
-        const fails = this.pieData_reportTotal.find(x => x.state == "fails");
+        this.pieData_reportTotal = this.pieData_reportTotal.map(x => (
+          {
+            ...x,
+            color: (
+              x.state == "sent" ? "#007bff" : (x.state == "canceled" ? "#ff0000" : (x.state == "error" ? "#ffab00" : "#020202"))
+            )
+          })
+        )
+
+        const success = this.pieData_reportTotal.find(x => x.state == "sent");
+        const error = this.pieData_reportTotal.find(x => x.state == "error");
+        const canceled = this.pieData_reportTotal.find(x => x.state == "canceled");
+        const outgoing = this.pieData_reportTotal.find(x => x.state == "outgoing");
         this.success_reportTotal = success ? success.total : 0;
-        this.fails_reportTotal = fails ? fails.total : 0;
-        this.total_reportTotal = this.success_reportTotal + this.fails_reportTotal;
+        this.error_reportTotal = error ? error.total : 0;
+        this.cancel_reportTotal = canceled ? canceled.total : 0;
+        this.outgoing_reportTotal = outgoing ? outgoing.total : 0;
+        this.total_reportTotal = this.success_reportTotal + this.error_reportTotal + this.cancel_reportTotal + this.outgoing_reportTotal;
+        console.log(this.pieData_reportTotal);
+
       }, (error) => {
         console.log(error);
 
@@ -205,11 +220,14 @@ export class SmsReportComponent implements OnInit {
   }
 
   getReportSumarySupplier() {
-    var requestSuccess = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: "success" });
-    var requestFails = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: "fails" });
-    forkJoin(requestSuccess, requestFails).subscribe((result: any) => {
-      this.lineData_reportSupplierSuccess = result[0] || [];
-      this.lineData_reportSupplierFails = result[1] || [];
+    var requestSent = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: 'sent' });
+    var requestError = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: 'error' });
+    var requestCancel = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: 'canceled' });
+    var requestOutgoing = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: 'outgoing' });
+    forkJoin(requestSent, requestError, requestCancel, requestOutgoing).subscribe((results: any[]) => {
+      this.reportChartLinesAccounts = results ? results : [];
+      console.log(this.reportChartLinesAccounts);
+      
     })
   }
 

@@ -67,6 +67,7 @@ namespace Infrastructure.Services
         {
             var entity = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Template)
+                .Include(x => x.SmsCampaign)
                 .Include(x => x.SmsAccount)
                 .Include(x => x.SmsConfigProductCategoryRels).ThenInclude(x => x.ProductCategory)
                 .Include(x => x.SmsConfigProductRels).ThenInclude(x => x.Product)
@@ -85,8 +86,7 @@ namespace Infrastructure.Services
             {
                 if (model.IsAppointmentAutomation)
                 {
-                    //RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunAppointmentAutomatic(hostName, model.Id), $"*/30 * * * *", TimeZoneInfo.Local);
-                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunAppointmentAutomatic(hostName, model.Id), $"*/3 * * * *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunAppointmentAutomatic(hostName, model.Id), $"*/30 * * * *", TimeZoneInfo.Local);
                 }
                 else
                 {

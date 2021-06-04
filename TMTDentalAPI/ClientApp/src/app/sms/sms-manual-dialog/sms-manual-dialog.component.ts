@@ -175,7 +175,8 @@ export class SmsManualDialogComponent implements OnInit {
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
     val.date = this.intlService.formatDate(new Date(), "yyyy-MM-ddTHH:mm");
     val.GuidIds = this.ids;
-    val.body = JSON.stringify(this.template);
+    // val.body = JSON.stringify(this.template);
+    val.body = this.template ? this.template.text : '';
     val.isBirthDayManual = this.isBirthDayManual;
     val.isAppointmentReminder = this.isAppointmentReminder;
     val.isThanksCustomer = this.isThanksCustomer;

@@ -4,6 +4,11 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
+    public class SmsCampaignSimple
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
     public class SmsCampaignBasic
     {
         public Guid Id { get; set; }
@@ -12,7 +17,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateEnd { get; set; }
         public int TotalMessage { get; set; }
         public int TotalSuccessfulMessages { get; set; }
-        public int TotalFailedMessages { get; set; }
+        public int TotalCancelMessages { get; set; }
+        public int TotalErrorMessages { get; set; }
+        public int TotaOutgoingMessages { get; set; }
         public int TotalWaitedMessages { get; set; }
         public DateTime? DateStart { get; set; }
         public string TypeDate { get; set; }

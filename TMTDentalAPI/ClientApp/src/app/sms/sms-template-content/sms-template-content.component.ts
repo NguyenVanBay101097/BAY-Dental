@@ -30,14 +30,6 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
       { name: 'Ngày hẹn', value: '{ngay_hen}' },
       { name: 'Bác sĩ', value: '{bac_si_lich_hen}' }
     ],
-    // "template": [
-    //   { name: 'Danh xưng', value: '{danh_xung}' },
-    //   { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
-    //   { name: 'Ngày sinh', value: '{ngay_sinh}' },
-    //   { name: 'Giờ hẹn', value: '{gio_hen}' },
-    //   { name: 'Ngày hẹn', value: '{ngay_hen}' },
-    //   { name: 'Bác sĩ', value: '{bac_si}' }
-    // ], 
     "saleOrderLine": [
       { name: 'Danh xưng', value: '{danh_xung}' },
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },

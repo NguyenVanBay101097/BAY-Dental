@@ -69,6 +69,7 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _smsConfigService.SearchQuery(x => x.CompanyId == CompanyId && x.Type == type)
                 .Include(x => x.Template)
+                .Include(x => x.SmsCampaign)
                 .Include(x => x.SmsAccount)
                 .FirstOrDefaultAsync();
             return Ok(_mapper.Map<SmsConfigBasic>(res));

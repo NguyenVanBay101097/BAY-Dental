@@ -49,8 +49,10 @@ namespace Infrastructure.HangfireJobService
                         .ToListAsync();
                     if (listAppointments.Any())
                     {
-                        var smsSendMessageService = new SmsMessageDetailService(null, null, null, context, null);
-                        var smsMessageService = new SmsMessageService(context, null, new EfRepository<SmsMessage>(context),
+                        var smsMessageService = new SmsMessageService(context, null, null,
+                            new EfRepository<SaleOrderLine>(context),
+                            new EfRepository<SaleOrder>(context),
+                            new EfRepository<SmsMessage>(context),
                             new EfRepository<Partner>(context),
                             new EfRepository<SmsMessageDetail>(context),
                             new EfRepository<Appointment>(context));
@@ -79,13 +81,6 @@ namespace Infrastructure.HangfireJobService
                         }
                         context.SmsMessageAppointmentRels.AddRange(smsMessage.SmsMessageAppointmentRels);
                         await context.SaveChangesAsync();
-                        smsMessage = await context.SmsMessages.Where(x => x.Id == smsMessage.Id)
-                            .Include(x => x.SmsMessageAppointmentRels)
-                            .Include(x => x.SmsAccount).FirstOrDefaultAsync();
-
-
-
-                        //await smsSendMessageService.CreateSmsMessageDetailV2(smsMessage, (Guid)config.CompanyId);
 
                         await smsMessageService.ActionSend(smsMessage);
 
@@ -121,10 +116,17 @@ namespace Infrastructure.HangfireJobService
                 ).ToListAsync();
                 if (partners.Any())
                 {
-                    var smsSendMessageService = new SmsMessageDetailService(null, null, null, context, null);
+                    var smsMessageService = new SmsMessageService(context, null, null,
+                            new EfRepository<SaleOrderLine>(context),
+                            new EfRepository<SaleOrder>(context),
+                            new EfRepository<SmsMessage>(context),
+                            new EfRepository<Partner>(context),
+                            new EfRepository<SmsMessageDetail>(context),
+                            new EfRepository<Appointment>(context));
                     var smsMessage = new SmsMessage();
                     smsMessage.SmsAccountId = config.SmsAccountId;
                     smsMessage.SmsCampaignId = config.SmsCampaignId;
+                    smsMessage.CompanyId = config.CompanyId;
                     smsMessage.Id = GuidComb.GenerateComb();
                     smsMessage.Name = $"Chúc mừng sinh nhật ngày {DateTime.Today.ToString("dd-MM-yyyy")}";
                     smsMessage.SmsTemplateId = config.TemplateId;
@@ -146,10 +148,9 @@ namespace Infrastructure.HangfireJobService
                     }
                     context.SmsMessagePartnerRels.AddRange(smsMessage.SmsMessagePartnerRels);
                     await context.SaveChangesAsync();
-                    smsMessage = await context.SmsMessages.Where(x => x.Id == smsMessage.Id)
-                            .Include(x => x.SmsMessagePartnerRels)
-                            .Include(x => x.SmsAccount).FirstOrDefaultAsync();
-                    await smsSendMessageService.CreateSmsMessageDetailV2(smsMessage, (Guid)config.CompanyId);
+
+                    await smsMessageService.ActionSend(smsMessage);
+
                     await context.SaveChangesAsync();
                     transaction.Commit();
                 }
@@ -194,10 +195,17 @@ namespace Infrastructure.HangfireJobService
                      ).ToListAsync();
                     if (lines.Any())
                     {
-                        var smsSendMessageService = new SmsMessageDetailService(null, null, null, context, null);
+                        var smsMessageService = new SmsMessageService(context, null, null,
+                             new EfRepository<SaleOrderLine>(context),
+                             new EfRepository<SaleOrder>(context),
+                             new EfRepository<SmsMessage>(context),
+                             new EfRepository<Partner>(context),
+                             new EfRepository<SmsMessageDetail>(context),
+                             new EfRepository<Appointment>(context));
                         var smsMessage = new SmsMessage();
                         smsMessage.SmsAccountId = config.SmsAccountId;
                         smsMessage.SmsCampaignId = config.SmsCampaignId;
+                        smsMessage.CompanyId = config.CompanyId;
                         smsMessage.Id = GuidComb.GenerateComb();
                         smsMessage.Name = $"Gửi tin nhắn  chăm sóc sau điều trị dịch vụ ngày {DateTime.Today.ToString("dd-MM-yyyy")}";
                         smsMessage.SmsTemplateId = config.TemplateId;
@@ -219,11 +227,8 @@ namespace Infrastructure.HangfireJobService
                         }
                         context.SmsMessageSaleOrderLineRels.AddRange(smsMessage.SmsMessageSaleOrderLineRels);
                         await context.SaveChangesAsync();
-                        smsMessage = await context.SmsMessages.Where(x => x.Id == smsMessage.Id)
-                            .Include(x => x.SmsAccount)
-                            .Include(x => x.SmsMessageSaleOrderLineRels).ThenInclude(x => x.SaleOrderLine)
-                            .FirstOrDefaultAsync();
-                        await smsSendMessageService.CreateSmsMessageDetailV2(smsMessage, (Guid)config.CompanyId);
+                      
+                        await smsMessageService.ActionSend(smsMessage);
                     }
                     transaction.Commit();
                 }
