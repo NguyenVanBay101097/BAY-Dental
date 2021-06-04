@@ -27,7 +27,6 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   type: string;
   filteredTemplate: any[];
   textareaLimit: number = 200;
-  campaign: any;
   template: any =
     {
       text: '',
@@ -37,7 +36,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   today: Date = new Date;
   timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
   timeRunJob: Date = new Date();
-
+  campaign: any;
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -46,7 +45,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
     private notificationService: NotificationService,
-    private smsCampaignService: SmsCampaignService
+    private smsCampaignService:SmsCampaignService
   ) { }
 
   ngOnInit() {
@@ -62,7 +61,6 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     })
     this.loadDataFormApi();
     this.loadSmsTemplate();
-    this.loadDefaultThanksCustomer();
     this.loadAccount();
     this.smsTemplateCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -92,7 +90,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     }
   }
 
-  loadDefaultThanksCustomer() {
+  loadDefaultCampaignThanksCustomer() {
     this.smsCampaignService.getDefaultThanksCustomer().subscribe(
       result => {
         if (result) {
@@ -100,7 +98,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
         }
       })
   }
-  
+
   loadDataFormApi() {
     var type = "sale-order"
     this.smsConfigService.get(type).subscribe(

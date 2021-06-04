@@ -112,7 +112,7 @@
                             </select>
                         </div>
                     </div>
-                    <kendo-chart *ngIf="(lineData_reportSupplierFails && lineData_reportSupplierFails.length > 0) 
+                    <kendo-chart *ngIf="lineData_reportSupplierFails && lineData_reportSupplierFails.length > 0
                         || lineData_reportSupplierSuccess && lineData_reportSupplierSuccess.length > 0">
                         <kendo-chart-legend position="bottom" orientation="horizontal"></kendo-chart-legend>
                         <kendo-chart-tooltip format="{0}%"></kendo-chart-tooltip>
@@ -145,10 +145,7 @@
                             </ng-container>
                         </kendo-chart-series>
                     </kendo-chart>
-                    <div class="no-data-report" *ngIf="!lineData_reportSupplierSuccess || 
-                        !lineData_reportSupplierSuccess.length || 
-                        !lineData_reportSupplierFails || 
-                        !lineData_reportSupplierFails.length">
+                    <div class="no-data-report" *ngIf="!lineData_reportSupplierFails && !lineData_reportSupplierSuccess">
                         Không có dữ liệu
                     </div>
                 </div>

@@ -179,6 +179,7 @@ namespace Infrastructure.Services
                     { "102", "sms_acc" },
                     { "103", "sms_credit" },
                     { "104", "sms_acc" },
+                    { "146", "sms_template" },
                 };
             }
         }
@@ -251,10 +252,20 @@ namespace Infrastructure.Services
 
             _context.Entry(self).Reference(s => s.SmsAccount).Load();
             var account = self.SmsAccount;
-            var senderService = new ESmsSenderService(account.BrandName, account.ApiKey, account.Secretkey);
+
+            await ActionSendSmsMessageDetail(details, account);
+
+            self.State = "success";
+            await _messageRepository.UpdateAsync(self);
+
+        }
+
+        public async Task ActionSendSmsMessageDetail(IEnumerable<SmsMessageDetail> sefts, SmsAccount account)
+        {
             var backlists = BacklistString.Split(",");
             var specialChars = SpecialCharactors.Split(",");
-            foreach (var detail in details)
+            var senderService = new ESmsSenderService(account.BrandName, account.ApiKey, account.Secretkey);
+            foreach (var detail in sefts)
             {
                 //neu truong hop detail ma co noi dung trong blacklist thi chuyen sang state canceled
                 if (backlists.Any(x => detail.Body.Contains(x)) || specialChars.Any(x => detail.Body.Contains(x)))
@@ -284,10 +295,7 @@ namespace Infrastructure.Services
                 }
             }
 
-            self.State = "success";
-
-            await _messageRepository.UpdateAsync(self);
-            await _messageDetailRepository.UpdateAsync(details);
+            await _messageDetailRepository.UpdateAsync(sefts);
         }
 
         private Partner GetPartnerFromObject(object item)

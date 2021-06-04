@@ -31,17 +31,20 @@ namespace Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly AppTenant _tenant;
         private readonly IAsyncRepository<SmsMessageDetail> _repository;
+        private readonly ISmsMessageService _smsMessageService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly CatalogDbContext _context;
         public SmsMessageDetailService(
             IHttpContextAccessor httpContextAccessor,
             ITenant<AppTenant> tenant,
+            ISmsMessageService smsMessageService,
             IAsyncRepository<SmsMessageDetail> repository,
             CatalogDbContext context,
             IMapper mapper)
         {
             _mapper = mapper;
             _tenant = tenant?.Value;
+            _smsMessageService = smsMessageService;
             _context = context;
             _repository = repository;
             _httpContextAccessor = httpContextAccessor;
@@ -107,13 +110,15 @@ namespace Infrastructure.Services
         public async Task ReSendSms(IEnumerable<SmsMessageDetail> details)
         {
             var smsAccountObj = GetService<ISmsAccountService>();
-            var dictSmsAccount = await smsAccountObj.SearchQuery().ToDictionaryAsync(x => x.Id, x => x.Id);
-            var smsMessageDetailGroup = details.GroupBy(x => x.SmsAccountId).ToDictionary(x => x.Key, x => x.Select(s => s.Id).ToList());
-            foreach (var key in smsMessageDetailGroup.Keys)
+            var smsMessageObj = GetService<ISmsMessageService>();
+            var dictSmsAccount = await smsAccountObj.SearchQuery().ToDictionaryAsync(x => x.Id, x => x);
+            var dictSmsDetails = details.GroupBy(x => x.SmsAccountId).ToDictionary(x => x.Key, x => x.ToList());
+
+            foreach (var item in dictSmsDetails)
             {
-                if (dictSmsAccount.ContainsKey(key))
+                if (dictSmsAccount.ContainsKey(item.Key))
                 {
-                    //await SendSMS(smsMessageDetailGroup[key], dictSmsAccount[key]);
+                    await smsMessageObj.ActionSendSmsMessageDetail(item.Value, dictSmsAccount[item.Key]);
                 }
             }
 
@@ -145,7 +150,7 @@ namespace Infrastructure.Services
                 .Select(x => new ReportTotalOutputItem
                 {
                     State = x.Key.State,
-                    StateDisplay = x.Key.State == "success" ? "Thành công" : "Thất bại",
+                    StateDisplay = x.Key.State == "sent" ? "Thành công" : "Thất bại",
                     Total = x.Count(),
                     Percentage = x.Count() * 100f / query.Count()
                 }).ToListAsync();
@@ -169,8 +174,8 @@ namespace Infrastructure.Services
             {
                 SmsCampaignName = y.First().SmsCampaignId.HasValue ? y.First().SmsCampaign.Name : "",
                 TotalMessages = y.Count(),
-                TotalSuccessfulMessages = y.Count(z => z.State == "success"),
-                TotalFailedMessages = y.Count(z => z.State == "fails")
+                TotalSuccessfulMessages = y.Count(z => z.State == "sent"),
+                TotalFailedMessages = y.Count(z => z.State != "sent")
             }).ToList();
 
             var totalItems = itemsOutput.Count();
@@ -188,9 +193,12 @@ namespace Infrastructure.Services
             var total = await SearchQuery().CountAsync();
             var query = SearchQuery().Where(x => x.Date.HasValue);
             if (!string.IsNullOrEmpty(val.Provider))
-                query = query.Where(x => x.SmsAccount.Provider == val.Provider && x.State == val.State && x.Date.HasValue);
+                query = query.Where(x => x.SmsAccount.Provider == val.Provider && x.Date.HasValue);
             if (!string.IsNullOrEmpty(val.State))
-                query = query.Where(x => x.State == val.State);
+            {
+                var states = val.State.Split(",");
+                query = query.Where(x => states.Contains(x.State));
+            }
             if (val.AccountId.HasValue)
                 query = query.Where(x => x.SmsAccountId == val.AccountId.Value);
 
