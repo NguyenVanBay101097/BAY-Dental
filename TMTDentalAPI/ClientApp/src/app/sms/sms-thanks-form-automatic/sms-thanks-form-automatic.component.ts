@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
+import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
@@ -26,6 +27,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   type: string;
   filteredTemplate: any[];
   textareaLimit: number = 200;
+  campaign: any;
   template: any =
     {
       text: '',
@@ -43,7 +45,8 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     private smsConfigService: SmsConfigService,
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private smsCampaignService: SmsCampaignService
   ) { }
 
   ngOnInit() {
@@ -59,6 +62,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     })
     this.loadDataFormApi();
     this.loadSmsTemplate();
+    this.loadDefaultThanksCustomer();
     this.loadAccount();
     this.smsTemplateCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -88,6 +92,15 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     }
   }
 
+  loadDefaultThanksCustomer() {
+    this.smsCampaignService.getDefaultThanksCustomer().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
+      })
+  }
+  
   loadDataFormApi() {
     var type = "sale-order"
     this.smsConfigService.get(type).subscribe(
