@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
+import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
@@ -35,7 +36,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   today: Date = new Date;
   timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
   timeRunJob: Date = new Date();
-
+  campaign: any;
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -43,7 +44,8 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     private smsConfigService: SmsConfigService,
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private smsCampaignService:SmsCampaignService
   ) { }
 
   ngOnInit() {
@@ -86,6 +88,15 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     } else {
       this.isTemplateCopy = false;
     }
+  }
+
+  loadDefaultCampaignThanksCustomer() {
+    this.smsCampaignService.getDefaultThanksCustomer().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
+      })
   }
 
   loadDataFormApi() {

@@ -23,6 +23,17 @@
                                     Điều kiện gửi tin
                                 </label>
                                 <table class="ml-5">
+                                    <tr *ngIf="campaign">
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help mt-2">
+                                                Tên chiến dịch
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 80%;">
+                                            <input type="text" [attr.disabled]="true" [value]="campaign?.name"
+                                                class="mt-2">
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label o_form_label_help mb-2">
@@ -92,8 +103,8 @@
                                             <label class="o_form_label">Nội dung</label>
                                         </td> -->
                                         <td colspan="2" style="width: 80%;">
-                                            <app-sms-template-content [type]="'partnerCampaign'" [textareaLength]="textareaLimit"
-                                                [template]="template">
+                                            <app-sms-template-content [type]="'partnerCampaign'"
+                                                [textareaLength]="textareaLimit" [template]="template">
                                             </app-sms-template-content>
                                         </td>
                                     </tr>

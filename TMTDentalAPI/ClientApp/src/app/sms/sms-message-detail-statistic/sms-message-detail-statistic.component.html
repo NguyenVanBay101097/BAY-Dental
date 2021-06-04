@@ -43,7 +43,7 @@
     <kendo-grid-column title="Trạng thái" width="100">
         <ng-template kendoGridCellTemplate let-dataItem>
             <span *ngIf="dataItem.state=='outgoing'">Đang gửi</span>
-            <span *ngIf="dataItem.state=='cancel'">Hủy</span>
+            <span *ngIf="dataItem.state=='canceled'">Hủy</span>
             <span *ngIf="dataItem.state=='error'">Thất bại</span>
             <span *ngIf="dataItem.state=='sent'">Thành công</span>
         </ng-template>

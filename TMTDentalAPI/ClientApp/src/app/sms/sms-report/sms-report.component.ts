@@ -205,8 +205,8 @@ export class SmsReportComponent implements OnInit {
   }
 
   getReportSumarySupplier() {
-    var requestSuccess = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: "success" });
-    var requestFails = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: "fails" });
+    var requestSuccess = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: 'sent' });
+    var requestFails = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: 'canceled,error,outgoing' });
     forkJoin(requestSuccess, requestFails).subscribe((result: any) => {
       this.lineData_reportSupplierSuccess = result[0] || [];
       this.lineData_reportSupplierFails = result[1] || [];

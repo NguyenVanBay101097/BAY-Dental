@@ -17,5 +17,6 @@ namespace Infrastructure.Services
         Task SetupSendSmsOrderAutomatic(Guid orderId);
         IQueryable<SmsMessage> SearchQuery();
         Task ActionSend(SmsMessage self);
+        Task ActionSendSmsMessageDetail(IEnumerable<SmsMessageDetail> sefts, SmsAccount account);
     }
 }
