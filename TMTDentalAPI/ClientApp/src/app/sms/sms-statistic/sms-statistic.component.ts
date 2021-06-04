@@ -17,9 +17,10 @@ export class SmsStatisticComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   filteredState: any[] = [
-    { name: 'Gửi thất bại', value: 'fails' },
-    { name: 'Gửi thành công', value: 'success' },
-    { name: 'Đang gửi', value: 'sending' }
+    { name: 'Đang gửi', value: 'outgoing' },
+    { name: 'Hủy', value: 'canceled' },
+    { name: 'Thất bại', value: 'error' },
+    { name: 'Thành công', value: 'sent' }
   ]
   campaignData: any[] = [];
   state: string;
@@ -84,11 +85,9 @@ export class SmsStatisticComponent implements OnInit {
   }
 
   onChangeState(state) {
-    if (state) {
-      this.state = state.value;
-      this.skip = 0;
-      this.loadDataFromApi();
-    }
+    state ? this.state = state.value : this.state = '';
+    this.skip = 0;
+    this.loadDataFromApi();
   }
 
   pageChange(event) {

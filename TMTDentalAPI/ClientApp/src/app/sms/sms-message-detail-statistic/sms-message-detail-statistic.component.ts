@@ -32,8 +32,10 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
   selectedIds: string[] = [];
   loading = false;
   filterStatus = [
-    { name: "Thành công", value: "success" },
-    { name: "Thất bại", value: "fails" },
+    { name: 'Đang gửi', value: 'outgoing' },
+    { name: 'Hủy', value: 'canceled' },
+    { name: 'Thất bại', value: 'error' },
+    { name: 'Thành công', value: 'sent' }
   ];
   searchUpdate = new Subject<string>();
   dateFrom: Date;
@@ -86,8 +88,6 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
       this.loading = false;
       if (res.data) {
         this.listMessageDetails = res.data;
-        console.log(res.data);
-
       }
     }, err => {
       console.log(err);

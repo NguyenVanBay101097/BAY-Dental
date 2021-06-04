@@ -24,3 +24,7 @@
 .o_form_view .o_group{
     margin: 0;
 }
+
+.form-control{
+    height: 36px !important;
+}
