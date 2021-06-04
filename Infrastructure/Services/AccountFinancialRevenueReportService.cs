@@ -76,7 +76,7 @@ namespace Infrastructure.Services
                                 {
                                      new AccountFinancialRevenueReportAccountAccountRel()
                                      {
-                                        AccountCode = "5111",
+                                        AccountCode = "131",
                                          Column = 1
                                       }
                                  }
@@ -318,12 +318,17 @@ namespace Infrastructure.Services
 
             var accountIds = accounts.Select(x => x.Id).ToList();
             var amlObj = GetService<IAccountMoveLineService>();
+            var journalObj = GetService<IAccountJournalService>();
+            var JournalType = new List<string>() { "cash", "bank", "advance" };
             if (accounts.Any())
             {
+                var jounals = await journalObj.SearchQuery(x => JournalType.Contains(x.Type)).ToListAsync();
+                var journalIds = jounals.Select(x => x.Id);
+
                 ISpecification<AccountMoveLine> filter = amlObj._QueryGetSpec(dateFrom: data.DateFrom, dateTo: data.DateTo, companyId: data.CompanyId);
                 filter = filter.And(new InitialSpecification<AccountMoveLine>(x => accountIds.Contains(x.AccountId)));
 
-                var list = await amlObj.SearchQuery(filter.AsExpression()).OrderBy(x => x.Date).GroupBy(x => x.AccountId).Select(x => new ComputeAccountBalanceRes
+                var list = await amlObj.SearchQuery(filter.AsExpression()).Where(x => journalIds.Contains(x.JournalId.Value)).OrderBy(x => x.Date).GroupBy(x => x.AccountId).Select(x => new ComputeAccountBalanceRes
                 {
                     AccountId = x.Key,
                     Debit = x.Sum(s => s.Debit),
