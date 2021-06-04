@@ -85,7 +85,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string SmsCampaignName { get; set; }
         public int TotalMessages { get; set; }
         public int TotalSuccessfulMessages { get; set; }
-        public int TotalFailedMessages { get; set; }
+        public int TotalCancelMessages { get; set; }
+        public int TotalErrorMessages { get; set; }
+        public int TotalOutgoingdMessages { get; set; }
     }
 
     public class ReportSupplierInput

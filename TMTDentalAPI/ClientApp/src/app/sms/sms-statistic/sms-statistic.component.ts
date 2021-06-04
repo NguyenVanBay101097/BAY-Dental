@@ -127,20 +127,18 @@ export class SmsStatisticComponent implements OnInit {
 
   stranslateCodeResponse(code) {
     switch (code) {
-      case "100":
+      case "" || null:
         return "Gửi thành công";
-      case "99":
-        return "Lỗi không xác định , thử lại sau";
-      case "101":
-        return "Đăng nhập thất bại (api key hoặc secrect key không đúng)";
-      case "102":
-        return "Tài khoản đã bị khóa";
-      case "103":
-        return "Số dư tài khoản không đủ dể gửi tin";
-      case "104":
-        return "Brandname không tồn tại hoặc đã bị hủy";
-      case "118":
-        return "Loại tin nhắn không hợp lệ";
+      case "sms_server":
+        return "Lỗi hệ thống đối tác";
+      case "sms_acc":
+        return "Lỗi tài khoản của bạn";
+      case "sms_credit":
+        return "Số dư không đủ";
+      case "sms_blacklist":
+        return "Tin nhắn chứa các ký tự đặc biệt";
+      case "sms_template":
+        return "Mẫu tin nhắn chưa đúng";
       default:
         return "Lý do khác";
     }

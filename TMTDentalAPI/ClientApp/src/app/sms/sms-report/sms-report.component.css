@@ -36,18 +36,6 @@
 .legend-total .num {
     color: LimeGreen;
 }
-.legend-success .color {
-    background-color: DeepSkyBlue;
-}
-.legend-success .num {
-    color: DeepSkyBlue;
-}
-.legend-fails .color {
-    background-color: DarkSlateGrey;
-}
-.legend-fails .num {
-    color: DarkSlateGrey;
-}
 .no-data-report {
     height: 400px;
     color: grey;
