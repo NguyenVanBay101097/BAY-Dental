@@ -18,47 +18,29 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
     }
 
-    public class RevenueTimeReportPaged
+    public class RevenueTimeReportPar
     {
-        public RevenueTimeReportPaged()
-        {
-            Limit = 20;
-        }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? CompanyId { get; set; }
-        public int Limit { get; set; }
-        public int Offset { get; set; }
     }
 
-    public class RevenueServiceReportPaged
+    public class RevenueServiceReportPar
     {
-        public RevenueServiceReportPaged()
-        {
-            Limit = 20;
-        }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? ProductId { get; set; }
         public Guid? CompanyId { get; set; }
-        public int Limit { get; set; }
-        public int Offset { get; set; }
     }
 
-    public class RevenueEmployeeReportPaged
+    public class RevenueEmployeeReportPar
     {
-        public RevenueEmployeeReportPaged()
-        {
-            Limit = 20;
-        }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? CompanyId { get; set; }
         public bool EmployeeGroup { get; set; }
         public Guid? EmployeeId { get; set; }
 
-        public int Limit { get; set; }
-        public int Offset { get; set; }
     }
 
     public class EmployeeAssistantKeyGroup
