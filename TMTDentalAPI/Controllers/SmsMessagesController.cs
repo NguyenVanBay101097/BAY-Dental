@@ -37,13 +37,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}")]
-        [CheckAccess(Actions = "SMS.Message.Read")]
-        public async Task<IActionResult> Get(Guid id)
-        {
-            var res = await _smsMessageService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            return Ok(_mapper.Map<SmsMessageDisplay>(res));
-        }
+        //[HttpGet("{id}")]
+        //[CheckAccess(Actions = "SMS.Message.Read")]
+        //public async Task<IActionResult> Get(Guid id)
+        //{
+        //    var res = await _smsMessageService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+        //    return Ok(_mapper.Map<SmsMessageDisplay>(res));
+        //}
 
 
 

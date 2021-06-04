@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -23,13 +24,13 @@ namespace Infrastructure.Services
 
         public async Task<SmsAccountBasic> GetDefault()
         {
-            var smsAccount = await SearchQuery(x => x.CompanyId == CompanyId).OrderByDescending(x => x.DateCreated).FirstOrDefaultAsync();
+            var smsAccount = await SearchQuery().OrderByDescending(x => x.DateCreated).FirstOrDefaultAsync();
             return _mapper.Map<SmsAccountBasic>(smsAccount);
         }
 
         public async Task<PagedResult2<SmsAccountBasic>> GetPaged(SmsAccountPaged val)
         {
-            var query = SearchQuery(x => x.CompanyId == CompanyId);
+            var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.BrandName.Contains(val.Search));
             var totalItems = await query.CountAsync();
@@ -42,7 +43,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<SmsSupplierBasic>> SmsSupplierAutocomplete(string search)
         {
-            var query = SearchQuery(x => x.CompanyId == CompanyId);
+            var query = SearchQuery();
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(x => x.Name.Contains(search));
             var items = await query.GroupBy(x => new { Provider = x.Provider, Name = x.Name }).Select(x => new SmsSupplierBasic
@@ -52,6 +53,17 @@ namespace Infrastructure.Services
             }).OrderBy(x => x.Name).ToListAsync();
 
             return items;
+        }
+
+        public override ISpecification<SmsAccount> RuleDomainGet(IRRule rule)
+        {
+            switch (rule.Code)
+            {
+                case "sms.sms_account_comp_rule":
+                    return new InitialSpecification<SmsAccount>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
+                default:
+                    return null;
+            }
         }
     }
 }

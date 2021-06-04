@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Hangfire;
 using Infrastructure.HangfireJobService;
@@ -125,7 +126,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SmsConfigGrid>> GetPaged(SmsConfigPaged val)
         {
-            var query = SearchQuery(x => x.CompanyId == CompanyId);
+            var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.States))
@@ -236,6 +237,17 @@ namespace Infrastructure.Services
                     });
             }
             return smsConfig.SmsConfigProductCategoryRels;
+        }
+
+        public override ISpecification<SmsConfig> RuleDomainGet(IRRule rule)
+        {
+            switch (rule.Code)
+            {
+                case "sms.sms_campaign_comp_rule":
+                    return new InitialSpecification<SmsConfig>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
+                default:
+                    return null;
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -58,6 +59,17 @@ namespace Infrastructure.Services
             }).ToListAsync();
 
             return _mapper.Map<IEnumerable<SmsTemplateBasic>>(res);
+        }
+
+        public override ISpecification<SmsTemplate> RuleDomainGet(IRRule rule)
+        {
+            switch (rule.Code)
+            {
+                case "sms.sms_campaign_comp_rule":
+                    return new InitialSpecification<SmsTemplate>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
+                default:
+                    return null;
+            }
         }
 
     }

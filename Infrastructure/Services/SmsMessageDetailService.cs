@@ -699,5 +699,16 @@ namespace Infrastructure.Services
                 return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
             }
         }
+
+        //public override ISpecification<SmsMessageDetail> RuleDomainGet(IRRule rule)
+        //{
+        //    switch (rule.Code)
+        //    {
+        //        case "sms.sms_campaign_comp_rule":
+        //            return new InitialSpecification<SmsMessageDetail>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
+        //        default:
+        //            return null;
+        //    }
+        //}
     }
 }

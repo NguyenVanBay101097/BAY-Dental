@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -289,6 +290,17 @@ namespace Infrastructure.Services
                 });
             }
             return campaign;
+        }
+
+        public override ISpecification<SmsCampaign> RuleDomainGet(IRRule rule)
+        {
+            switch (rule.Code)
+            {
+                case "sms.sms_campaign_comp_rule":
+                    return new InitialSpecification<SmsCampaign>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
+                default:
+                    return null;
+            }
         }
     }
 }

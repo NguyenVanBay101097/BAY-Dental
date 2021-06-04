@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Infrastructure.Data;
 using Infrastructure.Helpers;
@@ -435,7 +436,10 @@ namespace Infrastructure.Services
 
         public IQueryable<SmsMessage> SearchQuery()
         {
+
             return _messageRepository.SearchQuery();
         }
+
+        
     }
 }
