@@ -76,7 +76,7 @@ namespace Infrastructure.Services
                                 {
                                      new AccountFinancialRevenueReportAccountAccountRel()
                                      {
-                                        AccountCode = "131",
+                                        AccountCode = "5111",
                                          Column = 1
                                       }
                                  }
@@ -119,7 +119,7 @@ namespace Infrastructure.Services
                                                     new AccountFinancialRevenueReportAccountAccountRel()
                                                 {
                                                     AccountCode = "331",
-                                                    Column = 1
+                                                    Column = 2
                                                 } }
                          },
                              new AccountFinancialRevenueReport()
