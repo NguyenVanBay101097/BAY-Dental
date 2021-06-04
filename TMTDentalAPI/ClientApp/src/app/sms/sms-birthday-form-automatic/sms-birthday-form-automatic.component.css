@@ -83,3 +83,7 @@ input:checked+.slider:before {
     max-width: 800px !important;
     padding: 0 31px 15px 31px !important;
 }
+
+.form-control{
+    height: 36px !important;
+}

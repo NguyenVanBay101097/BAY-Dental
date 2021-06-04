@@ -55,7 +55,6 @@ export class ResConfigSettingsFormComponent implements OnInit {
         var tCareRunAt = new Date(result.tCareRunAt);
         this.formGroup.get('tCareRunAtObj').patchValue(tCareRunAt);
       }
-      debugger
       if (result.groupSms) {
         this.actionStartJobSmsMessage();
       } else {

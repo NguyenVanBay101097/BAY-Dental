@@ -98,3 +98,7 @@ input:checked+.slider:before {
 .container{
     padding: 15px!important;
 }
+
+.form-control{
+    height: 36px !important;
+}
