@@ -39,9 +39,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetHistoryPaymentMethod([FromQuery] SaleOrderPaymentMethodFilter val)
+        public async Task<IActionResult> GetHistoryPartnerAdvance([FromQuery] HistoryPartnerAdvanceFilter val)
         {
-            var result = await _saleOrderPaymentService.GetPagedResultPaymentMethodAsync(val);
+            var result = await _saleOrderPaymentService.GetPagedResultHistoryAdvanceAsync(val);
             return Ok(result);
         }
 
@@ -84,50 +84,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> ExportCustomerDebtExcelFile([FromQuery] SaleOrderPaymentMethodFilter val)
-        {
-            var stream = new MemoryStream();
-            var data = await _saleOrderPaymentService.GetCustomerDebtExportExcel(val);
-            byte[] fileContent;
-            var sheetName = "Sổ công nợ khách hàng";
-
-
-            using (var package = new ExcelPackage(stream))
-            {
-                var worksheet = package.Workbook.Worksheets.Add(sheetName);
-
-                worksheet.Cells[1, 1].Value = "Ngày ghi nợ";
-                worksheet.Cells[1, 2].Value = "Số phiếu";
-                worksheet.Cells[1, 3].Value = "Nguồn";
-                worksheet.Cells[1, 4].Value = "Công nợ";
-
-                worksheet.Cells["A1:P1"].Style.Font.Bold = true;
-
-                var row = 2;
-                foreach (var item in data)
-                {
-                    worksheet.Cells[row, 1].Value = item.PaymentDate;
-                    worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
-                    worksheet.Cells[row, 2].Value = item.Orders.First().Name;
-                    worksheet.Cells[row, 3].Value = item.PaymentName;
-                    worksheet.Cells[row, 4].Value = item.PaymentAmount;
-                    worksheet.Cells[row, 4].Style.Numberformat.Format = "#,###";
-                }
-
-                worksheet.Column(8).Style.Numberformat.Format = "@";
-                worksheet.Cells.AutoFitColumns();
-
-                package.Save();
-
-                fileContent = stream.ToArray();
-            }
-
-            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            stream.Position = 0;
-
-            return new FileContentResult(fileContent, mimeType);
-        }
+       
 
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetPrint(Guid id)

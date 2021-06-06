@@ -6,7 +6,8 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { SaleOrderPaymentMethodFilter, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
+import { CustomerDebtFilter, CustomerDebtReportService } from 'src/app/core/services/customer-debt-report.service';
+import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { PartnerCustomerDebtPaymentDialogComponent } from '../partner-customer-debt-payment-dialog/partner-customer-debt-payment-dialog.component';
 import { PartnerService } from '../partner.service';
@@ -27,8 +28,8 @@ export class PartnerCustomerDebtListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   loading = false;
-  amountDebtTotal = 0;
-  amountDebtPaidTotal = 0;
+  amountDebtDebitTotal = 0;
+  amountDebtCreditTotal = 0;
   amountDebtBalanceTotal = 0;
 
 
@@ -40,6 +41,7 @@ export class PartnerCustomerDebtListComponent implements OnInit {
     private partnerService: PartnerService,
     private router: Router,
     private route: ActivatedRoute,
+    private customerDebtReportService: CustomerDebtReportService,
     private notifyService: NotifyService,
     private saleOrderPaymentService: SaleOrderPaymentService) { }
 
@@ -61,21 +63,18 @@ export class PartnerCustomerDebtListComponent implements OnInit {
 
     this.loadDataFromApi();
     this.loadAmountDebtTotal();
-    this.loadAmountDebtPaidTotal();
-    this.loadAmountDebtBalanceTotal();
   }
 
   loadDataFromApi() {
     this.loading = true;
-    var paged = new SaleOrderPaymentMethodFilter();
+    var paged = new CustomerDebtFilter();
     paged.limit = this.limit;
     paged.offset = this.offset;
     paged.partnerId = this.partnerId;
-    paged.journalType = 'debt';
     paged.search = this.search || '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
-    this.saleOrderPaymentService.getHistoryPaymentMethodPaged(paged).pipe(
+    this.customerDebtReportService.getReports(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -102,20 +101,10 @@ export class PartnerCustomerDebtListComponent implements OnInit {
   }
 
   loadAmountDebtTotal() {
-    this.partnerService.getAmountDebtTotal(this.partnerId).subscribe(rs => {
-      this.amountDebtTotal = rs;
-    });
-  }
-
-  loadAmountDebtPaidTotal() {
-    this.partnerService.getAmountDebtPaidTotal(this.partnerId).subscribe(rs => {
-      this.amountDebtPaidTotal = rs;
-    });
-  }
-
-  loadAmountDebtBalanceTotal() {
-    this.partnerService.getAmountDebtBalance(this.partnerId).subscribe(rs => {
-      this.amountDebtBalanceTotal = rs;
+    this.partnerService.getAmountDebtTotal(this.partnerId).subscribe((rs: any) => {
+      this.amountDebtDebitTotal = rs.debitTotal;
+      this.amountDebtCreditTotal = rs.creditTotal;
+      this.amountDebtBalanceTotal = rs.balanceTotal;
     });
   }
 
@@ -130,28 +119,29 @@ export class PartnerCustomerDebtListComponent implements OnInit {
       this.notifyService.notify('success', 'Thanh toán thành công');
       this.loadDataFromApi();
       this.loadAmountDebtTotal();
-      this.loadAmountDebtPaidTotal();
-      this.loadAmountDebtBalanceTotal();
     }, er => { })
   }
 
 
 
-  getFormSaleOrder(id) {
-    this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
+  getForm(item) {
+    if(item.type == "debit"){
+      this.router.navigate(['/sale-orders/form'], { queryParams: { id: item.id } });
+    }else{
+      this.router.navigate(['/phieu-thu-chi/form'], { queryParams: { id: item.id } });
+    }
+    
   }
 
   exportExcelFile() {
-    var paged = new SaleOrderPaymentMethodFilter();
+    var paged = new CustomerDebtFilter();
     paged.limit = this.limit;
     paged.offset = this.offset;
     paged.partnerId = this.partnerId;
-    paged.journalType = 'debt';
     paged.search = this.search || '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
-
-    this.saleOrderPaymentService.exportCustomerDebtExcelFile(paged).subscribe((res) => {
+    this.customerDebtReportService.exportExcelFile(paged).subscribe((res) => {
       let filename = "Sổ công nợ khách hàng";
 
       let newBlob = new Blob([res], {

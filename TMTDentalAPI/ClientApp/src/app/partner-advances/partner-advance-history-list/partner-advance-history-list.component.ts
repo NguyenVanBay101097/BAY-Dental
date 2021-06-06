@@ -8,7 +8,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-import { SaleOrderPaymentMethodFilter, SaleOrderPaymentPaged, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
+import { HistoryPartnerAdvanceFilter, SaleOrderPaymentPaged, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
 import { PartnerService } from 'src/app/partners/partner.service';
 
 @Component({
@@ -60,14 +60,13 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var paged = new SaleOrderPaymentMethodFilter();
+    var paged = new HistoryPartnerAdvanceFilter();
     paged.limit = this.limit;
     paged.offset = this.offset;
     paged.partnerId = this.partnerId;
-    paged.journalType = 'advance';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
-    this.saleOrderPaymentService.getHistoryPaymentMethodPaged(paged).pipe(
+    this.saleOrderPaymentService.getHistoryPartnerAdvance(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems

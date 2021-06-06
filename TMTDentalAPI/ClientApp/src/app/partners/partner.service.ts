@@ -532,10 +532,6 @@ export class PartnerService {
         return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountDebtTotal');
     }
 
-    getAmountDebtPaidTotal(id){
-        return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountDebtPaidTotal');
-    }
-
     getAmountDebtBalance(id){
         return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountDebtBalance');
     }

@@ -4,6 +4,7 @@
             <li>
                 <a *ngIf="type === 'thu'" [routerLink]="['/phieu-thu-chi']" [queryParams]="{type: 'thu'}">Phiếu thu</a>
                 <a *ngIf="type === 'chi'" [routerLink]="['/phieu-thu-chi']" [queryParams]="{type: 'chi'}">Phiếu chi</a>
+                <span *ngIf="phieuThuChi.accountType == 'customer_debt'" >Phiếu công nợ</span>
             </li>
             <li class="active">
                 <span *ngIf="itemId">{{phieuThuChi.name}}</span>
@@ -38,11 +39,11 @@
                         *ngIf="phieuThuChi.state !== 'posted'" (click)="onSave()">
                         Lưu
                     </button>
-                    <button *ngIf="phieuThuChi.state === 'posted'" type="button" class="btn btn-danger btn-sm"
+                    <button *ngIf="phieuThuChi.state === 'posted' && phieuThuChi.accountType != 'customer_debt'" type="button" class="btn btn-danger btn-sm"
                         (click)="actionCancel()">
                         Hủy phiếu
                     </button>
-                    <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm" (click)="actionNew()">
+                    <button *ngIf="itemId && phieuThuChi.accountType != 'customer_debt'" type="button" class="btn btn-secondary btn-sm" (click)="actionNew()">
                         Thêm mới
                     </button>
                 </div>
@@ -63,7 +64,7 @@
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
-                            <tr>
+                            <tr *ngIf="phieuThuChi.accountType != 'customer_debt'">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         <span *ngIf="type === 'thu'">Loại thu</span>
@@ -88,7 +89,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
+                                    <span *ngIf="phieuThuChi.state == 'posted'">{{phieuThuChi.journal.name}}</span>
+                                    <kendo-combobox *ngIf="phieuThuChi.state != 'posted'" [data]="filteredJournals" [textField]="'name'" [filterable]="true"
                                         #journalCbx formControlName="journal" [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
@@ -100,7 +102,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="amount">
+                                    <span *ngIf="phieuThuChi.state == 'posted'">{{phieuThuChi.amount | number}}</span>
+                                    <kendo-numerictextbox *ngIf="phieuThuChi.state != 'posted'" [min]="0" [format]="'n0'" formControlName="amount">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -111,7 +114,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" formControlName="reason"></textarea>
+                                    <span *ngIf="phieuThuChi.state == 'posted'">{{phieuThuChi.reason}}</span>
+                                    <textarea *ngIf="phieuThuChi.state != 'posted'" type="text" class="form-control" formControlName="reason"></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -125,22 +129,28 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateObj">
+                                    <span *ngIf="phieuThuChi.state == 'posted'">
+                                        {{phieuThuChi.date | date: 'shortDate'}}
+                                    </span>
+                                    <kendo-datepicker *ngIf="phieuThuChi.state != 'posted'" formControlName="dateObj">
                                     </kendo-datepicker>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        <span *ngIf="type === 'thu'">Người nộp</span>
+                                        <span *ngIf="type === 'thu' || phieuThuChi.accountType == 'customer_debt'">Người nộp</span>
                                         <span *ngIf="type === 'chi'">Người nhận</span>
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="payerReceiver" />
+                                    <span *ngIf="phieuThuChi.state == 'posted'">
+                                        {{phieuThuChi.partner.name}}
+                                    </span>
+                                    <input *ngIf="phieuThuChi.state != 'posted'" class="form-control" formControlName="payerReceiver" />
                                 </td>
                             </tr>
-                            <tr>
+                            <tr *ngIf="phieuThuChi.accountType != 'customer_debt'">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Địa chỉ

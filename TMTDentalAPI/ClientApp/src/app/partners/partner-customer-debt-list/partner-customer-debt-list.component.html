@@ -4,7 +4,7 @@
             <h6>Tổng công nợ</h6>
         </div>
         <h4 class="text-primary">
-            {{(amountDebtTotal | number) || 0}}
+            {{(amountDebtDebitTotal | number) || 0}}
         </h4>
     </div>
     <div class="revenue">
@@ -12,7 +12,7 @@
             <h6>Tổng thanh toán</h6>
         </div>
         <h4 class="text-primary">
-            {{(amountDebtPaidTotal | number) || 0}}
+            {{(amountDebtCreditTotal | number) || 0}}
         </h4>
     </div>
     <div class="revenue">
@@ -57,8 +57,8 @@
     </kendo-grid-column>
     <kendo-grid-column title="Số phiếu" width="100">
         <ng-template kendoGridCellTemplate let-dataItem let-column="column">
-            <a class="text-primary" *ngFor="let order of dataItem.orders"
-                (click)="getFormSaleOrder(order.id)">{{order.name}}</a>
+            <a class="text-primary"
+                (click)="getForm(dataItem)">{{dataItem.name}}</a>
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="paymentName" title="Nguồn" width="120">

@@ -384,23 +384,20 @@ namespace Infrastructure.Services
             return Math.Abs(amounAdvance);
         }
 
-        public async Task<decimal> GetAmountDebtTotal(Guid id)
+        public async Task<CustomerDebtAmountTotal> GetAmountDebtTotal(Guid id)
         {
-            var paymentObj = GetService<IAccountPaymentService>();
-            var journalObj = GetService<IAccountJournalService>();
-            var journalAdvance = await journalObj.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "debt" && x.Active).FirstOrDefaultAsync();
-            var amounAdvance = await paymentObj.SearchQuery(x => x.PartnerId == id && x.JournalId == journalAdvance.Id && x.State != "cancel").Select(x => x.Amount).SumAsync();
-            return Math.Abs(amounAdvance);
-        }
-
-        public async Task<decimal> GetAmountDebtPaid(Guid id)
-        {
-            var moveLineObj = GetService<IAccountMoveLineService>();
+            var movelineObj = GetService<IAccountMoveLineService>();
             var accountObj = GetService<IAccountAccountService>();
-            var accountCNKH = await accountObj.GetAccountCustomerDebtCompany();
-            var amounPaid = await moveLineObj.SearchQuery(x => x.PartnerId == id && x.AccountId == accountCNKH.Id).SumAsync(x => x.Credit);         
-            return amounPaid;
-        }
+            var accountDebt = await accountObj.GetAccountCustomerDebtCompany();
+            var res = await movelineObj.SearchQuery(x => x.PartnerId == id && x.AccountId == accountDebt.Id).GroupBy(x=>x.PartnerId.Value).Select(x => new CustomerDebtAmountTotal {           
+                PartnerId = x.Key,
+                DebitTotal = x.Sum(x=>x.Debit),
+                CreditTotal = x.Sum(x=>x.Credit),
+                BalanceTotal = x.Sum(x=>x.Balance)           
+            }).FirstOrDefaultAsync();
+
+            return res;
+        }     
 
         public async Task<decimal> GetAmountDebtBalance(Guid id)
         {

@@ -1,3 +1,4 @@
+import { SaleOrderSimple } from './../../quotations/quotation.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -17,29 +18,27 @@ export class SaleOrderPaymentPagging {
   items: SaleOrderPaymentBasic[];
 }
 
-export class SaleOrderPaymentMethodFilter {
+export class HistoryPartnerAdvanceFilter {
   offset: number;
   limit: number;
   dateFrom: string;
   dateTo: string;
   search: string;
   partnerId: string;
-  journalType: string;
 }
 
-export class HistoryPaymentMethodPagging {
+export class HistoryPartnerAdvancePagging {
   limit: number;
   offset: number;
   totalItems: number;
-  items: SaleOrderPaymentMethodResult[];
+  items: HistoryPartnerAdvanceResult[];
 }
 
-export class SaleOrderPaymentMethodResult {
+export class HistoryPartnerAdvanceResult {
   paymentName: string;
   paymentDate: Date;
   paymentAmount: number;
-  orderId: string;
-  orderName: string;
+  orders: SaleOrderSimple;
 }
 
 export class SaleOrderPaymentBasic {
@@ -96,8 +95,8 @@ export class SaleOrderPaymentService {
     return this.http.get<SaleOrderPaymentPagging>(this.baseApi + this.apiUrl, { params: val });
   }
 
-  getHistoryPaymentMethodPaged(val): Observable<HistoryPaymentMethodPagging> {
-    return this.http.get<HistoryPaymentMethodPagging>(this.baseApi + this.apiUrl + "/GetHistoryPaymentMethod", { params: val });
+  getHistoryPartnerAdvance(val): Observable<HistoryPartnerAdvancePagging> {
+    return this.http.get<HistoryPartnerAdvancePagging>(this.baseApi + this.apiUrl + "/GetHistoryPartnerAdvance", { params: val });
   }
 
   get(id): Observable<SaleOrderPaymentDisplay> {
@@ -128,11 +127,6 @@ export class SaleOrderPaymentService {
     return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint', )
   }
 
-  exportCustomerDebtExcelFile(val: any) {
-    return this.http.get(this.baseApi + this.apiUrl + "/ExportCustomerDebtExcelFile", {
-      responseType: "blob",
-      params: val,
-    });
-  }
+ 
 
 }

@@ -260,9 +260,16 @@ export class PhieuThuChiFormComponent implements OnInit {
   }
 
   printPhieu(id: string) {
-    this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
-      this.printService.printHtml(data.html);
-    });
+    if(this.phieuThuChi.accountType  == 'other' || this.phieuThuChi.accountType  == null){
+      this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
+        this.printService.printHtml(data.html);
+      });
+    }else{
+      this.phieuThuChiService.getPrint2(id).subscribe((data: any) => {
+        this.printService.printHtml(data.html);
+      });
+    }
+   
   }
 
   actionCancel() {

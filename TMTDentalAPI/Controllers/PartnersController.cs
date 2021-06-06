@@ -150,21 +150,11 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetAmountDebtTotal(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
-            var amountDebtTotal = await _partnerService.GetAmountDebtTotal(id);
+            var res = await _partnerService.GetAmountDebtTotal(id);
             _unitOfWork.Commit();
 
-            return Ok(amountDebtTotal);
-        }
-
-        [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> GetAmountDebtPaidTotal(Guid id)
-        {
-            await _unitOfWork.BeginTransactionAsync();
-            var amountDebtPaidTotal = await _partnerService.GetAmountDebtPaid(id);
-            _unitOfWork.Commit();
-
-            return Ok(amountDebtPaidTotal);
-        }
+            return Ok(res);
+        }     
 
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetAmountDebtBalance(Guid id)

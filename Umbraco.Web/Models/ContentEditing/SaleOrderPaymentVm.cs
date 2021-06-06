@@ -103,9 +103,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
     }
 
-    public class SaleOrderPaymentMethodFilter
+    public class HistoryPartnerAdvanceFilter
     {
-        public SaleOrderPaymentMethodFilter()
+        public HistoryPartnerAdvanceFilter()
         {
             Limit = 20;
         }
@@ -121,12 +121,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? PartnerId { get; set; }
 
-        public string JournalType { get; set; }
-
     }
 
 
-    public class SaleOrderPaymentMethodResult
+    public class HistoryPartnerAdvanceResult
     {
         public string PaymentName { get; set; }
         public DateTime PaymentDate { get; set; }
