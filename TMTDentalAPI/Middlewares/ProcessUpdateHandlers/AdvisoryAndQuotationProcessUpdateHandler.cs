@@ -79,7 +79,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                     context.SaveChanges();
                 }
 
-                ///Add rule quotation : phiếu náo giá
+                ///Add rule quotation : phiếu báo giá
                 var quotationRule = context.IRRules.Where(x => x.Code == "quotation.quotation_comp_rule").FirstOrDefault();
                 if (quotationRule == null)
                 {

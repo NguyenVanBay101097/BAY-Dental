@@ -36,68 +36,133 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 var scopedServices = scope.ServiceProvider;
                 var context = scope.ServiceProvider.GetService<CatalogDbContext>();
 
-                var toothDisgnosisRule = context.IRRules.Where(x => x.Code == "tooth.tooth_diagnosis_comp_rule").FirstOrDefault();
-                if (toothDisgnosisRule == null)
+                ///Add rule SmsAccount : tài khoản brandname
+                var smsAccountRule = context.IRRules.Where(x => x.Code == "sms.sms_account_comp_rule").FirstOrDefault();
+                if (smsAccountRule == null)
                 {
-                    var model = context.IRModels.Where(x => x.Model == "ToothDiagnosis").FirstOrDefault();
+                    var model = context.IRModels.Where(x => x.Model == "SmsAccount").FirstOrDefault();
                     if (model == null)
                     {
-                        model = new IRModel { Name = "Tooth Diagnosis", Model = "ToothDiagnosis" };
+                        model = new IRModel { Name = "Sms Account", Model = "SmsAccount" };
                         context.IRModels.Add(model);
                         context.SaveChanges();
                     }
 
                     context.IRRules.Add(new IRRule
                     {
-                        Code = "tooth.tooth_diagnosis_comp_rule",
-                        Name = "Tooth diagnosis company rule",
+                        Code = "sms.sms_account_comp_rule",
+                        Name = "Sms Account company rule",
                         ModelId = model.Id
                     });
                     context.SaveChanges();
                 }
 
 
-                ///Add rule Advisory : phiếu tư vấn 
-                var advisoryRule = context.IRRules.Where(x => x.Code == "advisory.advisory_comp_rule").FirstOrDefault();
-                if (advisoryRule == null)
+                ///Add rule sms Campaign : sms chiến dịch
+                var smsCampaignRule = context.IRRules.Where(x => x.Code == "sms.sms_campaign_comp_rule").FirstOrDefault();
+                if (smsCampaignRule == null)
                 {
-                    var model = context.IRModels.Where(x => x.Model == "Advisory").FirstOrDefault();
+                    var model = context.IRModels.Where(x => x.Model == "SmsCampaign").FirstOrDefault();
                     if (model == null)
                     {
-                        model = new IRModel { Name = "Advisory", Model = "Advisory" };
+                        model = new IRModel { Name = "Sms Campaign", Model = "SmsCampaign" };
                         context.IRModels.Add(model);
                         context.SaveChanges();
                     }
 
                     context.IRRules.Add(new IRRule
                     {
-                        Code = "advisory.advisory_comp_rule",
-                        Name = "Advisory company rule",
+                        Code = "sms.sms_campaign_comp_rule",
+                        Name = "Sms Campaign company rule",
                         ModelId = model.Id
                     });
                     context.SaveChanges();
                 }
 
-                ///Add rule quotation : phiếu náo giá
-                var quotationRule = context.IRRules.Where(x => x.Code == "quotation.quotation_comp_rule").FirstOrDefault();
-                if (quotationRule == null)
+                ///Add rule sms config : thiết lập tin nhắn tự động
+                var smsConfigRule = context.IRRules.Where(x => x.Code == "sms.sms_config_comp_rule").FirstOrDefault();
+                if (smsConfigRule == null)
                 {
-                    var model = context.IRModels.Where(x => x.Model == "Quotation").FirstOrDefault();
+                    var model = context.IRModels.Where(x => x.Model == "SmsConfig").FirstOrDefault();
                     if (model == null)
                     {
-                        model = new IRModel { Name = "Quotation", Model = "Quotation" };
+                        model = new IRModel { Name = "Sms Config", Model = "SmsConfig" };
                         context.IRModels.Add(model);
                         context.SaveChanges();
                     }
 
                     context.IRRules.Add(new IRRule
                     {
-                        Code = "quotation.quotation_comp_rule",
-                        Name = "Quotation company rule",
+                        Code = "sms.sms_config_comp_rule",
+                        Name = "Sms Config company rule",
                         ModelId = model.Id
                     });
                     context.SaveChanges();
                 }
+
+                ///Add rule sms Template : tin nhắn sms mẫu
+                var smsTemplateRule = context.IRRules.Where(x => x.Code == "sms.sms_template_comp_rule").FirstOrDefault();
+                if (smsConfigRule == null)
+                {
+                    var model = context.IRModels.Where(x => x.Model == "SmsTemplate").FirstOrDefault();
+                    if (model == null)
+                    {
+                        model = new IRModel { Name = "Sms Template", Model = "SmsTemplate" };
+                        context.IRModels.Add(model);
+                        context.SaveChanges();
+                    }
+
+                    context.IRRules.Add(new IRRule
+                    {
+                        Code = "sms.sms_template_comp_rule",
+                        Name = "Sms Template company rule",
+                        ModelId = model.Id
+                    });
+                    context.SaveChanges();
+                }
+
+                ///Add rule sms Message : tin nhắn sms
+                var smsMessageRule = context.IRRules.Where(x => x.Code == "sms.sms_message_comp_rule").FirstOrDefault();
+                if (smsConfigRule == null)
+                {
+                    var model = context.IRModels.Where(x => x.Model == "SmsMessage").FirstOrDefault();
+                    if (model == null)
+                    {
+                        model = new IRModel { Name = "Sms Message", Model = "SmsMessage" };
+                        context.IRModels.Add(model);
+                        context.SaveChanges();
+                    }
+
+                    context.IRRules.Add(new IRRule
+                    {
+                        Code = "sms.sms_message_comp_rule",
+                        Name = "Sms Message company rule",
+                        ModelId = model.Id
+                    });
+                    context.SaveChanges();
+                }
+
+                ///Add rule sms Message detail : chi tiết tin nhắn sms - báo cáo thống kê tin nhắn
+                var smsMessageDetailRule = context.IRRules.Where(x => x.Code == "sms.sms_message_detail_comp_rule").FirstOrDefault();
+                if (smsConfigRule == null)
+                {
+                    var model = context.IRModels.Where(x => x.Model == "SmsMessageDetail").FirstOrDefault();
+                    if (model == null)
+                    {
+                        model = new IRModel { Name = "Sms Message Detail", Model = "SmsMessageDetail" };
+                        context.IRModels.Add(model);
+                        context.SaveChanges();
+                    }
+
+                    context.IRRules.Add(new IRRule
+                    {
+                        Code = "sms.sms_message_detail_comp_rule",
+                        Name = "Sms Message Detail company rule",
+                        ModelId = model.Id
+                    });
+                    context.SaveChanges();
+                }
+
             }
 
             return Task.CompletedTask;

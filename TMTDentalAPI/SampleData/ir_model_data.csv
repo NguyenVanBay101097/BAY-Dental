@@ -80,6 +80,12 @@ sale.model_advisory,Advisory,Advisory,0
 sale.model_quotation,Quotation,Quotation,0
 base.model_print_paper_size,PrintPaperSize,Print Paper Size,0
 config.model_config_print,ConfigPrint,Config Print,0
+sms.model_sms_account,SmsAccount,Sms Account,0
+sms.model_sms_campaign,SmsCampaign,Sms Campaign,0
+sms.model_sms_config,SmsConfig,Sms Config,0
+sms.model_sms_template,SmsTemplate,Sms Template,0
+sms.model_sms_message,SmsMessage,Sms Message,0
+sms.model_sms_message_detail,SmsMessageDetail,Sms Message Detail,0
 
 
 

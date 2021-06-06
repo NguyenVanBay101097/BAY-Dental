@@ -440,6 +440,40 @@
     <record id="base.partner_title_mrs" model="partner.title">
       <field name="name">Bà</field>
     </record>
+
+	  <!--
+    sms campaign birthday , appointment reminder , care after saleorder , Thanks Customer , DefaultCampaign
+    -->
+	  <record id="base.sms_campaign_default" model="sms.campaign">
+		  <field name="name">Chiến dịch mặc định</field>
+		  <field name="typeDate">unlimited</field>
+		  <field name="state">running</field>
+		  <field name="defaultType">sms_campaign_default</field>
+	  </record>
+	  <record id="base.sms_campaign_birthday" model="sms.campaign">
+		  <field name="name">Chúc mừng sinh nhật</field>
+		  <field name="typeDate">unlimited</field>
+		  <field name="state">running</field>
+		  <field name="defaultType">sms_campaign_birthday</field>
+	  </record>
+	  <record id="base.sms_campaign_appointment_reminder" model="sms.campaign">
+		  <field name="name">Nhắc lịch hẹn</field>
+		  <field name="typeDate">unlimited</field>
+		  <field name="state">running</field>
+		  <field name="defaultType">sms_campaign_appointment_reminder</field>
+	  </record>
+	  <record id="base.sms_campaign_thanks_customer" model="sms.campaign">
+		  <field name="name">Cảm ơn khách hàng</field>
+		  <field name="typeDate">unlimited</field>
+		  <field name="state">running</field>
+		  <field name="defaultType">sms_campaign_thanks_customer</field>
+	  </record>
+	  <record id="base.sms_campaign_care_after_order" model="sms.campaign">
+		  <field name="name">Tin nhắn chăm sóc sau điều trị</field>
+		  <field name="typeDate">unlimited</field>
+		  <field name="state">running</field>
+		  <field name="defaultType">sms_campaign_care_after_order</field>
+	  </record>
     
     <!--
     print paper size

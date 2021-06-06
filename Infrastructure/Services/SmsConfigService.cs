@@ -243,7 +243,7 @@ namespace Infrastructure.Services
         {
             switch (rule.Code)
             {
-                case "sms.sms_campaign_comp_rule":
+                case "sms.sms_config_comp_rule":
                     return new InitialSpecification<SmsConfig>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
                 default:
                     return null;

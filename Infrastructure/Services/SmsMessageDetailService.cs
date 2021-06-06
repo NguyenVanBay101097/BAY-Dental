@@ -236,7 +236,7 @@ namespace Infrastructure.Services
         //{
         //    switch (rule.Code)
         //    {
-        //        case "sms.sms_campaign_comp_rule":
+        //        case "sms.sms_message_detail_comp_rule":
         //            return new InitialSpecification<SmsMessageDetail>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
         //        default:
         //            return null;

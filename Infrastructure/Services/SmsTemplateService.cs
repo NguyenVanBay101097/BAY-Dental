@@ -65,7 +65,7 @@ namespace Infrastructure.Services
         {
             switch (rule.Code)
             {
-                case "sms.sms_campaign_comp_rule":
+                case "sms.sms_template_comp_rule":
                     return new InitialSpecification<SmsTemplate>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
                 default:
                     return null;
