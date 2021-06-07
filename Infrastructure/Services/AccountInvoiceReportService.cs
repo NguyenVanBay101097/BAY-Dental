@@ -38,7 +38,7 @@ namespace Infrastructure.Services
             var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
 
             var query = _context.AccountInvoiceReports.Where(x=> (x.Type == "out_invoice" || x.Type == "out_refund") && x.State == "posted"
-            && x.AccountInternalType == "receivable"
+            && x.AccountInternalType != "receivable"
             && (!x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value))
             ).AsQueryable();
 
