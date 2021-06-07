@@ -17,6 +17,8 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { SaleOrderLineService } from "src/app/core/services/sale-order-line.service";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { SaleOrderLinePromotionDialogComponent } from "../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component";
+import { FilterCellWrapperComponent } from "@progress/kendo-angular-grid";
+import { CheckPermissionService } from "src/app/shared/check-permission.service";
 
 @Component({
   selector: "app-sale-order-line-cu",
@@ -38,6 +40,8 @@ export class SaleOrderLineCuComponent implements OnInit {
   isEditting: boolean = false;
   isItSeff = false;
   // canEdit = true;
+  isDiscountOrder = false;
+  isDiscountLine = false;
 
   filteredEmployeesDoctor: any[] = [];
   filteredEmployeesAssistant: any[] = [];
@@ -48,7 +52,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Input() initialListTeeths: any[] = [];
   toothTypeDict = [
     { name: "Hàm trên", value: "upper_jaw" },
-    { name: "Nguyên Hàm", value: "whole_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
     { name: "Hàm dưới", value: "lower_jaw" },
     { name: "Chọn răng", value: "manual" },
   ];
@@ -62,12 +66,13 @@ export class SaleOrderLineCuComponent implements OnInit {
     private modalService: NgbModal,
     private toothCategoryService: ToothCategoryService,
     private notificationService: NotificationService,
-    private saleOrderLineService: SaleOrderLineService
+    private saleOrderLineService: SaleOrderLineService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
     this.formGroupInfo = this.fb.group({});
-
+    this.checkPermission();
     // this.formGroupInfo.setControl('teeth', this.fb.array(this.line.teeth));
     // this.formGroupInfo.setControl('promotions', this.fb.array(this.line.promotions));
 
@@ -395,6 +400,11 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   onActive(active) {
     this.onActiveEvent.emit(active);
+  }
+
+  checkPermission(){
+    this.isDiscountLine = this.checkPermissionService.check(['Basic.SaleOrder.DiscountLine']);
+    this.isDiscountOrder = this.checkPermissionService.check(['Basic.SaleOrder.DiscountOrder']);
   }
 
 }

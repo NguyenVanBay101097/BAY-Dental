@@ -5,6 +5,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PermissionService } from 'src/app/shared/permission.service';
 import { Product } from '../product';
@@ -30,13 +31,16 @@ export class ProductManagementProductsComponent implements OnInit {
   selectedCateg: any;
   searchProductUpdate = new Subject<string>();
   categories: any[] = [];
-
+  canAdd = false;
+  canEdit = false;
+  canDelete =false;
   constructor(private route: ActivatedRoute,
     private router: Router,
     private productCategoryService: ProductCategoryService,
     private productService: ProductService,
     public permissionService: PermissionService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -234,6 +238,12 @@ export class ProductManagementProductsComponent implements OnInit {
       },
       () => { }
     );
+  }
+
+  checkPermission(){
+    this.canAdd = this.checkPermissionService.check(['Catalog.Products.Create']);
+    this.canEdit = this.checkPermissionService.check(['Catalog.Products.Update']);
+    this.canDelete = this.checkPermissionService.check(['Catalog.Products.Delete']);
   }
 
 }

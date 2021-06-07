@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { QuotationService } from '../quotation.service';
 
 @Component({
@@ -13,7 +14,8 @@ export class QuotationApplyCouponComponent implements OnInit {
   errorMsg: string;
   @Output() applySuccess = new EventEmitter<any>();
   constructor(
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -24,6 +26,13 @@ export class QuotationApplyCouponComponent implements OnInit {
 
   onSave() {
     if (!this.formGroup.valid) {
+      this.notificationService.show({
+        content: 'Nhập mã khuyến mãi',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
       return false;
     }
 

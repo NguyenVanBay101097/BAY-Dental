@@ -91,5 +91,14 @@
       "Basic.AccountPayment.Create",
       "Basic.AccountPayment.Update"
     ]
+  },
+  {
+    "Permissions": [
+      "Catalog.Products.Create",
+      "Catalog.Products.Update"
+    ],
+    "Additionals": [
+      "Catalog.ProductCategory.Read"
+    ]
   }
 ]

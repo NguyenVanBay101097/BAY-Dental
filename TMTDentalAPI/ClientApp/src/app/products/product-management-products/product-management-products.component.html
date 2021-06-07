@@ -11,7 +11,7 @@
                     class="form-control size-text-14" placeholder="Tìm kiếm theo mã hoặc tên ..." type="text">
             </div>
             <div class="flex-fill">
-                <button class="btn btn-sm btn-primary mr-2" (click)="createProduct()">Thêm mới</button>
+                <button *ngIf="canAdd" class="btn btn-sm btn-primary mr-2" (click)="createProduct()">Thêm mới</button>
                 <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="importFromExcel()">
                     <i class="fas fa-upload"></i> Import
                 </button>
@@ -45,14 +45,14 @@
                         {{dataItem.qtyAvailable | number}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="id" width="100">
+                <kendo-grid-column *ngIf="canEdit || canDelete" field="id" width="100">
                     <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                         Thao tác
                     </ng-template>
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <button class="btn btn-success btn-sm mr-2" (click)="editProduct(dataItem)">
+                        <button *ngIf="canEdit" class="btn btn-success btn-sm mr-2" (click)="editProduct(dataItem)">
                             <i class="far fa-edit"></i></button>
-                        <button class="btn btn-danger btn-sm" (click)="deleteProduct(dataItem)">
+                        <button *ngIf="canDelete" class="btn btn-danger btn-sm" (click)="deleteProduct(dataItem)">
                             <i class="far fa-trash-alt"></i></button>
                     </ng-template>
                 </kendo-grid-column>

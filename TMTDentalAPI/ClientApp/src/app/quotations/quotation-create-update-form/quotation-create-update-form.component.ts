@@ -30,7 +30,10 @@ import { PaymentQuotationDisplay, QuotationLineDisplay, QuotationsDisplay, Quota
       transition('expanded <=> collapsed', animate('300ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
-  styleUrls: ['./quotation-create-update-form.component.css']
+  styleUrls: ['./quotation-create-update-form.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class QuotationCreateUpdateFormComponent implements OnInit {
   @ViewChild("empCbx", { static: true }) empCbx: ComboBoxComponent;

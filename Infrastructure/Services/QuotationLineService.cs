@@ -139,7 +139,7 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
             if (program != null)
             {
-                var error_status =  programObj._CheckPromotionApplyQuotationLine(program, quotationLine);
+                var error_status = await  programObj._CheckPromotionApplyQuotationLine(program, quotationLine);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
                     await _CreateRewardLine(quotationLine, program);
@@ -176,7 +176,7 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
             if (program != null)
             {
-                var error_status = programObj._CheckPromotionApplyQuotationLine(program, quotationLine);
+                var error_status = await programObj._CheckPromotionApplyQuotationLine(program, quotationLine);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
                     await _CreateRewardLine(quotationLine, program);
@@ -189,7 +189,7 @@ namespace Infrastructure.Services
             }
             else
             {
-                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };
+                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không chính xác", Success = false, SaleCouponProgram = null };
 
             }
         }
