@@ -171,6 +171,23 @@ export class LayoutSidebarComponent implements OnInit {
       permissions: ['TCare.Channel.Read', 'TCare.Scenario.Read', 'TCare.Messaging.Read', 'TCare.MessTemplate.Read', 'TCare.Config.Create']
     },
     {
+      name: 'SMS',
+      icon: 'fas fa-sms',
+      children: [
+        { name: 'Chúc mừng sinh nhật', link: '/sms/birthday-partners', permissions: ['SMS.Message.Read'] },
+        { name: 'Nhắc lịch hẹn', link: '/sms/appointment-reminder', permissions: ['SMS.Message.Read'] },
+        { name: 'Tin nhắn cảm ơn', link: '/sms/thanks-customer', permissions: ['SMS.Message.Read'] },
+        { name: 'Tin nhắn chăm sóc sau điều trị', link: '/sms/care-after-order', permissions: ['SMS.Message.Read'] },
+        { name: 'Tin nhắn mẫu', link: '/sms/templates', permissions: ['SMS.Template.Read'] },
+        { name: 'Quản lý chiến dịch', link: '/sms/campaign', permissions: ['SMS.Campaign.Read'] },
+        { name: 'Danh sách Brandname', link: '/sms/accounts', permissions: ['SMS.Account.Read'] },
+        { name: 'Thống kê tin nhắn', link: '/sms/statistic', permissions: ['SMS.Report.AllMessage'] },
+        { name: 'Báo cáo', link: '/sms/report', permissions: ['SMS.Report.AllSMS'] },
+      ],
+      groups: 'sms.group_sms',
+      permissions: ['SMS.Account.Read', 'SMS.Campaign.Read', 'SMS.Message.Read', 'SMS.Template.Read', 'SMS.Config.Read', 'SMS.Report.AllMessage', 'SMS.Report.AllSMS']
+    },
+    {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [

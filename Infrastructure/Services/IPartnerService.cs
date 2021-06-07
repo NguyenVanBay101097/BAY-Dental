@@ -70,5 +70,11 @@ namespace Infrastructure.Services
         Task<PagedResult2<PartnerGetDebtPagedItem>> GetDebtPaged(Guid id, PartnerGetDebtPagedFilter val);
         Task<decimal> GetAmountAdvanceBalance(Guid id);
         Task<decimal> GetAmountAdvanceUsed(Guid id);
+
+        Task<IEnumerable<PartnerBasic>> GetCustomerBirthDay(PartnerPaged val);
+        Task<IEnumerable<PartnerBasic>> GetCustomerAppointments(PartnerPaged val);
+        Task<IEnumerable<Guid>> GetPartnerForTCare(PartnerForTCarePaged val);
+        Task<IEnumerable<PartnerSaleOrderDone>> GetPartnerOrderDone(PartnerPaged val);
+
     }
 }

@@ -228,11 +228,11 @@ namespace TMTDentalAPI.Controllers
 
                 _unitOfWork.Commit();
 
-                var tenant = await _tenantDbContext.Tenants.Where(x => x.Hostname == _tenant.Hostname).FirstOrDefaultAsync();
-                tenant.Version = _appSettings.Version;
-                _tenantDbContext.SaveChanges();
+                //var tenant = await _tenantDbContext.Tenants.Where(x => x.Hostname == _tenant.Hostname).FirstOrDefaultAsync();
+                //tenant.Version = _appSettings.Version;
+                //_tenantDbContext.SaveChanges();
 
-                _cache.Remove(_tenant.Hostname.ToLower());
+                //_cache.Remove(_tenant.Hostname.ToLower());
             }
             catch(Exception e)
             {

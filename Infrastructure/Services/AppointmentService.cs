@@ -39,7 +39,10 @@ namespace Infrastructure.Services
                 await InsertAppointmentSequence();
                 entity.Name = await sequenceService.NextByCode("appointment");
             }
-
+            if (!string.IsNullOrEmpty(entity.Time))
+            {
+                entity.DateTimeAppointment = entity.Date.Add(TimeSpan.Parse(entity.Time));
+            }
             return await base.CreateAsync(entity);
         }
 
@@ -391,6 +394,10 @@ namespace Infrastructure.Services
             var appointment = await SearchQuery(x => x.Id == id).Include(x => x.AppointmentServices).ThenInclude(x => x.Product).FirstOrDefaultAsync();
             await ComputeAppointmentService(appointment, val);
             appointment = _mapper.Map(val, appointment);
+            if (!string.IsNullOrEmpty(val.Time) && val.Date.HasValue)
+            {
+                appointment.DateTimeAppointment = val.Date.Value.Add(TimeSpan.Parse(val.Time));
+            }
             await UpdateAsync(appointment);
         }
 

@@ -1,0 +1,30 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li class="mb-2">SMS Nhắc lịch hẹn</li>
+        </ol>
+        <div>
+            <div class="o_cp_buttons">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a routerLink="manually" class="nav-link px-3 py-1" routerLinkActive="active">Thủ công</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="auto" class="nav-link px-3 py-1" routerLinkActive="active">Tự động</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="statistic" [queryParams]="{campaignId:campaign ? campaign.id : campaignId}"
+                            class="nav-link px-3 py-1" routerLinkActive="active">Tin đã gửi</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+<div class="o_content">
+    <router-outlet></router-outlet>
+</div>

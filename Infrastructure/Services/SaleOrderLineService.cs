@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
@@ -1006,6 +1007,48 @@ namespace Infrastructure.Services
 
 
 
+        }
+
+        public async Task<PagedResult2<SmsCareAfterOrder>> GetPagedSmsCareAfterOrderAsync(SmsCareAfterOrderPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
+                    || x.OrderPartner.Phone.Contains(val.Search));
+            if (val.ProductId.HasValue)
+                query = query.Where(x => x.ProductId == val.ProductId.Value);
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateCreated >= val.DateFrom.Value);
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateCreated <= dateTo);
+            }
+
+            var totalItems = await query.CountAsync();
+
+            if (val.Limit > 0)
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            }
+
+            var items = await query.OrderByDescending(x => x.DateCreated).Select(x => new SmsCareAfterOrder
+            {
+                PartnerId = x.OrderPartnerId,
+                SaleOrderLineId = x.Id,
+                PartnerName = x.OrderPartner.Name,
+                PartnerPhone = x.OrderPartner.Phone,
+                SaleOrderName = x.Order.Name,
+                DoctorName = x.EmployeeId.HasValue ? x.Employee.Name : null,
+                DateDone = x.Order.DateDone
+            }).ToListAsync();
+
+            return new PagedResult2<SmsCareAfterOrder>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
         }
     }
 }

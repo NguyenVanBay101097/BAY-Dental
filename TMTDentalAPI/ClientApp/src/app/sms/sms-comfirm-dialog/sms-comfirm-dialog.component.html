@@ -1,0 +1,71 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title || 'Xác nhận'}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body">
+    <div *ngIf="bodyContent">{{bodyContent}}</div>
+    <div *ngIf="bodyNote">{{bodyNote}}</div>
+    <table class="o_group o_inner_group o_group_col_12">
+        <tbody>
+            <tr *ngIf="campaign">
+                <td colspan="1" class="o_td_label">
+                    <span class="o_form_label">
+                        Chiến dịch
+                    </span>
+                </td>
+                <td colspan="1">
+                    <span>{{campaign.name}}</span>
+                </td>
+            </tr>
+            <tr *ngIf="brandName">
+                <td colspan="1" class="o_td_label">
+                    <span class="o_form_label">
+                        Brandname
+                    </span>
+                </td>
+                <td colspan="1">
+                    <span>{{brandName}}</span>
+                </td>
+            </tr>
+            <tr *ngIf="timeSendSms">
+                <td colspan="1" class="o_td_label">
+                    <span class="o_form_label">
+                        Thời điểm gửi tin
+                    </span>
+                </td>
+                <td colspan="1">
+                    <span>{{timeSendSms}}</span>
+                </td>
+            </tr>
+            <tr *ngIf="body">
+                <td colspan="1" class="o_td_label">
+                    <span class="o_form_label">
+                        Nội dung tin nhắn
+                    </span>
+                </td>
+                <td colspan="1">
+                    <span>{{body}}</span>
+                </td>
+            </tr>
+            <tr *ngIf="numberSms">
+                <td colspan="1" class="o_td_label">
+                    <span class="o_form_label">
+                        Số người nhận tin
+                    </span>
+                </td>
+                <td colspan="1">
+                    <span>{{numberSms}}</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="onConfirm()" accesskey="s"><span>Gửi
+            ngay</span></button>
+    <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="onCancel()"
+        accesskey="q"><span>Đóng</span></button>
+</footer>

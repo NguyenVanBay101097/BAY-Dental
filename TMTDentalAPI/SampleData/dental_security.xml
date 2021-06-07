@@ -1,373 +1,410 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <data>
-    <record model="res.groups" id="group_user">
-      <field name="name">Lễ tân</field>
-      <field name="implied_ids" eval="base.group_user"/>
-    </record>
+	<data>
+		<record model="res.groups" id="group_user">
+			<field name="name">Lễ tân</field>
+			<field name="implied_ids" eval="base.group_user"/>
+		</record>
 
-    <record model="res.groups" id="group_manager">
-      <field name="name">Bác sĩ</field>
-      <field name="implied_ids" eval="base.group_user"/>
-    </record>
+		<record model="res.groups" id="group_manager">
+			<field name="name">Bác sĩ</field>
+			<field name="implied_ids" eval="base.group_user"/>
+		</record>
 
-    <record model="res.groups" id="group_admin">
-      <field name="name">Chủ chi nhánh</field>
-      <field name="implied_ids" eval="base.group_user"/>
-    </record>
+		<record model="res.groups" id="group_admin">
+			<field name="name">Chủ chi nhánh</field>
+			<field name="implied_ids" eval="base.group_user"/>
+		</record>
 
-    <record model="res.groups" id="sale.group_discount_per_so_line">
-      <field name="name">Discount on lines</field>
-      <field name="category_id" ref="base.module_category_hidden" />
-    </record>
+		<record model="res.groups" id="sale.group_discount_per_so_line">
+			<field name="name">Discount on lines</field>
+			<field name="category_id" ref="base.module_category_hidden" />
+		</record>
 
-    <record model="res.groups" id="sale.group_sale_coupon_promotion">
-      <field name="name">Coupon Promotion Programs</field>
-      <field name="category_id" ref="base.module_category_hidden" />
-    </record>
+		<record model="res.groups" id="sale.group_sale_coupon_promotion">
+			<field name="name">Coupon Promotion Programs</field>
+			<field name="category_id" ref="base.module_category_hidden" />
+		</record>
 
-    <record model="res.groups" id="sale.group_loyalty_card">
-      <field name="name">Loyalty Card</field>
-      <field name="category_id" ref="base.module_category_hidden" />
-    </record>
+		<record model="res.groups" id="sale.group_loyalty_card">
+			<field name="name">Loyalty Card</field>
+			<field name="category_id" ref="base.module_category_hidden" />
+		</record>
 
-    <record model="res.groups" id="survey.group_manager">
-      <field name="name">Quản lý</field>
-      <field name="category_id" ref="survey.module_category_survey" />
-    </record>
+		<record model="res.groups" id="survey.group_manager">
+			<field name="name">Quản lý</field>
+			<field name="category_id" ref="survey.module_category_survey" />
+		</record>
 
-    <record model="res.groups" id="survey.group_user">
-      <field name="name">Nhân viên</field>
-      <field name="category_id" ref="survey.module_category_survey" />
-    </record>
-  </data>
-  <data noupdate="1">
-    <record id="account.account_move_comp_rule" model="ir.rule">
-      <field name="name">Account Entry</field>
-      <field name="model_id" ref="account.model_account_move"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="res.groups" id="survey.group_user">
+			<field name="name">Nhân viên</field>
+			<field name="category_id" ref="survey.module_category_survey" />
+		</record>
+	</data>
+	<data noupdate="1">
+		<record id="account.account_move_comp_rule" model="ir.rule">
+			<field name="name">Account Entry</field>
+			<field name="model_id" ref="account.model_account_move"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record id="account.account_move_line_comp_rule" model="ir.rule">
-      <field name="name">Entry lines</field>
-      <field name="model_id" ref="account.model_account_move_line"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record id="account.account_move_line_comp_rule" model="ir.rule">
+			<field name="name">Entry lines</field>
+			<field name="model_id" ref="account.model_account_move_line"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record id="account.journal_comp_rule" model="ir.rule">
-      <field name="name">Journal multi-company</field>
-      <field name="model_id" ref="account.model_account_journal"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record id="account.journal_comp_rule" model="ir.rule">
+			<field name="name">Journal multi-company</field>
+			<field name="model_id" ref="account.model_account_journal"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record id="account.account_comp_rule" model="ir.rule">
-      <field name="name">Account multi-company</field>
-      <field name="model_id" ref="account.model_account_account"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record id="account.account_comp_rule" model="ir.rule">
+			<field name="name">Account multi-company</field>
+			<field name="model_id" ref="account.model_account_account"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record id="account.invoice_comp_rule" model="ir.rule">
-      <field name="name">Invoice multi-company</field>
-      <field name="model_id" ref="account.model_account_invoice"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record id="account.invoice_comp_rule" model="ir.rule">
+			<field name="name">Invoice multi-company</field>
+			<field name="model_id" ref="account.model_account_invoice"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="account.account_invoice_line_comp_rule">
-      <field name="name">Invoice Line company rule</field>
-      <field name="model_id" ref="account.model_account_invoice_line"/>
-      <field name="global" eval="True"/>
-    </record>
-    
-    <record model="ir.rule" id="account.account_payment_comp_rule">
-      <field name="name">Account payment company rule</field>
-      <field name="model_id" ref="account.model_account_payment"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="account.account_invoice_line_comp_rule">
+			<field name="name">Invoice Line company rule</field>
+			<field name="model_id" ref="account.model_account_invoice_line"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="stock.stock_picking_rule">
-      <field name="name">stock_picking multi-company</field>
-      <field name="model_id" ref="stock.model_stock_picking"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="account.account_payment_comp_rule">
+			<field name="name">Account payment company rule</field>
+			<field name="model_id" ref="account.model_account_payment"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="stock.stock_picking_type_rule">
-      <field name="name">Stock Picking Type multi-company</field>
-      <field name="model_id" ref="stock.model_stock_picking_type"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="stock.stock_picking_rule">
+			<field name="name">stock_picking multi-company</field>
+			<field name="model_id" ref="stock.model_stock_picking"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="stock.stock_warehouse_comp_rule">
-      <field name="name">Warehouse multi-company</field>
-      <field name="model_id" ref="stock.model_stock_warehouse"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="stock.stock_picking_type_rule">
+			<field name="name">Stock Picking Type multi-company</field>
+			<field name="model_id" ref="stock.model_stock_picking_type"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="stock.stock_location_comp_rule">
-      <field name="name">Location multi-company</field>
-      <field name="model_id" ref="stock.model_stock_location"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="stock.stock_warehouse_comp_rule">
+			<field name="name">Warehouse multi-company</field>
+			<field name="model_id" ref="stock.model_stock_warehouse"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="stock.stock_move_rule">
-      <field name="name">stock_move multi-company</field>
-      <field name="model_id" ref="stock.model_stock_move"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="stock.stock_location_comp_rule">
+			<field name="name">Location multi-company</field>
+			<field name="model_id" ref="stock.model_stock_location"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="stock.stock_quant_rule">
-      <field name="name">stock_quant multi-company</field>
-      <field name="model_id" ref="stock.model_stock_quant"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="stock.stock_move_rule">
+			<field name="name">stock_move multi-company</field>
+			<field name="model_id" ref="stock.model_stock_move"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record id="product.product_comp_rule" model="ir.rule">
-      <field name="name">Product multi-company</field>
-      <field name="model_id" ref="product.model_product_product"/>
-      <field name="global" eval="True"/>
-      <field name="active" eval="False"/>
-    </record>
+		<record model="ir.rule" id="stock.stock_quant_rule">
+			<field name="name">stock_quant multi-company</field>
+			<field name="model_id" ref="stock.model_stock_quant"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="base.res_partner_rule">
-      <field name="name">res.partner company</field>
-      <field name="model_id" ref="base.model_res_partner"/>
-      <field name="global" eval="True"/>
-      <field name="active" eval="False"/>
-    </record>
+		<record id="product.product_comp_rule" model="ir.rule">
+			<field name="name">Product multi-company</field>
+			<field name="model_id" ref="product.model_product_product"/>
+			<field name="global" eval="True"/>
+			<field name="active" eval="False"/>
+		</record>
 
-    <record model="ir.rule" id="product.product_pricelist_comp_rule">
-      <field name="name">product pricelist company rule</field>
-      <field name="model_id" ref="product.model_product_pricelist"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="base.res_partner_rule">
+			<field name="name">res.partner company</field>
+			<field name="model_id" ref="base.model_res_partner"/>
+			<field name="global" eval="True"/>
+			<field name="active" eval="False"/>
+		</record>
 
-    <record model="ir.rule" id="product.product_pricelist_item_comp_rule">
-      <field name="name">product pricelist item company rule</field>
-      <field name="model_id" ref="product.model_product_pricelist_item"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="product.product_pricelist_comp_rule">
+			<field name="name">product pricelist company rule</field>
+			<field name="model_id" ref="product.model_product_pricelist"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="sale.sale_order_comp_rule">
-      <field name="name">sale_order multi-company</field>
-      <field name="model_id" ref="sale.model_sale_order"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="product.product_pricelist_item_comp_rule">
+			<field name="name">product pricelist item company rule</field>
+			<field name="model_id" ref="product.model_product_pricelist_item"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="sale.sale_order_line_comp_rule">
-      <field name="name">sale_order_line multi-company</field>
-      <field name="model_id" ref="sale.model_sale_order_line"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="sale.sale_order_comp_rule">
+			<field name="name">sale_order multi-company</field>
+			<field name="model_id" ref="sale.model_sale_order"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="purchase.purchase_order_comp_rule">
-      <field name="name">Purchase Order multi-company</field>
-      <field name="model_id" ref="purchase.model_purchase_order"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="sale.sale_order_line_comp_rule">
+			<field name="name">sale_order_line multi-company</field>
+			<field name="model_id" ref="sale.model_sale_order_line"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="purchase.purchase_order_line_comp_rule">
-      <field name="name">Purchase Order Line multi-company</field>
-      <field name="model_id" ref="purchase.model_purchase_order_line"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="purchase.purchase_order_comp_rule">
+			<field name="name">Purchase Order multi-company</field>
+			<field name="model_id" ref="purchase.model_purchase_order"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="labo.labo_order_comp_rule">
-      <field name="name">Labo Order multi-company</field>
-      <field name="model_id" ref="labo.model_labo_order"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="purchase.purchase_order_line_comp_rule">
+			<field name="name">Purchase Order Line multi-company</field>
+			<field name="model_id" ref="purchase.model_purchase_order_line"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="labo.labo_order_line_comp_rule">
-      <field name="name">Labo Order Line multi-company</field>
-      <field name="model_id" ref="labo.model_labo_order_line"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="labo.labo_order_comp_rule">
+			<field name="name">Labo Order multi-company</field>
+			<field name="model_id" ref="labo.model_labo_order"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="sale.appointment_comp_rule">
-      <field name="name">Appointment multi-company</field>
-      <field name="model_id" ref="sale.model_appointment"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="labo.labo_order_line_comp_rule">
+			<field name="name">Labo Order Line multi-company</field>
+			<field name="model_id" ref="labo.model_labo_order_line"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="sale.dot_kham_comp_rule">
-      <field name="name">Đợt khám multi-company</field>
-      <field name="model_id" ref="sale.model_dot_kham"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="sale.appointment_comp_rule">
+			<field name="name">Appointment multi-company</field>
+			<field name="model_id" ref="sale.model_appointment"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="sale.toa_thuoc_comp_rule">
-      <field name="name">Toa thuốc multi-company</field>
-      <field name="model_id" ref="sale.model_toa_thuoc"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="sale.dot_kham_comp_rule">
+			<field name="name">Đợt khám multi-company</field>
+			<field name="model_id" ref="sale.model_dot_kham"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="sale_coupon.sale_coupon_program_comp_rule">
-      <field name="name">Coupon program multi-company</field>
-      <field name="model_id" ref="sale_coupon.model_sale_coupon_program"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="sale.toa_thuoc_comp_rule">
+			<field name="name">Toa thuốc multi-company</field>
+			<field name="model_id" ref="sale.model_toa_thuoc"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="sale_coupon.sale_coupon_comp_rule">
-      <field name="name">Coupon multi-company</field>
-      <field name="model_id" ref="sale_coupon.model_sale_coupon"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="sale_coupon.sale_coupon_program_comp_rule">
+			<field name="name">Coupon program multi-company</field>
+			<field name="model_id" ref="sale_coupon.model_sale_coupon_program"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="service_card.service_card_order_comp_rule">
-      <field name="name">Service Card Order multi-company</field>
-      <field name="model_id" ref="service_card.model_service_card_order"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="sale_coupon.sale_coupon_comp_rule">
+			<field name="name">Coupon multi-company</field>
+			<field name="model_id" ref="sale_coupon.model_sale_coupon"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="service_card.service_card_type_comp_rule">
-      <field name="name">Service Card Type multi-company</field>
-      <field name="model_id" ref="service_card.model_service_card_type"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="service_card.service_card_order_comp_rule">
+			<field name="name">Service Card Order multi-company</field>
+			<field name="model_id" ref="service_card.model_service_card_order"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="service_card.service_card_card_comp_rule">
-      <field name="name">Service Card Card multi-company</field>
-      <field name="model_id" ref="service_card.model_service_card_card"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="service_card.service_card_type_comp_rule">
+			<field name="name">Service Card Type multi-company</field>
+			<field name="model_id" ref="service_card.model_service_card_type"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="base.res_company_rule_employee">
-      <field name="name">company rule employee</field>
-      <field name="model_id" ref="base.model_res_company"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="service_card.service_card_card_comp_rule">
+			<field name="name">Service Card Card multi-company</field>
+			<field name="model_id" ref="service_card.model_service_card_card"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="account.phieu_thu_chi_comp_rule">
-      <field name="name">Phieu Thu Chi multi-company</field>
-      <field name="model_id" ref="account.model_phieu_thu_chi"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="base.res_company_rule_employee">
+			<field name="name">company rule employee</field>
+			<field name="model_id" ref="base.model_res_company"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="account.loai_thu_chi_comp_rule">
-      <field name="name">Loai Thu Chi multi-company</field>
-      <field name="model_id" ref="account.model_loai_thu_chi"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="account.phieu_thu_chi_comp_rule">
+			<field name="name">Phieu Thu Chi multi-company</field>
+			<field name="model_id" ref="account.model_phieu_thu_chi"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="sale.commission_comp_rule">
-      <field name="name">Commission multi-company</field>
-      <field name="model_id" ref="sale.model_commission"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="account.loai_thu_chi_comp_rule">
+			<field name="name">Loai Thu Chi multi-company</field>
+			<field name="model_id" ref="account.model_loai_thu_chi"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="sale.commission_settlement_comp_rule">
-      <field name="name">Commission Settlement multi-company</field>
-      <field name="model_id" ref="sale.model_commission_settlement"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="sale.commission_comp_rule">
+			<field name="name">Commission multi-company</field>
+			<field name="model_id" ref="sale.model_commission"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="hr.employee_comp_rule">
-      <field name="name">Employee multi-company</field>
-      <field name="model_id" ref="hr.model_employee"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="sale.commission_settlement_comp_rule">
+			<field name="name">Commission Settlement multi-company</field>
+			<field name="model_id" ref="sale.model_commission_settlement"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="hr.cham_cong_comp_rule">
-      <field name="name">Cham cong multi-company</field>
-      <field name="model_id" ref="hr.model_cham_cong"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="hr.employee_comp_rule">
+			<field name="name">Employee multi-company</field>
+			<field name="model_id" ref="hr.model_employee"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="hr.payslip_run_comp_rule">
-      <field name="name">Payslip Run multi-company</field>
-      <field name="model_id" ref="hr.model_payslip_run"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="hr.cham_cong_comp_rule">
+			<field name="name">Cham cong multi-company</field>
+			<field name="model_id" ref="hr.model_cham_cong"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="hr.payslip_comp_rule">
-      <field name="name">Payslip multi-company</field>
-      <field name="model_id" ref="hr.model_payslip"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="hr.payslip_run_comp_rule">
+			<field name="name">Payslip Run multi-company</field>
+			<field name="model_id" ref="hr.model_payslip_run"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="hr.payroll_structure_comp_rule">
-      <field name="name">Payroll Structure multi-company</field>
-      <field name="model_id" ref="hr.model_payroll_structure"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="hr.payslip_comp_rule">
+			<field name="name">Payslip multi-company</field>
+			<field name="model_id" ref="hr.model_payslip"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="hr.payroll_structure_type_comp_rule">
-      <field name="name">Payroll Structure Type multi-company</field>
-      <field name="model_id" ref="hr.model_payroll_structure_type"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="hr.payroll_structure_comp_rule">
+			<field name="name">Payroll Structure multi-company</field>
+			<field name="model_id" ref="hr.model_payroll_structure"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="base.resource_calendar_comp_rule">
-      <field name="name">Resource Calendar multi-company</field>
-      <field name="model_id" ref="base.model_resource_calendar"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="hr.payroll_structure_type_comp_rule">
+			<field name="name">Payroll Structure Type multi-company</field>
+			<field name="model_id" ref="hr.model_payroll_structure_type"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="medicineOrder.medicine_order_comp_rule">
-      <field name="name">MedicineOrder multi-company</field>
-      <field name="model_id" ref="base.model_medicine_order"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="base.resource_calendar_comp_rule">
+			<field name="name">Resource Calendar multi-company</field>
+			<field name="model_id" ref="base.model_resource_calendar"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="productrequest.product_request_comp_rule">
-      <field name="name">Product Request multi-company</field>
-      <field name="model_id" ref="stock.model_product_request"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="medicineOrder.medicine_order_comp_rule">
+			<field name="name">MedicineOrder multi-company</field>
+			<field name="model_id" ref="base.model_medicine_order"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="stock.stock_inventory_comp_rule">
-      <field name="name">Stock Inventory multi-company</field>
-      <field name="model_id" ref="stock.model_stock_inventory"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="productrequest.product_request_comp_rule">
+			<field name="name">Product Request multi-company</field>
+			<field name="model_id" ref="stock.model_product_request"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="stock.stock_inventory_line_comp_rule">
-      <field name="name">Stock Inventory line multi-company</field>
-      <field name="model_id" ref="stock.model_stock_inventory_line"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="stock.stock_inventory_comp_rule">
+			<field name="name">Stock Inventory multi-company</field>
+			<field name="model_id" ref="stock.model_stock_inventory"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="survey.survey_assignment_employee_rule">
-      <field name="name">Survey Assignment Employee Rule</field>
-      <field name="model_id" ref="survey.model_survey_assignment"/>
-      <field name="global" eval="False"/>
-      <field name="group_ids" ref="survey.group_user"/>
-    </record>
+		<record model="ir.rule" id="stock.stock_inventory_line_comp_rule">
+			<field name="name">Stock Inventory line multi-company</field>
+			<field name="model_id" ref="stock.model_stock_inventory_line"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="partner.partner_advance_comp_rule">
-      <field name="name">Partner Advance multi-company</field>
-      <field name="model_id" ref="partner.model_partner_advance"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="survey.survey_assignment_employee_rule">
+			<field name="name">Survey Assignment Employee Rule</field>
+			<field name="model_id" ref="survey.model_survey_assignment"/>
+			<field name="global" eval="False"/>
+			<field name="group_ids" ref="survey.group_user"/>
+		</record>
 
-    <record model="ir.rule" id="sale.sale_order_payment_comp_rule">
-      <field name="name">SaleOrder Payment multi-company</field>
-      <field name="model_id" ref="sale.model_sale_order_payment"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="partner.partner_advance_comp_rule">
+			<field name="name">Partner Advance multi-company</field>
+			<field name="model_id" ref="partner.model_partner_advance"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="tooth.tooth_diagnosis_comp_rule">
-      <field name="name">Tooth Diagnosis company rule</field>
-      <field name="model_id" ref="base.model_tooth_diagnosis"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="sale.sale_order_payment_comp_rule">
+			<field name="name">SaleOrder Payment multi-company</field>
+			<field name="model_id" ref="sale.model_sale_order_payment"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="advisory.advisory_comp_rule">
-      <field name="name">Advisory company rule</field>
-      <field name="model_id" ref="sale.model_advisory"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="tooth.tooth_diagnosis_comp_rule">
+			<field name="name">Tooth Diagnosis company rule</field>
+			<field name="model_id" ref="base.model_tooth_diagnosis"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="quotation.quotation_comp_rule">
-      <field name="name">Quotation company rule</field>
-      <field name="model_id" ref="sale.model_quotation"/>
-      <field name="global" eval="True"/>
-    </record>
+		<record model="ir.rule" id="advisory.advisory_comp_rule">
+			<field name="name">Advisory company rule</field>
+			<field name="model_id" ref="sale.model_advisory"/>
+			<field name="global" eval="True"/>
+		</record>
 
-    <record model="ir.rule" id="config.config_print_comp_rule">
-      <field name="name">Config Print multi-company</field>
-      <field name="model_id" ref="config.model_config_print"/>
-      <field name="global" eval="True"/>
-    </record>
-  </data>
+		<record model="ir.rule" id="quotation.quotation_comp_rule">
+			<field name="name">Quotation company rule</field>
+			<field name="model_id" ref="sale.model_quotation"/>
+			<field name="global" eval="True"/>
+		</record>
+
+		<record model="ir.rule" id="config.config_print_comp_rule">
+			<field name="name">Config Print multi-company</field>
+			<field name="model_id" ref="config.model_config_print"/>
+			<field name="global" eval="True"/>
+		</record>
+
+		
+		<record model="ir.rule" id="sms.sms_account_comp_rule">
+			<field name="name">Sms Account company rule</field>
+			<field name="model_id" ref="sms.model_sms_account"/>
+			<field name="global" eval="True"/>
+		</record>
+
+		<record model="ir.rule" id="sms.sms_campaign_comp_rule">
+			<field name="name">Sms Campaign company rule</field>
+			<field name="model_id" ref="sms.model_sms_campaign"/>
+			<field name="global" eval="True"/>
+		</record>
+
+		<record model="ir.rule" id="sms.sms_config_comp_rule">
+			<field name="name">Sms Config company rule</field>
+			<field name="model_id" ref="sms.model_sms_config"/>
+			<field name="global" eval="True"/>
+		</record>
+
+		<record model="ir.rule" id="sms.sms_template_comp_rule">
+			<field name="name">Sms Template company rule</field>
+			<field name="model_id" ref="sms.model_sms_template"/>
+			<field name="global" eval="True"/>
+		</record>
+
+		<record model="ir.rule" id="sms.sms_message_comp_rule">
+			<field name="name">Sms Message company rule</field>
+			<field name="model_id" ref="sms.model_sms_message"/>
+			<field name="global" eval="True"/>
+		</record>
+
+		<record model="ir.rule" id="sms.sms_message_detail_comp_rule">
+			<field name="name">Sms Message Detail company rule</field>
+			<field name="model_id" ref="sms.model_sms_message_detail"/>
+			<field name="global" eval="True"/>
+		</record>
+	</data>
 </odoo>
 

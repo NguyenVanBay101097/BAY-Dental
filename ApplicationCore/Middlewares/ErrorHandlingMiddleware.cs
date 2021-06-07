@@ -37,7 +37,6 @@ namespace ApplicationCore.Middlewares
             //else if (ex is MyUnauthorizedException) code = HttpStatusCode.Unauthorized;
             //else if (ex is MyException) code = HttpStatusCode.BadRequest;
 
-
             var msg = ex.Message;
             if (ex is DbUpdateException)
             {

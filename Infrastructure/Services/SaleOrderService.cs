@@ -2963,5 +2963,31 @@ namespace Infrastructure.Services
 
             return product;
         }
+
+        public async Task<PagedResult2<SaleOrderSmsBasic>> GetSaleOrderForSms(SaleOrderPaged val)
+        {
+            var query = SearchQuery(x => x.State == val.State && x.DateDone.HasValue);
+            if (val.DateOrderFrom.HasValue)
+                query = query.Where(x => x.DateDone.Value >= val.DateOrderFrom.Value);
+            if (val.DateOrderTo.HasValue)
+                query = query.Where(x => x.DateDone.Value <= val.DateOrderTo.Value);
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search));
+            var totalItems = await query.CountAsync();
+            var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SaleOrderSmsBasic
+            {
+                Id = x.Id,
+                PartnerId = x.PartnerId,
+                PartnerPhone = x.Partner.Phone,
+                PartnerName = x.Partner.DisplayName,
+                AmountTotal = x.AmountTotal,
+                DateDone = x.DateDone,
+                Name = x.Name,
+                SaleOrderLineName = string.Join(", ", x.OrderLines.Select(s => s.Name))
+            }).ToListAsync();
+            return new PagedResult2<SaleOrderSmsBasic>(totalItems, val.Offset, val.Limit) { 
+                Items = items
+            };
+        }
     }
 }

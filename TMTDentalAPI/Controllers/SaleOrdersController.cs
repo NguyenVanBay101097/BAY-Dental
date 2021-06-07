@@ -56,6 +56,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetSaleOrderForSms([FromQuery] SaleOrderPaged val)
+        {
+            var result = await _saleOrderService.GetSaleOrderForSms(val);
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> Get(Guid id)

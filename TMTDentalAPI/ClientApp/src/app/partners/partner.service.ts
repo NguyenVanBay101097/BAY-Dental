@@ -534,6 +534,14 @@ export class PartnerService {
     checkUpdateLevel() {
         return this.http.post(this.baseApi + this.apiUrl + '/CheckUpdateLevel', {});
     }
+
+    getCustomerBirthDay(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetCustomerBirthDay', val);
+    }
+    
+    getCustomerAppointments(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetCustomerAppointments', val);
+    }
 }
 
 

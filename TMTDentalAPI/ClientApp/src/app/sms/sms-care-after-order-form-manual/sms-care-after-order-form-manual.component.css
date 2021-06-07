@@ -1,0 +1,113 @@
+.pms-wrapper {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+}
+
+.pms-left {
+    flex: 0 0 300px;
+    margin-right: 15px;
+}
+
+.pms-right {
+    flex: 1;
+}
+
+.cate-item {
+    border-left: none;
+}
+
+.cate-item:not(.active):hover {
+    background-color: rgb(230, 226, 226);
+    cursor: pointer;
+}
+
+li {
+    cursor: pointer;
+}
+
+.cate-item:first-child {
+    border-top: none;
+}
+
+.edit_remove_action button {
+    background: none;
+    border: none;
+    margin-right: 5px;
+    border-style: none;
+    padding: 0;
+    outline: none;
+}
+
+.search-input {
+    box-shadow: none;
+}
+
+.list-group-item {
+    border-radius: 0px !important;
+}
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control:focus {
+    box-shadow: none !important;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+.k-widget.k-grid {
+    height: 100% !important;
+}
+
+tbody>.cursor:hover {
+    background-color: #c1c1c1;
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+.size-text-14 {
+    font-size: 13.5px;
+    border-radius: 0;
+}
+
+.sticky-table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    /* Don't collapse */
+    border-spacing: 0 !important;
+}
+
+.sticky-table .sticky-th {
+    /* Apply both top and bottom borders to the <th> */
+    position: sticky !important;
+    top: 0 !important;
+    background-color: #f9f9f9 !important;
+    border-top: 1px solid #dee2e6 !important;
+    border-bottom: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+}
+
+.sticky-table .sticky-td {
+    /* For cells, apply the border to one of each side only (right but not left, bottom but not top) */
+    border-bottom: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+}
+
+.sticky-table .sticky-th:first-child, .sticky-table .sticky-td:first-child {
+    /* Apply a left border on the first <td> or <th> in a row */
+    border-left: 1px solid #dee2e6 !important;
+}

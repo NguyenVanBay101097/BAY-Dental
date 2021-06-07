@@ -827,6 +827,7 @@ namespace Infrastructure.Services
             var sequence_dict = new Dictionary<string, IRSequence>();
             var partner_title_dict = new Dictionary<string, PartnerTitle>();
             var paper_size_dict = new Dictionary<string, PrintPaperSize>();
+            var sms_campaign_dict = new Dictionary<string, SmsCampaign>();
 
             var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\dental_data.xml");
             XmlDocument doc = new XmlDocument();
@@ -968,6 +969,33 @@ namespace Infrastructure.Services
                         }
                     }
                     paper_size_dict.Add(id, printPaperSize);
+                }else if (model == "sms.campaign")
+                {
+                    var smsCampaign = new SmsCampaign();
+                    var fields = record.GetElementsByTagName("field");
+                    for (var j = 0; j < fields.Count; j++)
+                    {
+                        XmlElement field = (XmlElement)fields[j];
+                        var field_name = field.GetAttribute("name");
+                        if (field_name == "name")
+                        {
+                            smsCampaign.Name = field.InnerText;
+                        }
+                        else if (field_name == "typeDate")
+                        {
+                            smsCampaign.TypeDate = field.InnerText;
+                        }
+                        else if (field_name == "state")
+                        {
+                            smsCampaign.State = field.InnerText;
+                        }
+                        else if (field_name == "defaultType")
+                        {
+                            smsCampaign.DefaultType = field.InnerText;
+                        }
+                       
+                    }
+                    sms_campaign_dict.Add(id, smsCampaign);
                 }
             }
 
@@ -980,8 +1008,8 @@ namespace Infrastructure.Services
             var seqObj = GetService<IIRSequenceService>();
             await seqObj.CreateAsync(sequence_dict.Values);
 
-            var partnerTitlte = GetService<IPartnerTitleService>();
-            await partnerTitlte.CreateAsync(partner_title_dict.Values);
+            var partnerTitlteObj = GetService<IPartnerTitleService>();
+            await partnerTitlteObj.CreateAsync(partner_title_dict.Values);
 
             var modelDataObj = GetService<IIRModelDataService>();
             await modelDataObj.CreateAsync(PrepareModelData(partner_title_dict, "res.partner.title"));
@@ -990,6 +1018,11 @@ namespace Infrastructure.Services
             await paperSizeObj.CreateAsync(paper_size_dict.Values);
 
             await modelDataObj.CreateAsync(PrepareModelData(paper_size_dict, "res.paper.size"));
+
+            var smsCampaignObj = GetService<ISmsCampaignService>();
+            await smsCampaignObj.CreateAsync(sms_campaign_dict.Values);
+
+            await modelDataObj.CreateAsync(PrepareModelData(sms_campaign_dict, "res.sms.campaign"));
 
         }
 

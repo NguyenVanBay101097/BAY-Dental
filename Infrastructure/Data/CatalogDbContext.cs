@@ -278,6 +278,22 @@ namespace Infrastructure.Data
         public DbSet<MemberLevel> MemberLevels { get; set; }
         public DbSet<SaleCouponProgramMemberLevelRel> SaleCouponProgramMemberLevelRels {get; set;}
 
+        /// <summary>
+        /// SMS
+        /// </summary>
+        public DbSet<SmsAccount> SmsAccounts { get; set; }
+        public DbSet<SmsComposer> SmsComposers { get; set; }
+        public DbSet<SmsConfig> SmsConfigs { get; set; }
+        public DbSet<SmsMessageDetail> SmsMessageDetails { get; set; }
+        public DbSet<SmsTemplate> SmsTemplates { get; set; }
+        public DbSet<SmsMessage> SmsMessages { get; set; }
+        public DbSet<SmsMessagePartnerRel> SmsMessagePartnerRels { get; set; }
+        public DbSet<SmsMessageAppointmentRel> SmsMessageAppointmentRels { get; set; }
+        public DbSet<SmsMessageSaleOrderRel> SmsMessageSaleOrderRels { get; set; }
+        public DbSet<SmsMessageSaleOrderLineRel> SmsMessageSaleOrderLineRels { get; set; }
+        public DbSet<SmsConfigProductCategoryRel> SmsConfigProductCategoryRels { get; set; }
+        public DbSet<SmsConfigProductRel> SmsConfigProductRels { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -500,6 +516,21 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new PrintPaperSizeConfigution());
             builder.ApplyConfiguration(new MemberLevelConfiguration());
             builder.ApplyConfiguration(new SaleCouponProgramMemberLevelRelConfiguration());
+
+            builder.ApplyConfiguration(new SmsAccountConfiguration());
+            builder.ApplyConfiguration(new SmsConfigConfiguration());
+            builder.ApplyConfiguration(new SmsComposerConfiguration());
+            builder.ApplyConfiguration(new SmsMessageDetailConfiguration());
+            builder.ApplyConfiguration(new SmsTemplateConfiguration());
+            builder.ApplyConfiguration(new SmsMessagePartnerRelConfiguration());
+            builder.ApplyConfiguration(new SmsMessageConfiguration());
+            builder.ApplyConfiguration(new SmsMessageAppointmentRelConfiguration());
+            builder.ApplyConfiguration(new SmsMessageSaleOrderLineRelConfiguration());
+            builder.ApplyConfiguration(new SmsMessageSaleOrderRelConfiguration());
+            builder.ApplyConfiguration(new SmsConfigProductRelConfiguration());
+            builder.ApplyConfiguration(new SmsConfigProductCategoryRelConfiguration());
+
+
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
@@ -550,6 +581,7 @@ namespace Infrastructure.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+
             if (!optionsBuilder.IsConfigured)
             {
                 if (_tenant != null)

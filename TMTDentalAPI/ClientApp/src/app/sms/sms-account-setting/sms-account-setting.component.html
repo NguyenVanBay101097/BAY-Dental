@@ -1,0 +1,143 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <span>Cấu hình sms</span>
+            </li>
+
+        </ol>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="d-flex">
+                    <div class="form-check mr-2">
+                        <input class="form-check-input" type="radio" name="brand_name" value="fpt" id="fpt_brand_name"
+                            (change)="onItemChange($event)" />
+                        <label class="form-check-label" for="fpt_brand_name">
+                            FPT
+                        </label>
+                    </div>
+                    <div class="form-check mr-2">
+                        <input class="form-check-input" type="radio" name="brand_name" value="esms" [checked]="true"
+                            id="e_sms_brand_name" (change)="onItemChange($event)" />
+                        <label class="form-check-label" for="e_sms_brand_name">
+                            E-SMS
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="brand_name" value="vietguys"
+                            id="viet_guys_brand_name" (change)="onItemChange($event)" />
+                        <label class="form-check-label" for="viet_guys_brand_name">
+                            Viet Guys
+                        </label>
+                    </div>
+                </div>
+                <div class="o_group">
+                    <div *ngIf="switchBrand">
+                        <ng-template [ngIf]="switchBrand=='fpt'">
+                            <table class="o_group o_inner_group o_group_col_12 modal-body">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Brand Name</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="brandName">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Client Id</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="clientId">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Client Secret</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="clientSecret">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ng-template>
+
+                        <ng-template [ngIf]="switchBrand=='esms'">
+                            <table class="o_group o_inner_group o_group_col_12 modal-body">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Brand Name</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="brandName">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">API Key</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="apiKey">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Secret Key</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="secretkey">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ng-template>
+                        <ng-template [ngIf]="switchBrand=='vietguys'">
+                            <table class="o_group o_inner_group o_group_col_12 modal-body">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Brand Name</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="brandName">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">UserName</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="userName">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Password</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <input type="text" class="form-control" formControlName="password">
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </ng-template>
+                    </div>
+                    <div class="float-right">
+                        <button type="button" class="btn btn-primary mr-2" (click)="onSave()">Xác nhận</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+</div>

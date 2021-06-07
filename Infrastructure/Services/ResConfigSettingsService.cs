@@ -40,6 +40,7 @@ namespace Infrastructure.Services
             await groupObj.InsertSettingGroupIfNotExist("sale.group_service_card", "Service Card");
             await groupObj.InsertSettingGroupIfNotExist("tcare.group_tcare", "TCare");
             await groupObj.InsertSettingGroupIfNotExist("survey.group_survey", "Group Survey");
+            await groupObj.InsertSettingGroupIfNotExist("sms.group_sms", "Group Sms");
 
             //var irValueObj = DependencyResolver.Current.GetService<IRValuesService>();
             var classified = await _GetClassifiedFields<T>();

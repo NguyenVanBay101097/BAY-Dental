@@ -63,6 +63,10 @@ export class SaleOrderService {
         return this.http.get<PagedResult2<SaleOrderBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
+    getSaleOrderForSms(val: any) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetSaleOrderForSms', { params: val });
+    }
+
     get(id): Observable<SaleOrderDisplay> {
         return this.http.get<SaleOrderDisplay>(this.baseApi + this.apiUrl + "/" + id);
     }

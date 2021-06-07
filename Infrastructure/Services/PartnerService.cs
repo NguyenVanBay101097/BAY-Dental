@@ -2042,6 +2042,152 @@ namespace Infrastructure.Services
             return amounBalance * sign;
         }
 
+
+        public async Task<IEnumerable<PartnerBasic>> GetCustomerBirthDay(PartnerPaged val)
+        {
+            var accountMoveLineObj = GetService<IAccountMoveLineService>();
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var query = SearchQuery();
+
+            if (val.Customer.HasValue && val.Customer.Value)
+                query = query.Where(x => x.Customer == val.Customer);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Phone.Contains(val.Search));
+
+            if (val.Month.HasValue)
+                query = query.Where(x => x.BirthMonth.HasValue && x.BirthMonth.Value == val.Month.Value);
+
+            if (val.IsBirthday.HasValue && val.IsBirthday.Value)
+            {
+                var currentDay = DateTime.Today.Day;
+                var currentMonth = DateTime.Today.Month;
+                query = query.Where(x => x.BirthDay.HasValue && x.BirthDay.Value == currentDay && x.BirthMonth.HasValue && x.BirthMonth.Value == currentMonth);
+            }
+            var partnerIds = await query.Select(x => x.Id).ToListAsync();
+
+            var dictRevenuePartner = await accountMoveLineObj
+                .SearchQuery(x => x.PartnerId.HasValue && partnerIds.Contains(x.PartnerId.Value))
+                .GroupBy(x => x.PartnerId.Value).Select(x => new RevenueReportResultDetail
+                {
+                    PartnerId = x.Key,
+                    Debit = x.Sum(k => k.Debit),
+                }).ToDictionaryAsync(x => x.PartnerId, x => x.Debit);
+
+            var dictPartner = await orderLineObj
+                .SearchQuery(x => x.OrderPartnerId.HasValue)
+                .GroupBy(x => x.OrderPartnerId.Value)
+                .Select(x => new { x.Key, Count = x.Count() })
+                .ToDictionaryAsync(x => x.Key, x => x.Count);
+
+            var listPartner = await query.Select(x => new PartnerBasic
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Age = x.GetAge(),
+                BirthDay = x.BirthDay,
+                BirthMonth = x.BirthMonth,
+                BirthYear = x.BirthYear,
+                Street = x.Street,
+                DistrictName = x.DistrictName,
+                WardName = x.WardName,
+                CityName = x.CityName,
+                DateOfBirth = x.GetDateOfBirth(),
+                Phone = x.Phone,
+                Address = x.GetAddress(),
+                Gender = x.GetGender(),
+                CountLine = dictPartner.ContainsKey(x.Id) ? dictPartner[x.Id] : 0,
+                Debit = dictRevenuePartner.ContainsKey(x.Id) ? dictRevenuePartner[x.Id] : 0
+            }).ToListAsync();
+
+            return listPartner;
+        }
+
+        public async Task<IEnumerable<PartnerBasic>> GetCustomerAppointments(PartnerPaged val)
+        {
+            DateTime currentDate = DateTime.Today;
+            var apObj = GetService<IAppointmentService>();
+            var partnerList = await apObj.SearchQuery().Include(x => x.Partner)
+                .Where(x => x.Date.Date == currentDate)
+                .Select(x => new PartnerBasic
+                {
+                    Id = x.Partner.Id,
+                    Name = x.Partner.Name,
+                    Age = x.Partner.GetAge(),
+                    BirthDay = x.Partner.BirthDay,
+                    BirthMonth = x.Partner.BirthMonth,
+                    BirthYear = x.Partner.BirthYear,
+                    Street = x.Partner.Street,
+                    DistrictName = x.Partner.DistrictName,
+                    WardName = x.Partner.WardName,
+                    CityName = x.Partner.CityName,
+                    DateOfBirth = x.Partner.GetDateOfBirth(),
+                    Phone = x.Partner.Phone,
+                    Address = x.Partner.GetAddress(),
+                    Gender = x.Partner.GetGender(),
+                    AppointmnetId = x.Id,
+                    AppointmnetName = x.Name,
+                    Time = x.Time,
+                    Date = x.Date.ToShortDateString()
+
+                })
+                .OrderBy(x => x.Name)
+                .ToListAsync();
+
+
+            return partnerList;
+            //return _mapper.Map<IEnumerable<PartnerBasic>>(apList);
+        }
+
+        private IQueryable<Partner> GetQueryable(PartnerForTCarePaged val)
+        {
+            var query = SearchQuery(x => x.Customer == true);
+            if (val.BirthDay.HasValue)
+                query = query.Where(x => x.BirthDay.HasValue && x.BirthDay.Value == val.BirthDay.Value);
+
+            if (val.BirthMonth.HasValue)
+                query = query.Where(x => x.BirthMonth.HasValue && x.BirthMonth.Value == val.BirthMonth.Value);
+
+            if (!string.IsNullOrEmpty(val.Op) && val.PartnerCategoryId.HasValue)
+            {
+                if (val.Op == "not_contains")
+                {
+                    query = query.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.CategoryId == val.PartnerCategoryId));
+                }
+                else
+                {
+                    query = query.Where(x => !x.PartnerPartnerCategoryRels.Any(s => s.CategoryId == val.PartnerCategoryId));
+                }
+            }
+            return query;
+        }
+
+        public async Task<IEnumerable<Guid>> GetPartnerForTCare(PartnerForTCarePaged val)
+        {
+            var query = GetQueryable(val);
+            var partnerIds = await query.Select(x => x.Id).ToListAsync();
+            return partnerIds;
+        }
+
+        public async Task<IEnumerable<PartnerSaleOrderDone>> GetPartnerOrderDone(PartnerPaged val)
+        {
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();
+            var today = DateTime.Today;
+            var today1 = DateTime.Now.Date;
+            var list =await saleOrderLineObj.SearchQuery(x => x.OrderPartnerId.HasValue && x.Order.State == "done" && x.Order.DateDone.HasValue && x.Order.DateDone.Value.Date == today).Include(x => x.Order).GroupBy(x => new { PartnerId = x.OrderPartnerId, PartnerName = x.OrderPartner.DisplayName, PartnerPhone = x.OrderPartner.Phone })
+                .Select(x => new PartnerSaleOrderDone
+                {
+                    Id = x.Key.PartnerId.Value,
+                    DisplayName = x.Key.PartnerName,
+                    Phone = x.Key.PartnerPhone,
+                    Debit = x.Sum(s => s.PriceSubTotal),
+                    SaleOrderLineName = string.Join(",", x.Select(s => s.Name)),
+                    SaleOrderName = string.Join(",", x.Select(s => s.Order.Name)),
+                    DateDone = x.Select(s => s.Order.DateDone).Max()
+                }).ToListAsync();
+            return list;
+        }
     }
 
     public class PartnerCreditDebitItem
