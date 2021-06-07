@@ -277,6 +277,9 @@ namespace Infrastructure.Data
 
         public DbSet<MemberLevel> MemberLevels { get; set; }
         public DbSet<SaleCouponProgramMemberLevelRel> SaleCouponProgramMemberLevelRels {get; set;}
+        public DbSet<AccountFinancialRevenueReport> AccountFinancialRevenueReports  {get; set; }
+        public DbSet<AccountFinancialRevenueReportAccountAccountRel> AccountFinancialRevenueReportAccountAccountRels { get; set; }
+        public DbSet<AccountFinancialRevenueReportAccountAccountTypeRel> AccountFinancialRevenueReportAccountAccountTypeRels { get; set; }
 
         /// <summary>
         /// SMS
@@ -531,6 +534,9 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SmsConfigProductCategoryRelConfiguration());
 
 
+            builder.ApplyConfiguration(new AccountFinancialRevenueReportConfiguration());
+            builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountTypeRelConfiguration());
+            builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountRelConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
