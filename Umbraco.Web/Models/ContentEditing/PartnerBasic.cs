@@ -117,13 +117,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? isBoth { get; set; } // get both customer and supplier
     }
 
-    public class CustomerDebtAmountTotal
-    {
-        public Guid PartnerId { get; set; }
-        public decimal DebitTotal { get; set; }
-        public decimal CreditTotal { get; set; }
-        public decimal BalanceTotal { get; set; }
-    }
+    
 
     public class PartnerGetDebtPagedFilter
     {

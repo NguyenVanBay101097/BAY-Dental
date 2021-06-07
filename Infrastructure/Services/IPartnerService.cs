@@ -71,8 +71,6 @@ namespace Infrastructure.Services
         Task<decimal> GetAmountAdvanceBalance(Guid id);
         Task<decimal> GetAmountAdvanceUsed(Guid id);
 
-        Task<CustomerDebtAmountTotal> GetAmountDebtTotal(Guid id);
-        Task<decimal> GetAmountDebtBalance(Guid id);
 
     }
 }

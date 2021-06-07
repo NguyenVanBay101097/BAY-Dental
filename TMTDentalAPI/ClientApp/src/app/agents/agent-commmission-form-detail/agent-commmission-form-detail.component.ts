@@ -8,7 +8,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { AgentCommmissionPaymentDialogComponent } from '../agent-commmission-payment-dialog/agent-commmission-payment-dialog.component';
-import { AgentService, CommissionAgentDetailFilter } from '../agent.service';
+import { AgentService, CommissionAgentDetailFilter, TotalAmountAgentFilter } from '../agent.service';
 
 @Component({
   selector: 'app-agent-commmission-form-detail',
@@ -26,8 +26,7 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
   searchUpdate = new Subject<string>();
   dateFrom: Date;
   dateTo: Date;
-  amountInComeAgent = 0;
-  amountCommissionAgent = 0;
+  commissionAgentStatistics : any;
   updateSubject: Subject<boolean> = new Subject<boolean>();
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
@@ -51,8 +50,7 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
       });
 
     this.loadDataFromApi();
-    this.loadAmountInComeAgent();
-    this.loadAmountCommissionAgent();
+    this.loadAmountCommissionAgentTotal();
   }
 
   loadDataFromApi() {
@@ -89,21 +87,15 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  loadAmountCommissionAgent() {
+  loadAmountCommissionAgentTotal() {
     if (this.id) {
-      this.agentService.getAmountCommissionAgent(this.id).subscribe((result) => {
-        this.amountCommissionAgent = result;
+      var val = new TotalAmountAgentFilter();
+      this.agentService.getAmountCommissionAgentToTal(val).subscribe((result : any) => {
+        this.commissionAgentStatistics = result;
       });
     }
   }
 
-  loadAmountInComeAgent() {
-    if (this.id) {
-      this.agentService.getAmountInComeAgent(this.id).subscribe((result) => {
-        this.amountInComeAgent = result;
-      });
-    }
-  }
 
   actionPayment(item) {
     const modalRef = this.modalService.open(AgentCommmissionPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
@@ -115,8 +107,7 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
     modalRef.result.then(() => {
       this.notifyService.notify('success', 'Thanh toán thành công');
       this.loadDataFromApi();
-      this.loadAmountCommissionAgent();
-      this.loadAmountInComeAgent();
+      this.loadAmountCommissionAgentTotal();
     }, er => { })
   }
 

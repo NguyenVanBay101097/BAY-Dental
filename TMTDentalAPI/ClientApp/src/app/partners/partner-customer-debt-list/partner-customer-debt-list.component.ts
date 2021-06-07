@@ -1,3 +1,4 @@
+import { AuthService } from './../../auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -6,7 +7,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { CustomerDebtFilter, CustomerDebtReportService } from 'src/app/core/services/customer-debt-report.service';
+import { AmountCustomerDebtFilter, CustomerDebtFilter, CustomerDebtReportService } from 'src/app/core/services/customer-debt-report.service';
 import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { PartnerCustomerDebtPaymentDialogComponent } from '../partner-customer-debt-payment-dialog/partner-customer-debt-payment-dialog.component';
@@ -28,10 +29,7 @@ export class PartnerCustomerDebtListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   loading = false;
-  amountDebtDebitTotal = 0;
-  amountDebtCreditTotal = 0;
-  amountDebtBalanceTotal = 0;
-
+  debtStatistics: any;
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -39,6 +37,7 @@ export class PartnerCustomerDebtListComponent implements OnInit {
   constructor(private intlService: IntlService,
     private modalService: NgbModal,
     private partnerService: PartnerService,
+    private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
     private customerDebtReportService: CustomerDebtReportService,
@@ -72,6 +71,7 @@ export class PartnerCustomerDebtListComponent implements OnInit {
     paged.offset = this.offset;
     paged.partnerId = this.partnerId;
     paged.search = this.search || '';
+    paged.companyId = this.authService.userInfo.companyId;
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
     this.customerDebtReportService.getReports(paged).pipe(
@@ -101,10 +101,11 @@ export class PartnerCustomerDebtListComponent implements OnInit {
   }
 
   loadAmountDebtTotal() {
-    this.partnerService.getAmountDebtTotal(this.partnerId).subscribe((rs: any) => {
-      this.amountDebtDebitTotal = rs.debitTotal;
-      this.amountDebtCreditTotal = rs.creditTotal;
-      this.amountDebtBalanceTotal = rs.balanceTotal;
+    var val = new AmountCustomerDebtFilter();
+    val.partnerId = this.partnerId;
+    val.companyId = this.authService.userInfo.companyId;
+    this.customerDebtReportService.getAmountDebtTotal(val).subscribe((rs: any) => {
+      this.debtStatistics = rs;
     });
   }
 

@@ -4,7 +4,7 @@
             <h6>Tổng công nợ</h6>
         </div>
         <h4 class="text-primary">
-            {{(amountDebtDebitTotal | number) || 0}}
+            {{ (debtStatistics?.debitTotal || 0) | number }}
         </h4>
     </div>
     <div class="revenue">
@@ -12,7 +12,7 @@
             <h6>Tổng thanh toán</h6>
         </div>
         <h4 class="text-primary">
-            {{(amountDebtCreditTotal | number) || 0}}
+            {{ (debtStatistics?.creditTotal || 0) | number }}
         </h4>
     </div>
     <div class="revenue">
@@ -20,7 +20,7 @@
             <h6>Tổng còn nợ</h6>
         </div>
         <h4 class="text-primary">
-            {{(amountDebtBalanceTotal | number) || 0}}
+            {{ (debtStatistics?.balanceTotal || 0) | number }}
         </h4>
     </div>
 </div>
@@ -43,29 +43,25 @@
         </div>
     </div>
     <div class="o_cp_t_right">
-        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo nguồn, số phiếu" type="text"
+        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo nguồn" type="text"
             [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
 </div>
 
 <kendo-grid [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
     [loading]="loading" (pageChange)="pageChange($event)" [navigable]="true">
-    <kendo-grid-column title="Ngày ghi nợ" width="135">
+    <kendo-grid-column title="Ngày" width="135">
         <ng-template kendoGridCellTemplate let-dataItem let-column="column">
-            {{dataItem.paymentDate | date:'shortDate'}}
+            {{dataItem.date | date:'shortDate'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Số phiếu" width="100">
-        <ng-template kendoGridCellTemplate let-dataItem let-column="column">
-            <a class="text-primary"
-                (click)="getForm(dataItem)">{{dataItem.name}}</a>
-        </ng-template>
+    <kendo-grid-column field="invoiceOrigin" title="Nguồn" width="100">
     </kendo-grid-column>
-    <kendo-grid-column field="paymentName" title="Nguồn" width="120">
+    <kendo-grid-column field="name" title="Nội dung" width="120">
     </kendo-grid-column>
     <kendo-grid-column title="Số tiền" class="text-right" width="135">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.paymentAmount | number}}
+            {{dataItem.balance | number}}
         </ng-template>
     </kendo-grid-column>
 </kendo-grid>

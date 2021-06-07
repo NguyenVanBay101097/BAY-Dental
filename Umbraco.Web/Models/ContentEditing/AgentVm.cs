@@ -108,7 +108,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public string Search { get; set; }
-
+        public Guid? CompanyId { get; set; }
     }
 
     public class CommissionAgentDetailFilter
@@ -125,7 +125,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public string Search { get; set; }
-
+        public Guid? CompanyId { get; set; }
         public Guid? AgentId { get; set; }
     }
 
@@ -160,6 +160,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? AgentId { get; set; }
 
         public Guid? PartnerId { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 
     public class CommissionAgentDetailItemResult
@@ -171,4 +173,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Amount{ get; set; }
      
     }
+
+    public class TotalAmountAgentFilter
+    {
+        public Guid? AgentId { get; set; }
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class TotalAmountAgentResult
+    {
+        public decimal AmountInComeTotal { get; set; }
+        public decimal AmountCommissionTotal { get; set; }
+        public decimal AmountBalanceTotal { get; set; }
+    }
+
 }

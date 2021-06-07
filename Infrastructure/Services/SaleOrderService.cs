@@ -2363,7 +2363,7 @@ namespace Infrastructure.Services
                 OrderId = id,
                 CompanyId = CompanyId,
                 Lines = lines,
-
+                Note = $"{order.Name}-Khách hàng thanh toán"
             };
 
             return rec;

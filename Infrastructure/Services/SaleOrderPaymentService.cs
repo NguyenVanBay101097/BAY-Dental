@@ -381,6 +381,7 @@ namespace Infrastructure.Services
                     PaymentDate = self.Date,
                     PaymentType = "inbound",
                     CompanyId = self.Order.CompanyId,
+                    Communication = self.Note
                 };
 
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = moveId });

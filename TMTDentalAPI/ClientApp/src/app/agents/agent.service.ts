@@ -15,6 +15,7 @@ export class CommissionAgentFilter {
   search: string;
   dateFrom: string;
   dateTo: string;
+  companyId: string;
 }
 
 export class CommissionAgentDetailFilter {
@@ -113,6 +114,11 @@ export class AgentSave {
   address: string;
 }
 
+export class TotalAmountAgentFilter {
+  agentId: string;
+  companyId: string;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -138,15 +144,12 @@ export class AgentService {
     return this.http.get<CommissionAgentDetailItemPagging>(this.base_api + this.apiUrl + '/GetCommissionAgentDetailItem', { params: new HttpParams({ fromObject: val }) });
   }
 
-  getAmountCommissionAgentBalance(id , partnerId){
-    return this.http.get<number>(this.base_api + this.apiUrl + '/' + id + '/GetCommissionAgentBalance', {params: new HttpParams().set('partnerId', partnerId)});
+
+  getAmountCommissionAgentToTal(val) {
+    return this.http.get(this.base_api + this.apiUrl + '/GetCommissionAmountAgent', { params: new HttpParams({ fromObject: val }) });
   }
 
-  getAmountCommissionAgent(id){
-    return this.http.get<number>(this.base_api + this.apiUrl + '/' + id + '/GetCommissionAmountAgent');
-  }
-
-  getAmountInComeAgent(id){
+  getAmountInComeAgent(id) {
     return this.http.get<number>(this.base_api + this.apiUrl + '/' + id + '/GetInComeAmountAgent');
   }
 

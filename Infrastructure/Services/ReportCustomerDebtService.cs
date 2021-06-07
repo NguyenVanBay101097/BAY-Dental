@@ -24,51 +24,31 @@ namespace Infrastructure.Services
             var movelineObj = GetService<IAccountMoveLineService>();
             var accountObj = GetService<IAccountAccountService>();
             var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
-            var accountDebt = await accountObj.GetAccountCustomerDebtCompany();
+            var query = movelineObj._QueryGet(companyId: val.CompanyId, state: "posted", dateFrom: val.DateFrom,
+                dateTo: val.DateTo);
 
-            var query = movelineObj.SearchQuery(x => x.AccountId == accountDebt.Id);
+            query = query.Where(x => x.Account.Code == "CNKH");
 
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId.Value);
 
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.SaleLineRels.Any(x => x.OrderLine.Order.Name.Contains(val.Search)) || x.PhieuThuChi.Name.Contains(val.Search));
-
-            if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateFrom);
-
-            if (val.DateTo.HasValue)
-            {
-                var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Date <= dateOrderTo);
-            }
+                query = query.Where(x => x.Move.InvoiceOrigin.Contains(val.Search));
 
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.PhieuThuChi).Include(x => x.Payment).OrderByDescending(x => x.DateCreated);
+            query = query.OrderByDescending(x => x.DateCreated);
 
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
 
-            var payment_ids = query.Where(x => x.PaymentId.HasValue).Select(x => x.PaymentId.Value).ToList();
-            var saleorder_dict = saleOrderPaymentObj.SearchQuery(x => x.PaymentRels.Any(s => payment_ids.Contains(s.PaymentId))).SelectMany(x => x.PaymentRels)
-            .GroupBy(x => new { Id = x.PaymentId, SaleOrderId = x.SaleOrderPayment.OrderId, SaleOrderName = x.SaleOrderPayment.Order.Name }).Select(s => new
-            {
-                Id = s.Key.Id,
-                OrderId = s.Key.SaleOrderId,
-                OrderName = s.Key.SaleOrderName
-            }).ToDictionary(x => x.Id, x => x);
-
-
             var items = await query.Select(x => new CustomerDebtResult
             {
-                Id = x.PaymentId.HasValue ? saleorder_dict[x.PaymentId.Value].OrderId : x.PhieuThuChiId.Value,
-                Name = x.PaymentId.HasValue ? saleorder_dict[x.PaymentId.Value].OrderName : x.PhieuThuChi.Name,
-                PaymentName = x.Name,
-                PaymentDate = x.Date.Value,
-                PaymentAmount = x.Balance,
-                Type = x.PaymentId.HasValue ? "debit" : "Credit",
+                Name = x.Payment != null ? x.Payment.Communication : x.PhieuThuChi.Reason,
+                Date = x.Date,
+                Balance = x.Balance,
+                InvoiceOrigin = x.Move.InvoiceOrigin,
             }).ToListAsync();
 
             var paged = new PagedResult2<CustomerDebtResult>(totalItems, val.Offset, val.Limit)
@@ -79,62 +59,31 @@ namespace Infrastructure.Services
             return paged;
         }
 
-
-        public async Task<List<CustomerDebtResult>> GetExportExcel(CustomerDebtFilter val)
+        public async Task<CustomerDebtAmountTotal> GetCustomerAmountTotal(AmountCustomerDebtFilter val)
         {
             var movelineObj = GetService<IAccountMoveLineService>();
-            var accountObj = GetService<IAccountAccountService>();
-            var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
-            var accountDebt = await accountObj.GetAccountCustomerDebtCompany();
+            var query = movelineObj._QueryGet(companyId: val.CompanyId, state: "posted", dateFrom: null,
+           dateTo: null);
 
-            var query = movelineObj.SearchQuery(x => x.AccountId == accountDebt.Id);
+            query = query.Where(x => x.Account.Code == "CNKH");
 
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId.Value);
 
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.SaleLineRels.Any(x => x.OrderLine.Order.Name.Contains(val.Search)));
-
-            if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateFrom);
-
-            if (val.DateTo.HasValue)
+            var res = await query.GroupBy(x => x.PartnerId.Value).Select(x => new CustomerDebtAmountTotal
             {
-                var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.Date <= dateOrderTo);
-            }
+                DebitTotal = x.Sum(x => x.Debit),
+                CreditTotal = x.Sum(x => x.Credit),
+                BalanceTotal = x.Sum(x => x.Balance)
+            }).FirstOrDefaultAsync();
 
-            var totalItems = await query.CountAsync();
+            var result = new CustomerDebtAmountTotal();
+            result.DebitTotal = res != null ? res.DebitTotal : 0;
+            result.CreditTotal = res != null ? res.CreditTotal : 0;
+            result.BalanceTotal = res != null ? res.BalanceTotal : 0;
 
-            query = query.Include(x => x.PhieuThuChi).Include(x => x.Payment).OrderByDescending(x => x.DateCreated);
-
-            if (val.Limit > 0)
-                query = query.Skip(val.Offset).Take(val.Limit);
-
-
-            var payment_ids = query.Where(x => x.PaymentId.HasValue).Select(x => x.PaymentId.Value).ToList();
-
-            var saleorder_dict = saleOrderPaymentObj.SearchQuery(x => x.PaymentRels.Any(s => payment_ids.Contains(s.PaymentId))).SelectMany(x => x.PaymentRels)
-            .GroupBy(x => new { Id = x.PaymentId, SaleOrderId = x.SaleOrderPayment.OrderId, SaleOrderName = x.SaleOrderPayment.Order.Name }).Select(s => new
-            {
-                Id = s.Key.Id,
-                OrderId = s.Key.SaleOrderId,
-                OrderName = s.Key.SaleOrderName
-            }).ToDictionary(x => x.Id, x => x);
-
-            var debts = await query.Select(x => new CustomerDebtResult
-            {
-                Id = x.PaymentId.HasValue ? saleorder_dict[x.PaymentId.Value].OrderId : x.PhieuThuChiId.Value,
-                Name = x.PaymentId.HasValue ? saleorder_dict[x.PaymentId.Value].OrderName : x.PhieuThuChi.Name,
-                PaymentName = x.Name,
-                PaymentDate = x.Date.Value,
-                PaymentAmount = x.Balance,
-            }).ToListAsync();
-
-            return debts;
+            return result;
         }
-
-
 
         protected T GetService<T>()
         {
@@ -161,19 +110,35 @@ namespace Infrastructure.Services
 
         public Guid? PartnerId { get; set; }
 
+        public Guid? CompanyId { get; set; }
+
     }
 
 
     public class CustomerDebtResult
     {
-        public Guid Id { get; set; }
+        /// <summary>
+        /// Nội dung
+        /// </summary>
         public string Name { get; set; }
-        public string PaymentName { get; set; }
-        public DateTime PaymentDate { get; set; }
 
-        public decimal PaymentAmount { get; set; }
+        public DateTime? Date { get; set; }
 
-        public string Type { get; set; }
+        public string InvoiceOrigin { get; set; }
 
+        public decimal Balance { get; set; }
+    }
+
+    public class AmountCustomerDebtFilter
+    {
+        public Guid? PartnerId { get; set; }
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class CustomerDebtAmountTotal
+    {
+        public decimal DebitTotal { get; set; }
+        public decimal CreditTotal { get; set; }
+        public decimal BalanceTotal { get; set; }
     }
 }

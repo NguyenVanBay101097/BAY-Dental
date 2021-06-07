@@ -18,10 +18,7 @@ namespace Infrastructure.Services
 
         Task<PagedResult2<CommissionAgentDetailItemResult>> GetCommissionAgentDetailItem(CommissionAgentDetailItemFilter val);
 
-        Task<decimal> GetCommissionAgentBalance(Guid id, Guid partnerId);
-
-        Task<decimal> GetInComeAmountAgent(Guid id);
-        Task<decimal> GetCommissionAmountAgent(Guid id);
+        Task<TotalAmountAgentResult> GetAmountCommissionAgentTotal(TotalAmountAgentFilter val);
 
         Task<AgentDisplay> GetDisplayById(Guid id);
 

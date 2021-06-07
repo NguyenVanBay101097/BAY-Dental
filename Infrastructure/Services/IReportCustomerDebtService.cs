@@ -9,7 +9,6 @@ namespace Infrastructure.Services
     public interface IReportCustomerDebtService
     {
         Task<PagedResult2<CustomerDebtResult>> GetPagedtCustomerDebtReports(CustomerDebtFilter val);
-
-        Task<List<CustomerDebtResult>> GetExportExcel(CustomerDebtFilter val);
+        Task<CustomerDebtAmountTotal> GetCustomerAmountTotal(AmountCustomerDebtFilter val);
     }
 }

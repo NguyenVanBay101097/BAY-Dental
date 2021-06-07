@@ -71,30 +71,10 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> GetCommissionAmountAgent(Guid id)
+        public async Task<IActionResult> GetCommissionAmountAgentTotal(TotalAmountAgentFilter val)
         {
             await _unitOfWork.BeginTransactionAsync();
-            var amountCommissionTotal = await _agentService.GetCommissionAmountAgent(id);
-            _unitOfWork.Commit();
-
-            return Ok(amountCommissionTotal);
-        }
-
-        [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> GetInComeAmountAgent(Guid id)
-        {
-            await _unitOfWork.BeginTransactionAsync();
-            var amountInComeTotal = await _agentService.GetInComeAmountAgent(id);
-            _unitOfWork.Commit();
-
-            return Ok(amountInComeTotal);
-        }
-
-        [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> GetCommissionAgentBalance(Guid id, Guid partnerId )
-        {
-            await _unitOfWork.BeginTransactionAsync();
-            var amountCommissionTotal = await _agentService.GetCommissionAgentBalance(id , partnerId);
+            var amountCommissionTotal = await _agentService.GetAmountCommissionAgentTotal(val);
             _unitOfWork.Commit();
 
             return Ok(amountCommissionTotal);

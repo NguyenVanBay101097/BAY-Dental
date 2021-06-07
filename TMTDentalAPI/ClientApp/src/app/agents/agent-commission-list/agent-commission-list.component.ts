@@ -1,3 +1,4 @@
+import { AuthService } from './../../auth/auth.service';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -31,6 +32,7 @@ export class AgentCommissionListComponent implements OnInit {
   constructor(private route: ActivatedRoute, private modalService: NgbModal,
     private agentService: AgentService, private router: Router,
     private intlService: IntlService,
+    private authService: AuthService,
     private notifyService: NotifyService,
     private printService: PrintService) { }
 
@@ -55,6 +57,7 @@ export class AgentCommissionListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
+    val.companyId = this.authService.userInfo.companyId;
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
     this.agentService.getCommissionAgent(val).pipe(

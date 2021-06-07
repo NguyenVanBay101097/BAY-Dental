@@ -9,6 +9,7 @@ export class CustomerDebtFilter {
   dateTo: string;
   search: string;
   partnerId: string;
+  companyId: string;
 }
 
 export class CustomerDebtPagging {
@@ -16,6 +17,11 @@ export class CustomerDebtPagging {
   offset: number;
   totalItems: number;
   items: CustomerDebtResult[];
+}
+
+export class AmountCustomerDebtFilter {
+ partnerId: string;
+ companyId: string;
 }
 
 export class CustomerDebtResult {
@@ -36,6 +42,10 @@ export class CustomerDebtReportService {
   getReports(val): Observable<CustomerDebtPagging> {
     return this.http.get<CustomerDebtPagging>(this.baseApi + this.apiUrl + "/GetReports", { params: val });
   }
+
+  getAmountDebtTotal(val){
+    return this.http.get(this.baseApi + this.apiUrl  + '/GetAmountDebtTotal' , { params: val });
+}
 
   exportExcelFile(val: any) {
     return this.http.get(this.baseApi + this.apiUrl + "/ExportExcelFile", {

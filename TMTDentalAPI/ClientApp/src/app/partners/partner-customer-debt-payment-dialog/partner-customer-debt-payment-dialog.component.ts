@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { mergeMap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { AmountCustomerDebtFilter, CustomerDebtReportService } from 'src/app/core/services/customer-debt-report.service';
 import { PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { PartnerService } from '../partner.service';
 
@@ -29,7 +30,7 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
 
-  constructor(private phieuthuchiService: PhieuThuChiService, private fb: FormBuilder, private intlService: IntlService,
+  constructor(private phieuthuchiService: PhieuThuChiService, private fb: FormBuilder, private intlService: IntlService,  private customerDebtReportService: CustomerDebtReportService,
     public activeModal: NgbActiveModal, private accountJournalService: AccountJournalService, private partnerService: PartnerService,
     private authService: AuthService) { }
 
@@ -96,8 +97,11 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
   }
 
   loadAmountDebtBalanceTotal() {
-    this.partnerService.getAmountDebtBalance(this.partnerId).subscribe(rs => {
-      this.amountDebtBalanceTotal = rs;
+    var val = new AmountCustomerDebtFilter();
+    val.partnerId = this.partnerId;
+    val.companyId = this.authService.userInfo.companyId;
+    this.customerDebtReportService.getAmountDebtTotal(val).subscribe((rs:any) => {
+      this.amountDebtBalanceTotal = rs.balanceTotal;
     });
   }
 
