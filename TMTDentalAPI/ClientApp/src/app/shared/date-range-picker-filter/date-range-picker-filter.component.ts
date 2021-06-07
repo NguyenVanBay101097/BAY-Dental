@@ -12,15 +12,17 @@ export class DateRangePickerFilterComponent implements OnInit {
   @Input() startDate: any;
   @Input() endDate: any;
   @Output() searchChange = new EventEmitter<any>();
+  @Input() opens: string = 'right';
+  @Input() drops: string = 'auto';
 
   selected: any;
   ranges: any = {
-    'Today': [moment(), moment()],
-    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-    'This Month': [moment().startOf('month'), moment().endOf('month')],
-    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+    'Hôm nay': [moment(), moment()],
+    'Hôm qua': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+    '7 ngày qua': [moment().subtract(6, 'days'), moment()],
+    '30 ngày qua': [moment().subtract(29, 'days'), moment()],
+    'Tháng này': [moment().startOf('month'), moment().endOf('month')],
+    'Tháng trước': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
   }
 
   public options: any = {

@@ -9,6 +9,7 @@ import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operato
 import { Subject } from 'rxjs';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { ActivatedRoute } from '@angular/router';
+import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 
 @Component({
   selector: 'app-account-common-customer-report-list',
@@ -29,6 +30,8 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
   dateTo: Date;
   resultSelection: string;
   public total: any;
+  companies: CompanySimple[] = [];
+  companyId: string;
 
   search: string;
   searchUpdate = new Subject<string>();
@@ -39,11 +42,12 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
 
   constructor(private reportService: AccountCommonPartnerReportService, private intlService: IntlService,
     private route: ActivatedRoute,
+    private companyService: CompanyService,
     private partnerService: PartnerService) { }
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
-
+  @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -60,9 +64,41 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
         this.resultSelection = params.get('result_selection');
         this.loadDataFromApi();
       });
-  
+      this.loadCompanies();
+      this.companyVC.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.companyVC.loading = true)),
+        switchMap((value) => this.searchCompany$(value)
+        )
+      )
+      .subscribe((x) => {
+        this.companies = x.items;
+        this.companyVC.loading = false;
+      });
+
   }
 
+ 
+  searchCompany$(search?) {
+    var val = new CompanyPaged();
+    val.active = true;
+    val.search = search || '';
+   return  this.companyService.getPaged(val);
+  } 
+
+  loadCompanies() {
+    this.searchCompany$().subscribe(res => {
+      this.companies = res.items;
+    });
+  }
+
+  onSelectCompany(e){
+    this.companyId = e ? e.id : null;
+    this.loadDataFromApi();
+  }
+  
   searchChangeDate(value: any) {
     this.dateFrom = value.dateFrom;
     this.dateTo = value.dateTo;
@@ -77,6 +113,7 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     val.partnerId = null;
     val.search = this.search ? this.search : '';
     val.resultSelection = this.resultSelection;
+    val.companyId = this.companyId || '';
 
     this.reportService.getSummary(val).subscribe(res => {
       this.items = res;

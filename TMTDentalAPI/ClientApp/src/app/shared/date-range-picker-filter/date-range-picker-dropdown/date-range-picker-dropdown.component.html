@@ -236,8 +236,10 @@
     </div>
 
     <div class="drp-buttons" *ngIf="!autoApply && ( !rangesArray.length || (showCalInRanges && !singleDatePicker))">
-        <button class="cancelBtn btn btn-sm btn-default" *ngIf="showCancel" type="button" (click)="clickCancel($event)">{{locale.cancelLabel}}</button>
-        <button class="applyBtn btn btn-sm btn-primary" [disabled]="applyBtn.disabled" type="button" (click)="clickApply($event)">{{locale.applyLabel}}</button>
+        <span>{{startDate | date:'dd/MM/yyyy'}} - {{endDate || startDate | date: 'dd/MM/yyyy'}}</span>
+        <button class="cancelBtn btn btn-sm btn-danger cursor-pointer" *ngIf="showClearButton" type="button" (click)="clear($event)">{{locale.clearLabel}}</button>
+        <button class="cancelBtn btn btn-sm btn-secondary cursor-pointer" *ngIf="showCancel" type="button" (click)="clickCancel($event)">{{locale.cancelLabel}}</button>
+        <button class="applyBtn btn btn-sm btn-primary cursor-pointer" [disabled]="applyBtn.disabled" type="button" (click)="clickApply($event)">{{locale.applyLabel}}</button>
     </div>
 
 </div>

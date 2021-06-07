@@ -474,6 +474,8 @@ namespace Infrastructure.Services
             {
                 var chamCongs = allChamcongs.Where(x => x.EmployeeId == item.EmployeeId);
                 var commission = commissions.FirstOrDefault(x => x.EmployeeId == item.EmployeeId);
+                if (commission == null) commission = new CommissionSettlementReportOutput();
+                commission.Amount = item.CommissionSalary;
                 var advance = Alladvances.Where(x => x.EmployeeId == item.EmployeeId);
                 await ComputeSalary(item, chamCongs, commission, advance, paysliprun.Date);
             }

@@ -5,3 +5,7 @@
 .cursor-pointer {
     cursor: pointer;
 }
+
+.clear:hover {
+    opacity: 0.8;
+}
