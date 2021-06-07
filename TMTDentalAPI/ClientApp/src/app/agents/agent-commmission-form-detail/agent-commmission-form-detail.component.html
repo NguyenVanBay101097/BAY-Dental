@@ -4,7 +4,7 @@
             <h6>Tổng doanh thu</h6>
         </div>
         <h4 class="text-primary">
-            {{(commissionAgentStatistics.amountInComeTotal || 0 ) | number }}
+            {{(commissionAgentStatistics?.amountInComeTotal || 0 ) | number }}
         </h4>
     </div>
     <div class="revenue">
@@ -12,7 +12,7 @@
             <h6>Tổng chi hoa hồng</h6>
         </div>
         <h4 class="text-primary">
-            {{(commissionAgentStatistics.amountCommissionTotal || 0) | number }}
+            {{(commissionAgentStatistics?.amountCommissionTotal || 0) | number }}
         </h4>
     </div>
 </div>

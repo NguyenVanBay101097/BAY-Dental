@@ -121,11 +121,13 @@ namespace Infrastructure.Services
             if (ids.Any())
                 query = query.Where(x => x.Partner.AgentId.HasValue && ids.Contains(x.Partner.AgentId.Value));
 
-            var incomeAgent_dict = await query.GroupBy(x => x.Partner.AgentId.Value).Select(x => new
+            var items = await query.ToListAsync();
+
+            var incomeAgent_dict = items.GroupBy(x => x.Partner.AgentId.Value).Select(x => new
             {
                 Id = x.Key,
                 Amount = x.Sum(s => (s.PriceSubtotal ?? 0)),
-            }).ToDictionaryAsync(x => x.Id, x => x.Amount);
+            }).ToDictionary(x => x.Id, x => x.Amount);
 
             return incomeAgent_dict;
         }
@@ -134,6 +136,9 @@ namespace Infrastructure.Services
         {
             var phieuthuchiObj = GetService<IPhieuThuChiService>();
             var query = phieuthuchiObj.SearchQuery();
+
+            if (companyId.HasValue)
+                query = query.Where(x => x.CompanyId == companyId);
 
             if (dateFrom.HasValue)
                 query = query.Where(x => x.Date >= dateFrom.Value);
@@ -150,11 +155,15 @@ namespace Infrastructure.Services
 
             query = query.Where(x => x.Account.Code == "HHNGT");
 
-            var comissionAgent_dict = await query.GroupBy(x => x.AgentId.Value).Select(x => new
+            var items = await query.ToListAsync();
+
+
+
+           var comissionAgent_dict = items.GroupBy(x => x.AgentId.Value).Select(x => new
             {
                 Id = x.Key,
-                Amount = x.Sum(s => s.Amount)
-            }).ToDictionaryAsync(x => x.Id, x => x.Amount);
+                Amount = x.Sum(s => s.Amount),
+            }).ToDictionary(x => x.Id, x => x.Amount);
 
             return comissionAgent_dict;
         }
@@ -163,6 +172,9 @@ namespace Infrastructure.Services
         {
             var phieuthuchiObj = GetService<IPhieuThuChiService>();
             var query = phieuthuchiObj.SearchQuery();
+
+            if (companyId.HasValue)
+                query = query.Where(x => x.CompanyId == companyId);
 
             if (dateFrom.HasValue)
                 query = query.Where(x => x.Date >= dateFrom.Value);
@@ -179,11 +191,13 @@ namespace Infrastructure.Services
 
             query = query.Where(x => x.Account.Code == "HHNGT");
 
-            var comissionAgent_dict = await query.GroupBy(x => x.PartnerId.Value).Select(x => new
+            var items = await query.ToListAsync();
+
+            var comissionAgent_dict = items.GroupBy(x => x.PartnerId.Value).Select(x => new
             {
                 Id = x.Key,
-                Amount = x.Sum(s => s.Amount)
-            }).ToDictionaryAsync(x => x.Id, x => x.Amount);
+                Amount = x.Sum(s => s.Amount),
+            }).ToDictionary(x => x.Id, x => x.Amount);
 
             return comissionAgent_dict;
         }
@@ -230,7 +244,7 @@ namespace Infrastructure.Services
                     Name = partner_dict[x.Key]
                 },
                 AmountTotal = x.Sum(x => (x.Debit - x.Credit) * sign),
-                AmountCommissionTotal = commAgent_dict.ContainsKey(x.Key) ? commAgent_dict[x.Key] : 0
+                AmountCommissionTotal = (commAgent_dict.Count != 0 || commAgent_dict.ContainsKey(x.Key)) ? commAgent_dict[x.Key] : 0
             }).ToList();
 
 
@@ -245,7 +259,7 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<CommissionAgentDetailItemResult>> GetCommissionAgentDetailItem(CommissionAgentDetailItemFilter val)
         {
             ///lấy dũ liệu từ accountmoveline
-            var movelineObj = GetService<IAccountMoveLineService>();     
+            var movelineObj = GetService<IAccountMoveLineService>();
             ///lây ra doanh thu các khách hàng có người giới thiệu
             var query = movelineObj._QueryGet(companyId: val.CompanyId, state: "posted", dateFrom: val.DateFrom,
               dateTo: val.DateTo);
@@ -285,17 +299,19 @@ namespace Infrastructure.Services
 
         public async Task<TotalAmountAgentResult> GetAmountCommissionAgentTotal(TotalAmountAgentFilter val)
         {
-            var commAgent_dict = await ComputeCommissionAgents(new List<Guid> { val.AgentId.Value}, null, null, val.CompanyId);
-            var incomeAgent_dict = await ComputeIncomeAgents(new List<Guid> { val.AgentId.Value }, null, null, val.CompanyId);
+            var phieuthuchiObj = GetService<IPhieuThuChiService>();
+            var movelineObj = GetService<IAccountMoveLineService>();
+            var commAgentAmountTotal = await phieuthuchiObj.SearchQuery(x=>x.AgentId.HasValue && x.AgentId == val.AgentId && x.CompanyId == val.CompanyId).SumAsync(x=>x.Amount);
+            var amountInComeTotal = await movelineObj.SearchQuery(x => x.Partner.AgentId.HasValue && x.Partner.AgentId == val.AgentId && x.Account.Code == "5111" && x.CompanyId == val.CompanyId.Value).SumAsync(x => (x.PriceSubtotal ?? 0));        
 
             var res = new TotalAmountAgentResult();
-            res.AmountCommissionTotal = commAgent_dict.ContainsKey(val.AgentId.Value) ? commAgent_dict[val.AgentId.Value] : 0;
-            res.AmountInComeTotal = incomeAgent_dict.ContainsKey(val.AgentId.Value) ? incomeAgent_dict[val.AgentId.Value] : 0;
+            res.AmountCommissionTotal = commAgentAmountTotal;
+            res.AmountInComeTotal = amountInComeTotal;
             res.AmountBalanceTotal = res.AmountInComeTotal - res.AmountCommissionTotal;
             return res;
         }
 
-    
+
 
 
 

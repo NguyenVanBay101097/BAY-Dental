@@ -9,7 +9,7 @@ import { AccountJournalFilter, AccountJournalService } from 'src/app/account-jou
 import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
-import { AgentService } from '../agent.service';
+import { AgentService, TotalAmountAgentFilter } from '../agent.service';
 
 @Component({
   selector: 'app-agent-commmission-payment-dialog',
@@ -75,8 +75,11 @@ export class AgentCommmissionPaymentDialogComponent implements OnInit {
 
   loadAmountCommissionAgentBalance() {
     if (this.agentId) {
-      this.agentService.getAmountCommissionAgentBalance(this.agentId, this.partnerId).subscribe((res) => {
-        this.amountTotalBalance = res;
+      var val = new TotalAmountAgentFilter();
+      val.agentId = this.agentId;
+      val.companyId = this.authService.userInfo.companyId;
+      this.agentService.getAmountCommissionAgentToTal(val).subscribe((res: any) => {
+        this.amountTotalBalance = res.amountBalanceTotal;
       },
         (error) => {
           console.log(error);

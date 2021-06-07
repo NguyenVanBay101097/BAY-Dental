@@ -70,8 +70,8 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> GetCommissionAmountAgentTotal(TotalAmountAgentFilter val)
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetCommissionAmountAgentTotal([FromQuery] TotalAmountAgentFilter val)
         {
             await _unitOfWork.BeginTransactionAsync();
             var amountCommissionTotal = await _agentService.GetAmountCommissionAgentTotal(val);

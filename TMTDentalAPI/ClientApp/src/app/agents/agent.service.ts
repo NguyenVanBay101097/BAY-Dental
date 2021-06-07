@@ -146,11 +146,7 @@ export class AgentService {
 
 
   getAmountCommissionAgentToTal(val) {
-    return this.http.get(this.base_api + this.apiUrl + '/GetCommissionAmountAgent', { params: new HttpParams({ fromObject: val }) });
-  }
-
-  getAmountInComeAgent(id) {
-    return this.http.get<number>(this.base_api + this.apiUrl + '/' + id + '/GetInComeAmountAgent');
+    return this.http.get(this.base_api + this.apiUrl + '/GetCommissionAmountAgentTotal', { params: new HttpParams({ fromObject: val }) });
   }
 
   get(id): Observable<AgentDisplay> {

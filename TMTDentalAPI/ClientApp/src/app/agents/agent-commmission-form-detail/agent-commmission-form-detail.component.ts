@@ -1,3 +1,4 @@
+import { AuthService } from './../../auth/auth.service';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -33,6 +34,7 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   constructor(private route: ActivatedRoute, private modalService: NgbModal,
     private agentService: AgentService, private router: Router,
+    private authService: AuthService,
     private intlService: IntlService,
     private notifyService: NotifyService,
     private printService: PrintService) { }
@@ -89,7 +91,10 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
 
   loadAmountCommissionAgentTotal() {
     if (this.id) {
+      debugger
       var val = new TotalAmountAgentFilter();
+      val.agentId = this.id;
+      val.companyId = this.authService.userInfo.companyId;
       this.agentService.getAmountCommissionAgentToTal(val).subscribe((result : any) => {
         this.commissionAgentStatistics = result;
       });
