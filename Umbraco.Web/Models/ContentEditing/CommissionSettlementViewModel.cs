@@ -18,10 +18,20 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? EmployeeId { get; set; }
 
         public Guid? CompanyId { get; set; }
+        public string CommissionType { get; set; }
 
         public int Offset { get; set; }
 
         public int Limit { get; set; }
+    }
+
+    public class CommissionSettlementReportRes
+    {
+        public string EmployeeName { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public string CommissionType { get; set; }
+        public decimal? Amount { get; set; }
+
     }
 
     public class CommissionSettlementReportOutput
@@ -49,6 +59,27 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
         public Guid? CompanyId { get; set; }
+    }
+    public class CommissionSettlementDetailReportPar
+    {
+        public CommissionSettlementDetailReportPar()
+        {
+            Limit = 20;
+        }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+        public string CommissionType { get; set; }
+        public string Search { get; set; }
+
+        public int Offset { get; set; }
+
+        public int Limit { get; set; }
     }
 
     public class CommissionSettlementReportDetailOutput
@@ -82,5 +113,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Nguồn
         /// </summary>
         public string InvoiceOrigin { get; set; }
+        public string EmployeeName { get; set; }
+        public string CommissionType { get; set; }
     }
 }

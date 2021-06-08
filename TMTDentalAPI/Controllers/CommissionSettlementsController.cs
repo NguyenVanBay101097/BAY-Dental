@@ -30,11 +30,20 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.Commission")]
-        public async Task<IActionResult> GetReportDetail(CommissionSettlementReport val)
+        public async Task<IActionResult> GetReportDetail(CommissionSettlementDetailReportPar val)
         {
             var result = await _commissionSettlementService.GetReportDetail(val);
             return Ok(result);
         }
-        
+
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Commission")]
+        public async Task<IActionResult> GetSumReport(CommissionSettlementReport val)
+        {
+            var result = await _commissionSettlementService.GetSumReport(val);
+            return Ok();
+        }
+
     }
 }
