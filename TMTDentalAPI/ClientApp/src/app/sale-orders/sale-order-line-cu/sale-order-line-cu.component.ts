@@ -40,8 +40,6 @@ export class SaleOrderLineCuComponent implements OnInit {
   isEditting: boolean = false;
   isItSeff = false;
   // canEdit = true;
-  isDiscountOrder = false;
-  isDiscountLine = false;
 
   filteredEmployeesDoctor: any[] = [];
   filteredEmployeesAssistant: any[] = [];
@@ -72,7 +70,6 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   ngOnInit() {
     this.formGroupInfo = this.fb.group({});
-    this.checkPermission();
     // this.formGroupInfo.setControl('teeth', this.fb.array(this.line.teeth));
     // this.formGroupInfo.setControl('promotions', this.fb.array(this.line.promotions));
 
@@ -402,9 +399,5 @@ export class SaleOrderLineCuComponent implements OnInit {
     this.onActiveEvent.emit(active);
   }
 
-  checkPermission(){
-    this.isDiscountLine = this.checkPermissionService.check(['Basic.SaleOrder.DiscountLine']);
-    this.isDiscountOrder = this.checkPermissionService.check(['Basic.SaleOrder.DiscountOrder']);
-  }
 
 }

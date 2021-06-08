@@ -9,7 +9,7 @@
     <div class="px-3 py-2">
         <div>
             <!-- giảm tiền -->
-            <div class="mb-2">
+            <div class="mb-2" *ngIf="isDiscountLine">
                 <label class="font-weight-600">Giảm đơn giá</label>
 
                 <ng-container *ngIf="getListPromotion('discount').length == 0; else elseTemplateDiscount">

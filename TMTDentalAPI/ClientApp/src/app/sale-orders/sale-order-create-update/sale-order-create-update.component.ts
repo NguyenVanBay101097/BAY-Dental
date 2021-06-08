@@ -112,7 +112,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   childEmiter = new BehaviorSubject<any>(null);
   @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
   lineSelected = null;
-  isDiscountOrder = false; // quyền giảm giá pđt
 
   constructor(
     private fb: FormBuilder,
@@ -162,9 +161,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.updateFormGroup(res);
       });
     }
-
-    this.checkPermission();
-
     // this.routeActive();
     //this.loadToothCateDefault();
     this.loadTeethList();
@@ -1113,8 +1109,5 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  checkPermission(){
-    this.isDiscountOrder = this.checkPermissionService.check(['Basic.SaleOrder.DiscountOrder']);
-  }
 }
 

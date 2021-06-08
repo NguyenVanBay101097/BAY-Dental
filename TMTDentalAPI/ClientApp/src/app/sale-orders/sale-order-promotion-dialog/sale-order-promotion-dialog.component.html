@@ -8,7 +8,7 @@
 <div class="modal-body o_act_window">
     <div class="px-3 py-2">
         <!-- giảm tiền -->
-        <div class="mb-2">
+        <div class="mb-2" *ngIf="isDiscountOrder">
             <label class="font-weight-600">Giảm thành tiền</label>
 
             <ng-container *ngIf="getListPromotion('discount').length == 0; else elseTemplateDiscount">

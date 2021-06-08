@@ -12,7 +12,7 @@ export class DateRangePickerFilterComponent implements OnInit {
   @Input() startDate: any;
   @Input() endDate: any;
   @Output() searchChange = new EventEmitter<any>();
-  @Input() opens: string = 'right';
+  @Input() opens: string = 'auto';
   @Input() drops: string = 'auto';
 
   selected: any;
