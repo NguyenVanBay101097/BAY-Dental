@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
-    public partial class thuong_addAgentTable : Migration
+    public partial class AddAgentModuleTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -37,6 +37,11 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.AddColumn<string>(
                 name: "AccountType",
+                table: "PhieuThuChis",
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "AgentId",
                 table: "PhieuThuChis",
                 nullable: true);
 
@@ -112,6 +117,11 @@ namespace Infrastructure.Data.Migrations
                 column: "AccountId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PhieuThuChis_AgentId",
+                table: "PhieuThuChis",
+                column: "AgentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Partners_AgentId",
                 table: "Partners",
                 column: "AgentId");
@@ -166,6 +176,14 @@ namespace Infrastructure.Data.Migrations
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_PhieuThuChis_Agents_AgentId",
+                table: "PhieuThuChis",
+                column: "AgentId",
+                principalTable: "Agents",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_PhieuThuChis_LoaiThuChis_LoaiThuChiId",
                 table: "PhieuThuChis",
                 column: "LoaiThuChiId",
@@ -189,6 +207,10 @@ namespace Infrastructure.Data.Migrations
                 table: "PhieuThuChis");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_PhieuThuChis_Agents_AgentId",
+                table: "PhieuThuChis");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_PhieuThuChis_LoaiThuChis_LoaiThuChiId",
                 table: "PhieuThuChis");
 
@@ -197,6 +219,10 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_PhieuThuChis_AccountId",
+                table: "PhieuThuChis");
+
+            migrationBuilder.DropIndex(
+                name: "IX_PhieuThuChis_AgentId",
                 table: "PhieuThuChis");
 
             migrationBuilder.DropIndex(
@@ -213,6 +239,10 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropColumn(
                 name: "AccountType",
+                table: "PhieuThuChis");
+
+            migrationBuilder.DropColumn(
+                name: "AgentId",
                 table: "PhieuThuChis");
 
             migrationBuilder.DropColumn(
