@@ -277,12 +277,15 @@ namespace Infrastructure.Services
             var query = GetQueryableReportPaged(val);
             var queryGroup = query.GroupBy(x => new { EmployeeId = x.EmployeeId.Value, EmployeeName = x.Employee.Name, Date = x.Date.Value.Date, CommissionType = x.Commission.Type });
             var count = await queryGroup.Select(x => x.Key.EmployeeId).CountAsync();
+            queryGroup = queryGroup.OrderByDescending(x => x.Key.Date);
             if (val.Limit > 0) queryGroup = queryGroup.Skip(val.Offset).Take(val.Limit);
 
-            var res = await queryGroup.OrderByDescending(z => z.Key.Date).Select(x => new CommissionSettlementReportRes()
+            var res = await queryGroup.Select(x => new CommissionSettlementReportRes()
             {
                 Amount = x.Sum(z => z.Amount),
-                CommissionType = x.Key.CommissionType
+                CommissionType = x.Key.CommissionType,
+                EmployeeId = x.Key.EmployeeId,
+                EmployeeName = x.Key.EmployeeName
             }).ToListAsync();
 
             return new PagedResult2<CommissionSettlementReportRes>(count, val.Offset, val.Limit)
