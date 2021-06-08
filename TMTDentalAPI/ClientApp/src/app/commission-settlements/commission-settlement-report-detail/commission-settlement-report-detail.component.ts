@@ -136,5 +136,28 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  exportCommissionExcelFile() { }
+  exportCommissionExcelFile() { 
+    var val = new CommissionSettlementReport();
+    val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.dateTo = this.dateTo ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.employeeId = this.employeeId ? this.employeeId : '';
+    val.commissionType = this.commissionType ? this.commissionType : '';
+    this.commissionSettlementsService.excelCommissionDetailExport(val).subscribe((rs) => {
+      let filename = "chi_tiet_hoa_hong_nhan_vien";
+      let newBlob = new Blob([], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    })
+  }
 }

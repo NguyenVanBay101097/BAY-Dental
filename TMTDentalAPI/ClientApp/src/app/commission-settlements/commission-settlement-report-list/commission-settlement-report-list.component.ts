@@ -37,7 +37,7 @@ export class CommissionSettlementReportListComponent implements OnInit {
     { name: 'Tư vấn', value: 'counselor' }
   ]
   constructor(
-    private commissionSettlementReportsService: CommissionSettlementsService,
+    private commissionSettlementsService: CommissionSettlementsService,
     private intl: IntlService,
     private employeeService: EmployeeService,
   ) { }
@@ -67,7 +67,7 @@ export class CommissionSettlementReportListComponent implements OnInit {
     val.employeeId = this.employeeId ? this.employeeId : '';
     val.commissionType = this.commissionType ? this.commissionType : '';
     this.loading = true;
-    this.commissionSettlementReportsService.getReportPaged(val).pipe(
+    this.commissionSettlementsService.getReportPaged(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -81,7 +81,7 @@ export class CommissionSettlementReportListComponent implements OnInit {
       this.loading = false;
     });
 
-    this.commissionSettlementReportsService.getSumReport(val).subscribe((res: any) => {
+    this.commissionSettlementsService.getSumReport(val).subscribe((res: any) => {
       console.log(res);
       this.sumReport = res;
     }, err => {
@@ -126,18 +126,27 @@ export class CommissionSettlementReportListComponent implements OnInit {
   }
 
   exportCommissionExcelFile() {
-    let filename = "tong_hoa_hong_nhan_vien";
-    let newBlob = new Blob([], {
-      type:
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    let data = window.URL.createObjectURL(newBlob);
-    let link = document.createElement("a");
-    link.href = data;
-    link.download = filename;
-    link.click();
-    setTimeout(() => {
-      window.URL.revokeObjectURL(data);
-    }, 100);
+    var val = new CommissionSettlementReport();
+    val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.dateTo = this.dateTo ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.employeeId = this.employeeId ? this.employeeId : '';
+    val.commissionType = this.commissionType ? this.commissionType : '';
+    this.commissionSettlementsService.excelCommissionExport(val).subscribe((rs) => {
+      let filename = "tong_hoa_hong_nhan_vien";
+      let newBlob = new Blob([], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    })
   }
 }

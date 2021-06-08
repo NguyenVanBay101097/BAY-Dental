@@ -2,18 +2,19 @@
     <div class="o_form_view o_form_nosheet o_form_editable">
         <div class="my-3 d-flex justify-content-between">
             <div class="d-flex justify-content-between">
-                <app-tai-date-range-filter-dropdown title="Thời gian" class="mr-1" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
+                <app-tai-date-range-filter-dropdown title="Thời gian" class="mr-1" [dateFrom]="dateFrom"
+                    [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
                 </app-tai-date-range-filter-dropdown>
                 <kendo-combobox [placeholder]="'Tất cả nhân viên'" (valueChange)="valueEmployeeChange($event)"
                     class="kendo-combobox-sm mr-1" [filterable]="true" [data]="filteredEmployees" #employeeCbx
                     [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
                 </kendo-combobox>
                 <kendo-combobox [placeholder]="'Loại hoa hồng'" (valueChange)="valueCommissionTypeChange($event)"
-                    class="kendo-combobox-sm mr-1" [data]="filteredCommissionType"
-                    [valueField]="'value'" [textField]="'name'">
+                    class="kendo-combobox-sm mr-1" [data]="filteredCommissionType" [valueField]="'value'"
+                    [textField]="'name'">
                 </kendo-combobox>
                 <button type="button" class="btn btn-secondary btn-sm mr-1" (click)="exportCommissionExcelFile()"><i
-                    class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
+                        class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
             </div>
 
             <div class="o_cp_t_right">
@@ -36,9 +37,19 @@
                 </ng-template>
             </kendo-grid-column>
         </kendo-grid>
-        <div class="d-flex">
-            <div>Tổng</div>
-            <div>{{sumReport}}</div>
+        <div class="o_group text_sum">
+            <table class="o_group o_inner_group table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>
+                            Tổng
+                        </td>
+                        <td class="text-right">
+                            {{sumReport}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

@@ -73,4 +73,11 @@ export class CommissionSettlementsService {
   getSumReport(val: any) {
     return this.http.post(this.baseApi + this.apiUrl + '/GetSumReport', val);
   }
+
+  excelCommissionExport(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/', val, { responseType: 'blob' });
+  }
+  excelCommissionDetailExport(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/', val, { responseType: 'blob' });
+  }
 }
