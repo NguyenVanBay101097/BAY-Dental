@@ -301,26 +301,41 @@ namespace Infrastructure.Services
             };
 
             var lineObj = GetService<ISaleOrderLineService>();
-            var saleOrderLine = await lineObj.SearchQuery(x => x.Id == self.SaleOrderLineId).Include(x => x.Employee).Include(x => x.Assistant).Include(x => x.Counselor).FirstOrDefaultAsync();
+            var saleOrderLine = await lineObj.SearchQuery(x => x.Id == self.SaleOrderLineId)
+                .Include(x => x.Employee)
+                .Include(x => x.Assistant)
+                .Include(x => x.Counselor)
+                .Include(x => x.SaleOrderLineInvoice2Rels)
+                .ThenInclude(x => x.InvoiceLine)
+                .ThenInclude(x => x.CommissionSettlements).FirstOrDefaultAsync();
+
+            var commissionSettlements = saleOrderLine.SaleOrderLineInvoice2Rels.Select(x => x.InvoiceLine).SelectMany(x => x.CommissionSettlements);
+            var baseAmount = commissionSettlements.Sum(x => x.BaseAmount);
+            var tongtienthanhtoan = saleOrderLine.AmountPaid + self.Amount;
+            var productObj = GetService<ProductService>();
+            var giavon = productObj.GetStandardPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId);
+
+
+
 
             var today = DateTime.Today;
             //add hoa hồng bác sĩ
             if (saleOrderLine.EmployeeId.HasValue && saleOrderLine.Employee.CommissionId.HasValue)
             {
-
+                //var phantramhoahong = TinhPhanTramHoaHong(saleOrderLine.Product, banghoahong);
                 res.CommissionSettlements.Add(new CommissionSettlement
                 {
                     EmployeeId = saleOrderLine.EmployeeId,
                     CommissionId = saleOrderLine.Employee.CommissionId,
                     ProductId = saleOrderLine.ProductId,
-                    Date = today
+                    Date = today,
                 });
             }
 
             //add hoa hồng phụ tá
             if (saleOrderLine.AssistantId.HasValue && saleOrderLine.Assistant.AssistantCommissionId.HasValue)
             {
-
+                //var phantramhoahong = TinhPhanTramHoaHong(saleOrderLine.Product, banghoahong);
                 res.CommissionSettlements.Add(new CommissionSettlement
                 {
                     EmployeeId = saleOrderLine.AssistantId,
@@ -333,6 +348,7 @@ namespace Infrastructure.Services
             //add hoa hồng tư vấn
             if (saleOrderLine.CounselorId.HasValue && saleOrderLine.Counselor.CounselorCommissionId.HasValue)
             {
+                //var phantramhoahong = TinhPhanTramHoaHong(saleOrderLine.Product, banghoahong);
                 res.CommissionSettlements.Add(new CommissionSettlement
                 {
                     EmployeeId = saleOrderLine.CounselorId,
@@ -397,7 +413,7 @@ namespace Infrastructure.Services
                 if (firstDayOfMonth < res.Date && res.Date > lastDayOfMonth)
                     throw new Exception("Bạn chỉ được hủy thanh toán trong tháng");
 
-                if(res.State == "cancel")
+                if (res.State == "cancel")
                     throw new Exception("Không thể hủy phiếu ở trạng thái hủy");
 
                 ///xử lý tìm các payment update state = "cancel" va hóa đơn thanh toán để xóa
@@ -475,10 +491,10 @@ namespace Infrastructure.Services
                 ).FirstOrDefaultAsync();
 
             var result = _mapper.Map<SaleOrderPaymentPrintVM>(payment);
-            if (result == null) 
+            if (result == null)
                 return null;
 
-            result.User = _mapper.Map<ApplicationUserSimple>(payment.CreatedBy);        
+            result.User = _mapper.Map<ApplicationUserSimple>(payment.CreatedBy);
             return result;
 
         }

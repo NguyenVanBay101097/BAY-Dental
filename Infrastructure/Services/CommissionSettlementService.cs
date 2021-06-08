@@ -71,26 +71,32 @@ namespace Infrastructure.Services
 
         public override async Task UpdateAsync(IEnumerable<CommissionSettlement> entities)
         {
-            await ComputeAmount(entities);
+            //await ComputeAmount(entities);
             await base.UpdateAsync(entities);
         }
 
-        public async Task ComputeAmount(IEnumerable<CommissionSettlement> val)
-        {
-            var commisstionProductRuleObj = GetService<ICommissionProductRuleService>();
-            foreach (var settlement in val)
-            {
-                var percent = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == settlement.CommissionId && x.ProductId == settlement.ProductId).Select(x => x.Percent).FirstOrDefaultAsync();
-                if (percent <= 0)
-                    continue;
+        //public async Task ComputeAmount(IEnumerable<CommissionSettlement> val)
+        //{
+        //    var commisstionProductRuleObj = GetService<ICommissionProductRuleService>();
+        //    foreach (var settlement in val)
+        //    {
+        //        //tính lợi nhuận
+        //        //tổng thanh toán dịch vụ: sum priceSub in all moveline of this orderLineId
+        //        var moveLineObj = GetService<IAccountMoveLineService>();
+        //        var ams = await moveLineObj.SearchQuery(x => x.Id == settlement.MoveLineId).Include(x => x.SaleLineRels).ToListAsync();
+        //        var amIds = ams.sel
 
-                var total = settlement.MoveLine.PriceSubtotal;
-                settlement.TotalAmount = total;
-                settlement.BaseAmount = total;
-                settlement.Percentage = percent ?? 0;
-                settlement.Amount = ((total * (percent ?? 0)) / 100);
-            }
-        }
+        //        var percent = await commisstionProductRuleObj.SearchQuery(x => x.CommissionId == settlement.CommissionId && x.ProductId == settlement.ProductId).Select(x => x.Percent).FirstOrDefaultAsync();
+        //        if (percent <= 0)
+        //            continue;
+
+        //        var total = settlement.MoveLine.PriceSubtotal;
+        //        settlement.TotalAmount = total;
+        //        settlement.BaseAmount = total;
+        //        settlement.Percentage = percent ?? 0;
+        //        settlement.Amount = ((total * (percent ?? 0)) / 100);
+        //    }
+        //}
 
 
         //public override Task<IEnumerable<CommissionSettlement>> CreateAsync(IEnumerable<CommissionSettlement> entities)

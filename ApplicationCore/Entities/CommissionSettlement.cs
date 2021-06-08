@@ -47,5 +47,8 @@ namespace ApplicationCore.Entities
         public Guid? ProductId { get; set; }
         public Product Product { get; set; }
 
+        public Guid? SaleOrderLineId { get; set; }
+        public SaleOrderLine SaleOrderLine { get; set; }
+
     }
 }

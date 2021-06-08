@@ -19,7 +19,7 @@ namespace Infrastructure.EntityConfigurations
             .HasForeignKey(x => x.EmployeeId);
 
             builder.HasOne(x => x.MoveLine)
-            .WithMany(x=> x.CommissionSettlements)
+            .WithMany(x => x.CommissionSettlements)
             .HasForeignKey(x => x.MoveLineId);
 
             builder.HasOne(x => x.Commission)
@@ -29,7 +29,7 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.Product)
             .WithMany()
             .HasForeignKey(x => x.ProductId);
-        
+
 
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
@@ -38,6 +38,10 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.WriteBy)
             .WithMany()
             .HasForeignKey(x => x.WriteById);
+
+            builder.HasOne(x => x.SaleOrderLine)
+                .WithMany(x => x.CommissionSettlements)
+                .HasForeignKey(x => x.SaleOrderLineId);
         }
     }
 }
