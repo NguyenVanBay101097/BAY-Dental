@@ -26,4 +26,28 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CompanyId { get; set; }
     }
+
+    public class GetSummarySaleReportRequest
+    {
+        public Guid? PartnerId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class GetSummarySaleReportResponse
+    {
+        public GetSummarySaleReportResponse()
+        {
+            PaidTotal = 0;
+            ResidualTotal = 0;
+        }
+
+        public decimal PriceTotal { get; set; }
+
+        public decimal? PaidTotal { get; set; }
+
+        public decimal? ResidualTotal { get; set; }
+
+        public decimal QtyTotal { get; set; }
+    }
 }

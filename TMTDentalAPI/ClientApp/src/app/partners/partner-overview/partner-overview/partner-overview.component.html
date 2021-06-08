@@ -35,10 +35,10 @@
                                 <div class="card text-white bg-info mb-3">
                                     <div class="card-body p-3">
                                         <h5 class="card-title text-center mb-2">
-                                            DOANH THU
+                                            TIỀN ĐIỀU TRỊ
                                         </h5>
                                         <h5 class="card-text text-center t_amount">
-                                            {{debit | number}}
+                                            {{(saleSummary?.priceTotal || 0) | number}}
                                         </h5>
                                     </div>
                                 </div>
@@ -50,7 +50,7 @@
                                             THANH TOÁN
                                         </h5>
                                         <h5 class="card-text text-center t_amount">
-                                            {{credit | number}}
+                                            {{(saleSummary?.paidTotal || 0) | number}}
                                         </h5>
                                     </div>
                                 </div>
@@ -60,7 +60,7 @@
                                     <div class="card-body p-3">
                                         <h5 class="card-title text-center mb-2">DỰ KIẾN THU</h5>
                                         <h5 class="card-text text-center t_amount">
-                                            {{debit - credit | number}}
+                                            {{(saleSummary?.residualTotal || 0) | number}}
                                         </h5>
                                     </div>
                                 </div>
@@ -68,9 +68,9 @@
                             <div class="col-6">
                                 <div class="card text-white bg-success">
                                     <div class="card-body p-3">
-                                        <h5 class="card-title text-center mb-2">SỐ P.ĐIỀU TRỊ</h5>
+                                        <h5 class="card-title text-center mb-2">SL DỊCH VỤ</h5>
                                         <h5 class="card-text text-center t_amount">
-                                            {{saleCount | number}}
+                                            {{(saleSummary?.qtyTotal || 0) | number}}
                                         </h5>
                                     </div>
                                 </div>
