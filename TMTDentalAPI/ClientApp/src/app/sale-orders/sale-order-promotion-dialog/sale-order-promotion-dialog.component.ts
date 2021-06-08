@@ -10,6 +10,7 @@ import {
   SaleCouponProgramPaged,
   SaleCouponProgramService,
 } from "src/app/sale-coupon-promotion/sale-coupon-program.service";
+import { CheckPermissionService } from "src/app/shared/check-permission.service";
 import { NotifyService } from "src/app/shared/services/notify.service";
 import { setTimeout } from "timers";
 import { SaleOrderDisplay } from "../sale-order-display";
@@ -33,7 +34,7 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
   autoPromotions = [];
   private updateSubject = new Subject<any>();
   isChange = false;
-
+  isDiscountOrder = false;
   private btnDiscountSubject = new Subject<any>();
   private btnPromoCodeSubject = new Subject<any>();
   private btnPromoNoCodeSubject = new Subject<any>();
@@ -47,7 +48,8 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
     private saleOrderSevice: SaleOrderService,
     private saleOrderLineService: SaleOrderLineService,
     private notificationService: NotifyService,
-    private modelService: NgbModal
+    private modelService: NgbModal,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -55,6 +57,7 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
     //   this.loadDefaultPromotion();
     // }, 0);
     this.loadDefaultPromotion();
+    this.isDiscountOrder = this.checkPermissionService.check(["Basic.SaleOrder.DiscountOrder"]);
   }
 
 
