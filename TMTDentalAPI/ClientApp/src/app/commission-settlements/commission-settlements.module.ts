@@ -9,9 +9,10 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { SharedModule } from '../shared/shared.module';
 import { CommissionSettlementsService } from './commission-settlements.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CommissionSettlementReportComponent } from './commission-settlement-report/commission-settlement-report.component';
 
 @NgModule({
-  declarations: [CommissionSettlementReportListComponent, CommissionSettlementReportDetailComponent],
+  declarations: [CommissionSettlementReportListComponent, CommissionSettlementReportDetailComponent, CommissionSettlementReportComponent],
   imports: [
     CommonModule,
     CommissionSettlementsRoutingModule,
