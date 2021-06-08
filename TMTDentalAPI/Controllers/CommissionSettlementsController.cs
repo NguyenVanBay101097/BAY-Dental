@@ -50,7 +50,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetSumReport(CommissionSettlementReport val)
         {
             var result = await _commissionSettlementService.GetSumReport(val);
-            return Ok();
+            return Ok(result);
         }
 
     }
