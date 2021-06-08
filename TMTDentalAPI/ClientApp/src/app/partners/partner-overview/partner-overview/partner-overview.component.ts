@@ -13,6 +13,7 @@ import { PromotionProgramBasic, PromotionProgramPaged, PromotionProgramService }
 import { SaleCouponProgramBasic, SaleCouponProgramPaged, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
+import { GetSummarySaleReportRequest, SaleReportService } from 'src/app/sale-report/sale-report.service';
 import { PartnersService } from 'src/app/shared/services/partners.service';
 import { PartnerDisplay } from '../../partner-simple';
 import { PartnerService } from '../../partner.service';
@@ -37,9 +38,7 @@ export class PartnerOverviewComponent implements OnInit {
   dotkhams: DotKhamBasic[] = [];
 
   //for report
-  debit: number = 0;
-  credit: number = 0;
-  saleCount: number = 0;
+  saleSummary: any;
 
   constructor(
     private authService: AuthService,
@@ -51,7 +50,8 @@ export class PartnerOverviewComponent implements OnInit {
     private saleOrderService: SaleOrderService,
     private saleCouponProgramService: SaleCouponProgramService,
     private router: Router,
-    private dotkhamService: DotKhamService
+    private dotkhamService: DotKhamService,
+    private saleReportService: SaleReportService
   ) { }
 
   ngOnInit() {
@@ -87,7 +87,6 @@ export class PartnerOverviewComponent implements OnInit {
     this.saleOrderService.getPaged(val).subscribe(
       result => {
         this.saleOrders = result.items;
-        this.saleCount = result.totalItems;
       }
     )
   }
@@ -122,14 +121,13 @@ export class PartnerOverviewComponent implements OnInit {
   }
 
   loadReport() {
-    var val = new AccountCommonPartnerReportSearchV2();
-    val.partnerIds.push(this.partnerId);
+    var val = new GetSummarySaleReportRequest();
+    val.partnerId = this.partnerId;
     val.companyId = this.authService.userInfo.companyId;
-    val.resultSelection = "customer";
-    this.accountCommonPartnerReportService.getSummaryPartner(val).subscribe(
+    this.saleReportService.getSummary(val).subscribe(
       result => {
-        this.debit = result.debit;
-        this.credit = result.credit;
+        console.log(result);
+        this.saleSummary = result;
       }
     )
   }

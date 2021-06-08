@@ -98,6 +98,11 @@ export class SaleReportOldNewPartnerOutput {
     customerOld: number;
 }
 
+export class GetSummarySaleReportRequest {
+    partnerId: string;
+    companyId: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SaleReportService {
     apiUrl = 'api/SaleReports';
@@ -137,5 +142,9 @@ export class SaleReportService {
 
     getReportOldNewPartner(val: SaleReportOldNewPartnerInput) {
         return this.http.post<SaleReportOldNewPartnerOutput>(this.baseApi + this.apiUrl + '/GetReportOldNewPartner', val);
+    }
+
+    getSummary(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetSummary', val);
     }
 }

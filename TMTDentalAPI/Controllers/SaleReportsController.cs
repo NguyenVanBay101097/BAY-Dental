@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
@@ -17,10 +18,13 @@ namespace TMTDentalAPI.Controllers
     public class SaleReportsController : BaseApiController
     {
         private readonly ISaleReportService _saleReportService;
+        private readonly ISaleOrderLineService _saleOrderLineService;
 
-        public SaleReportsController(ISaleReportService saleReportService)
+        public SaleReportsController(ISaleReportService saleReportService,
+            ISaleOrderLineService saleOrderLineService)
         {
             _saleReportService = saleReportService;
+            _saleOrderLineService = saleOrderLineService;
         }
 
         [HttpGet("GetTopService")]
@@ -148,6 +152,29 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _saleReportService.GetReportOldNewPartner(val);
             return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> GetSummary(GetSummarySaleReportRequest val)
+        {
+            var states = new string[] { "sale", "done" };
+            var query = _saleOrderLineService.SearchQuery(x => (!x.Order.IsQuotation.HasValue || x.Order.IsQuotation == false) &&
+                states.Contains(x.State));
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.OrderPartnerId == val.PartnerId);
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
+            var res = await query.GroupBy(x => 0).Select(x => new GetSummarySaleReportResponse
+            {
+                PriceTotal = x.Sum(s => s.PriceTotal),
+                PaidTotal = x.Sum(x => x.AmountPaid),
+                ResidualTotal = x.Sum(x => x.PriceTotal - x.AmountPaid),
+                QtyTotal = x.Sum(s => s.ProductUOMQty)
+            }).ToListAsync();
+
+            return Ok(res.Count > 0 ? res[0] : new GetSummarySaleReportResponse());
         }
     }
 }
