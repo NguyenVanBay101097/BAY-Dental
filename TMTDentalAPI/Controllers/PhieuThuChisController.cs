@@ -131,6 +131,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> DefaultGet(PhieuThuChiDefaultGet val)
         {
             var res = new PhieuThuChiDisplay();
+            res.Date = DateTime.Now;
             res.Type = val.Type;
             res.CompanyId = CompanyId;
             var journal = await _journalService.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "cash").FirstOrDefaultAsync();
@@ -150,6 +151,21 @@ namespace TMTDentalAPI.Controllers
             phieu.AmountText = AmountToText.amount_to_text(phieu.Amount);
 
             var html = _viewRenderService.Render("PhieuThuChi/Print", phieu);
+
+            return Ok(new PrintData() { html = html });
+        }
+
+        [AllowAnonymous]
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetPrint2(Guid id)
+        {
+            var res = await _phieuThuChiService.GetPrint(id);
+            if (res == null)
+                return NotFound();
+
+            res.AmountText = AmountToText.amount_to_text(res.Amount);
+
+            var html = _viewRenderService.Render("PhieuThuChi/Print2", res);
 
             return Ok(new PrintData() { html = html });
         }
@@ -205,5 +221,7 @@ namespace TMTDentalAPI.Controllers
 
             return new FileContentResult(fileContent, mimeType);
         }
+
+      
     }
 }

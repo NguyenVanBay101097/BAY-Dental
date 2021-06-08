@@ -542,6 +542,10 @@ export class PartnerService {
     getCustomerAppointments(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/GetCustomerAppointments', val);
     }
+
+    getAmountDebtBalance(id){
+        return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountDebtBalance');
+    }
 }
 
 

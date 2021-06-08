@@ -31,6 +31,11 @@ import { PartnerCustomerQuotationListComponent } from './partner-customer-quotat
 import { PartnerCustomerAdvisoryListComponent } from './partner-customer-advisory/partner-customer-advisory-list/partner-customer-advisory-list.component';
 import { PartnerAdvanceListComponent } from '../partner-advances/partner-advance-list/partner-advance-list.component';
 import { AuthGuard } from '../auth/auth.guard';
+import { PartnerCustomerDebtListComponent } from './partner-customer-debt-list/partner-customer-debt-list.component';
+import { PartnerCustomerDebtPaymentHistoryListComponent } from './partner-customer-debt-payment-history-list/partner-customer-debt-payment-history-list.component';
+import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-management/partner-customer-debt-management.component';
+import { PartnerAdvanceManagementComponent } from '../partner-advances/partner-advance-management/partner-advance-management.component';
+import { PartnerAdvanceHistoryListComponent } from '../partner-advances/partner-advance-history-list/partner-advance-history-list.component';
 
 const routes: Routes = [
   {
@@ -54,7 +59,14 @@ const routes: Routes = [
       { path: 'appointment', component: PartnerCustomerAppointmentComponent },
       { path: 'prescription', component: PartnerCustomerProductToaThuocListComponent },
       { path: 'categories', component: PartnerCustomerCategoriesComponent },
-      { path: 'advances', component: PartnerAdvanceListComponent },
+      {
+        path: 'advances', component: PartnerAdvanceManagementComponent,
+        children: [
+          { path: '', redirectTo: 'list', pathMatch: 'full' },
+          { path: 'list', component: PartnerAdvanceListComponent },
+          { path: 'advance-histories', component: PartnerAdvanceHistoryListComponent },
+        ]
+      },
       { path: 'partner-images', component: PartnerCustomerUploadImageComponent },
       { path: 'quotations', component: PartnerCustomerQuotationListComponent },
       //{ path: 'quotations', component: PartnerCustomerQuotationsComponent },
@@ -64,6 +76,15 @@ const routes: Routes = [
       { path: 'overview', component: PartnerOverviewComponent },
       { path: 'labo-orders', component: PartnerCustomerLaboOrdersComponentComponent },
       { path: 'treatment', component: PartnerCustomerTreatmentListComponent },
+      {
+        path: 'debt', component: PartnerCustomerDebtManagementComponent,
+        children: [
+          { path: '', redirectTo: 'list', pathMatch: 'full' },
+          { path: 'list', component: PartnerCustomerDebtListComponent },
+          { path: 'debt-histories', component: PartnerCustomerDebtPaymentHistoryListComponent },
+        ]
+      },
+
     ]
   },
   {

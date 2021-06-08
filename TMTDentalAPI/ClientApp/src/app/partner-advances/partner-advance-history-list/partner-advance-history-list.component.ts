@@ -8,7 +8,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-import { HistoryAdvancePaymentFilter, SaleOrderPaymentPaged, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
+import { HistoryPartnerAdvanceFilter, SaleOrderPaymentPaged, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
 import { PartnerService } from 'src/app/partners/partner.service';
 
 @Component({
@@ -17,7 +17,7 @@ import { PartnerService } from 'src/app/partners/partner.service';
   styleUrls: ['./partner-advance-history-list.component.css']
 })
 export class PartnerAdvanceHistoryListComponent implements OnInit {
-  @Input() partnerId: string;
+  partnerId: string;
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
   
@@ -41,6 +41,7 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
     private saleOrderPaymentService: SaleOrderPaymentService) { }
 
   ngOnInit() {
+    this.partnerId = this.route.parent.parent.snapshot.paramMap.get('id');
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 
@@ -59,13 +60,13 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var paged = new HistoryAdvancePaymentFilter();
+    var paged = new HistoryPartnerAdvanceFilter();
     paged.limit = this.limit;
     paged.offset = this.offset;
     paged.partnerId = this.partnerId;
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
-    this.saleOrderPaymentService.getHistoryAdvancePaged(paged).pipe(
+    this.saleOrderPaymentService.getHistoryPartnerAdvance(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems

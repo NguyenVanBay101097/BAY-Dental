@@ -405,6 +405,12 @@
 			<field name="model_id" ref="sms.model_sms_message_detail"/>
 			<field name="global" eval="True"/>
 		</record>
-	</data>
+
+    <record model="ir.rule" id="base.agent_comp_rule">
+      <field name="name">Agent company rule</field>
+      <field name="model_id" ref="base.model_agent"/>
+      <field name="global" eval="True"/>
+    </record>
+  </data>
 </odoo>
 

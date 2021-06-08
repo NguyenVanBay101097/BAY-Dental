@@ -9,6 +9,9 @@ export class PhieuThuChiPaged {
   type: string;
   dateFrom: string;
   dateTo: string;
+  accountType: string;
+  partnerId: string;
+  agentId: string;
   companyId: string;
 }
 
@@ -57,6 +60,29 @@ export class PhieuThuChiSave {
   address: string;
   loaiThuChiId: string;
   loaiThuChi: any;
+}
+
+export class CustomerDebtSave {
+  date: Date;
+  journalId: string;
+  journal: any;
+  name: string;
+  type: string;
+  amount: number;
+  reason: string;
+  partnerId: string;
+}
+
+export class CommissionAgentSave {
+  date: Date;
+  journalId: string;
+  journal: any;
+  name: string;
+  type: string;
+  amount: number;
+  reason: string;
+  partnerId: string;
+  customerId: string;
 }
 
 export class PhieuThuChiDisplay {
@@ -128,6 +154,10 @@ export class PhieuThuChiService {
 
   getPrint(id: string) {
     return this.http.get(this.baseApi + this.apiPrint+ '/Print' + `?id=${id}`, { responseType: 'text' });
+  }
+
+  getPrint2(id: string) {
+    return this.http.get(this.baseApi + this.apiUrl+ '/' + id + '/GetPrint2');
   }
 
   exportExcelFile(val: any) {

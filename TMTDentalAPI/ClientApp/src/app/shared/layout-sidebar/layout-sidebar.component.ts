@@ -188,6 +188,14 @@ export class LayoutSidebarComponent implements OnInit {
       permissions: ['SMS.Account.Read', 'SMS.Campaign.Read', 'SMS.Message.Read', 'SMS.Template.Read', 'SMS.Config.Read', 'SMS.Report.AllMessage', 'SMS.Report.AllSMS']
     },
     {
+      name: 'Hoa hồng',
+      icon: 'fas fa-poll',
+      children: [
+        { name: 'Người giới thiệu', link: '/agents/commission' },
+      ],
+      permissions: ['Catalog.Agent.Read']
+    },
+    {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [
@@ -196,6 +204,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhãn khảo sát', link: '/surveys/survey-tag', groups: 'survey.group_survey' },
         // { name: "Nguồn khách hàng", link: "/partner-sources" },
         { name: 'Nhà cung cấp', link: '/partners/suppliers', permissions: ['Basic.Partner.Read'] },
+        { name: 'Người giới thiệu', link: '/agents' },
         { name: 'Dịch vụ - Vật tư - Thuốc', link: '/products', permissions: ['Catalog.Products.Read'] },
         { name: 'Đơn thuốc mẫu', link: '/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
         // { name: 'Tiểu sử bệnh', link: '/histories' },
@@ -218,6 +227,7 @@ export class LayoutSidebarComponent implements OnInit {
       permissions: [
         'Catalog.PartnerCategory.Read',
         'Catalog.Products.Read',
+        'Catalog.Agent.Read',
         'Catalog.SamplePrescription.Read',
         'UoM.UoMs.Read',
         'Catalog.Commission.Read',

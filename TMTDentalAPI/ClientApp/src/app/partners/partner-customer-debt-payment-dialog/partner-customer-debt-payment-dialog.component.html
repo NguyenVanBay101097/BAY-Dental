@@ -1,0 +1,80 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}</h5>
+    <button type="button" ngbAutofocus class="close" data-dismiss="modal" aria-label="Close" (click)="onClose()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Phương thức</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div>
+                                        <kendo-combobox [data]="filteredJournals" [textField]="'name'"
+                                            [filterable]="true" #journalCbx formControlName="journal"
+                                            [valueField]="'id'">
+                                        </kendo-combobox>
+                                        <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)"
+                                            class="text-danger">
+                                            <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Số tiền</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" [max]="amountDebtBalanceTotal"
+                                        [autoCorrect]="true" formControlName="amount">
+                                    </kendo-numerictextbox>
+                                    <div *ngIf="f.amount.errors && (f.amount.touched || f.amount.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.amount.errors.required">Không được để trống</div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateObj">
+                                    </kendo-datepicker>
+                                    <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.dateObj.errors.required">Chọn ngày</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Nội dung</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea type="text" class="form-control" formControlName="reason"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary mr-2" (click)="actionPayment()">Thanh toán</button>
+    <button type="button" class="btn btn-light" (click)="onClose()">Đóng</button>
+</div>

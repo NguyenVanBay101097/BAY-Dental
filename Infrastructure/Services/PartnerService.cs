@@ -103,7 +103,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Source)
                 .Include(x => x.ReferralUser)
                 .Include(x => x.Title)
-                .Include(x => x.Consultant)
+                .Include(x => x.Agent)
                 .Include("PartnerPartnerCategoryRels.Category")
                 .Include("PartnerHistoryRels.History")
                 .FirstOrDefaultAsync();

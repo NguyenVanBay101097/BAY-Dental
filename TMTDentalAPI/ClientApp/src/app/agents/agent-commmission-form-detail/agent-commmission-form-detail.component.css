@@ -1,0 +1,42 @@
+.report-prescription-payment {
+    display: flex;
+    padding: 10px;
+    background-color: #f0eeee;
+  }
+  
+  .revenue {
+    min-width: 200px;
+    text-align: center;
+    padding: 10px;
+    margin-right: 10px;
+    margin-left: 5px;
+    border: 1px solid #bdc1c5;
+    border-radius: 4px;
+    background-color: white;
+  }
+  
+  .number-payment {
+    min-width: 200px;
+    text-align: center;
+    padding: 12px;
+    margin-right: 15px;
+    border: 1px solid #bdc1c5;
+    border-radius: 4px;
+    background-color: white;
+  }
+
+  .cu-height {
+    height: 31px !important;
+  }
+  
+  .cu-style {
+    width: auto !important;
+    min-width: 120px;
+    height: 31px !important;
+  }
+  
+  .custom {
+    min-width: 200px;
+    padding: 0;
+    margin-right: 15px;
+  }

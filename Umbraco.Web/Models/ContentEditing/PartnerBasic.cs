@@ -130,6 +130,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? OrderDone { get; set; }
     }
 
+    
+
     public class PartnerGetDebtPagedFilter
     {
         public int Limit { get; set; }
@@ -551,6 +553,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public int CustomerNew { get; set; }
         public IEnumerable<CustomerStatisticsDetails> Details { get; set; } = new List<CustomerStatisticsDetails>();
     }
+
+
 
     public class PartnerInfoVm
     {
