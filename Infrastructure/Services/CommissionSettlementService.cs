@@ -84,12 +84,12 @@ namespace Infrastructure.Services
                 if (percent <= 0)
                     continue;
 
-                var total = settlement.MoveLine.PriceSubtotal;              
+                var total = settlement.MoveLine.PriceSubtotal;
                 settlement.TotalAmount = total;
                 settlement.BaseAmount = total;
                 settlement.Percentage = percent ?? 0;
                 settlement.Amount = ((total * (percent ?? 0)) / 100);
-            }         
+            }
         }
 
 
@@ -160,7 +160,7 @@ namespace Infrastructure.Services
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
                 query = query.Where(x => x.Date <= val.DateTo);
             }
-       
+
 
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
@@ -186,7 +186,65 @@ namespace Infrastructure.Services
             return result;
         }
 
-        public async Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementReport val)
+        public async Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementDetailReportPar val)
+        {
+            var query = GetQueryableReportPaged(new CommissionSettlementReport()
+            {
+                CommissionType = val.CommissionType,
+                CompanyId = val.CompanyId,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                EmployeeId = val.EmployeeId
+            });
+
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => x.MoveLine.Move.InvoiceOrigin.Contains(val.Search)
+                || x.Product.Name.Contains(val.Search)
+                || x.Product.NameNoSign.Contains(val.Search)
+                || x.MoveLine.Partner.Name.Contains(val.Search)
+                || x.MoveLine.Partner.NameNoSign.Contains(val.Search)
+                );
+            }
+            var totalItems = await query.CountAsync();
+
+            if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await query.OrderBy(x => x.Date)
+                .Select(x => new CommissionSettlementReportDetailOutput
+                {
+                    Amount = x.Amount,
+                    BaseAmount = x.BaseAmount,
+                    Date = x.Date,
+                    Percentage = x.Percentage,
+                    ProductName = x.Product.Name,
+                    PartnerName = x.MoveLine.Partner.Name,
+                    InvoiceOrigin = x.MoveLine.Move.InvoiceOrigin,
+                    CommissionType = x.Commission.Type,
+                    EmployeeName = x.Employee.Name
+                }).ToListAsync();
+
+            return new PagedResult2<CommissionSettlementReportDetailOutput>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
+
+        public decimal GetStandardPrice(Guid id, Guid? force_company_id = null)
+        {
+            var propertyObj = GetService<IIRPropertyService>();
+            var val = propertyObj.get("standard_price", "product.product", res_id: $"product.product,{id}", force_company: force_company_id);
+            return Convert.ToDecimal(val == null ? 0 : val);
+        }
+
+        public async Task<decimal> GetSumReport(CommissionSettlementReport val)
+        {
+            var query = GetQueryableReportPaged(val);
+
+            return await query.GroupBy(x => new { x.EmployeeId.Value, Amount = x.Amount.Value }).SumAsync(x => x.Key.Amount);
+        }
+
+        public IQueryable<CommissionSettlement> GetQueryableReportPaged(CommissionSettlementReport val)
         {
             var query = SearchQuery();
 
@@ -202,35 +260,37 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= val.DateTo);
             }
 
-
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
 
-            var items = await query.OrderBy(x => x.Date).Skip(val.Offset).Take(val.Limit)
-                .Select(x => new CommissionSettlementReportDetailOutput
-                {
-                    Amount = x.Amount,
-                    BaseAmount = x.BaseAmount,
-                    Date = x.Date,
-                    Percentage = x.Percentage,
-                    ProductName = x.Product.Name,
-                    PartnerName = x.MoveLine.Partner.Name,
-                    InvoiceOrigin = x.MoveLine.Move.InvoiceOrigin
-                }).ToListAsync();
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.Employee.CompanyId == val.CompanyId);
 
-            var totalItems = await query.CountAsync();
+            if (!string.IsNullOrEmpty(val.CommissionType))
+                query = query.Where(x => x.Commission.Type == val.CommissionType);
 
-            return new PagedResult2<CommissionSettlementReportDetailOutput>(totalItems, val.Offset, val.Limit)
-            {
-                Items = items
-            };
+
+            return query;
         }
-
-        public decimal GetStandardPrice(Guid id, Guid? force_company_id = null)
+        public async Task<PagedResult2<CommissionSettlementReportRes>> GetReportPaged(CommissionSettlementReport val)
         {
-            var propertyObj = GetService<IIRPropertyService>();
-            var val = propertyObj.get("standard_price", "product.product", res_id: $"product.product,{id}", force_company: force_company_id);
-            return Convert.ToDecimal(val == null ? 0 : val);
+            var query = GetQueryableReportPaged(val);
+            var queryGroup = query.GroupBy(x => new { x.EmployeeId, EmployeeName = x.Employee.Name, x.Date.Value.Date, CommissionType = x.Commission.Type });
+            var count = await queryGroup.CountAsync();
+            if (val.Limit > 0) queryGroup = queryGroup.Skip(val.Offset).Take(val.Limit);
+
+            var res = await queryGroup.OrderByDescending(x => x.Key.Date).Select(x => new CommissionSettlementReportRes()
+            {
+                Amount = x.Sum(z => z.Amount),
+                CommissionType = x.Key.CommissionType,
+                EmployeeId = x.Key.EmployeeId,
+                EmployeeName = x.Key.EmployeeName
+            }).ToListAsync();
+
+            return new PagedResult2<CommissionSettlementReportRes>(count, val.Offset, val.Limit)
+            {
+                Items = res
+            };
         }
     }
 }

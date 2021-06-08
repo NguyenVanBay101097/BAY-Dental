@@ -28,6 +28,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Commission")]
+        public async Task<IActionResult> GetReportPaged([FromQuery] CommissionSettlementReport val)
+        {
+            var result = await _commissionSettlementService.GetReportPaged(val);
+            return Ok(result);
+        }
+
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.Commission")]
         public async Task<IActionResult> GetReportDetail(CommissionSettlementDetailReportPar val)
