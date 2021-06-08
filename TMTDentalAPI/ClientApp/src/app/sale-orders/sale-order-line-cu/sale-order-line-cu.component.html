@@ -228,13 +228,13 @@
 
         <hr *ngIf="this.isEditting">
         <!-- ưu đãi -->
-        <div *ngIf="isDiscountOrder || isDiscountLine" class="card border promotions">
+        <div class="card border promotions">
             <div class="card-body px-3 py-2">
-                <div *ngIf="isDiscountOrder" class="d-flex">
+                <div class="d-flex">
                     <span>Ưu đãi phiếu điều trị</span>
                     <span class="ml-auto">{{line.amountPromotionToOrder | number}}</span>
                 </div>
-                <div *ngIf="isDiscountLine" class="d-flex">
+                <div class="d-flex">
                     <span>Ưu đãi dịch vụ</span>
                     <img *ngIf="line.state != 'done'" (click)="onOpenPromotion()" class="ml-2 pointer" src="../../../assets/icons/promotion-bg-primary.svg" alt="">
                     <span class="ml-auto">{{line.amountPromotionToOrderLine | number}}</span>
