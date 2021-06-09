@@ -90,7 +90,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool Active { get; set; }
 
-        public int CountLine { get; set; }
+        public decimal CountLine { get; set; }
         public string DateOfBirth { get; set; }
 
         public Guid AppointmnetId { get; set; }
