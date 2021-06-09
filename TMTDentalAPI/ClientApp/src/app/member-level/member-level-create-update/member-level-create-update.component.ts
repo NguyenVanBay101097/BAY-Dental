@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, NgForm, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { update } from 'lodash';
 import { forkJoin } from 'rxjs';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -29,37 +30,68 @@ export class MemberLevelCreateUpdateComponent implements OnInit {
     { id: '10', value: "#30C381", checked: false },
     { id: '11', value: "#9365B8", checked: false },
   ]
-  isEqualName: boolean = false;
-  isEqualPoint: boolean = false;
-  indexName: number;
-  indexPoint: number;
+  formGroup: FormGroup;
+  submitted: boolean = false;
+
+  get f() {
+    return this.memberArray.controls;
+  }
+
+  get memberArray() {
+    return this.formGroup.controls.memberArrayForm as FormArray;
+  }
   constructor(
     private memberLevelService: MemberLevelService,
     private notifyService: NotifyService,
     private modalService: NgbModal,
     private router: Router,
-    private partnerService: PartnerService
+    private partnerService: PartnerService,
+    private fb: FormBuilder
   ) { }
 
   ngOnInit() {
-    // this.memberLevels = [];
+    this.formGroup = this.fb.group({
+      memberArrayForm: this.fb.array([])
+    })
     this.loadDataFromApi();
   }
+
   onAddMemberLevel() {
-    var level = {
-      name: '',
-      point: 0,
-      color: '0',
-    }
-    this.memberLevels.push(level);
-    this.isEqualName = false;
-    this.isEqualPoint = false;
+    this.memberArray.push(
+      this.fb.group({
+        name: ['',
+          {
+            validators: [Validators.required, this.isNameDup()]
+          }
+        ],
+        point: ['',
+          {
+            validators: [Validators.required, this.isPointDup()]
+          }
+        ],
+        color: '0',
+      })
+    )
   }
 
   loadDataFromApi() {
     this.memberLevelService.get().subscribe((result) => {
-      console.log(result);
-      this.memberLevels = result;
+      this.memberArray.clear();
+      result.forEach((member) => {
+        this.memberArray.push(this.fb.group({
+          name: [member.name,
+          {
+            validators: [Validators.required, this.isNameDup()]
+          }
+          ],
+          point: [member.point,
+          {
+            validators: [Validators.required, this.isPointDup()]
+          }
+          ],
+          color: member.color,
+        }))
+      })
       if (result.length == 0) {
         this.onAddMemberLevel();
       }
@@ -67,15 +99,19 @@ export class MemberLevelCreateUpdateComponent implements OnInit {
   }
 
   onDeleteMemberLevel(index) {
-    this.memberLevels.splice(index, 1);
+    this.memberArray.removeAt(index);
   }
 
-  onSave(form: NgForm) {
-    if (form.invalid || this.isEqualName || this.isEqualPoint) {
+  onSave() {
+    console.log(this.formGroup);
+    this.submitted = true;
+
+    if (this.formGroup.invalid) {
       return;
     }
 
-    var vals = this.memberLevels;
+    var vals = this.formGroup.get('memberArrayForm').value;
+
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Hạng thành viên';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn lưu thiết lập hạng thành viên?';
@@ -84,7 +120,7 @@ export class MemberLevelCreateUpdateComponent implements OnInit {
       this.memberLevelService.updateMember(vals).subscribe((res) => {
         this.partnerService.checkUpdateLevel().subscribe(() => {
           this.notifyService.notify("success", "Lưu hạng thành viên thành công");
-          this.memberLevels.length > 0 ?
+          vals.length > 0 ?
             this.router.navigate(['member-level/list']) :
             this.router.navigate(['member-level/management']);
         });
@@ -92,39 +128,25 @@ export class MemberLevelCreateUpdateComponent implements OnInit {
     });
   }
 
-  onChangeName(event, i) {
-    this.indexName = i;
-    var count = 0;
-    if (event != '') {
-      this.memberLevels.forEach(item => {
-        if (item.name.toLowerCase().normalize() === event.toLowerCase().normalize()) {
-          count++;
-        }
-        count > 1 ? this.isEqualName = true : this.isEqualName = false;
-      });
-    }
+  isNameDup() {
+    const validator: ValidatorFn = (formArray: FormArray) => {
+      const names = this.f.map(value => value.get('name').value);
+      const hasDuplicate = names.some(
+        (name, index) => names.indexOf(name, index + 1) != -1
+      );
+      return hasDuplicate ? { duplicate: true } : null;
+    };
+    return validator;
   }
 
-  onChangePoint(event, i) {
-    this.indexPoint = i;
-    var count = 0;
-    if(event!=null)
-    this.memberLevels.forEach(item => {
-      if (item.point === event) {
-        count++;
-      }
-      count > 1 ? this.isEqualPoint = true : this.isEqualPoint = false;
-    });
+  isPointDup() {
+    const validator: ValidatorFn = (formArray: FormArray) => {
+      const names = this.f.map(value => value.get('point').value);
+      const hasDuplicate = names.some(
+        (name, index) => names.indexOf(name, index + 1) != -1
+      );
+      return hasDuplicate ? { duplicate: true } : null;
+    };
+    return validator;
   }
-
-  // onCheckColor(item) {
-  //   this.memberColors.forEach(color => {
-  //     if (color.checked) {
-  //       color.checked = false;
-  //     }
-  //   });
-
-  //   this.memberColors.find(x => x.id === item.id).checked = !item.checked;
-  // }
-
 }

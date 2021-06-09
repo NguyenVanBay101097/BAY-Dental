@@ -43,3 +43,7 @@
 .d-display {
     display: block !important;
 }
+
+.table-tbody-ver-align-middle tbody > tr > td {
+    vertical-align:  top !important;
+}
