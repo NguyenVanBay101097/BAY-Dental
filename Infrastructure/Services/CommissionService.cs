@@ -117,5 +117,12 @@ namespace Infrastructure.Services
                     return null;
             }
         }
+
+        public async Task<decimal> getCommissionPercent(Guid? productId, Guid? CommissionId)
+        {
+            var ruleObj = GetService<ICommissionProductRuleService>();
+            var rule = await ruleObj.SearchQuery(x => x.ProductId == productId && x.CommissionId == CommissionId).FirstOrDefaultAsync();
+            return rule.Percent ?? 0;
+        }
     }
 }

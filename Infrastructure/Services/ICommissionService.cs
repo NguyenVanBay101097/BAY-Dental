@@ -14,6 +14,6 @@ namespace Infrastructure.Services
         Task<CommissionDisplay> GetCommissionForDisplay(Guid id);
         Task<Commission> CreateCommission(CommissionDisplay val);
         Task UpdateCommission(Guid id, CommissionDisplay val);
-
+        Task<decimal> getCommissionPercent(Guid? productId, Guid? CommissionId);
     }
 }
