@@ -216,7 +216,7 @@ namespace Infrastructure.Services
 
             if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.OrderBy(x => x.Date)
+            var items = await query.OrderByDescending(x => x.Date)
                 .Select(x => new CommissionSettlementReportDetailOutput
                 {
                     Amount = x.Amount,
@@ -298,6 +298,58 @@ namespace Infrastructure.Services
             {
                 Items = res
             };
+        }
+
+        public async Task<IEnumerable<CommissionSettlementReportRes>> ExportExcel(CommissionSettlementReport val)
+        {
+            var query = GetQueryableReportPaged(val);
+            var queryGroup = query.GroupBy(x => new { EmployeeId = x.EmployeeId.Value, EmployeeName = x.Employee.Name, Date = x.Date.Value.Date, CommissionType = x.Commission.Type });
+            var res = await queryGroup.OrderByDescending(x => x.Key.Date).Select(x => new CommissionSettlementReportRes()
+            {
+                Amount = x.Sum(z => z.Amount),
+                CommissionType = x.Key.CommissionType,
+                EmployeeId = x.Key.EmployeeId,
+                EmployeeName = x.Key.EmployeeName
+            }).ToListAsync();
+
+            return res;
+        }
+
+        public async Task<IEnumerable<CommissionSettlementReportDetailOutput>> DetailExportExcel(CommissionSettlementDetailReportPar val)
+        {
+            var query = GetQueryableReportPaged(new CommissionSettlementReport()
+            {
+                CommissionType = val.CommissionType,
+                CompanyId = val.CompanyId,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                EmployeeId = val.EmployeeId
+            });
+
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => x.MoveLine.Move.InvoiceOrigin.Contains(val.Search)
+                || x.Product.Name.Contains(val.Search)
+                || x.Product.NameNoSign.Contains(val.Search)
+                || x.MoveLine.Partner.Name.Contains(val.Search)
+                || x.MoveLine.Partner.NameNoSign.Contains(val.Search)
+                );
+            }
+            var res = await query.OrderByDescending(x => x.Date)
+                .Select(x => new CommissionSettlementReportDetailOutput
+                {
+                    Amount = x.Amount,
+                    BaseAmount = x.BaseAmount,
+                    Date = x.Date,
+                    Percentage = x.Percentage,
+                    ProductName = x.Product.Name,
+                    PartnerName = x.MoveLine.Partner.Name,
+                    InvoiceOrigin = x.MoveLine.Move.InvoiceOrigin,
+                    CommissionType = x.Commission.Type,
+                    EmployeeName = x.Employee.Name
+                }).ToListAsync();
+
+            return res;
         }
     }
 }
