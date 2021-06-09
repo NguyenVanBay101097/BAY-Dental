@@ -173,6 +173,7 @@ namespace Infrastructure.Services
             var program = await programObj.SearchQuery(x => x.PromoCode == couponCode)
                 .Include(x => x.DiscountSpecificProducts)
                 .Include(x => x.DiscountMemberLevels)
+                .Include(x => x.DiscountSpecificPartners)
                 .FirstOrDefaultAsync();
             if (program != null)
             {
