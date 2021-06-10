@@ -1017,7 +1017,7 @@ namespace Infrastructure.Services
             var paperSizeObj = GetService<IPrintPaperSizeService>();
             await paperSizeObj.CreateAsync(paper_size_dict.Values);
 
-            await modelDataObj.CreateAsync(PrepareModelData(paper_size_dict, "res.paper.size"));
+            await modelDataObj.CreateAsync(PrepareModelData(paper_size_dict, "print.paper.size"));
 
             var smsCampaignObj = GetService<ISmsCampaignService>();
             await smsCampaignObj.CreateAsync(sms_campaign_dict.Values);

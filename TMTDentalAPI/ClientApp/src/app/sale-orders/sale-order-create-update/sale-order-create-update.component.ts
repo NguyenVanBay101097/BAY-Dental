@@ -772,6 +772,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         mergeMap(() => this.saleOrderService.get(this.saleOrderId))
       )
         .subscribe(res => {
+          debugger
           this.resetData(res);
           modalRef.componentInstance.saleOrder = this.saleOrder;
         });

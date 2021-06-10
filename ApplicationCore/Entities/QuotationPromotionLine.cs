@@ -6,7 +6,7 @@ namespace ApplicationCore.Entities
 {
     public class QuotationPromotionLine : BaseEntity
     {
-        public Guid? QuotationLineId { get; set; }
+        public Guid QuotationLineId { get; set; }
         public QuotationLine QuotationLine { get; set; }
 
         public Guid PromotionId { get; set; }

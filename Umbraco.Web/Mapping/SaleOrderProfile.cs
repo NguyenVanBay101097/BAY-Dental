@@ -19,7 +19,7 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrder, SaleOrderDisplay>()
                 .ForMember(x => x.OrderLines, x => x.Ignore())
-                .ForMember(x => x.AmountDiscountTotal, x => x.MapFrom(s => Math.Round(s.OrderLines.Sum(z => ((decimal)z.AmountDiscountTotal) * z.ProductUOMQty))));
+                .ForMember(x => x.AmountDiscountTotal, x => x.MapFrom(s => Math.Round(s.OrderLines.Sum(z => ((decimal)z.AmountDiscountTotal * z.ProductUOMQty)))));
             CreateMap<SaleOrderDisplay, SaleOrder>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.InvoiceStatus, x => x.Ignore())

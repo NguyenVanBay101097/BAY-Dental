@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { QuotationService } from '../quotation.service';
 
 @Component({
@@ -15,6 +16,7 @@ export class QuotationApplyCouponComponent implements OnInit {
   @Output() applySuccess = new EventEmitter<any>();
   constructor(
     private fb: FormBuilder,
+    private notifyService: NotifyService,
     private notificationService: NotificationService
   ) { }
 
@@ -25,18 +27,20 @@ export class QuotationApplyCouponComponent implements OnInit {
   }
 
   onSave() {
+    if (this.formGroup.get('couponCode').value.trim() === '') {
+      this.notifyService.notify('error', 'Nhập mã khuyến mãi');
+      return false;
+    }
+
     if (!this.formGroup.valid) {
-      this.notificationService.show({
-        content: 'Nhập mã khuyến mãi',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
       return false;
     }
 
     this.applySuccess.emit(this.formGroup.value)
+  }
+
+  get f() {
+    return this.formGroup.controls;
   }
 
 }
