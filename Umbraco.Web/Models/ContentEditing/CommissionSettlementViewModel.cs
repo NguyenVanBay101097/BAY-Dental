@@ -34,6 +34,14 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
+    public class CommissionSettlementReportExcelRes
+    {
+        public string EmployeeName { get; set; }
+        public string CommissionType { get; set; }
+        public decimal? Amount { get; set; }
+
+    }
+
     public class CommissionSettlementReportOutput
     {
         public string EmployeeName { get; set; }
@@ -115,5 +123,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public string InvoiceOrigin { get; set; }
         public string EmployeeName { get; set; }
         public string CommissionType { get; set; }
+    }
+
+    public class CommissionSettlementReportDetailOutputExcel
+    {
+        public DateTime? Date { get; set; }
+        public string EmployeeName { get; set; }
+        public string CommissionType { get; set; }
+        public string InvoiceOrigin { get; set; }
+        public string PartnerName { get; set; }
+        public string ProductName { get; set; }
+        public decimal? BaseAmount { get; set; }
+        public decimal? Percentage { get; set; }
+        public decimal? Amount { get; set; }
     }
 }

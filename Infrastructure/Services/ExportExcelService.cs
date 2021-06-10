@@ -5,6 +5,7 @@ using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace Infrastructure.Services
         {
             context = _context;
         }
-        public async Task<object> createExcel<T>(IEnumerable<T> list, string titleSheet)
+        public async Task<object> createExcel<T>(IEnumerable<T> list, string titleSheet, IEnumerable<string> listHeader)
         {
             using (ExcelPackage package = new ExcelPackage())
             {
@@ -43,10 +44,14 @@ namespace Infrastructure.Services
                 //header.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#BFBFBF"));
 
                 //loop the header row to capitalize the values
+                var listheadCount = listHeader.Count();
                 for (int col = 1; col <= ws.Dimension.End.Column; col++)
                 {
                     var cell = ws.Cells[1, col];
-                    cell.Value = cell.Value.ToString().ToUpper();
+                    if (col <= listheadCount)
+                        cell.Value = listHeader.ToList()[col - 1].ToString();
+                    else
+                        cell.Value = cell.Value.ToString();
                 }
 
                 //Format the header
@@ -79,9 +84,16 @@ namespace Infrastructure.Services
                     }
 
                     //set the decimal format
-                    if (prop.PropertyType == typeof(decimal) || prop.PropertyType == typeof(decimal?))
+                    string propValue = prop.GetValue(listObject).ToString();
+                    double retNum;
+                    bool isNum = Double.TryParse(propValue, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+                    //if (prop.PropertyType == typeof(decimal) || prop.PropertyType == typeof(decimal?)
+                    //    || prop.PropertyType == typeof(double) || prop.PropertyType == typeof(double?)
+                    //    || prop.PropertyType == typeof(double) || prop.PropertyType == typeof(double?)
+                    //    || prop.PropertyType == typeof(float) || prop.PropertyType == typeof(float?))
+                    if (isNum)
                     {
-                        range.Style.Numberformat.Format = "0.00";
+                        range.Style.Numberformat.Format = "0,00";
                     }
                 }
 
@@ -102,15 +114,28 @@ namespace Infrastructure.Services
                 }
 
                 //send the excel back as byte array
-                
-                var response = context.HttpContext.Response;
-                //Write it back to the client
-                response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                response.Headers.Add("content-disposition", "attachment;  filename=ExcelDemo.xlsx");
-                await context.HttpContext.Response.BodyWriter.WriteAsync(package.GetAsByteArray());
-                //return new FileContentResult(package.GetAsByteArray());
                 return package.GetAsByteArray();
             }
+        }
+
+        public ExcelPackage ConverByteArrayTOExcepPackage(byte[] byteArray)
+        {
+            using (MemoryStream memStream = new MemoryStream(byteArray))
+            {
+                ExcelPackage package = new ExcelPackage(memStream);
+                package.Load(memStream);
+                return package;
+            }
+        }
+
+        public async Task CreateAndAddToHeader<T>(IEnumerable<T> list, string titleSheet, IEnumerable<string> listHeader)
+        {
+            var package = await createExcel<T>(list, titleSheet, listHeader);
+            var response = context.HttpContext.Response;
+            //Write it back to the client
+            response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            response.Headers.Add("content-disposition", "attachment;  filename=ExcelDemo.xlsx");
+            await context.HttpContext.Response.BodyWriter.WriteAsync(package as byte[]);
         }
     }
 }

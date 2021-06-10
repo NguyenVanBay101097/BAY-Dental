@@ -300,15 +300,14 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<IEnumerable<CommissionSettlementReportRes>> ExportExcel(CommissionSettlementReport val)
+        public async Task<IEnumerable<CommissionSettlementReportExcelRes>> ExportExcel(CommissionSettlementReport val)
         {
             var query = GetQueryableReportPaged(val);
             var queryGroup = query.GroupBy(x => new { EmployeeId = x.EmployeeId.Value, EmployeeName = x.Employee.Name, Date = x.Date.Value.Date, CommissionType = x.Commission.Type });
-            var res = await queryGroup.OrderByDescending(x => x.Key.Date).Select(x => new CommissionSettlementReportRes()
+            var res = await queryGroup.OrderByDescending(x => x.Key.Date).Select(x => new CommissionSettlementReportExcelRes()
             {
                 Amount = x.Sum(z => z.Amount),
                 CommissionType = x.Key.CommissionType,
-                EmployeeId = x.Key.EmployeeId,
                 EmployeeName = x.Key.EmployeeName
             }).ToListAsync();
 

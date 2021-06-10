@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Interfaces;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,9 +16,11 @@ namespace TMTDentalAPI.Controllers
     public class CommissionSettlementsController : BaseApiController
     {
         private readonly ICommissionSettlementService _commissionSettlementService;
-        public CommissionSettlementsController(ICommissionSettlementService commissionSettlementService)
+        private readonly IExportExcelService _exportExcelService;
+        public CommissionSettlementsController(ICommissionSettlementService commissionSettlementService, IExportExcelService exportExcelService)
         {
             _commissionSettlementService = commissionSettlementService;
+            _exportExcelService = exportExcelService;
         }
 
         [HttpPost("[action]")]
@@ -51,6 +54,38 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _commissionSettlementService.GetSumReport(val);
             return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ExportExcel([FromQuery] CommissionSettlementReport val)
+        {
+            var data = await _commissionSettlementService.ExportExcel(val);
+            var listTitle = new List<string>() {
+            "Nhân viên",
+            "Loại hoa hồng",
+            "Tiền hoa hồng"
+            };
+            await _exportExcelService.CreateAndAddToHeader(data, "Hoa hồng nhân viên", listTitle);
+            return Ok();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> DetailExportExcel([FromQuery] CommissionSettlementDetailReportPar val)
+        {
+            var data = await _commissionSettlementService.DetailExportExcel(val);
+            var listTitle = new List<string>() {
+            "Ngày thanh toán",
+            "Nhân viên",
+            "Loại hoa hồng",
+            "Số phiếu",
+            "Khách hàng",
+            "Dịch vụ",
+            "Lợi nhuận tính hoa hồng",
+            "% Hoa hồng",
+            "Tiền hoa hồng"
+            };
+            await _exportExcelService.CreateAndAddToHeader(data, "Hoa hồng chi tiet nhân viên", listTitle);
+            return Ok();
         }
 
     }
