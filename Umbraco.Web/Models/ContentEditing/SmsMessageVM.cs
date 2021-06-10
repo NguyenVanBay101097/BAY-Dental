@@ -66,18 +66,18 @@ namespace Umbraco.Web.Models.ContentEditing
             IsCareAfterOrder = false;
         }
         public DateTime? Date { get; set; }
-        /// <summary>
-        /// manual, automaic
-        /// </summary>
-        public string TypeSend { get; set; }
+    
         public string Name { get; set; }
         public string Body { get; set; }
         public Guid? SmsTemplateId { get; set; }
         public Guid? SmsAccountId { get; set; }
         public Guid? SmsCampaignId { get; set; }
-        public string State { get; set; }
+        //ResIds
         public IEnumerable<Guid> GuidIds { get; set; } = new List<Guid>();
         public string ResModel { get; set; }
+        
+
+        //xóa 4 cột này
         public bool? IsBirthDayManual { get; set; }
         public bool? IsAppointmentReminder { get; set; }
         public bool? IsThanksCustomer { get; set; }

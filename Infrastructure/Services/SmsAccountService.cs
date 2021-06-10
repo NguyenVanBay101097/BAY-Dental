@@ -34,7 +34,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.BrandName.Contains(val.Search));
             var totalItems = await query.CountAsync();
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).ToListAsync();
             return new PagedResult2<SmsAccountBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = _mapper.Map<IEnumerable<SmsAccountBasic>>(items)

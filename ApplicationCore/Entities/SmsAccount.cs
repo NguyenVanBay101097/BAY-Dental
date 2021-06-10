@@ -6,6 +6,8 @@ namespace ApplicationCore.Entities
 {
     public class SmsAccount : BaseEntity
     {
+        //DisplayName = BrandName + (Name)
+
         public string Name { get; set; }
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }

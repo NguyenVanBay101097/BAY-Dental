@@ -418,6 +418,8 @@ namespace Infrastructure.Services
 
                 await cardObj.UpdateAsync(card);
                 await cardObj._CheckUpgrade(new List<CardCard>() { card });
+
+                //tạo 1 message chờ gửi
             }
 
             await UpdateAsync(self);

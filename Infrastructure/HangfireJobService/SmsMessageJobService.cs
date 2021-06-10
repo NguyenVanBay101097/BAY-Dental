@@ -52,7 +52,7 @@ namespace Infrastructure.HangfireJobService
                 var partnerIds = new List<Guid>();
                 foreach (var item in smsMessages)
                 {
-                    await smsMessageService.ActionSend(item);
+                    await smsMessageService.ActionSend(item.Id);
 
                 }
                 transaction.Commit();

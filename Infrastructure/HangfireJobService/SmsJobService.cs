@@ -82,7 +82,7 @@ namespace Infrastructure.HangfireJobService
                         context.SmsMessageAppointmentRels.AddRange(smsMessage.SmsMessageAppointmentRels);
                         await context.SaveChangesAsync();
 
-                        await smsMessageService.ActionSend(smsMessage);
+                        await smsMessageService.ActionSend(smsMessage.Id);
 
                         foreach (var appointment in listAppointments)
                         {
@@ -149,7 +149,7 @@ namespace Infrastructure.HangfireJobService
                     context.SmsMessagePartnerRels.AddRange(smsMessage.SmsMessagePartnerRels);
                     await context.SaveChangesAsync();
 
-                    await smsMessageService.ActionSend(smsMessage);
+                    await smsMessageService.ActionSend(smsMessage.Id);
 
                     await context.SaveChangesAsync();
                     transaction.Commit();
@@ -228,7 +228,7 @@ namespace Infrastructure.HangfireJobService
                         context.SmsMessageSaleOrderLineRels.AddRange(smsMessage.SmsMessageSaleOrderLineRels);
                         await context.SaveChangesAsync();
                       
-                        await smsMessageService.ActionSend(smsMessage);
+                        await smsMessageService.ActionSend(smsMessage.Id);
                     }
                     transaction.Commit();
                 }
