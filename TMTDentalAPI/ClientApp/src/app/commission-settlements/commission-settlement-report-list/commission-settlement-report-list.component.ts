@@ -74,7 +74,6 @@ export class CommissionSettlementReportListComponent implements OnInit {
       }))
     ).subscribe((res: any) => {
       this.reportResults = res;
-      console.log(this.reportResults);
       this.loading = false;
     }, err => {
       console.log(err);
@@ -109,17 +108,17 @@ export class CommissionSettlementReportListComponent implements OnInit {
   onDateSearchChange(filter) {
     this.dateFrom = filter.dateFrom;
     this.dateTo = filter.dateTo;
+    this.skip = 0;
+    this.loadDataFromApi();
   }
 
   valueEmployeeChange(value) {
-    console.log(value);
     value ? this.employeeId = value.id : this.employeeId = '';
     this.skip = 0;
     this.loadDataFromApi();
   }
 
   valueCommissionTypeChange(value) {
-    console.log(value);
     value ? this.commissionType = value.value : this.commissionType = '';
     this.skip = 0;
     this.loadDataFromApi();
