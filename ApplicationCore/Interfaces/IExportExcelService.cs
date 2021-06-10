@@ -9,5 +9,7 @@ namespace ApplicationCore.Interfaces
     {
         Task<object> createExcel<T>(IEnumerable<T> list, string titleSheet, IEnumerable<string> listHeader);
         Task CreateAndAddToHeader<T>(IEnumerable<T> list, string titleSheet, IEnumerable<string> listHeader);
+        object ConverByteArrayTOExcepPackage(byte[] byteArray);
+        Task AddToHeader(byte[] package);
     }
 }

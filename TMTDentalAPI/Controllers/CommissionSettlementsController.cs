@@ -6,6 +6,7 @@ using ApplicationCore.Interfaces;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -57,22 +58,34 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> ExportExcel([FromQuery] CommissionSettlementReport val)
+        public async Task<IActionResult> ExportExcel([FromQuery] CommissionSettlementReportExportExcelPar val)
         {
-            var data = await _commissionSettlementService.ExportExcel(val);
+            var data = await _commissionSettlementService.ExportExcelData(val);
+            decimal sum = data.Sum(x => x.Amount.Value);
             var listTitle = new List<string>() {
             "Nhân viên",
             "Loại hoa hồng",
             "Tiền hoa hồng"
             };
-            await _exportExcelService.CreateAndAddToHeader(data, "Hoa hồng nhân viên", listTitle);
+            var packageByte = await _exportExcelService.createExcel(data, "Hoa hồng nhân viên", listTitle) as byte[];
+            var package = _exportExcelService.ConverByteArrayTOExcepPackage(packageByte) as ExcelPackage;
+            using (package)
+            {
+                var worksheet = package.Workbook.Worksheets[0];
+                worksheet.Cells[data.Count() + 2, 1].Value = "Tổng";
+                worksheet.Cells[data.Count() + 2, 2, data.Count() + 2, worksheet.Dimension.End.Column].Merge = true;
+                worksheet.Cells[data.Count() + 2, 2].Value = sum;
+                worksheet.Cells[data.Count() + 2, 2].Style.Numberformat.Format = "0,00";
+                await _exportExcelService.AddToHeader(package.GetAsByteArray());
+            }
             return Ok();
+
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> DetailExportExcel([FromQuery] CommissionSettlementDetailReportPar val)
+        public async Task<IActionResult> DetailExportExcel([FromQuery] CommissionSettlementDetailReportExcelPar val)
         {
-            var data = await _commissionSettlementService.DetailExportExcel(val);
+            var data = await _commissionSettlementService.DetailExportExcelData(val);
             var listTitle = new List<string>() {
             "Ngày thanh toán",
             "Nhân viên",
@@ -84,7 +97,14 @@ namespace TMTDentalAPI.Controllers
             "% Hoa hồng",
             "Tiền hoa hồng"
             };
-            await _exportExcelService.CreateAndAddToHeader(data, "Hoa hồng chi tiet nhân viên", listTitle);
+            var packageByte = await _exportExcelService.createExcel(data, "Hoa hồng chi tiết nhân viên", listTitle) as byte[];
+            var package = _exportExcelService.ConverByteArrayTOExcepPackage(packageByte) as ExcelPackage;
+            using (package)
+            {
+                var worksheet = package.Workbook.Worksheets[0];
+                worksheet.Cells[2, 8, worksheet.Dimension.End.Row, 8].Style.Numberformat.Format = "#0\\%";
+                await _exportExcelService.AddToHeader(package.GetAsByteArray());
+            }
             return Ok();
         }
 

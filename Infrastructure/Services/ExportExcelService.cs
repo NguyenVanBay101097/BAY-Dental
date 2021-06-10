@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
@@ -35,7 +37,13 @@ namespace Infrastructure.Services
                 ws.Cells.Style.Font.Name = "Calibri";
 
                 //put the data in the sheet, starting from column A, row 1
-                ws.Cells["A1"].LoadFromCollection(list, true);
+                MemberInfo[] membersToInclude = typeof(T)
+           .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+           .Where(p => !Attribute.IsDefined(p, typeof(EpplusIgnore)))
+           .ToArray();
+                ws.Cells["A1"].LoadFromCollection(list, true, OfficeOpenXml.Table.TableStyles.None,
+             BindingFlags.Instance | BindingFlags.Public,
+             membersToInclude);
 
                 //set some styling on the header row
                 var header = ws.Cells[1, 1, 1, ws.Dimension.End.Column];
@@ -66,11 +74,14 @@ namespace Infrastructure.Services
                 //loop the properties in list<t> to apply some data formatting based on data type and check for nested lists
                 var listObject = list.First();
                 var columns_to_delete = new List<int>();
-                for (int i = 0; i < listObject.GetType().GetProperties().Count(); i++)
+                var listProperties = listObject.GetType().GetProperties().Where(p => !Attribute.IsDefined(p, typeof(EpplusIgnore))).ToList();
+                for (int i = 0; i < listProperties.Count(); i++)
                 {
-                    var prop = listObject.GetType().GetProperties()[i];
+                    var prop = listProperties[i];
+                    var propValue = prop.GetValue(listObject);
                     var range = ws.Cells[2, i + 1, ws.Dimension.End.Row, i + 1];
-
+                    //if null , skip
+                    if (propValue == null) continue;
                     //check if the property is a List, if yes add it to columns_to_delete
                     if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
                     {
@@ -81,12 +92,12 @@ namespace Infrastructure.Services
                     if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
                     {
                         range.Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.ShortDatePattern;
+                        range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
                     }
 
                     //set the decimal format
-                    string propValue = prop.GetValue(listObject).ToString();
                     double retNum;
-                    bool isNum = Double.TryParse(propValue, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+                    bool isNum = Double.TryParse(propValue.ToString(), System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
                     //if (prop.PropertyType == typeof(decimal) || prop.PropertyType == typeof(decimal?)
                     //    || prop.PropertyType == typeof(double) || prop.PropertyType == typeof(double?)
                     //    || prop.PropertyType == typeof(double) || prop.PropertyType == typeof(double?)
@@ -118,7 +129,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public ExcelPackage ConverByteArrayTOExcepPackage(byte[] byteArray)
+        public object ConverByteArrayTOExcepPackage(byte[] byteArray)
         {
             using (MemoryStream memStream = new MemoryStream(byteArray))
             {
@@ -131,6 +142,11 @@ namespace Infrastructure.Services
         public async Task CreateAndAddToHeader<T>(IEnumerable<T> list, string titleSheet, IEnumerable<string> listHeader)
         {
             var package = await createExcel<T>(list, titleSheet, listHeader);
+            await AddToHeader(package as byte[]);
+        }
+
+        public async Task AddToHeader(byte[] package)
+        {
             var response = context.HttpContext.Response;
             //Write it back to the client
             response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

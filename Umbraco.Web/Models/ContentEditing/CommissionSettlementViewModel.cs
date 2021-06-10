@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -37,7 +38,27 @@ namespace Umbraco.Web.Models.ContentEditing
     public class CommissionSettlementReportExcelRes
     {
         public string EmployeeName { get; set; }
+        [EpplusIgnore]
         public string CommissionType { get; set; }
+        public string CommissionTypeDisplay
+        {
+            get
+            {
+                switch (this.CommissionType)
+                {
+                    case "doctor":
+                        return "Bác sĩ";
+                    case "assistant":
+                        return "Phụ tá";
+                    case "counselor":
+                        return "Tư vấn";
+                    default:
+                        return "";
+                };
+            }
+            set { }
+        }
+
         public decimal? Amount { get; set; }
 
     }
@@ -129,12 +150,59 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public DateTime? Date { get; set; }
         public string EmployeeName { get; set; }
+        [EpplusIgnore]
         public string CommissionType { get; set; }
+        public string CommissionTypeDisplay
+        {
+            get
+            {
+                switch (this.CommissionType)
+                {
+                    case "doctor":
+                        return "Bác sĩ";
+                    case "assistant":
+                        return "Phụ tá";
+                    case "counselor":
+                        return "Tư vấn";
+                    default:
+                        return "";
+                };
+            }
+            set { }
+        }
         public string InvoiceOrigin { get; set; }
         public string PartnerName { get; set; }
         public string ProductName { get; set; }
         public decimal? BaseAmount { get; set; }
         public decimal? Percentage { get; set; }
         public decimal? Amount { get; set; }
+    }
+
+    public class CommissionSettlementReportExportExcelPar
+    {
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+        public string CommissionType { get; set; }
+
+    }
+
+    public class CommissionSettlementDetailReportExcelPar
+    {
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+        public string CommissionType { get; set; }
+        public string Search { get; set; }
     }
 }

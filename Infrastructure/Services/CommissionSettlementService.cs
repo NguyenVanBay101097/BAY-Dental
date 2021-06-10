@@ -300,9 +300,16 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<IEnumerable<CommissionSettlementReportExcelRes>> ExportExcel(CommissionSettlementReport val)
+        public async Task<IEnumerable<CommissionSettlementReportExcelRes>> ExportExcelData(CommissionSettlementReportExportExcelPar val)
         {
-            var query = GetQueryableReportPaged(val);
+            var query = GetQueryableReportPaged(new CommissionSettlementReport()
+            {
+                CommissionType = val.CommissionType,
+                CompanyId = val.CompanyId,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                EmployeeId = val.EmployeeId
+            });
             var queryGroup = query.GroupBy(x => new { EmployeeId = x.EmployeeId.Value, EmployeeName = x.Employee.Name, Date = x.Date.Value.Date, CommissionType = x.Commission.Type });
             var res = await queryGroup.OrderByDescending(x => x.Key.Date).Select(x => new CommissionSettlementReportExcelRes()
             {
@@ -314,7 +321,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<IEnumerable<CommissionSettlementReportDetailOutput>> DetailExportExcel(CommissionSettlementDetailReportPar val)
+        public async Task<IEnumerable<CommissionSettlementReportDetailOutputExcel>> DetailExportExcelData(CommissionSettlementDetailReportExcelPar val)
         {
             var query = GetQueryableReportPaged(new CommissionSettlementReport()
             {
@@ -335,7 +342,7 @@ namespace Infrastructure.Services
                 );
             }
             var res = await query.OrderByDescending(x => x.Date)
-                .Select(x => new CommissionSettlementReportDetailOutput
+                .Select(x => new CommissionSettlementReportDetailOutputExcel
                 {
                     Amount = x.Amount,
                     BaseAmount = x.BaseAmount,
