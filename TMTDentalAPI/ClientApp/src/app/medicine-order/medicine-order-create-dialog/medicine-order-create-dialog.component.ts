@@ -65,7 +65,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       });
 
       this.loadFilteredJournals();
-  
+
       if (this.idToaThuoc) {
         this.getDefault();
       } else if (this.id) {
@@ -221,7 +221,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-     
+
     var val = this.formGroup.value;
     val = this.computeForm(val)
     this.medicineOrderService.confirmPayment(val).subscribe(

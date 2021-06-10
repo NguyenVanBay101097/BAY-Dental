@@ -51,7 +51,7 @@ namespace Infrastructure.Services
             return paged;
         }
 
-        public async Task<PagedResult2<SaleOrderPaymentHistoryAdvance>> GetPagedResultHistoryAdvanceAsync(HistoryAdvancePaymentFilter val)
+        public async Task<PagedResult2<HistoryPartnerAdvanceResult>> GetPagedResultHistoryAdvanceAsync(HistoryPartnerAdvanceFilter val)
         {
             var journalObj = GetService<IAccountJournalService>();
             var paymentObj = GetService<IAccountPaymentService>();
@@ -77,25 +77,29 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.Select(x => new SaleOrderPaymentHistoryAdvance
+            var items = await query.Select(x => new HistoryPartnerAdvanceResult
             {
                 PaymentName = x.Name,
                 PaymentDate = x.PaymentDate,
                 PaymentAmount = x.Amount,
-                Orders = x.SaleOrderPaymentAccountPaymentRels.Select(s => new SaleOrderBasic
+                Orders = x.SaleOrderPaymentAccountPaymentRels.Select(s => new SaleOrderSimple
                 {
                     Id = s.SaleOrderPayment.OrderId,
                     Name = s.SaleOrderPayment.Order.Name
                 })
             }).ToListAsync();
 
-            var paged = new PagedResult2<SaleOrderPaymentHistoryAdvance>(totalItems, val.Offset, val.Limit)
+            var paged = new PagedResult2<HistoryPartnerAdvanceResult>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };
 
             return paged;
         }
+
+
+
+
 
         public async Task<SaleOrderPaymentDisplay> GetDisplay(Guid id)
         {
@@ -302,6 +306,7 @@ namespace Infrastructure.Services
             // Invoice values.
             var invoice_vals = await _PrepareInvoice(self);
             var lines = await paymentLineObj.SearchQuery(x => x.SaleOrderPaymentId == self.Id)
+                .Include(x => x.SaleOrderPayment).ThenInclude(x => x.Order)
                 .Include(x => x.SaleOrderLine).ThenInclude(x => x.Employee)
                 .ToListAsync();
 
@@ -381,8 +386,9 @@ namespace Infrastructure.Services
             };
 
             var lineObj = GetService<ISaleOrderLineService>();
+            var partnerObj = GetService<IPartnerService>();
             var saleOrderLine = await lineObj.SearchQuery(x => x.Id == self.SaleOrderLineId).Include(x => x.Employee).Include(x => x.Assistant).Include(x => x.Counselor).FirstOrDefaultAsync();
-
+            var partner = await partnerObj.SearchQuery(x => x.Id == self.SaleOrderPayment.Order.PartnerId).Include(x => x.Agent).FirstOrDefaultAsync();
             var today = DateTime.Today;
             //add hoa hồng bác sĩ
             if (saleOrderLine.EmployeeId.HasValue && saleOrderLine.Employee.CommissionId.HasValue)
@@ -422,7 +428,18 @@ namespace Infrastructure.Services
                 });
             }
 
-            res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
+            //add người giới thiệu nếu có
+            if (partner.AgentId.HasValue)
+            {
+                res.CommissionSettlements.Add(new CommissionSettlement
+                {
+                    PartnerId = partner.Agent.PartnerId,
+                    ProductId = saleOrderLine.ProductId,
+                    Date = today
+                });
+            }
+
+             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
 
             return res;
@@ -444,6 +461,7 @@ namespace Infrastructure.Services
                     PaymentDate = self.Date,
                     PaymentType = "inbound",
                     CompanyId = self.Order.CompanyId,
+                    Communication = self.Note
                 };
 
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = moveId });
@@ -574,6 +592,7 @@ namespace Infrastructure.Services
         }
 
 
+
         public override ISpecification<SaleOrderPayment> RuleDomainGet(IRRule rule)
         {
             var userObj = GetService<IUserService>();
@@ -596,10 +615,10 @@ namespace Infrastructure.Services
                 ).FirstOrDefaultAsync();
 
             var result = _mapper.Map<SaleOrderPaymentPrintVM>(payment);
-            if (result == null) 
+            if (result == null)
                 return null;
 
-            result.User = _mapper.Map<ApplicationUserSimple>(payment.CreatedBy);        
+            result.User = _mapper.Map<ApplicationUserSimple>(payment.CreatedBy);
             return result;
 
         }

@@ -147,6 +147,7 @@
       <field name="padding">4</field>
     </record>
 
+
     <!-- account.account.type -->
     <record model="account.account.type" id="data_account_type_receivable">
       <field name="name">Receivable</field>
@@ -260,6 +261,18 @@
       <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
     </record>
 
+    <record model="account.account" id="data_account_CNKH">
+      <field name="name">Công nợ khách hàng</field>
+      <field name="code">CNKH</field>
+      <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
+    </record>
+
+    <record model="account.account" id="data_account_HHNGT">
+      <field name="name">Hoa hồng người giới thiệu</field>
+      <field name="code">HHNGT</field>
+      <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
+    </record>
+
     <!-- account.journal -->
     <record model="account.journal" id="data_account_journal_cash">
       <field name="name">Tiền mặt</field>
@@ -323,12 +336,30 @@
     </record>
 
     <record model="account.journal" id="data_account_journal_advance">
-      <field name="name">Nhật ký khách hàng tạm ứng</field>
+      <field name="name">Tạm ứng</field>
       <field name="type">advance</field>
       <field name="code">ADVANCE</field>
       <field name="update_posted" eval="True" />
       <field name="default_debit_account_id" ref="account.data_account_KHTU" />
       <field name="default_credit_account_id" ref="account.data_account_KHTU" />
+    </record>
+
+    <record model="account.journal" id="data_account_journal_debt">
+      <field name="name">Ghi công nợ</field>
+      <field name="type">debt</field>
+      <field name="code">DEBT</field>
+      <field name="update_posted" eval="True" />
+      <field name="default_debit_account_id" ref="account.data_account_CNKH" />
+      <field name="default_credit_account_id" ref="account.data_account_CNKH" />
+    </record>
+
+    <record model="account.journal" id="data_account_journal_commission">
+      <field name="name">Hoa hồng</field>
+      <field name="type">commission</field>
+      <field name="code">COMMISSION</field>
+      <field name="update_posted" eval="True" />
+      <field name="default_debit_account_id" ref="account.data_account_HHNGT" />
+      <field name="default_credit_account_id" ref="account.data_account_HHNGT" />
     </record>
 
 

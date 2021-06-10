@@ -11,7 +11,7 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Partner> builder)
         {
-            builder.Property(x => x.Name).IsRequired();         
+            builder.Property(x => x.Name).IsRequired();
 
             builder.HasOne(x => x.Company)
             .WithMany()
@@ -37,9 +37,9 @@ namespace Infrastructure.EntityConfigurations
             .WithMany()
             .HasForeignKey(x => x.TitleId);
 
-            builder.HasOne(x => x.Consultant)
-            .WithMany()
-            .HasForeignKey(x => x.ConsultantId);
+            builder.HasOne(x => x.Agent)
+            .WithMany(x => x.Partners)
+            .HasForeignKey(x => x.AgentId);
         }
     }
 }

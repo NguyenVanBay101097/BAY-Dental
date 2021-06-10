@@ -297,6 +297,8 @@ namespace Infrastructure.Data
         public DbSet<SmsConfigProductCategoryRel> SmsConfigProductCategoryRels { get; set; }
         public DbSet<SmsConfigProductRel> SmsConfigProductRels { get; set; }
 
+        public DbSet<Agent> Agents { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -537,6 +539,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new AccountFinancialRevenueReportConfiguration());
             builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountTypeRelConfiguration());
             builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountRelConfiguration());
+            builder.ApplyConfiguration(new AgentConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

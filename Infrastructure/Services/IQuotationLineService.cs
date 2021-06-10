@@ -11,7 +11,7 @@ namespace Infrastructure.Services
     {
         Task ApplyDiscountOnQuotationLine(ApplyDiscountViewModel val);
 
-        Task<SaleCouponProgramResponse> ApplyPromotionOnQuotationLine(ApplyPromotionRequest val);
+        Task ApplyPromotionOnQuotationLine(ApplyPromotionRequest val);
 
         Task<SaleCouponProgramResponse> ApplyPromotionUsageCodeOnQuotationLine(ApplyPromotionUsageCode val);
 

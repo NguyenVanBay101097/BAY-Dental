@@ -98,6 +98,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
     paged.limit = this.limit;
     paged.offset = this.skip;
     paged.type = this.type;
+    paged.accountType = "other" || '';
     paged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
     paged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : '';
     paged.search = this.search || '';

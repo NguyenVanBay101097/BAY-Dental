@@ -60,6 +60,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Communication { get; set; }
 
         /// <summary>
+        /// commission
+        /// customer_debt
+        /// other
+        /// </summary>
+        public string AccountType { get; set; }
+
+        /// <summary>
         /// Lý do nộp
         /// </summary>
         public string Reason { get; set; }

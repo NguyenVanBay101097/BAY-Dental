@@ -24,6 +24,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public string JournalName { get; set; }
 
         /// <summary>
+        /// tên khach hang
+        /// </summary>
+        public string PartnerName { get; set; }
+
+        public string Reason { get; set; }
+
+        /// <summary>
         /// Số tiền
         /// </summary>
         public decimal Amount { get; set; }

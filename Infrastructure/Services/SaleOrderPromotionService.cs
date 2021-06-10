@@ -57,7 +57,7 @@ namespace Infrastructure.Services
             var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.SearchOrder))
-                query = query.Where(x => x.SaleOrder.Name.Contains(val.SearchOrder) || x.SaleOrderLine.Name.Contains(val.SearchOrder));
+                query = query.Where(x => x.SaleOrderLine.Name.Contains(val.SearchOrder));
 
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateCreated >= val.DateFrom);

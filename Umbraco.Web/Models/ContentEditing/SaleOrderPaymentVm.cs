@@ -103,37 +103,35 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
     }
 
-    public class HistoryAdvancePaymentFilter
+    public class HistoryPartnerAdvanceFilter
     {
-        public HistoryAdvancePaymentFilter()
+        public HistoryPartnerAdvanceFilter()
         {
             Limit = 20;
         }
+        public int Offset { get; set; }
+
+        public int Limit { get; set; }
 
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
 
-        public int Offset { get; set; }
-
-        public int Limit { get; set; }
+        public string Search { get; set; }
 
         public Guid? PartnerId { get; set; }
 
     }
 
 
-    public class SaleOrderPaymentHistoryAdvance
+    public class HistoryPartnerAdvanceResult
     {
         public string PaymentName { get; set; }
         public DateTime PaymentDate { get; set; }
 
-        public Guid OrderId { get; set; }
-        public string OrderName { get; set; }
-
         public decimal PaymentAmount { get; set; }
 
-        public IEnumerable<SaleOrderBasic> Orders { get; set; }
+        public IEnumerable<SaleOrderSimple> Orders { get; set; }
     }
 
     public class SaleOrderPaymentPrintVM

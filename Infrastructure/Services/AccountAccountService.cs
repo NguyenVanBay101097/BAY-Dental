@@ -53,6 +53,18 @@ namespace Infrastructure.Services
             return await SearchQuery(x => x.Code == "KHTU" && x.CompanyId == companyId).FirstOrDefaultAsync();
         }
 
+        public async Task<AccountAccount> GetAccountCustomerDebtCompany()
+        {
+            var companyId = CompanyId;
+            return await SearchQuery(x => x.Code == "CNKH" && x.CompanyId == companyId).FirstOrDefaultAsync();
+        }
+
+        public async Task<AccountAccount> GetAccountCommissionAgentCompany()
+        {
+            var companyId = CompanyId;
+            return await SearchQuery(x => x.Code == "HHNGT" && x.CompanyId == companyId).FirstOrDefaultAsync();
+        }
+
 
         public override ISpecification<AccountAccount> RuleDomainGet(IRRule rule)
         {

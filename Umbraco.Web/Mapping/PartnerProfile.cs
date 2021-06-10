@@ -23,7 +23,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<PartnerDisplay, Partner>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Source, x => x.Ignore())
-                .ForMember(x => x.Consultant, x => x.Ignore())
+                .ForMember(x => x.Agent, x => x.Ignore())
                 .ForMember(x => x.ReferralUser, x => x.Ignore())
                 .ForMember(x => x.Title, x => x.Ignore())
                 .ForMember(x => x.DateCreated, x => x.Ignore())
