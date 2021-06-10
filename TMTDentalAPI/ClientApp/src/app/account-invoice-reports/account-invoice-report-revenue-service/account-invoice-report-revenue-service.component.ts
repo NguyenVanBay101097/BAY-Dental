@@ -56,6 +56,7 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
+    val.productId = val.productId || '';
     this.accInvService.getRevenueServiceReport(val).subscribe(res => {
       this.allDataInvoice = res;
       this.loading = false;
@@ -199,7 +200,8 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
     this.revenueManageService.emitChange({
        data : data,
        args : args,
-       filter : this.filter
+       filter : this.filter,
+       title: 'Doanh thu theo dịch vụ'
     })
   }
 
