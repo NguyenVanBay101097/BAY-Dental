@@ -31,6 +31,7 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
     var args = e.args;
     var filter = e.filter;
     var employeeFilter = e.employeeFilter || 'none';
+    var title = e.title || 'doanhthu';
     // Prevent automatically saving the file. We will save it manually after we fetch and add the details
     args.preventDefault();
 
@@ -154,7 +155,7 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
       });
       new Workbook(workbook).toDataURL().then((dataUrl: string) => {
         // https://www.telerik.com/kendo-angular-ui/components/filesaver/
-        saveAs(dataUrl, 'baocaodoanhthu.xlsx');
+        saveAs(dataUrl, `${title}.xlsx`);
       });
       // create a Workbook and save the generated data URL
       // https://www.telerik.com/kendo-angular-ui/components/excelexport/api/Workbook/

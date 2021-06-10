@@ -10,7 +10,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public RevenueReportQueryCommon(DateTime? dateFrom, DateTime? dateTo, Guid? companyId)
         {
             this.DateFrom = dateFrom;
-            this.DateFrom = dateFrom;
+            this.DateTo = dateTo;
             this.CompanyId = companyId;
         }
         public DateTime? DateFrom { get; set; }

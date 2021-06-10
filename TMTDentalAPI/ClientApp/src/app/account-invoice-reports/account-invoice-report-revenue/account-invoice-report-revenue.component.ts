@@ -169,7 +169,8 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     this.revenueManageService.emitChange({
       data: data,
       args: args,
-      filter: this.filter
+      filter: this.filter,
+      title:'Doanh thu theo thời gian'
     })
   }
 

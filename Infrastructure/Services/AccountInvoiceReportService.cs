@@ -32,12 +32,12 @@ namespace Infrastructure.Services
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
         }
-        private async Task<IQueryable<AccountInvoiceReport>> GetRevenueReportQuery(RevenueReportQueryCommon val)
+        private IQueryable<AccountInvoiceReport> GetRevenueReportQuery(RevenueReportQueryCommon val)
         {
             var userObj = GetService<IUserService>();
             var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
 
-            var query = _context.AccountInvoiceReports.Where(x=> (x.Type == "out_invoice" || x.Type == "out_refund") && x.State == "posted"
+            var query = _context.AccountInvoiceReports.Where(x => (x.Type == "out_invoice" || x.Type == "out_refund") && x.State == "posted"
             && x.AccountInternalType != "receivable"
             && (!x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value))
             ).AsQueryable();
@@ -64,10 +64,10 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<RevenueTimeReportDisplay>> GetRevenueTimeReport(RevenueTimeReportPar val)
         {
-            var query = (await GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId)))
+            var query = (GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId)))
                             .GroupBy(x => x.InvoiceDate.Value.Date);
 
-           var res = await query.Select(x => new RevenueTimeReportDisplay
+            var res = await query.Select(x => new RevenueTimeReportDisplay
             {
                 InvoiceDate = x.Key as DateTime?,
                 PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal))
@@ -80,12 +80,12 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<RevenueServiceReportDisplay>> GetRevenueServiceReport(RevenueServiceReportPar val)
         {
-            var query = await GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
-            if(val.ProductId.HasValue)
+            var query = GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
+            if (val.ProductId.HasValue)
             {
                 query = query.Where(x => x.ProductId == val.ProductId);
             }
-            var queryRes = query.GroupBy(x => new { x.ProductId, x.Product.Name});
+            var queryRes = query.GroupBy(x => new { x.ProductId, x.Product.Name });
 
             var res = await queryRes.Select(x => new RevenueServiceReportDisplay
             {
@@ -99,15 +99,15 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<RevenueEmployeeReportDisplay>> GetRevenueEmployeeReport(RevenueEmployeeReportPar val)
         {
-            var query = await GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
-            IQueryable<IGrouping<object,AccountInvoiceReport>> queryRes;
-            if(val.EmployeeGroup)
+            var query = GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
+            IQueryable<IGrouping<object, AccountInvoiceReport>> queryRes;
+            if (val.EmployeeGroup)
             {
                 if (val.EmployeeId.HasValue)
                 {
                     query = query.Where(x => x.EmployeeId == val.EmployeeId);
                 }
-                 queryRes = query.GroupBy(x => new EmployeeAssistantKeyGroup {Id = x.EmployeeId, Name = x.Employee.Name});
+                queryRes = query.GroupBy(x => new EmployeeAssistantKeyGroup { Id = x.EmployeeId, Name = x.Employee.Name });
             }
             else
             {
@@ -115,7 +115,7 @@ namespace Infrastructure.Services
                 {
                     query = query.Where(x => x.AssistantId == val.EmployeeId);
                 }
-                 queryRes = query.GroupBy(x => new EmployeeAssistantKeyGroup { Id = x.AssistantId, Name = x.Assistant.Name });
+                queryRes = query.GroupBy(x => new EmployeeAssistantKeyGroup { Id = x.AssistantId, Name = x.Assistant.Name });
             }
 
             var res = await queryRes.Select(x => new RevenueEmployeeReportDisplay
@@ -130,7 +130,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<RevenueReportDetailDisplay>> GetRevenueReportDetailPaged(RevenueReportDetailPaged val)
         {
-            var query = await GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
+            var query = GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
 
             var res = new List<RevenueReportDetailDisplay>();
             var count = 0;
