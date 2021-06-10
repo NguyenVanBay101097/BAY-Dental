@@ -219,14 +219,14 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(
         res => {
-          this.notify("cập nhật thiết lập thành công", true);
+          this.notify("Cập nhật thiết lập thành công", true);
           this.activeModal.close();
         }
       )
     } else {
       this.smsConfigService.create(val).subscribe(
         res => {
-          this.notify("thiết lập thành công", true);
+          this.notify("Thiết lập thành công", true);
           this.activeModal.close();
         }
       )
