@@ -206,7 +206,7 @@ namespace Infrastructure.Services
             foreach (var payment in val.Payments)
             {
                 var payQuot = _mapper.Map<PaymentQuotation>(payment);
-                payQuot.QuotationId = quotation.Id;            
+                payQuot.QuotationId = quotation.Id;
 
                 payments.Add(payQuot);
             }
@@ -342,7 +342,7 @@ namespace Infrastructure.Services
 
             await quotationLineObj.CreateAsync(listAdd);
             await quotationLineObj.UpdateAsync(listUpdate);
-           
+
         }
 
         public async Task<SaleOrderSimple> CreateSaleOrderByQuotation(Guid id)
@@ -556,7 +556,11 @@ namespace Infrastructure.Services
             var quotationPromotionObj = GetService<IQuotationPromotionService>();
             var quotationLineObj = GetService<IQuotationLineService>();
 
-            var quotation = await SearchQuery(x => x.Id == val.Id).Include(x => x.Lines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines).FirstOrDefaultAsync();
+            var quotation = await SearchQuery(x => x.Id == val.Id)
+                 .Include(x => x.Lines).ThenInclude(x => x.PromotionLines)
+                .Include(x => x.Lines).ThenInclude(x => x.Promotions)
+                .FirstOrDefaultAsync();
+
             var total = quotation.Lines.Sum(x => x.SubPrice * x.Qty);
             var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
 
@@ -588,7 +592,7 @@ namespace Infrastructure.Services
                     if (line.Qty == 0)
                         continue;
 
-                    var amount = (((line.Qty * line.SubPrice ) / total) * promotion.Amount);
+                    var amount = (((line.Qty * line.SubPrice) / total) * promotion.Amount);
                     if (amount != 0)
                     {
                         promotion.Lines.Add(new QuotationPromotionLine
@@ -639,7 +643,7 @@ namespace Infrastructure.Services
 
             if (program != null)
             {
-                var error_status =  programObj._CheckQuotationPromotion(program, quotation);
+                var error_status = programObj._CheckQuotationPromotion(program, quotation);
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
 
