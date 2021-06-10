@@ -19,7 +19,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementDetailReportPar val);
         Task<decimal> GetSumReport(CommissionSettlementReport val);
 
-        Task<IEnumerable<CommissionSettlementReportRes>> ExportExcel(CommissionSettlementReport val);
+        Task<IEnumerable<CommissionSettlementReportExcelRes>> ExportExcel(CommissionSettlementReport val);
         Task<IEnumerable<CommissionSettlementReportDetailOutput>> DetailExportExcel(CommissionSettlementDetailReportPar val);
     }
 }

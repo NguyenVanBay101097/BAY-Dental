@@ -352,6 +352,7 @@ namespace TMTDentalAPI
 
             services.AddScoped<IToothDiagnosisService, ToothDiagnosisService>();
             services.AddScoped<IAdvisoryService, AdvisoryService>();
+            services.AddScoped<IExportExcelService, ExportExcelService>();
 
             Action<IMapperConfigurationExpression> mapperConfigExp = mc =>
             {

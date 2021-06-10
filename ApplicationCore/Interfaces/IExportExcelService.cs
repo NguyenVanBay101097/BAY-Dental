@@ -7,6 +7,7 @@ namespace ApplicationCore.Interfaces
 {
     public interface IExportExcelService
     {
-        Task<object> createExcel<T>(IEnumerable<T> list,string titleSheet);
+        Task<object> createExcel<T>(IEnumerable<T> list, string titleSheet, IEnumerable<string> listHeader);
+        Task CreateAndAddToHeader<T>(IEnumerable<T> list, string titleSheet, IEnumerable<string> listHeader);
     }
 }
