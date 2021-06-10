@@ -138,15 +138,15 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
 
   exportCommissionExcelFile() { 
     var val = new CommissionSettlementReport();
-    val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
-    val.dateTo = this.dateTo ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : '';
+    val.dateTo = this.dateTo ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : '';
     val.limit = this.limit;
     val.offset = this.skip;
     val.employeeId = this.employeeId ? this.employeeId : '';
     val.commissionType = this.commissionType ? this.commissionType : '';
-    this.commissionSettlementsService.excelCommissionDetailExport(val).subscribe((rs) => {
+    this.commissionSettlementsService.excelCommissionDetailExport(val).subscribe((res: any) => {
       let filename = "chi_tiet_hoa_hong_nhan_vien";
-      let newBlob = new Blob([], {
+      let newBlob = new Blob([res], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });

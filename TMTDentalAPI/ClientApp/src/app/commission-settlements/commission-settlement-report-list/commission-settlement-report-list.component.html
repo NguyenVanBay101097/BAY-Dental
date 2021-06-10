@@ -16,13 +16,13 @@
                 <button type="button" class="btn btn-secondary btn-sm mr-1" (click)="exportCommissionExcelFile()"><i
                         class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
             </div>
-
-            <div class="o_cp_t_right">
-            </div>
         </div>
         <kendo-grid [data]="reportResults" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
             (pageChange)="pageChange($event)">
             <kendo-grid-column field="employeeName" title="Nhân viên">
+                <ng-template kendoGridFooterTemplate>
+                    <span class="text_sum">Tổng</span>
+                </ng-template>
             </kendo-grid-column>
             <kendo-grid-column title="Loại hoa hồng">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -33,23 +33,12 @@
             </kendo-grid-column>
             <kendo-grid-column title="Tiền hoa hồng" class="text-right">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.amount | number}}
+                    <span> {{dataItem.amount | number}} </span>
+                </ng-template>
+                <ng-template kendoGridFooterTemplate style="border-left-style: none;">
+                    <span style="float: right;" class="text_sum"> {{sumReport| number}} </span>
                 </ng-template>
             </kendo-grid-column>
         </kendo-grid>
-        <!-- <div class="o_group text_sum">
-            <table class="o_group o_inner_group table table-bordered">
-                <tbody>
-                    <tr>
-                        <td>
-                            Tổng
-                        </td>
-                        <td class="text-right">
-                            {{sumReport}}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div> -->
     </div>
 </div>

@@ -7,4 +7,14 @@
 .mb-3, .my-3 {
     margin-left: 1rem !important;
     margin-right: 1rem !important;
+    margin-bottom: 0 !important;
+}
+
+.o_cp_t_right{
+    justify-content: flex-end !important;
+    /* width: 100% !important; */
+}
+
+.o_cp_searchview{
+    width: 80% !important;
 }

@@ -75,9 +75,9 @@ export class CommissionSettlementsService {
   }
 
   excelCommissionExport(val) {
-    return this.http.post(this.baseApi + this.apiUrl + '/', val, { responseType: 'blob' });
+    return this.http.get(this.baseApi + this.apiUrl + '/ExportExcel', { params: val, responseType:'blob' });
   }
   excelCommissionDetailExport(val) {
-    return this.http.post(this.baseApi + this.apiUrl + '/', val, { responseType: 'blob' });
+    return this.http.get(this.baseApi + this.apiUrl + '/DetailExportExcel', {params: val , responseType:'blob'});
   }
 }

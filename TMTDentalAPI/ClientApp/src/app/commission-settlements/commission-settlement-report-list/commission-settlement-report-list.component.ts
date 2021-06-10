@@ -15,15 +15,15 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
   styleUrls: ['./commission-settlement-report-list.component.css']
 })
 export class CommissionSettlementReportListComponent implements OnInit {
+  reportResults: GridDataResult;
+  limit = 20;
+  skip = 0;
   loading = false;
   dateFrom: Date;
   dateTo: Date;
   monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
-  limit = 20;
-  skip = 0;
   searchUpdate = new Subject<string>();
-  reportResults: GridDataResult;
   sumReport: number = 0;
 
   @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
@@ -81,7 +81,6 @@ export class CommissionSettlementReportListComponent implements OnInit {
     });
 
     this.commissionSettlementsService.getSumReport(val).subscribe((res: any) => {
-      console.log(res);
       this.sumReport = res;
     }, err => {
       console.log(err);
@@ -126,15 +125,15 @@ export class CommissionSettlementReportListComponent implements OnInit {
 
   exportCommissionExcelFile() {
     var val = new CommissionSettlementReport();
-    val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
-    val.dateTo = this.dateTo ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : '';
+    val.dateTo = this.dateTo ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : '';
     val.limit = this.limit;
     val.offset = this.skip;
     val.employeeId = this.employeeId ? this.employeeId : '';
     val.commissionType = this.commissionType ? this.commissionType : '';
-    this.commissionSettlementsService.excelCommissionExport(val).subscribe((rs) => {
+    this.commissionSettlementsService.excelCommissionExport(val).subscribe((res: any) => {
       let filename = "tong_hoa_hong_nhan_vien";
-      let newBlob = new Blob([], {
+      let newBlob = new Blob([res], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });

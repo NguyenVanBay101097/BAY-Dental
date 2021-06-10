@@ -1,23 +1,31 @@
 <div class="bg-white">
     <div class="o_form_view o_form_nosheet o_form_editable">
         <div class="my-3 d-flex justify-content-between">
-            <div class="d-flex justify-content-between">
-                <app-tai-date-range-filter-dropdown title="Thời gian" class="mr-1" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
+            <div class="o_cp_t_left flex-wrap">
+                <app-tai-date-range-filter-dropdown title="Thời gian" class="mr-1 mb-2" [dateFrom]="dateFrom"
+                    [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
                 </app-tai-date-range-filter-dropdown>
                 <kendo-combobox [placeholder]="'Tất cả nhân viên'" (valueChange)="valueEmployeeChange($event)"
-                    class="kendo-combobox-sm mr-1" [filterable]="true" [data]="filteredEmployees" #employeeCbx
+                    class="kendo-combobox-sm mr-1 mb-2" [filterable]="true" [data]="filteredEmployees" #employeeCbx
                     [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
                 </kendo-combobox>
                 <kendo-combobox [placeholder]="'Loại hoa hồng'" (valueChange)="valueCommissionTypeChange($event)"
-                    class="kendo-combobox-sm mr-1" [data]="filteredCommissionType"
-                    [valueField]="'value'" [textField]="'name'">
+                    class="kendo-combobox-sm mr-1 mb-2" [data]="filteredCommissionType" [valueField]="'value'"
+                    [textField]="'name'">
                 </kendo-combobox>
-                <button type="button" class="btn btn-secondary btn-sm mr-1" (click)="exportCommissionExcelFile()"><i
-                    class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
+                <button type="button" class="btn btn-secondary btn-sm mr-1 mb-2" (click)="exportCommissionExcelFile()"><i
+                        class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
             </div>
 
             <div class="o_cp_t_right">
-                <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                <div class="o_cp_searchview">
+                    <div class="o_cp_searchview_group">
+                        <div class="o_searchview">
+                            <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ"
+                                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <kendo-grid [data]="reportDetailResults" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
