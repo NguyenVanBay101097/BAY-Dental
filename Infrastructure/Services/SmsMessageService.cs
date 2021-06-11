@@ -85,8 +85,8 @@ namespace Infrastructure.Services
                 Date = x.Date,
                 DateCreated = x.DateCreated,
                 Name = x.Name,
-                //CountPartner = x.SmsMessagePartnerRels.Count(),
-                //BrandName = x.SmsAccountId.HasValue ? x.SmsAccount.BrandName + $" ({x.SmsAccount.Name})" : "",
+                ResCount = x.ResCount.HasValue ? x.ResCount.Value : 0,
+                BrandName = x.SmsAccount != null ? x.SmsAccount.DisplayName : "",
             }).ToListAsync();
 
 
@@ -103,7 +103,7 @@ namespace Infrastructure.Services
 
             if (entity.ResModel == "sale-order-line")
             {
-                foreach (var id in val.GuidIds)
+                foreach (var id in val.ResIds)
                 {
                     entity.SmsMessageSaleOrderLineRels.Add(new SmsMessageSaleOrderLineRel()
                     {
@@ -114,7 +114,7 @@ namespace Infrastructure.Services
             else if (entity.ResModel == "sale-order")
             {
 
-                foreach (var id in val.GuidIds)
+                foreach (var id in val.ResIds)
                 {
                     entity.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
                     {
@@ -125,7 +125,7 @@ namespace Infrastructure.Services
             }
             else if (entity.ResModel == "appointment")
             {
-                foreach (var id in val.GuidIds)
+                foreach (var id in val.ResIds)
                 {
                     entity.SmsMessageAppointmentRels.Add(new SmsMessageAppointmentRel()
                     {
@@ -135,7 +135,7 @@ namespace Infrastructure.Services
             }
             else if (entity.ResModel == "partner")
             {
-                foreach (var id in val.GuidIds)
+                foreach (var id in val.ResIds)
                 {
                     entity.SmsMessagePartnerRels.Add(new SmsMessagePartnerRel()
                     {
@@ -143,7 +143,7 @@ namespace Infrastructure.Services
                     });
                 }
             }
-
+            entity.ResCount = val.ResIds.Count();
             entity = await _messageRepository.InsertAsync(entity);
             return _mapper.Map<SmsMessageDisplay>(entity);
         }
@@ -382,12 +382,11 @@ namespace Infrastructure.Services
                 entity.SmsCampaignId = campaign.Id;
                 entity.ResModel = "sale-order";
                 entity.Body = config.Body;
-                entity.Date = config.TypeTimeBeforSend == "hour" ? saleOrder.DateDone.Value.AddHours(config.TimeBeforSend) : saleOrder.DateDone.Value.AddDays(config.TimeBeforSend);
+                entity.ScheduleDate = config.TypeTimeBeforSend == "hour" ? saleOrder.DateDone.Value.AddHours(config.TimeBeforSend) : saleOrder.DateDone.Value.AddDays(config.TimeBeforSend);
                 entity.SmsAccountId = config.SmsAccountId;
                 entity.SmsTemplateId = config.TemplateId;
                 entity.CompanyId = config.CompanyId;
-                entity.State = "waiting";
-                entity.TypeSend = "automatic";
+                entity.State = "in_queue";
                 entity.Name = $"Tin nhắn cảm ơn khách hàng ngày {DateTime.Now.ToString("dd-MM-yyyy HH:mm")}";
                 entity.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
                 {

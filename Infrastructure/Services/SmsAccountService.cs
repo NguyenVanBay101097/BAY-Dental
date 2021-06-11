@@ -55,6 +55,18 @@ namespace Infrastructure.Services
             return items;
         }
 
+        public override Task<SmsAccount> CreateAsync(SmsAccount entity)
+        {
+            entity.DisplayName = $"{entity.BrandName} ({entity.Name})";
+            return base.CreateAsync(entity);
+        }
+
+        public override Task UpdateAsync(SmsAccount entity)
+        {
+            entity.DisplayName = $"{entity.BrandName} ({entity.Name})";
+            return base.UpdateAsync(entity);
+        }
+
         public override ISpecification<SmsAccount> RuleDomainGet(IRRule rule)
         {
             switch (rule.Code)

@@ -16,15 +16,9 @@ namespace ApplicationCore.Entities
         public Guid? SmsCampaignId { get; set; }
         public SmsCampaign SmsCampaign { get; set; }
 
-        //Ngày đã gửi: Sent Date
         public DateTime? Date { get; set; }
 
-        //Ngày chờ gửi: Scheduled Date
-        /// <summary>
-        /// manual, reminder bỏ cột này
-        /// </summary>
-        public string TypeSend { get; set; }
-
+        public DateTime? ScheduleDate { get; set; }
 
         public Guid? SmsTemplateId { get; set; }
         public SmsTemplate SmsTemplate { get; set; }
@@ -36,11 +30,6 @@ namespace ApplicationCore.Entities
         /// in_queue: Chờ gửi
         /// done: Đã gửi
         /// cancelled: Hủy 
-        /// 
-        /// waiting : Chờ gửi
-        /// sending: Đang gửi
-        /// fails: Thất bại
-        /// success: Thành công
         /// </summary>
         public string State { get; set; }
 
@@ -48,9 +37,7 @@ namespace ApplicationCore.Entities
         /// Partner, Appointment, SaleOrder, SaleOrderLine
         /// </summary>
         public string ResModel { get; set; }
-
-        //ResCount: Đếm số tin nhắn
-
+        public int? ResCount { get; set; }
         public ICollection<SmsMessagePartnerRel> SmsMessagePartnerRels { get; set; } = new List<SmsMessagePartnerRel>();
         public ICollection<SmsMessageAppointmentRel> SmsMessageAppointmentRels { get; set; } = new List<SmsMessageAppointmentRel>();
         public ICollection<SmsMessageSaleOrderRel> SmsMessageSaleOrderRels { get; set; } = new List<SmsMessageSaleOrderRel>();

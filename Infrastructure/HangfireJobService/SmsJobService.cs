@@ -40,6 +40,7 @@ namespace Infrastructure.HangfireJobService
                 {
                     var query = context.Appointments.AsQueryable();
                     var listAppointments = await query.Where(x => !x.DateAppointmentReminder.HasValue
+                      && x.CompanyId == config.CompanyId
                       && x.DateTimeAppointment.HasValue
                       && x.State == "confirmed"
                       && x.DateTimeAppointment.Value >= now &&
@@ -64,10 +65,9 @@ namespace Infrastructure.HangfireJobService
                         smsMessage.Name = $"Nhắc lịch hẹn khách hàng ngày {DateTime.Today.ToString("dd-MM-yyyy")}";
                         smsMessage.SmsTemplateId = config.TemplateId;
                         smsMessage.Body = config.Body;
-                        smsMessage.State = "sending";
-                        smsMessage.TypeSend = "automatic";
+                        smsMessage.State = "draft";
                         smsMessage.ResModel = "appointment";
-                        smsMessage.Date = config.DateSend;
+                        smsMessage.ScheduleDate = config.DateSend;
                         context.SmsMessages.Add(smsMessage);
                         await context.SaveChangesAsync();
                         foreach (var app in listAppointments)
@@ -111,6 +111,7 @@ namespace Infrastructure.HangfireJobService
                 var MonthNow = DateTime.Today.Month;
                 var queryPartner = context.Partners.AsQueryable();
                 var partners = await queryPartner.Where(x =>
+                x.CompanyId == config.CompanyId &&
                 x.BirthMonth.HasValue && x.BirthMonth.Value == MonthNow &&
                 x.BirthDay.HasValue && x.BirthDay.Value == dayNow
                 ).ToListAsync();
@@ -131,10 +132,9 @@ namespace Infrastructure.HangfireJobService
                     smsMessage.Name = $"Chúc mừng sinh nhật ngày {DateTime.Today.ToString("dd-MM-yyyy")}";
                     smsMessage.SmsTemplateId = config.TemplateId;
                     smsMessage.Body = config.Body;
-                    smsMessage.State = "waiting";
-                    smsMessage.TypeSend = "automatic";
+                    smsMessage.State = "draft";
                     smsMessage.ResModel = "partner";
-                    smsMessage.Date = config.DateSend;
+                    smsMessage.ScheduleDate = config.DateSend;
                     context.SmsMessages.Add(smsMessage);
                     await context.SaveChangesAsync();
                     foreach (var item in partners)
@@ -187,6 +187,7 @@ namespace Infrastructure.HangfireJobService
 
                     var lines = await context.SaleOrderLines.Where(
                         x => x.Order.State == "done" &&
+                        x.CompanyId == config.CompanyId &&
                         x.OrderPartnerId.HasValue &&
                         x.ProductId.HasValue &&
                         productIds.Contains(x.ProductId.Value) &&
@@ -210,10 +211,9 @@ namespace Infrastructure.HangfireJobService
                         smsMessage.Name = $"Gửi tin nhắn  chăm sóc sau điều trị dịch vụ ngày {DateTime.Today.ToString("dd-MM-yyyy")}";
                         smsMessage.SmsTemplateId = config.TemplateId;
                         smsMessage.Body = config.Body;
-                        smsMessage.State = "sending";
-                        smsMessage.TypeSend = "automatic";
+                        smsMessage.State = "draft";
                         smsMessage.ResModel = "sale-order-line";
-                        smsMessage.Date = config.DateSend;
+                        smsMessage.ScheduleDate = config.DateSend;
                         context.SmsMessages.Add(smsMessage);
                         await context.SaveChangesAsync();
                         foreach (var line in lines)
@@ -227,7 +227,7 @@ namespace Infrastructure.HangfireJobService
                         }
                         context.SmsMessageSaleOrderLineRels.AddRange(smsMessage.SmsMessageSaleOrderLineRels);
                         await context.SaveChangesAsync();
-                      
+
                         await smsMessageService.ActionSend(smsMessage.Id);
                     }
                     transaction.Commit();
