@@ -464,17 +464,6 @@ namespace Infrastructure.Services
                 });
             }
 
-            //add người giới thiệu nếu có
-            if (partner.AgentId.HasValue)
-            {
-                res.CommissionSettlements.Add(new CommissionSettlement
-                {
-                    PartnerId = partner.Agent.PartnerId,
-                    ProductId = saleOrderLine.ProductId,
-                    Date = today
-                });
-            }
-
              res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
 

@@ -19,5 +19,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementFilterReport val);
         Task<decimal> GetSumReport(CommissionSettlementFilterReport val);
 
+        string CommissionType(string commType);
+
     }
 }

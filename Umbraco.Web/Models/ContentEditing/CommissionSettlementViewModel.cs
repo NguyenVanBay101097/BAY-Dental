@@ -32,7 +32,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string EmployeeName { get; set; }
         public Guid? EmployeeId { get; set; }
-        public string CommissionType { get; set; }
+        public string CommissionType { get;set; }
         public decimal? Amount { get; set; }
 
     }

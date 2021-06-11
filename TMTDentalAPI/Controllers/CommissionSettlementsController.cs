@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Interfaces;
@@ -60,54 +61,117 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> ExportExcel([FromQuery] CommissionSettlementFilterReport val)
         {
+
+            var stream = new MemoryStream();
             val.Limit = int.MaxValue;
-            var data = await _commissionSettlementService.GetReport(val);
-            decimal sum = data.Sum(x => x.Amount.Value);
-            var listTitle = new List<string>() {
-            "Nhân viên",
-            "Loại hoa hồng",
-            "Tiền hoa hồng"
-            };
-            var packageByte = await _exportExcelService.createExcel(data, "Hoa hồng nhân viên", listTitle) as byte[];
-            var package = _exportExcelService.ConverByteArrayTOExcepPackage(packageByte) as ExcelPackage;
-            using (package)
+            var data = await _commissionSettlementService.GetReportPaged(val);
+            decimal sum = data.Items.Sum(x => x.Amount.Value);
+            byte[] fileContent;
+            var sheetName = "Hoa hồng nhân viên";
+
+
+            using (var package = new ExcelPackage(stream))
             {
-                var worksheet = package.Workbook.Worksheets[0];
-                worksheet.Cells[data.Count() + 2, 1].Value = "Tổng";
-                worksheet.Cells[data.Count() + 2, 2, data.Count() + 2, worksheet.Dimension.End.Column].Merge = true;
-                worksheet.Cells[data.Count() + 2, 2].Value = sum;
-                worksheet.Cells[data.Count() + 2, 2].Style.Numberformat.Format = "0,00";
-                await _exportExcelService.AddToHeader(package.GetAsByteArray());
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+
+                worksheet.Cells[1, 1].Value = "Nhân viên";
+                worksheet.Cells[1, 2].Value = "Loại hoa hồng";
+                worksheet.Cells[1, 3].Value = "Tiền hoa hồng";
+
+                worksheet.Cells["A1:P1"].Style.Font.Bold = true;
+
+                var row = 2;
+                foreach (var item in data.Items)
+                {
+                    worksheet.Cells[row, 1].Value = item.EmployeeName;
+                    worksheet.Cells[row, 2].Value = _commissionSettlementService.CommissionType(item.CommissionType);
+                    worksheet.Cells[row, 3].Value = item.Amount;
+                    worksheet.Cells[row, 3].Style.Numberformat.Format = "#,###";
+
+                    row++;
+                }
+
+                worksheet.Cells[row, 1].Value = "Tổng";
+                worksheet.Cells[row, 1].Style.Font.Bold = true;
+                worksheet.Cells[row, 2].Value = sum;
+                worksheet.Cells[row, 2, row, 3].Merge = true;
+                worksheet.Cells[row, 2].Style.Numberformat.Format = "#,###";
+                worksheet.Cells[row, 2].Style.Font.Bold = true;
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
             }
-            return Ok();
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
 
         }
 
+       
+
         [HttpGet("[action]")]
         public async Task<IActionResult> DetailExportExcel([FromQuery] CommissionSettlementFilterReport val)
-        {
+        {         
+            var stream = new MemoryStream();
             val.Limit = int.MaxValue;
             var data = await _commissionSettlementService.GetReportDetail(val);
-            var listTitle = new List<string>() {
-            "Ngày thanh toán",
-            "Nhân viên",
-            "Loại hoa hồng",
-            "Số phiếu",
-            "Khách hàng",
-            "Dịch vụ",
-            "Lợi nhuận tính hoa hồng",
-            "% Hoa hồng",
-            "Tiền hoa hồng"
-            };
-            var packageByte = await _exportExcelService.createExcel(data.Items, "Hoa hồng chi tiết nhân viên", listTitle) as byte[];
-            var package = _exportExcelService.ConverByteArrayTOExcepPackage(packageByte) as ExcelPackage;
-            using (package)
+            byte[] fileContent;
+            var sheetName = "Chi tiết hoa hồng nhân viên";
+
+
+            using (var package = new ExcelPackage(stream))
             {
-                var worksheet = package.Workbook.Worksheets[0];
-                worksheet.Cells[2, 8, worksheet.Dimension.End.Row, 8].Style.Numberformat.Format = "#0\\%";
-                await _exportExcelService.AddToHeader(package.GetAsByteArray());
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+
+                worksheet.Cells[1, 1].Value = "Ngày thanh toán";
+                worksheet.Cells[1, 2].Value = "Nhân viên";
+                worksheet.Cells[1, 3].Value = "Loại hoa hồng";
+                worksheet.Cells[1, 4].Value = "Số phiếu";
+                worksheet.Cells[1, 5].Value = "Khách hàng";
+                worksheet.Cells[1, 6].Value = "Dịch vụ";
+                worksheet.Cells[1, 7].Value = "Lợi nhuận tính hoa hồng";
+                worksheet.Cells[1, 8].Value = "% Hoa hồng";
+                worksheet.Cells[1, 9].Value = "Tiền hoa hồng";
+
+                worksheet.Cells["A1:P1"].Style.Font.Bold = true;
+
+                var row = 2;
+                foreach (var item in data.Items)
+                {
+                    worksheet.Cells[row, 1].Value = item.Date;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 2].Value = item.EmployeeName;
+                    worksheet.Cells[row, 3].Value = _commissionSettlementService.CommissionType(item.CommissionType);
+                    worksheet.Cells[row, 4].Value = item.InvoiceOrigin;
+                    worksheet.Cells[row, 5].Value = item.PartnerName;
+                    worksheet.Cells[row, 6].Value = item.ProductName;
+                    worksheet.Cells[row, 7].Value = item.BaseAmount;
+                    worksheet.Cells[row, 7].Style.Numberformat.Format = "#,###";
+                    worksheet.Cells[row, 8].Value = item.Percentage;
+                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#0\\%";
+                    worksheet.Cells[row, 9].Value = item.Amount;
+                    worksheet.Cells[row, 9].Style.Numberformat.Format = "#,###";
+
+                    row++;
+                }
+           
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
             }
-            return Ok();
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
         }
 
     }

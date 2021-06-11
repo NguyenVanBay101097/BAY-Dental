@@ -194,23 +194,10 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementFilterReport val)
         {
-            var query = GetQueryableReportPaged(new CommissionSettlementFilterReport()
-            {
-                CommissionType = val.CommissionType,
-                CompanyId = val.CompanyId,
-                DateFrom = val.DateFrom,
-                DateTo = val.DateTo,
-                EmployeeId = val.EmployeeId
-            });
+            var query = GetQueryableReportPaged(val);
+            var totalItems = await query.CountAsync();   
 
-           
-            var totalItems = await query.CountAsync();
-
-            if (val.Limit > 0) 
-                query = query.Skip(val.Offset).Take(val.Limit);
-
-            var items = await query.OrderByDescending(x => x.Date)
-                .Select(x => new CommissionSettlementReportDetailOutput
+            var items = await query.Select(x => new CommissionSettlementReportDetailOutput
                 {
                     Amount = x.Amount,
                     BaseAmount = x.BaseAmount,
@@ -270,31 +257,51 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.CommissionType))
                 query = query.Where(x => x.Commission.Type == val.CommissionType);
 
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            query = query.OrderByDescending(x => x.DateCreated);
 
             return query;
+        }
+
+        public string CommissionType(string commType)
+        {
+            switch (commType)
+            {
+                case "doctor":
+                    return "Bác sĩ";
+                case "assistant":
+                    return "Phụ tá";
+                case "counselor":
+                    return "Tư vấn";
+                default:
+                    return "";
+            };
         }
 
         public async Task<PagedResult2<CommissionSettlementReportRes>> GetReportPaged(CommissionSettlementFilterReport val)
         {
             var query = GetQueryableReportPaged(val);
 
-            var queryGroup = query.GroupBy(x => new { EmployeeId = x.EmployeeId.Value, EmployeeName = x.Employee.Name, Date = x.Date.Value.Date, CommissionType = x.Commission.Type });
-            var count = await queryGroup.Select(x => x.Key.EmployeeId).CountAsync();
-
-            if (val.Limit > 0) 
-                queryGroup = queryGroup.Skip(val.Offset).Take(val.Limit);
-
-            queryGroup = queryGroup.OrderByDescending(x => x.Key.Date);
-
-            var res = await queryGroup.Select(x => new CommissionSettlementReportRes()
+            //var items = query.GroupBy(x => new { EmployeeId = x.EmployeeId.Value, EmployeeName = x.Employee.Name, Date = x.Date.Value.Date, CommissionType = x.Commission.Type });
+            var items = await query.Include(x => x.Employee).Include(x => x.Commission).ToListAsync();
+            var totalItems =  items.Select(x => x.EmployeeId).Count();
+          
+            var res = items.GroupBy(x=> new {
+                EmployeeId = x.EmployeeId.Value,
+                EmployeeName = x.Employee.Name,
+                Date = x.Date.Value.Date,
+                CommissionType = x.Commission.Type
+            }).Select(x => new CommissionSettlementReportRes()
             {
                 Amount = x.Sum(z => z.Amount),
                 CommissionType = x.Key.CommissionType,
                 EmployeeId = x.Key.EmployeeId,
                 EmployeeName = x.Key.EmployeeName
-            }).ToListAsync();
+            }).ToList();
 
-            return new PagedResult2<CommissionSettlementReportRes>(count, val.Offset, val.Limit)
+            return new PagedResult2<CommissionSettlementReportRes>(totalItems, val.Offset, val.Limit)
             {
                 Items = res
             };

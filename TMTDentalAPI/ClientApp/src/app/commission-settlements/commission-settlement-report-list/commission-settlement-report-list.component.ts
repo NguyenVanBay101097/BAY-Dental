@@ -135,7 +135,7 @@ export class CommissionSettlementReportListComponent implements OnInit {
     val.employeeId = this.employeeId ? this.employeeId : '';
     val.commissionType = this.commissionType ? this.commissionType : '';
     this.commissionSettlementsService.excelCommissionExport(val).subscribe((res: any) => {
-      let filename = "tong_hoa_hong_nhan_vien";
+      let filename = "Tổng quan hoa hồng nhân viên";
       let newBlob = new Blob([res], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
