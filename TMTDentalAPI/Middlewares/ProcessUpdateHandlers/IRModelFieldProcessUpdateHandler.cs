@@ -80,6 +80,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         Model = "res.partner",
                         Name = "member_level",
                         TType = "many2one",
+                        Relation = "memberlevel"
                     });
 
                     context.SaveChanges();
