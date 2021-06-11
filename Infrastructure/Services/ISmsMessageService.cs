@@ -19,7 +19,7 @@ namespace Infrastructure.Services
         Task<SmsMessage> GetByIdAsync(Guid id);
         Task SetupSendSmsOrderAutomatic(Guid orderId);
         IQueryable<SmsMessage> SearchQuery();
-        Task ActionSend(SmsMessage self);
+        Task ActionSend(Guid id);
         Task ActionSendSmsMessageDetail(IEnumerable<SmsMessageDetail> sefts, SmsAccount account);
     }
 }

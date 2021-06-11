@@ -244,7 +244,7 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
         // }
         this.picker.show(event);
         setTimeout(() => {
-        this.setPosition();
+            this.setPosition();
         }, 0);
     }
 
@@ -306,10 +306,17 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
             containerTop = 'auto';
         }
         if (this.opens === 'left') {
+            var parentRightEdge = document.documentElement.clientWidth;
+            var containerRight = parentRightEdge - element.getBoundingClientRect().left - element.clientWidth;
+            // style = {
+            //   top: containerTop,
+            //   right: containerRight + 'px',
+            //   left: 'auto'
+            // };
             style = {
-                top: containerTop,
-                left: (element.offsetLeft - container.clientWidth + element.clientWidth) + 'px',
-                right: 'auto'
+              top: containerTop,
+              right: containerRight + 'px',
+              left: 'auto'
             };
         } else if (this.opens === 'center') {
             style = {
@@ -341,6 +348,7 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
                 };
             }
         }
+
         if (style) {
             this._renderer.setStyle(container, 'top', style.top);
             this._renderer.setStyle(container, 'left', style.left);

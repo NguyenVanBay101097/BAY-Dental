@@ -13,7 +13,7 @@ import { AccoutingReport, ReportFinancialService } from 'src/app/account-financi
 import { AccountReportGeneralLedgerService, ReportCashBankGeneralLedger } from 'src/app/account-report-general-ledgers/account-report-general-ledger.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { CashBookService } from 'src/app/cash-book/cash-book.service';
-import { CommissionSettlementReport, CommissionSettlementReportOutput, CommissionSettlementsService } from 'src/app/commission-settlements/commission-settlements.service';
+import { CommissionSettlementFilterReport, CommissionSettlementReportOutput, CommissionSettlementsService } from 'src/app/commission-settlements/commission-settlements.service';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerCustomerReportInput, PartnerCustomerReportOutput, PartnerService } from 'src/app/partners/partner.service';
@@ -277,7 +277,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   }
 
   loadCommissionSettlementReport() {
-    var val = new CommissionSettlementReport();
+    var val = new CommissionSettlementFilterReport();
     val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : '';
     val.dateFrom = this.dateFrom;
     val.dateTo = this.dateTo;

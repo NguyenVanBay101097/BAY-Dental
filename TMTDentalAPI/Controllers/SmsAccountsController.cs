@@ -41,23 +41,14 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(_mapper.Map<SmsAccountDisplay>(res));
         }
-
-        [HttpGet]
-        [CheckAccess(Actions = "SMS.Account.Read")]
-        public async Task<IActionResult> Get(string provider)
-        {
-            var res = await _smsAccountService.SearchQuery(x => x.Provider == provider && x.CompanyId == CompanyId).FirstOrDefaultAsync();
-
-            return Ok(_mapper.Map<SmsAccountDisplay>(res));
-        }
-
      
         [HttpPost]
         [CheckAccess(Actions = "SMS.Account.Create")]
         public async Task<IActionResult> CreateAsync(SmsAccountSave val)
         {
+            if (!ModelState.IsValid || val == null)
+                return BadRequest();
             var entity = _mapper.Map<SmsAccount>(val);
-            if (!ModelState.IsValid || val == null) return BadRequest();
             entity.CompanyId = CompanyId;
             entity = await _smsAccountService.CreateAsync(entity);
             var res = _mapper.Map<SmsAccountBasic>(entity);
@@ -68,8 +59,13 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "SMS.Account.Update")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsAccountSave val)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
             var entity = await _smsAccountService.GetByIdAsync(id);
-            if (!ModelState.IsValid || entity == null) return BadRequest();
+            if (entity == null)
+                return NotFound();
+          
             entity = _mapper.Map(val, entity);
             entity.CompanyId = CompanyId;
             await _smsAccountService.UpdateAsync(entity);

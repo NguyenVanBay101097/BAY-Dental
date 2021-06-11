@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210611022018_RemoveEmployeeAssistantAmlColumns")]
+    partial class RemoveEmployeeAssistantAmlColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1968,9 +1970,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("SaleOrderLineId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal?>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
@@ -1990,8 +1989,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("PartnerId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("SaleOrderLineId");
 
                     b.HasIndex("WriteById");
 
@@ -9069,9 +9066,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DisplayName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -9329,14 +9323,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ResCount")
-                        .HasColumnType("int");
-
                     b.Property<string>("ResModel")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ScheduleDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<Guid?>("SmsAccountId")
                         .HasColumnType("uniqueidentifier");
@@ -9348,6 +9336,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TypeSend")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WriteById")
@@ -12410,10 +12401,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany("CommissionSettlements")
-                        .HasForeignKey("SaleOrderLineId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

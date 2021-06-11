@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210610073215_Thang_Update_Sms")]
+    partial class Thang_Update_Sms
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -829,6 +831,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal>("AmountResidual")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid?>("AssistantId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
 
@@ -861,6 +866,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("DiscountType")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool?>("ExcludeFromInvoiceTab")
                         .HasColumnType("bit");
@@ -939,9 +947,13 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("AccountId");
 
+                    b.HasIndex("AssistantId");
+
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("FullReconcileId");
 
@@ -1968,9 +1980,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("SaleOrderLineId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal?>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
@@ -1990,8 +1999,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("PartnerId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("SaleOrderLineId");
 
                     b.HasIndex("WriteById");
 
@@ -11882,6 +11889,10 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ApplicationCore.Entities.Employee", "Assistant")
+                        .WithMany()
+                        .HasForeignKey("AssistantId");
+
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId");
@@ -11889,6 +11900,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("ApplicationCore.Entities.AccountFullReconcile", "FullReconcile")
                         .WithMany("ReconciledLines")
@@ -12410,10 +12425,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany("CommissionSettlements")
-                        .HasForeignKey("SaleOrderLineId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

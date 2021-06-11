@@ -25,7 +25,6 @@ namespace ApplicationCore.Entities
         public string TypeTimeBeforSend { get; set; }
 
         public bool IsBirthdayAutomation { get; set; }
-
         public bool IsAppointmentAutomation { get; set; }
         public bool IsCareAfterOrderAutomation { get; set; }
         public bool IsThanksCustomerAutomation { get; set; }

@@ -418,6 +418,8 @@ namespace Infrastructure.Services
 
                 await cardObj.UpdateAsync(card);
                 await cardObj._CheckUpgrade(new List<CardCard>() { card });
+
+                //tạo 1 message chờ gửi
             }
 
             await UpdateAsync(self);
@@ -2353,7 +2355,7 @@ namespace Infrastructure.Services
                 OrderId = id,
                 CompanyId = CompanyId,
                 Lines = lines,
-                Note = $"{order.Name}-Khách hàng thanh toán"
+                Note = $"{order.Name} - Khách hàng thanh toán"
             };
 
             return rec;

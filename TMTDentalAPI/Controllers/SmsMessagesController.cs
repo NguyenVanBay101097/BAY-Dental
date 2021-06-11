@@ -45,8 +45,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<SmsMessageDisplay>(res));
         }
 
-
-
         [HttpPost]
         [CheckAccess(Actions = "SMS.Message.Create")]
         public async Task<IActionResult> CreateAsync(SmsMessageSave val)
@@ -58,14 +56,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("[action]/{id}")]
+        [HttpGet("{id}/[action]")]
         [CheckAccess(Actions = "SMS.Message.Update")]
         public async Task<IActionResult> ActionSendSms(Guid id)
         {
             var entity = await _smsMessageService.SearchQuery().Where(x => x.Id == id).FirstOrDefaultAsync();
             if (entity == null) return NotFound();
             await _unitOfWorkAsync.BeginTransactionAsync();
-            await _smsMessageService.ActionSend(entity);
+            await _smsMessageService.ActionSend(id);
             _unitOfWorkAsync.Commit();
             return NoContent();
         }
@@ -80,18 +78,16 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("[action]/{orderId}")]
-        [CheckAccess(Actions = "SMS.Message.Update")]
-        public async Task<IActionResult> SetupSendSmsOrderAutomatic(Guid orderId)
-        {
-            if (!ModelState.IsValid) return BadRequest();
-            await _unitOfWorkAsync.BeginTransactionAsync();
-            await _smsMessageService.SetupSendSmsOrderAutomatic(orderId);
-            _unitOfWorkAsync.Commit();
-            return NoContent();
-        }
-
-
+        //[HttpGet("[action]/{orderId}")]
+        //[CheckAccess(Actions = "SMS.Message.Update")]
+        //public async Task<IActionResult> SetupSendSmsOrderAutomatic(Guid orderId)
+        //{
+        //    if (!ModelState.IsValid) return BadRequest();
+        //    await _unitOfWorkAsync.BeginTransactionAsync();
+        //    await _smsMessageService.SetupSendSmsOrderAutomatic(orderId);
+        //    _unitOfWorkAsync.Commit();
+        //    return NoContent();
+        //}
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "SMS.Message.Update")]
