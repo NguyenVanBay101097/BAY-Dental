@@ -77,7 +77,7 @@ export class SmsAccountListComponent implements OnInit {
 
   editItem(item) {
     let modalRef = this.modalService.open(SmsAccountSettingDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: ' + this.title;
+    modalRef.componentInstance.title = item.brandName || 'BrandName';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();
