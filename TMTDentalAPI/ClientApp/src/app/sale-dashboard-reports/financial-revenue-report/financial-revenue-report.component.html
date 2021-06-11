@@ -1,7 +1,7 @@
 <div class="bg-white">
     <div class="header d-flex justify-content-between align-items-center pt-2">
         <h5 class="mb-0 pb-0">BÁO CÁO NGUỒN THU</h5>
-        <app-date-range-picker-filter class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+        <app-date-range-picker-filter class="mr-1" [opens]="'left'" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
     </div>
 
     <div class="content mt-2 border border-secondary rounded row p-0 m-0">

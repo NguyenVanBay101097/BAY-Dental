@@ -146,6 +146,8 @@ namespace TMTDentalAPI.Controllers
             return Ok(amountAdvance);
         }
 
+
+
         [HttpPost]
         [CheckAccess(Actions = "Basic.Partner.Create")]
         public async Task<IActionResult> Create(PartnerDisplay val)

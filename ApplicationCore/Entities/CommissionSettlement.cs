@@ -6,6 +6,8 @@ namespace ApplicationCore.Entities
 {
     public class CommissionSettlement : BaseEntity
     {
+        public Guid? PartnerId { get; set; }
+        public Partner Partner { get; set; }
 
         public Guid? EmployeeId { get; set; }
         public Employee Employee { get; set; }

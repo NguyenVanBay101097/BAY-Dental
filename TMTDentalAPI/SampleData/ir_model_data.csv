@@ -89,6 +89,7 @@ sms.model_sms_message_detail,SmsMessageDetail,Sms Message Detail,0
 
 
 
+base.model_agent,Agent,Agent,0
 
 
 

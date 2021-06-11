@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Utilities;
@@ -8,6 +9,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -37,11 +39,12 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetHistoryPaymentAdvance([FromQuery] HistoryAdvancePaymentFilter val)
+        public async Task<IActionResult> GetHistoryPartnerAdvance([FromQuery] HistoryPartnerAdvanceFilter val)
         {
             var result = await _saleOrderPaymentService.GetPagedResultHistoryAdvanceAsync(val);
             return Ok(result);
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
@@ -80,6 +83,8 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
             return NoContent();
         }
+
+       
 
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetPrint(Guid id)

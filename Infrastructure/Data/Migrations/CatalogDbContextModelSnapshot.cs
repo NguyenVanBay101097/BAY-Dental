@@ -258,6 +258,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("FinancialRevenueReportId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("JournalTypes")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -285,6 +288,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<int>("Column")
                         .HasColumnType("int");
+
+                    b.Property<string>("JournalTypes")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AccountTypeId", "FinancialRevenueReportId");
 
@@ -1282,6 +1288,70 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("AdvisoryToothRels");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.Agent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("BirthDay")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BirthMonth")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BirthYear")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JobTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PartnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("PartnerId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("Agents");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
@@ -1899,6 +1969,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("MoveLineId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("PartnerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal?>("Percentage")
                         .HasColumnType("decimal(18,2)");
 
@@ -1920,6 +1993,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("MoveLineId");
+
+                    b.HasIndex("PartnerId");
 
                     b.HasIndex("ProductId");
 
@@ -5029,6 +5104,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("AgentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
 
@@ -5054,9 +5132,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ConsultantId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedById")
@@ -5091,6 +5166,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAgent")
+                        .HasColumnType("bit");
 
                     b.Property<string>("JobTitle")
                         .HasColumnType("nvarchar(max)");
@@ -5146,9 +5224,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("AgentId");
 
-                    b.HasIndex("ConsultantId");
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
 
@@ -5510,8 +5588,17 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("AgentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
@@ -5537,7 +5624,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("LoaiThuChiId")
+                    b.Property<Guid?>("LoaiThuChiId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -5565,6 +5652,10 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("AgentId");
 
                     b.HasIndex("CompanyId");
 
@@ -6854,7 +6945,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("PromotionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("QuotationLineId")
+                    b.Property<Guid>("QuotationLineId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("WriteById")
@@ -12052,6 +12143,28 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.Agent", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.ApplicationRoleFunction", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
@@ -12296,6 +12409,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.AccountMoveLine", "MoveLine")
                         .WithMany("CommissionSettlements")
                         .HasForeignKey("MoveLineId");
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId");
 
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
                         .WithMany()
@@ -13523,7 +13640,7 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
@@ -13537,13 +13654,13 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.Partner", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.Agent", "Agent")
+                        .WithMany("Partners")
+                        .HasForeignKey("AgentId");
+
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId");
-
-                    b.HasOne("ApplicationCore.Entities.Employee", "Consultant")
-                        .WithMany()
-                        .HasForeignKey("ConsultantId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
@@ -13713,6 +13830,14 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.PhieuThuChi", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.AccountAccount", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId");
+
+                    b.HasOne("ApplicationCore.Entities.Agent", "Agent")
+                        .WithMany()
+                        .HasForeignKey("AgentId");
+
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
@@ -13730,9 +13855,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("ApplicationCore.Entities.LoaiThuChi", "LoaiThuChi")
                         .WithMany()
-                        .HasForeignKey("LoaiThuChiId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LoaiThuChiId");
 
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
                         .WithMany()
@@ -14326,7 +14449,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("ApplicationCore.Entities.QuotationLine", "QuotationLine")
                         .WithMany("PromotionLines")
-                        .HasForeignKey("QuotationLineId");
+                        .HasForeignKey("QuotationLineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

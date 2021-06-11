@@ -344,6 +344,8 @@ namespace TMTDentalAPI
             services.AddScoped<IQuotationPromotionService, QuotationPromotionService>();
             services.AddScoped<IQuotationPromotionLineService, QuotationPromotionLineService>();
             services.AddScoped<IAccountFinancialRevenueReportService, AccountFinancialRevenueReportService>();
+            services.AddScoped<IAgentService, AgentService>();
+            services.AddScoped<IReportCustomerDebtService, ReportCustomerDebtService>();
 
             services.AddScoped<ISmsAccountService, SmsAccountService>();
             services.AddScoped<ISmsComposerService, SmsComposerService>();
@@ -533,6 +535,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SmsComposerProfile());
                 mc.AddProfile(new SmsCampaignProfile());
                 mc.AddProfile(new SmsMessageProfile());
+                mc.AddProfile(new AgentProfile());
             };
 
             #endregion

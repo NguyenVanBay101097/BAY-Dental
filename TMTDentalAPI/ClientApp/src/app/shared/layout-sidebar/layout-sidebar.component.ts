@@ -171,21 +171,29 @@ export class LayoutSidebarComponent implements OnInit {
       permissions: ['TCare.Channel.Read', 'TCare.Scenario.Read', 'TCare.Messaging.Read', 'TCare.MessTemplate.Read', 'TCare.Config.Create']
     },
     {
-      name: 'SMS',
+      name: 'SMS Brandname',
       icon: 'fas fa-sms',
       children: [
+        { name: 'Danh sách Brandname', link: '/sms/accounts', permissions: ['SMS.Account.Read'] },
         { name: 'Chúc mừng sinh nhật', link: '/sms/birthday-partners', permissions: ['SMS.Message.Read'] },
         { name: 'Nhắc lịch hẹn', link: '/sms/appointment-reminder', permissions: ['SMS.Message.Read'] },
-        { name: 'Tin nhắn cảm ơn', link: '/sms/thanks-customer', permissions: ['SMS.Message.Read'] },
-        { name: 'Tin nhắn chăm sóc sau điều trị', link: '/sms/care-after-order', permissions: ['SMS.Message.Read'] },
         { name: 'Tin nhắn mẫu', link: '/sms/templates', permissions: ['SMS.Template.Read'] },
+        { name: 'Chăm sóc sau điều trị', link: '/sms/care-after-order', permissions: ['SMS.Message.Read'] },
+        { name: 'Cảm ơn', link: '/sms/thanks-customer', permissions: ['SMS.Message.Read'] },
         { name: 'Quản lý chiến dịch', link: '/sms/campaign', permissions: ['SMS.Campaign.Read'] },
-        { name: 'Danh sách Brandname', link: '/sms/accounts', permissions: ['SMS.Account.Read'] },
-        { name: 'Thống kê tin nhắn', link: '/sms/statistic', permissions: ['SMS.Report.AllMessage'] },
+        { name: 'Theo dõi tin nhắn', link: '/sms/statistic', permissions: ['SMS.Report.AllMessage'] },
         { name: 'Báo cáo', link: '/sms/report', permissions: ['SMS.Report.AllSMS'] },
       ],
       groups: 'sms.group_sms',
       permissions: ['SMS.Account.Read', 'SMS.Campaign.Read', 'SMS.Message.Read', 'SMS.Template.Read', 'SMS.Config.Read', 'SMS.Report.AllMessage', 'SMS.Report.AllSMS']
+    },
+    {
+      name: 'Hoa hồng',
+      icon: 'fas fa-poll',
+      children: [
+        { name: 'Người giới thiệu', link: '/agents/commission' },
+      ],
+      permissions: ['Catalog.Agent.Read']
     },
     {
       name: 'Danh mục',
@@ -196,6 +204,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhãn khảo sát', link: '/surveys/survey-tag', groups: 'survey.group_survey' },
         // { name: "Nguồn khách hàng", link: "/partner-sources" },
         { name: 'Nhà cung cấp', link: '/partners/suppliers', permissions: ['Basic.Partner.Read'] },
+        { name: 'Người giới thiệu', link: '/agents' },
         { name: 'Dịch vụ - Vật tư - Thuốc', link: '/products', permissions: ['Catalog.Products.Read'] },
         { name: 'Đơn thuốc mẫu', link: '/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
         // { name: 'Tiểu sử bệnh', link: '/histories' },
@@ -218,6 +227,7 @@ export class LayoutSidebarComponent implements OnInit {
       permissions: [
         'Catalog.PartnerCategory.Read',
         'Catalog.Products.Read',
+        'Catalog.Agent.Read',
         'Catalog.SamplePrescription.Read',
         'UoM.UoMs.Read',
         'Catalog.Commission.Read',
@@ -244,7 +254,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Báo cáo tổng quan', link: '/sale-dashboard-reports' },
         { name: 'Kết quả kinh doanh', link: '/financial-report', permissions: ['Report.Financial'] },
         { name: 'Tiền mặt, ngân hàng', link: '/report-general-ledgers/cash-bank', permissions: ['Report.CashBankAccount'] },
-        { name: 'Thống kê doanh thu', link: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
+        { name: 'Báo cáo doanh thu', link: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
         { name: 'Thống kê điều trị', link: '/sale-report', permissions: ['Report.Sale'] },
         // { name: 'Công nợ khách hàng', link: '/report-account-common/partner', params: { result_selection: 'customer' }, permissions: ['Report.AccountPartner'] },
         { name: 'Công nợ nhà cung cấp', link: '/report-account-common/partner', params: { result_selection: 'supplier' }, permissions: ['Report.AccountPartner'] },

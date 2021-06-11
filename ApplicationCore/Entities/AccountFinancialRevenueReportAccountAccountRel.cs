@@ -15,5 +15,10 @@ namespace ApplicationCore.Entities
         ///1: credit, 2: debit, 3: balance
         /// </summary>
         public int Column { get; set; }
+        /// <summary>
+        /// collect types of journal that allow compute
+        /// journal types:example is 'cash,bank'
+        /// </summary>
+        public string JournalTypes { get; set; }
     }
 }

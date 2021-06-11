@@ -77,7 +77,8 @@ namespace Infrastructure.Services
                                      new AccountFinancialRevenueReportAccountAccountRel()
                                      {
                                         AccountCode = "131",
-                                         Column = 1
+                                         Column = 1,
+                                         JournalTypes = "cash,bank"
                                       }
                                  }
                         },
@@ -93,7 +94,8 @@ namespace Infrastructure.Services
                                            new AccountFinancialRevenueReportAccountAccountRel()
                                            {
                                                AccountCode = "KHTU",
-                                               Column = 1
+                                               Column = 1,
+                                               JournalTypes = "cash,bank"
                                            }
                                            }
                         },
@@ -119,7 +121,8 @@ namespace Infrastructure.Services
                                                     new AccountFinancialRevenueReportAccountAccountRel()
                                                 {
                                                     AccountCode = "331",
-                                                    Column = 2
+                                                    Column = 2,
+                                                     JournalTypes = "cash,bank"
                                                 } }
                          },
                              new AccountFinancialRevenueReport()
@@ -135,7 +138,8 @@ namespace Infrastructure.Services
                                 new AccountFinancialRevenueReportAccountAccountTypeRel()
                                 {
                                     AccountTypeId = account_type_thu.Id,
-                                    Column = 1
+                                    Column = 1,
+                                    JournalTypes = "cash,bank"
                                 },
                             }
                         },
@@ -163,7 +167,8 @@ namespace Infrastructure.Services
                                            new AccountFinancialRevenueReportAccountAccountRel()
                                            {
                                                AccountCode = "KHTU",
-                                               Column = 2
+                                               Column = 2,
+                                               JournalTypes = "advance"
                                            }
                                            }
                         },
@@ -266,7 +271,7 @@ namespace Infrastructure.Services
                     foreach (var accTypeRel in report.FinancialRevenueReportAccountTypeRels)
                     {
                         var accounts = await accountObj.SearchQuery(x => accTypeRel.AccountTypeId == x.UserTypeId && !x.IsExcludedProfitAndLossReport).ToListAsync();
-                        var valueDict = await ComputeAccountBalance(accounts, data);
+                        var valueDict = await ComputeAccountBalance(accounts, data, accTypeRel.JournalTypes);
                         res[report.Id] += SumComputeAccountBalanceResColumn(valueDict.Values, accTypeRel.Column);
                     }
                 }
@@ -276,7 +281,7 @@ namespace Infrastructure.Services
                     foreach (var accAccRel in report.FinancialRevenueReportAccountRels)
                     {
                         var accounts = await accountObj.SearchQuery(x => x.Code == accAccRel.AccountCode && !x.IsExcludedProfitAndLossReport).ToListAsync();
-                        var valueDict = await ComputeAccountBalance(accounts, data);
+                        var valueDict = await ComputeAccountBalance(accounts, data, accAccRel.JournalTypes);
                         res[report.Id] += SumComputeAccountBalanceResColumn(valueDict.Values, accAccRel.Column);
                     }
                 }
@@ -307,7 +312,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<IDictionary<Guid, ComputeAccountBalanceRes>> ComputeAccountBalance(IEnumerable<AccountAccount> accounts, RevenueReportPar data)
+        public async Task<IDictionary<Guid, ComputeAccountBalanceRes>> ComputeAccountBalance(IEnumerable<AccountAccount> accounts, RevenueReportPar data, string journalTypes = null)
         {
             var res = accounts.ToDictionary(x => x.Id, x => new ComputeAccountBalanceRes
             {
@@ -319,16 +324,20 @@ namespace Infrastructure.Services
             var accountIds = accounts.Select(x => x.Id).ToList();
             var amlObj = GetService<IAccountMoveLineService>();
             var journalObj = GetService<IAccountJournalService>();
-            var JournalType = new List<string>() { "cash", "bank", "advance" };
+
+            var journalTypeList = new List<string>();
+            if (!string.IsNullOrEmpty(journalTypes))
+                journalTypeList = journalTypes.Split(",").ToList();
+
             if (accounts.Any())
             {
-                var jounals = await journalObj.SearchQuery(x => JournalType.Contains(x.Type)).ToListAsync();
+                var jounals = await journalObj.SearchQuery(x => journalTypeList.Contains(x.Type)).ToListAsync();
                 var journalIds = jounals.Select(x => x.Id);
 
                 ISpecification<AccountMoveLine> filter = amlObj._QueryGetSpec(dateFrom: data.DateFrom, dateTo: data.DateTo, companyId: data.CompanyId);
                 filter = filter.And(new InitialSpecification<AccountMoveLine>(x => accountIds.Contains(x.AccountId)));
 
-                var list = await amlObj.SearchQuery(filter.AsExpression()).Where(x => journalIds.Contains(x.JournalId.Value)).OrderBy(x => x.Date).GroupBy(x => x.AccountId).Select(x => new ComputeAccountBalanceRes
+                var list = await amlObj.SearchQuery(filter.AsExpression()).Where(x => journalIds.Contains(x.JournalId.Value) || journalTypeList.Count == 0).OrderBy(x => x.Date).GroupBy(x => x.AccountId).Select(x => new ComputeAccountBalanceRes
                 {
                     AccountId = x.Key,
                     Debit = x.Sum(s => s.Debit),

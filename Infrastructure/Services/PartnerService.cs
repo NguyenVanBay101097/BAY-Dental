@@ -103,7 +103,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Source)
                 .Include(x => x.ReferralUser)
                 .Include(x => x.Title)
-                .Include(x => x.Consultant)
+                .Include(x => x.Agent)
                 .Include("PartnerPartnerCategoryRels.Category")
                 .Include("PartnerHistoryRels.History")
                 .FirstOrDefaultAsync();
@@ -2045,10 +2045,8 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<PartnerBasic>> GetCustomerBirthDay(PartnerPaged val)
         {
-            var accountMoveLineObj = GetService<IAccountMoveLineService>();
-            var orderLineObj = GetService<ISaleOrderLineService>();
             var query = SearchQuery();
-
+            var saleReportObj = GetService<ISaleReportService>();
             if (val.Customer.HasValue && val.Customer.Value)
                 query = query.Where(x => x.Customer == val.Customer);
 
@@ -2066,19 +2064,13 @@ namespace Infrastructure.Services
             }
             var partnerIds = await query.Select(x => x.Id).ToListAsync();
 
-            var dictRevenuePartner = await accountMoveLineObj
-                .SearchQuery(x => x.PartnerId.HasValue && partnerIds.Contains(x.PartnerId.Value))
-                .GroupBy(x => x.PartnerId.Value).Select(x => new RevenueReportResultDetail
-                {
-                    PartnerId = x.Key,
-                    Debit = x.Sum(k => k.Debit),
-                }).ToDictionaryAsync(x => x.PartnerId, x => x.Debit);
+            var SaleReportSearch = new SaleReportSearch()
+            {
+                CompanyId = CompanyId,
+                GroupBy = "customer"
+            };
 
-            var dictPartner = await orderLineObj
-                .SearchQuery(x => x.OrderPartnerId.HasValue)
-                .GroupBy(x => x.OrderPartnerId.Value)
-                .Select(x => new { x.Key, Count = x.Count() })
-                .ToDictionaryAsync(x => x.Key, x => x.Count);
+            var saleReportDict = (await saleReportObj.GetReport(SaleReportSearch)).ToDictionary(x => x.PartnerId, x => x);
 
             var listPartner = await query.Select(x => new PartnerBasic
             {
@@ -2096,8 +2088,8 @@ namespace Infrastructure.Services
                 Phone = x.Phone,
                 Address = x.GetAddress(),
                 Gender = x.GetGender(),
-                CountLine = dictPartner.ContainsKey(x.Id) ? dictPartner[x.Id] : 0,
-                Debit = dictRevenuePartner.ContainsKey(x.Id) ? dictRevenuePartner[x.Id] : 0
+                CountLine = saleReportDict.ContainsKey(x.Id) ? saleReportDict[x.Id].ProductUOMQty : 0,
+                Debit = saleReportDict.ContainsKey(x.Id) ? saleReportDict[x.Id].PriceTotal : 0,
             }).ToListAsync();
 
             return listPartner;
@@ -2175,7 +2167,7 @@ namespace Infrastructure.Services
             var saleOrderLineObj = GetService<ISaleOrderLineService>();
             var today = DateTime.Today;
             var today1 = DateTime.Now.Date;
-            var list =await saleOrderLineObj.SearchQuery(x => x.OrderPartnerId.HasValue && x.Order.State == "done" && x.Order.DateDone.HasValue && x.Order.DateDone.Value.Date == today).Include(x => x.Order).GroupBy(x => new { PartnerId = x.OrderPartnerId, PartnerName = x.OrderPartner.DisplayName, PartnerPhone = x.OrderPartner.Phone })
+            var list = await saleOrderLineObj.SearchQuery(x => x.OrderPartnerId.HasValue && x.Order.State == "done" && x.Order.DateDone.HasValue && x.Order.DateDone.Value.Date == today).Include(x => x.Order).GroupBy(x => new { PartnerId = x.OrderPartnerId, PartnerName = x.OrderPartner.DisplayName, PartnerPhone = x.OrderPartner.Phone })
                 .Select(x => new PartnerSaleOrderDone
                 {
                     Id = x.Key.PartnerId.Value,

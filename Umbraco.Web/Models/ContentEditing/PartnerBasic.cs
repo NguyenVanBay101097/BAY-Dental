@@ -90,7 +90,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool Active { get; set; }
 
-        public int CountLine { get; set; }
+        public decimal CountLine { get; set; }
         public string DateOfBirth { get; set; }
 
         public Guid AppointmnetId { get; set; }
@@ -129,6 +129,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? isBoth { get; set; } // get both customer and supplier
         public bool? OrderDone { get; set; }
     }
+
+    
 
     public class PartnerGetDebtPagedFilter
     {
@@ -551,6 +553,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public int CustomerNew { get; set; }
         public IEnumerable<CustomerStatisticsDetails> Details { get; set; } = new List<CustomerStatisticsDetails>();
     }
+
+
 
     public class PartnerInfoVm
     {

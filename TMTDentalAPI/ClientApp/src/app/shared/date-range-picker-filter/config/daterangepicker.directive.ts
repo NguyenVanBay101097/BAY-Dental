@@ -243,7 +243,9 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
         //     return;
         // }
         this.picker.show(event);
-            this.setPosition();
+        setTimeout(() => {
+        this.setPosition();
+        }, 0);
     }
 
     hide(e?) {
@@ -287,7 +289,7 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
                 this._el.nativeElement.value = this.picker.chosenLabel;
             }
         } else {
-            this.picker.clear();
+            // this.picker.clear();
         }
     }
     /**

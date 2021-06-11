@@ -19,6 +19,7 @@ export class SmsTemplateCrUpComponent implements OnInit {
   skip: number = 0;
   textareaLimit: number = 500;
   id: string;
+  submitted: boolean = false;
   templateTypeTab: string = '';
   template: any = {
     text: null,
@@ -40,13 +41,11 @@ export class SmsTemplateCrUpComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       body: [this.template, Validators.required],
       type: ['', Validators.required]
     })
-
     setTimeout(() => {
       if (this.id) {
         this.loadDataFromApi();
@@ -68,6 +67,7 @@ export class SmsTemplateCrUpComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid) { return false; }
     if (!this.template.text) return;
     var formValue = this.formGroup.value;
@@ -75,14 +75,14 @@ export class SmsTemplateCrUpComponent implements OnInit {
     if (this.id) {
       this.smsTemplateService.update(this.id, formValue).subscribe(
         (res) => {
-          this.notify('cập nhật thành công', true);
+          this.notify('Lưu tin nhắn mẫu thành công', true);
           this.activeModal.close(formValue);
         }
       );
     }
     else {
       this.smsTemplateService.create(formValue).subscribe(result => {
-        this.notify("thêm mới thành công", true)
+        this.notify("Lưu tin nhắn mẫu thành công", true)
         this.activeModal.close(result);
       }, err => { });
     }
@@ -114,5 +114,9 @@ export class SmsTemplateCrUpComponent implements OnInit {
   }
   selectTemplate(value) {
     this.templateTypeTab = value;
+  }
+
+  onCancel(){
+    this.activeModal.dismiss();
   }
 }

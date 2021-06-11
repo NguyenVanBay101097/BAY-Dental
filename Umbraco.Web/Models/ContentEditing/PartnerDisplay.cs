@@ -243,11 +243,13 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         /// <summary>
-        /// Nhan vien tu van 
+        /// Người giới thiệu
         /// </summary>
         public Guid? ConsultantId { get; set; }
         public EmployeeSimple Consultant { get; set; }
         public decimal? Point { get; set; }
         public MemberLevelBasic MemberLevel { get; set; }
+        public Guid? AgentId { get; set; }
+        public AgentBasic Agent { get; set; }
     }
 }
