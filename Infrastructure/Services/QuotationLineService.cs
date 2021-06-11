@@ -23,13 +23,16 @@ namespace Infrastructure.Services
         }
 
 
-
-
-        public void _ComputeAmountDiscountTotal(IEnumerable<QuotationLine> self)
+        public override async Task<IEnumerable<QuotationLine>> CreateAsync(IEnumerable<QuotationLine> entities)
         {
-            //Trường hợp ưu đãi phiếu điều trị thì ko đúng, sum từ PromotionLines là đúng
-            foreach (var line in self)
-                line.AmountDiscountTotal = line.PromotionLines.Sum(x => x.PriceUnit);
+            ComputeAmount(entities);
+            return await base.CreateAsync(entities);
+        }
+
+        public override async Task UpdateAsync(IEnumerable<QuotationLine> entities)
+        {
+            ComputeAmount(entities);
+            await base.UpdateAsync(entities);
         }
 
         public void ComputeAmount(IEnumerable<QuotationLine> self)
@@ -38,9 +41,19 @@ namespace Infrastructure.Services
                 return;
 
             foreach (var line in self)
+            {
                 line.Amount = Math.Round(line.Qty * ((line.SubPrice ?? 0) - (decimal)(line.AmountDiscountTotal ?? 0)));
-
+              
+            }
         }
+
+        public void _ComputeAmountDiscountTotal(IEnumerable<QuotationLine> self)
+        {
+            //Trường hợp ưu đãi phiếu điều trị thì ko đúng, sum từ PromotionLines là đúng
+            foreach (var line in self)
+                line.AmountDiscountTotal = line.PromotionLines.Sum(x => x.PriceUnit);
+        }
+
 
         public decimal _GetRewardValuesDiscountPercentagePerQuotationLine(SaleCouponProgram program, QuotationLine line)
         {
@@ -120,7 +133,7 @@ namespace Infrastructure.Services
            await quotationObj._ComputeAmountPromotionToQuotation(new List<Guid>(){ quotationLine.QuotationId});
         }
 
-        public async Task<SaleCouponProgramResponse> ApplyPromotionOnQuotationLine(ApplyPromotionRequest val)
+        public async Task ApplyPromotionOnQuotationLine(ApplyPromotionRequest val)
         {
             var programObj = GetService<ISaleCouponProgramService>();
             var couponObj = GetService<ISaleCouponService>();
@@ -143,14 +156,13 @@ namespace Infrastructure.Services
                 if (string.IsNullOrEmpty(error_status.Error))
                 {
                     await _CreateRewardLine(quotationLine, program);
-                    return new SaleCouponProgramResponse { Error = null, Success = true, SaleCouponProgram = _mapper.Map<SaleCouponProgramDisplay>(program) };
                 }
                 else
-                    return new SaleCouponProgramResponse { Error = error_status.Error, Success = false, SaleCouponProgram = null };
+                    throw new Exception(error_status.Error);
             }
             else
             {
-                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không tồn tại", Success = false, SaleCouponProgram = null };
+                 throw new Exception( "Mã chương trình khuyến mãi không tồn tại");
 
             }
         }
@@ -189,7 +201,7 @@ namespace Infrastructure.Services
             }
             else
             {
-                return new SaleCouponProgramResponse { Error = "Mã chương trình khuyến mãi không chính xác", Success = false, SaleCouponProgram = null };
+                return new SaleCouponProgramResponse { Error = "Mã khuyến mãi không chính xác", Success = false, SaleCouponProgram = null };
 
             }
         }

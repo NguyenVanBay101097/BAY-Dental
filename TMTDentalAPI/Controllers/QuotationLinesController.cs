@@ -55,9 +55,9 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            var res = await _quotationLineService.ApplyPromotionOnQuotationLine(val);
+             await _quotationLineService.ApplyPromotionOnQuotationLine(val);
             _unitOfWork.Commit();
-            return Ok(res);
+            return NoContent();
         }
     }
 }

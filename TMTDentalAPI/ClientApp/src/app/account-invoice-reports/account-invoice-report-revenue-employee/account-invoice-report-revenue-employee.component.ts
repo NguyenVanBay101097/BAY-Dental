@@ -58,6 +58,7 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     val.companyId = val.companyId || '';
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.employeeId = val.employeeId || '';
     this.loading = true;
     this.accInvService.getRevenueEmployeeReport(val).subscribe(res => {
       this.allDataInvoice = res;
@@ -205,7 +206,8 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
        data : data,
        args : args,
        filter : this.filter,
-       employeeFilter: this.empFilter
+       employeeFilter: this.empFilter,
+       title: 'Doanh thu theo nhân viên'
     })
   }
 

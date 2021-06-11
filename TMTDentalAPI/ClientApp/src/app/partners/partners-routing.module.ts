@@ -69,7 +69,7 @@ const routes: Routes = [
       },
       { path: 'partner-images', component: PartnerCustomerUploadImageComponent },
       { path: 'quotations', component: PartnerCustomerQuotationListComponent },
-      //{ path: 'quotations', component: PartnerCustomerQuotationsComponent },
+      // { path: 'quotations', component: PartnerCustomerQuotationsComponent },
       { path: 'advisories', component: PartnerCustomerAdvisoryListComponent },
       { path: 'treatment-histories', component: PartnerCustomerTreatmentHistoryComponent },
       { path: 'treatment-histories/form', component: PartnerCustomerTreatmentHistoryFormComponent },

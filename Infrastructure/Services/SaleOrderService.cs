@@ -418,6 +418,8 @@ namespace Infrastructure.Services
 
                 await cardObj.UpdateAsync(card);
                 await cardObj._CheckUpgrade(new List<CardCard>() { card });
+
+                //tạo 1 message chờ gửi
             }
 
             await UpdateAsync(self);
@@ -2870,7 +2872,10 @@ namespace Infrastructure.Services
             var orderPromotionObj = GetService<ISaleOrderPromotionService>();
             var orderLineObj = GetService<ISaleOrderLineService>();
 
-            var order = await SearchQuery(x => x.Id == val.Id).Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines).FirstOrDefaultAsync();
+            var order = await SearchQuery(x => x.Id == val.Id)
+                .Include(x => x.OrderLines).ThenInclude(x => x.PromotionLines)
+                .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
+                .FirstOrDefaultAsync();
             var total = order.OrderLines.Sum(x => x.PriceUnit * x.ProductUOMQty);
             var discount_amount = val.DiscountType == "percentage" ? total * val.DiscountPercent / 100 : val.DiscountFixed;
 
@@ -2985,14 +2990,15 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 SaleOrderLineName = string.Join(", ", x.OrderLines.Select(s => s.Name))
             }).ToListAsync();
-            return new PagedResult2<SaleOrderSmsBasic>(totalItems, val.Offset, val.Limit) { 
+            return new PagedResult2<SaleOrderSmsBasic>(totalItems, val.Offset, val.Limit)
+            {
                 Items = items
             };
         }
 
         public async Task<PagedResult2<SaleOrderRevenueReport>> GetRevenueReport(SaleOrderRevenueReportPaged val)
         {
-            var query = SearchQuery(x => x.State != "cancel");
+            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft");
             if (val.CompanyId.HasValue)
             {
                 query = query.Where(x => x.CompanyId == val.CompanyId);
@@ -3017,7 +3023,7 @@ namespace Infrastructure.Services
             switch (val.Column)
             {
                 case "AmountTotal":
-                    return await query.SumAsync(x=> x.AmountTotal.Value);
+                    return await query.SumAsync(x => x.AmountTotal.Value);
                 case "TotalPaid":
                     return await query.SumAsync(x => x.TotalPaid.Value);
                 case "Residual":

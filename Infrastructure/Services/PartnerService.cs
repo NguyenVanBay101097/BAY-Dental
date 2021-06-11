@@ -2064,13 +2064,13 @@ namespace Infrastructure.Services
             }
             var partnerIds = await query.Select(x => x.Id).ToListAsync();
 
-            var SaleReportSearch = new SaleReportSearch()
+            var SaleReportSearch = new SaleReportSearch()   
             {
                 CompanyId = CompanyId,
                 GroupBy = "customer"
             };
 
-            var saleReportDict = (await saleReportObj.GetReport(SaleReportSearch)).ToDictionary(x => x.PartnerId, x => x);
+            var saleReportDict = (await saleReportObj.GetReportForSmsMessage(partnerIds)).ToDictionary(x => x.PartnerId, x => x);
 
             var listPartner = await query.Select(x => new PartnerBasic
             {

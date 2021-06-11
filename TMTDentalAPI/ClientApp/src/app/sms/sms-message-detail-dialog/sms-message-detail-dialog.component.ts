@@ -113,7 +113,7 @@ export class SmsMessageDetailDialogComponent implements OnInit {
 
   onSend() {
     if (this.selectedIds.length == 0) {
-      this.notify("chưa chọn khách hàng", false);
+      this.notify("Chưa chọn khách hàng", false);
     }
     else {
       var smsMessageDetailIds = [];
