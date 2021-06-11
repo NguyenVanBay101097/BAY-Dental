@@ -192,8 +192,9 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-poll',
       children: [
         { name: 'Người giới thiệu', link: '/agents/commission' },
+        { name: 'Nhân viên', link: '/commission-settlements/report', permissions: ['Report.Commission'] },
       ],
-      permissions: ['Catalog.Agent.Read']
+      permissions: ['Catalog.Agent.Read','Report.Commission']
     },
     {
       name: 'Danh mục',
@@ -261,7 +262,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton', permissions: ['Report.Stock'] },
         { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report', permissions: ['Report.RealRevenue'] },
         // { name: 'Thống kê công việc', link: '/dot-kham-report' },
-        { name: 'Thống kê hoa hồng', link: '/commission-settlements/report', permissions: ['Report.Commission'] },
+        // { name: 'Thống kê hoa hồng', link: '/commission-settlements/report', permissions: ['Report.Commission'] },
         { name: 'Khách hàng lân cận phòng khám', link: '/partner-report-location', permissions: ['Report.PartnerLocation'] },
         { name: 'Thống kê nguồn khách hàng', link: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
         { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/partner', permissions: ['Report.PartnerOldNew'] },

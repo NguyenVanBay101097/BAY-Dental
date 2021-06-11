@@ -63,7 +63,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 }
 
                 //add member_level
-                var member_level = context.IRModelFields.Where(x => x.Model == "res.partner" && x.TType == "string" && x.Name == "member_level").FirstOrDefault();
+                var member_level = context.IRModelFields.Where(x => x.Model == "res.partner" && x.TType == "many2one" && x.Name == "member_level" && x.Relation == "memberlevel").FirstOrDefault();
                 if (member_level == null)
                 {
                     var model = context.IRModels.Where(x => x.Model == "Partner").FirstOrDefault();
@@ -79,14 +79,14 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         IRModelId = model.Id,
                         Model = "res.partner",
                         Name = "member_level",
-                        TType = "string",
+                        TType = "many2one",
                     });
 
                     context.SaveChanges();
                 }
 
                 //add loyalty_points
-                var loyalty_points = context.IRModelFields.Where(x => x.Model == "res.partner" && x.TType == "decimal" && x.Name == "loyalty_points").FirstOrDefault();
+                var loyalty_points = context.IRModelFields.Where(x => x.Model == "res.partner" && x.TType == "float" && x.Name == "loyalty_points").FirstOrDefault();
                 if (loyalty_points == null)
                 {
                     var model = context.IRModels.Where(x => x.Model == "Partner").FirstOrDefault();
@@ -102,7 +102,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         IRModelId = model.Id,
                         Model = "res.partner",
                         Name = "loyalty_points",
-                        TType = "decimal",
+                        TType = "float",
                     });
 
                     context.SaveChanges();
