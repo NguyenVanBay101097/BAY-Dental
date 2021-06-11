@@ -1,5 +1,5 @@
 <header class="modal-header">
-    <h5 class="modal-title" ngbAutofocus >{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <h5 class="modal-title" ngbAutofocus>{{title}}<span class="o_subtitle text-muted small"></span></h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onCancel()"
         tabindex="-1">×</button>
 </header>
@@ -16,7 +16,7 @@
                                     <label class="o_form_label">Tiêu đề tin nhắn mẫu</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="name" id="name"/>
+                                    <input class="form-control" formControlName="name" id="name" />
                                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
                                         class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tiêu đề tin nhắn mẫu</div>
@@ -25,17 +25,20 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Đối tượng</label>
+                                    <label class="o_form_label">Loại tin nhắn mẫu</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <select (change)="selectTemplate($event.target.value)" class="form-control"
+                                    <select name="type" id="type" (change)="selectTemplate($event.target.value)" class="form-control"
                                         formControlName="type" [attr.disabled]="id">
-                                        <option [value]="item.value" *ngFor="let item of listTemplates">
+                                        <option [value]="item.value" *ngFor="let item of listTemplates; let i = index" [selected]="i==0">
                                             {{item.name}}</option>
+                                        <!-- <option value="partner" selected>Chúc mừng sinh nhật</option>
+                                        <option value="appointment">Nhắc lịch hẹn</option> -->
+
                                     </select>
                                     <div *ngIf="f.type.errors && (f.type.touched || f.type.dirty || submitted)"
                                         class="text-danger">
-                                        <div *ngIf="f.type.errors.required">Chọn đối tượng</div>
+                                        <div *ngIf="f.type.errors.required">Chọn loại tin nhắn mẫu</div>
                                     </div>
                                 </td>
                             </tr>

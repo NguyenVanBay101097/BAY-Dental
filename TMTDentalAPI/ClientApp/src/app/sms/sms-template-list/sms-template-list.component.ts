@@ -19,7 +19,7 @@ export class SmsTemplateListComponent implements OnInit {
   skip = 0;
   loading = false;
   searchUpdate = new Subject<string>();
-  search: string;
+  search: string = '';
   constructor(
     private modalService: NgbModal,
     private notificationService: NotificationService,
@@ -43,7 +43,7 @@ export class SmsTemplateListComponent implements OnInit {
     var val = new SmsTemplatePaged();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.search = this.search || "";
+    val.search = this.search || '';
     this.smsTemplateService.getPaged(val).pipe(
       map(
         (response: any) =>
@@ -113,15 +113,15 @@ export class SmsTemplateListComponent implements OnInit {
   getTemplateType(type) {
     switch (type) {
       case "partner":
-        return "Khách hàng";
+        return "Chúc mừng sinh nhật";
       case "appointment":
-        return "Lịch hẹn";
+        return "Nhắc lịch hẹn";
       case "saleOrderLine":
-        return "Chi tiết điều trị";
+        return "Chăm sóc sau điều trị";
       case "saleOrder":
-        return "Phiếu điều trị";
+        return "Cám ơn";
       case "partnerCampaign":
-        return "Chiến dịch";
+        return "Chiến dịch khác";
     }
   }
 }
