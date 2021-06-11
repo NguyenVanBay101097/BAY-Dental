@@ -1,7 +1,7 @@
 <div class="flex-1-1-100 right border p-2 ml-2 d-flex flex-column">
     <h5 class="flex-0-0-auto">Doanh thu theo thời gian</h5>
     <div class="filter d-flex flex-0-0-auto">
-        <app-date-range-picker-filter class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)" opens="right"></app-date-range-picker-filter>
+        <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)" opens="right"></app-date-range-picker-filter>
         <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
         <button class="btn btn-primary" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
@@ -27,7 +27,7 @@
         <!-- excel -->
         <kendo-grid-excel fileName="baocaodoanhthu.xlsx" [fetchData]="allData"></kendo-grid-excel>
         <div *kendoGridDetailTemplate="let dataItem">
-            <app-account-invoice-report-revenue-detail [parent]="dataItem" [parentFilter]="filter"></app-account-invoice-report-revenue-detail>
+            <app-account-invoice-report-revenue-detail [parent]="dataItem"></app-account-invoice-report-revenue-detail>
         </div>
     </kendo-grid>
 </div>

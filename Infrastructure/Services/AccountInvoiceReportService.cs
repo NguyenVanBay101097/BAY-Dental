@@ -70,7 +70,10 @@ namespace Infrastructure.Services
             var res = await query.Select(x => new RevenueTimeReportDisplay
             {
                 InvoiceDate = x.Key as DateTime?,
-                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal))
+                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                CompanyId = val.CompanyId,
+                DateFrom = val.DateFrom,
+                DateTo   = val.DateTo
             }).ToListAsync();
 
             res = res.OrderByDescending(z => z.InvoiceDate.Value).ToList();
@@ -91,7 +94,10 @@ namespace Infrastructure.Services
             {
                 ProductId = x.Key.ProductId.Value,
                 ProductName = x.Key.Name,
-                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal))
+                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                DateTo = val.DateTo,
+                DateFrom = val.DateFrom,
+                CompanyId = val.CompanyId
             }).ToListAsync();
 
             return res;
@@ -101,28 +107,37 @@ namespace Infrastructure.Services
         {
             var query = GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
             IQueryable<IGrouping<object, AccountInvoiceReport>> queryRes;
-            if (val.EmployeeGroup)
-            {
-                if (val.EmployeeId.HasValue)
-                {
-                    query = query.Where(x => x.EmployeeId == val.EmployeeId);
-                }
-                queryRes = query.GroupBy(x => new EmployeeAssistantKeyGroup { Id = x.EmployeeId, Name = x.Employee.Name });
-            }
-            else
-            {
-                if (val.EmployeeId.HasValue)
-                {
-                    query = query.Where(x => x.AssistantId == val.EmployeeId);
-                }
-                queryRes = query.GroupBy(x => new EmployeeAssistantKeyGroup { Id = x.AssistantId, Name = x.Assistant.Name });
-            }
 
+            switch (val.GroupBy)
+            {
+                case"employee":
+                    if (val.GroupById.HasValue)
+                    {
+                        query = query.Where(x => x.EmployeeId == val.GroupById);
+                    }
+                    queryRes = query.GroupBy(x => new EmployeeAssistantKeyGroup { Id = x.EmployeeId, Name = x.Employee.Name });
+                    break;
+                case "assistant":
+                    if (val.GroupById.HasValue)
+                    {
+                        query = query.Where(x => x.AssistantId == val.GroupById);
+                    }
+                    queryRes = query.GroupBy(x => new EmployeeAssistantKeyGroup { Id = x.AssistantId, Name = x.Assistant.Name });
+                    break;
+                default:
+                    throw new Exception("Vui lòng chọn trường cần group");
+            }
+           
             var res = await queryRes.Select(x => new RevenueEmployeeReportDisplay
             {
                 EmployeeId = (x.Key as EmployeeAssistantKeyGroup).Id,
                 EmployeeName = (x.Key as EmployeeAssistantKeyGroup).Name,
-                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal))
+                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                GroupBy = val.GroupBy,
+                CompanyId = val.CompanyId,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                ToDetailEmployeeId = (x.Key as EmployeeAssistantKeyGroup).Id ?? Guid.Empty
             }).ToListAsync();
 
             return res;
@@ -135,21 +150,25 @@ namespace Infrastructure.Services
             var res = new List<RevenueReportDetailDisplay>();
             var count = 0;
 
-            if (val.Date.HasValue)
-            {
-                query = query.Where(x => x.InvoiceDate.Value.Date == val.Date.Value.Date);
-            }
-            else if (val.ProductId.HasValue)
+            if (val.ProductId.HasValue)
             {
                 query = query.Where(x => x.ProductId == val.ProductId);
             }
-            else if (val.EmployeeGroup)
+            if (val.EmployeeId.HasValue && val.EmployeeId != Guid.Empty)
             {
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
             }
-            else if (val.AssistantGroup)
+            if (val.EmployeeId.HasValue && val.EmployeeId == Guid.Empty)
+            {
+                query = query.Where(x => x.EmployeeId == null);
+            }
+            if (val.AssistantId.HasValue && val.AssistantId != Guid.Empty)
             {
                 query = query.Where(x => x.AssistantId == val.AssistantId);
+            }
+            if (val.AssistantId.HasValue && val.AssistantId == Guid.Empty)
+            {
+                query = query.Where(x => x.AssistantId == null);
             }
 
             count = await query.CountAsync();

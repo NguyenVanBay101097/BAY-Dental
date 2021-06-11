@@ -71,9 +71,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? TotalPaid { get; set; }
     }
 
-    public class GetSumTotalParam
+    public class GetRevenueSumTotalRes
     {
-        public string Column { get; set; }
+        public decimal AmountTotal { get; set; }
+        public decimal AmountPaid { get; set; }
+        public decimal Residual { get; set; }
+    }
+    public class GetRevenueSumTotalReq
+    {
+        public Guid? CompanyId { get; set; }
     }
 
 }

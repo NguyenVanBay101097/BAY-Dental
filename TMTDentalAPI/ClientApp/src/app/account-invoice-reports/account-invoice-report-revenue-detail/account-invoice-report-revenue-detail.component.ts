@@ -14,8 +14,6 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
 
   filter = new RevenueReportDetailPaged();
   @Input() parent: any;
-  @Input() parentFilter: any;
-  @Input() empFilter = 'EmployeeId';
   gridData: GridDataResult;
   loading = false;
 
@@ -29,17 +27,14 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
   }
 
   initFilterData() {
-    this.filter.dateFrom = this.parentFilter.dateFrom ? moment(this.parentFilter.dateFrom).format('YYYY/MM/DD') : '';
-    this.filter.dateTo = this.parentFilter.dateTo ? moment(this.parentFilter.dateTo).format('YYYY/MM/DD') : '';
-    this.filter.companyId = this.parentFilter.companyId || '';
+    this.filter.dateFrom = this.parent.invoiceDate ? moment(this.parent.invoiceDate).format('YYYY/MM/DD') : ( this.parent.dateFrom ? moment(this.parent.dateFrom).format('YYYY/MM/DD') : '');
+    this.filter.dateTo =   this.parent.invoiceDate ? moment(this.parent.invoiceDate).format('YYYY/MM/DD') : ( this.parent.dateTo ? moment(this.parent.dateTo).format('YYYY/MM/DD') : '');
+    this.filter.companyId = this.parent.companyId || '';
     this.filter.limit = 20;
     this.filter.offset = 0;
-    this.filter.date = this.parent.invoiceDate ?  moment(this.parent.invoiceDate).format('YYYY/MM/DD'): '';
     this.filter.productId = this.parent.productId  || '';
-    this.filter.employeeGroup = this.parentFilter.employeeGroup || false;
-    this.filter.employeeId = this.parent.employeeId || '';
-    this.filter.assistantGroup = !this.parentFilter.employeeGroup ? true : false;
-    this.filter.assistantId = this.parent.employeeId || '';
+    this.filter.employeeId = this.parent.groupBy && this.parent.groupBy == 'employee'? this.parent.toDetailEmployeeId : '';
+    this.filter.assistantId = this.parent.groupBy && this.parent.groupBy == 'assistant'? this.parent.toDetailEmployeeId : '';
   }
 
   loadReport() {

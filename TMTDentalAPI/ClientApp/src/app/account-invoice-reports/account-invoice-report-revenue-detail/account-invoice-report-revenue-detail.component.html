@@ -8,10 +8,9 @@
     </kendo-grid-column>
     <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
     </kendo-grid-column>
-    <kendo-grid-column field="employeeName" title="Bác sĩ/Phụ tá" width="150">
-        <ng-template kendoGridCellTemplate let-dataItem>
-            {{empFilter == 'EmployeeId'? dataItem.employeeName : dataItem.assistantName}}
-        </ng-template>
+    <kendo-grid-column field="employeeName" title="Bác sĩ" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column field="assistantName" title="Phụ tá" width="150">
     </kendo-grid-column>
     <kendo-grid-column field="productName" title="Dịch vụ" width="150">
     </kendo-grid-column>
