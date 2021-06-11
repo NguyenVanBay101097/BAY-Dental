@@ -2998,7 +2998,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SaleOrderRevenueReport>> GetRevenueReport(SaleOrderRevenueReportPaged val)
         {
-            var query = SearchQuery(x => x.State != "cancel");
+            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft");
             if (val.CompanyId.HasValue)
             {
                 query = query.Where(x => x.CompanyId == val.CompanyId);

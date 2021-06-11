@@ -71,7 +71,7 @@ export class SmsTemplateListComponent implements OnInit {
   }
 
   createItem() {
-    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'md', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'md', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm tin nhắn mẫu';
     modalRef.result.then((val) => {
       this.loadDataFromApi();
@@ -79,7 +79,7 @@ export class SmsTemplateListComponent implements OnInit {
   }
 
   editItem(dataItem) {
-    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'md', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'md', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Sửa tin nhắn mẫu";
     modalRef.componentInstance.id = dataItem.id;
     modalRef.componentInstance.templateTypeTab = dataItem.type;
@@ -89,12 +89,12 @@ export class SmsTemplateListComponent implements OnInit {
   }
 
   deleteItem(dataItem) {
-    const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Xóa tin nhắn mẫu";
-    modalRef.componentInstance.body = "Bạn chắc chắn muốn xóa";
+    modalRef.componentInstance.body = "Bạn có muốn xóa tin nhắn mẫu không";
     modalRef.result.then(() => {
       this.smsTemplateService.delete(dataItem.id).subscribe(res => {
-        this.notify("thành công", true);
+        this.notify("Xóa tin nhắn mẫu thành công", true);
         this.loadDataFromApi();
       });
     });
