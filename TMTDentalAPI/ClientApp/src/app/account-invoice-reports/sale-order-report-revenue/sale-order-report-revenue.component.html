@@ -3,20 +3,20 @@
     <div class="total d-flex">
         <div class="border mr-2 px-5 py-2 text-center">
             <label class="mb-0">Tổng điều trị</label>
-            <h5 class="text-info">{{amountTotal | number}}</h5>
+            <h5 class="text-info">{{sumRevenue.amountTotal | number}}</h5>
         </div>
         <div class="border mr-2 px-5 py-2 text-center">
             <label class="mb-0">Tổng thanh toán</label>
-            <h5 class="text-success">{{amountPaid | number}}</h5>
+            <h5 class="text-success">{{sumRevenue.amountPaid | number}}</h5>
         </div>
         <div class="border mr-2 px-5 py-2 text-center">
             <label class="mb-0">Dự kiến thu</label>
-            <h5 class="text-danger">{{residual | number}}</h5>
+            <h5 class="text-danger">{{sumRevenue.residual | number}}</h5>
         </div>
 
     </div>
     <div class="filter d-flex flex-0-0-auto mt-2">
-        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+        <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
         <button class="btn btn-primary" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
             file</button>

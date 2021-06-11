@@ -19,25 +19,36 @@ export class RevenueEmployeeReportPar{
     dateFrom?: any;
     dateTo?: any;
     companyId?: string;
-    employeeGroup: boolean;
-    employeeId: string;
+    groupBy: string;
+    groupById: string;
 }
 
 export class RevenueTimeReportDisplay {
 	invoiceDate?: any;
 	priceSubTotal: number;
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
 }
 
 export class RevenueServiceReportDisplay {
 	productName: string;
 	productId: string;
 	priceSubTotal: number;
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
 }
 
 export class RevenueEmployeeReportDisplay {
 	employeeName: string;
 	employeeId: string;
 	priceSubTotal: number;
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
+    groupBy: string;
+    toDetailEmployeeId: string;
 }
 
 export class RevenueReportDetailPaged{
@@ -46,12 +57,9 @@ export class RevenueReportDetailPaged{
     companyId?: string;
     limit: number;
     offset: number;
-    date?: any;
     productId?: string;
-    employeeGroup: boolean;
-    employeeId: string;
-    assistantGroup: boolean;
-    assistantId: string;
+    employeeId?: string;
+    assistantId?: string;
 }
 
 

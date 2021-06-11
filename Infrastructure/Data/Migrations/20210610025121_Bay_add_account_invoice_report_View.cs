@@ -11,7 +11,7 @@ namespace Infrastructure.Data.Migrations
 CREATE VIEW account_invoice_report
 AS (
 					SELECT aml.Id AS id,
-                    am.InvoiceDate AS InvoiceDate,
+                    am.Date AS InvoiceDate,
                     am.InvoiceOrigin as InvoiceOrigin,
                     aml.ProductId as ProductId,
 					aml.PartnerId as PartnerId,
@@ -47,7 +47,7 @@ AS (
 					and am.Type in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt')
 
 					GROUP BY aml.Id ,
-					 am.InvoiceDate,
+					 am.Date,
 					 am.InvoiceOrigin,
 					 aml.ProductId ,
 					aml.PartnerId  ,

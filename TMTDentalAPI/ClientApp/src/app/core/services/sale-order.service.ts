@@ -69,6 +69,10 @@ export class SaleOrderReportRevenue {
 	totalPaid?: any;
 }
 
+export class GetRevenueSumTotalReq {
+    companyId: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SaleOrderService {
     apiUrl = 'api/SaleOrders';
@@ -240,7 +244,7 @@ export class SaleOrderService {
         return this.http.post<PagedResult2<SaleOrderReportRevenue>>(this.baseApi + this.apiUrl + '/GetRevenueReport', val);
     }
 
-    getSumTotal(val){
-        return this.http.post(this.baseApi + this.apiUrl + '/GetSumTotal', val);
+    getRevenueSumTotal(val: GetRevenueSumTotalReq):any{
+        return this.http.post(this.baseApi + this.apiUrl + '/GetRevenueSumTotal', val);
     }
 }

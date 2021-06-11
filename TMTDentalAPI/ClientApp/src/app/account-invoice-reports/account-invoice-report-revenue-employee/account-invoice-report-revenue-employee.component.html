@@ -3,8 +3,8 @@
     <div class="filter d-flex flex-0-0-auto">
         <app-date-range-picker-filter class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
         <select [(ngModel)]="empFilter" (change)="onChangeEmployeeFilter()" class="form-control w-auto mr-1" aria-label="Default select example">
-          <option value="EmployeeId">Bác sĩ</option>
-          <option value="AssistantId">Phụ tá</option>
+          <option value="employee">Bác sĩ</option>
+          <option value="assistant">Phụ tá</option>
       </select>
         <kendo-combobox class="mr-1 kendo-combobox-sm" [placeholder]="'Tìm nhân viên'" [valueField]="'id'" [textField]="'name'" [filterable]="true" #emp [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
         </kendo-combobox>
@@ -33,7 +33,7 @@
         <!-- excel -->
         <kendo-grid-excel fileName="baocaodoanhthu.xlsx" [fetchData]="allData"></kendo-grid-excel>
         <div *kendoGridDetailTemplate="let dataItem">
-            <app-account-invoice-report-revenue-detail [empFilter]="empFilter" [parent]="dataItem" [parentFilter]="filter"></app-account-invoice-report-revenue-detail>
+            <app-account-invoice-report-revenue-detail [parent]="dataItem"></app-account-invoice-report-revenue-detail>
         </div>
     </kendo-grid>
 </div>

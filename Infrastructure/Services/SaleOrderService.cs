@@ -3017,20 +3017,18 @@ namespace Infrastructure.Services
             return new PagedResult2<SaleOrderRevenueReport>(count, val.Offset, val.Limit) { Items = res };
         }
 
-        public async Task<decimal> GetSumTotal(GetSumTotalParam val)
+        public async Task<GetRevenueSumTotalRes> GetRevenueSumTotal(GetRevenueSumTotalReq val)
         {
-            var query = SearchQuery(x => x.State != "cancel");
-            switch (val.Column)
+            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft");
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+            var res = new GetRevenueSumTotalRes()
             {
-                case "AmountTotal":
-                    return await query.SumAsync(x => x.AmountTotal.Value);
-                case "TotalPaid":
-                    return await query.SumAsync(x => x.TotalPaid.Value);
-                case "Residual":
-                    return await query.SumAsync(x => x.Residual.Value);
-                default:
-                    return 0;
-            }
+                AmountTotal = await query.SumAsync(x => x.AmountTotal.Value),
+                AmountPaid = await query.SumAsync(x => x.TotalPaid.Value),
+                Residual = await query.SumAsync(x => x.Residual.Value)
+            };
+            return res;
         }
     }
 }

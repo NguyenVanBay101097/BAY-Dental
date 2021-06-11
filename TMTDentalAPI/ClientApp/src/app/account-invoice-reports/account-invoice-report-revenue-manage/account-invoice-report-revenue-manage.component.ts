@@ -65,8 +65,8 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
     }
 
     var val = new RevenueReportDetailPaged();
-    val.dateFrom = val.dateFrom ? moment(filter.dateFrom).format('YYYY/MM/DD') : '';
-    val.dateTo = val.dateTo ? moment(filter.dateTo).format('YYYY/MM/DD') : '';
+    val.dateFrom = filter.dateFrom ? moment(filter.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = filter.dateTo ? moment(filter.dateTo).format('YYYY/MM/DD') : '';
     val.companyId = filter.companyId || '';
     val.limit = 0;
 
@@ -74,12 +74,12 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
     // Fetch the data for all details
     for (let idx = 0; idx < data.length; idx++) {
       var dataIndex = data[idx];
-      val.date = dataIndex.date ? moment(dataIndex.date).format('YYYY/MM/DD') : '';
+      val.dateFrom = dataIndex.date ?  moment(dataIndex.date).format('YYYY/MM/DD'): val.dateFrom ;
+      val.dateTo = dataIndex.date ?  moment(dataIndex.date).format('YYYY/MM/DD'): val.dateTo ;
       val.productId = dataIndex.productId || '';
-      val.employeeGroup = filter.employeeGroup || false;
-      val.employeeId = dataIndex.employeeId || '';
-      val.assistantGroup = !filter.employeeGroup ? true : false;
       val.assistantId = dataIndex.employeeId || '';
+      val.employeeId = dataIndex.groupBy && dataIndex.groupBy == 'employee'? dataIndex.toDetailEmployeeId : '';
+      val.assistantId = dataIndex.groupBy && dataIndex.groupBy == 'assistant'? dataIndex.toDetailEmployeeId : '';
       observables.push(this.accInvService.getRevenueReportDetailPaged(val));
     }
 

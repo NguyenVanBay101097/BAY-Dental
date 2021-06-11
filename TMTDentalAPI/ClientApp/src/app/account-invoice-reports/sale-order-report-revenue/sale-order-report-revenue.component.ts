@@ -5,7 +5,7 @@ import { DataResult } from '@progress/kendo-data-query';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
-import { SaleOrderReportRevenuePaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { GetRevenueSumTotalReq, SaleOrderReportRevenuePaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { saveAs } from '@progress/kendo-file-saver';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 
@@ -23,9 +23,11 @@ export class SaleOrderReportRevenueComponent implements OnInit {
   allDataReport: any;
   searchUpdate = new Subject<string>();
 
-  amountTotal = 0;
-   residual= 0;
-  amountPaid = 0;
+  sumRevenue = {
+    amountTotal : 0,
+    amountPaid : 0,
+    residual : 0
+  };
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
 
   constructor(
@@ -40,9 +42,7 @@ export class SaleOrderReportRevenueComponent implements OnInit {
     this.loadReport();
     this.searchChange();
 
-    this.sumTotalAmount();
-    this.sumTotalPaid();
-    this.sumTotalResidual();
+    this.getRevenueSumTotal();
     this.loadCompanies();
     this.FilterCombobox();
   }
@@ -78,6 +78,7 @@ export class SaleOrderReportRevenueComponent implements OnInit {
   onSelectCompany(e){
     this.filter.companyId = e? e.id : null;
     this.loadReport();
+    this.getRevenueSumTotal();
   }
 
   searchChange() {
@@ -92,14 +93,14 @@ export class SaleOrderReportRevenueComponent implements OnInit {
 
 
   initFilterData() {
-    this.filter.companyId = 'all';
+    this.filter.companyId = '';
     this.filter.limit = 20;
     this.filter.offset = 0;
   }
 
   loadReport() {
     var val = Object.assign({}, this.filter);
-    val.companyId = val.companyId == 'all' ? '' : val.companyId;
+    val.companyId = val.companyId || val.companyId;
     this.loading = true;
     this.saleOrderService.getRevenueReport(val).pipe(
       map(res => {
@@ -124,7 +125,7 @@ export class SaleOrderReportRevenueComponent implements OnInit {
 
   public allData = (): any => {
     var val = Object.assign({}, this.filter);
-    val.companyId = val.companyId == 'all' ? '' : val.companyId;
+    val.companyId = val.companyId || val.companyId;
     val.limit = 0;
     val.search = '';
 
@@ -155,23 +156,11 @@ export class SaleOrderReportRevenueComponent implements OnInit {
     grid.saveAsExcel();
   }
 
-  sumTotalAmount() {
-    this.saleOrderService.getSumTotal({ column: 'AmountTotal' }).subscribe((res:any) => {
-      this.amountTotal = res;
-    }
-    );
-  }
-
-  sumTotalPaid() {
-    this.saleOrderService.getSumTotal({ column: 'TotalPaid' }).subscribe((res:any) => {
-      this.amountPaid = res;
-    }
-    );
-  }
-
-  sumTotalResidual() {
-    this.saleOrderService.getSumTotal({ column: 'Residual' }).subscribe((res:any) => {
-      this.residual = res;
+  getRevenueSumTotal() {
+    var val = new GetRevenueSumTotalReq();
+    val.companyId = this.filter.companyId || '';
+    this.saleOrderService.getRevenueSumTotal(val).subscribe((res:any) => {
+      this.sumRevenue = res;
     }
     );
   }

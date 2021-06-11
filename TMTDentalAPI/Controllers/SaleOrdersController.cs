@@ -478,9 +478,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetSumTotal(GetSumTotalParam par) // dự kiến doanh thu
+        public async Task<IActionResult> GetRevenueSumTotal(GetRevenueSumTotalReq val) //Tổng dự kiến doanh thu
         {
-            var res = await _saleOrderService.GetSumTotal(par);
+            var res = await _saleOrderService.GetRevenueSumTotal(val);
             return Ok(res);
         }
     }
