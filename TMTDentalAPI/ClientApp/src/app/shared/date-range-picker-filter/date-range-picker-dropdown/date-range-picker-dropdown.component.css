@@ -355,6 +355,10 @@
     background: none;
 }
 
+.daterangepicker .ranges li.active button {
+    color: #fff;
+}
+
 
 /*  Larger Screen Styling */
 
