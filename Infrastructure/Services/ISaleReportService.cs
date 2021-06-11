@@ -11,6 +11,7 @@ namespace Infrastructure.Services
     {
         Task<IEnumerable<SaleReportTopServicesCs>> GetTopServices(SaleReportTopServicesFilter val);
         Task<IEnumerable<SaleReportItem>> GetReport(SaleReportSearch val);
+        Task<IEnumerable<SaleReportItem>> GetReportForSmsMessage(IEnumerable<Guid> partnerIds);
         Task<IEnumerable<SaleReportItemDetail>> GetReportDetail(SaleReportItem val);
         //Task<IEnumerable<SaleReportPartnerItem>> GetReportPartner(SaleReportPartnerSearch val);
         Task<IEnumerable<SaleReportPartnerItem>> GetReportPartnerV2(SaleReportPartnerSearch val);

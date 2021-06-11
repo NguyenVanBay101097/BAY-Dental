@@ -43,13 +43,10 @@ namespace Infrastructure.Services
             }
         }
 
-
         protected T GetService<T>()
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
         }
-
-
 
         public async Task<IEnumerable<SaleReportTopServicesCs>> GetTopServices(SaleReportTopServicesFilter val)
         {
@@ -520,11 +517,11 @@ namespace Infrastructure.Services
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
 
-            var result = query.Include(x=>x.Partner).AsEnumerable().GroupBy(x => new { PartnerId = x.PartnerId,OrderName = x.Name ,PartnerName  = x.Partner.DisplayName,Date = x.Date })
+            var result = query.Include(x => x.Partner).AsEnumerable().GroupBy(x => new { PartnerId = x.PartnerId, OrderName = x.Name, PartnerName = x.Partner.DisplayName, Date = x.Date })
                 .Select(x => new SaleReportPartnerV3Detail
                 {
                     Date = x.Key.Date,
-                    OrderName =x.Key.OrderName,
+                    OrderName = x.Key.OrderName,
                     PartnerName = x.Key.PartnerName,
                     PartnerId = x.Key.PartnerId.Value,
                     CountLine = x.Count(),
@@ -541,7 +538,7 @@ namespace Infrastructure.Services
                   {
                       WeekOfYear = x.Key.WeekOfYear,
                       Year = x.Key.Year,
-                      TotalNewPartner = x.Where(x => x.Type == "KHM").GroupBy(x=>x.PartnerId).Count(),
+                      TotalNewPartner = x.Where(x => x.Type == "KHM").GroupBy(x => x.PartnerId).Count(),
                       TotalOldPartner = x.Where(x => x.Type == "KHC").GroupBy(x => x.PartnerId).Count(),
                       lines = x.ToList()
                   }).ToList();
@@ -700,6 +697,25 @@ namespace Infrastructure.Services
 
 
             return null;
+        }
+
+        public async Task<IEnumerable<SaleReportItem>> GetReportForSmsMessage(IEnumerable<Guid> partnerIds)
+        {
+            var query = _context.SaleReports.Where(x => x.PartnerId.HasValue && partnerIds.Contains(x.PartnerId.Value)).AsQueryable();
+            var result = await query.GroupBy(x => new
+            {
+                PartnerId = x.PartnerId,
+                PartnerName = x.Partner.Name
+            })
+                  .Select(x => new SaleReportItem
+                  {
+                      PartnerId = x.Key.PartnerId,
+                      Name = x.Key.PartnerName,
+                      ProductUOMQty = x.Sum(s => s.ProductUOMQty),
+                      PriceTotal = x.Sum(s => s.PriceTotal),
+                      CompanyId = CompanyId
+                  }).ToListAsync();
+            return result;
         }
     }
 }
