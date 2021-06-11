@@ -50,7 +50,7 @@ export class DateRangePickerFilterComponent implements OnInit {
   }
 
   open() {
-    this.inputDr.open();
+    // this.inputDr.open();
   }
 
   onApply() {
