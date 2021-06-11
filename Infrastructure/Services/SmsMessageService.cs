@@ -69,11 +69,10 @@ namespace Infrastructure.Services
             if (val.SmsAccountId.HasValue)
                 query = query.Where(x => x.SmsAccountId.HasValue && x.SmsAccountId == val.SmsAccountId.Value);
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.DateCreated.HasValue && val.DateFrom.Value <= x.Date.Value);
+                query = query.Where(x => val.DateFrom.Value <= x.Date.Value);
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.DateCreated.HasValue && val.DateTo.Value >= x.Date.Value);
+                query = query.Where(x => val.DateTo.Value >= x.Date.Value);
             return query;
-            return null;
         }
 
         public async Task<PagedResult2<SmsMessageBasic>> GetPaged(SmsMessagePaged val)
@@ -86,9 +85,11 @@ namespace Infrastructure.Services
                 Date = x.Date,
                 DateCreated = x.DateCreated,
                 Name = x.Name,
-                CountPartner = x.SmsMessagePartnerRels.Count(),
-                BrandName = x.SmsAccountId.HasValue ? x.SmsAccount.BrandName + $" ({x.SmsAccount.Name})" : "",
+                ResCount = x.ResCount.HasValue ? x.ResCount.Value : 0,
+                BrandName = x.SmsAccount != null ? x.SmsAccount.DisplayName : "",
             }).ToListAsync();
+
+
             return new PagedResult2<SmsMessageBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
@@ -99,72 +100,50 @@ namespace Infrastructure.Services
         {
             var entity = _mapper.Map<SmsMessage>(val);
             entity.CompanyId = CompanyId;
-            if (entity.TypeSend == "manual")
-                entity.State = "sending";
-            else
-            {
-                entity.State = "waiting";
-            }
 
-            if (val.IsCareAfterOrder.HasValue && val.IsCareAfterOrder.Value)
+            if (entity.ResModel == "sale-order-line")
             {
-                entity.ResModel = "sale-order-line";
-                if (val.GuidIds.Any())
+                foreach (var id in val.ResIds)
                 {
-                    foreach (var id in val.GuidIds)
+                    entity.SmsMessageSaleOrderLineRels.Add(new SmsMessageSaleOrderLineRel()
                     {
-                        entity.SmsMessageSaleOrderLineRels.Add(new SmsMessageSaleOrderLineRel()
-                        {
-                            SaleOrderLineId = id
-                        });
-                    }
+                        SaleOrderLineId = id
+                    });
                 }
             }
-
-            else if (val.IsThanksCustomer.HasValue && val.IsThanksCustomer.Value)
+            else if (entity.ResModel == "sale-order")
             {
-                entity.ResModel = "sale-order";
-                if (val.GuidIds.Any())
+
+                foreach (var id in val.ResIds)
                 {
-                    foreach (var id in val.GuidIds)
+                    entity.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
                     {
-                        entity.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
-                        {
-                            SaleOrderId = id
-                        });
-                    }
+                        SaleOrderId = id
+                    });
+                }
+
+            }
+            else if (entity.ResModel == "appointment")
+            {
+                foreach (var id in val.ResIds)
+                {
+                    entity.SmsMessageAppointmentRels.Add(new SmsMessageAppointmentRel()
+                    {
+                        AppointmentId = id
+                    });
                 }
             }
-
-            else if (val.IsAppointmentReminder.HasValue && val.IsAppointmentReminder.Value)
+            else if (entity.ResModel == "partner")
             {
-                entity.ResModel = "appointment";
-                if (val.GuidIds.Any())
+                foreach (var id in val.ResIds)
                 {
-                    foreach (var id in val.GuidIds)
+                    entity.SmsMessagePartnerRels.Add(new SmsMessagePartnerRel()
                     {
-                        entity.SmsMessageAppointmentRels.Add(new SmsMessageAppointmentRel()
-                        {
-                            AppointmentId = id
-                        });
-                    }
+                        PartnerId = id
+                    });
                 }
             }
-
-            else
-            {
-                entity.ResModel = "partner";
-                if (val.GuidIds.Any())
-                {
-                    foreach (var id in val.GuidIds)
-                    {
-                        entity.SmsMessagePartnerRels.Add(new SmsMessagePartnerRel()
-                        {
-                            PartnerId = id
-                        });
-                    }
-                }
-            }
+            entity.ResCount = val.ResIds.Count();
             entity = await _messageRepository.InsertAsync(entity);
             return _mapper.Map<SmsMessageDisplay>(entity);
         }
@@ -185,8 +164,9 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task ActionSend(SmsMessage self)
+        public async Task ActionSend(Guid id)
         {
+            var self = await _messageRepository.GetByIdAsync(id);
             IDictionary<Guid, string> dict = null; //noi dung
             IEnumerable<object> objs = null;
             if (self.ResModel == "appointment")
@@ -205,8 +185,8 @@ namespace Infrastructure.Services
                 var saleLinesIds = self.SmsMessageSaleOrderLineRels.Select(x => x.SaleOrderLineId).ToList();
                 objs = await _saleLineRepository.SearchQuery(x => saleLinesIds.Contains(x.Id))
                     .Include(x => x.OrderPartner).ThenInclude(x => x.Title)
-                    .Include(x=>x.Order)
-                    .Include(x=>x.Employee)
+                    .Include(x => x.Order)
+                    .Include(x => x.Employee)
                     .ToListAsync();
 
                 dict = XuLyNoiDungChiTietDieuTri(self.Body, (IEnumerable<SaleOrderLine>)objs);
@@ -402,12 +382,11 @@ namespace Infrastructure.Services
                 entity.SmsCampaignId = campaign.Id;
                 entity.ResModel = "sale-order";
                 entity.Body = config.Body;
-                entity.Date = config.TypeTimeBeforSend == "hour" ? saleOrder.DateDone.Value.AddHours(config.TimeBeforSend) : saleOrder.DateDone.Value.AddDays(config.TimeBeforSend);
+                entity.ScheduleDate = config.TypeTimeBeforSend == "hour" ? saleOrder.DateDone.Value.AddHours(config.TimeBeforSend) : saleOrder.DateDone.Value.AddDays(config.TimeBeforSend);
                 entity.SmsAccountId = config.SmsAccountId;
                 entity.SmsTemplateId = config.TemplateId;
                 entity.CompanyId = config.CompanyId;
-                entity.State = "waiting";
-                entity.TypeSend = "automatic";
+                entity.State = "in_queue";
                 entity.Name = $"Tin nhắn cảm ơn khách hàng ngày {DateTime.Now.ToString("dd-MM-yyyy HH:mm")}";
                 entity.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
                 {
