@@ -14,8 +14,10 @@ namespace Infrastructure.Services
         //Task CreateSettlements(AccountPayment val);
         Task Unlink(IEnumerable<Guid> paymentIds);
 
-        Task<IEnumerable<CommissionSettlementReportOutput>> GetReport(CommissionSettlementReport val);
-        Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementReport val);
+        Task<IEnumerable<CommissionSettlementReportOutput>> GetReport(CommissionSettlementFilterReport val);
+        Task<PagedResult2<CommissionSettlementReportRes>> GetReportPaged(CommissionSettlementFilterReport val);
+        Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementFilterReport val);
+        Task<decimal> GetSumReport(CommissionSettlementFilterReport val);
 
     }
 }

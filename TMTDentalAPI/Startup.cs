@@ -369,6 +369,7 @@ namespace TMTDentalAPI
             services.AddScoped<IToothDiagnosisService, ToothDiagnosisService>();
             services.AddScoped<IAdvisoryService, AdvisoryService>();
             services.AddScoped<IMemberLevelService, MemberLevelService>();
+            services.AddScoped<IExportExcelService, ExportExcelService>();
 
             #region -- Add profile mapper of entity
             Action<IMapperConfigurationExpression> mapperConfigExp = mc =>
