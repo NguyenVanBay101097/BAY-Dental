@@ -18,8 +18,8 @@ AS (
                     aml.JournalId as JournalId,
 					am.InvoiceUserId as InvoiceUserId,
 					aml.CompanyId as CompanyId,
-					aml.EmployeeId,
-					aml.AssistantId,
+					sl.EmployeeId,
+					sl.AssistantId,
                     am.Type as Type,
 					aml.AccountInternalType as AccountInternalType,
 					am.State as State,
@@ -29,6 +29,8 @@ AS (
 
 				 FROM AccountMoveLines aml
                 JOIN AccountMoves am ON am.Id = aml.MoveId
+				LEFT JOIN SaleOrderLineInvoice2Rels smlrel on aml.Id = smlrel.InvoiceLineId
+				LEFT JOIN SaleOrderLines sl on smlrel.OrderLineId = sl.Id
 				JOIN (
 				SELECT id,(CASE
                          WHEN am.Type IN ('in_refund', 'in_invoice')
@@ -55,11 +57,10 @@ AS (
 					am.Type,
 					am.State ,
 					aml.AccountId,
-					aml.EmployeeId,
-					aml.AssistantId,
+					sl.EmployeeId,
+					sl.AssistantId,
 					aml.AccountInternalType
 					)
-
 ");
         }
 

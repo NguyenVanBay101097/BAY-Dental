@@ -1,21 +1,21 @@
 <kendo-grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
-    <kendo-grid-column field="invoiceDate" title="Ngày thanh toán" width="130">
+    <kendo-grid-column field="invoiceDate" title="Ngày thanh toán" width="120">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{dataItem.invoiceDate | date: 'dd/MM/yyyy'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="120">
+    <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="100">
     </kendo-grid-column>
-    <kendo-grid-column field="partnerName" title="Khách hàng" width="120">
+    <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
     </kendo-grid-column>
-    <kendo-grid-column field="employeeName" title="Bác sĩ/Phụ tá" width="120">
+    <kendo-grid-column field="employeeName" title="Bác sĩ/Phụ tá" width="150">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{empFilter == 'EmployeeId'? dataItem.employeeName : dataItem.assistantName}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="productName" title="Dịch vụ" width="120">
+    <kendo-grid-column field="productName" title="Dịch vụ" width="150">
     </kendo-grid-column>
-    <kendo-grid-column class="text-right" field="priceSubTotal" title="Thanh toán" width="120">
+    <kendo-grid-column class="text-right" field="priceSubTotal" title="Thanh toán" width="150">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{dataItem.priceSubTotal | number}}
         </ng-template>
