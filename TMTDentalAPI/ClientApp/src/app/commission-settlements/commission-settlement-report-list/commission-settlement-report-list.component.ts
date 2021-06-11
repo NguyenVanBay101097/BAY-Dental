@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommissionSettlementsService, CommissionSettlementReport, CommissionSettlementReportOutput, CommissionSettlementReportRes } from '../commission-settlements.service';
+import { CommissionSettlementsService, CommissionSettlementReportOutput, CommissionSettlementReportRes, CommissionSettlementFilterReport } from '../commission-settlements.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { EmployeeSimple, EmployeePaged } from 'src/app/employees/employee';
@@ -16,6 +16,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 })
 export class CommissionSettlementReportListComponent implements OnInit {
   reportResults: GridDataResult;
+  search: string = '';
   limit = 20;
   skip = 0;
   loading = false;
@@ -59,11 +60,12 @@ export class CommissionSettlementReportListComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    var val = new CommissionSettlementReport();
+    var val = new CommissionSettlementFilterReport();
     val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : '';
     val.dateTo = this.dateTo ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : '';
     val.limit = this.limit;
     val.offset = this.skip;
+    val.search = this.search || '';
     val.employeeId = this.employeeId ? this.employeeId : '';
     val.commissionType = this.commissionType ? this.commissionType : '';
     this.loading = true;
@@ -124,11 +126,12 @@ export class CommissionSettlementReportListComponent implements OnInit {
   }
 
   exportCommissionExcelFile() {
-    var val = new CommissionSettlementReport();
+    var val = new CommissionSettlementFilterReport();
     val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : '';
     val.dateTo = this.dateTo ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : '';
     val.limit = this.limit;
     val.offset = this.skip;
+    val.search = this.search || '';
     val.employeeId = this.employeeId ? this.employeeId : '';
     val.commissionType = this.commissionType ? this.commissionType : '';
     this.commissionSettlementsService.excelCommissionExport(val).subscribe((res: any) => {

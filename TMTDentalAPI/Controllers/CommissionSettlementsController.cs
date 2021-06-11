@@ -26,7 +26,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.Commission")]
-        public async Task<IActionResult> GetReport(CommissionSettlementReport val)
+        public async Task<IActionResult> GetReport(CommissionSettlementFilterReport val)
         {
             var result = await _commissionSettlementService.GetReport(val);
             return Ok(result);
@@ -34,7 +34,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Report.Commission")]
-        public async Task<IActionResult> GetReportPaged([FromQuery] CommissionSettlementReport val)
+        public async Task<IActionResult> GetReportPaged([FromQuery] CommissionSettlementFilterReport val)
         {
             var result = await _commissionSettlementService.GetReportPaged(val);
             return Ok(result);
@@ -42,7 +42,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.Commission")]
-        public async Task<IActionResult> GetReportDetail(CommissionSettlementDetailReportPar val)
+        public async Task<IActionResult> GetReportDetail(CommissionSettlementFilterReport val)
         {
             var result = await _commissionSettlementService.GetReportDetail(val);
             return Ok(result);
@@ -51,16 +51,17 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.Commission")]
-        public async Task<IActionResult> GetSumReport(CommissionSettlementReport val)
+        public async Task<IActionResult> GetSumReport(CommissionSettlementFilterReport val)
         {
             var result = await _commissionSettlementService.GetSumReport(val);
             return Ok(result);
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> ExportExcel([FromQuery] CommissionSettlementReportExportExcelPar val)
+        public async Task<IActionResult> ExportExcel([FromQuery] CommissionSettlementFilterReport val)
         {
-            var data = await _commissionSettlementService.ExportExcelData(val);
+            val.Limit = int.MaxValue;
+            var data = await _commissionSettlementService.GetReport(val);
             decimal sum = data.Sum(x => x.Amount.Value);
             var listTitle = new List<string>() {
             "Nhân viên",
@@ -83,9 +84,10 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> DetailExportExcel([FromQuery] CommissionSettlementDetailReportExcelPar val)
+        public async Task<IActionResult> DetailExportExcel([FromQuery] CommissionSettlementFilterReport val)
         {
-            var data = await _commissionSettlementService.DetailExportExcelData(val);
+            val.Limit = int.MaxValue;
+            var data = await _commissionSettlementService.GetReportDetail(val);
             var listTitle = new List<string>() {
             "Ngày thanh toán",
             "Nhân viên",
@@ -97,7 +99,7 @@ namespace TMTDentalAPI.Controllers
             "% Hoa hồng",
             "Tiền hoa hồng"
             };
-            var packageByte = await _exportExcelService.createExcel(data, "Hoa hồng chi tiết nhân viên", listTitle) as byte[];
+            var packageByte = await _exportExcelService.createExcel(data.Items, "Hoa hồng chi tiết nhân viên", listTitle) as byte[];
             var package = _exportExcelService.ConverByteArrayTOExcepPackage(packageByte) as ExcelPackage;
             using (package)
             {

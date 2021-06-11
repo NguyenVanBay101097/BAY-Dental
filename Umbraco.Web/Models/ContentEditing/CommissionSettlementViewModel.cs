@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class CommissionSettlementReport
+    public class CommissionSettlementFilterReport
     {
-        public CommissionSettlementReport()
+        public CommissionSettlementFilterReport()
         {
             Limit = 20;
         }
@@ -20,6 +20,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CompanyId { get; set; }
         public string CommissionType { get; set; }
+
+        public string Search { get; set; }
 
         public int Offset { get; set; }
 

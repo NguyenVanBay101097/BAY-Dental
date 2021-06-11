@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { CommissionSettlementReport, CommissionSettlementReportDetailOutput, CommissionSettlementsService, CommissionSettlementReportOutput, CommissionSettlementDetailReportPar } from '../commission-settlements.service';
+import { CommissionSettlementReportDetailOutput, CommissionSettlementsService, CommissionSettlementReportOutput, CommissionSettlementDetailReportPar, CommissionSettlementFilterReport } from '../commission-settlements.service';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -137,11 +137,12 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
   }
 
   exportCommissionExcelFile() { 
-    var val = new CommissionSettlementReport();
+    var val = new CommissionSettlementFilterReport();
     val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : '';
     val.dateTo = this.dateTo ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : '';
     val.limit = this.limit;
     val.offset = this.skip;
+    val.search = this.search || '';
     val.employeeId = this.employeeId ? this.employeeId : '';
     val.commissionType = this.commissionType ? this.commissionType : '';
     this.commissionSettlementsService.excelCommissionDetailExport(val).subscribe((res: any) => {

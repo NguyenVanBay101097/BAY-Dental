@@ -300,25 +300,34 @@ namespace Infrastructure.Services
                 //SalesmanId = self.SalesmanId
             };
 
+            var commObj = GetService<ICommissionService>();
+            var commSetObj = GetService<ICommissionSettlementService>();
+            var productObj = GetService<IProductService>();
             var lineObj = GetService<ISaleOrderLineService>();
+
             var saleOrderLine = await lineObj.SearchQuery(x => x.Id == self.SaleOrderLineId)
                 .Include(x => x.Employee)
                 .Include(x => x.Assistant)
                 .Include(x => x.Counselor)
                 .FirstOrDefaultAsync();
 
-            //tính lợi nhuận hoa hồng
+           
+            //tổng thanh toán 
             var totalPaid = saleOrderLine.AmountPaid + self.Amount;
-            var productObj = GetService<IProductService>();
+
+           //Tổng giá vốn
             var totalStandPrice = (decimal)productObj.GetStandardPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId) * saleOrderLine.ProductUOMQty;
-            var commSetObj = GetService<ICommissionSettlementService>();
+
+            //tính lợi nhuận hoa hồng
             var totalBaseAmount = await commSetObj.SearchQuery(x => x.SaleOrderLineId == self.SaleOrderLineId)
                 .Select(x=> new { x.BaseAmount, x.MoveLineId}).Distinct().SumAsync(x=> x.BaseAmount);
-            var baseAmountCurrent = totalPaid - totalStandPrice - totalBaseAmount > 0? totalPaid - totalStandPrice - totalBaseAmount: 0;
+
+            //Số tiền lợi nhuận hiên tại
+            var baseAmountCurrent = totalPaid - totalStandPrice - totalBaseAmount > 0 ? totalPaid - totalStandPrice - totalBaseAmount: 0;
 
             var today = DateTime.Today;
             //add hoa hồng bác sĩ
-            var commObj = GetService<ICommissionService>();
+        
             if (saleOrderLine.EmployeeId.HasValue && saleOrderLine.Employee.CommissionId.HasValue)
             {
                 var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Employee.CommissionId);

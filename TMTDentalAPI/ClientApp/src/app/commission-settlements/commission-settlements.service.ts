@@ -2,9 +2,10 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
 
-export class CommissionSettlementReport {
+export class CommissionSettlementFilterReport {
   dateFrom: string;
   dateTo: string;
+  search: string;
   employeeId: string;
   companyId: string;
   limit: number;
@@ -58,7 +59,7 @@ export class CommissionSettlementsService {
   apiUrl = "api/CommissionSettlements";
   constructor(private http: HttpClient, @Inject("BASE_API") private baseApi: string) { }
 
-  getReport(val: CommissionSettlementReport): Observable<CommissionSettlementReportOutput[]> {
+  getReport(val: CommissionSettlementFilterReport): Observable<CommissionSettlementReportOutput[]> {
     return this.http.post<CommissionSettlementReportOutput[]>(this.baseApi + this.apiUrl + "/GetReport", val);
   }
 
@@ -75,9 +76,9 @@ export class CommissionSettlementsService {
   }
 
   excelCommissionExport(val) {
-    return this.http.get(this.baseApi + this.apiUrl + '/ExportExcel', { params: val, responseType:'blob' });
+    return this.http.get(this.baseApi + this.apiUrl + '/ExportExcel', { params: val, responseType: 'blob' });
   }
   excelCommissionDetailExport(val) {
-    return this.http.get(this.baseApi + this.apiUrl + '/DetailExportExcel', {params: val , responseType:'blob'});
+    return this.http.get(this.baseApi + this.apiUrl + '/DetailExportExcel', { params: val, responseType: 'blob' });
   }
 }
