@@ -92,7 +92,6 @@ namespace Infrastructure.Services
                     if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
                     {
                         range.Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.ShortDatePattern;
-                        range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
                     }
 
                     //set the decimal format
