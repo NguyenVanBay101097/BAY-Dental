@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, NgForm, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import * as _ from 'lodash';
 import { update } from 'lodash';
 import { forkJoin } from 'rxjs';
 import { PartnerService } from 'src/app/partners/partner.service';
@@ -51,7 +52,7 @@ export class MemberLevelCreateUpdateComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      memberArrayForm: this.fb.array([])
+      memberArrayForm: this.fb.array([], this.customDuplicateValidation)
     })
     this.loadDataFromApi();
   }
@@ -59,16 +60,8 @@ export class MemberLevelCreateUpdateComponent implements OnInit {
   onAddMemberLevel() {
     this.memberArray.push(
       this.fb.group({
-        name: ['',
-          {
-            validators: [Validators.required, this.isNameDup()]
-          }
-        ],
-        point: ['',
-          {
-            validators: [Validators.required, this.isPointDup()]
-          }
-        ],
+        name: ['', Validators.required],
+        point: [null, Validators.required],
         color: '0',
       })
     )
@@ -79,16 +72,8 @@ export class MemberLevelCreateUpdateComponent implements OnInit {
       this.memberArray.clear();
       result.forEach((member) => {
         this.memberArray.push(this.fb.group({
-          name: [member.name,
-          {
-            validators: [Validators.required, this.isNameDup()]
-          }
-          ],
-          point: [member.point,
-          {
-            validators: [Validators.required, this.isPointDup()]
-          }
-          ],
+          name: [member.name, Validators.required],
+          point: [member.point, Validators.required],
           color: member.color,
         }))
       })
@@ -103,7 +88,6 @@ export class MemberLevelCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
-    console.log(this.formGroup);
     this.submitted = true;
 
     if (this.formGroup.invalid) {
@@ -128,25 +112,51 @@ export class MemberLevelCreateUpdateComponent implements OnInit {
     });
   }
 
-  isNameDup() {
-    const validator: ValidatorFn = (formArray: FormArray) => {
-      const names = this.f.map(value => value.get('name').value);
-      const hasDuplicate = names.some(
-        (name, index) => names.indexOf(name, index + 1) != -1
-      );
-      return hasDuplicate ? { duplicate: true } : null;
-    };
-    return validator;
+  customDuplicateValidation(formArray: FormArray) {
+    const listName = _.groupBy(formArray.controls, c => c.get('name').value);
+    const listPoint = _.groupBy(formArray.controls, c => c.get('point').value);
+
+    for (let prop in listName) {
+      if (prop) {
+        if (listName[prop].length > 1) {
+          _.forEach(listName[prop], function (item) {
+            item.setErrors({ 'duplicateName': true })
+          })
+        }
+        else {
+          _.forEach(listName[prop], function (item) {
+            item.setErrors(null)
+
+          })
+        }
+      }
+    }
+
+    for (let prop in listPoint) {
+        if (listPoint[prop].length > 1) {
+          _.forEach(listPoint[prop], function (item) {
+            if (item.value.point != null && item.value.point >=0) {
+              if (item.hasError('duplicateName')) {
+                item.setErrors({ 'duplicateName': true, 'duplicatePoint': true })
+              } else {
+                item.setErrors({ 'duplicatePoint': true });
+              }
+            }
+          })
+        }
+        else {
+          _.forEach(listPoint[prop], function (item) {
+            if (item.hasError('duplicateName')) {
+              item.setErrors({ 'duplicateName': true, 'duplicatePoint': false })
+            } else {
+              item.setErrors(null);
+            }
+
+          })
+        }
+    }
+
+    return null;
   }
 
-  isPointDup() {
-    const validator: ValidatorFn = (formArray: FormArray) => {
-      const names = this.f.map(value => value.get('point').value);
-      const hasDuplicate = names.some(
-        (name, index) => names.indexOf(name, index + 1) != -1
-      );
-      return hasDuplicate ? { duplicate: true } : null;
-    };
-    return validator;
-  }
 }

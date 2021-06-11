@@ -47,3 +47,7 @@
 .table-tbody-ver-align-middle tbody > tr > td {
     vertical-align:  top !important;
 }
+
+.table thead th{
+    vertical-align: middle !important;
+}

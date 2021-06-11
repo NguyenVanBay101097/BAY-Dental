@@ -32,9 +32,9 @@
                     class="table table-sm mt-2 table-bordered table-striped  table-tbody-ver-align-middle border-bottom">
                     <thead>
                         <tr>
-                            <th style="width:60px;" class="text-center">STT</th>
-                            <th style="width:400px;" class="text-center">Tên hạng thành viên</th>
-                            <th style="width:400px;" class="text-center">
+                            <th  class="text-center">STT</th>
+                            <th  class="text-center">Tên hạng thành viên</th>
+                            <th  class="text-center">
                                 Điểm tích lũy tối thiểu
                                 <span class="text-primary" placement="top"
                                     ngbTooltip="Số điểm tích lũy tối thiểu để đạt hạng thành viên này. Với tỷ lệ quy đổi là 10.000đ thực thu tương ứng với 1 điểm tích lũy.">
@@ -42,16 +42,16 @@
                                 </span>
                             </th>
                             <th class="text-center">Màu sắc</th>
-                            <th class="text-center" style="width:100px;"></th>
+                            <th class="text-center"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let member of memberArray.controls; let i = index" formArrayName="memberArrayForm">
                             <ng-container [formGroupName]="i">
-                                <td class="text-right" style="width:60px;">
+                                <td class="text-right" width="60">
                                     {{i + 1}}
                                 </td>
-                                <td style="width:400px;">
+                                <td width="300">
                                     <input type="text" class="form-control" formControlName="name">
 
                                     <div *ngIf="f[i].get('name').errors && (f[i].get('name').touched || f[i].get('name').dirty || submitted)"
@@ -59,13 +59,11 @@
                                         <div *ngIf="f[i].get('name').errors.required">Nhập tên hạng thành viên
                                         </div>
                                     </div>
-                                    <div *ngIf="f[i].get('name').errors?.duplicate && !f[i].get('name').errors.required"
-                                        class="text-danger">
-                                        <span>Trùng tên hạng thành viên khác
-                                        </span>
+                                    <div *ngIf="f[i].errors?.duplicateName" class="text-danger">
+                                        <span>Trùng tên hạng thành viên khác </span>
                                     </div>
                                 </td>
-                                <td style="width:400px;">
+                                <td width="300">
                                     <kendo-numerictextbox class="form-control" [min]="0" [autoCorrect]="true"
                                         formControlName="point" [format]="'n0'" [spinners]="false">
                                     </kendo-numerictextbox>
@@ -75,27 +73,25 @@
                                         <div *ngIf="member.get('point').errors.required">Nhập điểm tích lũy tối thiểu
                                         </div>
                                     </div>
-                                    <div *ngIf="f[i].get('point').errors?.duplicate && !f[i].get('point').errors.required"
-                                        class="text-danger">
-                                        <span>Trùng điểm hạng thành viên khác
-                                        </span>
+                                    <div *ngIf="f[i].errors?.duplicatePoint" class="text-danger">
+                                        <span>Trùng điểm hạng thành viên khác </span>
                                     </div>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center" width="600">
                                     <div>
                                         <ng-container *ngFor="let color of memberColors; let t = index">
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input d-none" type="radio"
                                                     formControlName="color" [id]="'color-' + i + '-' + t"
                                                     [value]="color.id">
-                                                <label class="form-check-label check-label ml-2"
+                                                <label class="form-check-label check-label"
                                                     [ngClass]="'o_tag_color_' + color.id"
                                                     [for]="'color-' + i + '-' + t"></label>
                                             </div>
                                         </ng-container>
                                     </div>
                                 </td>
-                                <td class="text-center" style="width:100px;">
+                                <td class="text-center" width="80">
                                     <i class="fas fa-trash-alt" style="font-size: 24px;"
                                         (click)="onDeleteMemberLevel(i)"></i>
                                 </td>

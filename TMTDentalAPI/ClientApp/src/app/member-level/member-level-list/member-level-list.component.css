@@ -18,3 +18,7 @@
     height: 30px;
     border-radius: 4px;
 }
+
+.table thead th{
+    vertical-align: middle !important;
+}
