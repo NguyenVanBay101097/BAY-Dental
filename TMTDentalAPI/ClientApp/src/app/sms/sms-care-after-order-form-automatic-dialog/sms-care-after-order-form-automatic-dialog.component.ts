@@ -232,9 +232,13 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       )
     }
     if (this.isTemplateCopy && val.templateName != '') {
+      var template = {
+        text: val.body,
+        templateType: 'text'
+      }
       var valueTemplate = {
         name: val.templateName,
-        body: val.body,
+        body: JSON.stringify(template),
         type: "saleOrderLine"
       }
       this.smsTemplateService.create(valueTemplate).subscribe(

@@ -26,11 +26,11 @@ export class SmsTemplateCrUpComponent implements OnInit {
     templateType: 'text'
   };
   listTemplates = [
-    { name: 'Khách hàng', value: 'partner' },
-    { name: 'Lịch hẹn', value: 'appointment' },
-    { name: 'Chi tiết điều trị', value: 'saleOrderLine' },
-    { name: 'Phiếu điều trị', value: 'saleOrder' },
-    { name: 'Chiến dịch', value: 'partnerCampaign' },
+    { name: 'Chúc mừng sinh nhật', value: 'partner' },
+    { name: 'Nhắc lịch hẹn', value: 'appointment' },
+    { name: 'Chăm sóc sau điều trị', value: 'saleOrderLine' },
+    { name: 'Cảm ơn', value: 'saleOrder' },
+    { name: 'Chiến dịch khác', value: 'partnerCampaign' },
   ]
   constructor(
     public activeModal: NgbActiveModal,
@@ -44,8 +44,9 @@ export class SmsTemplateCrUpComponent implements OnInit {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       body: [this.template, Validators.required],
-      type: ['', Validators.required]
+      type: [this.listTemplates[0].value, Validators.required]
     })
+    this.templateTypeTab = this.listTemplates[0].value;
     setTimeout(() => {
       if (this.id) {
         this.loadDataFromApi();
