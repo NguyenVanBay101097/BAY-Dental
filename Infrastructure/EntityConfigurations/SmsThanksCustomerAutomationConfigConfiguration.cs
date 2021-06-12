@@ -7,13 +7,13 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    public class SmsConfigConfiguration : IEntityTypeConfiguration<SmsConfig>
+    class SmsThanksCustomerAutomationConfigConfiguration : IEntityTypeConfiguration<SmsThanksCustomerAutomationConfig>
     {
-        public void Configure(EntityTypeBuilder<SmsConfig> builder)
+        public void Configure(EntityTypeBuilder<SmsThanksCustomerAutomationConfig> builder)
         {
             builder.HasOne(x => x.CreatedBy)
-                 .WithMany()
-                 .HasForeignKey(x => x.CreatedById);
+                .WithMany()
+                .HasForeignKey(x => x.CreatedById);
 
             builder.HasOne(x => x.WriteBy)
                 .WithMany()

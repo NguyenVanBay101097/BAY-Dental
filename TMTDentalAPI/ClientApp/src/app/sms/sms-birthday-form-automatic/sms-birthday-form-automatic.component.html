@@ -12,7 +12,7 @@
                             </td>
                             <td colspan="1" class="o_td_label" style="width: 80%;">
                                 <label class="switch">
-                                    <input type="checkbox" formControlName="isBirthdayAutomation">
+                                    <input type="checkbox" formControlName="active">
                                     <span class="slider round"></span>
                                 </label>
                             </td>
@@ -58,7 +58,7 @@
                                             </label>
                                         </td>
                                         <td colspan="1" class="d-flex align-items-center tr-send" style="width: 100%;">
-                                            <select formControlName="timeBeforSend" class="form-control mt-2 mb-2"
+                                            <select formControlName="dayBeforeSend" class="form-control mt-2 mb-2"
                                                 style="width:197px;">
                                                 <option class="form-control" value="0">0 ngày</option>
                                                 <option class="form-control" value="1">1 ngày</option>
@@ -77,7 +77,7 @@
                                             </label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <kendo-timepicker formControlName="dateTimeSend"></kendo-timepicker>
+                                            <kendo-timepicker formControlName="scheduleTime"></kendo-timepicker>
                                         </td>
                                     </tr>
                                 </table>

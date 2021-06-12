@@ -276,8 +276,8 @@ namespace Infrastructure.Data
         public DbSet<PrintPaperSize> PrintPaperSizes { get; set; }
 
         public DbSet<MemberLevel> MemberLevels { get; set; }
-        public DbSet<SaleCouponProgramMemberLevelRel> SaleCouponProgramMemberLevelRels {get; set;}
-        public DbSet<AccountFinancialRevenueReport> AccountFinancialRevenueReports  {get; set; }
+        public DbSet<SaleCouponProgramMemberLevelRel> SaleCouponProgramMemberLevelRels { get; set; }
+        public DbSet<AccountFinancialRevenueReport> AccountFinancialRevenueReports { get; set; }
         public DbSet<AccountFinancialRevenueReportAccountAccountRel> AccountFinancialRevenueReportAccountAccountRels { get; set; }
         public DbSet<AccountFinancialRevenueReportAccountAccountTypeRel> AccountFinancialRevenueReportAccountAccountTypeRels { get; set; }
 
@@ -286,7 +286,6 @@ namespace Infrastructure.Data
         /// </summary>
         public DbSet<SmsAccount> SmsAccounts { get; set; }
         public DbSet<SmsComposer> SmsComposers { get; set; }
-        public DbSet<SmsConfig> SmsConfigs { get; set; }
         public DbSet<SmsMessageDetail> SmsMessageDetails { get; set; }
         public DbSet<SmsTemplate> SmsTemplates { get; set; }
         public DbSet<SmsMessage> SmsMessages { get; set; }
@@ -296,6 +295,11 @@ namespace Infrastructure.Data
         public DbSet<SmsMessageSaleOrderLineRel> SmsMessageSaleOrderLineRels { get; set; }
         public DbSet<SmsConfigProductCategoryRel> SmsConfigProductCategoryRels { get; set; }
         public DbSet<SmsConfigProductRel> SmsConfigProductRels { get; set; }
+        public DbSet<SmsBirthdayAutomationConfig> SmsBirthdayAutomationConfigs { get; set; }
+        public DbSet<SmsAppointmentAutomationConfig> SmsAppointmentAutomationConfigs { get; set; }
+        public DbSet<SmsThanksCustomerAutomationConfig> SmsThanksCustomerAutomationConfigs { get; set; }
+        public DbSet<SmsCareAfterOrderAutomationConfig> SmsCareAfterOrderAutomationConfigs { get; set; }
+
 
         public DbSet<Agent> Agents { get; set; }
 
@@ -523,7 +527,6 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SaleCouponProgramMemberLevelRelConfiguration());
 
             builder.ApplyConfiguration(new SmsAccountConfiguration());
-            builder.ApplyConfiguration(new SmsConfigConfiguration());
             builder.ApplyConfiguration(new SmsComposerConfiguration());
             builder.ApplyConfiguration(new SmsMessageDetailConfiguration());
             builder.ApplyConfiguration(new SmsTemplateConfiguration());
@@ -534,6 +537,10 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SmsMessageSaleOrderRelConfiguration());
             builder.ApplyConfiguration(new SmsConfigProductRelConfiguration());
             builder.ApplyConfiguration(new SmsConfigProductCategoryRelConfiguration());
+            builder.ApplyConfiguration(new SmsBirthdayAutomationConfigConfiguration());
+            builder.ApplyConfiguration(new SmsAppointmentAutomationConfigConfiguration());
+            builder.ApplyConfiguration(new SmsThanksCustomerAutomationConfigConfiguration());
+            builder.ApplyConfiguration(new SmsCareAfterOrderAutomationConfigConfiguration());
 
 
             builder.ApplyConfiguration(new AccountFinancialRevenueReportConfiguration());

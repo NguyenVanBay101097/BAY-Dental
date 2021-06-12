@@ -10,6 +10,7 @@ import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
+import { SmsThanksCustomerAutomationConfigService } from '../sms-thanks-customer-automation-config.service';
 
 @Component({
   selector: 'app-sms-thanks-form-automatic',
@@ -25,6 +26,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   filteredSmsAccount: any[];
   id: string;
   type: string;
+  companyId: string;
   filteredTemplate: any[];
   textareaLimit: number = 200;
   template: any =
@@ -41,24 +43,27 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     private fb: FormBuilder,
     private modalService: NgbModal,
     private smsTemplateService: SmsTemplateService,
-    private smsConfigService: SmsConfigService,
+    private smsConfigService: SmsThanksCustomerAutomationConfigService,
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
     private notificationService: NotificationService,
-    private smsCampaignService:SmsCampaignService
+    private smsCampaignService: SmsCampaignService
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       template: null,
       smsAccount: [null, Validators.required],
-      isThanksCustomerAutomation: false,
-      TypeTimeBeforSend: 'hour',
+      active: false,
+      typeTimeBeforSend: 'hour',
       timeBeforSend: [1, Validators.required],
       templateName: '',
-      type: 'sale-order',
-      dateTimeSend: null
     })
+    var user_change_company_vm = localStorage.getItem('user_change_company_vm');
+    if (user_change_company_vm) {
+      var companyInfo = JSON.parse(user_change_company_vm);
+      this.companyId = companyInfo.currentCompany.id;
+    }
     this.loadDataFormApi();
     this.loadSmsTemplate();
     this.loadDefaultCampaignThanksCustomer();
@@ -101,8 +106,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   }
 
   loadDataFormApi() {
-    var type = "sale-order"
-    this.smsConfigService.get(type).subscribe(
+    this.smsConfigService.getByCompany(this.companyId).subscribe(
       (res: any) => {
         if (res) {
           this.id = res.id;
@@ -174,7 +178,9 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.dateSend = this.intlService.formatDate(val.dateTimeSend, "yyyy-MM-ddTHH:mm");
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
+    val.companyId = this.companyId;
     val.templateId = val.template ? val.template.id : null;
+    val.smsCampaignId = this.campaign ? this.campaign.id : null;
     val.body = this.template ? this.template.text : '';
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(

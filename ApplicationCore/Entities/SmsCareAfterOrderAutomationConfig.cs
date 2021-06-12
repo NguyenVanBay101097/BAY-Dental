@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class SmsConfig : BaseEntity
+    public class SmsCareAfterOrderAutomationConfig : BaseEntity
     {
         public string Name { get; set; }
         public Guid? CompanyId { get; set; }
@@ -16,7 +16,7 @@ namespace ApplicationCore.Entities
         public Guid? SmsCampaignId { get; set; }
         public SmsCampaign SmsCampaign { get; set; }
 
-        public DateTime? DateSend { get; set; }
+        public DateTime? ScheduleTime { get; set; }
 
         public string Body { get; set; }
 
@@ -24,12 +24,7 @@ namespace ApplicationCore.Entities
 
         public string TypeTimeBeforSend { get; set; }
 
-        public bool IsBirthdayAutomation { get; set; }
-        public bool IsAppointmentAutomation { get; set; }
-        public bool IsCareAfterOrderAutomation { get; set; }
-        public bool IsThanksCustomerAutomation { get; set; }
-
-        public string Type { get; set; }
+        public bool Active { get; set; }
 
         public Guid? TemplateId { get; set; }
         public SmsTemplate Template { get; set; }

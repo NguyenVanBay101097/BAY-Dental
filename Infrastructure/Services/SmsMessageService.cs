@@ -370,11 +370,11 @@ namespace Infrastructure.Services
 
         public async Task SetupSendSmsOrderAutomatic(Guid orderId)
         {
-            var configObj = GetService<ISmsConfigService>();
+            var configObj = GetService<ISmsThanksCustomerAutomationConfigService>();
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleOrder = await saleOrderObj.SearchQuery(x => x.Id == orderId).FirstOrDefaultAsync();
-            var config = await configObj.SearchQuery(x => x.Type == "sale-order").FirstOrDefaultAsync();
-            if (config != null && config.IsThanksCustomerAutomation && saleOrder.State == "done" && saleOrder.DateDone.HasValue)
+            var config = await configObj.SearchQuery().FirstOrDefaultAsync();
+            if (config != null && config.Active && saleOrder.State == "done" && saleOrder.DateDone.HasValue)
             {
                 var entity = new SmsMessage();
                 var smsCampaignObj = GetService<ISmsCampaignService>();

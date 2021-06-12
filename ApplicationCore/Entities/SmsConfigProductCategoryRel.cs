@@ -7,7 +7,7 @@ namespace ApplicationCore.Entities
     public class SmsConfigProductCategoryRel
     {
         public Guid SmsConfigId { get; set; }
-        public SmsConfig SmsConfig { get; set; }
+        public SmsCareAfterOrderAutomationConfig SmsConfig { get; set; }
         public Guid ProductCategoryId { get; set; }
         public ProductCategory ProductCategory { get; set; }
     }

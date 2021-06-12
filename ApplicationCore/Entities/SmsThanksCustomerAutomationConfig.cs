@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class SmsAppointmentAutomationConfig : BaseEntity
+    public class SmsThanksCustomerAutomationConfig : BaseEntity
     {
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
@@ -15,15 +15,16 @@ namespace ApplicationCore.Entities
         public Guid? SmsCampaignId { get; set; }
         public SmsCampaign SmsCampaign { get; set; }
 
-        /// <summary>
-        /// Thời gian gửi tin trước lịch hẹn
-        /// </summary>
+        public string Body { get; set; }
+
         public int TimeBeforSend { get; set; }
 
         public string TypeTimeBeforSend { get; set; }
-        public string Body { get; set; }
+
         public bool Active { get; set; }
+
         public Guid? TemplateId { get; set; }
         public SmsTemplate Template { get; set; }
+
     }
 }

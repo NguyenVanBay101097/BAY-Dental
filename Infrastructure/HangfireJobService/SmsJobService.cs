@@ -32,7 +32,7 @@ namespace Infrastructure.HangfireJobService
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var config = await context.SmsConfigs.Where(x => x.Id == configId).FirstOrDefaultAsync();
+                var config = await context.SmsAppointmentAutomationConfigs.Where(x => x.Id == configId && x.Active == true).FirstOrDefaultAsync();
                 if (config.TemplateId.HasValue)
                     config.Template = await context.SmsTemplates.Where(x => x.Id == config.TemplateId.Value).FirstOrDefaultAsync();
                 var now = DateTime.Now;
@@ -67,7 +67,7 @@ namespace Infrastructure.HangfireJobService
                         smsMessage.Body = config.Body;
                         smsMessage.State = "draft";
                         smsMessage.ResModel = "appointment";
-                        smsMessage.ScheduleDate = config.DateSend;
+                        smsMessage.ScheduleDate = DateTime.Now;
                         context.SmsMessages.Add(smsMessage);
                         await context.SaveChangesAsync();
                         foreach (var app in listAppointments)
@@ -103,11 +103,11 @@ namespace Infrastructure.HangfireJobService
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var config = await context.SmsConfigs.Where(x => x.Id == configId).FirstOrDefaultAsync();
+                var config = await context.SmsBirthdayAutomationConfigs.Where(x => x.Id == configId && x.Active == true).FirstOrDefaultAsync();
                 if (config.TemplateId.HasValue)
                     config.Template = await context.SmsTemplates.Where(x => x.Id == config.TemplateId.Value).FirstOrDefaultAsync();
 
-                var dayNow = DateTime.Today.AddDays(-config.TimeBeforSend).Day;
+                var dayNow = DateTime.Today.AddDays(-config.DayBeforeSend).Day;
                 var MonthNow = DateTime.Today.Month;
                 var queryPartner = context.Partners.AsQueryable();
                 var partners = await queryPartner.Where(x =>
@@ -134,7 +134,7 @@ namespace Infrastructure.HangfireJobService
                     smsMessage.Body = config.Body;
                     smsMessage.State = "draft";
                     smsMessage.ResModel = "partner";
-                    smsMessage.ScheduleDate = config.DateSend;
+                    smsMessage.ScheduleDate = config.ScheduleTime;
                     context.SmsMessages.Add(smsMessage);
                     await context.SaveChangesAsync();
                     foreach (var item in partners)
@@ -165,8 +165,8 @@ namespace Infrastructure.HangfireJobService
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var config = await context.SmsConfigs
-                    .Where(x => x.Id == configId && x.IsCareAfterOrderAutomation == true)
+                var config = await context.SmsCareAfterOrderAutomationConfigs
+                    .Where(x => x.Id == configId && x.Active == true)
                     .Include(x => x.SmsConfigProductCategoryRels)
                     .Include(x => x.SmsConfigProductRels)
                     .FirstOrDefaultAsync();
@@ -213,7 +213,7 @@ namespace Infrastructure.HangfireJobService
                         smsMessage.Body = config.Body;
                         smsMessage.State = "draft";
                         smsMessage.ResModel = "sale-order-line";
-                        smsMessage.ScheduleDate = config.DateSend;
+                        smsMessage.ScheduleDate = config.ScheduleTime;
                         context.SmsMessages.Add(smsMessage);
                         await context.SaveChangesAsync();
                         foreach (var line in lines)

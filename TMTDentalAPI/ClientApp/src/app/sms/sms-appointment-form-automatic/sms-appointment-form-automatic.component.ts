@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
+import { SmsAppointmentAutomationConfigService } from '../sms-appointment-automation-config.service';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
@@ -30,6 +31,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
   limit: number = 20;
   type: string;
   filteredTemplate: any[];
+  companyId: string;
   textareaLimit: number = 200;
   template: any = {
     text: '',
@@ -43,7 +45,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     private fb: FormBuilder,
     private modalService: NgbModal,
     private smsTemplateService: SmsTemplateService,
-    private smsConfigService: SmsConfigService,
+    private smsConfigService: SmsAppointmentAutomationConfigService,
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
     private notificationService: NotificationService,
@@ -54,12 +56,16 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     this.formGroup = this.fb.group({
       template: null,
       smsAccount: [null, Validators.required],
-      isAppointmentAutomation: false,
+      active: false,
       TypeTimeBeforSend: 'hour',
       timeBeforSend: [1, Validators.required],
       templateName: '',
-      type: 'appointment',
     })
+    var user_change_company_vm = localStorage.getItem('user_change_company_vm');
+    if (user_change_company_vm) {
+      var companyInfo = JSON.parse(user_change_company_vm);
+      this.companyId = companyInfo.currentCompany.id;
+    }
     this.loadDataFormApi();
     this.loadSmsTemplate();
     this.loadDefaultCampaignAppointmentReminder();
@@ -103,8 +109,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
   }
 
   loadDataFormApi() {
-    var type = "appointment"
-    this.smsConfigService.get(type).subscribe(
+    this.smsConfigService.getByCompany(this.companyId).subscribe(
       (res: any) => {
         if (res) {
           this.id = res.id;
@@ -177,7 +182,8 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     val.dateSend = this.intlService.formatDate(val.dateTimeSend, "yyyy-MM-ddTHH:mm");
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.templateId = val.template ? val.template.id : null;
-    val.campaignId = this.campaign ? this.campaign.id : null;
+    val.companyId = this.companyId;
+    val.smsCampaignId = this.campaign ? this.campaign.id : null;
     val.body = this.template ? this.template.text : '';
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(

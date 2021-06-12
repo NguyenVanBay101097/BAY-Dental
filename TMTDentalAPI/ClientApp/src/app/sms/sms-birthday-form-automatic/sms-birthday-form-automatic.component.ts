@@ -6,7 +6,9 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { validator } from 'fast-json-patch';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
+import { SmsBirthdayAutomationConfigService } from '../sms-birthday-automation-config.service';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
@@ -30,6 +32,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   limit: number = 20;
   type: string;
   filteredTemplate: any[];
+  companyId: string;
   textareaLimit: number = 200;
   campaign: any;
   isTemplateCopy = false;
@@ -43,8 +46,9 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
+    private authService: AuthService,
     private smsTemplateService: SmsTemplateService,
-    private smsConfigService: SmsConfigService,
+    private smsConfigService: SmsBirthdayAutomationConfigService,
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
     private notificationService: NotificationService,
@@ -55,16 +59,21 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     this.formGroup = this.fb.group({
       template: null,
       smsAccount: [null, Validators.required],
-      isBirthdayAutomation: false,
-      dateTimeSend: new Date(),
-      timeBeforSend: 0,
+      active: false,
+      scheduleTime: new Date(),
+      dayBeforeSend: 0,
       templateName: '',
-      type: 'partner',
     })
+    var user_change_company_vm = localStorage.getItem('user_change_company_vm');
+    if (user_change_company_vm) {
+      var companyInfo = JSON.parse(user_change_company_vm);
+      this.companyId = companyInfo.currentCompany.id;
+    }
     this.loadDataFormApi();
-    this.loadSmsTemplate();
     this.loadDefaultCampaignBirthday();
+
     this.loadAccount();
+
     this.smsTemplateCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.smsTemplateCbx.loading = true)),
@@ -93,10 +102,8 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
       })
   }
 
-
   loadDataFormApi() {
-    var type = "partner"
-    this.smsConfigService.get(type).subscribe(
+    this.smsConfigService.getByCompany(this.companyId).subscribe(
       (res: any) => {
         if (res) {
           this.id = res.id;
@@ -178,7 +185,9 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.dateSend = this.intlService.formatDate(val.dateTimeSend, "yyyy-MM-ddTHH:mm");
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
+    val.companyId = this.companyId;
     val.templateId = val.template ? val.template.id : null;
+    val.smsCampaignId = this.campaign ? this.campaign.id : null;
     val.body = this.template ? this.template.text : '';
     if (this.id) {
       this.smsConfigService.update(this.id, val).subscribe(
@@ -209,14 +218,6 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     }
   }
 
-  // addTemplate() {
-  //   const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-  //   modalRef.componentInstance.title = 'Tạo mẫu tin';
-  //   modalRef.componentInstance.templateTypeTab = "birthday";
-  //   modalRef.result.then((val) => {
-  //     this.loadSmsTemplate();
-  //   })
-  // }
   notify(title, isSuccess = true) {
     this.notificationService.show({
       content: title,
