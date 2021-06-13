@@ -116,14 +116,9 @@ namespace Infrastructure.Services
             var query = movelineObj._QueryGet(companyId: companyId, state: "posted", dateFrom: dateFrom,
                dateTo: dateTo);
 
-            query = query.Where(x => x.Account.Code == "5111");
+            query = query.Where(x => x.Account.Code == "5111" && x.Partner.AgentId.HasValue && ids.Contains(x.Partner.AgentId.Value));
 
-            if (ids.Any())
-                query = query.Where(x => x.Partner.AgentId.HasValue && ids.Contains(x.Partner.AgentId.Value));
-
-            var items = await query.Include(x => x.Partner).ToListAsync();
-
-            var incomAgent_dict = items.GroupBy(x => x.Partner.AgentId.Value).Select(x => new
+            var incomAgent_dict = query.GroupBy(x => x.Partner.AgentId.Value).Select(x => new
             {
                 Id = x.Key,
                 Amount = x.Sum(s => (s.PriceSubtotal ?? 0)),

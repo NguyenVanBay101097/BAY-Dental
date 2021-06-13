@@ -379,8 +379,8 @@ namespace Infrastructure.Services
                 ProductUoMId = self.SaleOrderLine.ProductUOMId,
                 Quantity = 1,
                 PriceUnit = self.Amount,
-
-                //SalesmanId = self.SalesmanId
+                EmployeeId = self.SaleOrderLine.EmployeeId,
+                AssistantId = self.SaleOrderLine.AssistantId
             };
 
             var commObj = GetService<ICommissionService>();
