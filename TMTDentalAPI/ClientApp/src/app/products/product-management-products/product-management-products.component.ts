@@ -8,6 +8,7 @@ import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-ca
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PermissionService } from 'src/app/shared/permission.service';
+import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 import { Product } from '../product';
 import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
 import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/product-product-cu-dialog.component';
@@ -52,6 +53,7 @@ export class ProductManagementProductsComponent implements OnInit {
       });
     this.loadProducts();
     this.loadCategories();
+    this.checkPermission();
   }
 
 
