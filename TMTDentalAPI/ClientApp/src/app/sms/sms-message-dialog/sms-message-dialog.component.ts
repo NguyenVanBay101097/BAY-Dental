@@ -238,15 +238,34 @@ export class SmsMessageDialogComponent implements OnInit {
               () => {
                 this.notify("Gửi tin nhắn thành công", true);
                 this.activeModal.close();
+
               }
             )
           } else {
             this.notify("Thêm mới tin nhắn thành công", true);
             this.activeModal.close();
           }
+
+          if (this.isTemplateCopy) {
+            var valueTemplate = {
+              name: val.templateName,
+              body: {
+                text: val.body,
+                templateType: 'text'
+              },
+              type: this.templateTypeTab
+            }
+            this.smsTemplateService.create(valueTemplate).subscribe(
+              () => {
+                this.loadSmsTemplate();
+              }
+            )
+          }
         }
       )
     })
+
+
   }
 
   changeTypeSend(event) {

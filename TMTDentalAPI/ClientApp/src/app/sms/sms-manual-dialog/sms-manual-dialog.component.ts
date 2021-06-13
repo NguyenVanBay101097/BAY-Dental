@@ -195,7 +195,10 @@ export class SmsManualDialogComponent implements OnInit {
           if (this.isTemplateCopy && val.templateName != '') {
             var valueTemplate = {
               name: val.templateName,
-              body: val.body,
+              body: {
+                text: val.body,
+                templateType: 'text'
+              },
               type: this.templateTypeTab
             }
             this.smsTemplateService.create(valueTemplate).subscribe(

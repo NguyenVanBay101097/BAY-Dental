@@ -71,7 +71,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     }
     this.loadDataFormApi();
     this.loadDefaultCampaignBirthday();
-
+    this.loadSmsTemplate();
     this.loadAccount();
 
     this.smsTemplateCbx.filterChange.asObservable().pipe(
