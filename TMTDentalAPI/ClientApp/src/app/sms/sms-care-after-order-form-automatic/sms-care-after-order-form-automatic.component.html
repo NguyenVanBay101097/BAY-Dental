@@ -30,7 +30,7 @@
     <kendo-grid-column field="brandName" title="Brandname"></kendo-grid-column>
     <kendo-grid-column title="Thời điểm gửi tin">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{dataItem.date | date: 'HH:mm'}}
+            {{dataItem.scheduleTime | date: 'HH:mm'}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column title="Thời gian gửi tin">
@@ -51,8 +51,8 @@
     </kendo-grid-column>
     <kendo-grid-column title="Trạng thái">
         <ng-template kendoGridCellTemplate let-dataItem>
-            <span class="text-success" *ngIf="dataItem.isCareAfterOrderAutomation">Kích hoạt</span>
-            <span *ngIf="!dataItem.isCareAfterOrderAutomation">Không kích hoạt</span>
+            <span class="text-success" *ngIf="dataItem.active">Kích hoạt</span>
+            <span *ngIf="!dataItem.active">Không kích hoạt</span>
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="id" width="100">

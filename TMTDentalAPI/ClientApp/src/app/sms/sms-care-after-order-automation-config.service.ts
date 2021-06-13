@@ -21,10 +21,6 @@ export class SmsCareAfterOrderAutomationConfigService {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
   }
 
-  get(type: string) {
-    return this.http.get(this.base_api + this.apiUrl, { params: new HttpParams().set('type', type) });
-  }
-
   getPaged(val: any) {
     return this.http.post(this.base_api + this.apiUrl + '/GetPaged', val);
   }

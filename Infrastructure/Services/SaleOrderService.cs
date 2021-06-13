@@ -393,6 +393,8 @@ namespace Infrastructure.Services
         public async Task ActionDone(IEnumerable<Guid> ids)
         {
             var cardObj = GetService<ICardCardService>();
+            var configObj = GetService<ISmsThanksCustomerAutomationConfigService>();
+            var smsMessageObj = GetService<ISmsMessageService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines).Include(x => x.Card).Include(x => x.Card.Type)
                 .ToListAsync();
@@ -409,6 +411,30 @@ namespace Infrastructure.Services
                 sale.State = "done";
                 sale.DateDone = DateTime.Now;
 
+                var config = await configObj.SearchQuery(x => x.CompanyId == sale.CompanyId).FirstOrDefaultAsync();
+                if (config != null && config.Active && sale.State == "done" && sale.DateDone.HasValue)
+                {
+                    var smsMessage = new SmsMessage();
+                    var smsCampaignObj = GetService<ISmsCampaignService>();
+                    var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
+                    smsMessage.SmsCampaignId = campaign.Id;
+                    smsMessage.ResModel = "sale-order";
+                    smsMessage.Body = config.Body;
+                    smsMessage.ScheduleDate = config.TypeTimeBeforSend == "hour" ? sale.DateDone.Value.AddHours(config.TimeBeforSend) : sale.DateDone.Value.AddDays(config.TimeBeforSend);
+                    smsMessage.SmsAccountId = config.SmsAccountId;
+                    smsMessage.SmsTemplateId = config.TemplateId;
+                    smsMessage.CompanyId = config.CompanyId;
+                    smsMessage.State = "in_queue";
+                    smsMessage.Name = $"Tin nhắn cảm ơn khách hàng ngày {DateTime.Now.ToString("dd-MM-yyyy HH:mm")}";
+                    smsMessage.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
+                    {
+                        SaleOrderId = sale.Id
+                    });
+                    smsMessage.CompanyId = CompanyId;
+
+                    await smsMessageObj.CreateAsync(smsMessage);
+                }
+
                 var card = await cardObj.GetValidCard(sale.PartnerId);
                 if (card == null)
                     continue;
@@ -420,6 +446,8 @@ namespace Infrastructure.Services
                 await cardObj._CheckUpgrade(new List<CardCard>() { card });
 
                 //tạo 1 message chờ gửi
+                
+
             }
 
             await UpdateAsync(self);

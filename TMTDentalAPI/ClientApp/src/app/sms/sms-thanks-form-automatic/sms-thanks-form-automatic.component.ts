@@ -176,7 +176,6 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     if (!this.template.text) return;
     var val = this.formGroup.value;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
-    val.dateSend = this.intlService.formatDate(val.dateTimeSend, "yyyy-MM-ddTHH:mm");
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.companyId = this.companyId;
     val.templateId = val.template ? val.template.id : null;

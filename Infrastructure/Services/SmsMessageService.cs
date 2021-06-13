@@ -238,7 +238,7 @@ namespace Infrastructure.Services
 
             await ActionSendSmsMessageDetail(details, account);
 
-            self.State = "success";
+            self.State = "done";
             self.Date = DateTime.Now;
             await _messageRepository.UpdateAsync(self);
 
@@ -423,6 +423,12 @@ namespace Infrastructure.Services
         public async Task<SmsMessage> GetByIdAsync(Guid id)
         {
             var entity = await _messageRepository.GetByIdAsync(id);
+            return entity;
+        }
+
+        public async Task<SmsMessage> CreateAsync(SmsMessage entity)
+        {
+            entity = await _messageRepository.InsertAsync(entity);
             return entity;
         }
 

@@ -34,24 +34,7 @@ namespace TMTDentalAPI.Controllers
             _tenant = tenant?.Value;
         }
 
-        [HttpGet("[action]")]
-        public IActionResult ActionStartJobAutomatic()
-        {
-            var hostName = _tenant != null ? _tenant.Hostname : "localhost";
-            var jobId = $"{hostName}_Send_Sms_message_detail";
-            RecurringJob.AddOrUpdate<ISmsMessageJobService>(jobId, x => x.RunJobFindSmsMessage(hostName, CompanyId), $"*/30 * * * *", TimeZoneInfo.Local);
-            
-            return NoContent();
-        }
-
-        [HttpGet("[action]")]
-        public IActionResult ActionStopJobAutomatic()
-        {
-            var hostName = _tenant != null ? _tenant.Hostname : "localhost";
-            var jobId = $"{hostName}_Send_Sms_message_detail";
-            RecurringJob.RemoveIfExists(jobId);
-            return NoContent();
-        }
+       
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SMS.Campaign.Read")]

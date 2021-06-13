@@ -21,7 +21,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Body { get; set; }
 
-        public Guid? CampaignId { get; set; }
+        public Guid? SmsCampaignId { get; set; }
 
         public IEnumerable<Guid> ProductIds { get; set; } = new List<Guid>();
         public IEnumerable<Guid> ProductCategoryIds { get; set; } = new List<Guid>();

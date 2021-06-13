@@ -18,7 +18,7 @@
                                 </td>
                                 <td colspan="1" class="o_td_label" style="width: 80%;">
                                     <label class="switch">
-                                        <input type="checkbox" formControlName="isCareAfterOrderAutomation">
+                                        <input type="checkbox" formControlName="active">
                                         <span class="slider round"></span>
                                     </label>
                                 </td>
@@ -37,7 +37,8 @@
                                             </td>
                                             <td colspan="1" style="width: 80%;">
                                                 <input class="form-control" formControlName="name" />
-                                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                                    class="text-danger">
                                                     <div *ngIf="f.name.errors.required">Nhập tên tin nhắn</div>
                                                 </div>
                                             </td>
@@ -49,8 +50,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <input type="text" [attr.disabled]="true"
-                                                    [value]="campaign?.name" class="mt-2 form-control">
+                                                <input type="text" [attr.disabled]="true" [value]="campaign?.name"
+                                                    class="mt-2 form-control">
                                             </td>
                                         </tr>
                                         <tr>
@@ -60,9 +61,10 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus class="mb-2 mt-2"
-                                                    [textField]="'brandName'" formControlName="smsAccount"
-                                                    [filterable]="true" #smsAccountCbx [valueField]="'id'">
+                                                <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
+                                                    class="mb-2 mt-2" [textField]="'brandName'"
+                                                    formControlName="smsAccount" [filterable]="true" #smsAccountCbx
+                                                    [valueField]="'id'">
                                                     <ng-template kendoComboBoxItemTemplate let-dataItem>
                                                         <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
                                                     </ng-template>
@@ -95,7 +97,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-timepicker formControlName="dateTimeSend" class="mt-2"></kendo-timepicker>
+                                                <kendo-timepicker formControlName="scheduleTimeObj" class="mt-2">
+                                                </kendo-timepicker>
                                             </td>
                                         </tr>
                                     </table>
@@ -132,7 +135,8 @@
                                                 [placeholder]="'Chọn nhóm dịch vụ'" [valueField]="'id'"
                                                 formControlName="productCategories">
                                             </kendo-multiselect>
-                                            <div *ngIf="f.productCategories.errors && (f.productCategories.touched || f.productCategories.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.productCategories.errors && (f.productCategories.touched || f.productCategories.dirty || submitted)"
+                                                class="text-danger">
                                                 <div *ngIf="f.productCategories.errors.required">Chọn nhóm dịch vụ</div>
                                             </div>
                                         </div>
@@ -142,7 +146,8 @@
                                                 [placeholder]="'Chọn dịch vụ'" [textField]="'name'" [valueField]="'id'"
                                                 formControlName="products">
                                             </kendo-multiselect>
-                                            <div *ngIf="f.products.errors && (f.products.touched || f.products.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.products.errors && (f.products.touched || f.products.dirty || submitted)"
+                                                class="text-danger">
                                                 <div *ngIf="f.products.errors.required">Chọn dịch vụ</div>
                                             </div>
                                         </div>
@@ -193,7 +198,8 @@
                                                 </div>
                                             </td>
                                             <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                                <input type="text" class="form-control mt-2" formControlName="templateName">
+                                                <input type="text" class="form-control mt-2"
+                                                    formControlName="templateName">
                                                 <span class="text-danger"
                                                     *ngIf="formGroup.controls.templateName.value==''">
                                                     Nhập tiêu đề tin nhắn mẫu

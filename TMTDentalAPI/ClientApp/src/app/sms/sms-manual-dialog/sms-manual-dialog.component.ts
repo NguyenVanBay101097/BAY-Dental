@@ -26,14 +26,13 @@ export class SmsManualDialogComponent implements OnInit {
   filteredTemplate: any[];
   filteredSmsAccount: any[];
   formGroup: FormGroup;
-  ids: string[] = [];
   smsMessageDetail: any
   submitted = false;
-  isBirthDayManual = false;
-  isAppointmentReminder = false;
-  isThanksCustomer = false;
-  isCareAfterOrder = false;
+
   campaign: any;
+  resIds: string[] = [];
+  resModel: string;
+
   isTemplateCopy = false;
   templateTypeTab: string;
   template: any = {
@@ -58,7 +57,6 @@ export class SmsManualDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       template: null,
       smsAccount: [null, Validators.required],
-      typeSend: 'manual',
       name: ['', Validators.required],
       templateName: ''
     })
@@ -173,21 +171,18 @@ export class SmsManualDialogComponent implements OnInit {
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.smsTemplateId = val.template ? val.template.id : null;
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
+    val.resModel = this.resModel;
     val.date = this.intlService.formatDate(new Date(), "yyyy-MM-ddTHH:mm");
-    val.GuidIds = this.ids;
+    val.resIds = this.resIds;
     // val.body = JSON.stringify(this.template);
     val.body = this.template ? this.template.text : '';
-    val.isBirthDayManual = this.isBirthDayManual;
-    val.isAppointmentReminder = this.isAppointmentReminder;
-    val.isThanksCustomer = this.isThanksCustomer;
-    val.isCareAfterOrder = this.isCareAfterOrder;
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.campaign = this.campaign ? this.campaign : null;
     modalRef.componentInstance.brandName = val.smsAccount.brandName;
     modalRef.componentInstance.timeSendSms = "Gửi ngay";
     modalRef.componentInstance.body = this.template ? this.template.text : '';
-    modalRef.componentInstance.numberSms = this.ids ? this.ids.length : 0;
+    modalRef.componentInstance.numberSms = this.resIds ? this.resIds.length : 0;
     modalRef.result.then(() => {
       this.smsMessageService.create(val).subscribe(
         (res: any) => {
@@ -223,7 +218,7 @@ export class SmsManualDialogComponent implements OnInit {
       type: { style: isSuccess ? 'success' : 'error', icon: true },
     });
   }
-  onCancel(){
+  onCancel() {
     this.activeModal.dismiss();
   }
 }

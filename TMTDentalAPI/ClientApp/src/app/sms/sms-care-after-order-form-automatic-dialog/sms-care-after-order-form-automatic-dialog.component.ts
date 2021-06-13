@@ -10,6 +10,7 @@ import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-ca
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
 import { SmsCampaignService } from '../sms-campaign.service';
+import { SmsCareAfterOrderAutomationConfigService } from '../sms-care-after-order-automation-config.service';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsMessageService } from '../sms-message.service';
@@ -56,34 +57,30 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     private modalService: NgbModal,
     public activeModal: NgbActiveModal,
     private smsTemplateService: SmsTemplateService,
-    private smsConfigService: SmsConfigService,
+    private smsConfigService: SmsCareAfterOrderAutomationConfigService,
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
     private productCategoryService: ProductCategoryService,
     private productService: ProductService,
     private notificationService: NotificationService,
-    private smsCampaignService: SmsCampaignService
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       template: null,
       smsAccount: [null, Validators.required],
-      isCareAfterOrderAutomation: false,
-      dateTimeSend: new Date(),
+      active: false,
+      scheduleTimeObj: new Date(),
       filter: this.filter,
       products: [],
-      productCategories: [[], Validators.required],
+      productCategories: [],
       typeTimeBeforSend: ['day', Validators.required],
       timeBeforSend: [1, Validators.required],
       name: ['', Validators.required],
       templateName: '',
-      type: 'sale-order-line',
     })
     if (this.id) {
       this.loadDataFormApi();
-    } else {
-      this.loadDefaultCampaignCareAfterOrder();
     }
     this.loadSmsTemplate();
     this.loadAccount();
@@ -111,14 +108,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
 
   }
 
-  loadDefaultCampaignCareAfterOrder() {
-    this.smsCampaignService.getDefaultCareAfterOrder().subscribe(
-      result => {
-        if (result) {
-          this.campaign = result;
-        }
-      })
-  }
+
 
   loadDataFormApi() {
     this.smsConfigService.getDisplay(this.id).subscribe(
@@ -128,6 +118,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
             this.filter = "product"
             res.filter = "product"
           }
+          this.campaign = res.smsCampaign
           if (res.productCategories && res.productCategories.length > 0) {
             this.filter = "productCategory"
             res.filter = "productCategory"
@@ -139,9 +130,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
               templateType: 'text'
             }
           }
-          if (res.dateSend) {
-            this.formGroup.get('dateTimeSend').patchValue(new Date(res.dateSend))
-          }
+          this.formGroup.get('scheduleTimeObj').patchValue(new Date(res.scheduleTime))
         } else {
           this.id = null;
         }
@@ -209,11 +198,11 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     if (!this.template.text) return;
     var val = this.formGroup.value;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
-    val.dateSend = this.intlService.formatDate(val.dateTimeSend, "yyyy-MM-ddTHH:mm");
+    val.scheduleTime = this.intlService.formatDate(val.scheduleTimeObj, "yyyy-MM-ddTHH:mm");
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.templateId = val.template ? val.template.id : null;
     val.body = this.template ? this.template.text : '';
-    val.campaignId = this.campaign ? this.campaign.id : null;
+    val.smsCampaignId = this.campaign ? this.campaign.id : null;
     val.productIds = val.products ? val.products.map(x => x.id) : [];
     val.productCategoryIds = val.productCategories ? val.productCategories.map(x => x.id) : [];
     if (this.id) {

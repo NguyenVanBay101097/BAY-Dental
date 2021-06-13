@@ -86,10 +86,10 @@
                                                 </div>
                                                 <div *ngIf="getValueFormControl('typeSend') == 'automatic'">
                                                     <kendo-datetimepicker class="w-fit-content"
-                                                        [format]="'MM/dd/yyyy HH:mm'" formControlName="dateObj"
+                                                        [format]="'MM/dd/yyyy HH:mm'" formControlName="scheduleDateObj"
                                                         required>
                                                     </kendo-datetimepicker>
-                                                    <div *ngIf="!getValueFormControl('dateObj')" class="text-danger">
+                                                    <div *ngIf="!getValueFormControl('scheduleDateObj')" class="text-danger">
                                                         Chọn thời gian gửi tin
                                                     </div>
                                                 </div>

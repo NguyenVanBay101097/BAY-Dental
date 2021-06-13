@@ -60,7 +60,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
       template: null,
       smsAccount: [null, Validators.required],
       active: false,
-      scheduleTime: new Date(),
+      scheduleTimeObj: new Date(),
       dayBeforeSend: 0,
       templateName: '',
     })
@@ -108,6 +108,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
         if (res) {
           this.id = res.id;
           this.formGroup.patchValue(res);
+          this.formGroup.get('scheduleTimeObj').patchValue(new Date(res.scheduleTime));
           if (res.body) {
             this.template = {
               text: res.body,
@@ -183,7 +184,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     if (!this.template.text) return;
     var val = this.formGroup.value;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
-    val.dateSend = this.intlService.formatDate(val.dateTimeSend, "yyyy-MM-ddTHH:mm");
+    val.scheduleTime = this.intlService.formatDate(val.scheduleTimeObj, "yyyy-MM-ddTHH:mm");
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.companyId = this.companyId;
     val.templateId = val.template ? val.template.id : null;
@@ -194,6 +195,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
         res => {
           // console.log(res);
           this.notify("cập nhật thiết lập thành công", true);
+          this.loadDataFormApi();
         }
       )
     } else {
@@ -201,6 +203,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
         res => {
           // console.log(res);
           this.notify("thiết lập thành công", true);
+          this.loadDataFormApi();
         }
       )
     }

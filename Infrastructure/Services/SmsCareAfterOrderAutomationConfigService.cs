@@ -44,9 +44,11 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
 
-            if (val.Active.HasValue)
+            if (!string.IsNullOrEmpty(val.States))
             {
-                query = query.Where(x => x.Active == val.Active.Value);
+                var states = val.States.Split(",");
+                var stateBools = states.Select(x => bool.Parse(x));
+                query = query.Where(x => stateBools.Contains(x.Active));
             }
 
             var totalItems = await query.CountAsync();
@@ -75,7 +77,82 @@ namespace Infrastructure.Services
 
         public async Task UpdateAsync(Guid id, SmsCareAfterOrderAutomationConfigSave val)
         {
-            throw new NotImplementedException();
+            var entity = await SearchQuery(x => x.Id == id)
+                 .Include(x => x.SmsConfigProductRels)
+                 .Include(x => x.SmsConfigProductCategoryRels).FirstOrDefaultAsync();
+            entity = _mapper.Map(val, entity);
+            if (val.ProductIds.Any())
+            {
+                entity.SmsConfigProductRels = ComputeProduct(val.ProductIds, entity);
+            }
+            else
+            {
+                entity.SmsConfigProductRels = new List<SmsConfigProductRel>();
+            }
+
+            if (val.ProductCategoryIds.Any())
+            {
+                entity.SmsConfigProductCategoryRels = ComputeProductCategory(val.ProductCategoryIds, entity);
+            }
+            else
+            {
+                entity.SmsConfigProductCategoryRels = new List<SmsConfigProductCategoryRel>();
+            }
+            await UpdateAsync(entity);
+            ActionRunJob(entity);
+        }
+
+        public ICollection<SmsConfigProductRel> ComputeProduct(IEnumerable<Guid> productIds, SmsCareAfterOrderAutomationConfig smsConfig)
+        {
+            if (smsConfig.SmsConfigProductRels != null && smsConfig.SmsConfigProductRels.Any())
+            {
+                var smsConfigProductRels = smsConfig.SmsConfigProductRels.ToList();
+                for (int i = 0; i < smsConfigProductRels.Count(); i++)
+                {
+                    var item = smsConfigProductRels[i];
+                    if (!productIds.Any(x => x == item.ProductId))
+                    {
+                        smsConfig.SmsConfigProductRels.Remove(item);
+                    }
+                }
+            }
+
+            foreach (var id in productIds)
+            {
+                if (!smsConfig.SmsConfigProductRels.Any(x => x.ProductId == id))
+                    smsConfig.SmsConfigProductRels.Add(new SmsConfigProductRel
+                    {
+                        ProductId = id,
+                        SmsConfigId = smsConfig.Id
+                    });
+            }
+            return smsConfig.SmsConfigProductRels;
+        }
+
+        public ICollection<SmsConfigProductCategoryRel> ComputeProductCategory(IEnumerable<Guid> ProductCategoryIds, SmsCareAfterOrderAutomationConfig smsConfig)
+        {
+            if (smsConfig.SmsConfigProductCategoryRels != null && smsConfig.SmsConfigProductCategoryRels.Any())
+            {
+                var smsConfigProductCategoryRels = smsConfig.SmsConfigProductCategoryRels.ToList();
+                foreach (var item in smsConfigProductCategoryRels)
+                {
+                    if (!ProductCategoryIds.Any(x => x == item.ProductCategoryId))
+                    {
+                        smsConfigProductCategoryRels.Remove(item);
+                    }
+                }
+            }
+
+            foreach (var id in ProductCategoryIds)
+            {
+                if (!smsConfig.SmsConfigProductCategoryRels.Any(x => x.ProductCategoryId == id))
+                    smsConfig.SmsConfigProductCategoryRels.Add(new SmsConfigProductCategoryRel
+                    {
+                        ProductCategoryId = id,
+                        SmsConfigId = smsConfig.Id
+                    });
+            }
+            return smsConfig.SmsConfigProductCategoryRels;
         }
 
         public void ActionRunJob(SmsCareAfterOrderAutomationConfig model)

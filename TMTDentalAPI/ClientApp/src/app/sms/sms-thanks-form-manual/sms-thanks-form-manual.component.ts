@@ -105,8 +105,8 @@ export class SmsThanksFormManualComponent implements OnInit {
     else {
       var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
       modalRef.componentInstance.title = "Tin nhắn cám ơn";
-      modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
-      modalRef.componentInstance.isThanksCustomer = true;
+      modalRef.componentInstance.resIds = this.selectedIds ? this.selectedIds : [];
+      modalRef.componentInstance.resModel = 'sale-order';
       modalRef.componentInstance.templateTypeTab = "saleOrder";
       modalRef.componentInstance.campaign = this.campaign;
       modalRef.result.then(

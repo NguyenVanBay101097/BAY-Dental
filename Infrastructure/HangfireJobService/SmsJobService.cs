@@ -152,7 +152,6 @@ namespace Infrastructure.HangfireJobService
                     await smsMessageService.ActionSend(smsMessage.Id);
 
                     await context.SaveChangesAsync();
-                    transaction.Commit();
                 }
                 transaction.Commit();
             }

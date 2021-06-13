@@ -111,8 +111,8 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     else {
       var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
       modalRef.componentInstance.title = "Tin nhắn chúc mừng sinh nhật";
-      modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
-      modalRef.componentInstance.isBirthDayManual = true;
+      modalRef.componentInstance.resIds = this.selectedIds ? this.selectedIds : [];
+      modalRef.componentInstance.resModel = "partner"
       modalRef.componentInstance.templateTypeTab = "partner";
       modalRef.componentInstance.campaign = this.campaign ? this.campaign : null;
       modalRef.result.then(

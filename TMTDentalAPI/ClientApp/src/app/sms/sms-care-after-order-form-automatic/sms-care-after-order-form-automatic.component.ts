@@ -5,6 +5,8 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { SmsCampaignService } from '../sms-campaign.service';
+import { SmsCareAfterOrderAutomationConfigService } from '../sms-care-after-order-automation-config.service';
 import { SmsCareAfterOrderFormAutomaticDialogComponent } from '../sms-care-after-order-form-automatic-dialog/sms-care-after-order-form-automatic-dialog.component';
 import { SmsConfigService } from '../sms-config.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
@@ -19,6 +21,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   offset = 0;
+  campaign: any;
   loading = false;
   searchUpdate = new Subject<string>();
   search: string;
@@ -30,13 +33,14 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private smsConfigService: SmsConfigService,
+    private smsConfigService: SmsCareAfterOrderAutomationConfigService,
+    private smsCampaignService: SmsCampaignService,
     private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
-
+    this.loadDefaultCampaignCareAfterOrder();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -44,6 +48,15 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
         this.offset = 0;
         this.loadDataFromApi();
       });
+  }
+
+  loadDefaultCampaignCareAfterOrder() {
+    this.smsCampaignService.getDefaultCareAfterOrder().subscribe(
+      result => {
+        if (result) {
+          this.campaign = result;
+        }
+      })
   }
 
   onStatusChange(event) {
@@ -97,8 +110,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
       limit: this.limit,
       offset: this.offset,
       search: this.search,
-      type: 'sale-order-line',
-      states: this.states,
+      states: this.states
     }
     this.smsConfigService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{
@@ -117,6 +129,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   setupAutomaic() {
     var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "md", windowClass: "o_technical_modal" });
     modalRef.componentInstance.title = "Thiết lập tin nhắn gửi tự động";
+    modalRef.componentInstance.campaign = this.campaign;
     // modalRef.componentInstance.templateTypeTab = "care_after_order";
     modalRef.result.then(
       result => {

@@ -4,11 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
+using Hangfire;
+using Infrastructure.HangfireJobService;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SaasKit.Multitenancy;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -21,12 +24,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly ISmsMessageService _smsMessageService;
         private readonly IUnitOfWorkAsync _unitOfWorkAsync;
+        private readonly AppTenant _tenant;
 
-        public SmsMessagesController(IUnitOfWorkAsync unitOfWorkAsync, IMapper mapper, ISmsMessageService smsMessageService)
+
+        public SmsMessagesController(ITenant<AppTenant> tenant, IUnitOfWorkAsync unitOfWorkAsync, IMapper mapper, ISmsMessageService smsMessageService)
         {
             _smsMessageService = smsMessageService;
             _mapper = mapper;
             _unitOfWorkAsync = unitOfWorkAsync;
+            _tenant = tenant?.Value;
         }
 
         [HttpGet]
@@ -78,22 +84,30 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        //[HttpGet("[action]/{orderId}")]
-        //[CheckAccess(Actions = "SMS.Message.Update")]
-        //public async Task<IActionResult> SetupSendSmsOrderAutomatic(Guid orderId)
-        //{
-        //    if (!ModelState.IsValid) return BadRequest();
-        //    await _unitOfWorkAsync.BeginTransactionAsync();
-        //    await _smsMessageService.SetupSendSmsOrderAutomatic(orderId);
-        //    _unitOfWorkAsync.Commit();
-        //    return NoContent();
-        //}
+        [HttpGet("[action]")]
+        public IActionResult ActionStartJobAutomatic()
+        {
+            var hostName = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobId = $"{hostName}_Send_Sms_message_detail";
+            RecurringJob.AddOrUpdate<ISmsMessageJobService>(jobId, x => x.RunJobFindSmsMessage(hostName, CompanyId), $"*/30 * * * *", TimeZoneInfo.Local);
+
+            return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult ActionStopJobAutomatic()
+        {
+            var hostName = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobId = $"{hostName}_Send_Sms_message_detail";
+            RecurringJob.RemoveIfExists(jobId);
+            return NoContent();
+        }
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "SMS.Message.Update")]
         public async Task<IActionResult> UpdateAsync(Guid id, SmsAccountSave val)
         {
-            var entity = await _smsMessageService.SearchQuery().Where(x=>x.Id ==id).FirstOrDefaultAsync();
+            var entity = await _smsMessageService.SearchQuery().Where(x => x.Id == id).FirstOrDefaultAsync();
             if (!ModelState.IsValid || entity == null) return BadRequest();
             entity = _mapper.Map(val, entity);
             entity.CompanyId = CompanyId;

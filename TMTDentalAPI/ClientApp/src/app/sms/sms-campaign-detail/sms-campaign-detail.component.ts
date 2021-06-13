@@ -32,7 +32,7 @@ export class SmsCampaignDetailComponent implements OnInit {
   campaign: any;
   campaignId: string;
   isEdit: boolean = false;
-  state = "waiting"; // waiting: chờ gửi, success: đã gửi
+  state = "in_queue"; // waiting: chờ gửi, success: đã gửi
   selectedIds: any = [];
   dateFrom: Date;
   dateTo: Date;

@@ -15,6 +15,8 @@ namespace Infrastructure.Services
         Task<SmsMessageDisplay> CreateAsync(SmsMessageSave val);
         Task ActionCancel(IEnumerable<Guid> messIds);
         Task UpdateAsync(SmsMessage entity);
+
+        Task<SmsMessage> CreateAsync(SmsMessage entity);
         Task DeleteAsync(SmsMessage entity);
         Task<SmsMessage> GetByIdAsync(Guid id);
         Task SetupSendSmsOrderAutomatic(Guid orderId);

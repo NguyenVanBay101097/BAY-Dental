@@ -46,7 +46,7 @@ namespace Infrastructure.Services
             var dictTotalOutgoingMessage = new Dictionary<Guid, int>();
 
             var ditcTotalWaitedMessage = await smsMessageObj
-                .SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "waiting" && x.CompanyId == CompanyId)
+                .SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "in_queue" && x.CompanyId == CompanyId)
                 .Include(x => x.SmsMessagePartnerRels)
                 .ToDictionaryAsync(x => x.SmsCampaignId.Value, x => x.SmsMessagePartnerRels.Count());
 
@@ -294,7 +294,7 @@ namespace Infrastructure.Services
             {
                 campaign = new SmsCampaign
                 {
-                    Name = "Tin nhắn chăm sóc sau điều trị",
+                    Name = "Chăm sóc sau điều trị",
                     CompanyId = CompanyId,
                     TypeDate = "unlimited",
                     State = "running",

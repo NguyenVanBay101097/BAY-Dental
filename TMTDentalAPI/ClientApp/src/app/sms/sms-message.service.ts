@@ -29,7 +29,7 @@ export class SmsMessageService {
     }
 
     actionSendSms(id: string) {
-        return this.http.get(this.base_api + this.apiUrl + '/ActionSendSms/' + id);
+        return this.http.get(`${this.base_api}${this.apiUrl}/${id}/ActionSendSms`);
     }
 
     actionCancelSendSMS(vals: string[]) {

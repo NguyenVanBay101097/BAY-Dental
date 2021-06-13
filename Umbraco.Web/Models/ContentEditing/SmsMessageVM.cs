@@ -61,6 +61,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? Date { get; set; }
         public string Name { get; set; }
         public string Body { get; set; }
+        public DateTime? ScheduleDate { get; set; }
+        public string State { get; set; }
         public Guid? SmsTemplateId { get; set; }
         public Guid? SmsAccountId { get; set; }
         public Guid? SmsCampaignId { get; set; }

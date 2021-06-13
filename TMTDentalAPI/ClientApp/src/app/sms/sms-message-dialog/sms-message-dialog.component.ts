@@ -68,7 +68,7 @@ export class SmsMessageDialogComponent implements OnInit {
       smsAccount: [null, Validators.required],
       template: null,
       typeSend: "manual", // manual: gửi ngay, automatic: đặt lịch
-      dateObj: new Date(),
+      scheduleDateObj: new Date(),
       templateName: null
     })
     this.loadCampaign();
@@ -208,9 +208,10 @@ export class SmsMessageDialogComponent implements OnInit {
     val.smsTemplateId = val.template ? val.template.id : null;
     val.body = this.template ? JSON.stringify(this.template) : '';
     val.resModel = "partner"
-    val.guidIds = this.partnerIds;
+    val.resIds = this.partnerIds;
+    val.state = val.typeSend == 'automatic' ? 'in_queue' : 'draft';
     if (val.typeSend == "automatic") {
-      val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm");
+      val.scheduleDate = this.intlService.formatDate(val.scheduleDateObj, "yyyy-MM-ddTHH:mm");
     }
     return val;
   }
@@ -226,13 +227,13 @@ export class SmsMessageDialogComponent implements OnInit {
     modalRef.componentInstance.campaign = val.smsCampaign;
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.brandName = val.smsAccount.brandName;
-    modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.dateObj, "HH:mm, dd/MM/yyyy");;
+    modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.scheduleDateObj, "HH:mm, dd/MM/yyyy");;
     modalRef.componentInstance.body = this.template ? this.template.text : '';
     modalRef.componentInstance.numberSms = this.partnerIds ? this.partnerIds.length : 0;
     modalRef.result.then(() => {
       this.smsMessageService.create(val).subscribe(
         (res: any) => {
-          if (res && res.typeSend == "manual") {
+          if (res && res.state != 'in_queue') {
             this.smsMessageService.actionSendSms(res.id).subscribe(
               () => {
                 this.notify("Gửi tin nhắn thành công", true);

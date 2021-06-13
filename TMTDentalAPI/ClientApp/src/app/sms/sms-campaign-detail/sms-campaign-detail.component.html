@@ -29,28 +29,28 @@
     <div class="pms-wrapper">
         <div class="pms-left border p-3">
             <div>
-                <input type="radio" class="btn-check" id="waiting" [value]="'waiting'" [(ngModel)]="state"
+                <input type="radio" class="btn-check" id="in_queue" [value]="'in_queue'" [(ngModel)]="state"
                     (change)="changeState()">
-                <label for="waiting" class="btn btn-sm rounded-right-0"
-                    [ngClass]="state == 'waiting' ? 'btn-primary' : 'btn-outline-primary'">Chờ gửi</label>
+                <label for="in_queue" class="btn btn-sm rounded-right-0"
+                    [ngClass]="state == 'in_queue' ? 'btn-primary' : 'btn-outline-primary'">Chờ gửi</label>
 
-                <input type="radio" class="btn-check" id="success" [value]="'success'" [(ngModel)]="state"
+                <input type="radio" class="btn-check" id="done" [value]="'done'" [(ngModel)]="state"
                     (change)="changeState()">
-                <label for="success" class="btn btn-sm rounded-left-0"
-                    [ngClass]="state == 'success' ? 'btn-primary' : 'btn-outline-primary'">Đã gửi</label>
+                <label for="done" class="btn btn-sm rounded-left-0"
+                    [ngClass]="state == 'done' ? 'btn-primary' : 'btn-outline-primary'">Đã gửi</label>
             </div>
             <div class="border">
                 <div class="o_cp_controller">
                     <div class="o_control_panel">
                         <div class="o_cp_t_left">
-                            <button type="button" *ngIf="state=='waiting' && gridData && gridData.total > 0 "
+                            <button type="button" *ngIf="state=='in_queue' && gridData && gridData.total > 0 "
                                 class="btn btn-danger btn-sm" (click)="cancelSend()">
                                 Hủy gửi
                             </button>
-                            <app-tai-date-range-filter-dropdown *ngIf="state=='success'" title="Thời gian"
+                            <app-tai-date-range-filter-dropdown *ngIf="state=='done'" title="Thời gian"
                                 [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
                             </app-tai-date-range-filter-dropdown>
-                            <kendo-combobox [class.d-none]="state!='success'" class="kendo-combobox-sm ml-2"
+                            <kendo-combobox [class.d-none]="state!='done'" class="kendo-combobox-sm ml-2"
                                 placeholder="Brandname" [data]="filteredSmsAccount" [textField]="'brandName'"
                                 [valueField]="'id'" [filterable]="true" #smsAccountCbx
                                 (valueChange)="onChangeAccount($event)">
@@ -66,13 +66,13 @@
                     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
                         [loading]="loading" (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'"
                         [selectedKeys]="selectedIds" (cellClick)="cellClick($event.dataItem)">
-                        <kendo-grid-checkbox-column *ngIf="state=='waiting'" showSelectAll="true" width="50">
+                        <kendo-grid-checkbox-column *ngIf="state=='in_queue'" showSelectAll="true" width="50">
                         </kendo-grid-checkbox-column>
                         <kendo-grid-column field="name" title="Tên tin nhắn">
                         </kendo-grid-column>
                         <kendo-grid-column field="brandName" title="Brandname">
                         </kendo-grid-column>
-                        <kendo-grid-column field="countPartner" title="Tổng người nhận">
+                        <kendo-grid-column field="resCount" title="Tổng người nhận">
                         </kendo-grid-column>
                         <kendo-grid-column title="Thời gian tạo">
                             <ng-template kendoGridCellTemplate let-dataItem>

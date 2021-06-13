@@ -179,7 +179,6 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     if (!this.template.text) return;
     var val = this.formGroup.value;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
-    val.dateSend = this.intlService.formatDate(val.dateTimeSend, "yyyy-MM-ddTHH:mm");
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.templateId = val.template ? val.template.id : null;
     val.companyId = this.companyId;
@@ -189,12 +188,15 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
       this.smsConfigService.update(this.id, val).subscribe(
         res => {
           this.notify("cập nhật thiết lập thành công", true);
+          this.loadDataFormApi();
         }
       )
     } else {
       this.smsConfigService.create(val).subscribe(
         res => {
           this.notify("thiết lập thành công", true);
+          this.loadDataFormApi();
+
         }
       )
     }

@@ -144,8 +144,8 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     else {
       var modalRef = this.modalService.open(SmsManualDialogComponent, { size: "md", windowClass: "o_technical_modal" });
       modalRef.componentInstance.title = "Tin nhắn chăm sóc sau điều trị";
-      modalRef.componentInstance.ids = this.selectedIds ? this.selectedIds : [];
-      modalRef.componentInstance.isCareAfterOrder = true;
+      modalRef.componentInstance.resIds = this.selectedIds ? this.selectedIds : [];
+      modalRef.componentInstance.resModel = 'sale-order-line';
       modalRef.componentInstance.templateTypeTab = "saleOrderLine";
       modalRef.componentInstance.campaign = this.campaign;
       modalRef.result.then(
