@@ -18,6 +18,7 @@ export class AgentCreateUpdateDialogComponent implements OnInit {
   submitted = false;
   isRoleRead = false;
   isRoleCreate = false;
+  title: string;
 
   dayList: number[] = [];
   monthList: number[] = [];
