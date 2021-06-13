@@ -381,61 +381,86 @@ namespace Infrastructure.Services
                 PriceUnit = self.Amount,
                 EmployeeId = self.SaleOrderLine.EmployeeId,
                 AssistantId = self.SaleOrderLine.AssistantId
-
-                //SalesmanId = self.SalesmanId
             };
 
+            var commObj = GetService<ICommissionService>();
+            var commSetObj = GetService<ICommissionSettlementService>();
+            var productObj = GetService<IProductService>();
             var lineObj = GetService<ISaleOrderLineService>();
-            var partnerObj = GetService<IPartnerService>();
-            var saleOrderLine = await lineObj.SearchQuery(x => x.Id == self.SaleOrderLineId).Include(x => x.Employee).Include(x => x.Assistant).Include(x => x.Counselor).FirstOrDefaultAsync();
-            var partner = await partnerObj.SearchQuery(x => x.Id == self.SaleOrderPayment.Order.PartnerId).Include(x => x.Agent).FirstOrDefaultAsync();
+
+            var saleOrderLine = await lineObj.SearchQuery(x => x.Id == self.SaleOrderLineId)
+                .Include(x => x.Employee)
+                .Include(x => x.Assistant)
+                .Include(x => x.Counselor)
+                .FirstOrDefaultAsync();
+
+           
+            //tổng thanh toán 
+            var totalPaid = saleOrderLine.AmountPaid + self.Amount;
+
+           //Tổng giá vốn
+            var totalStandPrice = (decimal)productObj.GetStandardPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId) * saleOrderLine.ProductUOMQty;
+
+            //tính lợi nhuận hoa hồng
+            var totalBaseAmount = await commSetObj.SearchQuery(x => x.SaleOrderLineId == self.SaleOrderLineId)
+                .Select(x=> new { x.BaseAmount, x.MoveLineId}).Distinct().SumAsync(x=> x.BaseAmount);
+
+            //Số tiền lợi nhuận hiên tại
+            var baseAmountCurrent = totalPaid - totalStandPrice - totalBaseAmount > 0 ? totalPaid - totalStandPrice - totalBaseAmount: 0;
+
             var today = DateTime.Today;
             //add hoa hồng bác sĩ
+        
             if (saleOrderLine.EmployeeId.HasValue && saleOrderLine.Employee.CommissionId.HasValue)
             {
-
+                var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Employee.CommissionId);
                 res.CommissionSettlements.Add(new CommissionSettlement
                 {
                     EmployeeId = saleOrderLine.EmployeeId,
                     CommissionId = saleOrderLine.Employee.CommissionId,
                     ProductId = saleOrderLine.ProductId,
-                    Date = today
+                    Date = today,
+                    SaleOrderLineId = self.SaleOrderLineId,
+                    BaseAmount = baseAmountCurrent.Value,
+                    Amount = totalPaid > totalStandPrice ? (baseAmountCurrent.Value * commPercent) / 100 : 0,
+                    Percentage = commPercent,
+                    TotalAmount = self.Amount
                 });
             }
 
             //add hoa hồng phụ tá
             if (saleOrderLine.AssistantId.HasValue && saleOrderLine.Assistant.AssistantCommissionId.HasValue)
             {
-
+                var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Assistant.AssistantCommissionId);
                 res.CommissionSettlements.Add(new CommissionSettlement
                 {
                     EmployeeId = saleOrderLine.AssistantId,
                     CommissionId = saleOrderLine.Assistant.AssistantCommissionId,
                     ProductId = saleOrderLine.ProductId,
-                    Date = today
+                    Date = today,
+                    SaleOrderLineId = self.SaleOrderLineId,
+                    BaseAmount = baseAmountCurrent.Value,
+                    Amount = totalPaid > totalStandPrice ? (baseAmountCurrent.Value * commPercent) / 100 : 0,
+                    Percentage = commPercent,
+                    TotalAmount = self.Amount
                 });
             }
 
             //add hoa hồng tư vấn
             if (saleOrderLine.CounselorId.HasValue && saleOrderLine.Counselor.CounselorCommissionId.HasValue)
             {
+                var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Counselor.CounselorCommissionId);
                 res.CommissionSettlements.Add(new CommissionSettlement
                 {
                     EmployeeId = saleOrderLine.CounselorId,
                     CommissionId = saleOrderLine.Counselor.CounselorCommissionId,
                     ProductId = saleOrderLine.ProductId,
-                    Date = today
-                });
-            }
-
-            //add người giới thiệu nếu có
-            if (partner.AgentId.HasValue)
-            {
-                res.CommissionSettlements.Add(new CommissionSettlement
-                {
-                    PartnerId = partner.Agent.PartnerId,
-                    ProductId = saleOrderLine.ProductId,
-                    Date = today
+                    Date = today,
+                    SaleOrderLineId = self.SaleOrderLineId,
+                    BaseAmount = baseAmountCurrent.Value,
+                    Amount = totalPaid > totalStandPrice ? (baseAmountCurrent.Value * commPercent) / 100 : 0,
+                    Percentage = commPercent,
+                    TotalAmount = self.Amount
                 });
             }
 

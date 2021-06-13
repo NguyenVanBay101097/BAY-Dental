@@ -22,7 +22,7 @@ import { RevenueManageService } from '../account-invoice-report-revenue-manage/r
   styleUrls: ['./account-invoice-report-revenue-employee.component.css']
 })
 export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
-  empFilter = 'EmployeeId';
+  empFilter = 'employee';
   filter = new RevenueEmployeeReportPar();
   companies: CompanySimple[] = [];
   listEmployee: EmployeeSimple[] = [];
@@ -58,7 +58,7 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     val.companyId = val.companyId || '';
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
-    val.employeeId = val.employeeId || '';
+    val.groupById = val.groupById || '';
     this.loading = true;
     this.accInvService.getRevenueEmployeeReport(val).subscribe(res => {
       this.allDataInvoice = res;
@@ -105,7 +105,7 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     this.filter.dateFrom = this.filter.dateFrom || new Date(y, m, 1);
     this.filter.dateTo = this.filter.dateTo || new Date(y, m + 1, 0);
     this.skip = 0;
-    this.filter.employeeGroup = this.empFilter == 'EmployeeId' ? true: false;
+    this.filter.groupBy = this.empFilter;
   }
 
   loadEmployees() {
@@ -213,13 +213,13 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
 
   
   onSelectEmployee(e) {
-    this.filter.employeeId = e? e.id : null;
+    this.filter.groupById = e? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
 
   onChangeEmployeeFilter() {
-    this.filter.employeeGroup = this.empFilter == 'EmployeeId'? true: false;
+    this.filter.groupBy = this.empFilter ;
     this.skip = 0;
     this.loadAllData();
   }

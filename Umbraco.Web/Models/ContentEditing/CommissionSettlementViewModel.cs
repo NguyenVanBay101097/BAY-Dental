@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class CommissionSettlementReport
+    public class CommissionSettlementFilterReport
     {
-        public CommissionSettlementReport()
+        public CommissionSettlementFilterReport()
         {
             Limit = 20;
         }
@@ -18,10 +19,50 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? EmployeeId { get; set; }
 
         public Guid? CompanyId { get; set; }
+        public string CommissionType { get; set; }
+
+        public string Search { get; set; }
 
         public int Offset { get; set; }
 
         public int Limit { get; set; }
+    }
+
+    public class CommissionSettlementReportRes
+    {
+        public string EmployeeName { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public string CommissionType { get;set; }
+        public decimal? Amount { get; set; }
+
+    }
+
+    public class CommissionSettlementReportExcelRes
+    {
+        public string EmployeeName { get; set; }
+        [EpplusIgnore]
+        public string CommissionType { get; set; }
+        public string CommissionTypeDisplay
+        {
+            get
+            {
+                switch (this.CommissionType)
+                {
+                    case "doctor":
+                        return "Bác sĩ";
+                    case "assistant":
+                        return "Phụ tá";
+                    case "counselor":
+                        return "Tư vấn";
+                    default:
+                        return "";
+                };
+            }
+            set { }
+        }
+
+        public decimal? Amount { get; set; }
+
     }
 
     public class CommissionSettlementReportOutput
@@ -49,6 +90,27 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
         public Guid? CompanyId { get; set; }
+    }
+    public class CommissionSettlementDetailReportPar
+    {
+        public CommissionSettlementDetailReportPar()
+        {
+            Limit = 20;
+        }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+        public string CommissionType { get; set; }
+        public string Search { get; set; }
+
+        public int Offset { get; set; }
+
+        public int Limit { get; set; }
     }
 
     public class CommissionSettlementReportDetailOutput
@@ -82,5 +144,67 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Nguồn
         /// </summary>
         public string InvoiceOrigin { get; set; }
+        public string EmployeeName { get; set; }
+        public string CommissionType { get; set; }
+    }
+
+    public class CommissionSettlementReportDetailOutputExcel
+    {
+        public DateTime? Date { get; set; }
+        public string EmployeeName { get; set; }
+        [EpplusIgnore]
+        public string CommissionType { get; set; }
+        public string CommissionTypeDisplay
+        {
+            get
+            {
+                switch (this.CommissionType)
+                {
+                    case "doctor":
+                        return "Bác sĩ";
+                    case "assistant":
+                        return "Phụ tá";
+                    case "counselor":
+                        return "Tư vấn";
+                    default:
+                        return "";
+                };
+            }
+            set { }
+        }
+        public string InvoiceOrigin { get; set; }
+        public string PartnerName { get; set; }
+        public string ProductName { get; set; }
+        public decimal? BaseAmount { get; set; }
+        public decimal? Percentage { get; set; }
+        public decimal? Amount { get; set; }
+    }
+
+    public class CommissionSettlementReportExportExcelPar
+    {
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+        public string CommissionType { get; set; }
+
+    }
+
+    public class CommissionSettlementDetailReportExcelPar
+    {
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+        public string CommissionType { get; set; }
+        public string Search { get; set; }
     }
 }

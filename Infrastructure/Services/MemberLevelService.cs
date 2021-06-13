@@ -69,5 +69,7 @@ namespace Infrastructure.Services
             await CreateAsync(memberAdd);
             
         }
+
+      
     }
 }

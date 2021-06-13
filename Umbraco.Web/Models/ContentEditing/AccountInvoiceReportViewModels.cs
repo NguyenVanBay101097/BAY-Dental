@@ -38,8 +38,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? CompanyId { get; set; }
-        public bool EmployeeGroup { get; set; }
-        public Guid? EmployeeId { get; set; }
+        /// <summary>
+        /// groupby: employee, assistant
+        /// </summary>
+        public string GroupBy { get; set; }
+        public Guid? GroupById { get; set; }
 
     }
 
@@ -53,6 +56,9 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public DateTime? InvoiceDate { get; set; }
         public decimal PriceSubTotal { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class RevenueServiceReportDisplay
@@ -60,6 +66,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string ProductName { get; set; }
         public Guid? ProductId { get; set; }
         public decimal PriceSubTotal { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class RevenueEmployeeReportDisplay
@@ -67,6 +76,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string EmployeeName { get; set; }
         public Guid? EmployeeId { get; set; }
         public decimal PriceSubTotal { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
+        public string GroupBy { get; set; }
+        public Guid ToDetailEmployeeId { get; set; }
     }
 
 
@@ -81,11 +95,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
         public int Limit { get; set; }
         public int Offset { get; set; }
-        public DateTime? Date { get; set; }
         public Guid? ProductId { get; set; }
-        public bool EmployeeGroup { get; set; }
         public Guid? EmployeeId { get; set; }
-        public bool AssistantGroup { get; set; }
         public Guid? AssistantId { get; set; }
     }
 

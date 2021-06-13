@@ -45,20 +45,20 @@
                     <tbody>
                         <ng-container *ngFor="let level of memberLevels;let i = index">
                             <tr>
-                                <td class="text-right">
+                                <td class="text-right" width="80">
                                     {{i+1}}
                                 </td>
-                                <td style="width: 400px;">
+                                <td width="300">
                                     {{level.name}}
                                 </td>
-                                <td class="text-right">
+                                <td width="300">
                                     {{level.point}}
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center" width="600">
                                     <ng-container *ngFor="let color of memberColors; let t = index">
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input d-none" disabled type="radio" [(ngModel)]="level.color" [name]="'color-'+i" [id]="'color-' + i + '-' + t" [value]="color.id">
-                                            <label class="form-check-label check-label ml-2" [ngClass]="'o_tag_color_' + color.id" [for]="'color-' + i + '-' + t"></label>
+                                            <label class="form-check-label check-label" [ngClass]="'o_tag_color_' + color.id" [for]="'color-' + i + '-' + t"></label>
                                         </div>
                                     </ng-container>
                                 </td>

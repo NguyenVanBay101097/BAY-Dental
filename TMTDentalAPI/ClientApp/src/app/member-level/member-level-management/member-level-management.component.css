@@ -1,5 +1,6 @@
-/* .o_content {
+.o_content {
     position: relative;
+    height: 93%;
 }
 
 .o_content .btn-position {
@@ -7,4 +8,4 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-} */
+}

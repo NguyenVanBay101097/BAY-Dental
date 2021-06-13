@@ -1,29 +1,70 @@
-<kendo-grid [data]="reportDetailResults" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-    (pageChange)="pageChange($event)">
-    <kendo-grid-column field="date" title="Ngày" width="120">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.date | date:'shortDate'}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="120">
-    </kendo-grid-column>
-    <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
-    </kendo-grid-column>
-    <kendo-grid-column field="productName" title="Dịch vụ" width="200">
-    </kendo-grid-column>
-    <kendo-grid-column field="baseAmount" title="Thanh toán" width="150" class="text-right">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.baseAmount | number}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="percentage" title="% hoa hồng" width="100" class="text-right">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.percentage | number}} %
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="amount" title="Hoa hồng" class="text-right" width="150">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.amount | number}}
-        </ng-template>
-    </kendo-grid-column>
-</kendo-grid>
+<div class="bg-white">
+    <div class="o_form_view o_form_nosheet o_form_editable">
+        <div class="my-3 d-flex justify-content-between">
+            <div class="o_cp_t_left flex-wrap">
+                <app-tai-date-range-filter-dropdown title="Thời gian" class="mr-1 mb-2" [dateFrom]="dateFrom"
+                    [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
+                </app-tai-date-range-filter-dropdown>
+                <kendo-combobox [placeholder]="'Tất cả nhân viên'" (valueChange)="valueEmployeeChange($event)"
+                    class="kendo-combobox-sm mr-1 mb-2" [filterable]="true" [data]="filteredEmployees" #employeeCbx
+                    [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
+                </kendo-combobox>
+                <kendo-combobox [placeholder]="'Loại hoa hồng'" (valueChange)="valueCommissionTypeChange($event)"
+                    class="kendo-combobox-sm mr-1 mb-2" [data]="filteredCommissionType" [valueField]="'value'"
+                    [textField]="'name'">
+                </kendo-combobox>
+                <button type="button" class="btn btn-secondary btn-sm mr-1 mb-2" (click)="exportCommissionExcelFile()"><i
+                        class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
+            </div>
+
+            <div class="o_cp_t_right">
+                <div class="o_cp_searchview">
+                    <div class="o_cp_searchview_group">
+                        <div class="o_searchview">
+                            <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ"
+                                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <kendo-grid [data]="reportDetailResults" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column field="date" title="Ngày thanh toán" width="150">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.date | date:'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="employeeName" title="Nhân viên" width="150">
+            </kendo-grid-column>
+            <kendo-grid-column title="Loại hoa hồng" width="150">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <span *ngIf="dataItem.commissionType=='doctor'">Bác sĩ</span>
+                    <span *ngIf="dataItem.commissionType=='assistant'">Phụ tá</span>
+                    <span *ngIf="dataItem.commissionType=='counselor'">Tư vấn</span>
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="120">
+            </kendo-grid-column>
+            <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
+            </kendo-grid-column>
+            <kendo-grid-column field="productName" title="Dịch vụ" width="300">
+            </kendo-grid-column>
+            <kendo-grid-column field="baseAmount" title="Lợi nhuận tính hoa hồng" width="200" class="text-right">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.baseAmount | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="percentage" title="% hoa hồng" width="120" class="text-right">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.percentage | number}} %
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="amount" title="Hoa hồng" class="text-right" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.amount | number}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>

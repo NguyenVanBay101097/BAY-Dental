@@ -13,7 +13,7 @@ namespace ApplicationCore.Entities
         public Employee Employee { get; set; }
 
         /// <summary>
-        /// Tiền còn lai cần thanh toán trên 1 line
+        /// Tiền thanh toán trên 1 line
         /// </summary>
         public decimal? TotalAmount { get; set; }
 
@@ -48,6 +48,9 @@ namespace ApplicationCore.Entities
 
         public Guid? ProductId { get; set; }
         public Product Product { get; set; }
+
+        public Guid? SaleOrderLineId { get; set; }
+        public SaleOrderLine SaleOrderLine { get; set; }
 
     }
 }

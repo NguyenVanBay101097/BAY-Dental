@@ -160,6 +160,7 @@ namespace Infrastructure.Services
             var modelObj = GetService<IIRModelService>();
 
             var model = await modelObj.SearchQuery(x => x.Model == "Product").FirstOrDefaultAsync();
+            var modelPartner = await modelObj.SearchQuery(x => x.Model == "Partner").FirstOrDefaultAsync();
             var toAdd = new List<IRModelField>();
 
             toAdd.Add(new IRModelField
@@ -176,6 +177,23 @@ namespace Infrastructure.Services
                 Model = "product.product",
                 Name = "standard_price",
                 TType = "float",
+            });
+
+            toAdd.Add(new IRModelField
+            {
+                IRModelId = modelPartner.Id,
+                Model = "res.partner",
+                Name = "loyalty_points",
+                TType = "float",
+            });
+
+            toAdd.Add(new IRModelField
+            {
+                IRModelId = modelPartner.Id,
+                Model = "res.partner",
+                Name = "member_level",
+                TType = "many2one",
+                Relation = "memberlevel"
             });
 
             await fieldObj.CreateAsync(toAdd);

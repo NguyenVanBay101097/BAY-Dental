@@ -74,9 +74,9 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Khảo sát đánh giá',
       icon: 'fas fa-poll',
       children: [
-        { name: 'Danh sách khảo sát', link: '/surveys', groups: 'survey.group_user,survey.group_manager', permissions: ['Survey.UserInput.Read'] },
-        { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey.group_manager', permissions: ['Survey.Assignment.Read'] },
-        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.group_manager', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'] },
+        { name: 'Danh sách khảo sát', link: '/surveys', permissions: ['Survey.UserInput.Read'] },
+        { name: 'Quản lý phân việc', link: '/surveys/manage', permissions: ['Survey.Assignment.Read'] },
+        { name: 'Câu hỏi khảo sát', link: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'] },
       ],
       groups: 'survey.group_survey',
       permissions: ['Survey.UserInput.Read', 'Survey.Assignment.Read', 'Survey.Question.Read']
@@ -192,8 +192,9 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-poll',
       children: [
         { name: 'Người giới thiệu', link: '/agents/commission' },
+        { name: 'Nhân viên', link: '/commission-settlements/report', permissions: ['Report.Commission'] },
       ],
-      permissions: ['Catalog.Agent.Read']
+      permissions: ['Catalog.Agent.Read','Report.Commission']
     },
     {
       name: 'Danh mục',
@@ -261,7 +262,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton', permissions: ['Report.Stock'] },
         { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report', permissions: ['Report.RealRevenue'] },
         // { name: 'Thống kê công việc', link: '/dot-kham-report' },
-        { name: 'Thống kê hoa hồng', link: '/commission-settlements/report', permissions: ['Report.Commission'] },
+        // { name: 'Thống kê hoa hồng', link: '/commission-settlements/report', permissions: ['Report.Commission'] },
         { name: 'Khách hàng lân cận phòng khám', link: '/partner-report-location', permissions: ['Report.PartnerLocation'] },
         { name: 'Thống kê nguồn khách hàng', link: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
         { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/partner', permissions: ['Report.PartnerOldNew'] },

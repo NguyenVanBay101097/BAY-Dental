@@ -85,6 +85,6 @@ namespace Infrastructure.Services
 
         Task<PagedResult2<SaleOrderRevenueReport>> GetRevenueReport(SaleOrderRevenueReportPaged val);
 
-        Task<decimal> GetSumTotal(GetSumTotalParam val);
+        Task<GetRevenueSumTotalRes> GetRevenueSumTotal(GetRevenueSumTotalReq val);
     }
 }
