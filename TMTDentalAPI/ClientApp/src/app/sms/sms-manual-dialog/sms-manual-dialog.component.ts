@@ -193,12 +193,13 @@ export class SmsManualDialogComponent implements OnInit {
             }
           )
           if (this.isTemplateCopy && val.templateName != '') {
+            let template = {
+              text: val.body,
+              templateType: 'text'
+            }
             var valueTemplate = {
               name: val.templateName,
-              body: {
-                text: val.body,
-                templateType: 'text'
-              },
+              body:  JSON.stringify(template),
               type: this.templateTypeTab
             }
             this.smsTemplateService.create(valueTemplate).subscribe(

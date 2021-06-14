@@ -247,12 +247,13 @@ export class SmsMessageDialogComponent implements OnInit {
           }
 
           if (this.isTemplateCopy) {
-            var valueTemplate = {
+            let template = {
+              text: val.body,
+              templateType: 'text'
+            }
+            let valueTemplate = {
               name: val.templateName,
-              body: {
-                text: val.body,
-                templateType: 'text'
-              },
+              body: JSON.stringify(template),
               type: this.templateTypeTab
             }
             this.smsTemplateService.create(valueTemplate).subscribe(
