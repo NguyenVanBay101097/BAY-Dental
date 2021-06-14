@@ -32,6 +32,13 @@ export class StockReportXuatNhapTonSearch {
     productCategId: string;
     search: string;
 }
+export class GetStockHistoryReq {
+    limit: number;
+    offset: number;
+    dateFrom: string;
+    dateTo: string;
+    productId: string;
+}
 
 @Injectable()
 export class StockReportService {
@@ -48,5 +55,13 @@ export class StockReportService {
     
     exportExcel(paged) {
         return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFile", paged,{ responseType: "blob" });
+    }
+
+    getStockHistory(val) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetStockHistoryPaged', { params: val });
+    }
+
+    excelStockHistoryExport(val) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetStockHistoryExcel', { params: val, responseType: 'blob' });
     }
 }

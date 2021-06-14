@@ -186,6 +186,8 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
   loadRecord() {
     this.stockPickingService.get(this.id).subscribe(result => {
+      console.log(result);
+      
       this.picking = result;
       this.pickingForm.patchValue(result);
       this.moveLines.clear();

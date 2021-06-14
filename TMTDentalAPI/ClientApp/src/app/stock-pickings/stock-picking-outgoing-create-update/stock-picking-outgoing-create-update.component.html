@@ -44,11 +44,19 @@
                 </div>
             </div>
             <div class="o_form_sheet h-100 d-flex flex-column">
-                <h1 class="hidden-xs" *ngIf="pickingName != '/'"><span class="o_form_field">{{pickingName}}</span>
-                </h1>
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Người tạo
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span></span>
+                                </td>
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -81,6 +89,17 @@
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số phiếu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <p class="hidden-xs" *ngIf="pickingName != '/'"><span class="">{{pickingName}}</span>
+                                    </p>
+                                </td>
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -120,7 +139,9 @@
                             <thead>
                                 <tr>
                                     <th width="50">STT</th>
-                                    <th width="200">Sản phẩm</th>
+                                    <th width="200">Mã sản phẩm</th>
+                                    <th width="200">Tên sản phẩm</th>
+                                    <th width="200">Loại sản phẩm</th>
                                     <th width="80" class="text-right">Số lượng</th>
                                     <th width="100" hasGroups [groups]="'product.group_uom'">Đơn vị</th>
                                     <th width="60" *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">#</th>
@@ -130,7 +151,9 @@
                                 <ng-container *ngFor="let line of moveLines.controls; let i=index">
                                     <tr [formGroupName]="i">
                                         <td class="align-middle">{{ i + 1 }}</td>
+                                        <td class="align-middle">{{line.get('product').value.defaultCode}}</td>
                                         <td class="align-middle">{{line.get('product').value.name}}</td>
+                                        <td class="align-middle">{{line.get('product').value.type2}}</td>
                                         <td class="align-middle text-right">
                                             <kendo-numerictextbox [min]="0" [format]="'n2'" *ngIf="['done', 'cancel'].indexOf(picking.state) === -1" formControlName="productUOMQty" style="width: 80px;" [spinners]="false">
                                             </kendo-numerictextbox>

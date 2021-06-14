@@ -1,14 +1,18 @@
 <table class="table table-sm table-striped table-hover table-custom">
     <thead>
         <th style="width:5%; min-width: 50px;" class="text-center">STT</th>
-        <th class="px-2">Sản phẩm</th>
+        <th class="px-2">Mã sản phẩm</th>
+        <th class="px-2">Tên sản phẩm</th>
+        <th class="px-2">Loại sản phẩm</th>
         <th style="width:25%" class="text-right px-2">Số lượng</th>
         <th style="width:25%" class=" px-2">Đơn vị tính</th>
     </thead>
     <tbody>
         <tr *ngFor="let item of data; let i = index">
             <td class="text-center">{{i+1 | number}}</td>
+            <td class="px-2">{{item.product.defaultCode}}</td>
             <td class="px-2">{{item.name}}</td>
+            <td class="px-2">{{item.product.type}}</td>
             <td class="text-right px-2">{{item.productUOMQty | number}}</td>
             <td class="px-2">{{item.productUOM.name}}</td>
         </tr>

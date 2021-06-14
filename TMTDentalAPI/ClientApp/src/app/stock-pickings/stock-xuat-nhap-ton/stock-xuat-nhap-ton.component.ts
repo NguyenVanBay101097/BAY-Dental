@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
@@ -7,6 +8,7 @@ import { distinctUntilChanged } from 'rxjs/operators';
 import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { StockReportService, StockReportXuatNhapTonItem, StockReportXuatNhapTonSearch } from 'src/app/stock-reports/stock-report.service';
+import { StockXuatNhapTonDetailDialogComponent } from '../stock-xuat-nhap-ton-detail-dialog/stock-xuat-nhap-ton-detail-dialog.component';
 
 @Component({
   selector: 'app-stock-xuat-nhap-ton',
@@ -37,7 +39,11 @@ export class StockXuatNhapTonComponent implements OnInit {
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
-  constructor(private reportService: StockReportService, private intlService: IntlService) { }
+  constructor(
+    private reportService: StockReportService,
+    private intlService: IntlService,
+    private modalService: NgbModal,
+  ) { }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -91,6 +97,18 @@ export class StockXuatNhapTonComponent implements OnInit {
     };
   }
 
+  cellClick(item: any) {
+    console.log(item);
+
+    const modalRef = this.modalService.open(StockXuatNhapTonDetailDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Lịch sử nhập xuất ' + item.productName;
+    modalRef.componentInstance.productId = item.productId;
+    modalRef.componentInstance.dateFrom = item.dateFrom;
+    modalRef.componentInstance.dateTo = item.dateTo;
+    modalRef.result.then((res) => {
+
+    })
+  }
 
   exportExcelFile() {
     var val = new StockReportXuatNhapTonSearch();

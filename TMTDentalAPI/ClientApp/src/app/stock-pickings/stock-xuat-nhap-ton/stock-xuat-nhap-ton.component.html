@@ -2,7 +2,8 @@
     <div class="o_control_panel">
         <div class="breadcrumb">
             <div class="d-flex">
-                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchChange($event)">
+                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                    (searchChange)="onSearchChange($event)">
                 </app-tai-date-range-filter-dropdown>
                 <button type="button" class="btn btn-primary btn-sm mx-1" (click)="exportExcelFile()">
                     <i class="fas fa-download"></i>&nbsp;Xuất file</button>
@@ -10,7 +11,8 @@
         </div>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm..." type="text"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
         <div class="o_cp_left">
@@ -27,7 +29,8 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)" (cellClick)="cellClick($event.dataItem)">
         <kendo-grid-column field="productCode" title="Mã sản phẩm">
         </kendo-grid-column>
         <kendo-grid-column field="productName" title="Tên sản phẩm">
