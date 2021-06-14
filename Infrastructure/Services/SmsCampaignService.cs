@@ -181,6 +181,7 @@ namespace Infrastructure.Services
                     CompanyId = CompanyId,
                     TypeDate = "unlimited",
                     State = "running",
+                    LimitMessage = 0,
                     DefaultType = "sms_campaign_birthday"
                 };
 
@@ -208,6 +209,7 @@ namespace Infrastructure.Services
                 {
                     Name = "Nhắc lịch hẹn",
                     CompanyId = CompanyId,
+                    LimitMessage = 0,
                     TypeDate = "unlimited",
                     DefaultType = "sms_campaign_appointment_reminder",
                     State = "running"
@@ -237,6 +239,7 @@ namespace Infrastructure.Services
                 {
                     Name = "Chiến dịch mặc định",
                     CompanyId = CompanyId,
+                    LimitMessage = 0,
                     TypeDate = "unlimited",
                     State = "running",
                     DefaultType = "sms_campaign_default"
@@ -268,6 +271,7 @@ namespace Infrastructure.Services
                 {
                     Name = "Cảm ơn khách hàng",
                     CompanyId = CompanyId,
+                    LimitMessage = 0,
                     TypeDate = "unlimited",
                     State = "running",
                     DefaultType = "sms_campaign_thanks_customer"
@@ -296,6 +300,7 @@ namespace Infrastructure.Services
                 {
                     Name = "Chăm sóc sau điều trị",
                     CompanyId = CompanyId,
+                    LimitMessage = 0,
                     TypeDate = "unlimited",
                     State = "running",
                     DefaultType = "sms_campaign_care_after_order"

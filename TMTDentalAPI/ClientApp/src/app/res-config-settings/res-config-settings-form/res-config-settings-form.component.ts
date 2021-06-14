@@ -8,6 +8,8 @@ import { PrintPaperSizeBasic, PrintPaperSizePaged, PrintPaperSizeService } from 
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
 import { SmsMessageService } from 'src/app/sms/sms-message.service';
+import { SmsCampaignService } from 'src/app/sms/sms-campaign.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-res-config-settings-form',
@@ -25,7 +27,8 @@ export class ResConfigSettingsFormComponent implements OnInit {
   @ViewChild('papersizeCbx', { static: true }) papersizeCbx: ComboBoxComponent;
   constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService, private printPaperSizeService: PrintPaperSizeService,
     private authService: AuthService,
-    private smsMessageService: SmsMessageService
+    private smsMessageService: SmsMessageService,
+    private smsCampaignService: SmsCampaignService
     , private notificationService: NotificationService, private intlService: IntlService) {
   }
 
@@ -59,6 +62,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
       }
       if (result.groupSms) {
         this.actionStartJobSmsMessage();
+        this.setupDefaultSmsCampaign();
       } else {
         this.actionStopJobSmsMessage();
       }
@@ -97,6 +101,15 @@ export class ResConfigSettingsFormComponent implements OnInit {
     this.smsMessageService.actionStopJobAutomatic().subscribe(
       res => { }
     )
+  }
+
+  setupDefaultSmsCampaign() {
+    var url1 = this.smsCampaignService.getDefaultCampaign();
+    var url2 = this.smsCampaignService.getDefaultCampaignAppointmentReminder();
+    var url3 = this.smsCampaignService.getDefaultCampaignBirthday();
+    var url4 = this.smsCampaignService.getDefaultCareAfterOrder();
+    var url5 = this.smsCampaignService.getDefaultThanksCustomer();
+    forkJoin(url1, url2, url3, url4, url5).subscribe(() => { })
   }
 
   onSave() {

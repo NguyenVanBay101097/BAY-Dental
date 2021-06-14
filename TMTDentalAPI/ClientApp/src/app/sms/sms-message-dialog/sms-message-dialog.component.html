@@ -36,8 +36,9 @@
                                                 <label class="o_form_label">Chọn chiến dịch</label>
                                             </td>
                                             <td class="o_td_value">
-                                                <kendo-combobox [data]="filteredSmsCampaign" [textField]="'name'" [valueField]="'id'" 
-                                                    formControlName="smsCampaign" [filterable]="true" #smsCampaignCbx
+                                                <kendo-combobox [data]="filteredSmsCampaign" [textField]="'name'"
+                                                    [valueField]="'id'" formControlName="smsCampaign"
+                                                    [filterable]="true" #smsCampaignCbx
                                                     (valueChange)="changeSmsCampaign($event)">
                                                 </kendo-combobox>
                                                 <div *ngIf="f.smsCampaign.errors && (f.smsCampaign.touched || f.smsCampaign.dirty || submitted)"
@@ -89,7 +90,8 @@
                                                         [format]="'MM/dd/yyyy HH:mm'" formControlName="scheduleDateObj"
                                                         required>
                                                     </kendo-datetimepicker>
-                                                    <div *ngIf="!getValueFormControl('scheduleDateObj')" class="text-danger">
+                                                    <div *ngIf="!getValueFormControl('scheduleDateObj')"
+                                                        class="text-danger">
                                                         Chọn thời gian gửi tin
                                                     </div>
                                                 </div>
@@ -150,18 +152,16 @@
                                                 <label class="o_form_label">Chọn tin nhắn mẫu</label>
                                             </td>
                                             <td class="o_td_value">
-                                                <kendo-combobox [data]="filteredTemplate" [textField]="'name'" [valueField]="'id'"
-                                                    formControlName="template" [filterable]="true"
+                                                <kendo-combobox [data]="filteredTemplate" [textField]="'name'"
+                                                    [valueField]="'id'" formControlName="template" [filterable]="true"
                                                     #smsTemplateCbx (valueChange)="onChangeTemplate($event)">
                                                 </kendo-combobox>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="2">
-                                                <app-sms-template-content 
-                                                    [type]="templateTypeTab"
-                                                    [textareaLength]="textareaLimit"
-                                                    [template]="template">
+                                                <app-sms-template-content [type]="templateTypeTab"
+                                                    [textareaLength]="textareaLimit" [template]="template">
                                                 </app-sms-template-content>
                                             </td>
                                         </tr>
@@ -199,7 +199,10 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Xác nhận</button>
+    <button type="button" *ngIf="getValueFormControl('typeSend') == 'automatic' " class="btn btn-primary"
+        (click)="actionReminder()" accesskey="s">Xác nhận</button>
+    <button type="button" *ngIf="getValueFormControl('typeSend') == 'manual' " class="btn btn-primary"
+        (click)="actionSendNow()" accesskey="s">Gửi ngay</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

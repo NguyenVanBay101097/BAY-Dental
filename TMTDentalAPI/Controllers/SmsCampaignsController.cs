@@ -34,7 +34,7 @@ namespace TMTDentalAPI.Controllers
             _tenant = tenant?.Value;
         }
 
-       
+
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SMS.Campaign.Read")]
@@ -44,7 +44,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-     
+
 
         [HttpGet("{id}")]
         [CheckAccess(Actions = "SMS.Campaign.Read")]
@@ -58,7 +58,9 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetDefaultCampaignBirthday()
         {
+            await _unitOfWorkAsync.BeginTransactionAsync();
             var res = await _smsCampaignService.GetDefaultCampaignBirthday();
+            _unitOfWorkAsync.Commit();
             return Ok(res);
         }
 
@@ -76,7 +78,9 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetDefaultThanksCustomer()
         {
+            await _unitOfWorkAsync.BeginTransactionAsync();
             var res = await _smsCampaignService.GetDefaultThanksCustomer();
+            _unitOfWorkAsync.Commit();
             return Ok(res);
         }
 
@@ -84,7 +88,9 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetDefaultCareAfterOrder()
         {
+            await _unitOfWorkAsync.BeginTransactionAsync();
             var res = await _smsCampaignService.GetDefaultCareAfterOrder();
+            _unitOfWorkAsync.Commit();
             return Ok(res);
         }
 
@@ -92,7 +98,9 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetDefaultCampaign()
         {
+            await _unitOfWorkAsync.BeginTransactionAsync();
             var res = await _smsCampaignService.GetDefaultCampaign();
+            _unitOfWorkAsync.Commit();
             return Ok(res);
         }
 
@@ -101,7 +109,10 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> CreateAsync(SmsCampaignSave val)
         {
             if (!ModelState.IsValid || val == null) return BadRequest();
+            await _unitOfWorkAsync.BeginTransactionAsync();
             var res = await _smsCampaignService.CreateAsync(val);
+            _unitOfWorkAsync.Commit();
+
             return Ok(res);
         }
 

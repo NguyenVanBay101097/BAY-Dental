@@ -216,7 +216,7 @@ export class SmsMessageDialogComponent implements OnInit {
     return val;
   }
 
-  onConfirm() {
+  actionSendNow() {
     this.submitted = true;
     if (this.formGroup.invalid) return;
     if (!this.template.text) return;
@@ -233,19 +233,51 @@ export class SmsMessageDialogComponent implements OnInit {
     modalRef.result.then(() => {
       this.smsMessageService.create(val).subscribe(
         (res: any) => {
-          if (res && res.state != 'in_queue') {
-            this.smsMessageService.actionSendSms(res.id).subscribe(
-              () => {
-                this.notify("Gửi tin nhắn thành công", true);
-                this.activeModal.close();
+          this.smsMessageService.actionSendSms(res.id).subscribe(
+            () => {
+              this.notify("Gửi tin nhắn thành công", true);
+              this.activeModal.close();
 
+            }
+          )
+          if (this.isTemplateCopy) {
+            let template = {
+              text: val.body,
+              templateType: 'text'
+            }
+            let valueTemplate = {
+              name: val.templateName,
+              body: JSON.stringify(template),
+              type: this.templateTypeTab
+            }
+            this.smsTemplateService.create(valueTemplate).subscribe(
+              () => {
+                this.loadSmsTemplate();
               }
             )
-          } else {
-            this.notify("Thêm mới tin nhắn thành công", true);
-            this.activeModal.close();
           }
+        }
+      )
+    })
+  }
 
+  actionReminder() {
+    this.submitted = true;
+    if (this.formGroup.invalid) return;
+    if (!this.template.text) return;
+    if ((this.errorSendLimit && !this.noLimit) || this.partnerIds.length == 0) return;
+    var val = this.GetValueFormGroup();
+    val.body = this.template ? this.template.text : '';
+    const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.campaign = val.smsCampaign;
+    modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
+    modalRef.componentInstance.brandName = val.smsAccount.brandName;
+    modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.scheduleDateObj, "HH:mm, dd/MM/yyyy");;
+    modalRef.componentInstance.body = this.template ? this.template.text : '';
+    modalRef.componentInstance.numberSms = this.partnerIds ? this.partnerIds.length : 0;
+    modalRef.result.then(() => {
+      this.smsMessageService.ActionCreateReminder(val).subscribe(
+        (res: any) => {
           if (this.isTemplateCopy) {
             let template = {
               text: val.body,

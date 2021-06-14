@@ -24,6 +24,10 @@ export class SmsMessageService {
         return this.http.post(this.base_api + this.apiUrl, val);
     }
 
+    ActionCreateReminder(val){
+        return this.http.post(this.base_api + this.apiUrl, val);
+    }
+
     getPaged(val) {
         return this.http.get(this.base_api + this.apiUrl, { params: val });
     }
