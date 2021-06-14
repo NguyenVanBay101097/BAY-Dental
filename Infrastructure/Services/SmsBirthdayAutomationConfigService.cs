@@ -26,15 +26,6 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<SmsBirthdayAutomationConfigDisplay> GetDisplay(Guid id)
-        {
-            var entity = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Template)
-                .Include(x => x.SmsCampaign)
-                .Include(x => x.SmsAccount)
-                .FirstOrDefaultAsync();
-            return _mapper.Map<SmsBirthdayAutomationConfigDisplay>(entity);
-        }
 
         public override async Task<SmsBirthdayAutomationConfig> CreateAsync(SmsBirthdayAutomationConfig entity)
         {
@@ -70,9 +61,9 @@ namespace Infrastructure.Services
             RecurringJob.RemoveIfExists(jobId);
         }
 
-        public async Task<SmsBirthdayAutomationConfigDisplay> GetByCompany(Guid companyId)
+        public async Task<SmsBirthdayAutomationConfigDisplay> GetByCompany()
         {
-            var entity = await SearchQuery(x => x.CompanyId == companyId)
+            var entity = await SearchQuery(x => x.CompanyId == CompanyId)
               .Include(x => x.Template)
               .Include(x => x.SmsCampaign)
               .Include(x => x.SmsAccount)
