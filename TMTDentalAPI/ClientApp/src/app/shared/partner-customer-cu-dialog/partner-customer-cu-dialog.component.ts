@@ -27,6 +27,7 @@ import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PermissionService } from '../permission.service';
 import { CheckPermissionService } from '../check-permission.service';
+import { AgentCreateUpdateDialogComponent } from '../agent-create-update-dialog/agent-create-update-dialog.component';
 
 @Component({
   selector: "app-partner-customer-cu-dialog",
@@ -347,6 +348,16 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     modalRef.result.then(result => {
       this.filteredTitles.push(result as PartnerTitle);
       this.formGroup.patchValue({ title: result });
+    }, () => {
+    });
+  }
+
+  quickCreateAgent() {
+    let modalRef = this.modalService.open(AgentCreateUpdateDialogComponent,  { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm người giới thiệu';
+    modalRef.result.then(result => {
+      this.filteredAgents.push(result as AgentBasic);
+      this.formGroup.patchValue({ agent: result });
     }, () => {
     });
   }

@@ -94,6 +94,7 @@ import { LocaleConfig, LOCALE_CONFIG } from './date-range-picker-filter/config/d
 import { DaterangepickerDirective } from './date-range-picker-filter/config/daterangepicker.directive';
 import { LocaleService } from './date-range-picker-filter/config/locale.service';
 import { DateRangePickerDropdownComponent } from './date-range-picker-filter/date-range-picker-dropdown/date-range-picker-dropdown.component';
+import { AgentCreateUpdateDialogComponent } from './agent-create-update-dialog/agent-create-update-dialog.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -181,7 +182,8 @@ const config: LocaleConfig = {};
         SaleOrderLineCuComponent,
         DateRangePickerFilterComponent,
         DaterangepickerDirective,
-        DateRangePickerDropdownComponent
+        DateRangePickerDropdownComponent,
+        AgentCreateUpdateDialogComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -258,7 +260,8 @@ const config: LocaleConfig = {};
         SaleOrderLineCuComponent,
         DateRangePickerFilterComponent,
         DaterangepickerDirective,
-        DateRangePickerDropdownComponent
+        DateRangePickerDropdownComponent,
+        AgentCreateUpdateDialogComponent
     ],
     imports: [
         NgbModule,
@@ -306,7 +309,8 @@ const config: LocaleConfig = {};
         LaboFinnishLineImportComponent,
         CashBookCuDialogComponent,
         DateRangePickerFilterComponent,
-        DateRangePickerDropdownComponent
+        DateRangePickerDropdownComponent,
+        AgentCreateUpdateDialogComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

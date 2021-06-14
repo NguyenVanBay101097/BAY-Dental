@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AgentListComponent } from './agent-list/agent-list.component';
-import { AgentCreateUpdateDialogComponent } from './agent-create-update-dialog/agent-create-update-dialog.component';
 import { AgentRoutingModule } from './agent-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
@@ -16,7 +15,7 @@ import { AgentCommmissionPaymentDialogComponent } from './agent-commmission-paym
 import { AgentCommmissionFormDetailItemComponent } from './agent-commmission-form-detail-item/agent-commmission-form-detail-item.component';
 
 @NgModule({
-  declarations: [AgentListComponent, AgentCreateUpdateDialogComponent, AgentCommissionListComponent, AgentCommissionFormComponent, AgentCommmissionFormDetailComponent, AgentCommmissionHistoryComponent, AgentCommmissionPaymentDialogComponent, AgentCommmissionFormDetailItemComponent],
+  declarations: [AgentListComponent, AgentCommissionListComponent, AgentCommissionFormComponent, AgentCommmissionFormDetailComponent, AgentCommmissionHistoryComponent, AgentCommmissionPaymentDialogComponent, AgentCommmissionFormDetailItemComponent],
   imports: [
     CommonModule,
     AgentRoutingModule,
@@ -27,9 +26,7 @@ import { AgentCommmissionFormDetailItemComponent } from './agent-commmission-for
     NgbModule,
   ], providers: [
     AgentService
-  ], entryComponents:
-  [
-    AgentCreateUpdateDialogComponent,
+  ], entryComponents: [
     AgentCommmissionPaymentDialogComponent
   ]
 })

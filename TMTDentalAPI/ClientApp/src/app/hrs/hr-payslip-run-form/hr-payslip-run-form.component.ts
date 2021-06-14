@@ -9,7 +9,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { HrPayslipRunConfirmDialogComponent } from '../hr-payslip-run-confirm-dialog/hr-payslip-run-confirm-dialog.component';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { validate, validator } from 'fast-json-patch';
 import { error } from 'protractor';
 import { SalaryPaymentModule } from 'src/app/salary-payment/salary-payment.module';
@@ -183,19 +183,42 @@ export class HrPayslipRunFormComponent implements OnInit {
   }
 
   onConfirm() {
-    if (this.id) {
-      const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Xác nhận bảng lương';
-      modalRef.componentInstance.body = 'Bạn chắc chắn xác nhận bảng lương?';
-      modalRef.componentInstance.body2 = ' Bạn sẽ không thể điều chỉnh sau khi xác nhận.';
-      modalRef.result.then(() => {
-        this.hrPaysliprunService.actionConfirm(this.id).subscribe(() => {
-          this.notify('success', 'Bảng lương xác nhận thành công');
-          this.loadRecord();
-        });
-      });
-
+    if (!this.FormGroup.valid) {
+      return;
     }
+
+    const val = this.getFormData();
+
+    const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xác nhận bảng lương';
+    modalRef.componentInstance.body = 'Bạn chắc chắn xác nhận bảng lương?';
+    modalRef.componentInstance.body2 = ' Bạn sẽ không thể điều chỉnh sau khi xác nhận.';
+    modalRef.result.then(() => {
+      if (this.id) {
+        this.hrPaysliprunService.update(this.id, val).pipe(
+          mergeMap((result: any) => {
+            return this.hrPaysliprunService.get(this.id);
+          })
+        ).subscribe((result: any) => {
+          this.hrPaysliprunService.actionConfirm(this.id).subscribe(() => {
+            this.notify('success', 'Bảng lương xác nhận thành công');
+            this.loadRecord();
+          });
+        });    
+      }else{
+        this.hrPaysliprunService.create(val).pipe(
+          mergeMap((result: any) => {
+            return this.hrPaysliprunService.CreatePayslipByRunId(result.id);
+          })
+        ).subscribe((result: any) => {
+          this.hrPaysliprunService.actionConfirm(result.id).subscribe(() => {
+            this.notify('success', 'Bảng lương xác nhận thành công');
+            this.loadRecord();
+          });
+        });
+      }
+    });
+   
   }
 
   actionCancel() {

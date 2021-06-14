@@ -20,6 +20,8 @@ namespace Infrastructure.Services
 
         Task<TotalAmountAgentResult> GetAmountCommissionAgentTotal(TotalAmountAgentFilter val);
 
+        Task<decimal> GetAmountBalanceCommissionAgentForPartner(TotalAmountAgentFilter val);
+
         Task<AgentDisplay> GetDisplayById(Guid id);
 
     }

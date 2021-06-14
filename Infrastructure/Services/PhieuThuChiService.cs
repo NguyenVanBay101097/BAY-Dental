@@ -57,12 +57,12 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateTo);
             }
 
+            var totalItems = await query.CountAsync();
+
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
             query = query.OrderByDescending(x => x.DateCreated);
-
-            var totalItems = await query.CountAsync();
 
             var items = await query.Include(x => x.LoaiThuChi).Include(x => x.Journal).Include(x => x.Partner).ToListAsync();
 

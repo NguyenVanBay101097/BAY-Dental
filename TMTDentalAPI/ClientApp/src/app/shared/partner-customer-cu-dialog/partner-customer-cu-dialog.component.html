@@ -152,8 +152,13 @@
                                                 <label class="o_form_label">Người giới thiệu</label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-combobox formControlName="agent" [filterable]="true" [data]="filteredAgents" [valueField]="'id'" #agentCbx [textField]="'name'">
-                                                </kendo-combobox>
+                                                <div class="d-flex">
+                                                    <kendo-combobox formControlName="agent" [filterable]="true" [data]="filteredAgents" [valueField]="'id'" #agentCbx [textField]="'name'">
+                                                    </kendo-combobox>
+                                                    <a class="btn btn-sm btn-light" (click)="quickCreateAgent()">
+                                                        <span class="k-icon k-i-plus"></span>
+                                                    </a>
+                                                </div>                                              
                                             </td>
                                         </tr>
                                     </tbody>

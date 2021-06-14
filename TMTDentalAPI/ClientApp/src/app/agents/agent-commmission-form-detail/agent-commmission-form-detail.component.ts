@@ -41,8 +41,8 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.route.parent.snapshot.paramMap.get('id');
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd;
+    // this.dateFrom = this.monthStart;
+    // this.dateTo = this.monthEnd;
 
     this.searchUpdate.pipe(
       debounceTime(400),
