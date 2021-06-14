@@ -52,7 +52,7 @@ namespace Infrastructure.Services
 
         public IQueryable<SmsMessageDetail> GetQueryable(SmsMessageDetailPaged val)
         {
-            var query = _repository.SearchQuery();
+            var query = _repository.SearchQuery(x => x.CompanyId == CompanyId);
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId.Value);
             if (!string.IsNullOrEmpty(val.Search))
@@ -217,7 +217,7 @@ namespace Infrastructure.Services
                     Year = x.Key.Year,
                     Count = x.Count(),
                     Total = total
-                }).OrderBy(x=>x.Month).ToListAsync();
+                }).OrderBy(x => x.Month).ToListAsync();
             return items;
         }
 

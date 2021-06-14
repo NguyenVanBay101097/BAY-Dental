@@ -163,6 +163,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("Autocomplete3")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
+        public async Task<IActionResult> Autocomplete3(ProductPaged val)
+        {
+            var res = await _productService.GetProductsAutocomplete2(val);
+            return Ok(res);
+        }
+
         [HttpPost("ImportExcel")]
         [CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportExcel(ProductImportExcelViewModel val)
