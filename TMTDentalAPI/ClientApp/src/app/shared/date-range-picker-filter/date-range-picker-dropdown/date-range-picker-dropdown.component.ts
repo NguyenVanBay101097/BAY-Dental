@@ -1096,7 +1096,7 @@ export class DateRangePickerDropdownComponent  implements OnInit {
     this.startDate = moment().startOf('day');
     this.endDate = moment().endOf('day');
     this.choosedDate.emit({ chosenLabel: '', startDate: null, endDate: null });
-    // this.datesUpdated.emit({ startDate: null, endDate: null });
+    this.datesUpdated.emit({ startDate: null, endDate: null });
     this.hide();
   }
 

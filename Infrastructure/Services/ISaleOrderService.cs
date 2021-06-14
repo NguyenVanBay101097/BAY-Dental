@@ -81,5 +81,10 @@ namespace Infrastructure.Services
 
 
         Task<List<SearchAllViewModel>> SearchAll(SaleOrderPaged val);
+        Task<PagedResult2<SaleOrderSmsBasic>> GetSaleOrderForSms(SaleOrderPaged val);
+
+        Task<PagedResult2<SaleOrderRevenueReport>> GetRevenueReport(SaleOrderRevenueReportPaged val);
+
+        Task<GetRevenueSumTotalRes> GetRevenueSumTotal(GetRevenueSumTotalReq val);
     }
 }

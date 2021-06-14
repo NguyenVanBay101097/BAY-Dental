@@ -1,3 +1,4 @@
+import { AgentBasic } from './../agents/agent.service';
 import { EmployeeSimple } from '../employees/employee';
 import { HistorySimple } from '../history/history';
 import { ApplicationUserSimple } from '../appointment/appointment';
@@ -64,6 +65,10 @@ export class PartnerDisplay extends PartnerBasic {
     titleId: string;
     title: PartnerTitle;
     consultant: EmployeeSimple;
+    point: number;
+    memberLevel: any;
+    agenId:string;
+    agent: AgentBasic;
 }
 
 export class PartnerSimpleInfo {
@@ -92,11 +97,13 @@ export class PartnerPaged {
     employee: boolean;
     companyId: string;
     supplier: boolean;
+    month: number;
     active: any = true;
     search: string;
     categoryId: string;
     tagIds: string[];
     computeCreditDebit: boolean;
+    isBirthday: boolean;
 }
 
 export class PagedResult2<T>{

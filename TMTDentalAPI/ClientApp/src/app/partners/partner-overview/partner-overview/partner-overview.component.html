@@ -1,7 +1,7 @@
 <div class="t_wrapper">
     <div class="t_section_left">
         <div class="info">
-            <app-partner-overview-info *ngIf="partner" [partner]="partner"></app-partner-overview-info>
+            <app-partner-overview-info *ngIf="partner" (updateEvent)="onPartnerUpdate()" [partner]="partner"></app-partner-overview-info>
         </div>
         <div class="image">
             <app-partner-overview-image [partnerId]="partnerId">

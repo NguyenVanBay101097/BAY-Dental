@@ -77,6 +77,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal Credit { get; set; }
 
+        public decimal? Balance { get; set; }
         public string CompanyName { get; set; }
         public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
         public DateTime? DateCreated { get; set; }
@@ -88,6 +89,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? BirthDay { get; set; }
 
         public bool Active { get; set; }
+
+        public decimal CountLine { get; set; }
+        public string DateOfBirth { get; set; }
+
+        public Guid AppointmnetId { get; set; }
+        public string AppointmnetName { get; set; }
+        public string Time { get; set; }
+        public string Date { get; set; }
+
     }
 
     public class PartnerPaged
@@ -105,6 +115,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool? Customer { get; set; }
 
+        public bool? IsBirthday { get; set; }
+
         public bool? Employee { get; set; }
 
         public bool? Supplier { get; set; }
@@ -112,10 +124,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> TagIds { get; set; } = new List<Guid>();
 
         public bool ComputeCreditDebit { get; set; }
-
+        public int? Month { get; set; }
         public bool? Active { get; set; }
         public bool? isBoth { get; set; } // get both customer and supplier
+        public bool? OrderDone { get; set; }
     }
+
+    
 
     public class PartnerGetDebtPagedFilter
     {
@@ -140,6 +155,19 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid MoveId { get; set; }
         public string MoveType { get; set; }
+    }
+
+    public class PartnerSaleOrderDone
+    {
+        public Guid Id { get; set; }
+        public string DisplayName { get; set; }
+        public string Phone { get; set; }
+        public string SaleOrderName { get; set; }
+        public Guid? SaleOrderId { get; set; }
+        public DateTime? DateDone { get; set; }
+        public string SaleOrderLineName { get; set; }
+        public IEnumerable<SaleOrderLineSmsSimple> SaleOrderLines { get; set; } = new List<SaleOrderLineSmsSimple>();
+        public decimal? Debit { get; set; }
     }
 
     public class PartnerPatch
@@ -525,6 +553,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public int CustomerNew { get; set; }
         public IEnumerable<CustomerStatisticsDetails> Details { get; set; } = new List<CustomerStatisticsDetails>();
     }
+
+
 
     public class PartnerInfoVm
     {

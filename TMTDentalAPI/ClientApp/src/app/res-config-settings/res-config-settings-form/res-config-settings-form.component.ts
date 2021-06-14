@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ResConfigSettingsService } from '../res-config-settings.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -7,6 +7,9 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { PrintPaperSizeBasic, PrintPaperSizePaged, PrintPaperSizeService } from 'src/app/config-prints/print-paper-size.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
+import { SmsMessageService } from 'src/app/sms/sms-message.service';
+import { SmsCampaignService } from 'src/app/sms/sms-campaign.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-res-config-settings-form',
@@ -17,12 +20,16 @@ import * as _ from 'lodash';
   }
 })
 export class ResConfigSettingsFormComponent implements OnInit {
+  submitted: boolean = false;
   formGroup: FormGroup;
   filterdPaperSizes: PrintPaperSizeBasic[] = [];
-  
+
   @ViewChild('papersizeCbx', { static: true }) papersizeCbx: ComboBoxComponent;
   constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService, private printPaperSizeService: PrintPaperSizeService,
-    private authService: AuthService, private notificationService: NotificationService, private intlService: IntlService) {
+    private authService: AuthService,
+    private smsMessageService: SmsMessageService,
+    private smsCampaignService: SmsCampaignService
+    , private notificationService: NotificationService, private intlService: IntlService) {
   }
 
   ngOnInit() {
@@ -30,31 +37,40 @@ export class ResConfigSettingsFormComponent implements OnInit {
       groupDiscountPerSOLine: false,
       groupLoyaltyCard: false,
       groupSaleCouponPromotion: false,
-      loyaltyPointExchangeRate: 0,
+      loyaltyPointExchangeRate: [0, Validators.required],
       groupMultiCompany: false,
       companySharePartner: false,
       companyShareProduct: false,
       groupUoM: false,
+      groupSms: false,
       groupServiceCard: false,
       productListpriceRestrictCompany: false,
       groupTCare: false,
       tCareRunAtObj: new Date(2000, 2, 10, 0, 0, 0),
       groupMedicine: false,
       groupSurvey: false,
+      // conversionRate: [0, Validators.required]
     });
 
 
     this.configSettingsService.defaultGet().subscribe((result: any) => {
       this.formGroup.patchValue(result);
-      
+
       if (result.tCareRunAt) {
         var tCareRunAt = new Date(result.tCareRunAt);
         this.formGroup.get('tCareRunAtObj').patchValue(tCareRunAt);
       }
-     
-      
+      if (result.groupSms) {
+        this.actionStartJobSmsMessage();
+        this.setupDefaultSmsCampaign();
+      } else {
+        this.actionStopJobSmsMessage();
+      }
+
     });
   }
+
+  get f() { return this.formGroup.controls; }
 
   onChangeCompanyShareProduct() {
     var companyShareProduct = this.companyShareProductValue;
@@ -71,11 +87,33 @@ export class ResConfigSettingsFormComponent implements OnInit {
 
   searchPaperSizes(q?: string) {
     var val = new PrintPaperSizePaged();
-    val.search = q || '';  
+    val.search = q || '';
     return this.printPaperSizeService.getPaged(val);
   }
 
+  actionStartJobSmsMessage() {
+    this.smsMessageService.actionStartJobAutomatic().subscribe(
+      res => { }
+    )
+  }
+
+  actionStopJobSmsMessage() {
+    this.smsMessageService.actionStopJobAutomatic().subscribe(
+      res => { }
+    )
+  }
+
+  setupDefaultSmsCampaign() {
+    var url1 = this.smsCampaignService.getDefaultCampaign();
+    var url2 = this.smsCampaignService.getDefaultCampaignAppointmentReminder();
+    var url3 = this.smsCampaignService.getDefaultCampaignBirthday();
+    var url4 = this.smsCampaignService.getDefaultCareAfterOrder();
+    var url5 = this.smsCampaignService.getDefaultThanksCustomer();
+    forkJoin(url1, url2, url3, url4, url5).subscribe(() => { })
+  }
+
   onSave() {
+    this.submitted = true;
     var val = this.formGroup.value;
     val.tCareRunAt = val.tCareRunAtObj ? this.intlService.formatDate(val.tCareRunAtObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     if (val.groupServiceCard) {

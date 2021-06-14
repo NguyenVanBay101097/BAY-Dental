@@ -1,3 +1,4 @@
+import { SaleOrderSimple } from './../../quotations/quotation.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -17,27 +18,27 @@ export class SaleOrderPaymentPagging {
   items: SaleOrderPaymentBasic[];
 }
 
-export class HistoryAdvancePaymentFilter {
+export class HistoryPartnerAdvanceFilter {
   offset: number;
   limit: number;
   dateFrom: string;
   dateTo: string;
+  search: string;
   partnerId: string;
 }
 
-export class HistoryPaymentAdvancePagging {
+export class HistoryPartnerAdvancePagging {
   limit: number;
   offset: number;
   totalItems: number;
-  items: SaleOrderPaymentHistoryAdvance[];
+  items: HistoryPartnerAdvanceResult[];
 }
 
-export class SaleOrderPaymentHistoryAdvance {
+export class HistoryPartnerAdvanceResult {
   paymentName: string;
   paymentDate: Date;
   paymentAmount: number;
-  orderId: string;
-  orderName: string;
+  orders: SaleOrderSimple;
 }
 
 export class SaleOrderPaymentBasic {
@@ -94,8 +95,8 @@ export class SaleOrderPaymentService {
     return this.http.get<SaleOrderPaymentPagging>(this.baseApi + this.apiUrl, { params: val });
   }
 
-  getHistoryAdvancePaged(val): Observable<HistoryPaymentAdvancePagging> {
-    return this.http.get<HistoryPaymentAdvancePagging>(this.baseApi + this.apiUrl + "/GetHistoryPaymentAdvance", { params: val });
+  getHistoryPartnerAdvance(val): Observable<HistoryPartnerAdvancePagging> {
+    return this.http.get<HistoryPartnerAdvancePagging>(this.baseApi + this.apiUrl + "/GetHistoryPartnerAdvance", { params: val });
   }
 
   get(id): Observable<SaleOrderPaymentDisplay> {
@@ -125,5 +126,7 @@ export class SaleOrderPaymentService {
   getPrint(id) {
     return this.http.get(this.baseApi + "SaleOrderPayment/Print?id=" + id, { responseType: 'text' });
   }
+
+ 
 
 }

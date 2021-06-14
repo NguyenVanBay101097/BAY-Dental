@@ -302,7 +302,6 @@ export class PartnerService {
     }
 
     getWardAship(request): Observable<Ward[]> {
-        debugger
         return this.http.post<Ward[]>(this.ashipApiUrl + "Ward/GetWards", request);
     }
 
@@ -526,6 +525,26 @@ export class PartnerService {
 
     getAmountAdvanceUsed(id){
         return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceUsed');
+    }
+
+    getCustomerInfo(id){
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/CustomerInfo');
+    }
+
+    checkUpdateLevel() {
+        return this.http.post(this.baseApi + this.apiUrl + '/CheckUpdateLevel', {});
+    }
+
+    getCustomerBirthDay(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetCustomerBirthDay', val);
+    }
+    
+    getCustomerAppointments(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetCustomerAppointments', val);
+    }
+
+    getAmountDebtBalance(id){
+        return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountDebtBalance');
     }
 }
 

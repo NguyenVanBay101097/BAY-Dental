@@ -30,7 +30,10 @@ import { PaymentQuotationDisplay, QuotationLineDisplay, QuotationsDisplay, Quota
       transition('expanded <=> collapsed', animate('300ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
-  styleUrls: ['./quotation-create-update-form.component.css']
+  styleUrls: ['./quotation-create-update-form.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class QuotationCreateUpdateFormComponent implements OnInit {
   @ViewChild("empCbx", { static: true }) empCbx: ComboBoxComponent;
@@ -449,8 +452,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.quotation = res;
           var newLine = this.quotation.lines[i];
           modalRef.componentInstance.quotationLine = newLine;
-        }, err => {
-          this.notify('error', err.error.error);
         });
     });
 
@@ -522,9 +523,12 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       };
 
       this.quotationService.applyDiscountOnQuotation(val).pipe(
-        mergeMap(() => this.quotationService.get(this.quotationId))
+        mergeMap((result: any) => {
+          return this.quotationService.get(this.quotationId);
+        })
       )
         .subscribe(res => {
+          debugger
           this.quotation = res;
           modalRef.componentInstance.quotation = this.quotation;
         });

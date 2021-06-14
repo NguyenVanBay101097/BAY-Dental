@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ProductCategory } from 'src/app/product-categories/product-category';
 import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
 
@@ -23,9 +24,10 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
   sourceCategories: any[];
   searchCateUpdate = new Subject<string>();
   category: any;
-
+  canAdd = false;
   constructor(private productCategoryService: ProductCategoryService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -34,6 +36,7 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.sourceCategories = this.categories.slice();
+    this.checkPermission();
   }
 
   onSearchChange(val: string) {
@@ -127,5 +130,9 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
       default:
         return '';
     }
+  }
+
+  checkPermission(){
+    this.canAdd = this.checkPermissionService.check(['Catalog.ProductCategory.Create']);
   }
 }

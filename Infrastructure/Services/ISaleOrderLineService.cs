@@ -65,5 +65,7 @@ namespace Infrastructure.Services
         Task ApplyPromotionOnOrderLine(ApplyPromotionRequest val);
 
         decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line);
+
+        Task<PagedResult2<SmsCareAfterOrder>> GetPagedSmsCareAfterOrderAsync(SmsCareAfterOrderPaged val);
     }
 }

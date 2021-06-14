@@ -222,5 +222,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public bool IsActive { get; set; }
 
+        public ICollection<CommissionSettlement> CommissionSettlements { get; set; } = new List<CommissionSettlement>();
+
     }
 }

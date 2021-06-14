@@ -146,6 +146,8 @@ namespace TMTDentalAPI.Controllers
             return Ok(amountAdvance);
         }
 
+
+
         [HttpPost]
         [CheckAccess(Actions = "Basic.Partner.Create")]
         public async Task<IActionResult> Create(PartnerDisplay val)
@@ -468,6 +470,20 @@ namespace TMTDentalAPI.Controllers
             return Ok(rec);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCustomerBirthDay(PartnerPaged val)
+        {
+            var rec = await _partnerService.GetCustomerBirthDay(val);
+            return Ok(rec);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCustomerAppointments(PartnerPaged val)
+        {
+            var rec = await _partnerService.GetCustomerAppointments(val);
+            return Ok(rec);
+        }
+
         //xuất excel danh sách hóa đơn còn nợ của 1 partner
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> ExportUnreconcileInvoices(Guid id)
@@ -734,6 +750,20 @@ namespace TMTDentalAPI.Controllers
             await _partnerService.UpdateAsync(entity);
 
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetPartnerForTCare(PartnerForTCarePaged val)
+        {
+            var res =await _partnerService.GetPartnerForTCare(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetPartnerOrderDone(PartnerPaged val)
+        {
+            var res = await _partnerService.GetPartnerOrderDone(val);
+            return Ok(res);
         }
     }
 }

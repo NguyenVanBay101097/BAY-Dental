@@ -52,6 +52,26 @@ export class SaleOrderToSurveyFilter {
     dateFrom: string;
     dateTo: string;
 }
+// report doanh thu dự kiến
+export class SaleOrderReportRevenuePaged {
+	limit: number;
+	offset: number;
+	companyId: string;
+	search: string;
+}
+
+export class SaleOrderReportRevenue {
+	id: string;
+	name: string;
+	partnerName: string;
+	amountTotal: number;
+	residual: number;
+	totalPaid?: any;
+}
+
+export class GetRevenueSumTotalReq {
+    companyId: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class SaleOrderService {
@@ -61,6 +81,10 @@ export class SaleOrderService {
 
     getPaged(val: any): Observable<PagedResult2<SaleOrderBasic>> {
         return this.http.get<PagedResult2<SaleOrderBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getSaleOrderForSms(val: any) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetSaleOrderForSms', { params: val });
     }
 
     get(id): Observable<SaleOrderDisplay> {
@@ -214,5 +238,13 @@ export class SaleOrderService {
 
     applyDiscountOnOrder(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnOrder', val);
+    }
+
+    getRevenueReport(val: SaleOrderReportRevenuePaged) {
+        return this.http.post<PagedResult2<SaleOrderReportRevenue>>(this.baseApi + this.apiUrl + '/GetRevenueReport', val);
+    }
+
+    getRevenueSumTotal(val: GetRevenueSumTotalReq):any{
+        return this.http.post(this.baseApi + this.apiUrl + '/GetRevenueSumTotal', val);
     }
 }

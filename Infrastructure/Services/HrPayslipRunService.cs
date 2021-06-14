@@ -332,7 +332,7 @@ namespace Infrastructure.Services
             && c.Date.Value.Year == paysliprun.Date.Value.Year).ToListAsync();
             var firstDayOfMonth = new DateTime(paysliprun.Date.Value.Year, paysliprun.Date.Value.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-            var commissions = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
+            var commissions = await commissionObj.GetReport(new CommissionSettlementFilterReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
             var Alladvances = await advanceObj.SearchQuery(c => empIds.Contains(c.EmployeeId.Value)
             && c.Type == "advance" && c.State == "done"
             && c.Date.Month == paysliprun.Date.Value.Month
@@ -400,7 +400,7 @@ namespace Infrastructure.Services
             {
                 var firstDayOfMonth = new DateTime(date.Value.Year, date.Value.Month, 1);
                 var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-                var allCommission = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = payslip.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth, EmployeeId = emp.Id });
+                var allCommission = await commissionObj.GetReport(new CommissionSettlementFilterReport() { CompanyId = payslip.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth, EmployeeId = emp.Id });
                 commission = allCommission.FirstOrDefault(x => x.EmployeeId == emp.Id);
             }
             if (advances == null)
@@ -465,7 +465,7 @@ namespace Infrastructure.Services
             && c.Date.Value.Year == paysliprun.Date.Value.Year).ToListAsync();
             var firstDayOfMonth = new DateTime(paysliprun.Date.Value.Year, paysliprun.Date.Value.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-            var commissions = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
+            var commissions = await commissionObj.GetReport(new CommissionSettlementFilterReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
             var Alladvances = await advanceObj.SearchQuery(c => empIds.Contains(c.EmployeeId.Value)
             && c.Type == "advance" && c.State == "done"
             && c.Date.Month == paysliprun.Date.Value.Month
@@ -474,6 +474,8 @@ namespace Infrastructure.Services
             {
                 var chamCongs = allChamcongs.Where(x => x.EmployeeId == item.EmployeeId);
                 var commission = commissions.FirstOrDefault(x => x.EmployeeId == item.EmployeeId);
+                if (commission == null) commission = new CommissionSettlementReportOutput();
+                commission.Amount = item.CommissionSalary;
                 var advance = Alladvances.Where(x => x.EmployeeId == item.EmployeeId);
                 await ComputeSalary(item, chamCongs, commission, advance, paysliprun.Date);
             }
@@ -506,7 +508,7 @@ namespace Infrastructure.Services
             && c.Date.Value.Year == paysliprun.Date.Value.Year).ToListAsync();
             var firstDayOfMonth = new DateTime(paysliprun.Date.Value.Year, paysliprun.Date.Value.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-            var commissions = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
+            var commissions = await commissionObj.GetReport(new CommissionSettlementFilterReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
             var Alladvances = await advanceObj.SearchQuery(c => empIds.Contains(c.EmployeeId.Value) && c.Type == "advance" && c.State == "done" && c.Date.Month == paysliprun.Date.Value.Month && c.Date.Year == paysliprun.Date.Value.Year).ToListAsync();
 
             //tạo phiếu lương từ list emps

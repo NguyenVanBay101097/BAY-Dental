@@ -1,7 +1,7 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
-            <li class="active">Cấu hình</li>
+            <li class="active">Cấu hình chung</li>
         </ol>
         <div class="o_cp_searchview">
         </div>
@@ -48,11 +48,11 @@
                                 </div>
                             </div>
                             <div class="o_setting_right_pane">
-                                <label class="o_form_label" for="o_field_input_705">Coupon
-                                    &amp; Khuyến mãi&nbsp;
+                                <label class="o_form_label" for="o_field_input_705">
+                                    Khuyến mãi
                                 </label>
                                 <div class="text-muted" id="sale_coupon">
-                                    Quản lý chương trình coupon &amp; khuyến mãi
+                                    Quản lý chương trình khuyến mãi
                                 </div>
                             </div>
                         </div>
@@ -141,6 +141,21 @@
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane">
                                 <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                    <input type="checkbox" id="o_field_input_sms" formControlName="groupSms"
+                                        class="custom-control-input">
+                                    <label for="o_field_input_sms" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_sms">SMS Brandname CSKH</label>
+                                <div class="text-muted">
+                                    Quản lý SMS Brandname CSKH
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
                                     <input type="checkbox" id="o_field_input_survey" formControlName="groupSurvey"
                                         class="custom-control-input">
                                     <label for="o_field_input_survey" class="custom-control-label">​</label>
@@ -152,8 +167,8 @@
                                     Quản lý và cấu hình khảo sát đánh giá
                                 </div>
                             </div>
-                        </div>                      
-                    </div>               
+                        </div>
+                    </div>
                     <div>
                         <h2>Đa chi nhánh</h2>
                         <div class="row mt16 o_settings_container">
@@ -212,6 +227,30 @@
                             </div>
                         </div>
                     </div>
+                    <!-- <div>
+                        <h2>Tích điểm</h2>
+                        <div class="row mt16 o_settings_container">
+                            <div class="col-12 col-lg-12 o_setting_box">
+                                
+                                <div class="o_setting_right_pane">
+                                    <div class="text-muted">
+                                        Quản lý thứ hạng thành viên của khách hàng theo điểm tích lũy
+                                    </div>
+                                    <div class="d-flex">
+                                        <label class="o_form_label mr-3 pt-1">Tỉ lệ quy đổi điểm</label>
+                                        <div>
+                                            <kendo-numerictextbox  [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="loyaltyPointExchangeRate">
+                                            </kendo-numerictextbox>
+                                            <div *ngIf="f.loyaltyPointExchangeRate.errors && (f.loyaltyPointExchangeRate.touched || f.loyaltyPointExchangeRate.dirty || submitted)" class="text-danger">
+                                                <div *ngIf="f.loyaltyPointExchangeRate.errors.required">Nhập số tiền quy đổi</div>
+                                            </div> 
+                                        </div>
+                                        <span class="ml-2 pt-1"> = 1 điểm</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
                 </div>
             </div>
         </div>

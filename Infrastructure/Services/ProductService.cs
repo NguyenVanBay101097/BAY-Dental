@@ -415,8 +415,10 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ProductSimple>> GetProductsAutocomplete2(ProductPaged val)
         {
-            var query = SearchQuery(domain: x => x.Active && (string.IsNullOrEmpty(val.Search) || x.Name.Contains(val.Search) ||
-             x.NameNoSign.Contains(val.Search)));
+            var query = SearchQuery(x => x.Active);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search));
             if (val.KeToaOK.HasValue)
                 query = query.Where(x => x.KeToaOK == val.KeToaOK);
             if (val.IsLabo.HasValue)
@@ -428,7 +430,10 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Type))
                 query = query.Where(x => x.Type == val.Type);
             if (!string.IsNullOrEmpty(val.Type2))
-                query = query.Where(x => x.Type2 == val.Type2);
+            {
+                var types = val.Type2.Split(",");
+                query = query.Where(x => types.Contains(x.Type2));
+            }
 
             var res = await query.Include(x => x.UOM).OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).ToListAsync();
             return _mapper.Map<IEnumerable<ProductSimple>>(res);

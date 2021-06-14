@@ -2,23 +2,34 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AccountInvoiceReportsRoutingModule } from './account-invoice-reports-routing.module';
-import { AccountInvoiceReportByTimeComponent } from './account-invoice-report-by-time/account-invoice-report-by-time.component';
 import { AccountInvoiceReportService } from './account-invoice-report.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule } from '@angular/forms';
-import { AccountInvoiceReportByTimeDetailComponent } from './account-invoice-report-by-time-detail/account-invoice-report-by-time-detail.component';
-import { AccountInvoiceReportIndexComponent } from './account-invoice-report-index/account-invoice-report-index.component';
+import { AccountInvoiceReportRevenueManageComponent } from './account-invoice-report-revenue-manage/account-invoice-report-revenue-manage.component';
+import { SharedModule } from '../shared/shared.module';
+import { AccountInvoiceReportRevenueDetailComponent } from './account-invoice-report-revenue-detail/account-invoice-report-revenue-detail.component';
+import { SaleOrderReportRevenueComponent } from './sale-order-report-revenue/sale-order-report-revenue.component';
+import { AccountInvoiceReportRevenueComponent } from './account-invoice-report-revenue/account-invoice-report-revenue.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AccountInvoiceReportRevenueServiceComponent } from './account-invoice-report-revenue-service/account-invoice-report-revenue-service.component';
+import { AccountInvoiceReportRevenueEmployeeComponent } from './account-invoice-report-revenue-employee/account-invoice-report-revenue-employee.component';
 
 @NgModule({
-  declarations: [AccountInvoiceReportByTimeComponent, AccountInvoiceReportByTimeDetailComponent, AccountInvoiceReportIndexComponent],
+  declarations: [AccountInvoiceReportRevenueDetailComponent, SaleOrderReportRevenueComponent, AccountInvoiceReportRevenueComponent,AccountInvoiceReportRevenueManageComponent,
+    AccountInvoiceReportRevenueServiceComponent,
+    AccountInvoiceReportRevenueEmployeeComponent
+  ],
   imports: [
     CommonModule,
     AccountInvoiceReportsRoutingModule,
     MyCustomKendoModule,
-    FormsModule
+    FormsModule,
+    SharedModule,
+    NgbModule,
   ],
   providers: [
     AccountInvoiceReportService
-  ]
+  ],
+  entryComponents: [SaleOrderReportRevenueComponent,AccountInvoiceReportRevenueComponent]
 })
 export class AccountInvoiceReportsModule { }

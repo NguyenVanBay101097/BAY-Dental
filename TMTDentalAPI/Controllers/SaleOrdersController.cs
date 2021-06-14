@@ -56,6 +56,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetSaleOrderForSms([FromQuery] SaleOrderPaged val)
+        {
+            var result = await _saleOrderService.GetSaleOrderForSms(val);
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> Get(Guid id)
@@ -459,6 +467,20 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetLineForProductRequest(Guid id)
         {
             var res = await _saleOrderService.GetLineForProductRequest(id);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetRevenueReport(SaleOrderRevenueReportPaged val) // dự kiến doanh thu
+        {
+            var res = await _saleOrderService.GetRevenueReport(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetRevenueSumTotal(GetRevenueSumTotalReq val) //Tổng dự kiến doanh thu
+        {
+            var res = await _saleOrderService.GetRevenueSumTotal(val);
             return Ok(res);
         }
     }

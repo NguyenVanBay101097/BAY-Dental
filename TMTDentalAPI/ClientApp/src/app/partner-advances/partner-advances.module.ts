@@ -10,9 +10,10 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PartnerAdvanceService } from './partner-advance.service';
 import { PartnerAdvancesRoutingModule } from "./partner-advances-routing.module";
 import { PartnerAdvanceHistoryListComponent } from './partner-advance-history-list/partner-advance-history-list.component';
+import { PartnerAdvanceManagementComponent } from './partner-advance-management/partner-advance-management.component';
 
 @NgModule({
-  declarations: [PartnerAdvanceListComponent, PartnerAdvanceCreateUpdateDialogComponent, PartnerAdvanceHistoryListComponent],
+  declarations: [PartnerAdvanceListComponent, PartnerAdvanceCreateUpdateDialogComponent, PartnerAdvanceHistoryListComponent, PartnerAdvanceManagementComponent],
   imports: [
     CommonModule,
     PartnerAdvancesRoutingModule,

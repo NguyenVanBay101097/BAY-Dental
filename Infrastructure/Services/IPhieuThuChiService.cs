@@ -14,7 +14,7 @@ namespace Infrastructure.Services
         Task<PhieuThuChiDisplay> GetByIdPhieuThuChi(Guid id);
         Task<PhieuThuChi> CreatePhieuThuChi(PhieuThuChiSave val);
         Task UpdatePhieuThuChi(Guid id, PhieuThuChiSave val);
-
+       
         Task Unlink(Guid id);
         Task ActionConfirm(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> id);
@@ -24,5 +24,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<ReportPhieuThuChi>> ReportPhieuThuChi(PhieuThuChiSearch val);
 
         Task<List<PhieuThuChiExportExcel>> GetExportExcel(PhieuThuChiPaged val);
+        Task<PrintVM> GetPrint(Guid id);
     }
 }

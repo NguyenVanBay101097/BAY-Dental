@@ -1,0 +1,123 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">                         
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Tên người giới thiệu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="name" name="name">
+                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger mb-1">
+                                        <div *ngIf="f.name.errors.required">Nhập tên người giới thiệu</div>
+                                    </div>
+                                </td>
+                               
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Giới tính</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="gender" id="male_radio" value="male">
+                                        <label class="form-check-label" for="male_radio">Nam</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="gender" id="female_radio" value="female">
+                                        <label class="form-check-label" for="female_radio">Nữ</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="gender" id="other_radio" value="other">
+                                        <label class="form-check-label" for="other_radio">Khác</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày sinh</label>
+                                </td>
+                                <td colspan="1" style="width:100%">
+                                    <div class="d-flex">
+                                        <select class="form-control" formControlName="birthDayStr">
+                                            <option value="">Ngày</option>
+                                            <option *ngFor="let i of dayList">
+                                                {{i}}</option>
+                                        </select>
+                                        <select class="form-control" formControlName="birthMonthStr">
+                                            <option value="">Tháng</option>
+                                            <option *ngFor="let i of monthList">
+                                                {{i}}</option>
+                                        </select>
+                                        <select class="form-control" formControlName="birthYearStr">
+                                            <option value="">Năm</option>
+                                            <option *ngFor="let i of yearList">
+                                                {{i}}</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Nghề nghiệp</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="jobTitle" />
+                                </td>
+                            </tr>
+                                              
+                          
+                                                    
+                               
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Số điện thoại</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="phone" />
+                                </td>
+                            </tr> 
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Email</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="email" />
+                                </td>
+                            </tr>                                                                                  
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Địa chỉ</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="address" />
+                                </td>
+                            </tr>                             
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <div>
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
+        <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+    </div>
+</div>

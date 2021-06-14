@@ -45,5 +45,17 @@ namespace TMTDentalAPI.ViewControllers
             return View(phieu);
 
         }
+
+        public async Task<IActionResult> Print2(Guid id)
+        {
+            var res = await _phieuThuChiService.GetPrint(id);
+
+            if (res == null)
+                return NotFound();
+
+            res.AmountText = AmountToText.amount_to_text(res.Amount);
+
+            return View(res);
+        }
     }
 }

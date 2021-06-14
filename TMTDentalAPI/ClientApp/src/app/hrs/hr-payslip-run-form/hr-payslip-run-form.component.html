@@ -81,7 +81,7 @@
                                             <th style="min-width: 150px;">Phụ cấp khác</th>
                                             <th style="min-width: 160px;">Thưởng</th>
                                             <th style="min-width: 160px;">Phụ cấp lễ tết</th>
-                                            <th class="text-right" style="min-width: 100px;">Hoa hồng</th>
+                                            <th class="text-right" style="min-width: 150px;">Hoa hồng</th>
                                             <th style="min-width: 150px;">Phạt</th>
                                             <th class="text-right" [hidden]="isCompact" style="min-width: 120px;">Tổng lương</th>
                                             <th class="text-right" style="min-width: 100px;">Tạm ứng</th>
@@ -118,7 +118,10 @@
                                                     <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="holidayAllowance" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>
                                                 </td>
-                                                <td class="text-right">{{item.get('commissionSalary').value | number }}</td>
+                                                <td class="text-right">
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="commissionSalary" [format]="'n0'" [min]="0" [autoCorrect]="true">
+                                                    </kendo-numerictextbox>
+                                                </td>
                                                 <td>
                                                     <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="amercementMoney" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>

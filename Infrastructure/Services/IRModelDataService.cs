@@ -102,6 +102,12 @@ namespace Infrastructure.Services
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
+                    case "res.sms.campaign":
+                        {
+                            var service = GetService<ISmsCampaignService>();
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
+                            return (T)(object)group;
+                        }
                     case "res.partner.source":
                         {
                             var service = GetService<IPartnerSourceService>();
@@ -129,6 +135,12 @@ namespace Infrastructure.Services
                     case "print.paper.size":
                         {
                             var service = GetService<IPrintPaperSizeService>();
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
+                            return (T)(object)group;
+                        }
+                    case "account.financialRevenue.report":
+                        {
+                            var service = GetService<IAccountFinancialRevenueReportService>();
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }

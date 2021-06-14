@@ -67,8 +67,18 @@ export class PartnerOverviewComponent implements OnInit {
   }
 
   GetPartner() {
-    this.PartnerOdataService.getDisplay(this.partnerId).subscribe((res: any) => {
-      this.partner = res;
+    // this.PartnerOdataService.getDisplay(this.partnerId).subscribe((res: any) => {
+    //   this.partner = res;
+    // });
+
+    this.partnerService.getCustomerInfo(this.partnerId).subscribe((result: any) => {
+      this.partner = result;
+    });
+  }
+
+  onPartnerUpdate() {
+    this.partnerService.getCustomerInfo(this.partnerId).subscribe((result: any) => {
+      this.partner = result;
     });
   }
 

@@ -1,0 +1,57 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Tin nhắn mẫu</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tiêu đề tin nhắn mẫu" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="c" (click)="createItem()">Thêm</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column title="STT" width="50">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{rowIndex + 1}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Tiêu đề tin nhắn mẫu" width="180"></kendo-grid-column>
+        <kendo-grid-column field="body" title="Nội dung" width="200"></kendo-grid-column>
+        <kendo-grid-column title="Loại tin nhắn mẫu" width="180">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{getTemplateType(dataItem.type)}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Ngày tạo" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.dateCreated | date:'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="id" width="100">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                    <span class="far fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                    <span class="far fa-trash-alt"></span></button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

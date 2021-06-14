@@ -15,6 +15,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class RevenueReportResultDetail
     {
+        public Guid PartnerId { get; set; }
         public string Name { get; set; }
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }

@@ -28,8 +28,8 @@ namespace TMTDentalAPI.Hubs
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, CurrentTenantCompanyId());
-            await base.OnDisconnectedAsync(exception);
-        }
+            await base.OnDisconnectedAsync(exception); 
+        }  
 
         protected string CurrentTenantCompanyId()
         {

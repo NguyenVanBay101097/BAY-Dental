@@ -275,6 +275,34 @@ namespace Infrastructure.Data
         public DbSet<ConfigPrint> ConfigPrints { get; set; }
         public DbSet<PrintPaperSize> PrintPaperSizes { get; set; }
 
+        public DbSet<MemberLevel> MemberLevels { get; set; }
+        public DbSet<SaleCouponProgramMemberLevelRel> SaleCouponProgramMemberLevelRels { get; set; }
+        public DbSet<AccountFinancialRevenueReport> AccountFinancialRevenueReports { get; set; }
+        public DbSet<AccountFinancialRevenueReportAccountAccountRel> AccountFinancialRevenueReportAccountAccountRels { get; set; }
+        public DbSet<AccountFinancialRevenueReportAccountAccountTypeRel> AccountFinancialRevenueReportAccountAccountTypeRels { get; set; }
+
+        /// <summary>
+        /// SMS
+        /// </summary>
+        public DbSet<SmsAccount> SmsAccounts { get; set; }
+        public DbSet<SmsComposer> SmsComposers { get; set; }
+        public DbSet<SmsMessageDetail> SmsMessageDetails { get; set; }
+        public DbSet<SmsTemplate> SmsTemplates { get; set; }
+        public DbSet<SmsMessage> SmsMessages { get; set; }
+        public DbSet<SmsMessagePartnerRel> SmsMessagePartnerRels { get; set; }
+        public DbSet<SmsMessageAppointmentRel> SmsMessageAppointmentRels { get; set; }
+        public DbSet<SmsMessageSaleOrderRel> SmsMessageSaleOrderRels { get; set; }
+        public DbSet<SmsMessageSaleOrderLineRel> SmsMessageSaleOrderLineRels { get; set; }
+        public DbSet<SmsConfigProductCategoryRel> SmsConfigProductCategoryRels { get; set; }
+        public DbSet<SmsConfigProductRel> SmsConfigProductRels { get; set; }
+        public DbSet<SmsBirthdayAutomationConfig> SmsBirthdayAutomationConfigs { get; set; }
+        public DbSet<SmsAppointmentAutomationConfig> SmsAppointmentAutomationConfigs { get; set; }
+        public DbSet<SmsThanksCustomerAutomationConfig> SmsThanksCustomerAutomationConfigs { get; set; }
+        public DbSet<SmsCareAfterOrderAutomationConfig> SmsCareAfterOrderAutomationConfigs { get; set; }
+
+
+        public DbSet<Agent> Agents { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -495,6 +523,30 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SaleCouponProgramPartnerRelConfiguration());
             builder.ApplyConfiguration(new ConfigPrintConfiguration());
             builder.ApplyConfiguration(new PrintPaperSizeConfigution());
+            builder.ApplyConfiguration(new MemberLevelConfiguration());
+            builder.ApplyConfiguration(new SaleCouponProgramMemberLevelRelConfiguration());
+
+            builder.ApplyConfiguration(new SmsAccountConfiguration());
+            builder.ApplyConfiguration(new SmsComposerConfiguration());
+            builder.ApplyConfiguration(new SmsMessageDetailConfiguration());
+            builder.ApplyConfiguration(new SmsTemplateConfiguration());
+            builder.ApplyConfiguration(new SmsMessagePartnerRelConfiguration());
+            builder.ApplyConfiguration(new SmsMessageConfiguration());
+            builder.ApplyConfiguration(new SmsMessageAppointmentRelConfiguration());
+            builder.ApplyConfiguration(new SmsMessageSaleOrderLineRelConfiguration());
+            builder.ApplyConfiguration(new SmsMessageSaleOrderRelConfiguration());
+            builder.ApplyConfiguration(new SmsConfigProductRelConfiguration());
+            builder.ApplyConfiguration(new SmsConfigProductCategoryRelConfiguration());
+            builder.ApplyConfiguration(new SmsBirthdayAutomationConfigConfiguration());
+            builder.ApplyConfiguration(new SmsAppointmentAutomationConfigConfiguration());
+            builder.ApplyConfiguration(new SmsThanksCustomerAutomationConfigConfiguration());
+            builder.ApplyConfiguration(new SmsCareAfterOrderAutomationConfigConfiguration());
+
+
+            builder.ApplyConfiguration(new AccountFinancialRevenueReportConfiguration());
+            builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountTypeRelConfiguration());
+            builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountRelConfiguration());
+            builder.ApplyConfiguration(new AgentConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
@@ -545,6 +597,7 @@ namespace Infrastructure.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+
             if (!optionsBuilder.IsConfigured)
             {
                 if (_tenant != null)

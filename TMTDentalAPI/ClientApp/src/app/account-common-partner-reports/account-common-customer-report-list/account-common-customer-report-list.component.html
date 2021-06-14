@@ -22,6 +22,8 @@
         <div class="o_cp_right">
             <app-tai-date-range-filter-dropdown class="mr-2" title="Thời hẹn" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
+            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+            </kendo-combobox>
         </div>
     </div>
 </div>

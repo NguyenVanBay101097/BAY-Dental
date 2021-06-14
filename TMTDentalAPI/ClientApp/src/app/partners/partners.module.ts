@@ -89,6 +89,10 @@ import { PartnerCustomerSaleOrderQuotationsLinesComponent } from './partner-cust
 import { ConsultingServicePopoverComponent } from './partner-customer-advisory/partner-customer-advisory-list/consulting-service-popover/consulting-service-popover.component';
 import { PartnerCustomerTreatmentFastPromotionComponent } from './partner-customer-treatment-fast-promotion/partner-customer-treatment-fast-promotion.component';
 import { PartnerCustomerTreatmentLineFastPromotionComponent } from './partner-customer-treatment-line-fast-promotion/partner-customer-treatment-line-fast-promotion.component';
+import { PartnerCustomerDebtListComponent } from './partner-customer-debt-list/partner-customer-debt-list.component';
+import { PartnerCustomerDebtPaymentDialogComponent } from './partner-customer-debt-payment-dialog/partner-customer-debt-payment-dialog.component';
+import { PartnerCustomerDebtPaymentHistoryListComponent } from './partner-customer-debt-payment-history-list/partner-customer-debt-payment-history-list.component';
+import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-management/partner-customer-debt-management.component';
 
 
 @NgModule({
@@ -167,7 +171,11 @@ import { PartnerCustomerTreatmentLineFastPromotionComponent } from './partner-cu
     PartnerCustomerSaleOrderQuotationsLinesComponent,
     ConsultingServicePopoverComponent,
     PartnerCustomerTreatmentFastPromotionComponent,
-    PartnerCustomerTreatmentLineFastPromotionComponent
+    PartnerCustomerTreatmentLineFastPromotionComponent,
+    PartnerCustomerDebtListComponent,
+    PartnerCustomerDebtPaymentDialogComponent,
+    PartnerCustomerDebtPaymentHistoryListComponent,
+    PartnerCustomerDebtManagementComponent
   ],
   imports: [
     CommonModule,
@@ -199,7 +207,8 @@ import { PartnerCustomerTreatmentLineFastPromotionComponent } from './partner-cu
     PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent,
     PartnerCustomerAdvisoryCuDialogComponent,
     PartnerCustomerTreatmentFastPromotionComponent,
-    PartnerCustomerTreatmentLineFastPromotionComponent
+    PartnerCustomerTreatmentLineFastPromotionComponent,
+    PartnerCustomerDebtPaymentDialogComponent
   ],
   providers: [SaleCouponProgramService],
   exports: [
