@@ -39,14 +39,15 @@ namespace Infrastructure.HangfireJobService
                 if (config.TemplateId.HasValue)
                     config.Template = await context.SmsTemplates.Where(x => x.Id == config.TemplateId.Value).FirstOrDefaultAsync();
                 var now = DateTime.Now;
+                var nowPast30 = now.AddMinutes(-30); //lấy quá khứ 30p
                 if (!string.IsNullOrEmpty(config.TypeTimeBeforSend))
                 {
                     var listAppointments = await context.Appointments.Where(x => x.CompanyId == config.CompanyId
                       && x.DateTimeAppointment.HasValue
                       && x.State == "confirmed"
                       && x.DateTimeAppointment.Value >= now &&
-                      ((config.TypeTimeBeforSend == "hour" && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) <= now) ||
-                      (config.TypeTimeBeforSend == "day" && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) <= now)))
+                      ((config.TypeTimeBeforSend == "hour" && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) <= now && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) > nowPast30) ||
+                      (config.TypeTimeBeforSend == "day" && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) <= now && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) > nowPast30)))
                         .ToListAsync();
                     if (listAppointments.Any())
                     {
