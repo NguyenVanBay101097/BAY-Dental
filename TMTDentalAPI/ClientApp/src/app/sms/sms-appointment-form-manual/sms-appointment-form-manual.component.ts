@@ -65,6 +65,7 @@ export class SmsAppointmentFormManualComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
+    val.state = 'confirmed';
     val.dateTimeFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTimeTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
 

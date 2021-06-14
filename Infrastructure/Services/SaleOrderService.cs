@@ -412,7 +412,7 @@ namespace Infrastructure.Services
                 sale.DateDone = DateTime.Now;
 
                 var config = await configObj.SearchQuery(x => x.CompanyId == sale.CompanyId).FirstOrDefaultAsync();
-                if (config != null && config.Active && sale.State == "done" && sale.DateDone.HasValue)
+                if (config != null && config.Active)
                 {
                     var smsMessage = new SmsMessage();
                     var smsCampaignObj = GetService<ISmsCampaignService>();
@@ -420,17 +420,16 @@ namespace Infrastructure.Services
                     smsMessage.SmsCampaignId = campaign.Id;
                     smsMessage.ResModel = "sale-order";
                     smsMessage.Body = config.Body;
-                    smsMessage.ScheduleDate = config.TypeTimeBeforSend == "hour" ? sale.DateDone.Value.AddHours(config.TimeBeforSend) : sale.DateDone.Value.AddDays(config.TimeBeforSend);
+                    smsMessage.ScheduleDate = config.TypeTimeBeforSend == "day" ? sale.DateDone.Value.AddDays(config.TimeBeforSend) : sale.DateDone.Value.AddHours(config.TimeBeforSend);
                     smsMessage.SmsAccountId = config.SmsAccountId;
                     smsMessage.SmsTemplateId = config.TemplateId;
                     smsMessage.CompanyId = config.CompanyId;
                     smsMessage.State = "in_queue";
-                    smsMessage.Name = $"Tin nhắn cảm ơn khách hàng ngày {DateTime.Now.ToString("dd-MM-yyyy HH:mm")}";
+                    smsMessage.Name = $"Cảm ơn";
                     smsMessage.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
                     {
                         SaleOrderId = sale.Id
                     });
-                    smsMessage.CompanyId = CompanyId;
 
                     await smsMessageObj.CreateAsync(smsMessage);
                 }
@@ -444,10 +443,6 @@ namespace Infrastructure.Services
 
                 await cardObj.UpdateAsync(card);
                 await cardObj._CheckUpgrade(new List<CardCard>() { card });
-
-                //tạo 1 message chờ gửi
-                
-
             }
 
             await UpdateAsync(self);
