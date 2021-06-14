@@ -67,5 +67,6 @@ namespace Infrastructure.Services
         decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line);
 
         Task<PagedResult2<SmsCareAfterOrder>> GetPagedSmsCareAfterOrderAsync(SmsCareAfterOrderPaged val);
+        Task<IEnumerable<ProductSimple>> GetProductSmsCareAfterOrder(string filter, int limit, int offset);
     }
 }

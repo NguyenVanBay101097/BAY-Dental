@@ -76,12 +76,8 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
   }
 
   onSearchProduct() {
-    var productPaged = new ProductPaged();
-    productPaged.limit = 20;
-    productPaged.offset = 0;
-    productPaged.search = this.searchProduct || '';
-    productPaged.type = "service";
-    return this.productService.autocomplete2(productPaged);
+    var search = this.searchProduct || '';
+    return this.saleOrderLineService.getProductSmsCareAfterOrder(search, 20, 0);
   }
 
   searchChangeDate(value) {

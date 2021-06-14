@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
 import { PagedResult2 } from '../paged-result-2';
+import { ProductSimple } from 'src/app/products/product-simple';
 
 export class SaleOrderLineOnChangeProduct {
     productId: string;
@@ -91,27 +92,34 @@ export class SaleOrderLineService {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetTeeth');
     }
 
-    getListLineIsLabo(val: any):Observable<PagedResult2<any>> {
+    getListLineIsLabo(val: any): Observable<PagedResult2<any>> {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetListLineIsLabo', { params: new HttpParams({ fromObject: val }) });
     }
 
-    applyDiscountOnOrderLine(val){
+    applyDiscountOnOrderLine(val) {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnOrderLine', val);
     }
 
-    applyPromotion(val){
+    applyPromotion(val) {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotion', val);
     }
 
-    patchIsActive(id, active){
-        return this.http.patch(this.baseApi + this.apiUrl + '/' + id + '/PatchIsActive',{active: active})
+    patchIsActive(id, active) {
+        return this.http.patch(this.baseApi + this.apiUrl + '/' + id + '/PatchIsActive', { active: active })
     }
 
-    applyPromotionUsageCode(val){
+    applyPromotionUsageCode(val) {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotionUsageCode', val);
     }
 
-    getSmsCareAfterOrderManual(val: any):Observable<PagedResult2<any>> {
+    getSmsCareAfterOrderManual(val: any): Observable<PagedResult2<any>> {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetSmsCareAfterOrderManual', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getProductSmsCareAfterOrder(filter: string, limit: number, offset: number): Observable<ProductSimple[]> {
+        return this.http.get<ProductSimple[]>(this.baseApi + this.apiUrl + '/GetProductSmsCareAfterOrder',
+            {
+                params: new HttpParams().set("filter", filter).set("limit", limit.toString()).set("offset", offset.toString())
+            })
     }
 }

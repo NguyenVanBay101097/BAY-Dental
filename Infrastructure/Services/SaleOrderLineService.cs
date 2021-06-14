@@ -965,7 +965,7 @@ namespace Infrastructure.Services
 
                 return promotionLine;
             }
-          
+
 
             return new SaleOrderPromotion();
         }
@@ -1049,6 +1049,32 @@ namespace Infrastructure.Services
             {
                 Items = items
             };
+        }
+
+        public async Task<IEnumerable<ProductSimple>> GetProductSmsCareAfterOrder(string filter, int limit, int offset)
+        {
+            var products = new List<ProductSimple>();
+            var query = SearchQuery(x => x.ProductId.HasValue).GroupBy(x => new
+            {
+                ProductName = x.Product.Name,
+                ProductId = x.ProductId.Value,
+                ProductNameNoSign = x.Product.NameNoSign
+            }).Select(x => new ProductSimple
+            {
+                Id = x.Key.ProductId,
+                Name = x.Key.ProductName,
+                NameNoSign = x.Key.ProductNameNoSign
+            });
+
+            if (!string.IsNullOrEmpty(filter) && query.Any())
+            {
+                query = query.Where(x => x.Name.Contains(filter) || x.NameNoSign.Contains(filter));
+            }
+
+
+            products = await query.Skip(offset).Take(limit).ToListAsync();
+
+            return products;
         }
     }
 }
