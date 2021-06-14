@@ -37,7 +37,7 @@
                                     </kendo-numerictextbox>
                                     <div *ngIf="f.amount.errors && (f.amount.touched || f.amount.dirty || submitted)"
                                         class="text-danger">
-                                        <div *ngIf="f.amount.errors.required">Không được để trống</div>
+                                        <div *ngIf="f.amount.errors.required">Nhập số tiền</div>
                                     </div>
                                 </td>
                             </tr>
@@ -48,7 +48,7 @@
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Ngày</label>
+                                    <label class="o_form_label">Ngày thanh toán</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker formControlName="dateObj">

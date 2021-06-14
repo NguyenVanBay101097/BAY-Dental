@@ -289,31 +289,6 @@ namespace Infrastructure.Services
             return namePhieu;
         }
 
-        //public override async Task<PhieuThuChi> CreateAsync(PhieuThuChi entity)
-        //{
-        //    var journalObj = GetService<IAccountJournalService>();
-        //    var loaiObj = GetService<ILoaiThuChiService>();
-        //    entity.Journal = await journalObj.SearchQuery(x => x.Id == entity.JournalId).FirstOrDefaultAsync();
-        //    if (entity.LoaiThuChiId.HasValue)
-        //        entity.LoaiThuChi = await loaiObj.SearchQuery(x => x.Id == entity.LoaiThuChiId).FirstOrDefaultAsync();
-
-        //    ComputeProps(entity);
-        //    return await base.CreateAsync(entity);
-        //}
-
-        //public override Task UpdateAsync(PhieuThuChi entity)
-        //{
-        //    ComputeProps(entity);
-        //    return base.UpdateAsync(entity);
-        //}
-
-
-        //public AccountAccount ComputeAccount()
-        //{
-        //    //neu account type = other, lay account thong qua loai thu chi
-        //    //neu account type = commission, lay account commission
-
-        //}
 
         private IList<AccountMove> _PreparePhieuThuChiMoves(IList<PhieuThuChi> val)
         {
@@ -345,8 +320,8 @@ namespace Infrastructure.Services
                     JournalId = phieu.JournalId,
                     Journal = phieu.Journal,
                     CompanyId = phieu.CompanyId,
-                    PartnerId = partner.Id,
-                    InvoiceOrigin = phieu.Name
+                    InvoiceOrigin = phieu.Name,
+                    PartnerId = partner?.Id
                 };
 
                 var lines = new List<AccountMoveLine>()
@@ -361,7 +336,7 @@ namespace Infrastructure.Services
                         Account = phieu.Account,
                         PhieuThuChiId = phieu.Id,
                         Move = move_vals,
-                        PartnerId = partner.Id,
+                        PartnerId = partner?.Id
                     },
                     new AccountMoveLine
                     {
@@ -373,7 +348,7 @@ namespace Infrastructure.Services
                         Account = liquidity_line_account,
                         PhieuThuChiId = phieu.Id,
                         Move = move_vals,
-                        PartnerId = partner.Id,
+                        PartnerId = partner?.Id
                     },
                 };
 
@@ -386,8 +361,10 @@ namespace Infrastructure.Services
 
         private Partner GetPartnerGhiSoSach(PhieuThuChi phieu)
         {
-            if (phieu.PartnerType == "agent")
+            if (phieu.AgentId.HasValue)
                 return phieu.Agent.Partner;
+            if (!phieu.PartnerId.HasValue && (phieu.AccountType == "other" || string.IsNullOrEmpty(phieu.AccountType)))
+                return null;
             return phieu.Partner;
         }
 
@@ -426,13 +403,6 @@ namespace Infrastructure.Services
 
             if (phieuthuchi.State == "cancel" && (phieuthuchi.AccountType == "other" || string.IsNullOrEmpty(phieuthuchi.AccountType)))
                 throw new Exception("Bạn không thể xóa phiếu khi đã hủy");
-
-            //if (phieuthuchi.AccountType != "other")
-            //{
-            //    var move_ids = phieuthuchi.MoveLines.Select(x => x.MoveId).Distinct().ToList();
-            //    await moveObj.ButtonCancel(move_ids);
-            //    await moveObj.Unlink(move_ids);
-            //}
 
             await DeleteAsync(phieuthuchi);
         }
