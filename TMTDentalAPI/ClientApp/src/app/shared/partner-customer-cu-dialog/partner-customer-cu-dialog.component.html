@@ -42,7 +42,7 @@
                             <div class="o_group">
                                 <table class="o_group o_inner_group o_group_col_6">
                                     <tbody>
-                                        <tr>
+                                        <tr *ngIf="!id || (id && showInfo)">
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Điện thoại</label>
                                             </td>
@@ -115,7 +115,7 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr *ngIf="!id || (id && showInfo)">
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Email</label>
                                             </td>
@@ -169,7 +169,7 @@
                                                 </kendo-datepicker>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr *ngIf="!id || (id && showInfo)">
                                             <td colspan="1" class="o_td_label">
                                                 <div class="d-flex">
                                                     <label class="o_form_label">

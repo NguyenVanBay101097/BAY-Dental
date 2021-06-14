@@ -5,6 +5,7 @@ import { PartnersService } from 'src/app/shared/services/partners.service';
 import { PartnerDisplay } from '../../partner-simple';
 import { Pipe, PipeTransform } from '@angular/core';
 import { PartnerService } from '../../partner.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-partner-overview-info',
@@ -15,11 +16,13 @@ export class PartnerOverviewInfoComponent implements OnInit {
   @Input() partner: any;
   categoriesOdata: any[] = [];
   @Output() updateEvent = new EventEmitter<any>();
+  showInfo = false;
 
   constructor(
     private modalService: NgbModal,
     private PartnerOdataService: PartnersService,
-    private partnerService: PartnerService
+    private partnerService: PartnerService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -32,6 +35,7 @@ export class PartnerOverviewInfoComponent implements OnInit {
       };
       this.categoriesOdata.push(category);
     });
+    this.checkPermission()
   }
 
   onAvatarUploaded(data: any) {
@@ -70,6 +74,10 @@ export class PartnerOverviewInfoComponent implements OnInit {
         this.categoriesOdata.push(category);
       });
     });
+  }
+
+  checkPermission(){
+    this.showInfo = this.checkPermissionService.check(["Basic.Partner.ContactInfo"]);
   }
 
 }

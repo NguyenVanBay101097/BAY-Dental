@@ -128,6 +128,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? Active { get; set; }
         public bool? isBoth { get; set; } // get both customer and supplier
         public bool? OrderDone { get; set; }
+        // quyền xem thông tin liên hệ của khách hàng
+        public bool? ShowInfo { get; set; }
     }
 
     

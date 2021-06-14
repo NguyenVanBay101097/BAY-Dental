@@ -62,6 +62,7 @@ export class PartnerCustomerListComponent implements OnInit {
   canImport = false;
   canFilterPartnerCategory = false;
   canUpdateExcel = false;
+  showInfo = false;
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
@@ -189,7 +190,7 @@ export class PartnerCustomerListComponent implements OnInit {
     var paged = new PartnerPaged();
     paged.customer = true;
     paged.search = this.search || "";
-
+    paged.showInfo = this.showInfo;
     var categs = this.searchCategs || [];
     paged.tagIds = categs.map(x => x.id);
     // paged.categoryId = this.searchCateg ? this.searchCateg.id : null;
@@ -265,5 +266,6 @@ export class PartnerCustomerListComponent implements OnInit {
     this.canImport = this.checkPermissionService.check(['Basic.Partner.Create']);
     this.canFilterPartnerCategory = this.checkPermissionService.check(["Catalog.PartnerCategory.Read"])
     this.canUpdateExcel = this.checkPermissionService.check(["Basic.Partner.Update"]);
+    this.showInfo = this.checkPermissionService.check(["Basic.Partner.ContactInfo"]);
   }
 }

@@ -73,11 +73,11 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="Ref" title="Mã KH" width="120" [locked]="true"></kendo-grid-column>
-        <kendo-grid-column field="Phone" title="Điện thoại" width="120" [locked]="true"></kendo-grid-column>
+        <kendo-grid-column *ngIf="showInfo" field="Phone" title="Điện thoại" width="120" [locked]="true"></kendo-grid-column>
         <kendo-grid-column field="Age" title="Tuổi" width="60"></kendo-grid-column>
         <kendo-grid-column field="GenderDisplay" title="Giới tính" width="90">
         </kendo-grid-column>
-        <kendo-grid-column field="Address" title="Địa chỉ" width="300"></kendo-grid-column>
+        <kendo-grid-column *ngIf="showInfo" field="Address" title="Địa chỉ" width="300"></kendo-grid-column>
         <kendo-grid-column title="Nhãn" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <app-partner-category-popover [tags]="dataItem.Tags" (onSave)="dataItem.Tags = $event" [rowPartnerId]="dataItem.Id">
