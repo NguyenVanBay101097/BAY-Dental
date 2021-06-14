@@ -36,9 +36,9 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)" (cellClick)="cellClick($event.dataItem)">
-        <kendo-grid-column field="name" title="Tên chiến dịch">
+        <kendo-grid-column field="name" title="Tên chiến dịch" width="200">
         </kendo-grid-column>
-        <kendo-grid-column title="Thời gian" width="230">
+        <kendo-grid-column title="Thời gian" width="200">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <span *ngIf="dataItem.typeDate == 'period'">
                     {{dataItem.dateStart | date:'dd/MM/yyyy'}} - {{dataItem.dateEnd | date:'dd/MM/yyyy'}}
@@ -48,25 +48,25 @@
                 </span>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="limitMessage" title="Hạn mức tin nhắn">
+        <kendo-grid-column field="limitMessage" title="Hạn mức tin nhắn" width="200">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <span *ngIf="dataItem.limitMessage==0">Không giới hạn</span>
                 <span *ngIf="dataItem.limitMessage!=0">{{dataItem.limitMessage}}</span>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="totalMessage" title="Tổng tin nhắn">
+        <kendo-grid-column field="totalMessage" title="Tổng tin nhắn" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="totalSuccessfulMessages" title="Thành công">
+        <kendo-grid-column field="totalSuccessfulMessages" title="Thành công" width="120">
         </kendo-grid-column>
-        <kendo-grid-column field="totalWaitedMessages" title="Đang chờ">
+        <kendo-grid-column field="totalWaitedMessages" title="Đang chờ" width="120">
         </kendo-grid-column>
-        <kendo-grid-column field="totaOutgoingMessages" title="Đang gửi">
+        <kendo-grid-column field="totaOutgoingMessages" title="Đang gửi" width="120">
         </kendo-grid-column>
-        <kendo-grid-column field="totalErrorMessages" title="Thất bại">
+        <kendo-grid-column field="totalErrorMessages" title="Thất bại" width="120">
         </kendo-grid-column>
-        <kendo-grid-column field="totalCancelMessages" title="Hủy">
+        <kendo-grid-column field="totalCancelMessages" title="Hủy" width="120">
         </kendo-grid-column>
-        <kendo-grid-column field="status" title="Trạng thái">
+        <kendo-grid-column field="status" title="Trạng thái" width="150">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <span *ngIf="dataItem.state=='running'">Đang chạy</span>
                 <span *ngIf="dataItem.state=='draft'">Chưa chạy</span>
