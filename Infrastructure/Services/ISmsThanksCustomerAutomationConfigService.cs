@@ -9,7 +9,6 @@ namespace Infrastructure.Services
 {
     public interface ISmsThanksCustomerAutomationConfigService :IBaseService<SmsThanksCustomerAutomationConfig>
     {
-        Task UpdateAsync(Guid id, SmsThanksCustomerAutomationConfigSave val);
-        Task<SmsThanksCustomerAutomationConfigDisplay> GetByCompany(Guid companyId);
+        Task<SmsThanksCustomerAutomationConfigDisplay> GetByCompany();
     }
 }

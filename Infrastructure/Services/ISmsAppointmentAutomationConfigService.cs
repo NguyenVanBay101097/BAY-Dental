@@ -9,7 +9,6 @@ namespace Infrastructure.Services
 {
     public interface ISmsAppointmentAutomationConfigService : IBaseService<SmsAppointmentAutomationConfig>
     {
-        Task UpdateAsync(Guid id, SmsAppointmentAutomationConfigSave val);
-        Task<SmsAppointmentAutomationConfigDisplay> GetByCompany(Guid compayId);
+        Task<SmsAppointmentAutomationConfigDisplay> GetByCompany();
     }
 }

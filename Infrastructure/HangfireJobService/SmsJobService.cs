@@ -26,13 +26,13 @@ namespace Infrastructure.HangfireJobService
             _configuration = configuration;
         }
 
-        public async Task RunAppointmentAutomatic(string db, Guid configId)
+        public async Task RunAppointmentAutomatic(string db, Guid companyId)
         {
             await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var config = await context.SmsAppointmentAutomationConfigs.Where(x => x.Id == configId && x.Active == true).FirstOrDefaultAsync();
+                var config = await context.SmsAppointmentAutomationConfigs.Where(x => x.CompanyId.HasValue && x.CompanyId.Value == companyId && x.Active == true).FirstOrDefaultAsync();
                 if (config.TemplateId.HasValue)
                     config.Template = await context.SmsTemplates.Where(x => x.Id == config.TemplateId.Value).FirstOrDefaultAsync();
                 var now = DateTime.Now;
@@ -97,13 +97,13 @@ namespace Infrastructure.HangfireJobService
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        public async Task RunBirthdayAutomatic(string db, Guid configId)
+        public async Task RunBirthdayAutomatic(string db, Guid companyId)
         {
             await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var config = await context.SmsBirthdayAutomationConfigs.Where(x => x.Id == configId && x.Active == true).FirstOrDefaultAsync();
+                var config = await context.SmsBirthdayAutomationConfigs.Where(x => x.CompanyId.HasValue && x.CompanyId.Value == companyId && x.Active == true).FirstOrDefaultAsync();
                 if (config.TemplateId.HasValue)
                     config.Template = await context.SmsTemplates.Where(x => x.Id == config.TemplateId.Value).FirstOrDefaultAsync();
 

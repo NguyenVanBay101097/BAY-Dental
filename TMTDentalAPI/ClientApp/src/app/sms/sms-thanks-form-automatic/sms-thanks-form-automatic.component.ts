@@ -106,7 +106,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   }
 
   loadDataFormApi() {
-    this.smsConfigService.getByCompany(this.companyId).subscribe(
+    this.smsConfigService.getByCompany().subscribe(
       (res: any) => {
         if (res) {
           this.id = res.id;
@@ -181,22 +181,12 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     val.templateId = val.template ? val.template.id : null;
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
     val.body = this.template ? this.template.text : '';
-    if (this.id) {
-      this.smsConfigService.update(this.id, val).subscribe(
-        res => {
-          // console.log(res);
-          this.notify("cập nhật thiết lập thành công", true);
-        }
-      )
-    } else {
-      this.smsConfigService.create(val).subscribe(
-        res => {
-          // console.log(res);
-          this.notify("thiết lập thành công", true);
-        }
-      )
-    }
-
+    this.smsConfigService.saveConfig(val).subscribe(
+      res => {
+        // console.log(res);
+        this.notify("Thiết lập thành công", true);
+      }
+    )
     if (this.isTemplateCopy && val.templateName != '') {
       var template = {
         text: val.body,

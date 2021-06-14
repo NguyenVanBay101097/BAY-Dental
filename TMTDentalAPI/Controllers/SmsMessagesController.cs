@@ -51,6 +51,17 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<SmsMessageDisplay>(res));
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "SMS.Campaign.Read")]
+        public async Task<IActionResult> ActionCreateReminder(SmsMessageSave val)
+        {
+            if (!ModelState.IsValid || val == null) return BadRequest();
+            await _unitOfWorkAsync.BeginTransactionAsync();
+            var res = await _smsMessageService.ActionCreateReminder(val);
+            _unitOfWorkAsync.Commit();
+            return Ok(res);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "SMS.Message.Create")]
         public async Task<IActionResult> CreateAsync(SmsMessageSave val)

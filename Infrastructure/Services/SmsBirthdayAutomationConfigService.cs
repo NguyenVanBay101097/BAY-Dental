@@ -54,10 +54,10 @@ namespace Infrastructure.Services
         public void ActionRunJob(SmsBirthdayAutomationConfig model)
         {
             var hostName = _tenant != null ? _tenant.Hostname : "localhost";
-            var jobIdBir = $"{hostName}_Sms_BirthdayAutomaticReminder_{model.Id}";
+            var jobIdBir = $"{hostName}_Sms_BirthdayAutomaticReminder_{model.CompanyId}";
             if (model.Active)
             {
-                RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunBirthdayAutomatic(hostName, model.Id), $"{model.ScheduleTime.Value.Minute} {model.ScheduleTime.Value.Hour} * * *", TimeZoneInfo.Local);
+                RecurringJob.AddOrUpdate<ISmsJobService>(jobIdBir, x => x.RunBirthdayAutomatic(hostName, model.CompanyId.Value), $"{model.ScheduleTime.Value.Minute} {model.ScheduleTime.Value.Hour} * * *", TimeZoneInfo.Local);
             }
             else
             {

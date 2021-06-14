@@ -28,35 +28,34 @@ namespace TMTDentalAPI.Controllers
             _unitOfWorkAsync = unitOfWorkAsync;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [CheckAccess(Actions = "SMS.Config.Read")]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> Get()
         {
-            var res = await _smsConfigService.GetByCompany(id);
+            var res = await _smsConfigService.GetByCompany();
             return Ok(res);
         }
 
         [HttpPost]
         [CheckAccess(Actions = "SMS.Config.Create")]
-        public async Task<IActionResult> CreateAsync(SmsBirthdayAutomationConfigSave val)
+        public async Task<IActionResult> SaveConfig(SmsBirthdayAutomationConfigSave val)
         {
-            var entity = _mapper.Map<SmsBirthdayAutomationConfig>(val);
+            var entity = await _smsConfigService.SearchQuery(x => x.CompanyId == CompanyId).FirstOrDefaultAsync();
             await _unitOfWorkAsync.BeginTransactionAsync();
-            entity = await _smsConfigService.CreateAsync(entity);
-            _unitOfWorkAsync.Commit();
-            return NoContent();
-        }
 
-        [HttpPut("{id}")]
-        [CheckAccess(Actions = "SMS.Config.Update")]
-        public async Task<IActionResult> UpdateAsync(Guid id, SmsBirthdayAutomationConfigSave val)
-        {
-            var entity = await _smsConfigService.GetByIdAsync(id);
-            if (entity == null || !ModelState.IsValid)
-                return NotFound();
-            await _unitOfWorkAsync.BeginTransactionAsync();
-            await _smsConfigService.UpdateAsync(id, val);
+            if (entity != null)
+            {
+                entity = _mapper.Map(val, entity);
+                await _smsConfigService.UpdateAsync(entity);
+            }
+            else
+            {
+                entity = _mapper.Map<SmsBirthdayAutomationConfig>(val);
+                entity = await _smsConfigService.CreateAsync(entity);
+            }
             _unitOfWorkAsync.Commit();
+
+
             return NoContent();
         }
     }

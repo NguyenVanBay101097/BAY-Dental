@@ -9,15 +9,11 @@ export class SmsBirthdayAutomationConfigService {
   apiUrl: string = 'api/SmsBirthdayAutomationConfigs';
   constructor(@Inject('BASE_API') private base_api: string, private http: HttpClient) { }
 
-  create(val) {
+  saveConfig(val) {
     return this.http.post(this.base_api + this.apiUrl, val);
   }
-
-  update(id: string, val) {
-    return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
-  }
-
-  getByCompany(companyId) {
-    return this.http.get(this.base_api + this.apiUrl + '/' + companyId);
+ 
+  getByCompany() {
+    return this.http.get(this.base_api + this.apiUrl);
   }
 }

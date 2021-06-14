@@ -24,21 +24,14 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<SmsThanksCustomerAutomationConfigDisplay> GetByCompany(Guid companyId)
+        public async Task<SmsThanksCustomerAutomationConfigDisplay> GetByCompany()
         {
-            var entity = await SearchQuery(x => x.CompanyId == companyId)
+            var entity = await SearchQuery(x => x.CompanyId == CompanyId)
                 .Include(x => x.Template)
                 .Include(x => x.SmsCampaign)
                 .Include(x => x.SmsAccount)
                 .FirstOrDefaultAsync();
             return _mapper.Map<SmsThanksCustomerAutomationConfigDisplay>(entity);
-        }
-
-        public async Task UpdateAsync(Guid id, SmsThanksCustomerAutomationConfigSave val)
-        {
-            var entity = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            entity = _mapper.Map(val, entity);
-            await UpdateAsync(entity);
         }
     }
 }

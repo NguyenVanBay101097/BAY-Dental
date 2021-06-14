@@ -109,7 +109,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
   }
 
   loadDataFormApi() {
-    this.smsConfigService.getByCompany(this.companyId).subscribe(
+    this.smsConfigService.getByCompany().subscribe(
       (res: any) => {
         if (res) {
           this.id = res.id;
@@ -184,22 +184,12 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     val.companyId = this.companyId;
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
     val.body = this.template ? this.template.text : '';
-    if (this.id) {
-      this.smsConfigService.update(this.id, val).subscribe(
-        res => {
-          this.notify("cập nhật thiết lập thành công", true);
-          this.loadDataFormApi();
-        }
-      )
-    } else {
-      this.smsConfigService.create(val).subscribe(
-        res => {
-          this.notify("thiết lập thành công", true);
-          this.loadDataFormApi();
-
-        }
-      )
-    }
+    this.smsConfigService.saveConfig(val).subscribe(
+      res => {
+        this.notify("Thiết lập thành công", true);
+        this.loadDataFormApi();
+      }
+    )
 
     if (this.isTemplateCopy && val.templateName != '') {
       var template = {

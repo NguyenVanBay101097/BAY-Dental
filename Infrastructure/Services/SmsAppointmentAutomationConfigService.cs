@@ -31,21 +31,19 @@ namespace Infrastructure.Services
             return entity;
         }
 
-        public async Task UpdateAsync(Guid id, SmsAppointmentAutomationConfigSave val)
+        public override async Task UpdateAsync(SmsAppointmentAutomationConfig entity)
         {
-            var entity = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            entity = _mapper.Map(val, entity);
-            await UpdateAsync(entity);
+            await base.UpdateAsync(entity);
             ActionRunJob(entity);
         }
 
         public void ActionRunJob(SmsAppointmentAutomationConfig model)
         {
             var hostName = _tenant != null ? _tenant.Hostname : "localhost";
-            var jobIdApp = $"{hostName}_Sms_AppointmentAutomaticReminder_{model.Id}";
+            var jobIdApp = $"{hostName}_Sms_AppointmentAutomaticReminder_{model.CompanyId}";
             if (model.Active)
             {
-                RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunAppointmentAutomatic(hostName, model.Id), $"*/30 * * * *", TimeZoneInfo.Local);
+                RecurringJob.AddOrUpdate<ISmsJobService>(jobIdApp, x => x.RunAppointmentAutomatic(hostName, model.CompanyId.Value), $"*/30 * * * *", TimeZoneInfo.Local);
             }
             else
             {
@@ -58,9 +56,9 @@ namespace Infrastructure.Services
             RecurringJob.RemoveIfExists(jobId);
         }
 
-        public async Task<SmsAppointmentAutomationConfigDisplay> GetByCompany(Guid compayId)
+        public async Task<SmsAppointmentAutomationConfigDisplay> GetByCompany()
         {
-            var entity = await SearchQuery(x => x.CompanyId == compayId)
+            var entity = await SearchQuery(x => x.CompanyId == CompanyId)
                  .Include(x => x.Template)
                  .Include(x => x.SmsCampaign)
                  .Include(x => x.SmsAccount)

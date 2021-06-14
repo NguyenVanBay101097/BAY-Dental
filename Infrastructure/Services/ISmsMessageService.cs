@@ -13,6 +13,7 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<SmsMessageBasic>> GetPaged(SmsMessagePaged val);
         Task<SmsMessageDisplay> CreateAsync(SmsMessageSave val);
+        Task<SmsMessageDisplay> ActionCreateReminder(SmsMessageSave val);
         Task ActionCancel(IEnumerable<Guid> messIds);
         Task UpdateAsync(SmsMessage entity);
 

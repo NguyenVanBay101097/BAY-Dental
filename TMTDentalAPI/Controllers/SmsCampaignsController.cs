@@ -54,8 +54,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-       
-
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetDefaultCampaignBirthday()

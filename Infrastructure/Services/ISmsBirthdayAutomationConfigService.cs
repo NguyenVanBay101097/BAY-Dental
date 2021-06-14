@@ -10,8 +10,6 @@ namespace Infrastructure.Services
 {
     public interface ISmsBirthdayAutomationConfigService : IBaseService<SmsBirthdayAutomationConfig>
     {
-        Task UpdateAsync(Guid id, SmsBirthdayAutomationConfigSave val);
-        Task<SmsBirthdayAutomationConfigDisplay> GetDisplay(Guid id);
-        Task<SmsBirthdayAutomationConfigDisplay> GetByCompany(Guid companyId);
+        Task<SmsBirthdayAutomationConfigDisplay> GetByCompany();
     }
 }

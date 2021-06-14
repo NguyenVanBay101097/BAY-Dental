@@ -98,6 +98,14 @@ namespace Infrastructure.Services
 
         public async Task<SmsMessageDisplay> CreateAsync(SmsMessageSave val)
         {
+            var entity = ComputeLines(val);
+            entity.ResCount = val.ResIds.Count();
+            entity = await _messageRepository.InsertAsync(entity);
+            return _mapper.Map<SmsMessageDisplay>(entity);
+        }
+
+        public SmsMessage ComputeLines(SmsMessageSave val)
+        {
             var entity = _mapper.Map<SmsMessage>(val);
             entity.CompanyId = CompanyId;
 
@@ -143,9 +151,7 @@ namespace Infrastructure.Services
                     });
                 }
             }
-            entity.ResCount = val.ResIds.Count();
-            entity = await _messageRepository.InsertAsync(entity);
-            return _mapper.Map<SmsMessageDisplay>(entity);
+            return entity;
         }
 
         private IDictionary<string, string> ESmsErrorCode
@@ -430,6 +436,15 @@ namespace Infrastructure.Services
         {
             entity = await _messageRepository.InsertAsync(entity);
             return entity;
+        }
+
+        public async Task<SmsMessageDisplay> ActionCreateReminder(SmsMessageSave val)
+        {
+            var entity = ComputeLines(val);
+            entity.ResCount = val.ResIds.Count();
+            entity.State = "in_queue";
+            entity = await _messageRepository.InsertAsync(entity);
+            return _mapper.Map<SmsMessageDisplay>(entity);
         }
 
         protected Guid CompanyId
