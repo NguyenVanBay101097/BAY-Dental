@@ -13,6 +13,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? PriceUnit { get; set; }
 
         public Guid? CategId { get; set; }
+        public string CategName { get; set; }
 
 
         public decimal? ListPrice { get; set; }

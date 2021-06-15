@@ -133,7 +133,7 @@ namespace Infrastructure.Services
         {
             return await SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x=> x.CreatedBy)
                 .Include(x => x.MoveLines)
-                .Include("MoveLines.Product")
+                .Include("MoveLines.Product.Categ")
                  .Include("MoveLines.ProductUOM")
                 .FirstOrDefaultAsync();
         }
