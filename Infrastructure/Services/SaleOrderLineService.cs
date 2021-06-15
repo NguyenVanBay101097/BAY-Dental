@@ -1028,6 +1028,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Order.DateDone <= dateTo);
             }
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
             var totalItems = await query.CountAsync();
 
             var items = await query.OrderByDescending(x => x.Order.DateDone).Skip(val.Offset).Take(val.Limit).Select(x => new SmsCareAfterOrder

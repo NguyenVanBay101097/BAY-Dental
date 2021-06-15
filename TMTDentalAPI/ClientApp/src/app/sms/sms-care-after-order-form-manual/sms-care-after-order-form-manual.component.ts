@@ -106,6 +106,8 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     this.dateFrom = value.dateFrom;
     this.dateTo = value.dateTo;
     this.skip = 0;
+    this.productId = null;
+    this.loadProducts();
     this.loadDataFromApi();
   }
 

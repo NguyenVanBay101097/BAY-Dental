@@ -70,6 +70,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? ProductId { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class SmsCareAfterOrder
