@@ -195,7 +195,11 @@ namespace Infrastructure.Services
                     ResId = campaign.Id.ToString()
                 });
             }
-
+            else if (!campaign.CompanyId.HasValue)
+            {
+                campaign.CompanyId = CompanyId;
+                await UpdateAsync(campaign);
+            }
             return campaign;
         }
 
@@ -225,7 +229,11 @@ namespace Infrastructure.Services
                     ResId = campaign.Id.ToString()
                 });
             }
-
+            else if (!campaign.CompanyId.HasValue)
+            {
+                campaign.CompanyId = CompanyId;
+                await UpdateAsync(campaign);
+            }
             return campaign;
         }
 
@@ -255,11 +263,13 @@ namespace Infrastructure.Services
                     ResId = campaign.Id.ToString()
                 });
             }
-
+            else if (!campaign.CompanyId.HasValue)
+            {
+                campaign.CompanyId = CompanyId;
+                await UpdateAsync(campaign);
+            }
             return campaign;
         }
-
-
 
         public async Task<SmsCampaign> GetDefaultThanksCustomer()
         {
@@ -287,6 +297,12 @@ namespace Infrastructure.Services
                     ResId = campaign.Id.ToString()
                 });
             }
+            else if (!campaign.CompanyId.HasValue)
+            {
+                campaign.CompanyId = CompanyId;
+                await UpdateAsync(campaign);
+            }
+
             return campaign;
         }
 
@@ -315,6 +331,11 @@ namespace Infrastructure.Services
                     Model = "res.sms.campaign",
                     ResId = campaign.Id.ToString()
                 });
+            }
+            else if (!campaign.CompanyId.HasValue)
+            {
+                campaign.CompanyId = CompanyId;
+                await UpdateAsync(campaign);
             }
             return campaign;
         }
