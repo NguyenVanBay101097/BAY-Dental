@@ -95,7 +95,7 @@ export class AgentCommmissionHistoryComponent implements OnInit {
 
   printItem(item) {
     this.phieuthuchiService.getPrint2(item.id).subscribe((data: any) => {
-      this.printService.printHtml(data.html);
+      this.printService.printHtml(data);
     });
   }
 

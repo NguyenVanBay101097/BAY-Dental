@@ -153,11 +153,11 @@ export class PhieuThuChiService {
   // }
 
   getPrint(id: string) {
-    return this.http.get(this.baseApi + this.apiPrint+ '/Print' + `?id=${id}`, { responseType: 'text' });
+    return this.http.get(this.baseApi + this.apiPrint + '/Print' + `?id=${id}`, { responseType: 'text' });
   }
 
   getPrint2(id: string) {
-    return this.http.get(this.baseApi + this.apiUrl+ '/' + id + '/GetPrint2');
+    return this.http.get(this.baseApi + this.apiPrint + '/Print2' + `?id=${id}`, { responseType: 'text' });
   }
 
   exportExcelFile(val: any) {

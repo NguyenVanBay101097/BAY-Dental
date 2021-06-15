@@ -78,8 +78,9 @@ export class AgentCommmissionPaymentDialogComponent implements OnInit {
       var val = new TotalAmountAgentFilter();
       val.agentId = this.agentId;
       val.companyId = this.authService.userInfo.companyId;
-      this.agentService.getAmountCommissionAgentToTal(val).subscribe((res: any) => {
-        this.amountTotalBalance = res.amountBalanceTotal;
+      val.partnerId = this.partnerId;
+      this.agentService.getAmountBalanceCommissionAgentForPartner(val).subscribe((res: any) => {
+        this.amountTotalBalance = res;
       },
         (error) => {
           console.log(error);

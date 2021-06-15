@@ -46,6 +46,7 @@ namespace TMTDentalAPI.ViewControllers
 
         }
 
+        [PrinterNameFilterAttribute(Name = AppConstants.PhieuThuChiPaperCode)]
         public async Task<IActionResult> Print2(Guid id)
         {
             var res = await _phieuThuChiService.GetPrint(id);

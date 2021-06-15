@@ -117,6 +117,7 @@ export class AgentSave {
 export class TotalAmountAgentFilter {
   agentId: string;
   companyId: string;
+  partnerId: string;
 }
 
 
@@ -147,6 +148,10 @@ export class AgentService {
 
   getAmountCommissionAgentToTal(val) {
     return this.http.get(this.base_api + this.apiUrl + '/GetCommissionAmountAgentTotal', { params: new HttpParams({ fromObject: val }) });
+  }
+
+  getAmountBalanceCommissionAgentForPartner(val) {
+    return this.http.get<number>(this.base_api + this.apiUrl + '/GetAmountBalanceCommissionAgentForPartner', { params: new HttpParams({ fromObject: val }) });
   }
 
   get(id): Observable<AgentDisplay> {
