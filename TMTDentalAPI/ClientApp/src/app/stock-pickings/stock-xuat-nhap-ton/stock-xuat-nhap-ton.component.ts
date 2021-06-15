@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ExcelExportData } from '@progress/kendo-angular-excel-export';
+import { process } from '@progress/kendo-data-query';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
@@ -9,7 +11,6 @@ import { ProductCategoryBasic } from 'src/app/product-categories/product-categor
 import { ProductSimple } from 'src/app/products/product-simple';
 import { StockReportService, StockReportXuatNhapTonItem, StockReportXuatNhapTonSearch } from 'src/app/stock-reports/stock-report.service';
 import { StockXuatNhapTonDetailDialogComponent } from '../stock-xuat-nhap-ton-detail-dialog/stock-xuat-nhap-ton-detail-dialog.component';
-
 @Component({
   selector: 'app-stock-xuat-nhap-ton',
   templateUrl: './stock-xuat-nhap-ton.component.html',
@@ -47,7 +48,9 @@ export class StockXuatNhapTonComponent implements OnInit {
     private reportService: StockReportService,
     private intlService: IntlService,
     private modalService: NgbModal,
-  ) { }
+  ) {
+    this.excelData = this.excelData.bind(this);
+  }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -129,28 +132,39 @@ export class StockXuatNhapTonComponent implements OnInit {
   }
 
   exportExcelFile() {
-    var val = new StockReportXuatNhapTonSearch();
-    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
-    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
-    val.productId = this.searchProduct ? this.searchProduct.id : null;
-    val.productCategId = this.searchCateg ? this.searchCateg.id : null;
-    val.search = this.search ? this.search : null;
-    this.reportService.exportExcel(val).subscribe(
-      rs => {
-        let filename = 'NhapXuatTon';
-        let newBlob = new Blob([rs], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-        console.log(rs);
+    document.getElementById('btnExcel').click();
 
-        let data = window.URL.createObjectURL(newBlob);
-        let link = document.createElement('a');
-        link.href = data;
-        link.download = filename;
-        link.click();
-        setTimeout(() => {
-          // For Firefox it is necessary to delay revoking the ObjectURL
-          window.URL.revokeObjectURL(data);
-        }, 100);
-      }
-    );
+    // var val = new StockReportXuatNhapTonSearch();
+    // val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
+    // val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
+    // val.productId = this.searchProduct ? this.searchProduct.id : null;
+    // val.productCategId = this.searchCateg ? this.searchCateg.id : null;
+    // val.search = this.search ? this.search : null;
+    // this.reportService.exportExcel(val).subscribe(
+    //   rs => {
+    //     let filename = 'NhapXuatTon';
+    //     let newBlob = new Blob([rs], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    //     console.log(rs);
+
+    //     let data = window.URL.createObjectURL(newBlob);
+    //     let link = document.createElement('a');
+    //     link.href = data;
+    //     link.download = filename;
+    //     link.click();
+    //     setTimeout(() => {
+    //       // For Firefox it is necessary to delay revoking the ObjectURL
+    //       window.URL.revokeObjectURL(data);
+    //     }, 100);
+    //   }
+    // );
+  }
+
+  public excelData(): ExcelExportData {
+    const result: ExcelExportData = {
+      data: process(this.gridData.data, {
+        sort: [{ field: 'productCode', dir: 'asc' }]
+      }).data
+    };
+    return result;
   }
 }
