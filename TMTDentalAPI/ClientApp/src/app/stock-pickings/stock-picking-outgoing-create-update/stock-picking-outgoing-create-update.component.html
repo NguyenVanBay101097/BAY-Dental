@@ -47,14 +47,14 @@
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
-                            <tr>
+                            <tr *ngIf="id">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Người tạo
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span></span>
+                                    <span>{{createdByName}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -66,6 +66,10 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [hidden]="pickingState == 'done'" [data]="filteredPartners" [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner" [valueField]="'id'">
                                     </kendo-combobox>
+                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.partner.errors.required">Chọn đối tác</div>
+                                    </div>
                                     <label *ngIf="pickingState == 'done'">{{partner?.name}}</label>
                                 </td>
                             </tr>
@@ -119,7 +123,7 @@
                     </table>
                 </div>
 
-                <div class="o_form_section" *ngIf="picking.state == 'draft'">
+                <!-- <div class="o_form_section" *ngIf="picking.state == 'draft'">
                     <div class="o_form_section_lef">
                         <div class="mb-2">
                             <app-tai-search-input (searchChange)="onProductInputSearchChange($event)" (upDownEnterChange)="upDownEnterChange($event)">
@@ -172,7 +176,122 @@
                             </tbody>
                         </table>
                     </div>
+                </div> -->
+
+                <div class="overflow-hidden" style="height: 614px;">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;" [class.d-none]="picking.state == 'done'"> Danh sách sản phẩm </th>
+                                <th> Danh sách nhập kho </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td [class.d-none]="picking.state == 'done'">
+                                    <div class="mt-2">
+                                        <div class="d-flex pl-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" [hidden]="true" type="radio"
+                                                    name="radioButton" id="medicine" value="medicine" checked
+                                                    (change)="onChangeType($event.target.value)">
+                                                <label class="form-check-label btn btn_none_radius btn-outline-primary" for="medicine">
+                                                    Thuốc
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" [hidden]="true" type="radio"
+                                                    name="radioButton" id="product" value="product"
+                                                    (change)="onChangeType($event.target.value)">
+                                                <label class="form-check-label btn btn_none_radius btn-outline-primary" for="product">
+                                                    Vật tư
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="group_product">
+                                            <div class="">
+                                                <app-tai-search-input
+                                                    (searchChange)="onProductInputSearchChange($event)"
+                                                    (upDownEnterChange)="upDownEnterChange($event)">
+                                                </app-tai-search-input>
+                                            </div>
+
+                                            <app-tai-product-list-selectable #productListSelectable
+                                                [productList]="productList" (changeProduct)="onChangeProduct($event)">
+                                            </app-tai-product-list-selectable>
+                                        </div>
+                                    </div>
+
+                                </td>
+                                <td>
+                                    <div class="pl-4 pr-4">
+                                        <table class="table table-sm table_none_border" id="table_details">
+                                            <thead>
+                                                <tr>
+                                                    <th width="50">STT</th>
+                                                    <th width="150">Mã sản phẩm</th>
+                                                    <th width="200">Tên sản phẩm</th>
+                                                    <th width="200">Loại sản phẩm</th>
+                                                    <th width="80" class="text-right">Số lượng</th>
+                                                    <th width="80" hasGroups [groups]="'product.group_uom'">Đơn vị</th>
+                                                    <th width="60"
+                                                        *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">
+                                                        #</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody formArrayName="moveLines">
+                                                <ng-container *ngFor="let line of moveLines.controls; let i=index">
+                                                    <tr [formGroupName]="i">
+                                                        <td class="align-middle">{{ i + 1 }}</td>
+                                                        <td class="align-middle">{{
+                                                            line.get('product').value.defaultCode}}
+                                                        </td>
+                                                        <td class="align-middle">{{ line.get('product').value.name}}
+                                                        </td>
+                                                        <td class="align-middle">
+                                                            <span
+                                                                *ngIf="line.get('product').value.type2 == 'medicine'">Thuốc</span>
+                                                            <span
+                                                                *ngIf="line.get('product').value.type2 == 'product'">Vật
+                                                                tư</span>
+                                                        </td>
+                                                        <td class="align-middle text-right">
+                                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                                *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"
+                                                                formControlName="productUOMQty" style="width: 80px;"
+                                                                [spinners]="false">
+                                                            </kendo-numerictextbox>
+                                                            <span
+                                                                *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{
+                                                                line.get('productUOMQty').value | number}}</span>
+                                                        </td>
+                                                        <td class="align-middle" hasGroups
+                                                            [groups]="'product.group_uom'">
+                                                            <a class="text-primary"
+                                                                *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"
+                                                                (click)="changeUoM(line)">{{line.get('productUOM').value.name}}</a>
+                                                            <span
+                                                                *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{line.get('productUOM').value.name}}</span>
+                                                        </td>
+                                                        <td class="align-middle"
+                                                            *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">
+                                                            <button type="button" class="btn btn-icon btn-sm btn-light"
+                                                                tabindex="-1" (click)="deleteLine(i)">
+                                                                <span class="k-icon k-i-delete"></span></button>
+                                                        </td>
+                                                    </tr>
+                                                </ng-container>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+
             </div>
         </div>
     </div>

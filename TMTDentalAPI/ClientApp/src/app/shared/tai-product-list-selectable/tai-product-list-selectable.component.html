@@ -1,12 +1,16 @@
-<table class="table table-sm o_list_view">
-    <thead>
-        <tr>
-            <th>Tên sản phẩm</th>
-        </tr>
-    </thead>
+<!-- <table class="table table-sm o_list_view table-bordered">
     <tbody>
         <tr *ngFor="let product of productList; let i=index" (click)="selectProduct(product)" [class.table-active]="i === productSelectedIndex">
             <td>{{product.name}}</td>
         </tr>
     </tbody>
-</table>
+</table> -->
+
+<div class="overflow-auto" style="height: 470px;">
+       <ul class="list-group flex-1-1-100">
+        <li (click)="selectProduct(product)" *ngFor="let product of productList; let i=index" class="list-group-item cate-item">
+            <span>{{product.name}}</span>
+            
+        </li>
+    </ul>
+</div>

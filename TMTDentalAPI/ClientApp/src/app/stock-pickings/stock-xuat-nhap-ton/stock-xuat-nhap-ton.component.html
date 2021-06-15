@@ -36,25 +36,40 @@
         <kendo-grid-column field="productName" title="Tên sản phẩm">
         </kendo-grid-column>
         <kendo-grid-column field="productUomName" title="Đơn vị tính">
+            <ng-template kendoGridFooterTemplate>
+                <span class="font-weight-bold">Tổng</span>
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="begin" class="text-right" title="Tồn đầu kỳ">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.begin | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate>
+                <span class="text_sum">{{sumBegin}}</span>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="import" class="text-right" title="Nhập trong kỳ">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.import | number}}
             </ng-template>
+            <ng-template kendoGridFooterTemplate>
+                <span class="text_sum">{{sumImport}}</span>
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="export" class="text-right" title="Xuất trong kỳ">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.export | number}}
             </ng-template>
+            <ng-template kendoGridFooterTemplate>
+                <span class="text_sum">{{sumExport}}</span>
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="end" class="text-right" title="Tồn cuối kỳ">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.end | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate>
+                <span class="text_sum">{{sumEnd}}</span>
             </ng-template>
         </kendo-grid-column>
     </kendo-grid>

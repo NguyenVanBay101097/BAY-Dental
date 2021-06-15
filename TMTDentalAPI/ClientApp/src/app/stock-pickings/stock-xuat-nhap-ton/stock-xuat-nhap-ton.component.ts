@@ -39,6 +39,10 @@ export class StockXuatNhapTonComponent implements OnInit {
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
+  sumBegin: number = 0;
+  sumEnd: number = 0;
+  sumImport: number = 0;
+  sumExport: number = 0;
   constructor(
     private reportService: StockReportService,
     private intlService: IntlService,
@@ -95,11 +99,25 @@ export class StockXuatNhapTonComponent implements OnInit {
       data: this.items.slice(this.skip, this.skip + this.limit),
       total: this.items.length
     };
+
+    this.sumBegin = this.gridData.data.map(val => val.begin).reduce((accumulator, currentValue) => {
+      return accumulator + currentValue;
+    }, 0);
+
+    this.sumEnd = this.gridData.data.map(val => val.end).reduce((accumulator, currentValue) => {
+      return accumulator + currentValue;
+    }, 0);
+
+    this.sumImport = this.gridData.data.map(val => val.import).reduce((accumulator, currentValue) => {
+      return accumulator + currentValue;
+    }, 0);
+
+    this.sumExport = this.gridData.data.map(val => val.export).reduce((accumulator, currentValue) => {
+      return accumulator + currentValue;
+    }, 0);
   }
 
   cellClick(item: any) {
-    console.log(item);
-
     const modalRef = this.modalService.open(StockXuatNhapTonDetailDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Lịch sử nhập xuất ' + item.productName;
     modalRef.componentInstance.productId = item.productId;

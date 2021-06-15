@@ -12,7 +12,10 @@
             <td class="text-center">{{i+1 | number}}</td>
             <td class="px-2">{{item.product.defaultCode}}</td>
             <td class="px-2">{{item.name}}</td>
-            <td class="px-2">{{item.product.type}}</td>
+            <td class="px-2">
+                <span *ngIf="item.product.type2 == 'medicine'">Thuốc</span>
+                <span *ngIf="item.product.type2 == 'product'">Vật tư</span>
+            </td>
             <td class="text-right px-2">{{item.productUOMQty | number}}</td>
             <td class="px-2">{{item.productUOM.name}}</td>
         </tr>
