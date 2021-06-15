@@ -12,6 +12,7 @@ namespace Umbraco.Web.Mapping
         public ToothProfile()
         {
             CreateMap<Tooth, ToothBasic>();
+            CreateMap<Tooth, ToothSimple>();
 
             CreateMap<Tooth, ToothDisplay>();
             CreateMap<ToothDisplay, Tooth>()

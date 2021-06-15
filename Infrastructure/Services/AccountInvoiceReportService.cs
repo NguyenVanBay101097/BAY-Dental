@@ -191,6 +191,15 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<decimal> SumRevenueReport(SumRevenueReportPar val)
+        {
+            var query = GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+            var res = await query.SumAsync(x=> x.PriceSubTotal);
+            return res;
+        }
+
 
         //public override ISpecification<AccountInvoiceReport> RuleDomainGet(IRRule rule)
         //{

@@ -66,6 +66,9 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrderLine, SaleOrderLineIsActivePatch>();
             CreateMap<SaleOrderLineIsActivePatch, SaleOrderLine>()
                 .ForMember(x => x.Id, x => x.Ignore());
+
+            CreateMap<SaleOrderLine, SaleOrderLineHistoryRes>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)));
         }
     }
 }

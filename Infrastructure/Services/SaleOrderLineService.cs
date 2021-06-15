@@ -1083,5 +1083,24 @@ namespace Infrastructure.Services
 
             return result;
         }
+
+        public async Task<Dictionary<DateTime, IEnumerable<SaleOrderLineHistoryRes>>> GetHistory(SaleOrderLineHistoryReq val)
+        {
+            var query = SearchQuery(x=> x.Order.State == "sale" || x.Order.State == "done");
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.OrderPartnerId == val.PartnerId);
+
+            var resList = await query.Include(x=> x.Order)
+                .Include("SaleOrderLineToothRels.Tooth").ToListAsync();
+            var resDict = resList.GroupBy(x => x.Order.DateOrder.Date, (key, val) => new
+            {
+                Key = key,
+                Value = _mapper.Map<IEnumerable<SaleOrderLineHistoryRes>>(val)
+            }).ToDictionary(x=> x.Key, x=> x.Value);
+            return resDict;
+        }
     }
 }
