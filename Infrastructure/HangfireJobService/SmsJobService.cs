@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using Hangfire;
+using Hangfire.Storage;
 using Infrastructure.Data;
 using Infrastructure.Helpers;
 using Infrastructure.Services;
@@ -28,6 +29,10 @@ namespace Infrastructure.HangfireJobService
 
         public async Task RunAppointmentAutomatic(string db, Guid companyId)
         {
+            var jobId = $"{db}_Sms_AppointmentAutomaticReminder_{companyId}";
+            var job = JobStorage.Current.GetConnection().GetRecurringJobs().Single(x => x.Id == jobId);
+            var lastExecution = job.LastExecution ?? DateTime.Now;
+
             await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
@@ -43,13 +48,12 @@ namespace Infrastructure.HangfireJobService
                 }
                    
                 var now = DateTime.Now;
-                var nowPast30 = now.AddMinutes(-30); //lấy quá khứ 30p
                 var listAppointments = await context.Appointments.Where(x => x.CompanyId == config.CompanyId
                       && x.DateTimeAppointment.HasValue
                       && x.State == "confirmed"
                       && x.DateTimeAppointment.Value >= now &&
-                      ((config.TypeTimeBeforSend == "hour" && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) <= now && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) > nowPast30) ||
-                      (config.TypeTimeBeforSend == "day" && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) <= now && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) > nowPast30)))
+                      ((config.TypeTimeBeforSend == "hour" && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) < now && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) > lastExecution) ||
+                      (config.TypeTimeBeforSend == "day" && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) < now && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) > lastExecution)))
                         .ToListAsync();
                 if (listAppointments.Any())
                 {
@@ -68,6 +72,7 @@ namespace Infrastructure.HangfireJobService
                     smsMessage.SmsTemplateId = config.TemplateId;
                     smsMessage.Body = config.Body;
                     smsMessage.ResModel = "appointment";
+                    smsMessage.CompanyId = config.CompanyId;
 
                     foreach (var app in listAppointments)
                     {
@@ -198,13 +203,10 @@ namespace Infrastructure.HangfireJobService
                         smsMessage.SmsAccountId = config.SmsAccountId;
                         smsMessage.SmsCampaignId = config.SmsCampaignId;
                         smsMessage.CompanyId = config.CompanyId;
-                        smsMessage.Id = GuidComb.GenerateComb();
-                        smsMessage.Name = $"Gửi tin nhắn  chăm sóc sau điều trị dịch vụ ngày {DateTime.Today.ToString("dd-MM-yyyy")}";
+                        smsMessage.Name = $"Chăm sóc sau điều trị";
                         smsMessage.SmsTemplateId = config.TemplateId;
                         smsMessage.Body = config.Body;
-                        smsMessage.State = "draft";
                         smsMessage.ResModel = "sale-order-line";
-                        smsMessage.ScheduleDate = config.ScheduleTime;
                         context.SmsMessages.Add(smsMessage);
                         await context.SaveChangesAsync();
                         foreach (var line in lines)
