@@ -135,5 +135,19 @@ namespace TMTDentalAPI.Controllers
             await _smsMessageService.DeleteAsync(entity);
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "SMS.Message.Update")]
+        public async Task<IActionResult> ActionSchedule(SmsMessageScheduleViewModel val)
+        {
+            var message = await _smsMessageService.GetByIdAsync(val.Id);
+            if (message == null)
+                return NotFound();
+
+            message.ScheduleDate = val.ScheduleDate;
+            message.State = "in_queue";
+            await _smsMessageService.UpdateAsync(message);
+            return NoContent();
+        }
     }
 }

@@ -45,34 +45,34 @@ namespace Infrastructure.Services
             var dictTotalCanceledMessage = new Dictionary<Guid, int>();
             var dictTotalOutgoingMessage = new Dictionary<Guid, int>();
 
-            var ditcTotalWaitedMessage = await smsMessageObj
-                .SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "in_queue" && x.CompanyId == CompanyId)
-                .Include(x => x.SmsMessagePartnerRels)
-                .ToDictionaryAsync(x => x.SmsCampaignId.Value, x => x.SmsMessagePartnerRels.Count());
+            //var ditcTotalWaitedMessage = await smsMessageObj
+            //    .SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "in_queue" && x.CompanyId == CompanyId)
+            //    .Include(x => x.SmsMessagePartnerRels)
+            //    .ToDictionaryAsync(x => x.SmsCampaignId.Value, x => x.SmsMessagePartnerRels.Count());
 
-            var listSuccess = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "sent" && x.CompanyId == CompanyId).ToListAsync();
-            if (listSuccess.Any())
-            {
-                dictTotalSuccessfulMessage = listSuccess.GroupBy(x => x.SmsCampaignId.Value).ToDictionary(x => x.Key, x => x.Count());
-            }
+            //var listSuccess = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "sent" && x.CompanyId == CompanyId).ToListAsync();
+            //if (listSuccess.Any())
+            //{
+            //    dictTotalSuccessfulMessage = listSuccess.GroupBy(x => x.SmsCampaignId.Value).ToDictionary(x => x.Key, x => x.Count());
+            //}
 
-            var listFails = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "error" && x.CompanyId == CompanyId).ToListAsync();
-            if (listFails.Any())
-            {
-                dictTotalFailedMessage = listFails.GroupBy(x => x.SmsCampaignId.Value).ToDictionary(x => x.Key, x => x.Count());
-            }
+            //var listFails = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "error" && x.CompanyId == CompanyId).ToListAsync();
+            //if (listFails.Any())
+            //{
+            //    dictTotalFailedMessage = listFails.GroupBy(x => x.SmsCampaignId.Value).ToDictionary(x => x.Key, x => x.Count());
+            //}
 
-            var listCancel = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "canceled" && x.CompanyId == CompanyId).ToListAsync();
-            if (listCancel.Any())
-            {
-                dictTotalCanceledMessage = listCancel.GroupBy(x => x.SmsCampaignId.Value).ToDictionary(x => x.Key, x => x.Count());
-            }
+            //var listCancel = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "canceled" && x.CompanyId == CompanyId).ToListAsync();
+            //if (listCancel.Any())
+            //{
+            //    dictTotalCanceledMessage = listCancel.GroupBy(x => x.SmsCampaignId.Value).ToDictionary(x => x.Key, x => x.Count());
+            //}
 
-            var listOutgoing = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "outgoing" && x.CompanyId == CompanyId).ToListAsync();
-            if (listOutgoing.Any())
-            {
-                dictTotalOutgoingMessage = listOutgoing.GroupBy(x => x.SmsCampaignId.Value).ToDictionary(x => x.Key, x => x.Count());
-            }
+            //var listOutgoing = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.State == "outgoing" && x.CompanyId == CompanyId).ToListAsync();
+            //if (listOutgoing.Any())
+            //{
+            //    dictTotalOutgoingMessage = listOutgoing.GroupBy(x => x.SmsCampaignId.Value).ToDictionary(x => x.Key, x => x.Count());
+            //}
 
             var totalItems = await query.CountAsync();
             var items = await query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x => x.DateCreated).Select(x => new SmsCampaignBasic
@@ -84,17 +84,17 @@ namespace Infrastructure.Services
                 LimitMessage = x.LimitMessage,
                 State = x.State,
                 TypeDate = x.TypeDate,
-                TotalWaitedMessages = ditcTotalWaitedMessage.ContainsKey(x.Id) ? ditcTotalWaitedMessage[x.Id] : 0,
-                TotalCancelMessages = dictTotalCanceledMessage.ContainsKey(x.Id) ? dictTotalCanceledMessage[x.Id] : 0,
-                TotaOutgoingMessages = dictTotalOutgoingMessage.ContainsKey(x.Id) ? dictTotalOutgoingMessage[x.Id] : 0,
-                TotalErrorMessages = dictTotalFailedMessage.ContainsKey(x.Id) ? dictTotalFailedMessage[x.Id] : 0,
-                TotalSuccessfulMessages = dictTotalSuccessfulMessage.ContainsKey(x.Id) ? dictTotalSuccessfulMessage[x.Id] : 0,
-                TotalMessage =
-                  (ditcTotalWaitedMessage.ContainsKey(x.Id) ? ditcTotalWaitedMessage[x.Id] : 0) +
-                  (dictTotalCanceledMessage.ContainsKey(x.Id) ? dictTotalCanceledMessage[x.Id] : 0) +
-                  (dictTotalOutgoingMessage.ContainsKey(x.Id) ? dictTotalOutgoingMessage[x.Id] : 0) +
-                   (dictTotalFailedMessage.ContainsKey(x.Id) ? dictTotalFailedMessage[x.Id] : 0) +
-                   (dictTotalSuccessfulMessage.ContainsKey(x.Id) ? dictTotalSuccessfulMessage[x.Id] : 0)
+                //TotalWaitedMessages = ditcTotalWaitedMessage.ContainsKey(x.Id) ? ditcTotalWaitedMessage[x.Id] : 0,
+                //TotalCancelMessages = dictTotalCanceledMessage.ContainsKey(x.Id) ? dictTotalCanceledMessage[x.Id] : 0,
+                //TotaOutgoingMessages = dictTotalOutgoingMessage.ContainsKey(x.Id) ? dictTotalOutgoingMessage[x.Id] : 0,
+                //TotalErrorMessages = dictTotalFailedMessage.ContainsKey(x.Id) ? dictTotalFailedMessage[x.Id] : 0,
+                //TotalSuccessfulMessages = dictTotalSuccessfulMessage.ContainsKey(x.Id) ? dictTotalSuccessfulMessage[x.Id] : 0,
+                //TotalMessage =
+                //  (ditcTotalWaitedMessage.ContainsKey(x.Id) ? ditcTotalWaitedMessage[x.Id] : 0) +
+                //  (dictTotalCanceledMessage.ContainsKey(x.Id) ? dictTotalCanceledMessage[x.Id] : 0) +
+                //  (dictTotalOutgoingMessage.ContainsKey(x.Id) ? dictTotalOutgoingMessage[x.Id] : 0) +
+                //   (dictTotalFailedMessage.ContainsKey(x.Id) ? dictTotalFailedMessage[x.Id] : 0) +
+                //   (dictTotalSuccessfulMessage.ContainsKey(x.Id) ? dictTotalSuccessfulMessage[x.Id] : 0)
             }).ToListAsync();
             return new PagedResult2<SmsCampaignBasic>(totalItems, val.Offset, val.Limit)
             {

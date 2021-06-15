@@ -36,52 +36,53 @@ namespace Infrastructure.HangfireJobService
                 if (config == null)
                     return;
 
-                if (config.TemplateId.HasValue)
-                    config.Template = await context.SmsTemplates.Where(x => x.Id == config.TemplateId.Value).FirstOrDefaultAsync();
+                if (string.IsNullOrEmpty(config.Body) && config.TemplateId.HasValue)
+                {
+                    var template = await context.SmsTemplates.Where(x => x.Id == config.TemplateId.Value).FirstOrDefaultAsync();
+                    config.Body = template.Body;
+                }
+                   
                 var now = DateTime.Now;
                 var nowPast30 = now.AddMinutes(-30); //lấy quá khứ 30p
-                if (!string.IsNullOrEmpty(config.TypeTimeBeforSend))
-                {
-                    var listAppointments = await context.Appointments.Where(x => x.CompanyId == config.CompanyId
+                var listAppointments = await context.Appointments.Where(x => x.CompanyId == config.CompanyId
                       && x.DateTimeAppointment.HasValue
                       && x.State == "confirmed"
                       && x.DateTimeAppointment.Value >= now &&
                       ((config.TypeTimeBeforSend == "hour" && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) <= now && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) > nowPast30) ||
                       (config.TypeTimeBeforSend == "day" && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) <= now && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) > nowPast30)))
                         .ToListAsync();
-                    if (listAppointments.Any())
+                if (listAppointments.Any())
+                {
+                    var smsMessageService = new SmsMessageService(context, null, null,
+                        new EfRepository<SaleOrderLine>(context),
+                        new EfRepository<SaleOrder>(context),
+                        new EfRepository<SmsMessage>(context),
+                        new EfRepository<Partner>(context),
+                        new EfRepository<SmsMessageDetail>(context),
+                        new EfRepository<Appointment>(context));
+
+                    var smsMessage = new SmsMessage();
+                    smsMessage.SmsAccountId = config.SmsAccountId;
+                    smsMessage.SmsCampaignId = config.SmsCampaignId;
+                    smsMessage.Name = $"Nhắc lịch hẹn";
+                    smsMessage.SmsTemplateId = config.TemplateId;
+                    smsMessage.Body = config.Body;
+                    smsMessage.ResModel = "appointment";
+
+                    foreach (var app in listAppointments)
                     {
-                        var smsMessageService = new SmsMessageService(context, null, null,
-                            new EfRepository<SaleOrderLine>(context),
-                            new EfRepository<SaleOrder>(context),
-                            new EfRepository<SmsMessage>(context),
-                            new EfRepository<Partner>(context),
-                            new EfRepository<SmsMessageDetail>(context),
-                            new EfRepository<Appointment>(context));
-
-                        var smsMessage = new SmsMessage();
-                        smsMessage.SmsAccountId = config.SmsAccountId;
-                        smsMessage.SmsCampaignId = config.SmsCampaignId;
-                        smsMessage.Name = $"Nhắc lịch hẹn";
-                        smsMessage.SmsTemplateId = config.TemplateId;
-                        smsMessage.Body = config.Body;
-                        smsMessage.ResModel = "appointment";
-
-                        foreach (var app in listAppointments)
+                        var rel = new SmsMessageAppointmentRel()
                         {
-                            var rel = new SmsMessageAppointmentRel()
-                            {
-                                AppointmentId = app.Id,
-                            };
-                            smsMessage.SmsMessageAppointmentRels.Add(rel);
-                        }
-
-                        context.SmsMessages.Add(smsMessage);
-                        await context.SaveChangesAsync();
-                      
-                        await smsMessageService.ActionSend(smsMessage.Id);
-                        transaction.Commit();
+                            AppointmentId = app.Id,
+                        };
+                        smsMessage.SmsMessageAppointmentRels.Add(rel);
                     }
+
+                    context.SmsMessages.Add(smsMessage);
+                    await context.SaveChangesAsync();
+
+                    await smsMessageService.ActionSend(smsMessage.Id);
+                    transaction.Commit();
                 }
             }
             catch (Exception ex) { throw new Exception(ex.Message); }

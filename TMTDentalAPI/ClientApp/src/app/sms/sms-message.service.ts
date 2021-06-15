@@ -51,4 +51,8 @@ export class SmsMessageService {
     actionStopJobAutomatic() {
         return this.http.get(this.base_api + this.apiUrl + '/ActionStopJobAutomatic');
     }
+
+    actionSchedule(val: any) {
+        return this.http.post(this.base_api + this.apiUrl + '/ActionSchedule', val);
+    }
 }

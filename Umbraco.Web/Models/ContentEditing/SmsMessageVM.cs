@@ -58,6 +58,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SmsMessageSave
     {
+        public string Name { get; set; }
         public string Body { get; set; }
         public DateTime? ScheduleDate { get; set; }
         public Guid? SmsTemplateId { get; set; }

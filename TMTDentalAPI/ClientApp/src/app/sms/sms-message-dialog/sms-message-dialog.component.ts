@@ -227,7 +227,7 @@ export class SmsMessageDialogComponent implements OnInit {
     modalRef.componentInstance.campaign = val.smsCampaign;
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.brandName = val.smsAccount.brandName;
-    modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.scheduleDateObj, "HH:mm, dd/MM/yyyy");;
+    modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.scheduleDateObj, "dd-MM-yyyy HH:mm");;
     modalRef.componentInstance.body = this.template ? this.template.text : '';
     modalRef.componentInstance.numberSms = this.partnerIds ? this.partnerIds.length : 0;
     modalRef.result.then(() => {
@@ -237,9 +237,20 @@ export class SmsMessageDialogComponent implements OnInit {
             () => {
               this.notify("Gửi tin nhắn thành công", true);
               this.activeModal.close();
-
             }
           )
+
+          this.smsMessageService.actionSchedule(
+            {
+              id: res.id,
+              scheduleDate: this.intlService.formatDate(val.scheduleDateObj, "yyyy-MM-ddTHH:mm:ss")
+            }).subscribe(
+            () => {
+              this.notify("Gửi tin nhắn thành công", true);
+              this.activeModal.close();
+            }
+          )
+
           if (this.isTemplateCopy) {
             let template = {
               text: val.body,
@@ -272,12 +283,23 @@ export class SmsMessageDialogComponent implements OnInit {
     modalRef.componentInstance.campaign = val.smsCampaign;
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.brandName = val.smsAccount.brandName;
-    modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.scheduleDateObj, "HH:mm, dd/MM/yyyy");;
+    modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.scheduleDateObj, "dd-MM-yyyy HH:mm");;
     modalRef.componentInstance.body = this.template ? this.template.text : '';
     modalRef.componentInstance.numberSms = this.partnerIds ? this.partnerIds.length : 0;
     modalRef.result.then(() => {
-      this.smsMessageService.ActionCreateReminder(val).subscribe(
+      this.smsMessageService.create(val).subscribe(
         (res: any) => {
+          this.smsMessageService.actionSchedule(
+            {
+              id: res.id,
+              scheduleDate: this.intlService.formatDate(val.scheduleDateObj, "yyyy-MM-ddTHH:mm:ss")
+            }).subscribe(
+            () => {
+              this.notify("Gửi tin nhắn thành công", true);
+              this.activeModal.close();
+            }
+          )
+
           if (this.isTemplateCopy) {
             let template = {
               text: val.body,
@@ -302,9 +324,9 @@ export class SmsMessageDialogComponent implements OnInit {
   }
 
   changeTypeSend(event) {
-    if (event.target.value == "automatic") {
-      this.formGroup.get("dateObj").setValue(new Date());
-    }
+    // if (event.target.value == "automatic") {
+    //   this.formGroup.get("dateObj").setValue(new Date());
+    // }
   }
 
   changeSmsCampaign(event) {

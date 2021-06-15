@@ -111,6 +111,7 @@ export class SmsCampaignDetailComponent implements OnInit {
     )
       .subscribe(
         (res) => {
+          console.log(res);
           this.gridData = res;
           this.loading = false;
         },
