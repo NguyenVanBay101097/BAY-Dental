@@ -19,7 +19,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PartnerName { get; set; }
 
         public decimal? AmountTotal { get; set; }
-
         /// <summary>
         /// Trạng thái
         /// draft: Quotation
@@ -63,5 +62,40 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         public string SaleOrderLineName { get; set; }
+    }
+
+    public class SaleOrderManagementExcel{
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Ngày điều trị
+        /// </summary>
+        public DateTime DateOrder { get; set; }
+
+        /// <summary>
+        /// Khách hàng
+        /// </summary>
+        public string PartnerName { get; set; }
+
+        public decimal? AmountTotal { get; set; }
+
+        public decimal? TotalPaid { get; set; }
+
+        /// <summary>
+        /// Trạng thái
+        /// draft: Quotation
+        /// sale: Sales Order
+        /// done: Locked
+        /// cancel: Cancelled
+        /// </summary>
+        public string State { get; set; }
+
+        public string Name { get; set; }
+
+        public string UserName { get; set; }
+
+        public decimal? Residual { get; set; }
+
+        public IEnumerable<SaleOrderLineDisplay> SaleOrderLineDisplays { get; set; } = new List<SaleOrderLineDisplay>();
     }
 }

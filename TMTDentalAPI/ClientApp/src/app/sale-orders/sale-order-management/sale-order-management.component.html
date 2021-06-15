@@ -1,0 +1,99 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <h5>Quản lý điều trị chưa hoàn thành</h5>
+    </div>
+</div>
+<div class="o_content">
+    <div class="t_section_right">
+        <div class="t_treatment_wrapper">
+            <div class="o_cp_controller">
+                <div class="o_control_panel">
+                    <div class="breadcrumb">
+                        <div class="d-flex">
+                            <kendo-combobox [data]="ranges" [valueField]="'value'" [textField]="'text'"
+                                style="width:70%;" class="mr-2 kendo-combobox-sm cmb"
+                                [(ngModel)]="dateOrderTo" [placeholder]="'Thời gian'"
+                                [filterable]="true" 
+                                (ngModelChange)="handleFilterDateOrder()">
+                            </kendo-combobox>
+                            <kendo-combobox [data]="companies" [valueField]="'id'" [textField]="'name'"
+                                style="width:70%;" class="mr-2 kendo-combobox-sm cmb"
+                                [(ngModel)]="company" [placeholder]="'Tất cả chi nhánh'"
+                                (ngModelChange)="handleFilterCompany()">
+                            </kendo-combobox>
+                            <button class="btn btn-primary btn-sm mr-2 btnExport" title="xuất file" (click)="exportExcelFile()"> <i
+                                class="fas fa-download mr-2"></i>Xuất file
+                            </button>
+                        </div>
+                    </div>
+                    <div class="o_cp_searchview">
+                        <div class="o_searchview">
+                            <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu điều trị" type="text"
+                                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                        </div>
+                    </div>
+                    <div class="o_cp_left">
+                        <div class="o_cp_buttons">
+    
+                        </div>
+                        <div class="o_cp_sidebar">
+                        </div>
+                    </div>
+                    <div class="o_cp_right">
+    
+                    </div>
+                </div>
+            </div>
+            <div class="t_treatment_grid">
+                <div class="kendo-grid-data">
+                    <kendo-grid [data]="saleOrdersData" [pageable]="true" [pageSize]="limit" [skip]="skip"
+                        (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading">
+                        <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}"
+                            field="DateOrder" title="Ngày lập phiếu" width="120">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.dateOrder | date:'short'}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+                            field="Name" title="Số phiếu" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                <a class="text-primary" (click)="getFormSaleOrder(dataItem.id)">{{dataItem.name}}</a>
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+                            field="Name" title="Khách hàng" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.partnerName}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column class="text-right"
+                            [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="AmountTotal"
+                            title="Tiền điều trị" width="120">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.amountTotal | number}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column class="text-right"
+                            [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="Thanh Toán"
+                            width="120">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{ dataItem.state != "draft" ? (dataItem.amountTotal - dataItem.residual | number) : 0 }}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column class="text-right"
+                            [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="Residual"
+                            title="Còn lại" width="120">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.residual | number}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <div *kendoGridDetailTemplate="let dataItem">
+                            <app-sale-order-line-management [saleOrderId]="dataItem.id">
+                            </app-sale-order-line-management>
+                        </div>
+                    </kendo-grid>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
