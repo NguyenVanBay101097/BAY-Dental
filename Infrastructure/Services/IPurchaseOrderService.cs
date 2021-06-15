@@ -18,5 +18,6 @@ namespace Infrastructure.Services
         PurchaseOrderDisplay DefaultGet(PurchaseOrderDefaultGet val);
         Task ButtonConfirm(IEnumerable<Guid> ids);
         Task ButtonCancel(IEnumerable<Guid> ids);
+        Task PreparePurchase(IEnumerable<Guid> ids);
     }
 }

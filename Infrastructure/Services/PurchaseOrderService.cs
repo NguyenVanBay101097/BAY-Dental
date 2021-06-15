@@ -104,7 +104,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        private async Task<decimal> _ComputeAmountResidual(PurchaseOrder self)
+        private async Task<decimal> _ComputeTotalPaid(PurchaseOrder self)
         {
             var amlObj = GetService<IAccountMoveLineService>();
             var moveObj = GetService<IAccountMoveService>();
@@ -198,16 +198,26 @@ namespace Infrastructure.Services
 
         public PurchaseOrderDisplay DefaultGet(PurchaseOrderDefaultGet val)
         {
-            var res = new PurchaseOrderDisplay();
-            res.Type = val.Type;
-            var companyId = CompanyId;
+            var journalObj = GetService<IAccountJournalService>();
             var pickingTypeObj = GetService<IStockPickingTypeService>();
-            var pickingType = pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse.CompanyId == companyId).FirstOrDefault();
+            var companyId = CompanyId;
+
+            var pickingType = pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse.CompanyId == CompanyId).FirstOrDefault();
             if (pickingType == null)
                 pickingType = pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse == null).FirstOrDefault();
             if (pickingType == null)
                 throw new Exception("Không tìm thấy hoạt động nhập kho nào");
-            res.PickingTypeId = pickingType.Id;
+
+            var cashJournal = journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefault();
+            if (cashJournal == null)
+                throw new Exception("Không tìm thấy phương thức thanh toán tiền mặt");
+
+            var res = new PurchaseOrderDisplay();
+            res.Type = val.Type;                          
+            res.PickingTypeId = pickingType.Id;                  
+            res.JournalId = cashJournal.Id;
+            res.Journal = _mapper.Map<AccountJournalSimple>(cashJournal);
+            res.AmountPayment = 0;
 
             return res;
         }
@@ -230,6 +240,8 @@ namespace Infrastructure.Services
 
                 order.AmountTotal = totalAmountUntaxed;
                 order.AmountResidual = totalAmountResidual;
+                if (order.AmountPayment.HasValue)
+                    order.AmountPayment = order.AmountPayment > totalAmountUntaxed ? totalAmountUntaxed : order.AmountPayment;
             }
         }
 
@@ -322,6 +334,7 @@ namespace Infrastructure.Services
 
             _GetInvoiced(self);
             _AmountAll(self);
+            ComputeState(self);
 
             await UpdateAsync(self);
         }
@@ -548,6 +561,36 @@ namespace Infrastructure.Services
                 .Select(x => x.PickingId.Value).Distinct().ToList();
         }
 
+        public void ComputeState(IEnumerable<PurchaseOrder> self)
+        {          
+            var states = new string[] { "draft", "cancel" };
+            foreach (var order in self)
+            {
+                if (states.Contains(order.State) || order.AmountResidual <= 0)
+                    continue;            
+
+                order.State = "done";
+                foreach (var line in order.OrderLines)
+                    line.State = "done";
+            }
+        }
+
+        public async Task PreparePurchase(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+              .Include(x => x.OrderLines).ThenInclude(x => x.MoveLines)             
+              .Include(x => x.Journal)
+              .ToListAsync();
+
+            var poLineObj = GetService<IPurchaseOrderLineService>();
+            poLineObj._ComputeQtyInvoiced(self.SelectMany(x => x.OrderLines));
+
+            _GetInvoiced(self);
+            _AmountAll(self);
+            ComputeState(self);
+
+            await UpdateAsync(self);
+        }
 
         public async Task<IEnumerable<StockMove>> CreateStockMoves(IEnumerable<PurchaseOrderLine> self, StockPicking picking)
         {
