@@ -31,7 +31,7 @@ namespace Infrastructure.Services
         {
             var query = GetQueryPaged(val);
 
-            var items = await query.Include(x => x.Partner).Skip(val.Offset).Take(val.Limit)
+            var items = await query.Include(x => x.Partner).Include(x=> x.CreatedBy).Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 
@@ -131,7 +131,7 @@ namespace Infrastructure.Services
 
         public async Task<StockPicking> GetPickingForDisplay(Guid id)
         {
-            return await SearchQuery(x => x.Id == id).Include(x => x.Partner)
+            return await SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x=> x.CreatedBy)
                 .Include(x => x.MoveLines)
                 .Include("MoveLines.Product")
                  .Include("MoveLines.ProductUOM")
