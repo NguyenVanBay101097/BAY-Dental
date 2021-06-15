@@ -26,6 +26,7 @@ namespace ApplicationCore.Entities
 
         public DateTime? DateTimeAppointment { get; set; }
 
+        //ko cần cột này
         public DateTime? DateAppointmentReminder { get; set; }
 
         /// <summary>

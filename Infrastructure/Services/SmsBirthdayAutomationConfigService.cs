@@ -26,12 +26,17 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-
         public override async Task<SmsBirthdayAutomationConfig> CreateAsync(SmsBirthdayAutomationConfig entity)
         {
             entity = await base.CreateAsync(entity);
             ActionRunJob(entity);
             return entity;
+        }
+
+        public override async Task UpdateAsync(SmsBirthdayAutomationConfig entity)
+        {
+            await base.UpdateAsync(entity);
+            ActionRunJob(entity);
         }
 
         public async Task UpdateAsync(Guid id, SmsBirthdayAutomationConfigSave val)

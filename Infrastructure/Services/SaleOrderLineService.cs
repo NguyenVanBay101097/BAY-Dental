@@ -965,7 +965,7 @@ namespace Infrastructure.Services
 
                 return promotionLine;
             }
-          
+
 
             return new SaleOrderPromotion();
         }
@@ -1011,30 +1011,29 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SmsCareAfterOrder>> GetPagedSmsCareAfterOrderAsync(SmsCareAfterOrderPaged val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x => x.State == "done");
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
+                    || x.OrderPartner.NameNoSign.Contains(val.Search)
                     || x.OrderPartner.Phone.Contains(val.Search));
             if (val.ProductId.HasValue)
                 query = query.Where(x => x.ProductId == val.ProductId.Value);
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.DateCreated >= val.DateFrom.Value);
+                query = query.Where(x => x.Order.DateDone >= val.DateFrom.Value);
 
             if (val.DateTo.HasValue)
             {
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.DateCreated <= dateTo);
+                query = query.Where(x => x.Order.DateDone <= dateTo);
             }
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
 
             var totalItems = await query.CountAsync();
 
-            if (val.Limit > 0)
-            {
-                query = query.Skip(val.Offset).Take(val.Limit);
-            }
-
-            var items = await query.OrderByDescending(x => x.DateCreated).Select(x => new SmsCareAfterOrder
+            var items = await query.OrderByDescending(x => x.Order.DateDone).Skip(val.Offset).Take(val.Limit).Select(x => new SmsCareAfterOrder
             {
                 PartnerId = x.OrderPartnerId,
                 SaleOrderLineId = x.Id,
@@ -1042,13 +1041,47 @@ namespace Infrastructure.Services
                 PartnerPhone = x.OrderPartner.Phone,
                 SaleOrderName = x.Order.Name,
                 DoctorName = x.EmployeeId.HasValue ? x.Employee.Name : null,
-                DateDone = x.Order.DateDone
+                DateDone = x.Order.DateDone,
+                ProductName = x.Product.Name
             }).ToListAsync();
 
             return new PagedResult2<SmsCareAfterOrder>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };
+        }
+
+        public async Task<IEnumerable<ProductSimple>> GetProductSmsCareAfterOrder(DateTime? dateFrom, DateTime? dateTo, Guid? companyId)
+        {
+            var query = SearchQuery(x => x.State == "done");
+            if (dateFrom.HasValue)
+            {
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.Order.DateDone >= dateFrom);
+            }
+
+            if (dateTo.HasValue)
+            {
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Order.DateDone <= dateTo);
+            }
+
+            if (companyId.HasValue)
+                query = query.Where(x => x.CompanyId == companyId);
+
+            var result = await query.GroupBy(x => new
+            {
+                ProductName = x.Product.Name,
+                ProductId = x.ProductId.Value,
+                ProductNameNoSign = x.Product.NameNoSign
+            }).Select(x => new ProductSimple
+            {
+                Id = x.Key.ProductId,
+                Name = x.Key.ProductName,
+                NameNoSign = x.Key.ProductNameNoSign
+            }).ToListAsync();
+
+            return result;
         }
     }
 }

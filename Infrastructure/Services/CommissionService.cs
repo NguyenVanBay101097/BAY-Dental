@@ -122,7 +122,7 @@ namespace Infrastructure.Services
         {
             var ruleObj = GetService<ICommissionProductRuleService>();
             var rule = await ruleObj.SearchQuery(x => x.ProductId == productId && x.CommissionId == CommissionId).FirstOrDefaultAsync();
-            return rule.Percent ?? 0;
+            return rule != null ? rule.Percent ?? 0 : 0;
         }
     }
 }

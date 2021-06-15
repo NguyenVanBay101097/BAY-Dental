@@ -33,20 +33,21 @@ namespace Infrastructure.HangfireJobService
             try
             {
                 var config = await context.SmsAppointmentAutomationConfigs.Where(x => x.CompanyId.HasValue && x.CompanyId.Value == companyId && x.Active == true).FirstOrDefaultAsync();
+                if (config == null)
+                    return;
+
                 if (config.TemplateId.HasValue)
                     config.Template = await context.SmsTemplates.Where(x => x.Id == config.TemplateId.Value).FirstOrDefaultAsync();
                 var now = DateTime.Now;
+                var nowPast30 = now.AddMinutes(-30); //lấy quá khứ 30p
                 if (!string.IsNullOrEmpty(config.TypeTimeBeforSend))
                 {
-                    var query = context.Appointments.AsQueryable();
-                    var listAppointments = await query.Where(x => !x.DateAppointmentReminder.HasValue
-                      && x.CompanyId == config.CompanyId
+                    var listAppointments = await context.Appointments.Where(x => x.CompanyId == config.CompanyId
                       && x.DateTimeAppointment.HasValue
                       && x.State == "confirmed"
                       && x.DateTimeAppointment.Value >= now &&
-                      ((config.TypeTimeBeforSend == "minute" && x.DateTimeAppointment.Value.AddMinutes(-config.TimeBeforSend) <= now) ||
-                      (config.TypeTimeBeforSend == "hour" && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) <= now) ||
-                      (config.TypeTimeBeforSend == "day" && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) <= now)))
+                      ((config.TypeTimeBeforSend == "hour" && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) <= now && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) > nowPast30) ||
+                      (config.TypeTimeBeforSend == "day" && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) <= now && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) > nowPast30)))
                         .ToListAsync();
                     if (listAppointments.Any())
                     {
@@ -61,35 +62,24 @@ namespace Infrastructure.HangfireJobService
                         var smsMessage = new SmsMessage();
                         smsMessage.SmsAccountId = config.SmsAccountId;
                         smsMessage.SmsCampaignId = config.SmsCampaignId;
-                        smsMessage.Id = GuidComb.GenerateComb();
-                        smsMessage.Name = $"Nhắc lịch hẹn khách hàng ngày {DateTime.Today.ToString("dd-MM-yyyy")}";
+                        smsMessage.Name = $"Nhắc lịch hẹn";
                         smsMessage.SmsTemplateId = config.TemplateId;
                         smsMessage.Body = config.Body;
-                        smsMessage.State = "draft";
                         smsMessage.ResModel = "appointment";
-                        smsMessage.ScheduleDate = DateTime.Now;
-                        context.SmsMessages.Add(smsMessage);
-                        await context.SaveChangesAsync();
+
                         foreach (var app in listAppointments)
                         {
                             var rel = new SmsMessageAppointmentRel()
                             {
                                 AppointmentId = app.Id,
-                                SmsMessageId = smsMessage.Id
                             };
                             smsMessage.SmsMessageAppointmentRels.Add(rel);
                         }
-                        context.SmsMessageAppointmentRels.AddRange(smsMessage.SmsMessageAppointmentRels);
-                        await context.SaveChangesAsync();
 
+                        context.SmsMessages.Add(smsMessage);
+                        await context.SaveChangesAsync();
+                      
                         await smsMessageService.ActionSend(smsMessage.Id);
-
-                        foreach (var appointment in listAppointments)
-                        {
-                            appointment.DateAppointmentReminder = now;
-                            context.Entry(appointment).State = EntityState.Modified;
-                        }
-                        await context.SaveChangesAsync();
                         transaction.Commit();
                     }
                 }
@@ -104,13 +94,18 @@ namespace Infrastructure.HangfireJobService
             try
             {
                 var config = await context.SmsBirthdayAutomationConfigs.Where(x => x.CompanyId.HasValue && x.CompanyId.Value == companyId && x.Active == true).FirstOrDefaultAsync();
-                if (config.TemplateId.HasValue)
+                if (config == null)
+                    return;
+
+                if (string.IsNullOrEmpty(config.Body) && config.TemplateId.HasValue)
+                {
                     config.Template = await context.SmsTemplates.Where(x => x.Id == config.TemplateId.Value).FirstOrDefaultAsync();
+                    config.Body = config.Template.Body;
+                }
 
                 var dayNow = DateTime.Today.AddDays(-config.DayBeforeSend).Day;
                 var MonthNow = DateTime.Today.Month;
-                var queryPartner = context.Partners.AsQueryable();
-                var partners = await queryPartner.Where(x =>
+                var partners = await context.Partners.Where(x =>
                 x.CompanyId == config.CompanyId &&
                 x.BirthMonth.HasValue && x.BirthMonth.Value == MonthNow &&
                 x.BirthDay.HasValue && x.BirthDay.Value == dayNow
@@ -128,27 +123,23 @@ namespace Infrastructure.HangfireJobService
                     smsMessage.SmsAccountId = config.SmsAccountId;
                     smsMessage.SmsCampaignId = config.SmsCampaignId;
                     smsMessage.CompanyId = config.CompanyId;
-                    smsMessage.Id = GuidComb.GenerateComb();
-                    smsMessage.Name = $"Chúc mừng sinh nhật ngày {DateTime.Today.ToString("dd-MM-yyyy")}";
+                    smsMessage.Name = $"Chúc mừng sinh nhật";
                     smsMessage.SmsTemplateId = config.TemplateId;
                     smsMessage.Body = config.Body;
-                    smsMessage.State = "draft";
                     smsMessage.ResModel = "partner";
-                    smsMessage.ScheduleDate = config.ScheduleTime;
-                    context.SmsMessages.Add(smsMessage);
-                    await context.SaveChangesAsync();
+
                     foreach (var item in partners)
                     {
                         var rel = new SmsMessagePartnerRel()
                         {
                             PartnerId = item.Id,
-                            SmsMessageId = smsMessage.Id
                         };
                         smsMessage.SmsMessagePartnerRels.Add(rel);
                     }
-                    context.SmsMessagePartnerRels.AddRange(smsMessage.SmsMessagePartnerRels);
-                    await context.SaveChangesAsync();
 
+                    context.SmsMessages.Add(smsMessage);
+                    await context.SaveChangesAsync();
+                  
                     await smsMessageService.ActionSend(smsMessage.Id);
 
                     await context.SaveChangesAsync();

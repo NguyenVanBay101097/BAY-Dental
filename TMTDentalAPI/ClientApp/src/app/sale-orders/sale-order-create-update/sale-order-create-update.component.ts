@@ -324,12 +324,17 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionDone() {
     if (this.saleOrderId) {
-      this.saleOrderService.actionDone([this.saleOrderId]).subscribe(() => {
-        this.loadSaleOrder();
-        this.notify('success', 'Hoàn thành phiếu điều trị');
-        this.smsMessageService.SetupSendSmsOrderAutomatic(this.saleOrderId).subscribe(
-          () => { }
-        )
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+      modalRef.componentInstance.title = 'Hoàn thành phiếu điều trị';
+      modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hoàn thành điều trị?';
+      modalRef.result.then(() => {
+        this.saleOrderService.actionDone([this.saleOrderId]).subscribe(() => {
+          this.loadSaleOrder();
+          this.notify('success', 'Hoàn thành phiếu điều trị');
+          this.smsMessageService.SetupSendSmsOrderAutomatic(this.saleOrderId).subscribe(
+            () => { }
+          )
+        });
       });
     }
   }

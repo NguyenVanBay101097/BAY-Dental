@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
@@ -39,6 +40,7 @@ export class SmsThanksFormManualComponent implements OnInit {
     private intlService: IntlService,
     private saleOrderService: SaleOrderService,
     private smsCampaignService: SmsCampaignService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -65,6 +67,7 @@ export class SmsThanksFormManualComponent implements OnInit {
     val.dateOrderFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateOrderTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
     val.state = "done";
+    val.companyId = this.authService.userInfo.companyId;
     this.saleOrderService.getSaleOrderForSms(val).pipe(
       map((response: any) =>
       (<GridDataResult>{

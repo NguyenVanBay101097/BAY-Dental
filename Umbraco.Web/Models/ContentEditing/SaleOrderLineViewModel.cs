@@ -70,6 +70,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? ProductId { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class SmsCareAfterOrder
@@ -81,5 +82,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string SaleOrderName { get; set; }
         public string DoctorName { get; set; }
         public DateTime? DateDone { get; set; }
+        public string ProductName { get; set; }
     }
 }

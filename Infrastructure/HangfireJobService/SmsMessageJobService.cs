@@ -40,11 +40,14 @@ namespace Infrastructure.HangfireJobService
                             new EfRepository<SmsMessageDetail>(context),
                             new EfRepository<Appointment>(context));
                 var now = DateTime.Now;
+                var morning = DateTime.Today.AddHours(6).AddMinutes(0);
+                var night = DateTime.Today.AddHours(22).AddMinutes(0);
                 var query = context.SmsMessages.Where(
                     x =>
                     x.State == "in_queue" &&
                     x.ScheduleDate.HasValue &&
-                    x.ScheduleDate.Value <= now
+                    x.ScheduleDate.Value <= now &&
+                    (now >= morning && now <= night)
                 ).Include(x => x.SmsAccount)
                 .Include(x => x.SmsMessagePartnerRels)
                 .Include(x => x.SmsMessageSaleOrderRels).ThenInclude(x => x.SaleOrder);
