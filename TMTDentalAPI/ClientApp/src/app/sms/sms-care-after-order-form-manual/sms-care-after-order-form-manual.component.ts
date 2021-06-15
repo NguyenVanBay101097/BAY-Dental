@@ -5,6 +5,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { fromEvent, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderLineService, SmsCareAfterOrderPaged } from 'src/app/core/services/sale-order-line.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
@@ -30,13 +31,14 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
   monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   search: string = '';
   selectedIds: string[] = [];
-  searchUpdate = new Subject<string>();
+  searchPartnerUpdate = new Subject<string>();
   filterPaged: SmsCareAfterOrderPaged = new SmsCareAfterOrderPaged();
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
   loading = false;
   campaign: any;
+  filteredProducts: any[] = [];
 
   constructor(
     private notificationService: NotificationService,
@@ -45,39 +47,59 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     private modalService: NgbModal,
     private intlService: IntlService,
     private smsCampaignService: SmsCampaignService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
+
     this.loadProducts();
+    this.loadDataFromApi();
     setTimeout(() => {
       this.loadDefaultCampaignCareAfterOrder();
     }, 1000);
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd;
+  
 
     this.searchProductUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
-      .subscribe(() => {
-        this.loadProducts();
+      .subscribe((value) => {
+        this.filterProducts(value);
+      });
+
+    this.searchPartnerUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe((value) => {
+        this.skip = 0;
+        this.search = value;
+        this.loadDataFromApi();
       });
   }
 
   loadProducts() {
     this.onSearchProduct().subscribe(
       res => {
-        if (res && res[0]) {
-          this.productId = res[0].id;
-        }
+        console.log(res);
         this.listProducts = res;
-        this.loadDataFromApi();
+        this.filteredProducts = this.listProducts.slice();
       }
     )
   }
 
+  filterProducts(val: string) {
+    this.filteredProducts = this.listProducts.filter(x => x.name.toLowerCase().includes(val.toLowerCase()) ||
+     x.nameNoSign.toLowerCase().includes(val.toLowerCase()));
+  }
+
   onSearchProduct() {
     var search = this.searchProduct || '';
-    return this.saleOrderLineService.getProductSmsCareAfterOrder(search, 20, 0);
+    return this.saleOrderLineService.getProductSmsCareAfterOrder({
+      dateFrom: this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '',
+      dateTo: this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : '',
+      companyId: this.authService.userInfo.companyId
+    });
   }
 
   searchChangeDate(value) {
@@ -100,6 +122,7 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     this.filterPaged.productId = this.productId || '';
     this.filterPaged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
     this.filterPaged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : '';
+    this.filterPaged.companyId = this.authService.userInfo.companyId;
     this.saleOrderLineService.getSmsCareAfterOrderManual(this.filterPaged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,

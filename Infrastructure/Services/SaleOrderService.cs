@@ -2999,10 +2999,12 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateDone.Value >= val.DateOrderFrom.Value);
             if (val.DateOrderTo.HasValue)
                 query = query.Where(x => x.DateDone.Value <= val.DateOrderTo.Value);
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search));
             var totalItems = await query.CountAsync();
-            var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SaleOrderSmsBasic
+            var items = await query.OrderByDescending(x => x.DateDone).Skip(val.Offset).Take(val.Limit).Select(x => new SaleOrderSmsBasic
             {
                 Id = x.Id,
                 PartnerId = x.PartnerId,

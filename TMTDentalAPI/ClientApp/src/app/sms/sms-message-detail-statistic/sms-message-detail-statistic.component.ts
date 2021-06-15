@@ -32,8 +32,8 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
   selectedIds: string[] = [];
   loading = false;
   filterStatus = [
-    { name: 'Đang gửi', value: 'outgoing' },
-    { name: 'Hủy', value: 'canceled' },
+    // { name: 'Đang gửi', value: 'outgoing' },
+    // { name: 'Hủy', value: 'cancelled' },
     { name: 'Thất bại', value: 'error' },
     { name: 'Thành công', value: 'sent' }
   ];

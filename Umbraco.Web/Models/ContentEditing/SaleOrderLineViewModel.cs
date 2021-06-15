@@ -81,5 +81,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string SaleOrderName { get; set; }
         public string DoctorName { get; set; }
         public DateTime? DateDone { get; set; }
+        public string ProductName { get; set; }
     }
 }

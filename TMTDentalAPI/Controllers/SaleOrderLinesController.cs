@@ -188,9 +188,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetProductSmsCareAfterOrder(string filter, int limit, int offset)
+        public async Task<IActionResult> GetProductSmsCareAfterOrder(DateTime? dateFrom, DateTime? dateTo, Guid? companyId)
         {
-            var result = await _saleLineService.GetProductSmsCareAfterOrder(filter, limit, offset);
+            var result = await _saleLineService.GetProductSmsCareAfterOrder(dateFrom, dateTo, companyId);
             return Ok(result);
         }
     }

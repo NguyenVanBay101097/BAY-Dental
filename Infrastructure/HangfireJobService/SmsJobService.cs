@@ -62,7 +62,6 @@ namespace Infrastructure.HangfireJobService
                         var smsMessage = new SmsMessage();
                         smsMessage.SmsAccountId = config.SmsAccountId;
                         smsMessage.SmsCampaignId = config.SmsCampaignId;
-                        smsMessage.Id = GuidComb.GenerateComb();
                         smsMessage.Name = $"Nhắc lịch hẹn";
                         smsMessage.SmsTemplateId = config.TemplateId;
                         smsMessage.Body = config.Body;

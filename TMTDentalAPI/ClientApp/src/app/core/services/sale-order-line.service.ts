@@ -57,6 +57,7 @@ export class SmsCareAfterOrderPaged {
     dateFrom: string;
     dateTo: string;
     productId: string;
+    companyId: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -116,10 +117,10 @@ export class SaleOrderLineService {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetSmsCareAfterOrderManual', { params: new HttpParams({ fromObject: val }) });
     }
 
-    getProductSmsCareAfterOrder(filter: string, limit: number, offset: number): Observable<ProductSimple[]> {
+    getProductSmsCareAfterOrder(val: any): Observable<ProductSimple[]> {
         return this.http.get<ProductSimple[]>(this.baseApi + this.apiUrl + '/GetProductSmsCareAfterOrder',
             {
-                params: new HttpParams().set("filter", filter).set("limit", limit.toString()).set("offset", offset.toString())
+                params: new HttpParams({fromObject: val})
             })
     }
 }
