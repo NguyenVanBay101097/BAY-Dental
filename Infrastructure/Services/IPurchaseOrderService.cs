@@ -12,8 +12,8 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<PurchaseOrderBasic>> GetPagedResultAsync(PurchaseOrderPaged val);
         Task<PurchaseOrderDisplay> GetPurchaseDisplay(Guid id);
-        Task<PurchaseOrder> CreateLabo(PurchaseOrderDisplay val);
-        Task UpdateLabo(Guid id, PurchaseOrderDisplay val);
+        Task<PurchaseOrder> CreatePurchaseOrder(PurchaseOrderSave val);
+        Task UpdatePurchaseOrder(Guid id, PurchaseOrderSave val);
         Task Unlink(IEnumerable<Guid> ids);
         PurchaseOrderDisplay DefaultGet(PurchaseOrderDefaultGet val);
         Task ButtonConfirm(IEnumerable<Guid> ids);

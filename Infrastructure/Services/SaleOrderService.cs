@@ -446,7 +446,7 @@ namespace Infrastructure.Services
                 await cardObj._CheckUpgrade(new List<CardCard>() { card });
 
                 //tạo 1 message chờ gửi
-                
+
 
             }
 
@@ -1889,6 +1889,8 @@ namespace Infrastructure.Services
 
             return invoices;
         }
+
+
 
         public async Task<SaleOrderPrintVM> GetPrint(Guid id)
         {

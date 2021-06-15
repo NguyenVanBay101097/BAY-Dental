@@ -41,6 +41,31 @@ export class PurchaseOrderDisplay {
     amountResidual: number;
 }
 
+export class PurchaseOrderSave {
+    partnerId: string;
+    journalId: string;
+    dateOrder: string;
+    amountPayment: number;
+    orderLines: PurchaseOrderLineSave[];
+    type: string;
+    note: string;
+}
+
+export class PurchaseOrderLineSave {
+    id: string;
+    name: string;
+    productId: string;
+    productQty: number;
+    priceUnit: number;
+    oldPriceUnit: number;
+    priceSubtotal: number;
+    state: string;
+    uomFactor: number;
+    productUOMId: string;
+    productUOMPOId: string;
+    discount: number;
+}
+
 export class PurchaseOrderLineDisplay {
     id: string;
     name: string;
@@ -73,11 +98,11 @@ export class PurchaseOrderService {
         return this.http.get<PurchaseOrderDisplay>(this.baseApi + this.apiUrl + "/" + id);
     }
 
-    create(val: PurchaseOrderDisplay): Observable<PurchaseOrderDisplay> {
-        return this.http.post<PurchaseOrderDisplay>(this.baseApi + this.apiUrl, val);
+    create(val) {
+        return this.http.post(this.baseApi + this.apiUrl, val);
     }
 
-    update(id: string, val: PurchaseOrderDisplay) {
+    update(id: string, val) {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 

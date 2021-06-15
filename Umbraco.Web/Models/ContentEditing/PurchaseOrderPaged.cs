@@ -16,9 +16,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type { get; set; }
         public Guid? PartnerId { get; set; }
 
-        public DateTime? DateOrderFrom { get; set; }
+        public DateTime? DateFrom { get; set; }
 
-        public DateTime? DateOrderTo { get; set; }
+        public DateTime? DateTo { get; set; }
 
         public string State { get; set; }
     }

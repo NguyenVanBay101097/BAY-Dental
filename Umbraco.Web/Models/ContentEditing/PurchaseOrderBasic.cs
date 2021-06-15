@@ -13,6 +13,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
         public decimal? AmountTotal { get; set; }
         public string Type { get; set; }
-        public decimal AmountResidual { get; set; }
+        public decimal? AmountResidual { get; set; }
+         
     }
 }

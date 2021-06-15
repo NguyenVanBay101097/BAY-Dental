@@ -21,6 +21,8 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+
+
         public async Task<PurchaseOrderLineOnChangeProductResult> OnChangeProduct(PurchaseOrderLineOnChangeProduct val)
         {
             var res = new PurchaseOrderLineOnChangeProductResult();
@@ -65,6 +67,7 @@ namespace Infrastructure.Services
                 line.PriceTotal = line.PriceSubtotal;
             }
         }
+     
 
         public void _ComputeQtyInvoiced(IEnumerable<PurchaseOrderLine> self)
         {
@@ -104,5 +107,6 @@ namespace Infrastructure.Services
                 PartnerId = move.PartnerId,
             };
         }
+    
     }
 }

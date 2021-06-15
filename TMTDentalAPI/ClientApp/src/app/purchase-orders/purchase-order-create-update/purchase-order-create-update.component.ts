@@ -244,7 +244,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
     var data = Object.assign(this.purchaseOrder, val);
-    this.purchaseOrderService.create(data).subscribe(result => {
+    this.purchaseOrderService.create(val).subscribe((result:any) => {
       this.purchaseOrderService.buttonConfirm([result.id]).subscribe(() => {
         this.router.navigate(['/purchase/orders/edit/' + result.id]);
       }, () => {
@@ -403,7 +403,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         this.loadRecord();
       });
     } else {
-      this.purchaseOrderService.create(data).subscribe(result => {
+      this.purchaseOrderService.create(data).subscribe((result:any) => {
         this.router.navigate(['/purchase/orders/edit/' + result.id]);
       });
     }

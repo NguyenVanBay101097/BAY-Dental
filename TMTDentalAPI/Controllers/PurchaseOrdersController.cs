@@ -47,30 +47,26 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost]
         [CheckAccess(Actions = "Purchase.Order.Create")]
-        public async Task<IActionResult> Create(PurchaseOrderDisplay val)
+        public async Task<IActionResult> Create(PurchaseOrderSave val)
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            await _unitOfWork.BeginTransactionAsync();
-            foreach (var item in val.OrderLines.ToList())
-            {
-                item.ProductUOM = null;
-            }
-            var labo = await _purchaseOrderService.CreateLabo(val);
+            await _unitOfWork.BeginTransactionAsync();        
+            var purchase = await _purchaseOrderService.CreatePurchaseOrder(val);
             _unitOfWork.Commit();
-            val.Id = labo.Id;
-            return Ok(val);
+            var basic = _mapper.Map<PurchaseOrderBasic>(purchase);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "Purchase.Order.Update")]
-        public async Task<IActionResult> Update(Guid id, PurchaseOrderDisplay val)
+        public async Task<IActionResult> Update(Guid id, PurchaseOrderSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
             await _unitOfWork.BeginTransactionAsync();
-            await _purchaseOrderService.UpdateLabo(id, val);
+            await _purchaseOrderService.UpdatePurchaseOrder(id, val);
             _unitOfWork.Commit();
 
             return NoContent();
