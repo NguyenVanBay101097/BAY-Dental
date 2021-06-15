@@ -41,7 +41,7 @@ namespace Infrastructure.HangfireJobService
                             new EfRepository<Appointment>(context));
                 var now = DateTime.Now;
                 var morning = DateTime.Today.AddHours(6).AddMinutes(0);
-                var night = DateTime.Today.AddHours(6).AddMinutes(0);
+                var night = DateTime.Today.AddHours(22).AddMinutes(0);
                 var query = context.SmsMessages.Where(
                     x =>
                     x.State == "in_queue" &&
