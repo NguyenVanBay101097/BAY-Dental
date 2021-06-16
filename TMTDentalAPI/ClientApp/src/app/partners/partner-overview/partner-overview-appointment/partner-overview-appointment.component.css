@@ -5,3 +5,8 @@
 .t_title {
     color: #0B92F3;
  }
+
+ .border_card{
+     border-left: 3px solid #007BFF;
+     background-color: #F9FBFF
+ }

@@ -93,6 +93,8 @@ import { PartnerCustomerDebtListComponent } from './partner-customer-debt-list/p
 import { PartnerCustomerDebtPaymentDialogComponent } from './partner-customer-debt-payment-dialog/partner-customer-debt-payment-dialog.component';
 import { PartnerCustomerDebtPaymentHistoryListComponent } from './partner-customer-debt-payment-history-list/partner-customer-debt-payment-history-list.component';
 import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-management/partner-customer-debt-management.component';
+import { PartnerOverviewTreatmentHistoryComponent } from './partner-overview/partner-overview-treatment-history/partner-overview-treatment-history.component';
+import { AccountInvoiceReportService } from '../account-invoice-reports/account-invoice-report.service';
 
 
 @NgModule({
@@ -175,7 +177,8 @@ import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-
     PartnerCustomerDebtListComponent,
     PartnerCustomerDebtPaymentDialogComponent,
     PartnerCustomerDebtPaymentHistoryListComponent,
-    PartnerCustomerDebtManagementComponent
+    PartnerCustomerDebtManagementComponent,
+    PartnerOverviewTreatmentHistoryComponent
   ],
   imports: [
     CommonModule,
@@ -210,7 +213,7 @@ import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-
     PartnerCustomerTreatmentLineFastPromotionComponent,
     PartnerCustomerDebtPaymentDialogComponent
   ],
-  providers: [SaleCouponProgramService],
+  providers: [SaleCouponProgramService, AccountInvoiceReportService],
   exports: [
     PartnerCustomerDetailComponent,
     PartnerCustomerTreatmentPaymentDetailComponent
