@@ -541,10 +541,10 @@ namespace TMTDentalAPI.Controllers
                     rowE = row-1;
                     worksheet.Cells[$"B{rowF}:F{rowF}"].Style.Font.Bold = true;
                     worksheet.Cells[$"A{rowF}:A{rowE}"].Merge = true;
-                    row++;
-                    worksheet.Cells.AutoFitColumns();
-                    package.Save();
+                    
                 }
+                worksheet.Cells.AutoFitColumns();
+                package.Save();
                 fileContent = stream.ToArray();
             }
 

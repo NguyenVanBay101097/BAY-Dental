@@ -11,17 +11,17 @@
                     <div class="breadcrumb">
                         <div class="d-flex">
                             <kendo-combobox [data]="ranges" [valueField]="'value'" [textField]="'text'"
-                                style="width:70%;" class="mr-2 kendo-combobox-sm cmb"
+                                class="mr-2 kendo-combobox-sm cmb"
                                 [(ngModel)]="dateOrderTo" [placeholder]="'Thời gian'"
                                 [filterable]="true" 
                                 (ngModelChange)="handleFilterDateOrder()">
                             </kendo-combobox>
                             <kendo-combobox [data]="companies" [valueField]="'id'" [textField]="'name'"
-                                style="width:70%;" class="mr-2 kendo-combobox-sm cmb"
+                                class="mr-2 kendo-combobox-sm cmb"
                                 [(ngModel)]="company" [placeholder]="'Tất cả chi nhánh'"
                                 (ngModelChange)="handleFilterCompany()">
                             </kendo-combobox>
-                            <button class="btn btn-primary btn-sm mr-2 btnExport" title="xuất file" (click)="exportExcelFile()"> <i
+                            <button class="btn btn-primary btn-sm mr-2 btnExport w-30" title="xuất file" (click)="exportExcelFile()"> <i
                                 class="fas fa-download mr-2"></i>Xuất file
                             </button>
                         </div>
