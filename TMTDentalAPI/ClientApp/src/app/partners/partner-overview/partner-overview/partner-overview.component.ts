@@ -2,44 +2,20 @@ import { HttpParams } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CompositeFilterDescriptor } from "@progress/kendo-data-query";
-import {
-  AccountCommonPartnerReport,
-  AccountCommonPartnerReportSearchV2,
-  AccountCommonPartnerReportService,
-} from "src/app/account-common-partner-reports/account-common-partner-report.service";
+import { AccountCommonPartnerReport, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService, } from "src/app/account-common-partner-reports/account-common-partner-report.service";
 import { AccountInvoiceReportService, SumRevenueReportPar } from "src/app/account-invoice-reports/account-invoice-report.service";
 import { AppointmentDisplay } from "src/app/appointment/appointment";
 import { AuthService } from "src/app/auth/auth.service";
-import {
-  AmountCustomerDebtFilter,
-  CustomerDebtReportService,
-} from "src/app/core/services/customer-debt-report.service";
-import {
-  SaleOrderLineService,
-  SaleOrderLinesPaged,
-} from "src/app/core/services/sale-order-line.service";
-import {
-  SaleOrderPaged,
-  SaleOrderService,
-} from "src/app/core/services/sale-order.service";
+import { AmountCustomerDebtFilter, CustomerDebtReportService, } from "src/app/core/services/customer-debt-report.service";
+import { SaleOrderLineService, SaleOrderLinesPaged, } from "src/app/core/services/sale-order-line.service";
+import { SaleOrderPaged, SaleOrderService, } from "src/app/core/services/sale-order.service";
 import { DotKhamService } from "src/app/dot-khams/dot-kham.service";
 import { DotKhamBasic, DotKhamPaged } from "src/app/dot-khams/dot-khams";
-import {
-  PromotionProgramBasic,
-  PromotionProgramPaged,
-  PromotionProgramService,
-} from "src/app/promotion-programs/promotion-program.service";
-import {
-  SaleCouponProgramBasic,
-  SaleCouponProgramPaged,
-  SaleCouponProgramService,
-} from "src/app/sale-coupon-promotion/sale-coupon-program.service";
+import { PromotionProgramBasic, PromotionProgramPaged, PromotionProgramService, } from "src/app/promotion-programs/promotion-program.service";
+import { SaleCouponProgramBasic, SaleCouponProgramPaged, SaleCouponProgramService, } from "src/app/sale-coupon-promotion/sale-coupon-program.service";
 import { SaleOrderBasic } from "src/app/sale-orders/sale-order-basic";
 import { SaleOrderLineDisplay } from "src/app/sale-orders/sale-order-line-display";
-import {
-  GetSummarySaleReportRequest,
-  SaleReportService,
-} from "src/app/sale-report/sale-report.service";
+import { GetSummarySaleReportRequest, SaleReportService, } from "src/app/sale-report/sale-report.service";
 import { PartnersService } from "src/app/shared/services/partners.service";
 import { PartnerDisplay } from "../../partner-simple";
 import { PartnerService } from "../../partner.service";
@@ -83,7 +59,7 @@ export class PartnerOverviewComponent implements OnInit {
     private saleReportService: SaleReportService,
     private customerDebtReportService: CustomerDebtReportService,
     private accountInvoiceReportService: AccountInvoiceReportService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.activeRoute.parent.params.subscribe((params) => {
@@ -167,8 +143,7 @@ export class PartnerOverviewComponent implements OnInit {
     var val = new GetSummarySaleReportRequest();
     val.partnerId = this.partnerId;
     val.companyId = this.authService.userInfo.companyId;
-    this.saleReportService.getSummary(val).subscribe((result:any) => {
-      console.log(result);
+    this.saleReportService.getSummary(val).subscribe((result: any) => {
       this.saleSummary = result;
     });
   }
@@ -204,13 +179,13 @@ export class PartnerOverviewComponent implements OnInit {
     }
   }
 
-  loadSumRevenue(){
+  loadSumRevenue() {
     var val = new SumRevenueReportPar();
     val.partnerId = this.partnerId;
     val.companyId = this.authService.userInfo.companyId;
-    this.accountInvoiceReportService.getSumRevenueReport(val).subscribe((res:any)=>{
+    this.accountInvoiceReportService.getSumRevenueReport(val).subscribe((res: any) => {
       this.sumRevenue = res;
     })
   }
-  
+
 }

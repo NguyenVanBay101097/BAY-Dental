@@ -60,6 +60,11 @@ export class SmsCareAfterOrderPaged {
     companyId: string;
 }
 
+export class SaleOrderLineHistoryReq{
+    partnerId: string;
+    companyId: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SaleOrderLineService {
     apiUrl = 'api/SaleOrderLines';
@@ -120,7 +125,11 @@ export class SaleOrderLineService {
     getProductSmsCareAfterOrder(val: any): Observable<ProductSimple[]> {
         return this.http.get<ProductSimple[]>(this.baseApi + this.apiUrl + '/GetProductSmsCareAfterOrder',
             {
-                params: new HttpParams({fromObject: val})
+                params: new HttpParams({ fromObject: val })
             })
+    }
+
+    getHistories(val: any) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetHistory', { params: new HttpParams({ fromObject: val }) });
     }
 }
