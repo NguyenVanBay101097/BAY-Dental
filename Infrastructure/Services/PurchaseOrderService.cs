@@ -50,6 +50,9 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State == val.State);
 
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
             var totalItems = await query.CountAsync();
 
             if (val.Limit > 0)
