@@ -5,7 +5,7 @@
                 <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
                     (searchChange)="onSearchChange($event)">
                 </app-tai-date-range-filter-dropdown>
-                <button type="button" class="btn btn-primary btn-sm mx-1" (click)="exportExcelFile()">
+                <button type="button" class="btn btn-primary btn-sm mx-1" (click)="exportExcelFile(grid)">
                     <i class="fas fa-download"></i>&nbsp;Xuất file</button>
             </div>
         </div>
@@ -29,13 +29,8 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" #grid="kendoGrid"
         (pageChange)="pageChange($event)" (cellClick)="cellClick($event.dataItem)">
-        <ng-template kendoGridToolbarTemplate>
-            <button type="button" kendoGridExcelCommand icon="file-excel" id="btnExcel" class="d-none">
-                Xuất Excel
-            </button>
-        </ng-template>
         <kendo-grid-column field="productCode" title="Mã sản phẩm">
         </kendo-grid-column>
         <kendo-grid-column field="productName" title="Tên sản phẩm">
@@ -77,6 +72,5 @@
                 <span class="text_sum">{{sumEnd}}</span>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-excel fileName="NhapXuatTon.xlsx" [fetchData]="excelData"></kendo-grid-excel>
     </kendo-grid>
 </div>
