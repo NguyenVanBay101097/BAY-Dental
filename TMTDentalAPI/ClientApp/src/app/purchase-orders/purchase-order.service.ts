@@ -5,6 +5,7 @@ import { PagedResult2 } from '../core/paged-result-2';
 import { PartnerSimple } from '../partners/partner-simple';
 import { UoMDisplay } from '../uoms/uom.service';
 import { ProductUoMBasic } from '../products/product.service';
+import { ProductSimple } from '../products/product-simple';
 
 export class PurchaseOrderPaged {
     limit: number;
@@ -70,7 +71,7 @@ export class PurchaseOrderLineDisplay {
     id: string;
     name: string;
     productId: string;
-    product: ProductUoMBasic;
+    product: ProductSimple;
     productQty: number;
     priceUnit: number;
     oldPriceUnit: number;
@@ -79,7 +80,6 @@ export class PurchaseOrderLineDisplay {
     uomFactor: number;
     productUOMId: string;
     productUOM: UoMDisplay;
-
     productUOMPO: UoMDisplay;
     productUOMPOId: string;
     discount: number;
@@ -88,6 +88,8 @@ export class PurchaseOrderLineDisplay {
 @Injectable()
 export class PurchaseOrderService {
     apiUrl = 'api/PurchaseOrders';
+    apiPrintUrl = '/PurchaseOrder';
+    
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<PagedResult2<PurchaseOrderBasic>> {
@@ -114,8 +116,12 @@ export class PurchaseOrderService {
         return this.http.post<PurchaseOrderDisplay>(this.baseApi + this.apiUrl + '/DefaultGet', val);
     }
 
-    getPrint(id) {
-        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetPrint');
+    getRefundByOrder(id) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetRefundByOrder');
+    }
+
+    getPrint(id: string) {
+        return this.http.get(this.baseApi + this.apiPrintUrl+ '/Print' + `?id=${id}`, { responseType: 'text' });
     }
 
     buttonConfirm(ids: string[]) {

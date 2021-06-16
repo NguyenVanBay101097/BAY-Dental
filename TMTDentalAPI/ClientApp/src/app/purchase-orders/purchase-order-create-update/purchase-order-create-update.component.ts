@@ -20,6 +20,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 declare var $: any;
 
 @Component({
@@ -38,9 +40,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   purchaseOrder: PurchaseOrderDisplay = new PurchaseOrderDisplay();
   hasDefined = false;
   filteredPartners: PartnerSimple[];
+
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
+  @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
+
   productList: ProductBasic2[] = [];
+  filteredJournals: any = [];
   productSearch: string;
   searchUpdate = new Subject<string>();
   productSelectedIndex = 0;
@@ -59,11 +65,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     private purchaseLineService: PurchaseOrderLineService,
     private intlService: IntlService,
     private notificationService: NotificationService,
+    private accountJournalService: AccountJournalService,
     private router: Router,
     private permissionService: PermissionService,
     private authService: AuthService,
     private modalService: NgbModal,
-    private paymentService: AccountPaymentService
+    private paymentService: AccountPaymentService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -106,7 +114,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     });
 
     this.loadPartners();
-
+    this.loadFilteredJournals();
     this.loadProductList();
 
     this.searchUpdate.pipe(
@@ -190,6 +198,19 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       this.productList = res.items;
     }, err => {
     });
+  }
+
+  loadFilteredJournals() {
+    var val = new AccountJournalFilter();
+    val.type = "bank,cash";
+    val.companyId = this.authService.userInfo.companyId;
+    this.accountJournalService.autocomplete(val).subscribe((res) => {
+      this.filteredJournals = _.unionBy(this.filteredJournals, res, 'id');
+    },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   get orderLines() {
@@ -408,4 +429,11 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       });
     }
   }
+
+  printPhieu(id: string) {
+    this.purchaseOrderService.getPrint(id).subscribe((data: any) => {
+      this.printService.printHtml(data);
+    });
+  }
+
 }

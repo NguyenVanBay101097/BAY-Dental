@@ -64,6 +64,17 @@
                     </button> -->
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="purchaseOrder.state !== 'done'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': purchaseOrder.state === 'done', 'btn-secondary': purchaseOrder.state !== 'done'}"
+                        type="button">
+                        Hoàn thành
+                    </button>
+                    <button *ngIf="purchaseOrder.state === 'cancel'" [disabled]="purchaseOrder.state !== 'cancel'"
+                        class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': purchaseOrder.state === 'cancel', 'btn-secondary': purchaseOrder.state !== 'cancel'}"
+                        type="button">
+                        Đã hủy
+                    </button>
                     <button [disabled]="purchaseOrder.state !== 'purchase'" class="btn o_arrow_button disabled"
                         [ngClass]="{'btn-primary': purchaseOrder.state === 'purchase', 'btn-secondary': purchaseOrder.state !== 'purchase'}"
                         type="button">
@@ -74,17 +85,8 @@
                         type="button">
                         Nháp
                     </button>
-                    <button *ngIf="purchaseOrder.state === 'cancel'" [disabled]="purchaseOrder.state !== 'cancel'"
-                        class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': purchaseOrder.state === 'cancel', 'btn-secondary': purchaseOrder.state !== 'cancel'}"
-                        type="button">
-                        Đã hủy
-                    </button>
-                    <button [disabled]="purchaseOrder.state !== 'draft'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': purchaseOrder.state === 'draft', 'btn-secondary': purchaseOrder.state !== 'draft'}"
-                        type="button">
-                        Hoàn thành
-                    </button>
+
+
                 </div>
             </div>
             <div class="o_form_sheet">

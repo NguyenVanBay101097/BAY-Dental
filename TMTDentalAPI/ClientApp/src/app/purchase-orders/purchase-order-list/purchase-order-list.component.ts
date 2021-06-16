@@ -42,7 +42,7 @@ export class PurchaseOrderListComponent implements OnInit {
     { text: 'Đơn hàng', value: 'purchase,done' },
     { text: 'Nháp', value: 'draft,cancel' }
   ];
-  supplierData:PartnerSimple[] = [];
+  supplierData: PartnerSimple[] = [];
   canAdd = true;
   canUpdate = true;
   canDelete = true;
@@ -53,7 +53,7 @@ export class PurchaseOrderListComponent implements OnInit {
     private checkPermissionService: CheckPermissionService,
     private partnerService: PartnerService,
     private notifyService: NotifyService
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -71,7 +71,7 @@ export class PurchaseOrderListComponent implements OnInit {
         this.skip = 0;
         this.loadDataFromApi();
       });
-      this.suppliertCbxFilterChange();
+    this.suppliertCbxFilterChange();
   }
 
   onDateSearchChange(data) {
@@ -87,9 +87,9 @@ export class PurchaseOrderListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  handleFilter(event){
+  handleFilter(event) {
     console.log(event);
-    
+
     this.supplierFilter = event.id;
     this.skip = 0;
     this.loadDataFromApi();
@@ -152,15 +152,9 @@ export class PurchaseOrderListComponent implements OnInit {
     val.search = this.search || '';
     val.type = this.type;
     val.partnerId = this.supplierFilter ? this.supplierFilter : "";
-    if (this.dateOrderFrom) {
-      val.dateOrderFrom = this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US');
-    }
-    if (this.dateOrderTo) {
-      val.dateOrderTo = this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US');
-    }
-    if (this.stateFilter) {
-      val.state = this.stateFilter;
-    }
+    val.dateOrderFrom = this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US');
+    val.dateOrderTo = this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US');
+    val.state = this.stateFilter;
 
     this.purchaseOrderService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -176,7 +170,7 @@ export class PurchaseOrderListComponent implements OnInit {
     })
   }
 
-  loadSupplier(){
+  loadSupplier() {
     this.searchSuppliers().subscribe(result => {
       this.supplierData = result;
     })
@@ -205,27 +199,30 @@ export class PurchaseOrderListComponent implements OnInit {
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal',size:'sm' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', size: 'sm' });
     modalRef.componentInstance.title = 'Xóa phiếu mua hàng';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu mua hàng?';
     modalRef.result.then(() => {
       this.purchaseOrderService.unlink([item.id]).subscribe(() => {
-        this.notifyService.notify("success","Xóa thành công")
+        this.notifyService.notify("success", "Xóa thành công")
         this.loadDataFromApi();
-      },error =>{
+      }, error => {
       });
     });
   }
 
   exportExcelFile() {
-    var paged = new PurchaseOrderPaged();
-    paged.limit = 0;
-    paged.partnerId = this.supplierFilter? this.supplierFilter: "";
-    paged.search = this.search || '';
-    paged.dateOrderFrom = this.intlService.formatDate(this.dateOrderFrom, "yyyy-MM-dd");
-    paged.dateOrderTo = this.intlService.formatDate(this.dateOrderTo, "yyyy-MM-dd");
-    this.purchaseOrderService.exportExcelFile(paged).subscribe((res) => {
-      let filename = "Mua-hang";
+    var val = new PurchaseOrderPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.type = this.type;
+    val.partnerId = this.supplierFilter ? this.supplierFilter : "";
+    val.dateOrderFrom = this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US');
+    val.dateOrderTo = this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US');
+    val.state = this.stateFilter; 
+    this.purchaseOrderService.exportExcelFile(val).subscribe((res) => {
+      let filename = this.type == 'order' ? 'Mua-hang' : 'Tra-hang';
 
       let newBlob = new Blob([res], {
         type:
