@@ -7,6 +7,7 @@ using AutoMapper;
 using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
 using Facebook.ApiClient.Interfaces;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -28,13 +29,15 @@ namespace Infrastructure.Services
     public class PartnerService : BaseService<Partner>, IPartnerService
     {
         private readonly IMapper _mapper;
+        private readonly CatalogDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         // private readonly IPartnerMapPSIDFacebookPageService _partnerMapPSIDFacebookPageService;
-        public PartnerService(IAsyncRepository<Partner> repository, IHttpContextAccessor httpContextAccessor,
+        public PartnerService(CatalogDbContext context, IAsyncRepository<Partner> repository, IHttpContextAccessor httpContextAccessor,
             IMapper mapper, UserManager<ApplicationUser> userManager)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _context = context;
             _userManager = userManager;
             //_partnerMapPSIDFacebookPageService = partnerMapPSIDFacebookPageService;
         }
@@ -2064,7 +2067,7 @@ namespace Infrastructure.Services
             }
             var partnerIds = await query.Select(x => x.Id).ToListAsync();
 
-            var SaleReportSearch = new SaleReportSearch()   
+            var SaleReportSearch = new SaleReportSearch()
             {
                 CompanyId = CompanyId,
                 GroupBy = "customer"
@@ -2179,6 +2182,22 @@ namespace Infrastructure.Services
                     DateDone = x.Select(s => s.Order.DateDone).Max()
                 }).ToListAsync();
             return list;
+        }
+
+        public async Task<PagedResult2<PartnerInfoVM>> GetViewPartnerInfo(PartnerViewInfoPaged val)
+        {
+            var query = _context.VPartnerInfos.AsQueryable();
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State == val.State);
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+            if (val.IsResidual.HasValue)
+                query = val.IsResidual.Value ? query.Where(x => x.Residual.HasValue) : query.Where(x => !x.Residual.HasValue);
+            if (val.IsTotalDebit.HasValue)
+                query = val.IsTotalDebit.Value ? query.Where(x => x.TotalDebit.HasValue) : query.Where(x => !x.TotalDebit.HasValue);
+            return null;
+
+
         }
     }
 

@@ -168,6 +168,7 @@ namespace Infrastructure.Data
         public DbSet<ModelAccessReport> ModelAccessReports { get; set; }
         public DbSet<SaleReport> SaleReports { get; set; }
         public DbSet<VFundBook> VFundBooks { get; set; }
+        public DbSet<VPartnerInfo> VPartnerInfos { get; set; }
         public DbSet<FacebookConnect> FacebookConnects { get; set; }
         public DbSet<FacebookConnectPage> FacebookConnectPages { get; set; }
         //Facebook
@@ -384,6 +385,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboOrderLineToothRelConfiguration());
             builder.ApplyConfiguration(new SaleReportConfiguration());
             builder.ApplyConfiguration(new VFundBookConfiguration());
+            builder.ApplyConfiguration(new VPartnerInfoConfiguration());
             builder.ApplyConfiguration(new PartnerOldNewReportConfiguration());
             builder.ApplyConfiguration(new PurchaseOrderConfiguration());
             builder.ApplyConfiguration(new PurchaseOrderLineConfiguration());
