@@ -168,7 +168,7 @@ namespace Infrastructure.Services
             foreach (var order in self)
             {
                 if (!states.Contains(order.State))
-                    throw new Exception("Chỉ có thể xóa phiếu mua hàng ở trạng thái nháp.");
+                    throw new Exception("Bạn chỉ được xóa phiếu mua hàng ở trạng thái nháp.");
             }
 
             await DeleteAsync(self);

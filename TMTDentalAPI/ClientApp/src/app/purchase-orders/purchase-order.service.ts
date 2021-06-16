@@ -129,4 +129,11 @@ export class PurchaseOrderService {
     unlink(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/Unlink', ids);
     }
+
+    exportExcelFile(val: any) {
+        return this.http.get(this.baseApi + this.apiUrl + "/ExportExcelFile", {
+          responseType: "blob",
+          params: val,
+        });
+      }
 }
