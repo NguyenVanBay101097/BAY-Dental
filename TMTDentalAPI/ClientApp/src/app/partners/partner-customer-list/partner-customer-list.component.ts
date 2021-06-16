@@ -62,6 +62,27 @@ export class PartnerCustomerListComponent implements OnInit {
   canImport = false;
   canFilterPartnerCategory = false;
   canUpdateExcel = false;
+  
+  expectedStatus: { text: string, value: string }[] = [
+    { text: 'Tất cả dự kiến thu', value: '' },
+    { text: 'Có dự kiến thu', value: 'has_expected' },
+    { text: 'Không có dự kiến thu', value: 'has_not_expected' }
+  ];
+  expectedStatusSelected = this.expectedStatus[0];
+
+  debtStatus: { text: string, value: string }[] = [
+    { text: 'Tất cả công nợ', value: '' },
+    { text: 'Có công nợ', value: 'has_expected' },
+    { text: 'Không có công nợ', value: 'has_not_expected' }
+  ];
+  debtStatusSelected = this.debtStatus[0];
+
+  memberLevel: { text: string, value: string }[] = [
+    { text: 'Tất cả hạng thành viên', value: '' },
+    { text: 'Vàng', value: 'has_expected' },
+    { text: 'Bạc', value: 'has_not_expected' }
+  ];
+  memberLevelSelected = this.memberLevel[0];
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
