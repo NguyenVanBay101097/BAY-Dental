@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -8,6 +9,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -31,7 +33,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet]
         [CheckAccess(Actions = "Purchase.Order.Read")]
-        public async Task<IActionResult> Get([FromQuery]PurchaseOrderPaged val)
+        public async Task<IActionResult> Get([FromQuery] PurchaseOrderPaged val)
         {
             var result = await _purchaseOrderService.GetPagedResultAsync(val);
             return Ok(result);
@@ -45,13 +47,25 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Purchase.Order.Read")]
+        public async Task<IActionResult> GetRefundByOrder(Guid id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            var res = await _purchaseOrderService.GetRefundByOrder(id);
+            _unitOfWork.Commit();
+            return Ok(res);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "Purchase.Order.Create")]
         public async Task<IActionResult> Create(PurchaseOrderSave val)
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            await _unitOfWork.BeginTransactionAsync();        
+            await _unitOfWork.BeginTransactionAsync();
             var purchase = await _purchaseOrderService.CreatePurchaseOrder(val);
             _unitOfWork.Commit();
             var basic = _mapper.Map<PurchaseOrderBasic>(purchase);
@@ -111,6 +125,64 @@ namespace TMTDentalAPI.Controllers
             await _purchaseOrderService.ButtonCancel(ids);
             _unitOfWork.Commit();
             return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ExportExcelFile([FromQuery] PurchaseOrderPaged val)
+        {
+            var stream = new MemoryStream();
+            val.Limit = int.MaxValue;
+            var data = await _purchaseOrderService.GetPagedResultAsync(val);
+            byte[] fileContent;
+            var sheetName = val.Type == "order" ? "Mua-hang" : "Tra-hang";
+
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+
+                worksheet.Cells[1, 1].Value = "STT";
+                worksheet.Cells[1, 2].Value = "Số phiếu";
+                worksheet.Cells[1, 3].Value = "Nhà cung cấp";
+                worksheet.Cells[1, 4].Value = "Ngày mua hàng";
+                worksheet.Cells[1, 5].Value = "Tổng tiền";
+                worksheet.Cells[1, 6].Value = "Đã thanh toán";
+                worksheet.Cells[1, 7].Value = "Còn nợ";
+                worksheet.Cells[1, 8].Value = "Trạng thái";
+
+                worksheet.Cells["A1:P1"].Style.Font.Bold = true;
+
+                var row = 2;
+                var i = 0;
+                foreach (var item in data.Items)
+                {
+                    worksheet.Cells[row, 1].Value = i++;
+                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 3].Value = item.PartnerName;
+                    worksheet.Cells[row, 4].Value = item.DateOrder;
+                    worksheet.Cells[row, 4].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 5].Value = item.AmountTotal;
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#,###";
+                    worksheet.Cells[row, 6].Value = (item.AmountTotal ?? 0) - (item.AmountResidual ?? 0);
+                    worksheet.Cells[row, 6].Style.Numberformat.Format = "#,###";
+                    worksheet.Cells[row, 7].Value = (item.AmountResidual ?? 0);
+                    worksheet.Cells[row, 7].Style.Numberformat.Format = "#,###";
+                    worksheet.Cells[row, 8].Value = item.State == "draft" ? "Nháp" : (item.State == "purchase" ? "Đơn hàng" : "Hoàn thành");
+
+                    row++;
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
         }
 
         [HttpPost("[action]")]
