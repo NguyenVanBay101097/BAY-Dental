@@ -6,6 +6,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
 import { SmsCampaignService, SmsCampaignPaged } from '../sms-campaign.service';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
@@ -59,6 +60,7 @@ export class SmsMessageDialogComponent implements OnInit {
     private smsTemplateService: SmsTemplateService,
     private smsMessageService: SmsMessageService,
     private intlService: IntlService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -124,7 +126,8 @@ export class SmsMessageDialogComponent implements OnInit {
     val.limit = 20;
     val.offset = 0;
     val.search = search || '';
-    val.combobox = true;
+    val.userCampaign = true;
+    val.companyId = this.authService.userInfo.companyId;
     return this.smsCampaignService.getPaged(val);
   }
 
@@ -234,17 +237,6 @@ export class SmsMessageDialogComponent implements OnInit {
       this.smsMessageService.create(val).subscribe(
         (res: any) => {
           this.smsMessageService.actionSendSms(res.id).subscribe(
-            () => {
-              this.notify("Gửi tin nhắn thành công", true);
-              this.activeModal.close();
-            }
-          )
-
-          this.smsMessageService.actionSchedule(
-            {
-              id: res.id,
-              scheduleDate: this.intlService.formatDate(val.scheduleDateObj, "yyyy-MM-ddTHH:mm:ss")
-            }).subscribe(
             () => {
               this.notify("Gửi tin nhắn thành công", true);
               this.activeModal.close();

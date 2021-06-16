@@ -24,13 +24,15 @@ namespace Infrastructure.Services
 
         private IQueryable<SmsCampaign> GetQueryable(SmsCampaignPaged val)
         {
-            var query = SearchQuery(x => x.CompanyId == CompanyId);
+            var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State == val.State);
-            if (val.Combobox.HasValue && val.Combobox.Value)
-                query = query.Where(x => string.IsNullOrEmpty(x.DefaultType) || x.DefaultType.Equals("sms_campaign_default"));
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId.HasValue || x.CompanyId == val.CompanyId);
+            if (val.UserCampaign.HasValue)
+                query = query.Where(x => x.UserCampaign == val.UserCampaign);
 
             return query;
         }
@@ -75,7 +77,7 @@ namespace Infrastructure.Services
             //}
 
             var totalItems = await query.CountAsync();
-            var items = await query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x => x.DateCreated).Select(x => new SmsCampaignBasic
+            var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).Select(x => new SmsCampaignBasic
             {
                 Id = x.Id,
                 Name = x.Name,
@@ -96,6 +98,29 @@ namespace Infrastructure.Services
                 //   (dictTotalFailedMessage.ContainsKey(x.Id) ? dictTotalFailedMessage[x.Id] : 0) +
                 //   (dictTotalSuccessfulMessage.ContainsKey(x.Id) ? dictTotalSuccessfulMessage[x.Id] : 0)
             }).ToListAsync();
+
+            var ids = items.Select(x => x.Id).ToList();
+            var statistics = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && ids.Contains(x.SmsCampaignId.Value))
+                .GroupBy(x => x.SmsCampaignId.Value)
+                .Select(x => new
+                {
+                    CampaignId = x.Key,
+                    Total = x.Sum(s => 1),
+                    TotalSent = x.Sum(s => s.State == "sent" ? 1 : 0),
+                    TotalError = x.Sum(s => s.State == "error" ? 1 : 0),
+                }).ToListAsync();
+            var statistics_dict = statistics.ToDictionary(x => x.CampaignId, x => x);
+
+            foreach (var item in items)
+            {
+                if (!statistics_dict.ContainsKey(item.Id))
+                    continue;
+                var statistic = statistics_dict[item.Id];
+                item.TotalMessage = statistic.Total;
+                item.TotalSuccessfulMessages = statistic.TotalSent;
+                item.TotalErrorMessages = statistic.TotalError;
+            }
+
             return new PagedResult2<SmsCampaignBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items

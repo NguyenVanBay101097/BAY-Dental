@@ -48,6 +48,7 @@ export class SmsCampaignCrUpComponent implements OnInit {
     var val = this.formGroup.value;
     val.dateEnd = this.intlService.formatDate(val.endDateObj, "yyyy-MM-ddT23:59");
     val.dateStart = this.intlService.formatDate(val.startDateObj, "yyyy-MM-dd");
+    val.userCampaign = true;
     this.smsCampaignService.create(val).subscribe(
       () => {
         this.notify("Thêm chiến dịch thành công", true);

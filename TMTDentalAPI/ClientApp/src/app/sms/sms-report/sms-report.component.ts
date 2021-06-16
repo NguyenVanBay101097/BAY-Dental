@@ -5,6 +5,7 @@ import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
 import { SmsCampaignPaged, SmsCampaignService } from '../sms-campaign.service';
 import { ReportCampaignPaged, ReportSupplierInput, ReportTotalInput, SmsMessageDetailService } from '../sms-message-detail.service';
@@ -49,7 +50,8 @@ export class SmsReportComponent implements OnInit {
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
     private smsCampaignService: SmsCampaignService,
-    private smsMessageDetailService: SmsMessageDetailService
+    private smsMessageDetailService: SmsMessageDetailService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -125,7 +127,7 @@ export class SmsReportComponent implements OnInit {
     val.limit = 20;
     val.offset = 0;
     val.search = search || '';
-    val.combobox = false;
+    val.companyId = this.authService.userInfo.companyId;
     return this.smsCampaignService.getPaged(val);
   }
 

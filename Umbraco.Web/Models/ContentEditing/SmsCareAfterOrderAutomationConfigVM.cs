@@ -7,6 +7,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class SmsCareAfterOrderAutomationConfigSave
     {
         public string Name { get; set; }
+
         public bool Active { get; set; }
 
         public Guid? TemplateId { get; set; }
@@ -18,6 +19,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public int TimeBeforSend { get; set; }
 
         public string TypeTimeBeforSend { get; set; }
+
+        public string ApplyOn { get; set; }
 
         public string Body { get; set; }
 
@@ -62,6 +65,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<ProductSimple> Products { get; set; } = new List<ProductSimple>();
         public IEnumerable<ProductCategorySimple> ProductCategories { get; set; } = new List<ProductCategorySimple>();
+
+        public string ApplyOn { get; set; }
     }
 
     public class SmsCareAfterOrderAutomationConfigGrid

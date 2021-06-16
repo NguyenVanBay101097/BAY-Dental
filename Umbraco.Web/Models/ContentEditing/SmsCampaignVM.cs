@@ -31,7 +31,6 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public SmsCampaignPaged()
         {
-            Combobox = false;
             Limit = 20;
             Offset = 0;
         }
@@ -39,7 +38,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
         public string Search { get; set; }
         public string State { get; set; }
-        public bool? Combobox { get; set; }
+        public Guid? CompanyId { get; set; }
+        public bool? UserCampaign { get; set; }
     }
 
     public class SmsCampaignSave
@@ -49,6 +49,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateEnd { get; set; }
         public DateTime? DateStart { get; set; }
         public string TypeDate { get; set; }
-        public string State { get; set; }
+        public bool UserCampaign { get; set; }
     }
 }

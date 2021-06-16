@@ -74,6 +74,7 @@ export class SmsCampaignDetailComponent implements OnInit {
       distinctUntilChanged())
       .subscribe((value) => {
         this.offset = 0;
+        this.selectedIds = [];
         this.loadDataFromApi();
       });
 
@@ -124,6 +125,7 @@ export class SmsCampaignDetailComponent implements OnInit {
 
   pageChange(event): void {
     this.offset = event.offset;
+    this.selectedIds = [];
     this.loadDataFromApi();
   }
 
@@ -154,10 +156,13 @@ export class SmsCampaignDetailComponent implements OnInit {
   }
 
   changeState() {
+    this.selectedIds = [];
+    this.offset = 0;
     this.loadDataFromApi();
   }
 
   onSearchDateChange(data) {
+    this.selectedIds = [];
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.offset = 0;

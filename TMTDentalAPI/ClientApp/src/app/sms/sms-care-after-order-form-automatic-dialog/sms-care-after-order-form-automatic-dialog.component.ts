@@ -71,7 +71,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       smsAccount: [null, Validators.required],
       active: false,
       scheduleTimeObj: new Date(),
-      filter: this.filter,
+      applyOn: ['product_category', Validators.required],
       products: [],
       productCategories: [],
       typeTimeBeforSend: ['day', Validators.required],
@@ -258,22 +258,17 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
 
   onChangeRadioButton(event: any) {
     var filter = event.currentTarget.value;
-    if (filter) {
-      this.filter = filter;
-      this.formGroup.get('products').patchValue(null);
-      this.formGroup.get('productCategories').patchValue(null);
-      if (filter == 'product') {
-        this.f.productCategories.clearValidators();
-        this.f.productCategories.updateValueAndValidity();
-        this.f.products.setValidators(Validators.required);
-        this.f.products.updateValueAndValidity();
-      }
-      else if (filter == 'productCategory') {
-        this.f.products.clearValidators();
-        this.f.products.updateValueAndValidity();
-        this.f.productCategories.setValidators(Validators.required);
-        this.f.productCategories.updateValueAndValidity();
-      }
+    if (filter == 'product') {
+      this.f.productCategories.clearValidators();
+      this.f.productCategories.updateValueAndValidity();
+      this.f.products.setValidators(Validators.required);
+      this.f.products.updateValueAndValidity();
+    }
+    else if (filter == 'product_category') {
+      this.f.products.clearValidators();
+      this.f.products.updateValueAndValidity();
+      this.f.productCategories.setValidators(Validators.required);
+      this.f.productCategories.updateValueAndValidity();
     }
   }
 

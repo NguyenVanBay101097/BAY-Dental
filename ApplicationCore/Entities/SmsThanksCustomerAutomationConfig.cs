@@ -26,5 +26,6 @@ namespace ApplicationCore.Entities
         public Guid? TemplateId { get; set; }
         public SmsTemplate Template { get; set; }
 
+        public DateTime? LastCron { get; set; }
     }
 }

@@ -38,6 +38,11 @@
     border-bottom-right-radius: 0!important;
 }
 
-.o_td_label {
-    
+.o_cp_t_left {
+    justify-content: space-between;
 }
+
+.o_cp_t_left .o_cp_filter {
+    display: flex;
+}
+

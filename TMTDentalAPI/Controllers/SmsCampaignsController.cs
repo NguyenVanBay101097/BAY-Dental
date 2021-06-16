@@ -34,8 +34,6 @@ namespace TMTDentalAPI.Controllers
             _tenant = tenant?.Value;
         }
 
-
-
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetPaged([FromQuery] SmsCampaignPaged val)
@@ -43,8 +41,6 @@ namespace TMTDentalAPI.Controllers
             var res = await _smsCampaignService.GetPaged(val);
             return Ok(res);
         }
-
-
 
         [HttpGet("{id}")]
         [CheckAccess(Actions = "SMS.Campaign.Read")]

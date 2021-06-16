@@ -52,7 +52,7 @@ namespace Infrastructure.Services
 
         public IQueryable<SmsMessageDetail> GetQueryable(SmsMessageDetailPaged val)
         {
-            var query = _repository.SearchQuery(x => x.CompanyId == CompanyId);
+            var query = _repository.SearchQuery();
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId.Value);
             if (!string.IsNullOrEmpty(val.Search))
@@ -69,6 +69,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateCreated.HasValue && val.DateTo.Value >= x.DateCreated.Value);
             if (val.SmsMessageId.HasValue)
                 query = query.Where(x => x.SmsMessageId.HasValue && x.SmsMessageId.Value == val.SmsMessageId.Value);
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
             return query;
         }
 

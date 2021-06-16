@@ -43,5 +43,7 @@ namespace ApplicationCore.Entities
         /// default_default
         /// </summary>
         public string DefaultType { get; set; }
+
+        public bool UserCampaign { get; set; }
     }
 }

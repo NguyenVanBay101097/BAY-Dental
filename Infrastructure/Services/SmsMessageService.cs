@@ -79,16 +79,15 @@ namespace Infrastructure.Services
         {
             var query = GetQueryable(val);
             var totalItems = await query.CountAsync();
-            var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SmsMessageBasic
+            var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).Select(x => new SmsMessageBasic
             {
                 Id = x.Id,
                 Date = x.Date,
-                DateCreated = x.DateCreated,
+                ScheduleDate = x.ScheduleDate,
                 Name = x.Name,
                 ResCount = x.ResCount.HasValue ? x.ResCount.Value : 0,
                 BrandName = x.SmsAccount != null ? x.SmsAccount.DisplayName : "",
             }).ToListAsync();
-
 
             return new PagedResult2<SmsMessageBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -368,10 +367,11 @@ namespace Infrastructure.Services
         public async Task ActionCancel(IEnumerable<Guid> messIds)
         {
             var messes = await SearchQuery().Where(x => messIds.Contains(x.Id) && x.CompanyId == CompanyId).ToListAsync();
-            if (messes.Any())
-            {
-                await _messageRepository.DeleteAsync(messes);
-            }
+            if (messes.Any(x => x.State != "in_queue"))
+                throw new Exception("Bạn chỉ có thể hủy tin nhắn chờ gửi");
+            foreach (var item in messes)
+                item.State = "cancelled";
+            await _messageRepository.UpdateAsync(messes);
         }
 
         public async Task SetupSendSmsOrderAutomatic(Guid orderId)
@@ -457,7 +457,6 @@ namespace Infrastructure.Services
                 return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
             }
         }
-
         //public override ISpecification<SmsMessage> RuleDomainGet(IRRule rule)
         //{
         //    switch (rule.Code)

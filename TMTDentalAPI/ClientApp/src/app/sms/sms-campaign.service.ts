@@ -15,8 +15,9 @@ export class SmsCampaignPaged {
     limit: number;
     offset: number;
     search: string;
-    combobox: boolean;
     state: string;
+    userCampaign: boolean;
+    companyId: string;
 }
 
 @Injectable({
