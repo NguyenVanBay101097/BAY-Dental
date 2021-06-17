@@ -8,6 +8,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsMessageDetailDialogComponent } from '../sms-message-detail-dialog/sms-message-detail-dialog.component';
@@ -172,13 +173,20 @@ export class SmsCampaignDetailComponent implements OnInit {
   cancelSend() {
     if (this.selectedIds && this.selectedIds.length <= 0) {
       this.notify("Bạn chưa chọn tin nhắn nào để hủy gửi. Vui lòng chọn và thử lại", false);
+      return;
     }
-    this.smsMessageService.actionCancelSendSMS(this.selectedIds).subscribe(
-      () => {
-        this.notify("Hủy thành công", true);
-        this.loadDataFromApi();
-      }
-    )
+
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Hủy gửi';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy gửi?';
+    modalRef.result.then(() => {
+      this.smsMessageService.actionCancelSendSMS(this.selectedIds).subscribe(
+        () => {
+          this.notify("Hủy thành công", true);
+          this.loadDataFromApi();
+        }
+      )
+    });
   }
 
   onEditCampaign() {

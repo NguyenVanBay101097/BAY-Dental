@@ -131,28 +131,28 @@ namespace Infrastructure.Services
         {
             var entity = _mapper.Map<SmsCampaign>(val);
             entity.CompanyId = CompanyId;
-            if (entity.TypeDate == "unlimited")
-            {
-                entity.State = "running";
-            }
-            else if (entity.TypeDate == "period")
-            {
-                if (entity.DateStart.HasValue &&
-                    entity.DateStart.Value <= DateTime.Today &&
-                    entity.DateEnd.HasValue &&
-                    entity.DateEnd.Value >= DateTime.Today)
-                {
-                    entity.State = "running";
-                }
-                else if (entity.DateStart.HasValue && entity.DateStart.Value > DateTime.Today)
-                {
-                    entity.State = "draft";
-                }
-                else
-                {
-                    entity.State = "shutdown";
-                }
-            }
+            //if (entity.TypeDate == "unlimited")
+            //{
+            //    entity.State = "running";
+            //}
+            //else if (entity.TypeDate == "period")
+            //{
+            //    if (entity.DateStart.HasValue &&
+            //        entity.DateStart.Value <= DateTime.Today &&
+            //        entity.DateEnd.HasValue &&
+            //        entity.DateEnd.Value >= DateTime.Today)
+            //    {
+            //        entity.State = "running";
+            //    }
+            //    else if (entity.DateStart.HasValue && entity.DateStart.Value > DateTime.Today)
+            //    {
+            //        entity.State = "draft";
+            //    }
+            //    else
+            //    {
+            //        entity.State = "shutdown";
+            //    }
+            //}
             entity = await CreateAsync(entity);
             return _mapper.Map<SmsCampaignBasic>(entity);
         }

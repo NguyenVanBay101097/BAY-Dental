@@ -322,31 +322,31 @@ export class SmsMessageDialogComponent implements OnInit {
   }
 
   changeSmsCampaign(event) {
-    if (event) {
-      if (event.limitMessage == 0) {
-        this.noLimit = true;
-      }
-      if (event.state == 'draft' || event.state == 'shutdown') {
-        this.notify('Chiến dịch này chưa được kích hoạt hoặc đã bị dừng. Vui lòng kiểm tra lại chiến dịch', false);
-        this.formGroup.get('smsCampaign').setValue(null);
-      }
-      else if (event.typeDate != 'unlimited' && event.limitMessage != 0 && event.limitMessage <= event.totalMessage) {
-        this.notify('Hạn mức gửi tin nhắn đã hết. Vui lòng kiểm tra lại chiến dịch', false);
-        this.formGroup.get('smsCampaign').setValue(null);
-      }
-      this.limitMessage = event.limitMessage;
-      this.sendLimit = this.limitMessage - event.totalMessage;
-      if (this.sendLimit > 0) {
-        this.noLimit = false;
-      }
-      if (this.partnerIds.length == this.sendLimit) {
-        this.errorSendLimit = false;
-      }
-      if (this.partnerIds.length > this.sendLimit && this.sendLimit > 0) {
-        this.partnerIds.length = 0;
-        this.errorSendLimit = true;
-      }
-    }
+    // if (event) {
+    //   if (event.limitMessage == 0) {
+    //     this.noLimit = true;
+    //   }
+    //   if (event.state == 'draft' || event.state == 'shutdown') {
+    //     this.notify('Chiến dịch này chưa được kích hoạt hoặc đã bị dừng. Vui lòng kiểm tra lại chiến dịch', false);
+    //     this.formGroup.get('smsCampaign').setValue(null);
+    //   }
+    //   else if (event.typeDate != 'unlimited' && event.limitMessage != 0 && event.limitMessage <= event.totalMessage) {
+    //     this.notify('Hạn mức gửi tin nhắn đã hết. Vui lòng kiểm tra lại chiến dịch', false);
+    //     this.formGroup.get('smsCampaign').setValue(null);
+    //   }
+    //   this.limitMessage = event.limitMessage;
+    //   this.sendLimit = this.limitMessage - event.totalMessage;
+    //   if (this.sendLimit > 0) {
+    //     this.noLimit = false;
+    //   }
+    //   if (this.partnerIds.length == this.sendLimit) {
+    //     this.errorSendLimit = false;
+    //   }
+    //   if (this.partnerIds.length > this.sendLimit && this.sendLimit > 0) {
+    //     this.partnerIds.length = 0;
+    //     this.errorSendLimit = true;
+    //   }
+    // }
   }
 }
 

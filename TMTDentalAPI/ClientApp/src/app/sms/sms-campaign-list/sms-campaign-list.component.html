@@ -60,12 +60,5 @@
         </kendo-grid-column>
         <kendo-grid-column field="totalErrorMessages" title="Thất bại" width="120">
         </kendo-grid-column>
-        <kendo-grid-column field="status" title="Trạng thái" width="150">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                <span *ngIf="dataItem.state=='running'">Đang chạy</span>
-                <span *ngIf="dataItem.state=='draft'">Chưa chạy</span>
-                <span *ngIf="dataItem.state=='shutdown'">Kết thúc</span>
-            </ng-template>
-        </kendo-grid-column>
     </kendo-grid>
 </div>

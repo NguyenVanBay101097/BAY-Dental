@@ -30,6 +30,7 @@ namespace Infrastructure.Services
         private readonly IAsyncRepository<Appointment> _appointmentRepository;
         private readonly IAsyncRepository<SaleOrderLine> _saleLineRepository;
         private readonly IAsyncRepository<SaleOrder> _saleOrderRepository;
+        private readonly IAsyncRepository<SmsCampaign> _smsCampaignRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly string SpecialCharactors = "@,_,{,},[,],|,~,\\,\\,$";
@@ -44,7 +45,8 @@ namespace Infrastructure.Services
             IAsyncRepository<SmsMessage> repository,
             IAsyncRepository<Partner> partnerRepository,
             IAsyncRepository<SmsMessageDetail> messageDetailRepository,
-            IAsyncRepository<Appointment> appointmentRepository)
+            IAsyncRepository<Appointment> appointmentRepository,
+            IAsyncRepository<SmsCampaign> smsCampaignRepository)
         {
             _mapper = mapper;
             _context = context;
@@ -55,6 +57,7 @@ namespace Infrastructure.Services
             _partnerRepository = partnerRepository;
             _messageDetailRepository = messageDetailRepository;
             _appointmentRepository = appointmentRepository;
+            _smsCampaignRepository = smsCampaignRepository;
         }
 
         private IQueryable<SmsMessage> GetQueryable(SmsMessagePaged val)
@@ -172,6 +175,20 @@ namespace Infrastructure.Services
         public async Task ActionSend(Guid id)
         {
             var self = await _messageRepository.GetByIdAsync(id);
+            if (self == null)
+                return;
+
+            if (self.SmsCampaignId.HasValue)
+            {
+                var campaign = await _smsCampaignRepository.SearchQuery(x => x.Id == self.SmsCampaignId).Include(x => x.MessageDetails).FirstOrDefaultAsync();
+                if (campaign.LimitMessage > 0)
+                {
+                    var remain = Math.Max(campaign.LimitMessage - campaign.MessageDetails.Count, 0);
+                    if ((self.ResCount ?? 0) > remain)
+                        throw new Exception("Vượt hạn mức gửi tin cho phép");
+                }
+            }
+
             IDictionary<Guid, string> dict = null; //noi dung
             IEnumerable<object> objs = null;
             if (self.ResModel == "appointment")

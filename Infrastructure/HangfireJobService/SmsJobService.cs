@@ -64,7 +64,8 @@ namespace Infrastructure.HangfireJobService
                         new EfRepository<SmsMessage>(context),
                         new EfRepository<Partner>(context),
                         new EfRepository<SmsMessageDetail>(context),
-                        new EfRepository<Appointment>(context));
+                        new EfRepository<Appointment>(context),
+                        new EfRepository<SmsCampaign>(context));
 
                     var smsMessage = new SmsMessage();
                     smsMessage.SmsAccountId = config.SmsAccountId;
@@ -126,7 +127,8 @@ namespace Infrastructure.HangfireJobService
                             new EfRepository<SmsMessage>(context),
                             new EfRepository<Partner>(context),
                             new EfRepository<SmsMessageDetail>(context),
-                            new EfRepository<Appointment>(context));
+                            new EfRepository<Appointment>(context),
+                            new EfRepository<SmsCampaign>(context));
                     var smsMessage = new SmsMessage();
                     smsMessage.SmsAccountId = config.SmsAccountId;
                     smsMessage.SmsCampaignId = config.SmsCampaignId;
@@ -197,7 +199,8 @@ namespace Infrastructure.HangfireJobService
                          new EfRepository<SmsMessage>(context),
                          new EfRepository<Partner>(context),
                          new EfRepository<SmsMessageDetail>(context),
-                         new EfRepository<Appointment>(context));
+                         new EfRepository<Appointment>(context),
+                         new EfRepository<SmsCampaign>(context));
                     var smsMessage = new SmsMessage();
                     smsMessage.SmsAccountId = config.SmsAccountId;
                     smsMessage.SmsCampaignId = config.SmsCampaignId;
@@ -262,7 +265,8 @@ namespace Infrastructure.HangfireJobService
                             new EfRepository<SmsMessage>(context),
                             new EfRepository<Partner>(context),
                             new EfRepository<SmsMessageDetail>(context),
-                            new EfRepository<Appointment>(context));
+                            new EfRepository<Appointment>(context),
+                            new EfRepository<SmsCampaign>(context));
                     var smsMessage = new SmsMessage();
                     smsMessage.SmsAccountId = config.SmsAccountId;
                     smsMessage.SmsCampaignId = config.SmsCampaignId;

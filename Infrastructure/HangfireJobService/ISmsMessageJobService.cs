@@ -7,6 +7,6 @@ namespace Infrastructure.HangfireJobService
 {
     public interface ISmsMessageJobService
     {
-       Task RunJobFindSmsMessage(string db, Guid companyId);
+       Task RunJobFindSmsMessage(string db);
     }
 }
