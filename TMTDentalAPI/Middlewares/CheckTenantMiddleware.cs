@@ -44,15 +44,22 @@ namespace TMTDentalAPI.Middlewares
                 {
                     //var result = JsonConvert.SerializeObject(new { error = "Chưa đăng kí tài khoản", message = "Chưa đăng kí tài khoản", url = "/auth/notavaliable" });
                     //context.Response.ContentType = "application/json";
+                    //await context.Response.WriteAsync(content);
+
                     context.Response.StatusCode = 503;
 
                     var content = File.ReadAllText(@"C:\Users\Seven\Desktop\source\TDental\TMTDentalAPI\ClientApp\src\app\auth\not-avaliable\not-avaliable.component.html");
-                   context.Response.ContentType = "text/html";
-                    await context.Response.WriteAsync(content);
+                    var pathReq = context.Request.Path.ToString();
+                    if (pathReq.ToLower().Contains("/auth/notavaliable"))
+                        await _next.Invoke(context);
+                    else
+                    {
+                        context.Response.Redirect("/auth/notavaliable");
+                    }
                 }
             }
          
-        }
+        } 
 
     }
 }
