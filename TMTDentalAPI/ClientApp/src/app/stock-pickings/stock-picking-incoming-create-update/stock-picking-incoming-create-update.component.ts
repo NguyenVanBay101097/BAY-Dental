@@ -314,6 +314,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   }
 
   actionDone() {
+    this.submitted = true;
     if (this.id) {
       if (this.pickingForm.dirty) {
         if (!this.pickingForm.valid) {

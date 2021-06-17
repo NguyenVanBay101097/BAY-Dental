@@ -327,6 +327,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   }
 
   actionDone() {
+    this.submitted = true;
     if (this.id) {
       if (this.pickingForm.dirty) {
         //update and done
