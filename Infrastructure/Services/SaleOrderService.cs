@@ -291,7 +291,7 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 PartnerName = x.Partner.Name,
                 AmountTotal = x.AmountTotal,
-                TotalPaid = x.AmountTotal ?? 0 - x.Residual ?? 0,
+                TotalPaid = x.TotalPaid,
                 Residual = x.Residual,
                SaleOrderLineDisplays = x.OrderLines.Any() ? x.OrderLines.Select(s=> new SaleOrderLineDisplay
                { 
