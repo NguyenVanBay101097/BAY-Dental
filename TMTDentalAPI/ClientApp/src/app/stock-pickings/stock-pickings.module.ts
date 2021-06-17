@@ -22,6 +22,7 @@ import { StockInventoriesModule } from '../stock-inventories/stock-inventories.m
 import { StockInventoryFormComponent } from '../stock-inventories/stock-inventory-form/stock-inventory-form.component';
 import { StockPickingRequestProductComponent } from './stock-picking-request-product/stock-picking-request-product.component';
 import { StockPickingRequestProductDialogComponent } from './stock-picking-request-product-dialog/stock-picking-request-product-dialog.component';
+import { StockXuatNhapTonDetailDialogComponent } from './stock-xuat-nhap-ton-detail-dialog/stock-xuat-nhap-ton-detail-dialog.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { StockPickingRequestProductDialogComponent } from './stock-picking-reque
     StockXuatNhapTonComponent,
     StockPickingIncomingDetailComponent,
     StockPickingRequestProductComponent,
+    StockXuatNhapTonDetailDialogComponent,
     StockPickingRequestProductDialogComponent],
   imports: [
     CommonModule,
@@ -51,7 +53,8 @@ import { StockPickingRequestProductDialogComponent } from './stock-picking-reque
   ],
   entryComponents: [
     StockPickingMlDialogComponent,
-    StockPickingRequestProductDialogComponent
+    StockPickingRequestProductDialogComponent,
+    StockXuatNhapTonDetailDialogComponent
   ]
 })
 export class StockPickingsModule { }

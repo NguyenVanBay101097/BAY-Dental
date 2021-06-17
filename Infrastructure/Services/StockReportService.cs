@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 using ApplicationCore.Utilities;
+using ApplicationCore.Models;
 
 namespace Infrastructure.Services
 {
-    public class StockReportService: IStockReportService
+    public class StockReportService : IStockReportService
     {
         private readonly CatalogDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -55,7 +56,8 @@ namespace Infrastructure.Services
             }
 
             var list = await query
-               .GroupBy(x => new {
+               .GroupBy(x => new
+               {
                    ProductId = x.Product.Id,
                    ProductName = x.Product.Name,
                    ProductCode = x.Product.DefaultCode,
@@ -98,7 +100,8 @@ namespace Infrastructure.Services
                 x.Product.DefaultCode.Contains(val.Search));
             }
 
-            var list2 = await query2.Select(x => new {
+            var list2 = await query2.Select(x => new
+            {
                 ProductId = x.Product.Id,
                 ProductName = x.Product.Name,
                 ProductCode = x.Product.DefaultCode,
@@ -106,7 +109,8 @@ namespace Infrastructure.Services
                 Import = x.quantity > 0 ? x.quantity : 0,
                 Export = x.quantity < 0 ? -x.quantity : 0
             })
-                      .GroupBy(x => new {
+                      .GroupBy(x => new
+                      {
                           ProductId = x.ProductId,
                           ProductName = x.ProductName,
                           ProductCode = x.ProductCode,
@@ -137,12 +141,16 @@ namespace Infrastructure.Services
                         Import = item.Import,
                         Export = item.Export
                     });
-                } 
+                }
                 else
                 {
                     dict[item.ProductId].Import = item.Import;
                     dict[item.ProductId].Export = item.Export;
                 }
+
+                var value = dict[item.ProductId];
+                if (value.Begin == 0 && value.Import == 0 && value.Export == 0 && value.End == 0)
+                    dict.Remove(item.ProductId);
             }
 
             foreach (var item in dict.ToArray())
@@ -201,6 +209,39 @@ namespace Infrastructure.Services
             }
 
             return list2;
+        }
+
+        public async Task<PagedResult2<GetStockHistoryRes>> GetStockHistoryPaged(GetStockHistoryReq val)
+        {
+            var query = _context.StockHistories.AsQueryable();
+            if (val.DateFrom.HasValue)
+            {
+                query = query.Where(x => x.date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+            }
+            if (val.DateTo.HasValue)
+            {
+                query = query.Where(x => x.date <= val.DateTo.Value.AbsoluteEndOfDate());
+            }
+            if (val.ProductId.HasValue)
+            {
+                query = query.Where(x => x.product_id == val.ProductId);
+            }
+
+            var count = await query.CountAsync();
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var res = await query.Select(x => new GetStockHistoryRes()
+            {
+                Date = x.date,
+                MovePickingName = x.Move.Picking.Name,
+                Quantity = x.quantity
+            }).ToListAsync();
+
+            return new PagedResult2<GetStockHistoryRes>(count, val.Offset, val.Limit)
+            {
+                Items = res
+            };
         }
     }
 }
