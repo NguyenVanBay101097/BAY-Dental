@@ -201,7 +201,10 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       this.pickingForm.get('dateObj').patchValue(date);
       this.moveLines.clear();
       result.moveLines.forEach(line => {
-        this.moveLines.push(this.fb.group(line));
+        const rs = this.fb.group(line);
+        rs.controls.productUOMQty.setValidators(Validators.required);
+        rs.controls.productUOMQty.updateValueAndValidity();
+        this.moveLines.push(rs);
       });
     });
   }
@@ -234,6 +237,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       var productSimple = new ProductSimple();
       productSimple.id = product.id;
       productSimple.name = product.name;
+      productSimple.defaultCode = product.defaultCode;
       productSimple.type2 = product.type2
 
       this.stockMoveService.onChangeProduct(val).subscribe((result: any) => {
@@ -243,7 +247,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
           productUOM: result.productUOM,
           product: productSimple,
           productId: product.id,
-          productUOMQty: 1
+          productUOMQty: [1, Validators.required]
         });
 
         this.moveLines.push(group);
@@ -285,7 +289,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   onSaveOrUpdate() {
     this.submitted = true;
     if (!this.checkQtyPriceValid()) {
-      alert('Vui lòng nhập số lượng');
+      // alert('Vui lòng nhập số lượng');
       return;
     }
 
@@ -328,7 +332,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
         //update and done
 
         if (!this.checkQtyPriceValid()) {
-          alert('Vui lòng nhập số lượng');
+          // alert('Vui lòng nhập số lượng');
           return;
         }
 
@@ -343,7 +347,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
         this.stockPickingService.update(this.id, val).subscribe(() => {
           this.stockPickingService.actionDone([this.id]).subscribe(() => {
             this.notificationService.show({
-              content: 'Xác nhận thành công',
+              content: 'Cập nhật thành công',
               hideAfter: 3000,
               position: { horizontal: 'center', vertical: 'top' },
               animation: { type: 'fade', duration: 400 },
@@ -356,7 +360,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
         //only need done
         this.stockPickingService.actionDone([this.id]).subscribe(() => {
           this.notificationService.show({
-            content: 'Xác nhận thành công',
+            content: 'Cập nhật thành công',
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },
@@ -369,7 +373,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       //save and done
 
       if (!this.checkQtyPriceValid()) {
-        alert('Vui lòng nhập số lượng');
+        // alert('Vui lòng nhập số lượng');
         return;
       }
 

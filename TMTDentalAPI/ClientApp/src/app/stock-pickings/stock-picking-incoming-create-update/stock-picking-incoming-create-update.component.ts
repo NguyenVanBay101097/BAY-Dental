@@ -200,7 +200,10 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
       this.pickingForm.patchValue(result);
       this.moveLines.clear();
       result.moveLines.forEach(line => {
-        this.moveLines.push(this.fb.group(line));
+        const rs = this.fb.group(line);
+        rs.controls.productUOMQty.setValidators(Validators.required);
+        rs.controls.productUOMQty.updateValueAndValidity();
+        this.moveLines.push(rs);
       });
     });
   }
@@ -243,7 +246,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
           productUOM: result.productUOM,
           product: productSimple,
           productId: product.id,
-          productUOMQty: 1
+          productUOMQty: [1, Validators.required]
         });
 
         this.moveLines.push(group);
@@ -324,7 +327,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
         this.stockPickingService.update(this.id, val).subscribe(() => {
           this.stockPickingService.actionDone([this.id]).subscribe(() => {
             this.notificationService.show({
-              content: 'Xác nhận thành công',
+              content: 'Cập nhật thành công',
               hideAfter: 3000,
               position: { horizontal: 'center', vertical: 'top' },
               animation: { type: 'fade', duration: 400 },
@@ -337,7 +340,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
         //only need done
         this.stockPickingService.actionDone([this.id]).subscribe(() => {
           this.notificationService.show({
-            content: 'Xác nhận thành công',
+            content: 'Cập nhật thành công',
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },

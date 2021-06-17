@@ -120,10 +120,11 @@ export class StockXuatNhapTonComponent implements OnInit {
 
   cellClick(item: any) {
     const modalRef = this.modalService.open(StockXuatNhapTonDetailDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Lịch sử nhập xuất ' + item.productName;
+    modalRef.componentInstance.title = 'Lịch sử Nhập - Xuất';
     modalRef.componentInstance.productId = item.productId;
     modalRef.componentInstance.dateFrom = item.dateFrom;
     modalRef.componentInstance.dateTo = item.dateTo;
+    modalRef.componentInstance.productName = item.productName;
     modalRef.result.then((res) => {
 
     })

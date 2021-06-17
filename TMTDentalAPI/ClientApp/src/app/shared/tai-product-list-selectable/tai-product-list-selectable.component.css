@@ -14,3 +14,7 @@ li {
 .list-group-item {
     border-radius: 0px !important;
 }
+
+.border_products{
+    border: 1px solid #dee2e6;
+}

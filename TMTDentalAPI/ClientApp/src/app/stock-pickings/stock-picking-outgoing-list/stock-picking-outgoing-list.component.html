@@ -33,7 +33,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="date" title="Ngày xuất" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.date | date: 'short'}}
+                {{dataItem.date | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="partner" title="Đối tác" width="150">

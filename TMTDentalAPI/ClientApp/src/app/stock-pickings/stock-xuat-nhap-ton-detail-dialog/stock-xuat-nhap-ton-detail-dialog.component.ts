@@ -19,6 +19,7 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
   dateFrom: string;
   dateTo: string;
   productId: string;
+  productName: string;
   constructor(
     public activeModal: NgbActiveModal,
     private stockReportService: StockReportService,
@@ -45,8 +46,6 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
-      console.log(this.gridData);
-      
       this.loading = false;
     }, err => {
       console.log(err);
@@ -66,7 +65,7 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
     val.offset = this.skip;
 
     this.stockReportService.excelStockHistoryExport(val).subscribe((res: any) => {
-      let filename = "Lịch sử nhập xuất";
+      let filename = `Lịch sử nhập xuất ${this.productName}`;
       let newBlob = new Blob([res], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

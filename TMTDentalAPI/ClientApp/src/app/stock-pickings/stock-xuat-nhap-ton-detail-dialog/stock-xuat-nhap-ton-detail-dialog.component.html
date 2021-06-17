@@ -1,11 +1,12 @@
 <header class="modal-header">
-    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <h5 class="modal-title">{{title + ' ' + productName}} <span class="o_subtitle text-muted small"></span></h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onCancel()"
         tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window p-2">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
         <kendo-grid-column field="movePickingName" title="Số phiếu" width="120">
         </kendo-grid-column>
         <kendo-grid-column title="Ngày nhập/xuất" width="120">
@@ -13,14 +14,13 @@
                 {{dataItem.date | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="quantity" title="Người tạo" width="120" class="text-right">
+        <kendo-grid-column field="quantity" title="Tổng số lượng" width="120" class="text-right">
         </kendo-grid-column>
     </kendo-grid>
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary"
-        (click)="exportExcelFile()" accesskey="s">Xuất excel</button>
+    <button type="button" class="btn btn-primary" (click)="exportExcelFile()" accesskey="s">Xuất excel</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
         accesskey="q">Đóng</button>
 </footer>
