@@ -1,0 +1,37 @@
+<div class="d-flex flex-column h-100">
+    <div class="d-flex pb-1">
+        <div class="form-check">
+            <input class="form-check-input" [hidden]="true" type="radio" name="radioButton" id="medicine"
+                value="medicine" checked (change)="onChangeType($event.target.value)">
+            <label class="form-check-label btn btn_none_radius btn-outline-primary" for="medicine">
+                Thuốc
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" [hidden]="true" type="radio" name="radioButton" id="product"
+                value="product" (change)="onChangeType($event.target.value)">
+            <label class="form-check-label btn btn_none_radius btn-outline-primary" for="product">
+                Vật tư
+            </label>
+        </div>
+    </div>
+    <div class="flex-0-0-auto has-search">
+        <span class="fa fa-search form-control-feedback"></span>
+        <input #search accesskey="C" class="form-control size-text-14" placeholder="Tìm kiếm theo tên..."
+            type="text" id="search" (keyup)="onChangeSearch($event.target.value);">
+    </div>
+    <!-- Component Form Service List -->
+    <div class="flex--1-1-100 overflow-auto" style="min-height: 300px;">
+        <table class="table table-sm">        
+            <tbody>
+                <tr class="cursor" (click)="onSelectValue(item)"
+                    *ngFor="let item of listProducts;let i = index">
+                    <td class="sticky-td">{{item.name}}</td>
+                    <td class="sticky-td text-right">{{item.purchasePrice | number}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

@@ -102,7 +102,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
     this.loadPartners();
     this.loadFilteredJournals();
-    this.loadProductList('medicine');
 
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -111,31 +110,18 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         this.loadProductList(this.listType);
       });
 
-    $('#productSearchInput').focus(function () {
-      $(this).select();
-    });
-
     this.authService.getGroups().subscribe((result: any) => {
       this.permissionService.define(result);
       this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
     });
   }
 
-  getLoadApi() {
-    if (this.id) {
-      return this.purchaseOrderService.get(this.id);
-    }
-    else if (this.orderId && this.type == "refund") {
-      return this.purchaseOrderService.getRefundByOrder(this.orderId);
-    } else {
-      return this.purchaseOrderService.defaultGet({ type: this.type });
-    }
 
-  }
 
   loadRecord() {
-    this.getLoadApi().subscribe((result: any) => {
+    this.loadDataApi().subscribe((result: any) => {
       this.purchaseOrder = result;
+
       this.formGroup.patchValue(this.purchaseOrder);
       let dateOrder = new Date(result.dateOrder);
       this.formGroup.get('dateOrderObj').patchValue(dateOrder);
@@ -147,6 +133,17 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         control.push(g);
       });
     });
+  }
+
+  loadDataApi() {
+    if (this.id) {
+      return this.purchaseOrderService.get(this.id);
+    }
+    else if (this.orderId && this.type == "refund") {
+      return this.purchaseOrderService.getRefundByOrder(this.orderId);
+    } else {
+      return this.purchaseOrderService.defaultGet({ type: this.type });
+    }
   }
 
   loadPartners() {
@@ -245,13 +242,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       return o.get('productQty').value == null || o.get('priceUnit').value == null;
     });
     if (index !== -1) {
-      // this.notificationService.show({
-      //   content: 'Vui lòng nhập số lượng và đơn giá',
-      //   hideAfter: 3000,
-      //   position: { horizontal: 'center', vertical: 'top' },
-      //   animation: { type: 'fade', duration: 400 },
-      //   type: { style: 'warning', icon: true }
-      // });
       return false;
     }
 
@@ -273,6 +263,15 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         this.router.navigate(['/purchase/orders/edit/' + result.id]);
       });
     });
+  }
+
+  getPicking(pickingid) {
+    if (this.type == 'order') {
+      this.router.navigate(['/stock/incoming-pickings/edit/' + pickingid]);
+    } else {
+      this.router.navigate(['/stock/outgoing-pickings/edit/' + pickingid]);
+    }
+
   }
 
 
@@ -322,8 +321,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  selectProduct(i) {
-    var product = this.productList[i];
+  selectProduct(item) {
+    var product = item;
     // var index = _.findIndex(this.orderLines.controls, o => {
     //   return o.get('product').value.id == product.id;
     // });
@@ -431,7 +430,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  printPhieu(id: string) {
+  getPrint(id) {
     this.purchaseOrderService.getPrint(id).subscribe((data: any) => {
       this.printService.printHtml(data);
     });

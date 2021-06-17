@@ -118,6 +118,14 @@ namespace Infrastructure.Services
 
                         var invoices = moves.Concat(payment_moves);
                         await _AutoReconcile(rec, invoices);
+
+                        ///update purchase order          
+                        var purchase_Ids = invoices.SelectMany(x => x.InvoiceLines).Select(x => x.PurchaseLine.OrderId).Distinct().ToList();
+                        if (purchase_Ids.Any())
+                        {
+                            var purchaseObj = GetService<IPurchaseOrderService>();
+                            await purchaseObj.PreparePurchase(purchase_Ids);
+                        }
                     }
                     else if (rec.SaleOrderPaymentRels.Any())
                     {
@@ -203,13 +211,7 @@ namespace Infrastructure.Services
             var move_ids = lines.Select(x => x.MoveId).Distinct().ToList();
             await moveObj._ComputeAmount(move_ids);
 
-            ///update purchase order          
-            var purchase_Ids = lines.Select(x => x.PurchaseLine.OrderId).Distinct().ToList();
-            if (purchase_Ids.Any())
-            {
-                var purchaseObj = GetService<IPurchaseOrderService>();
-                await purchaseObj.PreparePurchase(purchase_Ids);
-            }
+
 
             //update sale order residual
             var saleLineObj = GetService<ISaleOrderLineService>();

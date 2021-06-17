@@ -125,7 +125,7 @@ namespace Infrastructure.Services
             purchase.UserId = UserId;
 
             var lines = new List<PurchaseOrderLine>();
-            var sequence = 0;
+            var sequence = 1;
             foreach (var item in val.OrderLines)
             {
                 var line = _mapper.Map<PurchaseOrderLine>(item);
@@ -277,7 +277,7 @@ namespace Infrastructure.Services
             }
 
             //Cập nhật sequence cho tất cả các line của val
-            int sequence = 0;
+            int sequence = 1;
 
             foreach (var line in val.OrderLines)
             {
@@ -528,8 +528,9 @@ namespace Infrastructure.Services
         {
             var journalObj = GetService<IAccountJournalService>();
             var pickingTypeObj = GetService<IStockPickingTypeService>();
+            var purchaseLineObj = GetService<IPurchaseOrderLineService>();
+
             var purchase = await SearchQuery(x => x.Id == id && x.Type == "order" && x.State != "draft")
-                .Include(x => x.OrderLines)
                 .Include(x => x.Partner)
                 .FirstOrDefaultAsync();
 
@@ -546,7 +547,6 @@ namespace Infrastructure.Services
             if (cashJournal == null)
                 throw new Exception("Không tìm thấy phương thức thanh toán tiền mặt");
 
-            var sequence = 0;
             var res = new PurchaseOrderDisplay();
             res.Type = "refund";
             res.PickingTypeId = pickingType.Id;
@@ -554,9 +554,8 @@ namespace Infrastructure.Services
             res.Journal = _mapper.Map<AccountJournalSimple>(cashJournal);
             res.AmountPayment = 0;
             res.Partner = _mapper.Map<PartnerSimple>(purchase.Partner);
-            res.OrderLines = purchase.OrderLines.Any() ? purchase.OrderLines.Select(x => new PurchaseOrderLineDisplay
+            res.OrderLines = await purchaseLineObj.SearchQuery(x=>x.OrderId == purchase.Id).Select(x => new PurchaseOrderLineDisplay
             {
-                Sequence = sequence++,
                 Name = x.Name,
                 PriceTotal = x.PriceTotal,
                 PriceUnit = x.PriceUnit,
@@ -565,7 +564,7 @@ namespace Infrastructure.Services
                 Product = _mapper.Map<ProductSimple>(x.Product),
                 ProductQty = x.ProductQty,
                 ProductUOM = _mapper.Map<UoMDisplay>(x.ProductUOM),
-            }).ToList() : new List<PurchaseOrderLineDisplay>();
+            }).ToListAsync();
 
             return res;
         }
@@ -619,7 +618,7 @@ namespace Infrastructure.Services
             var states = new string[] { "draft", "cancel" };
             foreach (var order in self)
             {
-                if (states.Contains(order.State) || order.AmountResidual <= 0)
+                if (states.Contains(order.State) || order.AmountResidual > 0)
                     continue;
 
                 order.State = "done";

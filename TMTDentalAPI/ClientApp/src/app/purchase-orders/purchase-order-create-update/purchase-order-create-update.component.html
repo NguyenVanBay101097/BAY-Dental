@@ -46,13 +46,14 @@
                         Thanh toán
                     </button>
                     <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1" type="button"
+                        class="btn btn-primary btn-sm" (click)="getPrint(purchaseOrder?.id)">
+                        In phiếu
+                    </button>
+                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1" type="button"
                         class="btn btn-primary btn-sm" (click)="actionRefund()">
                         Trả hàng
                     </button>
-                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1" type="button"
-                        class="btn btn-primary btn-sm" (click)="actionRegisterPayment()">
-                        In phiếu
-                    </button>
+
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="purchaseOrder?.state !== 'done'" class="btn o_arrow_button disabled"
@@ -172,7 +173,9 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <span>{{purchaseOrder?.picking?.name}}</span>
+                                        <a [routerLink]="" (click)="getPicking(purchaseOrder?.picking?.id)">
+                                           {{purchaseOrder?.picking?.name}}
+                                        </a>                                      
                                     </td>
                                 </tr>
                             </tbody>
@@ -198,34 +201,18 @@
                     <div class="o_form_section_left" *ngIf="purchaseOrder?.state == 'draft'">
                         <h5>Danh sách hàng hóa</h5>
                         <div class="t_search_wrapper">
-                            <div class="d-flex pb-1">
-                                <div class="form-check">
-                                    <input class="form-check-input" [hidden]="true" type="radio" name="radioButton"
-                                        id="medicine" value="medicine" checked
-                                        (change)="onChangeType($event.target.value)">
-                                    <label class="form-check-label btn btn_none_radius btn-outline-primary"
-                                        for="medicine">
-                                        Thuốc
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" [hidden]="true" type="radio" name="radioButton"
-                                        id="product" value="product" (change)="onChangeType($event.target.value)">
-                                    <label class="form-check-label btn btn_none_radius btn-outline-primary"
-                                        for="product">
-                                        Vật tư
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="flex-0-0-auto has-search">
+
+                            <!-- <div class="flex-0-0-auto has-search">
                                 <span class="fa fa-search form-control-feedback"></span>
                                 <input #search accesskey="C" class="form-control size-text-14"
                                     placeholder="Tìm kiếm ..." type="text" id="search"
                                     (keyup)="onChangeSearch($event.target.value);">
-                            </div>
-                            <app-tai-product-list-selectable #productListSelectable [productList]="productList"
+                            </div> -->
+                            <!-- <app-tai-product-list-selectable #productListSelectable 
                                 (changeProduct)="onChangeProduct($event)">
-                            </app-tai-product-list-selectable>
+                            </app-tai-product-list-selectable> -->
+                            <app-product-list-search-dropdown (onSelectService)="selectProduct($event)">
+                            </app-product-list-search-dropdown>
                         </div>
 
 
@@ -243,7 +230,8 @@
                                     <th scope="col" width="180">Đơn giá</th>
                                     <th scope="col" width="120">CK(%)</th>
                                     <th scope="col" class="text-right" width="180">Thành tiền</th>
-                                    <th scope="col" *ngIf="purchaseOrder?.state == 'draft'">
+                                    <th scope="col" width="80" class="text-center"
+                                        *ngIf="purchaseOrder?.state == 'draft'">
                                         <i class="far fa-trash-alt"></i>
                                     </th>
                                 </tr>

@@ -1,0 +1,144 @@
+/* .dropdown-menu {
+    max-width: 410px;
+    width: 100%;
+    min-width: 300px;
+}
+
+.dropdown-menu .dropdown-item {
+    padding: 0 !important;
+} */
+
+.search-icon {
+    position: absolute;
+    top: 40px;
+    left: 0px;
+    color: hsl(208deg 7% 46%);
+    padding: 10px;
+}
+
+.input-search {
+    padding-left: 36px;
+}
+
+._wrapper {
+    max-width: 400px;
+}
+
+._wrapper .input-search {
+    box-shadow: none;
+}
+
+._wrapper .dropdown-menu {
+    width: 100%;
+    overflow: auto;
+    max-height: 400px;
+}
+
+._wrapper .dropdown-menu .service-name {
+    white-space: normal;
+}
+
+.form-check-input:checked+.form-check-label {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+   
+}
+
+.form-check-label{
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.form-check{
+    padding-left: 2px;
+}
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control:focus {
+    box-shadow: none !important;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+.flex-0-0-auto {
+    flex: 0 0 auto;
+}
+
+.flex-1-1-100 {
+    flex: 1 1 100%;
+}
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control:focus {
+    box-shadow: none !important;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+tbody>.cursor:hover {
+    background-color: #c1c1c1;
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+.size-text-14 {
+    font-size: 13.5px;
+    border-radius: 0;
+}
+
+.sticky-table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    /* Don't collapse */
+    border-spacing: 0 !important;
+}
+
+.sticky-table .sticky-th {
+    /* Apply both top and bottom borders to the <th> */
+    position: sticky !important;
+    top: 0 !important;
+    background-color: #f9f9f9 !important;
+    border-top: 1px solid #dee2e6 !important;
+    border-bottom: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+}
+
+.sticky-table .sticky-td {
+    /* For cells, apply the border to one of each side only (right but not left, bottom but not top) */
+    border-bottom: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+}
+
+.sticky-table .sticky-th:first-child, .sticky-table .sticky-td:first-child {
+    /* Apply a left border on the first <td> or <th> in a row */
+    border-left: 1px solid #dee2e6 !important;
+}

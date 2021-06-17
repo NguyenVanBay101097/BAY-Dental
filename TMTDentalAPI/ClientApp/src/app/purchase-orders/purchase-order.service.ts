@@ -89,7 +89,7 @@ export class PurchaseOrderLineDisplay {
 @Injectable()
 export class PurchaseOrderService {
     apiUrl = 'api/PurchaseOrders';
-    apiPrintUrl = '/PurchaseOrder';
+    apiPrintUrl = 'PurchaseOrder';
     
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 

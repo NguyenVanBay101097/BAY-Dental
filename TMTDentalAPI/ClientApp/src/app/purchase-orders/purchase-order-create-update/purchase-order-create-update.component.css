@@ -33,7 +33,7 @@ input[type="radio"]{
 }
 
 .t_custom_form .o_form_sheet {
-    max-width: 90%;
+    max-width: 85%;
     margin-top: 15px;
     margin-bottom: 0;
 }
@@ -101,8 +101,8 @@ input[type="radio"]{
 .o_form_section .o_form_section_left {
     -webkit-box-flex: 1;
     flex: 1 1 auto;
-    width: 13% !important;
-    padding-right: 1px;
+    width: 10% !important;
+    padding-right: 10px;
   }
   
   .t_search_wrapper {
@@ -182,19 +182,5 @@ input[type="radio"]{
     font-weight: 600;
 }
 
-.form-check-input:checked+.form-check-label {
-    color: #fff;
-    background-color: #0d6efd;
-    border-color: #0d6efd;
-   
-}
 
-.form-check-label{
-    padding: 5px;
-    border-radius: 5px;
-}
-
-.form-check{
-    padding-left: 2px;
-}
 

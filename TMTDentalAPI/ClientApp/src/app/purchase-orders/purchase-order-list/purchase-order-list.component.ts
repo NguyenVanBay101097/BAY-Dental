@@ -111,7 +111,7 @@ export class PurchaseOrderListComponent implements OnInit {
       case 'purchase':
         return 'Đơn hàng';
       case 'done':
-        return 'Đã khóa';
+        return 'Hoàn thành';
       case 'cancel':
         return 'Đã hủy';
       default:
