@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, AbstractControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StockPickingMlDialogComponent } from '../stock-picking-ml-dialog/stock-picking-ml-dialog.component';
 import { StockMoveDisplay, StockPickingService, StockPickingDefaultGet, StockPickingDisplay } from '../stock-picking.service';
@@ -22,6 +22,7 @@ import { forkJoin } from 'rxjs';
 import { unionBy } from 'lodash';
 import { observe } from 'fast-json-patch';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 declare var jquery: any;
 declare var $: any;
@@ -39,6 +40,10 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   opened = false;
   picking: StockPickingDisplay = new StockPickingDisplay();
   id: string;
+  type2: string = 'medicine';
+  createdByName: string = '';
+  submitted = false;
+
   filteredPartners: PartnerSimple[] = [];
   productSearch: string;
   productList: ProductBasic2[] = [];
@@ -51,6 +56,8 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild(TaiProductListSelectableComponent, { static: false }) productListSelectable: TaiProductListSelectableComponent;
+
+  get f() { return this.pickingForm.controls; }
 
   constructor(
     private fb: FormBuilder,
@@ -65,12 +72,13 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     private productService: ProductService,
     private modalService: NgbModal,
     private printServie: PrintService,
-    private checkPermissionService: CheckPermissionService
+    private checkPermissionService: CheckPermissionService,
+    public authService: AuthService
   ) { }
 
   ngOnInit() {
     this.pickingForm = this.fb.group({
-      partner: null,
+      partner: [null, Validators.required],
       dateObj: new Date(),
       note: null,
       moveLines: this.fb.array([]),
@@ -94,16 +102,16 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       debounceTime(300),
       tap(() => (this.partnerCbx.loading = true)),
       switchMap(value => this.searchPartners(value))
-      ).subscribe(results => {
-        this.filteredPartners =_.unionBy(results[0], results[1],results[2], 'id');
-        this.partnerCbx.loading = false;
-      });
+    ).subscribe(results => {
+      this.filteredPartners = _.unionBy(results[0], results[1], results[2], 'id');
+      this.partnerCbx.loading = false;
+    });
 
     this.loadFilteredPartners();
   }
 
-  get partner() {return this.pickingForm.get('partner').value;}
-  get note() {return this.pickingForm.get('note').value;}
+  get partner() { return this.pickingForm.get('partner').value; }
+  get note() { return this.pickingForm.get('note').value; }
 
   loadProductList() {
     var val = new ProductPaged();
@@ -111,6 +119,8 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     val.offset = 0;
     val.type = 'product,consu';
     val.search = this.productSearch || '';
+    val.type2 = this.type2;
+
     this.productService.getPaged(val).subscribe(res => {
       this.productList = res.items;
       this.sourceProductList = res.items;
@@ -132,23 +142,23 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   onProductInputSearchChange(text) {
     this.productSearch = text;
 
-    if(!this.productSearch || this.productSearch.trim() == '')
-     this.productList = this.sourceProductList;
-     else {
-       this.productSearch = this.productSearch.trim().toLocaleLowerCase();
-      this.productList = this.sourceProductList.filter(x=> x.name.toLocaleLowerCase().indexOf(this.productSearch) >= 0
-      || x.nameNoSign.toLocaleLowerCase().indexOf(this.productSearch) >= 0 
-      || x.defaultCode.toLocaleLowerCase().indexOf(this.productSearch) >=0
+    if (!this.productSearch || this.productSearch.trim() == '')
+      this.productList = this.sourceProductList;
+    else {
+      this.productSearch = this.productSearch.trim().toLocaleLowerCase();
+      this.productList = this.sourceProductList.filter(x => x.name.toLocaleLowerCase().indexOf(this.productSearch) >= 0
+        || x.nameNoSign.toLocaleLowerCase().indexOf(this.productSearch) >= 0
+        || x.defaultCode.toLocaleLowerCase().indexOf(this.productSearch) >= 0
       );
-     }
+    }
 
-     this.productListSelectable.resetIndex();
+    this.productListSelectable.resetIndex();
   }
 
   loadFilteredPartners() {
     this.searchPartners().subscribe(
       results => {
-        this.filteredPartners =_.unionBy(results[0], results[1],results[2], 'id');
+        this.filteredPartners = _.unionBy(results[0], results[1], results[2], 'id');
       }
     );
   }
@@ -161,12 +171,12 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     val.active = true;
     var partner$ = this.partnerService.getAutocompleteSimple(val);
 
-    var val2 = Object.assign({},val);
+    var val2 = Object.assign({}, val);
     delete val2.customer;
     val2.supplier = true;
     var supplier$ = this.partnerService.getAutocompleteSimple(val2);
 
-    var val3 = Object.assign({},val);
+    var val3 = Object.assign({}, val);
     delete val3.customer;
     val3.employee = true;
     var employee$ = this.partnerService.getAutocompleteSimple(val3);
@@ -176,20 +186,25 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
   loadDefault() {
     this.stockPickingService.defaultGetOutgoing().subscribe(result => {
+      this.createdByName = this.authService.userInfo.name;
       this.pickingForm.patchValue(result);
       this.picking = result;
     });
   }
 
   loadRecord() {
-    this.stockPickingService.get(this.id).subscribe(result => {
+    this.stockPickingService.get(this.id).subscribe((result: any) => {
+      this.createdByName = result.createdByName;
       this.picking = result;
       this.pickingForm.patchValue(result);
       let date = this.intlService.parseDate(result.date);
       this.pickingForm.get('dateObj').patchValue(date);
       this.moveLines.clear();
       result.moveLines.forEach(line => {
-        this.moveLines.push(this.fb.group(line));
+        const rs = this.fb.group(line);
+        rs.controls.productUOMQty.setValidators(Validators.required);
+        rs.controls.productUOMQty.updateValueAndValidity();
+        this.moveLines.push(rs);
       });
     });
   }
@@ -222,6 +237,8 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       var productSimple = new ProductSimple();
       productSimple.id = product.id;
       productSimple.name = product.name;
+      productSimple.defaultCode = product.defaultCode;
+      productSimple.type2 = product.type2
 
       this.stockMoveService.onChangeProduct(val).subscribe((result: any) => {
         var group = this.fb.group({
@@ -230,7 +247,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
           productUOM: result.productUOM,
           product: productSimple,
           productId: product.id,
-          productUOMQty: 1
+          productUOMQty: [1, Validators.required]
         });
 
         this.moveLines.push(group);
@@ -270,8 +287,9 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   }
 
   onSaveOrUpdate() {
+    this.submitted = true;
     if (!this.checkQtyPriceValid()) {
-      alert('Vui lòng nhập số lượng');
+      // alert('Vui lòng nhập số lượng');
       return;
     }
 
@@ -282,6 +300,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     var val = this.pickingForm.value;
     val.partnerId = val.partner ? val.partner.id : null;
     val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
+    val.createdByName = this.createdByName;
     if (this.id) {
       this.stockPickingService.update(this.id, val).subscribe(() => {
         this.notificationService.show({
@@ -308,12 +327,13 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   }
 
   actionDone() {
+    this.submitted = true;
     if (this.id) {
       if (this.pickingForm.dirty) {
         //update and done
 
         if (!this.checkQtyPriceValid()) {
-          alert('Vui lòng nhập số lượng');
+          // alert('Vui lòng nhập số lượng');
           return;
         }
 
@@ -328,7 +348,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
         this.stockPickingService.update(this.id, val).subscribe(() => {
           this.stockPickingService.actionDone([this.id]).subscribe(() => {
             this.notificationService.show({
-              content: 'Xác nhận thành công',
+              content: 'Cập nhật thành công',
               hideAfter: 3000,
               position: { horizontal: 'center', vertical: 'top' },
               animation: { type: 'fade', duration: 400 },
@@ -341,7 +361,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
         //only need done
         this.stockPickingService.actionDone([this.id]).subscribe(() => {
           this.notificationService.show({
-            content: 'Xác nhận thành công',
+            content: 'Cập nhật thành công',
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },
@@ -354,7 +374,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       //save and done
 
       if (!this.checkQtyPriceValid()) {
-        alert('Vui lòng nhập số lượng');
+        // alert('Vui lòng nhập số lượng');
         return;
       }
 
@@ -384,16 +404,21 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   }
 
   onPrint() {
-    this.stockPickingService.Print(this.id).subscribe((res:any) => {
+    this.stockPickingService.Print(this.id).subscribe((res: any) => {
       this.printServie.printHtml(res);
     });
   }
 
-  checkRole(){
-    this.canCreateUpdate = this.checkPermissionService.check(["Stock.Picking.Update","Stock.Picking.Create"]);
+  checkRole() {
+    this.canCreateUpdate = this.checkPermissionService.check(["Stock.Picking.Update", "Stock.Picking.Create"]);
     this.canActionDone = this.checkPermissionService.check(["Stock.Picking.Update"]);
     this.canCreate = this.checkPermissionService.check(["Stock.Picking.Create"]);
     this.canPrint = this.checkPermissionService.check(["Stock.Picking.Read"]);
+  }
+
+  onChangeType(value) {
+    this.type2 = value;
+    this.loadProductList();
   }
 }
 

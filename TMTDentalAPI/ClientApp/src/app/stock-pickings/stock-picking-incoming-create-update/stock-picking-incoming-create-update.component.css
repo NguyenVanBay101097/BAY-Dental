@@ -5,3 +5,52 @@
 .flex-1-1-100 {
     flex: 1 1 100%;
 }
+
+.form-check-input:checked+.form-check-label {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.form-check{
+    padding: 0;
+}
+.table_none_border td, .table_none_border th{
+    border-left: none !important;
+    border-top: none !important;
+    border-right: none !important;
+}
+
+.group_product{
+    border: 1px solid #dee2e6;
+    padding: 4px;
+}
+
+.btn.btn_none_radius{
+    border-bottom-left-radius:0 !important;
+    border-bottom-right-radius:0 !important;
+}
+
+.o_form_view .o_form_sheet_bg .o_form_sheet{
+    padding: 0;
+}
+
+.o_form_view .o_group{
+    margin: 0px;
+    padding: 16px;
+}
+
+.text_bold{
+    font-weight: 500;
+    color: #007BFF;
+    font-size: 1.14rem;
+}
+
+.t_head{
+    padding-left: 20px;
+    background-color: #F2F2F2;
+}
+
+.o_form_view .o_form_sheet_bg .o_form_sheet{
+    max-width: 100%!important;
+}

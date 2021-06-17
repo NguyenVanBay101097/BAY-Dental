@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Interfaces;
+using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +19,13 @@ namespace TMTDentalAPI.Controllers
     public class StockReportsController : BaseApiController
     {
         private readonly IStockReportService _stockReportService;
-        public StockReportsController(IStockReportService stockReportService)
+        private readonly IExportExcelService _exportExcelService;
+        private readonly IMapper _mapper;
+        public StockReportsController(IStockReportService stockReportService, IExportExcelService exportExcelService, IMapper mapper)
         {
             _stockReportService = stockReportService;
+            _exportExcelService = exportExcelService;
+            _mapper = mapper;
         }
 
         [HttpPost("XuatNhapTonSummary")]
@@ -83,6 +89,25 @@ namespace TMTDentalAPI.Controllers
             stream.Position = 0;
 
             return new FileContentResult(fileContent, mimeType);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Stock")]
+        public async Task<IActionResult> GetStockHistoryPaged([FromQuery] GetStockHistoryReq val)
+        {
+            var res = await _stockReportService.GetStockHistoryPaged(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Stock")]
+        public async Task<IActionResult> GetStockHistoryExcel([FromQuery] GetStockHistoryReq val)
+        {
+            val.Limit = int.MaxValue;
+            var res = await _stockReportService.GetStockHistoryPaged(val);
+            var data = _mapper.Map<IEnumerable<GetStockHistoryResExcel>>(res.Items);
+            await _exportExcelService.CreateAndAddToHeader(data, "Lịch sử nhập xuất");
+            return Ok();
         }
     }
 }

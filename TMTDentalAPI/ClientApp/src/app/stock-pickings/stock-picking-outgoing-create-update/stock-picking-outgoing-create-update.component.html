@@ -23,32 +23,48 @@
         <div class="o_form_sheet_bg h-100 d-flex flex-column">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="pickingState != 'done' && canCreateUpdate" class="btn btn-primary btn-sm" accesskey="s" (click)="onSaveOrUpdate()">Lưu</button>
-                    <button type="button" accesskey="1" class="btn btn-primary btn-sm" *ngIf="['draft'].indexOf(picking.state) !== -1 && canActionDone" (click)="actionDone()">
+                    <button type="button" *ngIf="pickingState != 'done' && canCreateUpdate"
+                        class="btn btn-primary btn-sm" accesskey="s" (click)="onSaveOrUpdate()">Lưu</button>
+                    <button type="button" accesskey="1" class="btn btn-primary btn-sm"
+                        *ngIf="['draft'].indexOf(picking.state) !== -1 && canActionDone" (click)="actionDone()">
                         Hoàn thành
                     </button>
-                    <button *ngIf="id && canPrint" type="button" accesskey="1" class="btn btn-primary btn-sm" (click)="onPrint()">
+                    <button *ngIf="id && canPrint" type="button" accesskey="1" class="btn btn-primary btn-sm"
+                        (click)="onPrint()">
                         In Phiếu
-                      </button>
-                    <a [routerLink]="['/stock/outgoing-pickings/create']" accesskey="c" *ngIf="id && canCreate" class="btn btn-secondary btn-sm">
+                    </button>
+                    <a [routerLink]="['/stock/outgoing-pickings/create']" accesskey="c" *ngIf="id && canCreate"
+                        class="btn btn-secondary btn-sm">
                         Thêm mới
                     </a>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="picking.state !== 'done'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': picking.state === 'done', 'btn-secondary': picking.state !== 'done'}" type="button">
+                    <button [disabled]="picking.state !== 'done'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': picking.state === 'done', 'btn-secondary': picking.state !== 'done'}"
+                        type="button">
                         Hoàn thành
                     </button>
-                    <button [disabled]="picking.state !== 'draft'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': picking.state === 'draft', 'btn-secondary': picking.state !== 'draft'}" type="button">
+                    <button [disabled]="picking.state !== 'draft'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': picking.state === 'draft', 'btn-secondary': picking.state !== 'draft'}"
+                        type="button">
                         Nháp
                     </button>
                 </div>
             </div>
-            <div class="o_form_sheet h-100 d-flex flex-column">
-                <h1 class="hidden-xs" *ngIf="pickingName != '/'"><span class="o_form_field">{{pickingName}}</span>
-                </h1>
+            <div class="o_form_sheet h-100 d-flex flex-column" style="width:95%">
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
+                            <tr *ngIf="id">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Người tạo
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>{{createdByName}}</span>
+                                </td>
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -56,8 +72,14 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [hidden]="pickingState == 'done'" [data]="filteredPartners" [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner" [valueField]="'id'">
+                                    <kendo-combobox [hidden]="pickingState == 'done'" [data]="filteredPartners"
+                                        [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner"
+                                        [valueField]="'id'">
                                     </kendo-combobox>
+                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.partner.errors.required">Chọn đối tác</div>
+                                    </div>
                                     <label *ngIf="pickingState == 'done'">{{partner?.name}}</label>
                                 </td>
                             </tr>
@@ -81,6 +103,18 @@
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
+                            <tr *ngIf="id">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số phiếu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <h5 class="hidden-xs text-primary text-weight-bold" *ngIf="pickingName != '/'"><span
+                                            class="">{{pickingName}}</span>
+                                    </h5>
+                                </td>
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -99,57 +133,123 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="overflow-hidden h-100">
+                    <table class="table table-sm table-bordered h-100">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;" class="t_head" [class.d-none]="picking.state == 'done'"> Danh sách sản phẩm
+                                </th>
+                                <th class="t_head"> Danh sách xuất kho </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td [class.d-none]="picking.state == 'done'">
+                                    <div class="mt-2 h-100">
+                                        <div class="d-flex pl-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" [hidden]="true" type="radio"
+                                                    name="radioButton" id="medicine" value="medicine" checked
+                                                    (change)="onChangeType($event.target.value)">
+                                                <label class="form-check-label btn btn_none_radius btn-outline-primary"
+                                                    for="medicine">
+                                                    Thuốc
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" [hidden]="true" type="radio"
+                                                    name="radioButton" id="product" value="product"
+                                                    (change)="onChangeType($event.target.value)">
+                                                <label class="form-check-label btn btn_none_radius btn-outline-primary"
+                                                    for="product">
+                                                    Vật tư
+                                                </label>
+                                            </div>
+                                        </div>
 
-                <div class="o_form_section" *ngIf="picking.state == 'draft'">
-                    <div class="o_form_section_lef">
-                        <div class="mb-2">
-                            <app-tai-search-input (searchChange)="onProductInputSearchChange($event)" (upDownEnterChange)="upDownEnterChange($event)">
-                            </app-tai-search-input>
-                        </div>
-                    </div>
-                    <div class="o_form_section_right">
-                    </div>
+                                        <div class="group_product h-90">
+                                            <div class="">
+                                                <app-tai-search-input
+                                                    (searchChange)="onProductInputSearchChange($event)"
+                                                    (upDownEnterChange)="upDownEnterChange($event)">
+                                                </app-tai-search-input>
+                                            </div>
+
+                                            <app-tai-product-list-selectable #productListSelectable
+                                                [productList]="productList" (changeProduct)="onChangeProduct($event)">
+                                            </app-tai-product-list-selectable>
+                                        </div>
+                                    </div>
+
+                                </td>
+                                <td>
+                                    <div class="pl-4 pr-4 overflow-auto h-100">
+                                        <table class="table table-sm table_none_border" id="table_details">
+                                            <thead>
+                                                <tr>
+                                                    <th width="50" class="text-center">STT</th>
+                                                    <th width="150" class="text-center">Mã sản phẩm</th>
+                                                    <th width="180" class="text-center">Tên sản phẩm</th>
+                                                    <th width="150" class="text-center">Loại sản phẩm</th>
+                                                    <th width="100" class="text-center">Số lượng</th>
+                                                    <th width="80" hasGroups [groups]="'product.group_uom'" class="text-center">Đơn vị</th>
+                                                    <th width="90"
+                                                        *ngIf="['done', 'cancel'].indexOf(picking.state) === -1" class="text-center">
+                                                        Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody formArrayName="moveLines">
+                                                <ng-container *ngFor="let line of moveLines.controls; let i=index">
+                                                    <tr [formGroupName]="i">
+                                                        <td class="align-middle text-center">{{ i + 1 }}</td>
+                                                        <td class="align-middle text-center">{{
+                                                            line.get('product').value.defaultCode}}
+                                                        </td>
+                                                        <td class="align-middle text-center">{{ line.get('product').value.name}}
+                                                        </td>
+                                                        <td class="align-middle text-center">
+                                                            <span
+                                                                *ngIf="line.get('product').value.type2 == 'medicine'">Thuốc</span>
+                                                            <span
+                                                                *ngIf="line.get('product').value.type2 == 'product'">Vật
+                                                                tư</span>
+                                                        </td>
+                                                        <td class="align-middle text-center">
+                                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                                *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"
+                                                                formControlName="productUOMQty" style="width: 80px;"
+                                                                [spinners]="false">
+                                                            </kendo-numerictextbox>
+                                                            <span
+                                                                *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{
+                                                                line.get('productUOMQty').value | number}}</span>
+                                                        </td>
+                                                        <td class="align-middle text-center" hasGroups
+                                                            [groups]="'product.group_uom'">
+                                                            <a class="text-primary"
+                                                                *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"
+                                                                (click)="changeUoM(line)">{{line.get('productUOM').value.name}}</a>
+                                                            <span
+                                                                *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{line.get('productUOM').value.name}}</span>
+                                                        </td>
+                                                        <td class="align-middle text-center"
+                                                            *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">
+                                                            <button type="button" class="btn btn-danger btn-sm"
+                                                                tabindex="-1" (click)="deleteLine(i)">
+                                                                <i class="far fa-trash-alt"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                </ng-container>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
-                <div class="o_form_section overflow-hidden">
-                    <div class="o_form_section_left overflow-auto" [class.d-none]="picking.state == 'done'">
-                        <app-tai-product-list-selectable #productListSelectable [productList]="productList" (changeProduct)="onChangeProduct($event)"></app-tai-product-list-selectable>
-                    </div>
-                    <div class="o_form_section_right">
-                        <table class="table table-sm" id="table_details">
-                            <thead>
-                                <tr>
-                                    <th width="50">STT</th>
-                                    <th width="200">Sản phẩm</th>
-                                    <th width="80" class="text-right">Số lượng</th>
-                                    <th width="100" hasGroups [groups]="'product.group_uom'">Đơn vị</th>
-                                    <th width="60" *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">#</th>
-                                </tr>
-                            </thead>
-                            <tbody formArrayName="moveLines">
-                                <ng-container *ngFor="let line of moveLines.controls; let i=index">
-                                    <tr [formGroupName]="i">
-                                        <td class="align-middle">{{ i + 1 }}</td>
-                                        <td class="align-middle">{{line.get('product').value.name}}</td>
-                                        <td class="align-middle text-right">
-                                            <kendo-numerictextbox [min]="0" [format]="'n2'" *ngIf="['done', 'cancel'].indexOf(picking.state) === -1" formControlName="productUOMQty" style="width: 80px;" [spinners]="false">
-                                            </kendo-numerictextbox>
-                                            <span *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{ line.get('productUOMQty').value | number}}</span>
-                                        </td>
-                                        <td class="align-middle" hasGroups [groups]="'product.group_uom'">
-                                            <a class="text-primary" *ngIf="['done', 'cancel'].indexOf(picking.state) === -1" (click)="changeUoM(line)">{{line.get('productUOM').value.name}}</a>
-                                            <span *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{line.get('productUOM').value.name}}</span>
-                                        </td>
-                                        <td class="align-middle" *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">
-                                            <button type="button" class="btn btn-icon btn-sm btn-light" tabindex="-1" (click)="deleteLine(i)">
-                                                <span class="k-icon k-i-delete"></span></button>
-                                        </td>
-                                    </tr>
-                                </ng-container>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

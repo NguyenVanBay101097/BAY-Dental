@@ -144,19 +144,19 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 1].Value = "STT";
                 worksheet.Cells[1, 2].Value = "Số phiếu";
                 worksheet.Cells[1, 3].Value = "Nhà cung cấp";
-                worksheet.Cells[1, 4].Value = "Ngày mua hàng";
+                worksheet.Cells[1, 4].Value = val.Type == "order" ? "Ngày mua hàng" : "Ngày trả hàng";
                 worksheet.Cells[1, 5].Value = "Tổng tiền";
-                worksheet.Cells[1, 6].Value = "Đã thanh toán";
+                worksheet.Cells[1, 6].Value = val.Type == "order" ? "Đã thanh toán" : "Đã nhận hoàn";
                 worksheet.Cells[1, 7].Value = "Còn nợ";
                 worksheet.Cells[1, 8].Value = "Trạng thái";
 
                 worksheet.Cells["A1:P1"].Style.Font.Bold = true;
 
                 var row = 2;
-                var i = 0;
+                var index = 1;
                 foreach (var item in data.Items)
                 {
-                    worksheet.Cells[row, 1].Value = i++;
+                    worksheet.Cells[row, 1].Value = index;
                     worksheet.Cells[row, 2].Value = item.Name;
                     worksheet.Cells[row, 3].Value = item.PartnerName;
                     worksheet.Cells[row, 4].Value = item.DateOrder;
@@ -170,6 +170,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 8].Value = item.State == "draft" ? "Nháp" : (item.State == "purchase" ? "Đơn hàng" : "Hoàn thành");
 
                     row++;
+                    index++;
                 }
 
                 worksheet.Cells.AutoFitColumns();

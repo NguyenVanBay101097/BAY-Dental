@@ -58,7 +58,7 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.ToListAsync();
+            var items = await query.Include(x => x.Partner).ToListAsync();
 
             return new PagedResult2<PurchaseOrderBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -168,7 +168,7 @@ namespace Infrastructure.Services
             foreach (var order in self)
             {
                 if (!states.Contains(order.State))
-                    throw new Exception("Bạn chỉ được xóa phiếu mua hàng ở trạng thái nháp.");
+                    throw new Exception("Bạn chỉ được xóa phiếu mua hàng ở trạng thái nháp");
             }
 
             await DeleteAsync(self);

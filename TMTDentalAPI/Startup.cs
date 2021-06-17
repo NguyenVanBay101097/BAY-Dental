@@ -543,6 +543,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SmsCampaignProfile());
                 mc.AddProfile(new SmsMessageProfile());
                 mc.AddProfile(new AgentProfile());
+                mc.AddProfile(new StockReportProfile());
             };
 
             #endregion
