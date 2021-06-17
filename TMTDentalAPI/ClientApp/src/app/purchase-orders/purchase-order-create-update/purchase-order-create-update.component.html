@@ -194,90 +194,120 @@
                         </table>
                     </div>
                 </div>
-                <div class="t_lower">
-                    <div class="w-100 h-100 d-flex flex-column">
-                        <div *ngIf="purchaseOrder?.state == 'draft'" class="w-25 mb-2">
-                            <!-- <app-service-list-search-dropdown (onSelectService)="addLine($event)">
-                            </app-service-list-search-dropdown> -->
-                        </div>
-                        <div class="d-flex overflow-hidden">
-                            <div class="w-100 h-100 d-flex flex-column">
-                                <table class="table table-sm mb-0" id="table_details">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" width="80">STT</th>
-                                            <th scope="col" width="200">Hàng hóa</th>
-                                            <th scope="col" width="120">Số lượng</th>
-                                            <th scope="col" width="120">ĐVT</th>
-                                            <th scope="col" width="180">Đơn giá</th>
-                                            <th scope="col" width="120">CK(%)</th>
-                                            <th scope="col" class="text-right"  width="180">Thành tiền</th>
-                                            <th scope="col" *ngIf="purchaseOrder?.state == 'draft'">
-                                                 <i class="far fa-trash-alt"></i></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody formArrayName="orderLines">
-                                        <ng-container *ngFor="let line of orderLines.controls; let i=index">
-                                            <tr [formGroupName]="i">
-                                                <td class="align-middle">{{ i + 1 }}</td>
-                                                <td class="align-middle">{{ line.get('product').value?.name}}</td>
-                                                <td class="align-middle">
-                                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                        *ngIf="purchaseOrder?.state == 'draft'"
-                                                        formControlName="productQty" style="width: 80px;"
-                                                        [spinners]="false">
-                                                    </kendo-numerictextbox>
-                                                    <span *ngIf="purchaseOrder?.state != 'draft'">
-                                                        {{line.get('productQty').value | number}}
-                                                    </span>
-                                                </td>
-                                                <td class="align-middle">
-                                                    <a class="text-primary" *ngIf="purchaseOrder.state == 'draft'"
-                                                        (click)="changeUoM(line)">{{line.get('productUOM').value?.name}}</a>
-                                                    <span *ngIf="purchaseOrder?.state != 'draft'">
-                                                        {{line.get('productUOM').value?.name}}
-                                                    </span>
-                                                </td>
-                                                <td class="align-middle">
-                                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                        (valueChange)="changePrice($event,line)"
-                                                        *ngIf="purchaseOrder?.state == 'draft'"
-                                                        formControlName="priceUnit" style="width: 120px;"
-                                                        [spinners]="false">
-                                                    </kendo-numerictextbox>
-                                                    <span *ngIf="purchaseOrder?.state != 'draft'">
-                                                        {{line.get('priceUnit').value | number}}
-                                                    </span>
-                                                </td>
-                                                <td class="align-middle">
-                                                    <kendo-numerictextbox [min]="0"
-                                                        *ngIf="purchaseOrder?.state == 'draft'" [format]="'n0'"
-                                                        formControlName="discount" style="width: 60px;"
-                                                        [spinners]="false">
-                                                    </kendo-numerictextbox>
-                                                    <span *ngIf="purchaseOrder?.state != 'draft'">
-                                                        {{line.get('discount').value | number}}
-                                                    </span>
-                                                </td>
-                                                <td class="align-middle text-right">
-                                                    {{computeLinePriceSubtotal(line) | number}}
-                                                </td>
-                                                <td class="align-middle" *ngIf="purchaseOrder?.state == 'draft'">
-                                                    <button type="button" class="btn btn-xs btn-info mr-1"
-                                                        title="Tạo bản sao" (click)="duplicateLine(i, line)">
-                                                        <i class="far fa-copy"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-xs btn-danger" title="Xóa"
-                                                        (click)="removeOrderLine(i)">
-                                                        <i class="far fa-trash-alt"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </ng-container>
-                                    </tbody>
-                                </table>
+                <div class="o_form_section">
+                    <div class="o_form_section_left" *ngIf="purchaseOrder?.state == 'draft'">
+                        <h5>Danh sách hàng hóa</h5>
+                        <div class="t_search_wrapper">
+                            <div class="d-flex pb-1">
+                                <div class="form-check">
+                                    <input class="form-check-input" [hidden]="true" type="radio" name="radioButton"
+                                        id="medicine" value="medicine" checked
+                                        (change)="onChangeType($event.target.value)">
+                                    <label class="form-check-label btn btn_none_radius btn-outline-primary"
+                                        for="medicine">
+                                        Thuốc
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" [hidden]="true" type="radio" name="radioButton"
+                                        id="product" value="product" (change)="onChangeType($event.target.value)">
+                                    <label class="form-check-label btn btn_none_radius btn-outline-primary"
+                                        for="product">
+                                        Vật tư
+                                    </label>
+                                </div>
                             </div>
+                            <div class="flex-0-0-auto has-search">
+                                <span class="fa fa-search form-control-feedback"></span>
+                                <input #search accesskey="C" class="form-control size-text-14"
+                                    placeholder="Tìm kiếm ..." type="text" id="search"
+                                    (keyup)="onChangeSearch($event.target.value);">
+                            </div>
+                            <app-tai-product-list-selectable #productListSelectable [productList]="productList"
+                                (changeProduct)="onChangeProduct($event)">
+                            </app-tai-product-list-selectable>
                         </div>
+
+
+                    </div>
+
+                    <div class="o_form_section_right">
+                        <h5>Danh sách mua hàng</h5>
+                        <table class="table table-sm mb-0" id="table_details">
+                            <thead>
+                                <tr>
+                                    <th scope="col" width="80">STT</th>
+                                    <th scope="col" width="200">Hàng hóa</th>
+                                    <th scope="col" width="120">Số lượng</th>
+                                    <th scope="col" width="120">ĐVT</th>
+                                    <th scope="col" width="180">Đơn giá</th>
+                                    <th scope="col" width="120">CK(%)</th>
+                                    <th scope="col" class="text-right" width="180">Thành tiền</th>
+                                    <th scope="col" *ngIf="purchaseOrder?.state == 'draft'">
+                                        <i class="far fa-trash-alt"></i>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="orderLines">
+                                <ng-container *ngFor="let line of orderLines.controls; let i=index">
+                                    <tr [formGroupName]="i">
+                                        <td class="align-middle">{{ i + 1 }}</td>
+                                        <td class="align-middle">{{ line.get('product').value?.name}}</td>
+                                        <td class="align-middle">
+                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                *ngIf="purchaseOrder?.state == 'draft'" formControlName="productQty"
+                                                style="width: 80px;" [spinners]="false">
+                                            </kendo-numerictextbox>
+                                            <span *ngIf="purchaseOrder?.state != 'draft'">
+                                                {{line.get('productQty').value | number}}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <a class="text-primary" *ngIf="purchaseOrder.state == 'draft'"
+                                                (click)="changeUoM(line)">{{line.get('productUOM').value?.name}}</a>
+                                            <span *ngIf="purchaseOrder?.state != 'draft'">
+                                                {{line.get('productUOM').value?.name}}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                (valueChange)="changePrice($event,line)"
+                                                *ngIf="purchaseOrder?.state == 'draft'" formControlName="priceUnit"
+                                                style="width: 120px;" [spinners]="false">
+                                            </kendo-numerictextbox>
+                                            <span *ngIf="purchaseOrder?.state != 'draft'">
+                                                {{line.get('priceUnit').value | number}}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <kendo-numerictextbox [min]="0" *ngIf="purchaseOrder?.state == 'draft'"
+                                                [format]="'n0'" formControlName="discount" style="width: 60px;"
+                                                [spinners]="false">
+                                            </kendo-numerictextbox>
+                                            <span *ngIf="purchaseOrder?.state != 'draft'">
+                                                {{line.get('discount').value | number}}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle text-right">
+                                            {{computeLinePriceSubtotal(line) | number}}
+                                        </td>
+                                        <td class="align-middle" *ngIf="purchaseOrder?.state == 'draft'">
+                                            <button type="button" class="btn btn-xs btn-info mr-1" title="Tạo bản sao"
+                                                (click)="duplicateLine(i, line)">
+                                                <i class="far fa-copy"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-xs btn-danger" title="Xóa"
+                                                (click)="removeOrderLine(i)">
+                                                <i class="far fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+
+
+                        <div class="clearfix"></div>
                     </div>
                 </div>
 
