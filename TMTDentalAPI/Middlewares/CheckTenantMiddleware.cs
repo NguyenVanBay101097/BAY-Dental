@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -45,30 +46,9 @@ namespace TMTDentalAPI.Middlewares
                     //context.Response.ContentType = "application/json";
                     context.Response.StatusCode = 503;
 
-                    var file = new FileInfo(@"C:\Users\Seven\Desktop\source\TDental\TMTDentalAPI\ClientApp\src\app\auth\not-avaliable\not-avaliable.component.html");
-                    byte[] buffer;
-                    if (file.Exists)
-                    {
-                        context.Response.StatusCode = 503;
-                        context.Response.ContentType = "text/html";
-
-                        buffer = File.ReadAllBytes(file.FullName);
-                    }
-                    else
-                    {
-                        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                        context.Response.ContentType = "text/plain";
-                        buffer = Encoding.UTF8
-                            .GetBytes("Unable to find the requested file");
-                    }
-
-                    context.Response.ContentLength = buffer.Length;
-
-                    using (var stream = context.Response.Body)
-                    {
-                        await stream.WriteAsync(buffer, 0, buffer.Length);
-                        await stream.FlushAsync();
-                    }
+                    var content = File.ReadAllText(@"C:\Users\Seven\Desktop\source\TDental\TMTDentalAPI\ClientApp\src\app\auth\not-avaliable\not-avaliable.component.html");
+                   context.Response.ContentType = "text/html";
+                    await context.Response.WriteAsync(content);
                 }
             }
          
