@@ -99,6 +99,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Journal)
                 .Include(x => x.User)
                 .Include(x => x.PickingType)
+                .Include(x => x.Picking)
                 .FirstOrDefaultAsync();
 
             purchase.OrderLines = await lineObj.SearchQuery(x => x.OrderId == purchase.Id).Include(x => x.Product).Include(x => x.ProductUOM).OrderBy(x => x.Sequence).ToListAsync();
