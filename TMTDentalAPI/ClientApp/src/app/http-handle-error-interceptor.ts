@@ -26,6 +26,11 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
                     this.router.navigate(['/auth/expired']);
                     return throwError(error);
                 }
+                if (error.status === 503) {
+                    this.authService.logout();
+                    this.router.navigate(['/auth/notavaliable']);
+                    return throwError(error);
+                }
 
                 if (error instanceof HttpErrorResponse) {
                     // Server Error
