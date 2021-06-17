@@ -50,8 +50,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   productSearch: string;
   searchUpdate = new Subject<string>();
   productSelectedIndex = 0;
-  uomByProduct: { [id: string]: UoMDisplay[] } = {}
-
+  uomByProduct: { [id: string]: UoMDisplay[] } = {};
+  listType: string = 'medicine'
   submitted = false;
 
   get f() { return this.formGroup.controls; }
@@ -78,7 +78,10 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
-      pickingTypeId: null,
+      // pickingTypeId: null,
+      journal: null,
+      amountPayment: [0, Validators.required],
+      notes: null,
       orderLines: this.fb.array([]),
     });
 
@@ -115,13 +118,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
     this.loadPartners();
     this.loadFilteredJournals();
-    this.loadProductList();
+    this.loadProductList('medicine');
 
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
-        this.loadProductList();
+        this.loadProductList(this.listType);
       });
 
     $('#productSearchInput').focus(function () {
@@ -188,12 +191,15 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     return this.partnerService.getAutocompleteSimple(val);
   }
 
-  loadProductList() {
+  loadProductList(type?: string) {
+    this.listType = type;
     var val = new ProductPaged();
     val.limit = 10;
     val.offset = 0;
     val.purchaseOK = true;
     val.search = this.productSearch || '';
+    val.type2 = this.listType;
+    val.type = 'product';
     this.productService.getPaged(val).subscribe(res => {
       this.productList = res.items;
     }, err => {
@@ -336,13 +342,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       this.purchaseLineService.onChangeProduct(val).subscribe(result => {
         var group = this.fb.group({
           name: result.name,
-          priceUnit: result.priceUnit,
+          priceUnit: [result.priceUnit,Validators.required],
           productUOMId: result.productUOMId,
           productUOM: result.productUOM,
           product: productSimple,
           productId: product.id,
           priceSubtotal: null,
-          productQty: 1,
+          productQty: [1,Validators.required],
           discount: 0,
         });
 
@@ -392,13 +398,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       return o.get('productQty').value == null || o.get('priceUnit').value == null;
     });
     if (index !== -1) {
-      this.notificationService.show({
-        content: 'Vui lòng nhập số lượng và đơn giá',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'warning', icon: true }
-      });
+      // this.notificationService.show({
+      //   content: 'Vui lòng nhập số lượng và đơn giá',
+      //   hideAfter: 3000,
+      //   position: { horizontal: 'center', vertical: 'top' },
+      //   animation: { type: 'fade', duration: 400 },
+      //   type: { style: 'warning', icon: true }
+      // });
       return false;
     }
 
@@ -411,6 +417,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
+    val.journalId = val.journal.id;
     var data = Object.assign(this.purchaseOrder, val);
     if (this.id) {
       this.purchaseOrderService.update(this.id, data).subscribe(() => {
