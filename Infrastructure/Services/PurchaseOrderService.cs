@@ -424,6 +424,9 @@ namespace Infrastructure.Services
                     var moves = await CreateStockMoves(order.OrderLines, picking);
 
                     await pickingObj.ActionDone(new List<Guid>() { picking.Id });
+
+                    order.PickingId = picking.Id;
+
                 }
             }
         }

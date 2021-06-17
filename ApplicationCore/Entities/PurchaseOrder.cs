@@ -32,6 +32,12 @@ namespace ApplicationCore.Entities
         public StockPickingType PickingType { get; set; }
 
         /// <summary>
+        /// phiếu nhập/xuất kho
+        /// </summary>
+        public Guid? PickingId { get; set; }
+        public StockPicking Picking { get; set; }
+
+        /// <summary>
         /// tiền thanh toán chỉ áp dụng lần thanh toán đầu
         /// </summary>
         public decimal? AmountPayment { get; set; }

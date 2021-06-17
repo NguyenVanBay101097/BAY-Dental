@@ -22,13 +22,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
 
         public Guid PickingTypeId { get; set; }
-        public StockPickingTypeBasic PickingType { get; set; }
 
         public Guid? JournalId { get; set; }
         public AccountJournalSimple Journal { get; set; }
 
         public string UserId { get; set; }
         public ApplicationUserSimple User { get; set; }
+
+        /// <summary>
+        /// phiếu nhập/xuất kho
+        /// </summary>
+        public Guid? PickingId { get; set; }
+        public StockPickingSimple Picking { get; set; }
 
         /// <summary>
         /// Nhà cung cấp

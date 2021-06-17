@@ -37,7 +37,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   id: string;
   type: string;
   purchaseOrderLineOnChangeProductResult: PurchaseOrderLineOnChangeProductResult = new PurchaseOrderLineOnChangeProductResult();
-  purchaseOrder: PurchaseOrderDisplay = new PurchaseOrderDisplay();
+  purchaseOrder: any;
   hasDefined = false;
   filteredPartners: PartnerSimple[];
 
@@ -90,8 +90,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
     if (this.id) {
       this.loadRecord();
-    } else {
-      this.purchaseOrderService.defaultGet({ type: this.type }).subscribe(result => {
+    }
+    else {
+      this.purchaseOrderService.defaultGet({ type: this.type }).subscribe((result :any) => {       
         this.purchaseOrder = result;
 
         this.formGroup.patchValue(result);
@@ -139,7 +140,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   loadRecord() {
     if (this.id) {
-      this.purchaseOrderService.get(this.id).subscribe(result => {
+      this.purchaseOrderService.get(this.id).subscribe((result:any) => {
         this.purchaseOrder = result;
         this.formGroup.patchValue(this.purchaseOrder);
         let dateOrder = new Date(result.dateOrder);
@@ -298,7 +299,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   }
 
   createNew() {
-    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: this.purchaseOrder.type } });
+    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: this.purchaseOrder.type  } });
   }
 
   focusProductSearchInput() {

@@ -96,8 +96,8 @@ export class PurchaseOrderService {
         return this.http.get<PagedResult2<PurchaseOrderBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
-    get(id): Observable<PurchaseOrderDisplay> {
-        return this.http.get<PurchaseOrderDisplay>(this.baseApi + this.apiUrl + "/" + id);
+    get(id) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id);
     }
 
     create(val) {
@@ -112,8 +112,8 @@ export class PurchaseOrderService {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 
-    defaultGet(val: any): Observable<PurchaseOrderDisplay> {
-        return this.http.post<PurchaseOrderDisplay>(this.baseApi + this.apiUrl + '/DefaultGet', val);
+    defaultGet(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/DefaultGet', val);
     }
 
     getRefundByOrder(id) {

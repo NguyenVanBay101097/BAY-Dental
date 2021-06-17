@@ -31,6 +31,10 @@ namespace Infrastructure.EntityConfigurations
               .WithMany()
               .HasForeignKey(x => x.UserId);
 
+            builder.HasOne(x => x.Picking)
+            .WithMany()
+            .HasForeignKey(x => x.PickingId);
+
             builder.HasOne(x => x.RefundOrder)
             .WithMany()
             .HasForeignKey(x => x.RefundOrderId);
