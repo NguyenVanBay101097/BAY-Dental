@@ -24,7 +24,7 @@ export class HasGroupsDirective implements OnInit {
     }
 
     applyPermission() {
-        if (!this.groups) {
+        if (!this.groups || this.groups == "product.group_uom" ) {
             return false;
         }
         var permissions = this.groups.split(',');
