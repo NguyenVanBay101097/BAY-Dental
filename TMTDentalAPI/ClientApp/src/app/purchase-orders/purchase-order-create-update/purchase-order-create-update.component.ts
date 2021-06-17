@@ -36,6 +36,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
   type: string;
+  orderId: string;
   purchaseOrderLineOnChangeProductResult: PurchaseOrderLineOnChangeProductResult = new PurchaseOrderLineOnChangeProductResult();
   purchaseOrder: PurchaseOrderDisplay = new PurchaseOrderDisplay();
   hasDefined = false;
@@ -78,7 +79,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
-      // pickingTypeId: null,
       journal: null,
       amountPayment: [0, Validators.required],
       notes: null,
@@ -87,10 +87,14 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
     this.id = this.route.snapshot.paramMap.get('id');
     this.type = this.route.snapshot.queryParamMap.get('type');
-
+    this.orderId = this.route.snapshot.queryParamMap.get('orderId');
     if (this.id) {
       this.loadRecord();
-    } else {
+    }
+    else if (this.type == "refund" && this.orderId){
+      this.loadRecord();
+    }
+    else {
       this.purchaseOrderService.defaultGet({ type: this.type }).subscribe(result => {
         this.purchaseOrder = result;
 
@@ -137,22 +141,29 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     });
   }
 
-  loadRecord() {
-    if (this.id) {
-      this.purchaseOrderService.get(this.id).subscribe(result => {
-        this.purchaseOrder = result;
-        this.formGroup.patchValue(this.purchaseOrder);
-        let dateOrder = new Date(result.dateOrder);
-        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
-
-        let control = this.formGroup.get('orderLines') as FormArray;
-        control.clear();
-        result.orderLines.forEach(line => {
-          var g = this.fb.group(line);
-          control.push(g);
-        });
-      });
+  getService(){
+    if(this.id){
+      return this.purchaseOrderService.get(this.id);
     }
+    if(this.orderId && this.type == "refund"){
+      return this.purchaseOrderService.getRefundByOrder(this.orderId);
+    }
+  }
+
+  loadRecord() {
+    this.getService().subscribe(result => {
+      // this.purchaseOrder = result;
+      // this.formGroup.patchValue(this.purchaseOrder);
+      // let dateOrder = new Date(result.dateOrder);
+      // this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+
+      // let control = this.formGroup.get('orderLines') as FormArray;
+      // control.clear();
+      // result.orderLines.forEach(line => {
+      //   var g = this.fb.group(line);
+      //   control.push(g);
+      // });
+    });
   }
 
   loadPartners() {
@@ -251,13 +262,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       return o.get('productQty').value == null || o.get('priceUnit').value == null;
     });
     if (index !== -1) {
-      this.notificationService.show({
-        content: 'Vui lòng nhập số lượng và đơn giá',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'warning', icon: true }
-      });
+      // this.notificationService.show({
+      //   content: 'Vui lòng nhập số lượng và đơn giá',
+      //   hideAfter: 3000,
+      //   position: { horizontal: 'center', vertical: 'top' },
+      //   animation: { type: 'fade', duration: 400 },
+      //   type: { style: 'warning', icon: true }
+      // });
       return false;
     }
 
@@ -270,8 +281,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
+    val.journalId = val.journal.id;
     var data = Object.assign(this.purchaseOrder, val);
-    this.purchaseOrderService.create(val).subscribe((result:any) => {
+    this.purchaseOrderService.create(data).subscribe((result:any) => {
       this.purchaseOrderService.buttonConfirm([result.id]).subscribe(() => {
         this.router.navigate(['/purchase/orders/edit/' + result.id]);
       }, () => {
@@ -301,6 +313,10 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.router.navigate(['/purchase/orders/create'], { queryParams: { type: this.purchaseOrder.type } });
   }
 
+  actionRefund(){
+    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: 'refund', orderId: this.id } });
+  }
+
   focusProductSearchInput() {
     $('#productSearchInput').focus();
   }
@@ -325,15 +341,11 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   selectProduct(i) {
     var product = this.productList[i];
-    var index = _.findIndex(this.orderLines.controls, o => {
-      return o.get('product').value.id == product.id;
-    });
+    // var index = _.findIndex(this.orderLines.controls, o => {
+    //   return o.get('product').value.id == product.id;
+    // });
 
-    if (index !== -1) {
-      var control = this.orderLines.controls[index];
-      control.patchValue({ productQty: control.get('productQty').value + 1 });
-    } else {
-      var val = new PurchaseOrderLineOnChangeProduct();
+    var val = new PurchaseOrderLineOnChangeProduct();
       val.productId = product.id;
 
       var productSimple = new ProductSimple();
@@ -355,7 +367,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         this.orderLines.push(group);
         this.focusLastRow();
       });
-    }
   }
 
   changeUoM(line: AbstractControl) {

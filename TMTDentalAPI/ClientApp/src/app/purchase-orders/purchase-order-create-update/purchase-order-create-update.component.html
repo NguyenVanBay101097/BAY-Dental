@@ -28,7 +28,7 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()" accesskey="s">
+                    <button *ngIf="purchaseOrder.state == 'draft'" type="button" class="btn btn-primary btn-sm" (click)="onSave()" accesskey="s">
                         Lưu
                     </button>
                     <button type="button" *ngIf="!id" class="btn btn-primary btn-sm" (click)="onSaveConfirm()"
@@ -43,6 +43,16 @@
                         *ngIf="['purchase', 'done'].indexOf(purchaseOrder.state) !== -1 && purchaseOrder.amountResidual > 0"
                         type="button" class="btn btn-primary btn-sm" (click)="actionRegisterPayment()">
                         Thanh toán
+                    </button>
+                    <button
+                        *ngIf="['purchase', 'done'].indexOf(purchaseOrder.state) !== -1"
+                        type="button" class="btn btn-primary btn-sm" (click)="actionRefund()">
+                        Trả hàng
+                    </button>
+                    <button
+                        *ngIf="['purchase', 'done'].indexOf(purchaseOrder.state) !== -1"
+                        type="button" class="btn btn-primary btn-sm" (click)="actionRegisterPayment()">
+                        In phiếu
                     </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
@@ -93,7 +103,7 @@
                                     </kendo-combobox>
                                     <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
                                         class="text-danger">
-                                        <div *ngIf="f.partner.errors.required">Chọn cung cấp</div>
+                                        <div *ngIf="f.partner.errors.required">Chọn nhà cung cấp</div>
                                     </div>
                                     <span [class.d-none]="purchaseOrder.state == 'draft'">
                                         {{purchaseOrder.partner ? purchaseOrder.partner.name: ''}}
@@ -128,25 +138,29 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
-                                        Phương thức TT
+                                        {{purchaseOrder.state != 'draft' ? 'Người lập phiếu': 'Phương thức TT'}}
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'"
+                                    <kendo-combobox [class.d-none]="purchaseOrder.state != 'draft'" [data]="filteredJournals" [textField]="'name'"
                                     [filterable]="true"formControlName="journal" [valueField]="'id'">
                                     </kendo-combobox>
+                                    {{purchaseOrder.state != 'draft' ? purchaseOrder.user?.name : ''}}
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
-                                        Số tiền
+                                        {{purchaseOrder.state != 'draft' ? 'Tham chiếu': 'Số tiền'}}
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [max]="getAmountTotal" [format]="'n0'"
+                                    <kendo-numerictextbox [class.d-none]="purchaseOrder.state != 'draft'" [min]="0" [max]="getAmountTotal" [format]="'n0'"
                                     [autoCorrect]="true" formControlName="amountPayment">
                                     </kendo-numerictextbox>
+                                    <div *ngIf = "f.amountPayment.errors?.required" class="text-danger">
+                                        Nhập số tiền
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -243,7 +257,7 @@
                                     <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                         <tr [formGroupName]="i">
                                             <td class="align-middle">{{ i + 1 }}</td>
-                                            <td class="align-middle">{{ line.get('product').value.name}}</td>
+                                            <td class="align-middle">{{ line.get('product').value?.name}}</td>
                                             <td class="align-middle">
                                                 <kendo-numerictextbox [min]="0" [format]="'n0'"
                                                     *ngIf="purchaseOrder.state == 'draft'" formControlName="productQty"
@@ -255,9 +269,9 @@
                                             </td>
                                             <td class="align-middle">
                                                 <a class="text-primary" *ngIf="purchaseOrder.state == 'draft'"
-                                                    (click)="changeUoM(line)">{{line.get('productUOM').value.name}}</a>
+                                                    (click)="changeUoM(line)">{{line.get('productUOM').value?.name}}</a>
                                                 <span
-                                                    *ngIf="purchaseOrder.state != 'draft'">{{line.get('productUOM').value.name}}</span>
+                                                    *ngIf="purchaseOrder.state != 'draft'">{{line.get('productUOM').value?.name}}</span>
                                             </td>
                                             <td class="align-middle">
                                                 <kendo-numerictextbox [min]="0" [format]="'n0'"
