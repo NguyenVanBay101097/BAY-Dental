@@ -33,8 +33,8 @@ export class PurchaseOrderListComponent implements OnInit {
   selectedIds: string[] = [];
   type: string;
 
-  dateOrderFrom: Date;
-  dateOrderTo: Date;
+  dateFrom: Date;
+  dateTo: Date;
   stateFilter: string;
   supplierFilter: string;
   stateFilterOptions: TmtOptionSelect[] = [
@@ -75,8 +75,8 @@ export class PurchaseOrderListComponent implements OnInit {
   }
 
   onDateSearchChange(data) {
-    this.dateOrderFrom = data.dateFrom;
-    this.dateOrderTo = data.dateTo;
+    this.dateFrom = data.dateFrom;
+    this.dateTo = data.dateTo;
     this.skip = 0;
     this.loadDataFromApi();
   }
@@ -150,11 +150,12 @@ export class PurchaseOrderListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.type = this.type;
-    val.partnerId = this.supplierFilter ? this.supplierFilter : "";
-    val.dateOrderFrom = this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US');
-    val.dateOrderTo = this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US');
-    val.state = this.stateFilter;
+    val.type = this.type || '';
+    val.partnerId = this.supplierFilter || '';
+    val.state = this.stateFilter || '';
+    val.dateOrderFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    val.dateOrderTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
+  
 
     this.purchaseOrderService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -216,11 +217,12 @@ export class PurchaseOrderListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.type = this.type;
-    val.partnerId = this.supplierFilter ? this.supplierFilter : "";
-    val.dateOrderFrom = this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US');
-    val.dateOrderTo = this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US');
-    val.state = this.stateFilter; 
+    val.type = this.type || '';
+    val.partnerId = this.supplierFilter || '';
+    val.state = this.stateFilter || '';
+    val.dateOrderFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    val.dateOrderTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
+  
     this.purchaseOrderService.exportExcelFile(val).subscribe((res) => {
       let filename = this.type == 'order' ? 'Mua-hang' : 'Tra-hang';
 
