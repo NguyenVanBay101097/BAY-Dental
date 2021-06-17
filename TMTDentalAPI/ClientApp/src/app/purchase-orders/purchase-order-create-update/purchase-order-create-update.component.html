@@ -28,7 +28,7 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()" accesskey="s">
+                    <button *ngIf="purchaseOrder.state == 'draft'" type="button" class="btn btn-primary btn-sm" (click)="onSave()" accesskey="s">
                         Lưu
                     </button>
                     <button type="button" *ngIf="!id" class="btn btn-primary btn-sm" (click)="onSaveConfirm()"
@@ -43,6 +43,16 @@
                         *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1 && purchaseOrder?.amountResidual > 0"
                         type="button" class="btn btn-primary btn-sm" (click)="actionRegisterPayment()">
                         Thanh toán
+                    </button>
+                    <button
+                        *ngIf="['purchase', 'done'].indexOf(purchaseOrder.state) !== -1"
+                        type="button" class="btn btn-primary btn-sm" (click)="actionRefund()">
+                        Trả hàng
+                    </button>
+                    <button
+                        *ngIf="['purchase', 'done'].indexOf(purchaseOrder.state) !== -1"
+                        type="button" class="btn btn-primary btn-sm" (click)="actionRegisterPayment()">
+                        In phiếu
                     </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">

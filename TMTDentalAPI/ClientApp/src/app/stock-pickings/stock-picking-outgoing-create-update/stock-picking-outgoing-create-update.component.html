@@ -51,7 +51,7 @@
                     </button>
                 </div>
             </div>
-            <div class="o_form_sheet h-100 d-flex flex-column">
+            <div class="o_form_sheet h-100 d-flex flex-column" style="width:95%">
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
@@ -103,16 +103,16 @@
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
-                            <tr>
+                            <tr *ngIf="id">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Số phiếu
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <p class="hidden-xs" *ngIf="pickingName != '/'"><span
+                                    <h5 class="hidden-xs text-primary text-weight-bold" *ngIf="pickingName != '/'"><span
                                             class="">{{pickingName}}</span>
-                                    </p>
+                                    </h5>
                                 </td>
                             </tr>
                             <tr>
@@ -133,19 +133,19 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="overflow-hidden" style="height: 614px;">
-                    <table class="table table-sm table-bordered">
+                <div class="overflow-hidden h-100">
+                    <table class="table table-sm table-bordered h-100">
                         <thead>
                             <tr>
-                                <th style="width: 25%;" [class.d-none]="picking.state == 'done'"> Danh sách sản phẩm
+                                <th style="width: 25%;" class="t_head" [class.d-none]="picking.state == 'done'"> Danh sách sản phẩm
                                 </th>
-                                <th> Danh sách nhập kho </th>
+                                <th class="t_head"> Danh sách xuất kho </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td [class.d-none]="picking.state == 'done'">
-                                    <div class="mt-2">
+                                    <div class="mt-2 h-100">
                                         <div class="d-flex pl-2">
                                             <div class="form-check">
                                                 <input class="form-check-input" [hidden]="true" type="radio"
@@ -167,7 +167,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="group_product">
+                                        <div class="group_product h-90">
                                             <div class="">
                                                 <app-tai-search-input
                                                     (searchChange)="onProductInputSearchChange($event)"
@@ -183,7 +183,7 @@
 
                                 </td>
                                 <td>
-                                    <div class="pl-4 pr-4 overflow-auto" style="height: 560px;">
+                                    <div class="pl-4 pr-4 overflow-auto h-100">
                                         <table class="table table-sm table_none_border" id="table_details">
                                             <thead>
                                                 <tr>

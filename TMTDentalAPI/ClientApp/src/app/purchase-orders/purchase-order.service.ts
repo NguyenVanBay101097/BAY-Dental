@@ -37,6 +37,7 @@ export class PurchaseOrderDisplay {
     dateOrder: string;
     amountTotal: number;
     datePlanned: string;
+    pickingTypeId:string;
     orderLines: PurchaseOrderLineDisplay[];
     type: string;
     amountResidual: number;
