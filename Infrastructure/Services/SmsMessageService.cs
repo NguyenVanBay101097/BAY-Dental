@@ -90,7 +90,30 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 ResCount = x.ResCount.HasValue ? x.ResCount.Value : 0,
                 BrandName = x.SmsAccount != null ? x.SmsAccount.DisplayName : "",
+                DateCreated = x.DateCreated
             }).ToListAsync();
+
+            var ids = items.Select(x => x.Id).ToList();
+            var statistics = await _messageDetailRepository.SearchQuery(x => x.SmsMessageId.HasValue && ids.Contains(x.SmsMessageId.Value))
+                .GroupBy(x => x.SmsMessageId.Value)
+                .Select(x => new
+                {
+                    MessageId = x.Key,
+                    Total = x.Sum(s => 1),
+                    TotalSent = x.Sum(s => s.State == "sent" ? 1 : 0),
+                    TotalError = x.Sum(s => s.State == "error" ? 1 : 0),
+                }).ToListAsync();
+            var statistics_dict = statistics.ToDictionary(x => x.MessageId, x => x);
+
+            foreach (var item in items)
+            {
+                if (!statistics_dict.ContainsKey(item.Id))
+                    continue;
+                var statistic = statistics_dict[item.Id];
+                item.Total = statistic.Total;
+                item.TotalSent = statistic.TotalSent;
+                item.TotalError = statistic.TotalError;
+            }
 
             return new PagedResult2<SmsMessageBasic>(totalItems, val.Offset, val.Limit)
             {

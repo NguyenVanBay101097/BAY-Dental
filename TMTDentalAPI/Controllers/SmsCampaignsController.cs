@@ -114,11 +114,10 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "SMS.Campaign.Update")]
-        public async Task<IActionResult> UpdateAsync(Guid id, SmsCampaignSave val)
+        public async Task<IActionResult> UpdateAsync(Guid id, SmsCampaignUpdateVM val)
         {
             var entity = await _smsCampaignService.GetByIdAsync(id);
             if (entity == null) return NotFound();
-            entity.CompanyId = CompanyId;
             await _smsCampaignService.UpdateAsync(id, val);
             return NoContent();
         }

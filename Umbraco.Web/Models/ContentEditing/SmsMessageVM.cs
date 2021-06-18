@@ -31,6 +31,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? Date { get; set; }
         public int ResCount { get; set; }
         public DateTime? ScheduleDate { get; set; }
+        public int Total { get; set; }
+        public int TotalSent { get; set; }
+        public int TotalError { get; set; }
+        public DateTime? DateCreated { get; set; }
     }
 
     public class SmsMessageSimple

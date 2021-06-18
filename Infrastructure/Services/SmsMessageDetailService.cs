@@ -23,6 +23,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
+using ApplicationCore.Utilities;
 
 namespace Infrastructure.Services
 {
@@ -139,21 +140,34 @@ namespace Infrastructure.Services
             return query;
         }
 
-        public async Task<IEnumerable<ReportTotalOutputItem>> GetReportTotal(ReportTotalInput val)
+        public async Task<IEnumerable<SmsMessageDetailReportSummaryResponse>> GetReportTotal(SmsMessageDetailReportSummaryRequest val)
         {
             var query = SearchQuery();
-            if (val.Date.HasValue)
-                query = query.Where(x => x.Date.Value.Month == val.Date.Value.Month);
+            if (val.DateFrom.HasValue)
+            {
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.Date >= dateFrom);
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateTo);
+            }
+
             if (val.SmsAccountId.HasValue)
                 query = query.Where(x => x.SmsAccountId == val.SmsAccountId.Value);
-            if (val.SmsCampaignId.HasValue)
-                query = query.Where(x => x.SmsCampaignId.Value == val.SmsCampaignId.Value);
 
-            var res = await query.GroupBy(x => new { x.State })
-                .Select(x => new ReportTotalOutputItem
+            if (val.SmsCampaignId.HasValue)
+                query = query.Where(x => x.SmsCampaignId == val.SmsCampaignId);
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
+            var res = await query.GroupBy(x => x.State)
+                .Select(x => new SmsMessageDetailReportSummaryResponse
                 {
-                    State = x.Key.State,
-                    StateDisplay = x.Key.State == "sent" ? "Thành công" : (x.Key.State == "canceled" ? "Hủy" : (x.Key.State == "error" ? "Thất bại" : "Đang gửi")),
+                    State = x.Key,
                     Total = x.Count(),
                     Percentage = x.Count() * 100f / query.Count()
                 }).ToListAsync();

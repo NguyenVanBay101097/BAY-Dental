@@ -38,6 +38,7 @@ import { SmsCareAfterOrderFormManualComponent } from './sms-care-after-order-for
 import { SmsCareAfterOrderFormAutomaticDialogComponent } from './sms-care-after-order-form-automatic-dialog/sms-care-after-order-form-automatic-dialog.component';
 import { SmsTooltipsContentComponent } from './sms-tooltips-content/sms-tooltips-content.component';
 import { SmsReportComponent } from './sms-report/sms-report.component';
+import { SmsCampaignUpdateComponent } from './sms-campaign-update/sms-campaign-update.component';
 import { SmsNoteContentComponent } from './sms-note-content/sms-note-content.component';
 import { SmsPersonalizedTabsComponent } from './sms-personalized-tabs/sms-personalized-tabs.component';
 
@@ -75,6 +76,7 @@ import { SmsPersonalizedTabsComponent } from './sms-personalized-tabs/sms-person
     SmsTooltipsContentComponent,
     SmsCareAfterOrderFormAutomaticDialogComponent,
     SmsReportComponent,
+    SmsCampaignUpdateComponent,
     SmsNoteContentComponent,
     SmsPersonalizedTabsComponent
   ],

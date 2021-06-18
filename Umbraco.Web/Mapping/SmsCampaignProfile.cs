@@ -14,6 +14,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<SmsCampaign, SmsCampaignBasic>();
             CreateMap<SmsCampaign, SmsCampaignSimple>();
             CreateMap<SmsCampaignSave, SmsCampaign>();
+            CreateMap<SmsCampaignUpdateVM, SmsCampaign>();
         }
     }
 }

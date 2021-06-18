@@ -12,12 +12,12 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<SmsCampaignBasic>> GetPaged(SmsCampaignPaged val);
         Task<SmsCampaignBasic> CreateAsync(SmsCampaignSave val);
-        Task UpdateAsync(Guid id, SmsCampaignSave val);
+        Task UpdateAsync(Guid id, SmsCampaignUpdateVM val);
         Task<SmsCampaign> GetDefaultCampaignBirthday();
         Task<SmsCampaign> GetDefaultCampaignAppointmentReminder();
         Task<SmsCampaign> GetDefaultCampaign();
         Task<SmsCampaign> GetDefaultThanksCustomer();
         Task<SmsCampaign> GetDefaultCareAfterOrder();
-        Task<SmsCampaignBasic> GetDisplay(Guid id);
+        Task<SmsCampaignDisplay> GetDisplay(Guid id);
     }
 }
