@@ -62,7 +62,7 @@
                                             <label class="o_form_label">Client Secret</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control"
+                                            <input type="text" class="form-control" [class.border-danger]="submitted"
                                                 [class.border-outline]="f.clientSecret.value==''"
                                                 formControlName="clientSecret">
                                             <div *ngIf="f.clientSecret.errors && (f.clientSecret.touched || f.clientSecret.dirty || submitted)"
@@ -83,7 +83,7 @@
                                             <label class="o_form_label">Brand Name</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control" formControlName="brandName">
+                                            <input type="text" class="form-control" [class.border-danger]="submitted" formControlName="brandName">
                                             <div *ngIf="f.brandName.errors && (f.brandName.touched || f.brandName.dirty || submitted)"
                                                 class="text-danger">
                                                 <div *ngIf="f.brandName.errors.required">Nhập Brandname</div>
@@ -95,7 +95,7 @@
                                             <label class="o_form_label">API Key</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control" formControlName="apiKey">
+                                            <input type="text" class="form-control" [class.border-danger]="submitted" formControlName="apiKey">
                                             <div *ngIf="f.apiKey.errors && (f.apiKey.touched || f.apiKey.dirty || submitted)"
                                                 class="text-danger">
                                                 <div *ngIf="f.apiKey.errors.required">Nhập Api Key</div>
@@ -107,7 +107,7 @@
                                             <label class="o_form_label">Secret Key</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control" formControlName="secretkey">
+                                            <input type="text" class="form-control" [class.border-danger]="submitted" formControlName="secretkey">
                                             <div *ngIf="f.secretkey.errors && (f.secretkey.touched || f.secretkey.dirty || submitted)"
                                                 class="text-danger">
                                                 <div *ngIf="f.secretkey.errors.required">Nhập Secret Key</div>

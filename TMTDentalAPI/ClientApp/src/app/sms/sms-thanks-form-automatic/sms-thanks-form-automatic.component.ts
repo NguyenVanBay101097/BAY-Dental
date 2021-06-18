@@ -39,6 +39,8 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
   timeRunJob: Date = new Date();
   campaign: any;
+  submitted: boolean = false;
+  get f() { return this.formGroup.controls; }
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -91,8 +93,12 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     var check = event.target.checked
     if (check) {
       this.isTemplateCopy = true;
+      this.f.templateName.setValidators(Validators.required);
+      this.f.templateName.updateValueAndValidity();
     } else {
       this.isTemplateCopy = false;
+      this.f.templateName.clearValidators();
+      this.f.templateName.updateValueAndValidity();
     }
   }
 
@@ -172,6 +178,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid) return;
     if (!this.template.text) return;
     var val = this.formGroup.value;

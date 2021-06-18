@@ -88,8 +88,12 @@ export class SmsManualDialogComponent implements OnInit {
     var check = event.target.checked
     if (check) {
       this.isTemplateCopy = true;
+      this.f.templateName.setValidators(Validators.required);
+      this.f.templateName.updateValueAndValidity();
     } else {
       this.isTemplateCopy = false;
+      this.f.templateName.clearValidators();
+      this.f.templateName.updateValueAndValidity();
     }
 
   }
@@ -176,6 +180,8 @@ export class SmsManualDialogComponent implements OnInit {
     val.resIds = this.resIds;
     // val.body = JSON.stringify(this.template);
     val.body = this.template ? this.template.text : '';
+    console.log(val);
+    
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.campaign = this.campaign ? this.campaign : null;

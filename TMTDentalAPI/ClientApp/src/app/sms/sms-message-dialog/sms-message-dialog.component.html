@@ -145,7 +145,8 @@
                                 <tr>
                                     <td colspan="2">
                                         <app-sms-template-content [type]="templateTypeTab"
-                                            [textareaLength]="textareaLimit" [template]="template">
+                                            [textareaLength]="textareaLimit" [template]="template"
+                                            [submitted]="submitted">
                                         </app-sms-template-content>
                                     </td>
                                 </tr>
@@ -161,11 +162,14 @@
                                     </td>
                                     <td>
                                         <div *ngIf="isTemplateCopy">
-                                            <input type="text" class="form-control mt-2" formControlName="templateName"
+                                            <input type="text" class="form-control mt-2"
+                                                [class.border-danger]="submitted" formControlName="templateName"
                                                 placeholder="Tiêu đề tin nhắn mẫu" required>
-                                            <span class="text-danger" *ngIf="!getValueFormControl('templateName')">
-                                                Nhập tiêu đề tin nhắn mẫu
-                                            </span>
+                                            <div *ngIf="f.templateName.errors && (f.templateName.touched || f.templateName.dirty || submitted)"
+                                                class="text-danger">
+                                                <div *ngIf="f.templateName.errors.required">Nhập tiêu đề tin nhắn
+                                                    mẫu</div>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>

@@ -40,9 +40,11 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     text: '',
     templateType: 'text'
   };
+  submitted: boolean = false;
   public today: Date = new Date;
   public timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
   public timeRunJob: Date = new Date();
+  get f() { return this.formGroup.controls; }
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -129,8 +131,12 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     var check = event.target.checked
     if (check) {
       this.isTemplateCopy = true;
+      this.f.templateName.setValidators(Validators.required);
+      this.f.templateName.updateValueAndValidity();
     } else {
       this.isTemplateCopy = false;
+      this.f.templateName.clearValidators();
+      this.f.templateName.updateValueAndValidity();
     }
 
   }
@@ -180,6 +186,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid) return;
     if (!this.template.text) return;
     var val = this.formGroup.value;

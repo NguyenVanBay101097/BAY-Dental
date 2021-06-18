@@ -37,7 +37,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   campaign: any;
   type: string;
   filteredTemplate: any[];
-  filter: string = 'productCategory';
+  filter: string = 'product_category';
   textareaLimit: number = 200;
   isTemplateCopy = false;
   template: any = {
@@ -72,13 +72,14 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       active: false,
       scheduleTimeObj: new Date(),
       applyOn: ['product_category', Validators.required],
-      products: [],
-      productCategories: [],
+      products: null,
+      productCategories: [null, Validators.required],
       typeTimeBeforSend: ['day', Validators.required],
       timeBeforSend: [1, Validators.required],
       name: ['', Validators.required],
       templateName: '',
     })
+    
     if (this.id) {
       this.loadDataFormApi();
     }
@@ -107,8 +108,6 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     this.loadProduct();
 
   }
-
-
 
   loadDataFormApi() {
     this.smsConfigService.getDisplay(this.id).subscribe(
@@ -142,10 +141,13 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     var check = event.target.checked
     if (check) {
       this.isTemplateCopy = true;
+      this.f.templateName.setValidators(Validators.required);
+      this.f.templateName.updateValueAndValidity();
     } else {
       this.isTemplateCopy = false;
+      this.f.templateName.clearValidators();
+      this.f.templateName.updateValueAndValidity();
     }
-
   }
 
   loadAccount() {
@@ -257,19 +259,20 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   }
 
   onChangeRadioButton(event: any) {
-    var filter = event.currentTarget.value;
-    if (filter == 'product') {
+    this.filter = event.target.value;
+    if (this.filter == 'product') {
       this.f.productCategories.clearValidators();
       this.f.productCategories.updateValueAndValidity();
       this.f.products.setValidators(Validators.required);
       this.f.products.updateValueAndValidity();
     }
-    else if (filter == 'product_category') {
+    else if (this.filter == 'product_category') {
       this.f.products.clearValidators();
       this.f.products.updateValueAndValidity();
       this.f.productCategories.setValidators(Validators.required);
       this.f.productCategories.updateValueAndValidity();
     }
+    
   }
 
 
