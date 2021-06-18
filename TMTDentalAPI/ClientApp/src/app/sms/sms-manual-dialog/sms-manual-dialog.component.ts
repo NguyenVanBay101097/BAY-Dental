@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -19,9 +19,11 @@ import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
   styleUrls: ['./sms-manual-dialog.component.css']
 })
 export class SmsManualDialogComponent implements OnInit {
-  @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
-  @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent
+  @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent;
+  @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent;
+  @ViewChild('textarea', { static: false }) textarea: ElementRef;
 
+  listContentTabs: string[] = [];
   title: string;
   filteredTemplate: any[];
   filteredSmsAccount: any[];
@@ -41,6 +43,7 @@ export class SmsManualDialogComponent implements OnInit {
   }
   textareaLimit: number = 459;
   get f() { return this.formGroup.controls; }
+  get textValue() { return this.formGroup.get('body').value; }
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -58,7 +61,8 @@ export class SmsManualDialogComponent implements OnInit {
       template: null,
       smsAccount: [null, Validators.required],
       name: ['', Validators.required],
-      templateName: ''
+      templateName: '',
+      body: ['', Validators.required]
     })
 
     this.loadSmsTemplate();
@@ -72,7 +76,6 @@ export class SmsManualDialogComponent implements OnInit {
       this.smsTemplateCbx.loading = false;
     });
 
-
     this.smsAccountCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.smsAccountCbx.loading = true)),
@@ -81,7 +84,6 @@ export class SmsManualDialogComponent implements OnInit {
       this.filteredSmsAccount = result ? result.items : [];
       this.smsAccountCbx.loading = false;
     });
-
   }
 
   checkedTemplateCopy(event) {
@@ -95,9 +97,7 @@ export class SmsManualDialogComponent implements OnInit {
       this.f.templateName.clearValidators();
       this.f.templateName.updateValueAndValidity();
     }
-
   }
-
 
   searchSmsTemplate(q?: string) {
     var filter = new SmsTemplateFilter();
@@ -132,6 +132,7 @@ export class SmsManualDialogComponent implements OnInit {
         templateType: 'text'
       }
     }
+    this.f.body.setValue(this.template.text);
   }
 
   getLimitText() {
@@ -167,7 +168,7 @@ export class SmsManualDialogComponent implements OnInit {
   onSave() {
     this.submitted = true;
     if (this.formGroup.invalid) return false;
-    if (!this.template.text) return;
+    // if (!this.template.text) return;
     var val = this.formGroup.value;
     if (this.isTemplateCopy && val.templateName == '') {
       return false
@@ -179,15 +180,13 @@ export class SmsManualDialogComponent implements OnInit {
     val.date = this.intlService.formatDate(new Date(), "yyyy-MM-ddTHH:mm");
     val.resIds = this.resIds;
     // val.body = JSON.stringify(this.template);
-    val.body = this.template ? this.template.text : '';
-    console.log(val);
-    
+    // val.body = this.template ? this.template.text : '';
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.campaign = this.campaign ? this.campaign : null;
     modalRef.componentInstance.brandName = val.smsAccount.brandName;
     modalRef.componentInstance.timeSendSms = "Gửi ngay";
-    modalRef.componentInstance.body = this.template ? this.template.text : '';
+    modalRef.componentInstance.body = this.textValue ? this.textValue : '';
     modalRef.componentInstance.numberSms = this.resIds ? this.resIds.length : 0;
     modalRef.result.then(() => {
       this.smsMessageService.create(val).subscribe(
@@ -205,7 +204,7 @@ export class SmsManualDialogComponent implements OnInit {
             }
             var valueTemplate = {
               name: val.templateName,
-              body:  JSON.stringify(template),
+              body: JSON.stringify(template),
               type: this.templateTypeTab
             }
             this.smsTemplateService.create(valueTemplate).subscribe(
@@ -217,6 +216,27 @@ export class SmsManualDialogComponent implements OnInit {
         }
       )
     });
+  }
+
+  addToContent(tabValue) {
+    const selectionStart = this.textarea.nativeElement.selectionStart;
+    const selectionEnd = this.textarea.nativeElement.selectionEnd;
+    var tabValueNew = tabValue;
+    if (this.textValue) {
+      tabValueNew = ((selectionStart > 0 && this.textValue[selectionStart - 1] == ' ') ? "" : " ")
+        + tabValue
+        + (this.textValue[selectionEnd] == ' ' ? "" : " ");
+      this.f.body.setValue(
+        this.textValue.slice(0, selectionStart)
+        + tabValueNew
+        + this.textValue.slice(this.textarea.nativeElement.selectionEnd)
+      );
+    } else {
+      this.f.body.setValue(tabValue);
+    }
+
+    this.textarea.nativeElement.focus();
+    this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
   }
 
   notify(title, isSuccess = true) {

@@ -28,3 +28,10 @@
 .form-control{
     height: 36px !important;
 }
+
+.form-control.textarea{
+    overflow: hidden !important;
+    overflow-wrap: break-word!important;
+    resize: none!important;
+    height: 134px!important;
+}

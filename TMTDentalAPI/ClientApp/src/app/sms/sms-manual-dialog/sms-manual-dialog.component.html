@@ -102,13 +102,21 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <!-- <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Nội dung</label>
-                                            </td> -->
                                             <td colspan="2" style="width: 80%;">
-                                                <app-sms-template-content [type]="templateTypeTab"
+                                                <!-- <app-sms-template-content [type]="templateTypeTab"
                                                     [textareaLength]="textareaLimit" [template]="template">
-                                                </app-sms-template-content>
+                                                </app-sms-template-content> -->
+                                                <textarea type="text" my-autosize class="form-control textarea textarea-required"
+                                                    id="textarea_mass" formControlName="body" rows="5"
+                                                    #textarea></textarea>
+                                                <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
+                                                    class="text-danger">
+                                                    <div *ngIf="f.body.errors.required">Nhập nội dung tin nhắn</div>
+                                                    <div *ngIf="f.body.errors.maxlength">Số kí tự đã vượt quá cho phép !
+                                                    </div>
+                                                </div>
+                                                <app-sms-note-content></app-sms-note-content>
+                                                <app-sms-personalized-tabs [type]="templateTypeTab" (contentEmit)="addToContent($event)"></app-sms-personalized-tabs>
                                             </td>
                                         </tr>
                                         <tr>
@@ -122,8 +130,9 @@
                                                 </div>
                                             </td>
                                             <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                                <input type="text" class="form-control mt-2" [class.border-danger]="submitted"
-                                                    formControlName="templateName" style="height:36px;">
+                                                <input type="text" class="form-control mt-2"
+                                                    [class.border-danger]="submitted" formControlName="templateName"
+                                                    style="height:36px;">
                                                 <div *ngIf="f.templateName.errors && (f.templateName.touched || f.templateName.dirty || submitted)"
                                                     class="text-danger">
                                                     <div *ngIf="f.templateName.errors.required">Nhập tiêu đề tin nhắn
