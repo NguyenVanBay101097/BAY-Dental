@@ -3,7 +3,7 @@
         <textarea type="text" my-autosize class="form-control textarea-required" id="textarea_mass"
             formControlName="text" [maxlength]="textareaLength" rows="5" #textarea (change)="onTextChange()">
         </textarea>
-        <div *ngIf="f.text.errors && (f.text.touched || f.text.dirty)" class="text-danger">
+        <div *ngIf="f.text.errors && (f.text.touched || f.text.dirty || submitted)" class="text-danger">
             <div *ngIf="f.text.errors.required">Nhập nội dung tin nhắn</div>
             <div *ngIf="f.text.errors.maxlength">Số kí tự đã vượt quá cho phép !</div>
         </div>

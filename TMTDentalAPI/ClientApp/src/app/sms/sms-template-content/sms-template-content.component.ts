@@ -13,6 +13,7 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
   @Input() type: any;
   @Input() template: any;
   @Input() textareaLength: any;
+  @Input() submitted: boolean;
   @ViewChild('textarea', { static: false }) textarea: ElementRef;
 
   tabs: Array<{ name: string, value: string }> = [];
@@ -60,8 +61,6 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
       templateType: this.template.templateType,
       text: [this.template.text, Validators.required]
     });
-    this.textControl.markAsTouched();
-    this.textControl.markAsDirty();
 
     if (this.listTabs[this.type]) {
       this.tabs = this.listTabs[this.type];

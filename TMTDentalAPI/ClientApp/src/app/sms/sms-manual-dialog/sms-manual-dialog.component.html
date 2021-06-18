@@ -37,8 +37,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <input type="text" [attr.disabled]="true"
-                                                    [value]="campaign?.name" class="mt-2 form-control">
+                                                <input type="text" [attr.disabled]="true" [value]="campaign?.name"
+                                                    class="mt-2 form-control">
                                             </td>
                                         </tr>
                                         <tr>
@@ -122,12 +122,13 @@
                                                 </div>
                                             </td>
                                             <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                                <input type="text" class="form-control mt-2"
+                                                <input type="text" class="form-control mt-2" [class.border-danger]="submitted"
                                                     formControlName="templateName" style="height:36px;">
-                                                <span class="text-danger"
-                                                    *ngIf="formGroup.controls.templateName.value==''">
-                                                    Nhập tiêu đề tin nhắn mẫu
-                                                </span>
+                                                <div *ngIf="f.templateName.errors && (f.templateName.touched || f.templateName.dirty || submitted)"
+                                                    class="text-danger">
+                                                    <div *ngIf="f.templateName.errors.required">Nhập tiêu đề tin nhắn
+                                                        mẫu</div>
+                                                </div>
                                             </td>
                                         </tr>
                                     </table>

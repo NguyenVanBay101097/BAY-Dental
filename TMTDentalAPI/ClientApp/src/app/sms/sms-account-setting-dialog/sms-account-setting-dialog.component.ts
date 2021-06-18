@@ -34,7 +34,9 @@ export class SmsAccountSettingDialogComponent implements OnInit {
       apiKey: ['', Validators.required],
       secretkey: ['', Validators.required],
     });
-    this.loadDataFromApi();
+    if(this.id){
+      this.loadDataFromApi();
+    }
   }
 
   get f() {

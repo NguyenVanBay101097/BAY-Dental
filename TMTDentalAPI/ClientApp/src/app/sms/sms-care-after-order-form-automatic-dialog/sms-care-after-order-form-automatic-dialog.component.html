@@ -112,15 +112,15 @@
                                     <div class="d-flex ml-5">
                                         <div class="form-check mr-2">
                                             <input (change)="onChangeRadioButton($event)" class="form-check-input"
-                                                formControlName="applyOn" type="radio" name="filter" id="productCategory"
-                                                value="product_category">
+                                                formControlName="applyOn" type="radio" name="applyOn"
+                                                id="productCategory" value="product_category">
                                             <label class="form-check-label font-weight-600" for="productCategory">
                                                 Nhóm dịch vụ
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input (change)="onChangeRadioButton($event)" formControlName="applyOn"
-                                                class="form-check-input font-weight-600" type="radio" name="filter"
+                                                class="form-check-input font-weight-600" type="radio" name="applyOn"
                                                 id="product" value="product">
                                             <label class="form-check-label" for="product">
                                                 Dịch vụ
@@ -128,9 +128,9 @@
                                         </div>
                                     </div>
                                     <div class="ml-5">
-                                        <div *ngIf="filter=='productCategory'">
+                                        <div *ngIf="filter=='product_category'">
                                             <kendo-multiselect (filterChange)="loadProductCategory($event)"
-                                                [filterable]="true" style="min-height: 100px;" class="mr-3"
+                                                [filterable]="true" style="min-height: 100px;" class="mr-3" [class.border-danger]="submitted"
                                                 [data]="filteredProductCategories" [textField]="'name'"
                                                 [placeholder]="'Chọn nhóm dịch vụ'" [valueField]="'id'"
                                                 formControlName="productCategories">
@@ -141,7 +141,7 @@
                                             </div>
                                         </div>
                                         <div *ngIf="filter=='product'">
-                                            <kendo-multiselect (filterChange)="loadProduct($event)" class="mr-3"
+                                            <kendo-multiselect (filterChange)="loadProduct($event)" class="mr-3" [class.border-danger]="submitted"
                                                 style="min-height: 100px;" [data]="filteredProducts" [filterable]="true"
                                                 [placeholder]="'Chọn dịch vụ'" [textField]="'name'" [valueField]="'id'"
                                                 formControlName="products">
@@ -178,12 +178,9 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <!-- <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Nội dung</label>
-                                            </td> -->
                                             <td colspan="2" style="width: 80%;">
                                                 <app-sms-template-content [type]="'saleOrderLine'"
-                                                    [textareaLength]="textareaLimit" [template]="template">
+                                                    [textareaLength]="textareaLimit" [template]="template" [submitted]="submitted">
                                                 </app-sms-template-content>
                                             </td>
                                         </tr>
@@ -198,12 +195,13 @@
                                                 </div>
                                             </td>
                                             <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                                <input type="text" class="form-control mt-2"
+                                                <input type="text" class="form-control mt-2" [class.border-danger]="submitted"
                                                     formControlName="templateName">
-                                                <span class="text-danger"
-                                                    *ngIf="formGroup.controls.templateName.value==''">
-                                                    Nhập tiêu đề tin nhắn mẫu
-                                                </span>
+                                                <div *ngIf="f.templateName.errors && (f.templateName.touched || f.templateName.dirty || submitted)"
+                                                    class="text-danger">
+                                                    <div *ngIf="f.templateName.errors.required">Nhập tiêu đề tin nhắn
+                                                        mẫu</div>
+                                                </div>
                                             </td>
                                         </tr>
                                     </table>
