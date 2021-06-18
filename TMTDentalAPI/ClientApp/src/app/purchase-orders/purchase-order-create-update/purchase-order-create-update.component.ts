@@ -237,6 +237,15 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     return total;
   }
 
+  get getAmountPayment() {
+    var amountPayment = this.f.amountPayment.value;
+    return amountPayment;
+  }
+
+  get getResidual(){
+    return this.getAmountTotal - this.getAmountPayment;
+  }
+
   onSaveConfirm() {
     var index = _.findIndex(this.orderLines.controls, o => {
       return o.get('productQty').value == null || o.get('priceUnit').value == null;
@@ -258,6 +267,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     var data = Object.assign(this.purchaseOrder, val);
     this.purchaseOrderService.create(data).subscribe((result: any) => {
       this.purchaseOrderService.buttonConfirm([result.id]).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xác nhận thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.router.navigate(['/purchase/orders/edit/' + result.id]);
       }, () => {
         this.router.navigate(['/purchase/orders/edit/' + result.id]);
@@ -278,6 +294,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   buttonConfirm() {
     if (this.id) {
       this.purchaseOrderService.buttonConfirm([this.id]).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xác nhận thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.loadRecord();
       });
     }

@@ -291,10 +291,35 @@
                                         </td>
                                     </tr>
                                 </ng-container>
+                                <tr>
+                                    <td colspan="5"></td>
+                                    <th class="align-middle">
+                                        Tổng tiền
+                                    </th>
+                                    <th class="align-middle text-right">
+                                        {{getAmountTotal | number}}
+                                    </th>
+                                </tr>
+                                <tr *ngIf="purchaseOrder?.state != 'draft'">
+                                    <td colspan="5" style="border-top:0"></td>
+                                    <th class="align-middle">
+                                        Đã thanh toán
+                                    </th>
+                                    <th class="align-middle text-right">
+                                        {{getAmountPayment | number}}
+                                    </th>
+                                </tr>
+                                <tr *ngIf="purchaseOrder?.state != 'draft'">
+                                    <td colspan="5" style="border-top:0"></td>
+                                    <th class="align-middle">
+                                        Còn nợ
+                                    </th>
+                                    <th class="align-middle text-right text-danger">
+                                        {{getResidual | number}}
+                                    </th>
+                                </tr>
                             </tbody>
                         </table>
-
-
                         <div class="clearfix"></div>
                     </div>
                 </div>
