@@ -201,24 +201,6 @@ export class SmsCampaignDetailComponent implements OnInit {
     return this.f.limitMessage.value - totalMessageCampaign;
   }
 
-  onSaveCampaign() {
-    this.submitted = true;
-    if (this.formGroup.invalid) return false;
-    var val = this.formGroup.value;
-    if (val.typeDate == 'period') {
-      val.dateEnd = this.intlService.formatDate(val.endDateObj, "yyyy-MM-ddT23:59");
-      val.dateStart = this.intlService.formatDate(val.startDateObj, "yyyy-MM-dd")
-    }
-    val.state = this.formGroup.get('stateCheck') && this.formGroup.get('stateCheck').value == true ? 'running' : 'shutdown';
-    this.smsCampaignService.update(this.campaignId, val).subscribe(
-      result => {
-        this.notify("Cập nhật chiến dịch thành công");
-        this.isEdit = false;
-      }
-    )
-    this.campaignName = val.name;
-  }
-
   getValueFormControl(key) {
     return this.formGroup.get(key).value;
   }
@@ -244,6 +226,18 @@ export class SmsCampaignDetailComponent implements OnInit {
     modalRef.result.then((val) => {
       this.loadDataFromApi();
     })
+  }
+
+  onSaveCampaign() {
+    this.smsCampaignService.get(this.campaignId)
+      .subscribe(
+        (res: any) => {
+          this.campaign = res;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
   }
 
   onChangeAccount(event) {

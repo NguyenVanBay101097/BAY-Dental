@@ -52,7 +52,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SMS.Report.AllSMS")]
-        public async Task<IActionResult> GetReportTotal([FromQuery] ReportTotalInput val)
+        public async Task<IActionResult> GetReportTotal([FromQuery] SmsMessageDetailReportSummaryRequest val)
         {
             var res = await _smsMessageDetailService.GetReportTotal(val);
             return Ok(res);

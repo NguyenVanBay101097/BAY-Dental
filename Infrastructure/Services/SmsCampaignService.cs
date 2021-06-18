@@ -157,38 +157,22 @@ namespace Infrastructure.Services
             return _mapper.Map<SmsCampaignBasic>(entity);
         }
 
-        public async Task UpdateAsync(Guid id, SmsCampaignSave val)
+        public async Task UpdateAsync(Guid id, SmsCampaignUpdateVM val)
         {
             var entity = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             entity = _mapper.Map(val, entity);
             await UpdateAsync(entity);
         }
 
-        public async Task<SmsCampaignBasic> GetDisplay(Guid id)
+        public async Task<SmsCampaignDisplay> GetDisplay(Guid id)
         {
-            var smsMessageObj = GetService<ISmsMessageService>();
-            var smsMessageDetailObj = GetService<ISmsMessageDetailService>();
-            var TotalWait = await smsMessageObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "waiting" && x.CompanyId == CompanyId).SelectMany(x => x.SmsMessagePartnerRels).CountAsync();
-            var TotalSent = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "sent" && x.CompanyId == CompanyId).CountAsync();
-            var TotalError = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "error" && x.CompanyId == CompanyId).CountAsync();
-            var TotalCanceled = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "canceled" && x.CompanyId == CompanyId).CountAsync();
-            var TotalOutgoing = await smsMessageDetailObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && x.SmsCampaignId.Value == id && x.State == "outgoing" && x.CompanyId == CompanyId).CountAsync();
-
-            var campaign = await SearchQuery(x => x.Id == id).Select(x => new SmsCampaignBasic
+            var campaign = await SearchQuery(x => x.Id == id).Select(x => new SmsCampaignDisplay
             {
                 Id = x.Id,
                 DateEnd = x.DateEnd,
                 DateStart = x.DateStart,
-                DefaultType = x.DefaultType,
                 LimitMessage = x.LimitMessage,
                 Name = x.Name,
-                State = x.State,
-                TotalMessage = TotalCanceled + TotalError + TotalOutgoing + TotalSent + TotalWait,
-                TotalSuccessfulMessages = TotalSent,
-                TotalCancelMessages = TotalCanceled,
-                TotalErrorMessages = TotalError,
-                TotaOutgoingMessages = TotalOutgoing,
-                TotalWaitedMessages = TotalWait,
                 TypeDate = x.TypeDate
             }).FirstOrDefaultAsync();
             return campaign;
