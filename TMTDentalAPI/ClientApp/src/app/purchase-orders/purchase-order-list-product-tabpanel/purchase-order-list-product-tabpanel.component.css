@@ -21,22 +21,11 @@
 }
 
 ._wrapper {
-    max-width: 400px;
-}
-
-._wrapper .input-search {
-    box-shadow: none;
-}
-
-._wrapper .dropdown-menu {
-    width: 100%;
-    overflow: auto;
+    min-height: 300px;
     max-height: 400px;
 }
 
-._wrapper .dropdown-menu .service-name {
-    white-space: normal;
-}
+
 
 .form-check-input:checked+.form-check-label {
     color: #fff;
@@ -45,9 +34,17 @@
    
 }
 
+.table-list-product td {
+    padding: .75rem;
+    vertical-align: top;
+    border-top: none !important;
+}
+
+
 .form-check-label{
-    padding: 5px;
+    padding: 4px;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .form-check{
@@ -72,6 +69,10 @@
     text-align: center;
     pointer-events: none;
     color: #aaa;
+}
+
+.has-search input{
+    border-radius: 5px;
 }
 
 .flex-0-0-auto {
@@ -122,23 +123,5 @@ tbody>.cursor:hover {
     border-spacing: 0 !important;
 }
 
-.sticky-table .sticky-th {
-    /* Apply both top and bottom borders to the <th> */
-    position: sticky !important;
-    top: 0 !important;
-    background-color: #f9f9f9 !important;
-    border-top: 1px solid #dee2e6 !important;
-    border-bottom: 1px solid #dee2e6 !important;
-    border-right: 1px solid #dee2e6 !important;
-}
 
-.sticky-table .sticky-td {
-    /* For cells, apply the border to one of each side only (right but not left, bottom but not top) */
-    border-bottom: 1px solid #dee2e6 !important;
-    border-right: 1px solid #dee2e6 !important;
-}
 
-.sticky-table .sticky-th:first-child, .sticky-table .sticky-td:first-child {
-    /* Apply a left border on the first <td> or <th> in a row */
-    border-left: 1px solid #dee2e6 !important;
-}

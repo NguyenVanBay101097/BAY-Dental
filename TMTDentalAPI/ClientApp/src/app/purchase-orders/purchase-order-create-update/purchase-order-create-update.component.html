@@ -199,27 +199,18 @@
                 </div>
                 <div class="o_form_section">
                     <div class="o_form_section_left" *ngIf="purchaseOrder?.state == 'draft'">
-                        <h5>Danh sách hàng hóa</h5>
-                        <div class="t_search_wrapper">
+                        <p class="t_tilte">Danh sách hàng hóa</p>
 
-                            <!-- <div class="flex-0-0-auto has-search">
-                                <span class="fa fa-search form-control-feedback"></span>
-                                <input #search accesskey="C" class="form-control size-text-14"
-                                    placeholder="Tìm kiếm ..." type="text" id="search"
-                                    (keyup)="onChangeSearch($event.target.value);">
-                            </div> -->
-                            <!-- <app-tai-product-list-selectable #productListSelectable 
-                                (changeProduct)="onChangeProduct($event)">
-                            </app-tai-product-list-selectable> -->
-                            <app-product-list-search-dropdown (onSelectService)="selectProduct($event)">
-                            </app-product-list-search-dropdown>
+                        <div class="group_product h-90">
+                            <app-purchase-order-list-product-tabpanel (onSelectService)="selectProduct($event)">
+                            </app-purchase-order-list-product-tabpanel>
                         </div>
-
+                       
 
                     </div>
 
                     <div class="o_form_section_right">
-                        <h5>Danh sách mua hàng</h5>
+                        <p class="t_tilte">Danh sách mua hàng</p>
                         <table class="table table-sm mb-0" id="table_details">
                             <thead>
                                 <tr>

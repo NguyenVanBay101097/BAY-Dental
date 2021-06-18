@@ -42,6 +42,7 @@ namespace Infrastructure.Services
 
             var seqObj = GetService<IIRSequenceService>();
             var moveObj = GetService<IAccountMoveService>();
+            var moveLineObj = GetService<IAccountMoveLineService>();
             var settlementObj = GetService<ICommissionSettlementService>();
 
             foreach (var rec in self)
@@ -120,7 +121,8 @@ namespace Infrastructure.Services
                         await _AutoReconcile(rec, invoices);
 
                         ///update purchase order          
-                        var purchase_Ids = invoices.SelectMany(x => x.InvoiceLines).Select(x => x.PurchaseLine.OrderId).Distinct().ToList();
+                        var purchase_Ids = await moveLineObj.SearchQuery(x => x.PurchaseLineId.HasValue && move_ids.Contains(x.MoveId))
+                            .Include(x => x.PurchaseLine).Select(s=>s.PurchaseLine.OrderId).Distinct().ToListAsync();
                         if (purchase_Ids.Any())
                         {
                             var purchaseObj = GetService<IPurchaseOrderService>();

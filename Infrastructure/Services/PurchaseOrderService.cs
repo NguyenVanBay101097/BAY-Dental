@@ -745,9 +745,11 @@ namespace Infrastructure.Services
         public async Task<PurchaseOrderPrintVm> GetPrint(Guid id)
         {
             var userObj = GetService<IUserService>();
+            var lineObj = GetService<IPurchaseOrderLineService>();
 
             var purchaseOrder = await SearchQuery(x => x.Id == id).Select(x => new PurchaseOrderPrintVm
             {
+                Id = x.Id,
                 Name = x.Name,
                 Date = x.DateOrder,
                 Note = x.Notes,
@@ -761,25 +763,25 @@ namespace Infrastructure.Services
                     PartnerDistrictName = x.Company.Partner.DistrictName,
                     PartnerWardName = x.Company.Partner.WardName,
                     PartnerStreet = x.Company.Partner.Street,
-                } : null,
-
-                Lines = x.OrderLines.Any() ? x.OrderLines.Select(s => new PurchaseOrderLinePrintVm
-                {
-                    Sequence = s.Sequence,
-                    Name = s.Name,
-                    ProductQty = s.ProductQty,
-                    ProductUOMName = s.ProductUOM != null ? s.ProductUOM.Name : null,
-                    PriceUnit = s.PriceUnit,
-                    Discount = (s.Discount ?? 0),
-                    PriceSubtotal = (s.PriceSubtotal ?? 0)
-                }).ToList() : new List<PurchaseOrderLinePrintVm>(),
+                } : null,         
                 AmountTotal = (x.AmountTotal ?? 0),
                 PartnerName = x.Partner != null ? x.Partner.Name : null,
-                StockPickingTypeName = x.PickingType != null ? x.PickingType.Name : null,
+                StockPickingName = x.Picking != null ? x.Picking.Name : null,
                 Type = x.Type,
                 UserName = x.User != null ? x.User.Name : null,
                 CreatedById = x.CreatedById
             }).FirstOrDefaultAsync();
+
+            purchaseOrder.Lines = await lineObj.SearchQuery(x=> x.OrderId == purchaseOrder.Id).Select(s => new PurchaseOrderLinePrintVm
+            {
+                Sequence = s.Sequence,
+                Name = s.Name,
+                ProductQty = s.ProductQty,
+                ProductUOMName = s.ProductUOM != null ? s.ProductUOM.Name : null,
+                PriceUnit = s.PriceUnit,
+                Discount = (s.Discount ?? 0),
+                PriceSubtotal = (s.PriceSubtotal ?? 0)
+            }).ToListAsync();
 
             if (string.IsNullOrEmpty(purchaseOrder.UserName))
             {

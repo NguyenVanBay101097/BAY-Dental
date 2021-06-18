@@ -1,5 +1,5 @@
 <div class="d-flex flex-column h-100">
-    <div class="d-flex pb-1">
+    <div class="d-flex pb-1 pt-1">
         <div class="form-check">
             <input class="form-check-input" [hidden]="true" type="radio" name="radioButton" id="medicine"
                 value="medicine" checked (change)="onChangeType($event.target.value)">
@@ -17,12 +17,12 @@
     </div>
     <div class="flex-0-0-auto has-search">
         <span class="fa fa-search form-control-feedback"></span>
-        <input #search accesskey="C" class="form-control size-text-14" placeholder="Tìm kiếm theo tên..."
+        <input #search accesskey="Q" class="form-control size-text-14" placeholder="Tìm kiếm theo tên [Alt + Q]"
             type="text" id="search" (keyup)="onChangeSearch($event.target.value);">
     </div>
     <!-- Component Form Service List -->
-    <div class="flex--1-1-100 overflow-auto" style="min-height: 300px;">
-        <table class="table table-sm">        
+    <div class="flex--1-1-100 overflow-auto _wrapper">
+        <table class="table table-sm table-list-product">        
             <tbody>
                 <tr class="cursor" (click)="onSelectValue(item)"
                     *ngFor="let item of listProducts;let i = index">

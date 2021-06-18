@@ -19,6 +19,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class PurchaseOrderPrintVm
     {
+        public Guid Id { get; set; }
         public CompanyPrintVM Company { get; set; }
         public string Name { get; set; }
 
@@ -32,7 +33,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string UserName { get; set; }
 
-        public string StockPickingTypeName { get; set; }
+        public string StockPickingName { get; set; }
 
         public IEnumerable<PurchaseOrderLinePrintVm> Lines { get; set; } = new List<PurchaseOrderLinePrintVm>();
 

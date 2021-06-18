@@ -1,16 +1,14 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { fromEvent, merge, Observable, of, OperatorFunction, Subject, throwError } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
 
 @Component({
-  selector: 'app-product-list-search-dropdown',
-  templateUrl: './product-list-search-dropdown.component.html',
-  styleUrls: ['./product-list-search-dropdown.component.css']
+  selector: 'app-purchase-order-list-product-tabpanel',
+  templateUrl: './purchase-order-list-product-tabpanel.component.html',
+  styleUrls: ['./purchase-order-list-product-tabpanel.component.css']
 })
-export class ProductListSearchDropdownComponent implements OnInit {
-
-  @ViewChild("searchInput", { static: true }) searchInput: ElementRef;
+export class PurchaseOrderListProductTabpanelComponent implements OnInit {
   listProducts = [];
   model: any;
   searching = false;
@@ -19,9 +17,8 @@ export class ProductListSearchDropdownComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
 
-  @Output() onSelectService = new EventEmitter<any>()
-  focus$ = new Subject<any>();
-
+  @Output() onSelectService = new EventEmitter<any>();
+  
   constructor(
     private productService: ProductService
   ) { }
@@ -36,13 +33,7 @@ export class ProductListSearchDropdownComponent implements OnInit {
     this.LoadDataProduct();
   }
 
-  forCusEmit(e) {
-    this.focus$.next({ type: 'forcus', value: e.target.value });
-  }
-
-  formatter = (x: any) => x.name;
-
-  LoadDataProduct() {
+    LoadDataProduct() {
     var val = new ProductPaged();
     val.limit = 20;
     val.offset = 0;
@@ -63,7 +54,6 @@ export class ProductListSearchDropdownComponent implements OnInit {
   }
 
   onSelectValue(event) {
-
     var item = event;
     if (item.error)
       return;
@@ -71,7 +61,7 @@ export class ProductListSearchDropdownComponent implements OnInit {
     this.onSelectService.emit({
       id: item.id,
       name: item.name,
-      listPrice: item.listPrice
+      purchasePrice: item.purchasePrice
     });
   }
 

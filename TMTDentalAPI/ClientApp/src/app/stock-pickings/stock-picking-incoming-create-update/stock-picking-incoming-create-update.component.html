@@ -2,8 +2,8 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li><a routerLink="/stock/stock-report-xuat-nhap-ton">Kho</a></li>
-            <li><a routerLink="/stock/incoming-pickings">Phiếu nhập kho</a></li>
-            <li class="active">{{pickingName === '/' ? 'Mới' : pickingName}}</li>
+            <li><a routerLink="/stock/incoming-picking?s">Phiếu nhập kho</a></li>
+            <li class="active">{{picking?.name === '/' ? 'Mới' : picking?.name}}</li>
         </ol>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
@@ -28,26 +28,26 @@
                         Lưu
                     </button>
                     <button type="button" accesskey="1" class="btn btn-primary btn-sm"
-                        *ngIf="['draft'].indexOf(picking.state) !== -1 && canActionDone" (click)="actionDone()">
+                        *ngIf="['draft'].indexOf(picking?.state) !== -1 && canActionDone" (click)="actionDone()">
                         Hoàn thành
                     </button>
                     <button *ngIf="id && canPrint" type="button" accesskey="1" class="btn btn-primary btn-sm"
                         (click)="onPrint()">
                         In Phiếu
                     </button>
-                    <a [routerLink]="['/stock/incoming-pickings/create']" accesskey="c" *ngIf="id && canCreate"
+                    <a [routerLink]="['/stock/incoming-picking?s/create']" accesskey="c" *ngIf="id && canCreate"
                         class="btn btn-secondary btn-sm">
                         Thêm mới
                     </a>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="picking.state !== 'done'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': picking.state === 'done', 'btn-secondary': picking.state !== 'done'}"
+                    <button [disabled]="picking?.state !== 'done'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': picking?.state === 'done', 'btn-secondary': picking?.state !== 'done'}"
                         type="button">
                         Hoàn thành
                     </button>
-                    <button [disabled]="picking.state !== 'draft'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': picking.state === 'draft', 'btn-secondary': picking.state !== 'draft'}"
+                    <button [disabled]="picking?.state !== 'draft'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': picking?.state === 'draft', 'btn-secondary': picking?.state !== 'draft'}"
                         type="button">
                         Nháp
                     </button>
@@ -97,7 +97,7 @@
                                         </kendo-datepicker>
                                     </ng-container>
                                     <ng-template #dateLable>
-                                        <label for="">{{picking.date | date: 'shortDate'}}</label>
+                                        <label for="">{{picking?.date | date: 'shortDate'}}</label>
                                     </ng-template>
                                 </td>
                             </tr>
@@ -112,8 +112,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <h5 class="hidden-xs text-primary text-weight-bold" *ngIf="pickingName != '/'"><span
-                                            class="">{{pickingName}}</span>
+                                    <h5 class="hidden-xs text-primary text-weight-bold" *ngIf="picking?.name != '/'"><span
+                                            class="">{{picking?.name}}</span>
                                     </h5>
                                 </td>
                             </tr>
@@ -124,7 +124,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <ng-container *ngIf="pickingState != 'done'; else noteLabel">
+                                    <ng-container *ngIf="picking.state != 'done'; else noteLabel">
                                         <textarea class="form-control" formControlName="note"></textarea>
                                     </ng-container>
                                     <ng-template #noteLabel>
@@ -139,14 +139,14 @@
                     <table class="table table-sm table-bordered h-100">
                         <thead>
                             <tr>
-                                <th style="width: 25%;" class="t_head" [class.d-none]="picking.state == 'done'"> Danh sách sản phẩm
+                                <th style="width: 25%;" class="t_head" [class.d-none]="picking?.state == 'done'"> Danh sách sản phẩm
                                 </th>
                                 <th class="t_head"> Danh sách nhập kho </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td [class.d-none]="picking.state == 'done'">
+                                <td *ngIf="picking?.state == 'draft'">
                                     <div class="mt-2 h-100">
                                         <div class="d-flex pl-2">
                                             <div class="form-check">
@@ -196,7 +196,7 @@
                                                     <th width="100" class="text-center">Số lượng</th>
                                                     <th width="80" hasGroups [groups]="'product.group_uom'" class="text-center">Đơn vị</th>
                                                     <th width="90"
-                                                        *ngIf="['done', 'cancel'].indexOf(picking.state) === -1" class="text-center">
+                                                        *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1" class="text-center">
                                                         Thao tác</th>
                                                 </tr>
                                             </thead>
@@ -218,24 +218,24 @@
                                                             </td>
                                                             <td class="align-middle text-center">
                                                                 <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                                    *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"
+                                                                    *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1"
                                                                     formControlName="productUOMQty" style="width: 80px;"
                                                                     [spinners]="false">
                                                                 </kendo-numerictextbox>
                                                                 <span
-                                                                    *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{
+                                                                    *ngIf="['done', 'cancel'].indexOf(picking?.state) !== -1">{{
                                                                     line.get('productUOMQty').value | number}}</span>
                                                             </td>
                                                             <td class="align-middle text-center" hasGroups
                                                                 [groups]="'product.group_uom'">
                                                                 <a class="text-primary"
-                                                                    *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"
+                                                                    *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1"
                                                                     (click)="changeUoM(line)">{{line.get('productUOM').value.name}}</a>
                                                                 <span
-                                                                    *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{line.get('productUOM').value.name}}</span>
+                                                                    *ngIf="['done', 'cancel'].indexOf(picking?.state) !== -1">{{line.get('productUOM').value.name}}</span>
                                                             </td>
                                                             <td class="align-middle text-center"
-                                                                *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">
+                                                                *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1">
                                                                 <button type="button"
                                                                     class="btn btn-danger btn-sm" tabindex="-1"
                                                                     (click)="deleteLine(i)">
