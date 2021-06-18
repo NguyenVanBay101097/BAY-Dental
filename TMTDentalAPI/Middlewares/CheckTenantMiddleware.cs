@@ -29,7 +29,9 @@ namespace TMTDentalAPI.Middlewares
             if (tenant != null)
             {
                 await _next.Invoke(context);
-            }else {
+            }
+            else
+            {
                 var subDomain = string.Empty;
                 var host = context.Request.Host.Host;
                 if (!string.IsNullOrWhiteSpace(host))
@@ -48,18 +50,12 @@ namespace TMTDentalAPI.Middlewares
 
                     context.Response.StatusCode = 503;
 
-                    var content = File.ReadAllText(@"C:\Users\Seven\Desktop\source\TDental\TMTDentalAPI\ClientApp\src\app\auth\not-avaliable\not-avaliable.component.html");
-                    var pathReq = context.Request.Path.ToString();
-                    if (pathReq.ToLower().Contains("/auth/notavaliable"))
-                        await _next.Invoke(context);
-                    else
-                    {
-                        context.Response.Redirect("/auth/notavaliable");
-                    }
+                    var content = File.ReadAllText(@"Views\Auth\Notavaliable.cshtml");
+                    await context.Response.WriteAsync(content);
                 }
             }
-         
-        } 
+
+        }
 
     }
 }

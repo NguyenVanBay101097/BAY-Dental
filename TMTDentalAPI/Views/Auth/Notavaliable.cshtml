@@ -3,11 +3,21 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - TPOS.VN</title>
+    <title>Tdental</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+
     <style>
         .list-group li {
             border-color: #7fa6d0 !important;
+        }
+
+        .list-group-item a {
+            color: white;
+        }
+
+        .font-weight-600 {
+            font-weight: 600
         }
     </style>
 </head>
@@ -19,11 +29,20 @@
             <div><b>0908075455</b> để được hỗ trợ</div>
         </div>
         <ul class="list-group text-white mt-4">
-            <li class="list-group-item list-group-item-action active">Trang chủ</li>
-            <li class="list-group-item list-group-item-action active">Liên hệ</li>
-            <li class="list-group-item list-group-item-action active">Đăng nhập</li>
+            <li class="list-group-item list-group-item-action active d-flex justify-content-lg-between">
+                <a href=" https://tdental.vn/">
+                    <i class="fas fa-home">
+                    </i> Trang chủ
+                </a>
+                <span class="font-weight-600">></span>
+            </li>
+            <li class="list-group-item list-group-item-action active  d-flex justify-content-lg-between">
+                <a href="https://tdental.vn/lien-he.html">
+                    <i class="fas fa-id-card-alt"></i> Liên hệ
+                </a>
+                <span class="font-weight-600">></span>
+            </li>
         </ul>
     </div>
-
 </body>
 </html>
