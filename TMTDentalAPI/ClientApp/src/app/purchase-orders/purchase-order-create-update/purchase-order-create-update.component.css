@@ -195,3 +195,12 @@ input[type="radio"]{
     padding: 4px;
 }
 
+.line-amount-residual{
+    border-top: 1px solid ;
+}
+
+.o_form_view .o_group.o_inner_group.oe_subtotal_footer {
+    border-top: none;
+}
+
+

@@ -23,6 +23,7 @@ import { unionBy } from 'lodash';
 import { observe } from 'fast-json-patch';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PermissionService } from 'src/app/shared/permission.service';
 declare var jquery: any;
 declare var $: any;
 
@@ -50,7 +51,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   canCreateUpdate = false;
   canCreate = false;
   canPrint = false;
-
+  hasDefined = false;
   filteredPartners: PartnerSimple[] = [];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
@@ -73,6 +74,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     private printServie: PrintService,
     private checkPermissionService: CheckPermissionService,
     public authService: AuthService,
+    private permissionService: PermissionService
   ) { }
 
   ngOnInit() {
@@ -109,6 +111,11 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     });
 
     this.loadFilteredPartners();
+    this.authService.getGroups().subscribe((result: any) => {
+      this.permissionService.define(result);
+      this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+      
+    });
   }
 
   get state() { return this.pickingForm.get('state').value; }

@@ -113,6 +113,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.authService.getGroups().subscribe((result: any) => {
       this.permissionService.define(result);
       this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+
     });
   }
 
@@ -230,12 +231,11 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   }
 
   get getAmountTotal() {
-    var total = 0;
-    this.orderLines.controls.forEach(c => {
-      total += this.computeLinePriceSubtotal(c);
-    });
-    return total;
+    return this.orderLines.value.reduce((total, cur) => {
+      return total + cur.priceUnit * (1 - cur.discount / 100) * cur.productQty;
+    }, 0);
   }
+
 
   onSaveConfirm() {
     var index = _.findIndex(this.orderLines.controls, o => {
@@ -250,14 +250,22 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-
+    debugger
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
     val.journalId = val.journal.id;
+
     var data = Object.assign(this.purchaseOrder, val);
     this.purchaseOrderService.create(data).subscribe((result: any) => {
       this.purchaseOrderService.buttonConfirm([result.id]).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xác nhận thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.router.navigate(['/purchase/orders/edit/' + result.id]);
       }, () => {
         this.router.navigate(['/purchase/orders/edit/' + result.id]);
@@ -278,6 +286,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   buttonConfirm() {
     if (this.id) {
       this.purchaseOrderService.buttonConfirm([this.id]).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xác nhận thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.loadRecord();
       });
     }
@@ -323,6 +338,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   selectProduct(item) {
     var product = item;
+
     // var index = _.findIndex(this.orderLines.controls, o => {
     //   return o.get('product').value.id == product.id;
     // });
@@ -334,6 +350,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     productSimple.id = product.id;
     productSimple.name = product.name;
     this.purchaseLineService.onChangeProduct(val).subscribe(result => {
+      console.log(result);
+
       var group = this.fb.group({
         name: result.name,
         priceUnit: [result.priceUnit, Validators.required],
@@ -343,7 +361,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         productId: product.id,
         priceSubtotal: null,
         productQty: [1, Validators.required],
-        discount: 0,
+        discount: [0, Validators.required],
       });
 
       this.orderLines.push(group);
@@ -391,13 +409,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       return o.get('productQty').value == null || o.get('priceUnit').value == null;
     });
     if (index !== -1) {
-      // this.notificationService.show({
-      //   content: 'Vui lòng nhập số lượng và đơn giá',
-      //   hideAfter: 3000,
-      //   position: { horizontal: 'center', vertical: 'top' },
-      //   animation: { type: 'fade', duration: 400 },
-      //   type: { style: 'warning', icon: true }
-      // });
       return false;
     }
 
@@ -406,11 +417,12 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
     val.journalId = val.journal.id;
+    // val.productId = this.purchaseOrder.product ? this.purchaseOrder.prpduct.id : null;
+    // val.productUOMId = this.purchaseOrder.productUOM ? this.purchaseOrder.productUOM.id : null;
     var data = Object.assign(this.purchaseOrder, val);
     if (this.id) {
       this.purchaseOrderService.update(this.id, data).subscribe(() => {

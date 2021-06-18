@@ -49,7 +49,7 @@
                         class="btn btn-primary btn-sm" (click)="getPrint(purchaseOrder?.id)">
                         In phiếu
                     </button>
-                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1" type="button"
+                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1 && purchaseOrder?.type != 'refund'" type="button"
                         class="btn btn-primary btn-sm" (click)="actionRefund()">
                         Trả hàng
                     </button>
@@ -210,18 +210,18 @@
                     </div>
 
                     <div class="o_form_section_right">
-                        <p class="t_tilte">Danh sách mua hàng</p>
+                        <p class="t_tilte">Danh sách {{this.purchaseOrder?.type == 'order' ? 'mua hàng' : 'trả hàng'}} </p>
                         <table class="table table-sm mb-0" id="table_details">
                             <thead>
                                 <tr>
-                                    <th scope="col" width="80">STT</th>
-                                    <th scope="col" width="200">Hàng hóa</th>
+                                    <th scope="col" class="text-center" width="80">STT</th>
+                                    <th scope="col" width="200">Tên hàng hóa</th>
                                     <th scope="col" width="120">Số lượng</th>
                                     <th scope="col" width="120">ĐVT</th>
                                     <th scope="col" width="180">Đơn giá</th>
                                     <th scope="col" width="120">CK(%)</th>
                                     <th scope="col" class="text-right" width="180">Thành tiền</th>
-                                    <th scope="col" width="80" class="text-center"
+                                    <th scope="col" width="50" class="text-center"
                                         *ngIf="purchaseOrder?.state == 'draft'">
                                         <i class="far fa-trash-alt"></i>
                                     </th>
@@ -230,7 +230,7 @@
                             <tbody formArrayName="orderLines">
                                 <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                     <tr [formGroupName]="i">
-                                        <td class="align-middle">{{ i + 1 }}</td>
+                                        <td class="text-center align-middle">{{ i + 1 }}</td>
                                         <td class="align-middle">{{ line.get('product').value?.name}}</td>
                                         <td class="align-middle">
                                             <kendo-numerictextbox [min]="0" [format]="'n0'"
@@ -242,9 +242,9 @@
                                             </span>
                                         </td>
                                         <td class="align-middle">
-                                            <a class="text-primary" *ngIf="purchaseOrder.state == 'draft'"
+                                            <a title="Click vào để thay đổi đơn vị" class="text-primary" *ngIf="purchaseOrder.state == 'draft' && hasDefined"
                                                 (click)="changeUoM(line)">{{line.get('productUOM').value?.name}}</a>
-                                            <span *ngIf="purchaseOrder?.state != 'draft'">
+                                            <span *ngIf="purchaseOrder?.state != 'draft' || (!hasDefined && purchaseOrder.state == 'draft')">
                                                 {{line.get('productUOM').value?.name}}
                                             </span>
                                         </td>
@@ -270,22 +270,60 @@
                                         <td class="align-middle text-right">
                                             {{computeLinePriceSubtotal(line) | number}}
                                         </td>
-                                        <td class="align-middle" *ngIf="purchaseOrder?.state == 'draft'">
-                                            <button type="button" class="btn btn-xs btn-info mr-1" title="Tạo bản sao"
+                                        <td class="text-center align-middle" *ngIf="purchaseOrder?.state == 'draft'">
+                                            <button type="button" class="btn btn-xs btn-info" title="Tạo bản sao"
                                                 (click)="duplicateLine(i, line)">
                                                 <i class="far fa-copy"></i>
                                             </button>
-                                            <button type="button" class="btn btn-xs btn-danger" title="Xóa"
+                                            <button type="button" class="btn btn-xs btn-danger " title="Xóa"
                                                 (click)="removeOrderLine(i)">
                                                 <i class="far fa-trash-alt"></i>
                                             </button>
                                         </td>
                                     </tr>
-                                </ng-container>
+                                </ng-container>                                                         
+                            </tbody>
+                        </table>                      
+                        <table class="o_group o_inner_group oe_subtotal_footer oe_right pr-0 o_group_col_4">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label pb-0">
+                                        <label class="o_form_label oe_subtotal_footer_separator">
+                                            Tổng tiền
+                                        </label>
+                                    </td>
+                                    <td colspan="1">
+                                        <span
+                                            class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="purchaseOrder?.state != 'draft'">
+                                    <td colspan="1" class="o_td_label pb-0">
+                                        <label class="o_form_label oe_subtotal_footer_separator">
+                                           Đã thanh toán
+                                        </label>
+                                    </td>     
+                                    <td colspan="1">
+                                        <span class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">
+                                            {{((getAmountTotal - purchaseOrder?.amountResidual) || 0) | number}}
+                                        </span>
+                                    </td>                                                                  
+                                </tr>
+                                <tr *ngIf="purchaseOrder?.state != 'draft'" class="line-amount-residual">
+                                    <td colspan="1" class="o_td_label pb-0">
+                                        <label class="o_form_label oe_subtotal_footer_separator">
+                                            Còn nợ
+                                         </label>
+                                    </td> 
+                                    <td colspan="1">
+                                        <span class="oe_subtotal_footer_separator text-danger o_form_field o_form_field_number o_field_widget">
+                                            {{purchaseOrder?.amountResidual | number}}
+                                        </span>
+                                    </td>                                    
+                                  
+                                </tr>
                             </tbody>
                         </table>
-
-
                         <div class="clearfix"></div>
                     </div>
                 </div>

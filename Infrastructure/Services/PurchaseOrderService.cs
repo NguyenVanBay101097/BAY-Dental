@@ -561,8 +561,10 @@ namespace Infrastructure.Services
                 PriceUnit = x.PriceUnit,
                 PriceSubtotal = x.PriceSubtotal,
                 Discount = x.Discount,
+                ProductId = x.ProductId,
                 Product = _mapper.Map<ProductSimple>(x.Product),
                 ProductQty = x.ProductQty,
+                ProductUOMId = x.ProductUOMId,
                 ProductUOM = _mapper.Map<UoMDisplay>(x.ProductUOM),
             }).ToListAsync();
 
