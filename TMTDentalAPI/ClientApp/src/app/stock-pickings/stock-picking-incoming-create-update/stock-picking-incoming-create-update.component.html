@@ -229,10 +229,10 @@
                                                             <td class="align-middle text-center" hasGroups
                                                                 [groups]="'product.group_uom'">
                                                                 <a class="text-primary"
-                                                                    *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"
+                                                                    *ngIf="['done', 'cancel'].indexOf(picking.state) === -1 && hasDefined"
                                                                     (click)="changeUoM(line)">{{line.get('productUOM').value.name}}</a>
                                                                 <span
-                                                                    *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{line.get('productUOM').value.name}}</span>
+                                                                    *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1 || (['done', 'cancel'].indexOf(picking.state) === -1 && !hasDefined)">{{line.get('productUOM').value.name}}</span>
                                                             </td>
                                                             <td class="align-middle text-center"
                                                                 *ngIf="['done', 'cancel'].indexOf(picking.state) === -1">
