@@ -219,7 +219,7 @@
                     </div>
 
                     <div class="o_form_section_right">
-                        <h5>Danh sách mua hàng</h5>
+                        <h5>Danh sách {{type == 'refund' ? ' trả hàng': ' mua hàng'}}</h5>
                         <table class="table table-sm mb-0" id="table_details">
                             <thead>
                                 <tr>
@@ -251,9 +251,9 @@
                                             </span>
                                         </td>
                                         <td class="align-middle">
-                                            <a class="text-primary" *ngIf="purchaseOrder.state == 'draft'"
+                                            <a title="Click vào để thay đổi đơn vị" class="text-primary" *ngIf="purchaseOrder.state == 'draft' && hasDefined"
                                                 (click)="changeUoM(line)">{{line.get('productUOM').value?.name}}</a>
-                                            <span *ngIf="purchaseOrder?.state != 'draft'">
+                                            <span *ngIf="purchaseOrder?.state != 'draft' || (!hasDefined && purchaseOrder.state == 'draft')">
                                                 {{line.get('productUOM').value?.name}}
                                             </span>
                                         </td>

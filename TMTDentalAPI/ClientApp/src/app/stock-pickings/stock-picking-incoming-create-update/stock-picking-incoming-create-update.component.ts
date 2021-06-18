@@ -109,6 +109,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     });
 
     this.loadFilteredPartners();
+    
   }
 
   get state() { return this.pickingForm.get('state').value; }

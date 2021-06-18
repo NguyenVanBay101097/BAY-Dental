@@ -113,6 +113,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.authService.getGroups().subscribe((result: any) => {
       this.permissionService.define(result);
       this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+      
     });
   }
 
@@ -346,6 +347,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   selectProduct(item) {
     var product = item;
+    
     // var index = _.findIndex(this.orderLines.controls, o => {
     //   return o.get('product').value.id == product.id;
     // });
@@ -357,6 +359,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     productSimple.id = product.id;
     productSimple.name = product.name;
     this.purchaseLineService.onChangeProduct(val).subscribe(result => {
+      console.log(result);
+      
       var group = this.fb.group({
         name: result.name,
         priceUnit: [result.priceUnit, Validators.required],
@@ -366,7 +370,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         productId: product.id,
         priceSubtotal: null,
         productQty: [1, Validators.required],
-        discount: 0,
+        discount: [0, Validators.required],
       });
 
       this.orderLines.push(group);
