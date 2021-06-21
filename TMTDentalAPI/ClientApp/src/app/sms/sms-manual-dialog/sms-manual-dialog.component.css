@@ -35,3 +35,7 @@
     resize: none!important;
     height: 134px!important;
 }
+
+.textarea-required.ng-touched.ng-dirty.ng-invalid, .textarea-required.ng-touched.ng-invalid {
+    border: 1px solid red;
+}

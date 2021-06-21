@@ -102,19 +102,24 @@
                                                 (valueChange)="onChangeTemplate($event)" [valueField]="'id'"
                                                 class="mb-2">
                                             </kendo-combobox>
-                                            <!-- <a class="btn btn-sm btn-light" (click)="addTemplate()">
-                                                <span class="k-icon k-i-plus"></span>
-                                            </a> -->
                                         </td>
                                     </tr>
                                     <tr>
-                                        <!-- <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label">Nội dung</label>
-                                        </td> -->
                                         <td colspan="2" style="width: 80%;">
-                                            <app-sms-template-content [type]="'partner'"
-                                                [textareaLength]="textareaLimit" [template]="template">
-                                            </app-sms-template-content>
+                                            <textarea type="text" my-autosize
+                                                class="form-control textarea textarea-required" id="textarea_mass"
+                                                formControlName="body"
+                                                [class.border-danger]="submitted && f.body.value==''" rows="5"
+                                                #textarea></textarea>
+                                            <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
+                                                class="text-danger">
+                                                <div *ngIf="f.body.errors.required">Nhập nội dung tin nhắn</div>
+                                                <div *ngIf="f.body.errors.maxlength">Số kí tự đã vượt quá cho phép !
+                                                </div>
+                                            </div>
+                                            <app-sms-note-content></app-sms-note-content>
+                                            <app-sms-personalized-tabs [type]="'partner'"
+                                                (contentEmit)="addToContent($event)"></app-sms-personalized-tabs>
                                         </td>
                                     </tr>
                                     <tr>
@@ -128,7 +133,8 @@
                                             </div>
                                         </td>
                                         <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                            <input type="text" class="form-control mt-2" formControlName="templateName">
+                                            <input type="text" class="form-control mt-2" formControlName="templateName"
+                                                [class.border-danger]="submitted && f.templateName.value==''">
                                             <div *ngIf="f.templateName.errors && (f.templateName.touched || f.templateName.dirty || submitted)"
                                                 class="text-danger">
                                                 <div *ngIf="f.templateName.errors.required">Nhập tiêu đề tin nhắn

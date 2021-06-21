@@ -32,3 +32,14 @@
 .o_form_view .o_group{
     margin: 0!important;
 }
+
+.form-control.textarea{
+    overflow: hidden !important;
+    overflow-wrap: break-word!important;
+    resize: none!important;
+    height: 134px!important;
+}
+
+.textarea-required.ng-touched.ng-dirty.ng-invalid, .textarea-required.ng-touched.ng-invalid {
+    border: 1px solid red;
+}

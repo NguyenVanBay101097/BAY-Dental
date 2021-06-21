@@ -23,7 +23,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <input type="text" class="form-control" formControlName="name">
+                                                <input type="text" class="form-control" formControlName="name"
+                                                    [class.border-danger]="submitted && f.name.value==''">
                                                 <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
                                                     class="text-danger">
                                                     <div *ngIf="f.name.errors.required">Nhập tên tin nhắn</div>
@@ -96,17 +97,13 @@
                                                     #smsTemplateCbx (valueChange)="onChangeTemplate($event)"
                                                     [valueField]="'id'" class="mb-2">
                                                 </kendo-combobox>
-                                                <!-- <a class="btn btn-sm btn-light" (click)="addTemplate()">
-                                                    <span class="k-icon k-i-plus"></span>
-                                                </a> -->
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="2" style="width: 80%;">
-                                                <!-- <app-sms-template-content [type]="templateTypeTab"
-                                                    [textareaLength]="textareaLimit" [template]="template">
-                                                </app-sms-template-content> -->
-                                                <textarea type="text" my-autosize class="form-control textarea textarea-required"
+                                                <textarea type="text" my-autosize
+                                                    class="form-control textarea textarea-required"
+                                                    [class.border-danger]="submitted && f.body.value==''"
                                                     id="textarea_mass" formControlName="body" rows="5"
                                                     #textarea></textarea>
                                                 <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
@@ -116,11 +113,12 @@
                                                     </div>
                                                 </div>
                                                 <app-sms-note-content></app-sms-note-content>
-                                                <app-sms-personalized-tabs [type]="templateTypeTab" (contentEmit)="addToContent($event)"></app-sms-personalized-tabs>
+                                                <app-sms-personalized-tabs [type]="templateTypeTab"
+                                                    (contentEmit)="addToContent($event)"></app-sms-personalized-tabs>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>
+                                            <td colspan="1">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" value=""
                                                         id="flexCheckChecked" (change)="checkedTemplateCopy($event)">
@@ -131,7 +129,8 @@
                                             </td>
                                             <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
                                                 <input type="text" class="form-control mt-2"
-                                                    [class.border-danger]="submitted" formControlName="templateName"
+                                                    formControlName="templateName"
+                                                    [class.border-danger]="submitted && f.templateName.value==''"
                                                     style="height:36px;">
                                                 <div *ngIf="f.templateName.errors && (f.templateName.touched || f.templateName.dirty || submitted)"
                                                     class="text-danger">

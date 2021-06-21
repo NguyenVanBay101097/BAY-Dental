@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-sms-personalized-tabs',
@@ -40,6 +40,10 @@ export class SmsPersonalizedTabsComponent implements OnInit {
     ]
   }
   constructor() { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.ngOnInit();
+  }
 
   ngOnInit() {
     if (this.listTabs[this.type]) {

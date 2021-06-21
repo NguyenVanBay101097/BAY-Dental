@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -12,6 +12,8 @@ import { SmsTemplateService } from '../sms-template.service';
   styleUrls: ['./sms-template-cr-up.component.css']
 })
 export class SmsTemplateCrUpComponent implements OnInit {
+  @ViewChild('textarea', { static: false }) textarea: ElementRef;
+
   title: string;
   formGroup: FormGroup;
   filteredConfigSMS: any[];
@@ -22,7 +24,7 @@ export class SmsTemplateCrUpComponent implements OnInit {
   submitted: boolean = false;
   templateTypeTab: string = '';
   template: any = {
-    text: null,
+    text: '',
     templateType: 'text'
   };
   listTemplates = [
@@ -43,7 +45,7 @@ export class SmsTemplateCrUpComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
-      body: [this.template, Validators.required],
+      body: ['', Validators.required],
       type: [this.listTemplates[0].value, Validators.required]
     })
     this.templateTypeTab = this.listTemplates[0].value;
@@ -56,22 +58,21 @@ export class SmsTemplateCrUpComponent implements OnInit {
   }
 
   get f() { return this.formGroup.controls; }
-
-  get bodyControl() { return this.formGroup.get('body'); }
+  get textValue() { return this.formGroup.get('body').value; }
 
   loadDataFromApi() {
     this.smsTemplateService.get(this.id).subscribe((res: any) => {
       this.formGroup.patchValue(res);
       this.template = JSON.parse(res.body);
-      this.bodyControl.setValue(this.template);
+      this.f.body.setValue(this.template.text);
     });
   }
 
   onSave() {
     this.submitted = true;
     if (this.formGroup.invalid) { return false; }
-    if (!this.template.text) return;
     var formValue = this.formGroup.value;
+    this.template.text = formValue.body;
     formValue.body = JSON.stringify(this.template);
     if (this.id) {
       this.smsTemplateService.update(this.id, formValue).subscribe(
@@ -115,6 +116,27 @@ export class SmsTemplateCrUpComponent implements OnInit {
   }
   selectTemplate(value) {
     this.templateTypeTab = value;
+  }
+
+  addToContent(tabValue) {
+    const selectionStart = this.textarea.nativeElement.selectionStart;
+    const selectionEnd = this.textarea.nativeElement.selectionEnd;
+    var tabValueNew = tabValue;
+    if (this.textValue) {
+      tabValueNew = ((selectionStart > 0 && this.textValue[selectionStart - 1] == ' ') ? "" : " ")
+        + tabValue
+        + (this.textValue[selectionEnd] == ' ' ? "" : " ");
+      this.f.body.setValue(
+        this.textValue.slice(0, selectionStart)
+        + tabValueNew
+        + this.textValue.slice(this.textarea.nativeElement.selectionEnd)
+      );
+    } else {
+      this.f.body.setValue(tabValue);
+    }
+
+    this.textarea.nativeElement.focus();
+    this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
   }
 
   onCancel(){

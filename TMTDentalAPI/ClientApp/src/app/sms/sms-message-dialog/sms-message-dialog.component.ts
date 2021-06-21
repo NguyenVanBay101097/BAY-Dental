@@ -1,5 +1,5 @@
 import { state } from '@angular/animations';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -26,6 +26,7 @@ export class SmsMessageDialogComponent implements OnInit {
   @ViewChild("smsCampaignCbx", { static: true }) smsCampaignCbx: ComboBoxComponent;
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent;
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent;
+  @ViewChild('textarea', { static: false }) textarea: ElementRef;
 
   formGroup: FormGroup;
   title: string;
@@ -38,7 +39,7 @@ export class SmsMessageDialogComponent implements OnInit {
   errorSendLimit: boolean = false;
   noLimit: boolean = false;
   textareaLimit: number = 200;
-  templateTypeTab;
+  templateTypeTab: string;
   template: any = {
     text: '',
     templateType: 'text'
@@ -49,6 +50,7 @@ export class SmsMessageDialogComponent implements OnInit {
   submitted = false;
 
   get f() { return this.formGroup.controls; }
+  get textValue() { return this.formGroup.get('body').value; }
 
   constructor(
     private fb: FormBuilder,
@@ -65,13 +67,14 @@ export class SmsMessageDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      name: [null, Validators.required],
+      name: ['', Validators.required],
       smsCampaign: [null, Validators.required],
       smsAccount: [null, Validators.required],
       template: null,
       typeSend: "manual", // manual: gửi ngay, automatic: đặt lịch
       scheduleDateObj: new Date(),
-      templateName: null
+      templateName: '',
+      body: ['', Validators.required]
     })
     this.loadCampaign();
     this.loadAccount();
@@ -166,6 +169,7 @@ export class SmsMessageDialogComponent implements OnInit {
         templateType: 'text'
       }
     }
+    this.f.body.setValue(this.template.text);
   }
 
   searchSmsTemplate(q?: string) {
@@ -186,7 +190,16 @@ export class SmsMessageDialogComponent implements OnInit {
   }
 
   checkedTemplateCopy(event) {
-    this.isTemplateCopy = event.target.checked;
+    var check = event.target.checked
+    if (check) {
+      this.isTemplateCopy = true;
+      this.f.templateName.setValidators(Validators.required);
+      this.f.templateName.updateValueAndValidity();
+    } else {
+      this.isTemplateCopy = false;
+      this.f.templateName.clearValidators();
+      this.f.templateName.updateValueAndValidity();
+    }
   }
 
   onSelectPartners() {
@@ -209,7 +222,7 @@ export class SmsMessageDialogComponent implements OnInit {
     val.smsCampaignId = val.smsCampaign ? val.smsCampaign.id : null;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.smsTemplateId = val.template ? val.template.id : null;
-    val.body = this.template ? JSON.stringify(this.template) : '';
+    val.body = val.body ? val.body : '';
     val.resModel = "partner"
     val.resIds = this.partnerIds;
     val.state = val.typeSend == 'automatic' ? 'in_queue' : 'draft';
@@ -222,16 +235,14 @@ export class SmsMessageDialogComponent implements OnInit {
   actionSendNow() {
     this.submitted = true;
     if (this.formGroup.invalid) return;
-    if (!this.template.text) return;
     if ((this.errorSendLimit && !this.noLimit) || this.partnerIds.length == 0) return;
     var val = this.GetValueFormGroup();
-    val.body = this.template ? this.template.text : '';
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.campaign = val.smsCampaign;
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.brandName = val.smsAccount.brandName;
     modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.scheduleDateObj, "dd-MM-yyyy HH:mm");;
-    modalRef.componentInstance.body = this.template ? this.template.text : '';
+    modalRef.componentInstance.body = val.body;
     modalRef.componentInstance.numberSms = this.partnerIds ? this.partnerIds.length : 0;
     modalRef.result.then(() => {
       this.smsMessageService.create(val).subscribe(
@@ -243,7 +254,7 @@ export class SmsMessageDialogComponent implements OnInit {
             }
           )
 
-          if (this.isTemplateCopy) {
+          if (this.isTemplateCopy && val.templateName != '') {
             let template = {
               text: val.body,
               templateType: 'text'
@@ -267,7 +278,6 @@ export class SmsMessageDialogComponent implements OnInit {
   actionReminder() {
     this.submitted = true;
     if (this.formGroup.invalid) return;
-    if (!this.template.text) return;
     if ((this.errorSendLimit && !this.noLimit) || this.partnerIds.length == 0) return;
     var val = this.GetValueFormGroup();
     val.body = this.template ? this.template.text : '';
@@ -276,7 +286,7 @@ export class SmsMessageDialogComponent implements OnInit {
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.brandName = val.smsAccount.brandName;
     modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.scheduleDateObj, "dd-MM-yyyy HH:mm");;
-    modalRef.componentInstance.body = this.template ? this.template.text : '';
+    modalRef.componentInstance.body = val.body;
     modalRef.componentInstance.numberSms = this.partnerIds ? this.partnerIds.length : 0;
     modalRef.result.then(() => {
       this.smsMessageService.create(val).subscribe(
@@ -286,13 +296,13 @@ export class SmsMessageDialogComponent implements OnInit {
               id: res.id,
               scheduleDate: this.intlService.formatDate(val.scheduleDateObj, "yyyy-MM-ddTHH:mm:ss")
             }).subscribe(
-            () => {
-              this.notify("Gửi tin nhắn thành công", true);
-              this.activeModal.close();
-            }
-          )
+              () => {
+                this.notify("Gửi tin nhắn thành công", true);
+                this.activeModal.close();
+              }
+            )
 
-          if (this.isTemplateCopy) {
+          if (this.isTemplateCopy && val.templateName != '') {
             let template = {
               text: val.body,
               templateType: 'text'
@@ -311,8 +321,28 @@ export class SmsMessageDialogComponent implements OnInit {
         }
       )
     })
+  }
 
 
+  addToContent(tabValue) {
+    const selectionStart = this.textarea.nativeElement.selectionStart;
+    const selectionEnd = this.textarea.nativeElement.selectionEnd;
+    var tabValueNew = tabValue;
+    if (this.textValue) {
+      tabValueNew = ((selectionStart > 0 && this.textValue[selectionStart - 1] == ' ') ? "" : " ")
+        + tabValue
+        + (this.textValue[selectionEnd] == ' ' ? "" : " ");
+      this.f.body.setValue(
+        this.textValue.slice(0, selectionStart)
+        + tabValueNew
+        + this.textValue.slice(this.textarea.nativeElement.selectionEnd)
+      );
+    } else {
+      this.f.body.setValue(tabValue);
+    }
+
+    this.textarea.nativeElement.focus();
+    this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
   }
 
   changeTypeSend(event) {

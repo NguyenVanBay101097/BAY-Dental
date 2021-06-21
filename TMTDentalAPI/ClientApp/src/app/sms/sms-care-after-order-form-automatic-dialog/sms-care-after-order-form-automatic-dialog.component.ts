@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
@@ -24,8 +24,10 @@ import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 })
 export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
 
-  @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
-  @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent
+  @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent;
+  @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent;
+  @ViewChild('textarea', { static: false }) textarea: ElementRef;
+
   formGroup: FormGroup;
   filteredConfigSMS: any[];
   filteredSmsAccount: any[];
@@ -49,9 +51,9 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   public today: Date = new Date;
   public timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
   public timeRunJob: Date = new Date();
-  get f() {
-    return this.formGroup.controls;
-  }
+  get f() { return this.formGroup.controls; }
+  get textValue() { return this.formGroup.get('body').value; }
+
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -78,8 +80,10 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       timeBeforSend: [1, Validators.required],
       name: ['', Validators.required],
       templateName: '',
+      body: ['', Validators.required]
+
     })
-    
+
     if (this.id) {
       this.loadDataFormApi();
     }
@@ -119,8 +123,8 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
           }
           this.campaign = res.smsCampaign
           if (res.productCategories && res.productCategories.length > 0) {
-            this.filter = "productCategory"
-            res.filter = "productCategory"
+            this.filter = "product_category"
+            res.filter = "product_category"
           }
           this.formGroup.patchValue(res);
           if (res.body) {
@@ -185,6 +189,8 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
         templateType: 'text'
       }
     }
+    this.f.body.setValue(this.template.text);
+
   }
 
   searchSmsTemplate(q?: string) {
@@ -197,13 +203,11 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   onSave() {
     this.submitted = true;
     if (this.formGroup.invalid) return;
-    if (!this.template.text) return;
     var val = this.formGroup.value;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.scheduleTime = this.intlService.formatDate(val.scheduleTimeObj, "yyyy-MM-ddTHH:mm");
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.templateId = val.template ? val.template.id : null;
-    val.body = this.template ? this.template.text : '';
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
     val.productIds = val.products ? val.products.map(x => x.id) : [];
     val.productCategoryIds = val.productCategories ? val.productCategories.map(x => x.id) : [];
@@ -272,7 +276,6 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
       this.f.productCategories.setValidators(Validators.required);
       this.f.productCategories.updateValueAndValidity();
     }
-    
   }
 
 
@@ -305,6 +308,27 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
         }
       }
     );
+  }
+
+  addToContent(tabValue) {
+    const selectionStart = this.textarea.nativeElement.selectionStart;
+    const selectionEnd = this.textarea.nativeElement.selectionEnd;
+    var tabValueNew = tabValue;
+    if (this.textValue) {
+      tabValueNew = ((selectionStart > 0 && this.textValue[selectionStart - 1] == ' ') ? "" : " ")
+        + tabValue
+        + (this.textValue[selectionEnd] == ' ' ? "" : " ");
+      this.f.body.setValue(
+        this.textValue.slice(0, selectionStart)
+        + tabValueNew
+        + this.textValue.slice(this.textarea.nativeElement.selectionEnd)
+      );
+    } else {
+      this.f.body.setValue(tabValue);
+    }
+
+    this.textarea.nativeElement.focus();
+    this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
   }
 
 }

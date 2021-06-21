@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -21,6 +21,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
 
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent
+  @ViewChild('textarea', { static: false }) textarea: ElementRef;
 
   formGroup: FormGroup;
   filteredConfigSMS: any[];
@@ -44,6 +45,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
   public timeRunJob: Date = new Date();
 
   get f() { return this.formGroup.controls; }
+  get textValue() { return this.formGroup.get('body').value; }
 
   constructor(
     private fb: FormBuilder,
@@ -64,6 +66,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
       TypeTimeBeforSend: 'hour',
       timeBeforSend: [1, Validators.required],
       templateName: '',
+      body: ['', Validators.required]
     })
     var user_change_company_vm = localStorage.getItem('user_change_company_vm');
     if (user_change_company_vm) {
@@ -123,6 +126,8 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
         if (res) {
           this.id = res.id;
           this.formGroup.patchValue(res);
+          console.log(res);
+          
           if (res.body) {
             this.template = {
               text: res.body,
@@ -174,6 +179,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
         templateType: 'text'
       }
     }
+    this.f.body.setValue(this.template.text);
   }
 
   searchSmsTemplate(q?: string) {
@@ -186,14 +192,12 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
   onSave() {
     this.submitted = true;
     if (this.formGroup.invalid) return;
-    if (!this.template.text) return;
     var val = this.formGroup.value;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.templateId = val.template ? val.template.id : null;
     val.companyId = this.companyId;
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
-    val.body = this.template ? this.template.text : '';
     this.smsConfigService.saveConfig(val).subscribe(
       res => {
         this.notify("Thiết lập thành công", true);
@@ -227,6 +231,28 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
       this.loadSmsTemplate();
     })
   }
+
+  addToContent(tabValue) {
+    const selectionStart = this.textarea.nativeElement.selectionStart;
+    const selectionEnd = this.textarea.nativeElement.selectionEnd;
+    var tabValueNew = tabValue;
+    if (this.textValue) {
+      tabValueNew = ((selectionStart > 0 && this.textValue[selectionStart - 1] == ' ') ? "" : " ")
+        + tabValue
+        + (this.textValue[selectionEnd] == ' ' ? "" : " ");
+      this.f.body.setValue(
+        this.textValue.slice(0, selectionStart)
+        + tabValueNew
+        + this.textValue.slice(this.textarea.nativeElement.selectionEnd)
+      );
+    } else {
+      this.f.body.setValue(tabValue);
+    }
+
+    this.textarea.nativeElement.focus();
+    this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
+  }
+
   notify(title, isSuccess = true) {
     this.notificationService.show({
       content: title,

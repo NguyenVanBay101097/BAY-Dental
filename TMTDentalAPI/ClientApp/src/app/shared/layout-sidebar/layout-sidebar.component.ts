@@ -176,8 +176,8 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Chúc mừng sinh nhật', link: '/sms/birthday-partners', permissions: ['SMS.Message.Read'] },
         { name: 'Nhắc lịch hẹn', link: '/sms/appointment-reminder', permissions: ['SMS.Message.Read'] },
-        { name: 'Tin nhắn cảm ơn', link: '/sms/thanks-customer', permissions: ['SMS.Message.Read'] },
         { name: 'Chăm sóc sau điều trị', link: '/sms/care-after-order', permissions: ['SMS.Message.Read'] },
+        { name: 'Tin nhắn cảm ơn', link: '/sms/thanks-customer', permissions: ['SMS.Message.Read'] },
         { name: 'Quản lý chiến dịch', link: '/sms/campaign', permissions: ['SMS.Campaign.Read'] },
         { name: 'Theo dõi tin nhắn', link: '/sms/statistic', permissions: ['SMS.Report.AllMessage'] },
         { name: 'Báo cáo', link: '/sms/report', permissions: ['SMS.Report.AllSMS'] },
