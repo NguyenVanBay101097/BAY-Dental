@@ -4,15 +4,25 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class PartnerInfoVM
+    public class PartnerInfoDisplay
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
+        public DateTime? DateCreated { get; set; }
+
         public string Ref { get; set; }
+        public string DisplayName { get; set; }
+        public string Name { get; set; }
         public string Phone { get; set; }
-        public int? BirthDay { get; set; }
-        public int? BirthMonth { get; set; }
+        public string Email { get; set; }
         public int? BirthYear { get; set; }
+        public int? BirthMonth { get; set; }
+        public int? BirthDay { get; set; }
+        public string OrderState { get; set; }
+        public decimal? OrderResidual { get; set; }
+        public decimal? TotalDebit { get; set; }
+        public Guid? MemberLevelId { get; set; }
+        public MemberLevelBasic MemberLevel { get; set; }
+        public string PartnerCategIds { get; set; }
         public string DateOfBirth
         {
             get
@@ -39,15 +49,11 @@ namespace Umbraco.Web.Models.ContentEditing
             {
             }
         }
-        public decimal? Residual { get; set; }
-        public decimal? TotalDebit { get; set; }
-        public double? MemberLevel { get; set; }
-        public string PartnerCategIds { get; set; }
     }
 
-    public class PartnerViewInfoPaged
+    public class PartnerInfoPaged
     {
-        public PartnerViewInfoPaged()
+        public PartnerInfoPaged()
         {
             Offset = 0;
             Limit = 20;

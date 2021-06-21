@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20210616044340_CreateViewPartnerInfor")]
-    partial class CreateViewPartnerInfor
+    [Migration("20210621093157_add_function_partnerInfo")]
+    partial class add_function_partnerInfo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

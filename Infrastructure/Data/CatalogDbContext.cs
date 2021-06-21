@@ -168,7 +168,6 @@ namespace Infrastructure.Data
         public DbSet<ModelAccessReport> ModelAccessReports { get; set; }
         public DbSet<SaleReport> SaleReports { get; set; }
         public DbSet<VFundBook> VFundBooks { get; set; }
-        public DbSet<VPartnerInfo> VPartnerInfos { get; set; }
         public DbSet<FacebookConnect> FacebookConnects { get; set; }
         public DbSet<FacebookConnectPage> FacebookConnectPages { get; set; }
         //Facebook
@@ -303,6 +302,7 @@ namespace Infrastructure.Data
 
 
         public DbSet<Agent> Agents { get; set; }
+        public DbSet<PartnerInfo> PartnerInfos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -385,7 +385,6 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboOrderLineToothRelConfiguration());
             builder.ApplyConfiguration(new SaleReportConfiguration());
             builder.ApplyConfiguration(new VFundBookConfiguration());
-            builder.ApplyConfiguration(new VPartnerInfoConfiguration());
             builder.ApplyConfiguration(new PartnerOldNewReportConfiguration());
             builder.ApplyConfiguration(new PurchaseOrderConfiguration());
             builder.ApplyConfiguration(new PurchaseOrderLineConfiguration());
@@ -549,6 +548,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountTypeRelConfiguration());
             builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountRelConfiguration());
             builder.ApplyConfiguration(new AgentConfiguration());
+            builder.ApplyConfiguration(new PartnerInfoConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

@@ -2184,19 +2184,9 @@ namespace Infrastructure.Services
             return list;
         }
 
-        public async Task<PagedResult2<PartnerInfoVM>> GetViewPartnerInfo(PartnerViewInfoPaged val)
+        public async Task<PagedResult2<PartnerInfoDisplay>> GetViewPartnerInfoPaged(PartnerInfoPaged val)
         {
-            var query = _context.VPartnerInfos.AsQueryable();
-            if (!string.IsNullOrEmpty(val.State))
-                query = query.Where(x => x.State == val.State);
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search));
-            if (val.IsResidual.HasValue)
-                query = val.IsResidual.Value ? query.Where(x => x.Residual.HasValue) : query.Where(x => !x.Residual.HasValue);
-            if (val.IsTotalDebit.HasValue)
-                query = val.IsTotalDebit.Value ? query.Where(x => x.TotalDebit.HasValue) : query.Where(x => !x.TotalDebit.HasValue);
-            return null;
-
+            throw new Exception();
 
         }
     }
