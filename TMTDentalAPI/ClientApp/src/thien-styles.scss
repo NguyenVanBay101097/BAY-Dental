@@ -537,11 +537,11 @@ a.disabled {
         border: 1px solid rgba(0, 0, 0, 0.125);
         &-label {
             padding: 0.5rem 1rem;
+            margin-bottom: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            font-size: 0.9rem;
         }
         &-content {
             max-height: 0;
@@ -562,7 +562,7 @@ a.disabled {
             z-index: -1;
             &:checked {
               + .tab-label {
-                  
+
               }
               ~ .tab-content {
                 max-height: 100vh;

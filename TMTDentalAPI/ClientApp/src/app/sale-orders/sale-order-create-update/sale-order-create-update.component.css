@@ -129,3 +129,13 @@
     min-width: 200px;
 }
 
+.customer-avatar {
+    height: 100px;
+    width: 100px;
+}
+
+.cus-row {
+    margin: 0;
+    margin-left: 1rem;
+    width: 100%;
+}
