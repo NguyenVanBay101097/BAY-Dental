@@ -9,17 +9,44 @@
                 <span *ngIf="!saleOrderId">Mới</span>
             </li>
         </ol>
-        <!-- <div class="o_cp_left">
-        <div class="o_cp_buttons">
-            <div class="o_form_buttons_view">
-                <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
-                    *ngIf="id">
-                    Thêm mới</button>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <a [routerLink]="['/partners/customer/' + customerId + '/treatment']" class="btn btn-secondary btn-sm mr-1">
+                        Trở lại
+                    </a>
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder.state != 'done'" (click)="onSave()">
+                        Lưu
+                    </button>
+                    <button type="button" accesskey="1" *ngIf="saleOrder.state == 'draft'" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
+                        Lưu và xác nhận
+                    </button>
+                    <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
+                        Thanh toán
+                    </button>
+                    <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
+                        In phiếu
+                    </button>
+                    <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
+                        Hủy phiếu
+                    </button>
+                    <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
+                        Hoàn thành
+                    </button>
+                    <button *ngIf="['done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
+                        Chưa hoàn thành
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="o_cp_right">
-    </div> -->
+        <div class="o_cp_right" *ngIf="['sale'].indexOf(saleOrder.state) !== -1">
+            <button (click)="createProductToaThuoc()" type="button" class="btn btn-sm btn-primary ml-auto mr-1">
+                Tạo đơn thuốc
+            </button>
+            <button type="button" (click)="dialogAppointment()" class="btn btn-sm btn-primary">
+                Tạo lịch hẹn
+            </button>
+        </div>
     </div>
 </div>
 
@@ -27,50 +54,16 @@
     <form class="o_form_view h-100" [formGroup]="formGroup">
         <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
             <div class="flex-0-0-auto">
-                <div class="d-flex">
-                    <div class="btns">
-                        <a [routerLink]="['/partners/customer/' + customerId + '/treatment']" class="btn btn-secondary btn-sm">
-                            Trở lại
-                        </a>
-                        <!-- <button type="button" *ngIf="saleOrder.state == 'sale' && !isEditting" class="btn btn-secondary btn-sm" (click)="actionEdit()">
-                            Sửa dịch vụ
-                        </button> -->
-                        <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder.state != 'done'" (click)="onSave()">
-                            Lưu
-                        </button>
-                        <button type="button" accesskey="1" *ngIf="saleOrder.state == 'draft'" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
-                            Lưu và xác nhận
-                        </button>
-                        <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
-                            Thanh toán
-                        </button>
-                        <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
-                            In phiếu
-                        </button>
-                        <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
-                Cập nhật công nợ
-            </button> -->
-                        <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
-                            Hủy phiếu
-                        </button>
-                        <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
-                            Hoàn thành
-                        </button>
-                        <button *ngIf="['done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
-                            Chưa hoàn thành
-                        </button>
-                        <!-- <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
-                In phiếu
-            </button> -->
-                    </div>
-                    <div *ngIf="['sale'].indexOf(saleOrder.state) !== -1" class="ml-auto">
-                        <button (click)="createProductToaThuoc()" type="button" class="btn btn-sm btn-primary ml-auto mr-1">
-                            Tạo đơn thuốc
-                        </button>
-                        <button type="button" (click)="dialogAppointment()" class="btn btn-sm btn-primary">
-                            Tạo lịch
-                            hẹn
-                        </button>
+                <div class="t-accordion">
+                    <div class="tab">
+                        <input type="checkbox" id="tab-checkbox-1" checked />
+                        <label class="tab-label" for="tab-checkbox-1">
+                            <b>Thông tin khách hàng</b>
+                            <i class="fas fa-chevron-down"></i>
+                        </label>
+                        <div class="tab-content">
+                            Lorem Ipsum
+                        </div>
                     </div>
                 </div>
                 <div class="o_group">
