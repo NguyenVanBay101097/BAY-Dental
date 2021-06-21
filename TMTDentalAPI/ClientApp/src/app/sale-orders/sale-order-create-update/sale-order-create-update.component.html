@@ -15,31 +15,31 @@
                     <a [routerLink]="['/partners/customer/' + customerId + '/treatment']" class="btn btn-secondary btn-sm mr-1">
                         Trở lại
                     </a>
-                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder.state != 'done'" (click)="onSave()">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder && saleOrder.state != 'done'" (click)="onSave()">
                         Lưu
                     </button>
-                    <button type="button" accesskey="1" *ngIf="saleOrder.state == 'draft'" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
+                    <button type="button" accesskey="1" *ngIf="saleOrder && saleOrder.state == 'draft'" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
                         Lưu và xác nhận
                     </button>
-                    <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
+                    <button *ngIf="saleOrder && ['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
                         Thanh toán
                     </button>
                     <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
                         In phiếu
                     </button>
-                    <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
+                    <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
                         Hủy phiếu
                     </button>
-                    <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
+                    <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
                         Hoàn thành
                     </button>
-                    <button *ngIf="['done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
+                    <button *ngIf="saleOrder && ['done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
                         Chưa hoàn thành
                     </button>
                 </div>
             </div>
         </div>
-        <div class="o_cp_right" *ngIf="['sale'].indexOf(saleOrder.state) !== -1">
+        <div class="o_cp_right" *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1">
             <button (click)="createProductToaThuoc()" type="button" class="btn btn-sm btn-primary ml-auto mr-1">
                 Tạo đơn thuốc
             </button>
@@ -255,7 +255,7 @@
                                     <!-- ưu đãi -->
                                     <div class="card mb-3">
                                         <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">Ưu đãi phiếu điều trị
-                                            <img *ngIf="saleOrder.state != 'done'" class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
+
                                             <span class="ml-auto">{{sumPromotionSaleOrder() | number}}</span>
                                         </div>
                                         <div class="card-body px-3 py-2">
@@ -266,6 +266,12 @@
                                             <div *ngFor="let item of saleOrder.promotions" class="d-flex justify-content-between mb-1">
                                                 <span>{{item.name}}</span>
                                                 <span>{{item.amount | number}}</span>
+                                            </div>
+                                            <div class="w-100 text-right">
+                                                <button type="button" *ngIf="saleOrder.state != 'done'" class="btn btn-primary btn-sm ml-auto" (click)="onOpenSaleOrderPromotion()">
+                                                    <img src="/assets/icons/promotion-white.svg" alt="">
+                                                    Thêm ưu đãi
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

@@ -130,8 +130,8 @@
 }
 
 .cus-avatar {
-    height: 100px;
-    width: 100px;
+    height: 90px;
+    width: 90px;
 }
 .cus-row {
     margin: 0;
@@ -143,4 +143,10 @@
 }
 .cus-info {
     display: flex;
+}
+.cus-label {
+    padding-right: .5rem;
+}
+.cus-content {
+    font-weight: bold;
 }
