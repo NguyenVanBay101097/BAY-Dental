@@ -153,11 +153,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.partnerId) {
       this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' }).subscribe((res: any) => {
         this.saleOrder = res;
+        console.log(this.saleOrder);
+        
         this.updateFormGroup(res);
       });
     } else if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((res: any) => {
         this.saleOrder = res;
+        console.log(this.saleOrder);
+        
         this.updateFormGroup(res);
       });
     }
@@ -166,7 +170,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadTeethList();
     this.loadToothCategories();
     this.loadEmployees();
-
   }
 
   loadEmployees() {

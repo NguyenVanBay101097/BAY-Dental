@@ -129,13 +129,24 @@
     min-width: 200px;
 }
 
-.customer-avatar {
-    height: 100px;
-    width: 100px;
+.cus-avatar {
+    height: 90px;
+    width: 90px;
 }
-
 .cus-row {
     margin: 0;
-    margin-left: 1rem;
     width: 100%;
+}
+.cus-col {
+    padding-left: 1rem;
+    padding-right: 0;
+}
+.cus-info {
+    display: flex;
+}
+.cus-label {
+    padding-right: .5rem;
+}
+.cus-content {
+    font-weight: bold;
 }
