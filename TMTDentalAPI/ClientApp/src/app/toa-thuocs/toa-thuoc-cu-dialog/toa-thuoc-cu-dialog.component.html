@@ -111,13 +111,26 @@
                                         </kendo-numerictextbox>
                                     </td>
                                     <td>
-                                        <select class="form-control" formControlName="useAt">
+                                        <div class="d-flex">
+                                            <div>
+                                                <app-toa-thuoc-line-useat-popover [item]="item" [index]="i" class="ml-3"
+                                                (useAtFormGroup)="onChangeUseAt(i,$event)">
+                                                </app-toa-thuoc-line-useat-popover>
+                                            </div>
+                                            
+                                            <div class="ml-2">
+                                                <span>
+                                                    {{item.get('useAt').value != 'other' ? getUsedAt(item.get('useAt').value) : item.get('note').value}}
+                                                </span>
+                                            </div>                                         
+                                        </div>
+                                        <!-- <select class="form-control" formControlName="useAt">
                                             <option value="after_meal">Sau khi ăn</option>
                                             <option value="before_meal">Trước khi ăn</option>
                                             <option value="in_meal">Trong khi ăn</option>
                                             <option value="after_wakeup">Sau khi thức dậy</option>
                                             <option value="before_sleep">Trước khi đi ngủ</option>
-                                        </select>
+                                        </select> -->
                                     </td>
                                     <td>
                                         <button type="button" title="Hủy" class="btn btn-danger btn-sm"
@@ -168,16 +181,26 @@
                                 </td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table>                 
                     <div class="o_group o_inner_group o_group_col_6">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" formControlName="saveSamplePrescription" id="saveSamplePrescription" (change)="onCheckSaveSamplePrescription($event)">
-                            <label class="form-check-label" for="saveSamplePrescription">
-                                Lưu làm đơn thuốc mẫu
-                            </label>
-                        </div>
-                        <input *ngIf="getFBValueItem('saveSamplePrescription')" type="text" class="form-control w-75" 
-                            formControlName="nameSamplePrescription" placeholder="Nhập tên đơn thuốc mẫu ..." />
+                        <div class="d-flex">
+                            <div class="o_td_label">
+                                <label class="o_form_label">
+                                    Chuẩn đoán bệnh
+                                </label>
+                            </div>
+                            <textarea class="form-control" formControlName="diagnostic"></textarea>
+                        </div>      
+                        <div>
+                            <div class="form-check pt-2">
+                                <input class="form-check-input" type="checkbox" formControlName="saveSamplePrescription" id="saveSamplePrescription" (change)="onCheckSaveSamplePrescription($event)">
+                                <label class="form-check-label" for="saveSamplePrescription">
+                                    Lưu làm đơn thuốc mẫu
+                                </label>
+                            </div>
+                            <input *ngIf="getFBValueItem('saveSamplePrescription')" type="text" class="form-control w-75" 
+                                formControlName="nameSamplePrescription" placeholder="Nhập tên đơn thuốc mẫu ..." />
+                        </div>                       
                     </div>
                 </div>
             </div>

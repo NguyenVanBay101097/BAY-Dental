@@ -175,6 +175,7 @@ namespace Infrastructure.Services
             toathuoc.ReExaminationDate = val.ReExaminationDate;
             toathuoc.EmployeeId = val.EmployeeId;
             toathuoc.Note = val.Note;
+            toathuoc.Diagnostic = val.Diagnostic;
 
             SaveOrderLines(val, toathuoc);
 

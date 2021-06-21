@@ -63,6 +63,7 @@ namespace ApplicationCore.Entities
                 case "in_meal": return "Trong khi ăn";
                 case "after_wakeup": return "Sau khi dậy";
                 case "before_sleep": return "Trước khi đi ngủ";
+                case "other": return (string.IsNullOrEmpty(Note) ? "Khác" : Note);
                 default:
                     return "";
             }
