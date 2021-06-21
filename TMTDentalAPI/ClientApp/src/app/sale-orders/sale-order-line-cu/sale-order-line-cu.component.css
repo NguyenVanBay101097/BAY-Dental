@@ -119,3 +119,11 @@
     padding: 0.125rem 0.35rem;
     margin-right: 5px;
 }
+
+.mt-2-5{
+    margin: 2.5rem !important;
+}
+
+.btn-sm{
+    max-height: 31px !important;
+}
