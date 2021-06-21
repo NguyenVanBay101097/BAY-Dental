@@ -63,21 +63,142 @@
                         </label>
                         <div class="tab-content">
                             <div class="d-flex">
-                                <img class="customer-avatar" [src]="'' || 'assets/images/no-avatar.png'" alt=""
+                                <img class="cus-avatar" [src]="'' || 'assets/images/no-avatar.png'" alt=""
                                     onerror="this.src='assets/images/no-avatar.png';">
                                 <div class="row cus-row">
-                                    <div class="col">
-                                        <label class="cus-label">Khách hàng</label>
-                                        
+                                    <div class="col cus-col">
+                                        <div class="cus-info">
+                                            <label class="cus-label">Khách hàng</label>
+                                            <div class="cus-content">
+                                                <a *ngIf="saleOrder.partner" [routerLink]="['/partners/customer/' + saleOrder.partner.id]">
+                                                    {{saleOrder.partner.displayName}}
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="cus-info">
+                                            <label class="cus-label">Giới tính</label>
+                                            <div class="cus-content">
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="cus-info">
+                                            <label class="cus-label">Nhãn</label>
+                                            <div class="cus-content">
+                                                
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col"></div>
-                                    <div class="col"></div>
+                                    <div class="col cus-col">
+                                        <div class="cus-info">
+                                            <label class="cus-label">Ngày sinh</label>
+                                            <div class="cus-content">
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="cus-info">
+                                            <label class="cus-label">Nghề nghiệp</label>
+                                            <div class="cus-content">
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="cus-info">
+                                            <label class="cus-label">Tiểu sử bệnh</label>
+                                            <div class="cus-content">
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col cus-col">
+                                        <div class="cus-info">
+                                            <label class="cus-label">Tuổi</label>
+                                            <div class="cus-content">
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="cus-info">
+                                            <label class="cus-label">Hạng thành viên</label>
+                                            <div class="cus-content">
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <a *ngIf="saleOrder.partner" [routerLink]="['/partners/customer/' + saleOrder.partner.id]">{{saleOrder.partner.displayName}}</a>
+                                </td>
+                            </tr>
+                            <tr *ngIf="saleOrder.quotation">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Báo giá
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <a class="text-primary" [routerLink]="['/quotations/form']" [queryParams]="{ id: saleOrder.quotation.id}">
+                                        {{saleOrder.quotation.name}}
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr *ngIf="saleOrder.Quote">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Phiếu tư vấn
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <a *ngIf="saleOrder.Quote" [routerLink]="['/sale-quotations/form']" [queryParams]="{id: saleOrder.quote.Id}">{{saleOrder.quote.name}}</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Ngày lập phiếu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'" formControlName="dateOrderObj">
+                                    </kendo-datetimepicker>
+                                    <div *ngIf="f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày lập phiếu</div>
+                                    </div>
+                                    <span [class.d-none]="saleOrder.state == 'draft'">
+                                        {{
+                                        saleOrder.dateOrder | date:
+                                        'short'
+                                        }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Trạng thái
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{getStateDisplay()}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="o_notebook flex-1-1-100 overflow-hidden d-flex flex-column">
