@@ -23,10 +23,13 @@ import { ToaThuocLineUseatPopoverComponent } from './toa-thuoc-line-useat-popove
     ReactiveFormsModule, 
     FormsModule,
     NgbModule
+  ],exports:[
+    ToaThuocLineUseatPopoverComponent
   ],
   entryComponents: [
     ToaThuocCuDialogComponent,
     ToaThuocLineDialogComponent,
+    ToaThuocLineUseatPopoverComponent,
   ],
   providers: [
     ToaThuocService

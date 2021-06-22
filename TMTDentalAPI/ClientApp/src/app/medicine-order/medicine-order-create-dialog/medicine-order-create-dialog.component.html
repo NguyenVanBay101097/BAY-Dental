@@ -163,7 +163,7 @@
                                     <!-- <td class="text-center">
                                         {{line.get('toaThuocLine') && line.get('toaThuocLine').value ?
                                         line.get('toaThuocLine').value.numberOfDays : ''}}</td> -->
-                                    <td>{{line.get('toaThuocLine') ? computeUseAt(line.get('toaThuocLine').value.useAt) : ''}}
+                                    <td>{{line.get('toaThuocLine').value.useAt != 'other' ?  computeUseAt(line.get('toaThuocLine').value.useAt) : line.get('toaThuocLine').value.note }}
                                     </td>
                                     <td class="text-center" style="width: 10%;">
                                         <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
@@ -233,6 +233,16 @@
                                 </th>
                                 <td colspan="1" style="width: 100%;">
                                     {{precscriptPayment.toaThuoc ? precscriptPayment.toaThuoc.note : ''}}
+                                </td>
+                            </tr>
+                            <tr *ngIf="precscriptPayment.toaThuoc?.diagnostic">
+                                <th colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Chuẩn đoán bệnh
+                                    </label>
+                                </th>
+                                <td colspan="1" style="width: 100%;">
+                                    {{precscriptPayment.toaThuoc ? precscriptPayment.toaThuoc.diagnostic : ''}}
                                 </td>
                             </tr>
                             <tr *ngIf="precscriptPayment.toaThuoc?.reExaminationDate">

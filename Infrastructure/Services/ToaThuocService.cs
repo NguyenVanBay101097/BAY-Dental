@@ -203,7 +203,8 @@ namespace Infrastructure.Services
                     NumberOfDays = line.NumberOfDays,
                     Quantity = line.Quantity,
                     UseAt = line.UseAt,
-                    ProductUoMId = line.ProductUoMId
+                    ProductUoMId = line.ProductUoMId,
+                    Note = line.Note
                 });
             }
 
