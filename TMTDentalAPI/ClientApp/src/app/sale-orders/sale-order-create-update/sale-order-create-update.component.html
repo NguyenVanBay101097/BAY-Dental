@@ -76,58 +76,63 @@
                                 <div class="row cus-row">
                                     <div class="col cus-col">
                                         <div class="cus-info">
-                                            <label class="cus-label">Khách hàng</label>
+                                            <label class="cus-label">Khách hàng:</label>
                                             <div class="cus-content">
                                                 <a *ngIf="saleOrder.partner"
                                                     [routerLink]="['/partners/customer/' + saleOrder.partner.id]">
-                                                    {{saleOrder.partner.displayName}}
+                                                    {{saleOrder.partner?.displayName}}
                                                 </a>
                                             </div>
                                         </div>
                                         <div class="cus-info">
-                                            <label class="cus-label">Giới tính</label>
+                                            <label class="cus-label">Giới tính:</label>
                                             <div class="cus-content">
-
+                                                {{saleOrder.partner?.genderConvertcom}}
                                             </div>
                                         </div>
                                         <div class="cus-info">
-                                            <label class="cus-label">Nhãn</label>
+                                            <label class="cus-label">Nhãn:</label>
                                             <div class="cus-content">
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col cus-col">
-                                        <div class="cus-info">
-                                            <label class="cus-label">Ngày sinh</label>
-                                            <div class="cus-content">
-
-                                            </div>
-                                        </div>
-                                        <div class="cus-info">
-                                            <label class="cus-label">Nghề nghiệp</label>
-                                            <div class="cus-content">
-
-                                            </div>
-                                        </div>
-                                        <div class="cus-info">
-                                            <label class="cus-label">Tiểu sử bệnh</label>
-                                            <div class="cus-content">
-
+                                                <span *ngFor="let tag of tags" class="badge badge-secondary mr-1"
+                                                [ngClass]="'o_tag_color_' + tag.Color">
+                                                {{tag.Name}}
+                                            </span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col cus-col">
                                         <div class="cus-info">
-                                            <label class="cus-label">Tuổi</label>
+                                            <label class="cus-label">Ngày sinh:</label>
                                             <div class="cus-content">
-
+                                                {{saleOrder.partner?.dateOfBirth}}
                                             </div>
                                         </div>
                                         <div class="cus-info">
-                                            <label class="cus-label">Hạng thành viên</label>
+                                            <label class="cus-label">Nghề nghiệp:</label>
                                             <div class="cus-content">
-
+                                                {{saleOrder.partner?.jobTitle}}
+                                            </div>
+                                        </div>
+                                        <div class="cus-info">
+                                            <label class="cus-label">Tiểu sử bệnh:</label>
+                                            <div class="cus-content">
+                                                {{saleOrder.partner?.medicalHistory}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col cus-col">
+                                        <div class="cus-info">
+                                            <label class="cus-label">Tuổi:</label>
+                                            <div class="cus-content">
+                                                {{saleOrder.partner?.age}}
+                                            </div>
+                                        </div>
+                                        <div class="cus-info">
+                                            <label class="cus-label">Hạng thành viên:</label>
+                                            <div class="cus-content">
+                                                <span *ngIf="saleOrder.partner.memberLevel" class="badge badge-secondary" [ngClass]="'o_tag_color_' + saleOrder.partner.memberLevel?.color">
+                                                    {{saleOrder.partner.memberLevel?.name}}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>

@@ -108,6 +108,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   submitted = false;
   amountAdvanceBalance: number = 0;
   defaultToothCate: ToothCategoryBasic;
+  tags: any[] = [];
 
   childEmiter = new BehaviorSubject<any>(null);
   @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
@@ -154,14 +155,30 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' }).subscribe((res: any) => {
         this.saleOrder = res;
         console.log(this.saleOrder);
-        
+        this.saleOrder.partner.categories.forEach(item => {
+          var category = {
+            Id: item.id,
+            Name: item.name,
+            CompleteName: item.completeName,
+            Color: item.color
+          };
+          this.tags.push(category);
+        });
         this.updateFormGroup(res);
       });
     } else if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((res: any) => {
         this.saleOrder = res;
         console.log(this.saleOrder);
-        
+        this.saleOrder.partner.categories.forEach(item => {
+          var category = {
+            Id: item.id,
+            Name: item.name,
+            CompleteName: item.completeName,
+            Color: item.color
+          };
+          this.tags.push(category);
+        });
         this.updateFormGroup(res);
       });
     }

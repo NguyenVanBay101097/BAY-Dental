@@ -182,87 +182,88 @@
                                     </span>
                                 </ng-template>
 
-                                <ng-template #popContent let-greeting="greeting">
-                                    <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'"
-                                        [spinners]="false" formControlName="priceUnit">
-                                    </kendo-numerictextbox>
-                                </ng-template>
-                                <ng-template #popTitle let-language="language">Giá gốc</ng-template>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label_help">
-                                Số lượng
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%; text-align: end;">
-                            <ng-container *ngIf="!isEditting; else elseTemplateQty">
-                                <span class="font-weight-600">
-                                    {{line.productUOMQty | number}}
-                                </span>
-                            </ng-container>
-                            <ng-template #elseTemplateQty>
-                                <kendo-numerictextbox required style="width:100%;" [format]="'n0'" [min]="0"
-                                    [spinners]="false" formControlName="productUOMQty">
-                                </kendo-numerictextbox>
-                            </ng-template>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label_help">
-                                Thành tiền
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%; text-align: end;">
-                            <div class="font-weight-600">
-                                <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
-                                    {{line.priceSubTotal | number: '1.0-0'}}
-                                </ng-container>
-                                <ng-template #elseTemplatePriceSub>
-                                    {{getPriceSubTotalFormGroup() | number}}
-                                </ng-template>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="padding: 0 45px 0 0;">
-                            <hr>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label_help">
-                                Thanh toán
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%; text-align: end;">
-                            <div *ngIf="!isFast" class="font-weight-600">
-                                {{line.amountInvoiced | number}}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label_help">
-                                Còn lại
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%; text-align: end;">
-                            <div *ngIf="!isFast" class="font-weight-600">
-                                {{((isEditting? getPriceSubTotalFormGroup(): line.priceSubTotal)-
-                                line.amountInvoiced) |
-                                number}}
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                                            <ng-template #popContent let-greeting="greeting">
+                                                <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'"
+                                                    [spinners]="false" formControlName="priceUnit">
+                                                </kendo-numerictextbox>
+                                            </ng-template>
+                                            <ng-template #popTitle let-language="language">Giá gốc</ng-template>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label_help">
+                                            Số lượng
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%; text-align: end;">
+                                        <ng-container *ngIf="!isEditting; else elseTemplateQty">
+                                            <span class="font-weight-600">
+                                                {{line.productUOMQty | number}}
+                                            </span>
+                                        </ng-container>
+                                        <ng-template #elseTemplateQty>
+                                            <kendo-numerictextbox required style="width:60%;" [format]="'n0'" [min]="0"
+                                                [spinners]="false" formControlName="productUOMQty">
+                                            </kendo-numerictextbox>
+                                        </ng-template>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label_help">
+                                            Thành tiền
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%; text-align: end;">
+                                        <div class="font-weight-600">
+                                            <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
+                                                {{line.priceSubTotal | number: '1.0-0'}}
+                                            </ng-container>
+                                            <ng-template #elseTemplatePriceSub>
+                                                {{getPriceSubTotalFormGroup() | number}}
+                                            </ng-template>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="padding: 0 45px 0 0;">
+                                        <hr>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label_help">
+                                            Thanh toán
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%; text-align: end;">
+                                        <div *ngIf="!isFast" class="font-weight-600">
+                                            {{line.amountInvoiced | number}}
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label_help">
+                                            Còn lại
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%; text-align: end;">
+                                        <div *ngIf="!isFast" class="font-weight-600">
+                                            {{((isEditting? getPriceSubTotalFormGroup(): line.priceSubTotal)-
+                                            line.amountInvoiced) |
+                                            number}}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
 <!-- ưu đãi -->
 <div class="d-flex justify-content-between">
