@@ -215,11 +215,11 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> SetupTenant(CompanySetupTenant val)
         {
             //nếu tenant = null thì báo lỗi
-            if (_tenant == null)
-                return Ok(new { Success = false, message = "Tên miền chưa đăng ký" });
-            //nếu database đã có dữ liệu thì return false
-            if (_context.Companies.ToList().Count > 0)
-                return Ok(new { Success = false, message = "Database đã có dữ liệu" });
+            //if (_tenant == null)
+            //    return Ok(new { Success = false, message = "Tên miền chưa đăng ký" });
+            ////nếu database đã có dữ liệu thì return false
+            //if (_context.Companies.ToList().Count > 0)
+            //    return Ok(new { Success = false, message = "Database đã có dữ liệu" });
 
             try
             {

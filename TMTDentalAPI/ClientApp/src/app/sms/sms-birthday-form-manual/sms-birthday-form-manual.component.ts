@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
+import { BirthdayCustomerService, ListPagedBirthdayCustomerRequest } from 'src/app/core/services/birthday-customer.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { SmsCampaignService } from '../sms-campaign.service';
@@ -48,6 +51,8 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private smsCampaignService: SmsCampaignService,
+    private birthCustomerService: BirthdayCustomerService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -66,21 +71,30 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    var val = new PartnerPaged();
+    var val = new ListPagedBirthdayCustomerRequest();
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.customer = true;
-    val.supplier = false;
-    val.month = this.month;
-    val.isBirthday = this.isBirthday;
-    this.partnerService.getCustomerBirthDay(val)
-      .subscribe((res: any[]) => {
-        this.gridData = res;
-      }, err => {
-        console.log(err);
-      }
+
+    this.birthCustomerService
+      .getListPaged(val)
+      .pipe(
+        map(
+          (response: any) =>
+            <GridDataResult>{
+              data: response.items,
+              total: response.totalItems,
+            }
+        )
       )
+      .subscribe(
+        (res) => {
+          this.gridData = res;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
   }
 
   searchSmsTemplate(q?: string) {

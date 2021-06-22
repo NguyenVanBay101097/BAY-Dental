@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using AutoMapper;
 using Hangfire;
+using Infrastructure.HangfireJobService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -210,6 +211,36 @@ namespace Infrastructure.Services
 
             //other fields
             await SetDefaultOtherFields(self, classified.Others);
+
+            //Thêm dữ liệu cần thiết khi bật tắt tính năng ví dụ sms
+            foreach(var item in classified.Groups)
+            {
+                var name = item.Name;
+                var val = self.GetType().GetProperty(name).GetValue(self, null);
+                if (name == "GroupSms")
+                {
+                    var hostName = _tenant != null ? _tenant.Hostname : "localhost";
+                    var jobId = $"{hostName}_Send_Sms_message_detail";
+                    if (Equals(val, 1) || Equals(val, true))
+                    {
+                        RecurringJob.AddOrUpdate<ISmsMessageJobService>(jobId, x => x.RunJobFindSmsMessage(hostName), $"*/30 * * * *", TimeZoneInfo.Local);
+                    }
+                    else
+                    {
+                        RecurringJob.RemoveIfExists(jobId);
+                    }
+                }
+
+                if (name == "GroupMedicine")
+                {
+                    var productService = GetService<IProductService>();
+                    var medicines = await productService.SearchQuery(x => x.Type2 == "medicine").ToListAsync();
+                    foreach (var medicine in medicines)
+                        medicine.PurchaseOK = Convert.ToBoolean(val);
+                    await productService.UpdateAsync(medicines);
+                }
+            }
+
 
             //xử lý clear cache
             _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule");

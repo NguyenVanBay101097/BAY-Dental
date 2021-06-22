@@ -1956,20 +1956,14 @@ namespace Infrastructure.Services
                 query = query.Where(x => (x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search) || x.Phone.Contains(val.Search)));
             }
 
-            if (val.isBoth.HasValue && val.isBoth == true)
+            if (val.Customer.HasValue)
             {
-                query = query.Where(x => x.Customer == true || x.Supplier == true);
+                query = query.Where(x => x.Customer == true);
             }
-            else
+
+            if (val.Supplier.HasValue)
             {
-                if (val.Customer.HasValue)
-                {
-                    query = query.Where(x => x.Customer == true);
-                }
-                if (val.Supplier.HasValue)
-                {
-                    query = query.Where(x => x.Supplier == true);
-                }
+                query = query.Where(x => x.Supplier == true);
             }
 
             var res = await query
@@ -2053,15 +2047,6 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.Phone.Contains(val.Search));
 
-            if (val.Month.HasValue)
-                query = query.Where(x => x.BirthMonth.HasValue && x.BirthMonth.Value == val.Month.Value);
-
-            if (val.IsBirthday.HasValue && val.IsBirthday.Value)
-            {
-                var currentDay = DateTime.Today.Day;
-                var currentMonth = DateTime.Today.Month;
-                query = query.Where(x => x.BirthDay.HasValue && x.BirthDay.Value == currentDay && x.BirthMonth.HasValue && x.BirthMonth.Value == currentMonth);
-            }
             var partnerIds = await query.Select(x => x.Id).ToListAsync();
 
             var SaleReportSearch = new SaleReportSearch()   

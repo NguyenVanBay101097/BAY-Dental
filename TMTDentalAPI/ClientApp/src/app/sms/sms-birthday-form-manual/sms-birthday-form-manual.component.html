@@ -31,11 +31,15 @@
     <kendo-grid-column field="name" title="Họ tên" width="200"></kendo-grid-column>
     <kendo-grid-column field="phone" title="Số điện thoại" width="120"></kendo-grid-column>
     <kendo-grid-column field="dateOfBirth" title="Ngày sinh" width="120"></kendo-grid-column>
-    <kendo-grid-column field="gender" title="Giới tính" width="120"></kendo-grid-column>
-    <kendo-grid-column field="countLine" title="Số dịch vụ" width="120"></kendo-grid-column>
-    <kendo-grid-column title="Doanh thu" class="text-right" width="120">
+    <kendo-grid-column field="displayGender" title="Giới tính" width="120"></kendo-grid-column>
+    <kendo-grid-column field="totalQty" title="Số dịch vụ"  class="text-right" width="120">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{dataItem?.debit | number}}
+            {{dataItem.totalQty | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="priceTotal" title="Doanh thu" class="text-right" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.priceTotal | number}}
         </ng-template>
     </kendo-grid-column>
 </kendo-grid>
