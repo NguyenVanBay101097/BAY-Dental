@@ -128,3 +128,8 @@
 .btn-sm{
     max-height: 31px !important;
 }
+
+.btn-teeth {
+    cursor: pointer;
+    margin-left: 1rem;
+}
