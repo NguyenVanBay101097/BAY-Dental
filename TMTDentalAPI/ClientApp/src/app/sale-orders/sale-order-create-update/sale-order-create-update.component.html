@@ -56,7 +56,7 @@
     <form class="o_form_view h-100" [formGroup]="formGroup">
         <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
             <div class="flex-0-0-auto">
-                <div class="t-accordion">
+                <div class="t-accordion mb-3">
                     <div class="tab">
                         <input type="checkbox" id="tab-checkbox-1" checked />
                         <label class="tab-label" for="tab-checkbox-1">
@@ -128,78 +128,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="o_group">
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Khách hàng
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="saleOrder.partner" [routerLink]="['/partners/customer/' + saleOrder.partner.id]">{{saleOrder.partner.displayName}}</a>
-                                </td>
-                            </tr>
-                            <tr *ngIf="saleOrder.quotation">
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Báo giá
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <a class="text-primary" [routerLink]="['/quotations/form']" [queryParams]="{ id: saleOrder.quotation.id}">
-                                        {{saleOrder.quotation.name}}
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr *ngIf="saleOrder.Quote">
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Phiếu tư vấn
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="saleOrder.Quote" [routerLink]="['/sale-quotations/form']" [queryParams]="{id: saleOrder.quote.Id}">{{saleOrder.quote.name}}</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ngày lập phiếu
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'" formControlName="dateOrderObj">
-                                    </kendo-datetimepicker>
-                                    <div *ngIf="f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày lập phiếu</div>
-                                    </div>
-                                    <span [class.d-none]="saleOrder.state == 'draft'">
-                                        {{
-                                        saleOrder.dateOrder | date:
-                                        'short'
-                                        }}
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Trạng thái
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    {{getStateDisplay()}}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
 
@@ -278,9 +206,6 @@
                                         <div
                                             class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">
                                             Ưu đãi phiếu điều trị
-                                            <img *ngIf="saleOrder.state != 'done'" class="ml-1 pointer"
-                                                (click)="onOpenSaleOrderPromotion()"
-                                                src="../../../assets/icons/promotion.svg" alt="">
                                             <span class="ml-auto">{{sumPromotionSaleOrder() | number}}</span>
                                         </div>
                                         <div class="card-body px-3 py-2">
