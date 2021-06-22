@@ -19,6 +19,7 @@ import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-di
 import { SaleOrderLinePromotionDialogComponent } from "../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component";
 import { FilterCellWrapperComponent } from "@progress/kendo-angular-grid";
 import { CheckPermissionService } from "src/app/shared/check-permission.service";
+import { ToothSelectionDialogComponent } from "src/app/shared/tooth-selection-dialog/tooth-selection-dialog.component";
 
 @Component({
   selector: "app-sale-order-line-cu",
@@ -399,5 +400,13 @@ export class SaleOrderLineCuComponent implements OnInit {
     this.onActiveEvent.emit(active);
   }
 
+  toothSelection() {
+    let modalRef = this.modalService.open(ToothSelectionDialogComponent, { size: 'md', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        // modalRef.componentInstance.title = 'Thanh toán';
 
+        modalRef.result.then(result => {
+
+        }, () => {
+        });
+  }
 }
