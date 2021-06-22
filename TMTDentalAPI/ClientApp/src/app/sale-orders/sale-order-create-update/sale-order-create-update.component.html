@@ -16,26 +16,32 @@
                         class="btn btn-secondary btn-sm mr-1">
                         Trở lại
                     </a>
-                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder && saleOrder.state != 'done'" (click)="onSave()">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s"
+                        *ngIf="saleOrder && saleOrder.state != 'done'" (click)="onSave()">
                         Lưu
                     </button>
-                    <button type="button" accesskey="1" *ngIf="saleOrder && saleOrder.state == 'draft'" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
+                    <button type="button" accesskey="1" *ngIf="saleOrder && saleOrder.state == 'draft'"
+                        class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
                         Lưu và xác nhận
                     </button>
-                    <button *ngIf="saleOrder && ['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
+                    <button *ngIf="saleOrder && ['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
+                        class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
                         Thanh toán
                     </button>
                     <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm"
                         (click)="printSaleOrder()">
                         In phiếu
                     </button>
-                    <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
+                    <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button"
+                        class="btn btn-danger btn-sm" (click)="actionCancel()">
                         Hủy phiếu
                     </button>
-                    <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
+                    <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button"
+                        class="btn btn-success btn-sm" (click)="actionDone()">
                         Hoàn thành
                     </button>
-                    <button *ngIf="saleOrder && ['done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
+                    <button *ngIf="saleOrder && ['done'].indexOf(saleOrder.state) !== -1" type="button"
+                        class="btn btn-success btn-sm" (click)="actionUnlock()">
                         Chưa hoàn thành
                     </button>
                 </div>
@@ -72,7 +78,8 @@
                                         <div class="cus-info">
                                             <label class="cus-label">Khách hàng</label>
                                             <div class="cus-content">
-                                                <a *ngIf="saleOrder.partner" [routerLink]="['/partners/customer/' + saleOrder.partner.id]">
+                                                <a *ngIf="saleOrder.partner"
+                                                    [routerLink]="['/partners/customer/' + saleOrder.partner.id]">
                                                     {{saleOrder.partner.displayName}}
                                                 </a>
                                             </div>
@@ -80,13 +87,13 @@
                                         <div class="cus-info">
                                             <label class="cus-label">Giới tính</label>
                                             <div class="cus-content">
-                                                
+
                                             </div>
                                         </div>
                                         <div class="cus-info">
                                             <label class="cus-label">Nhãn</label>
                                             <div class="cus-content">
-                                                
+
                                             </div>
                                         </div>
                                     </div>
@@ -94,19 +101,19 @@
                                         <div class="cus-info">
                                             <label class="cus-label">Ngày sinh</label>
                                             <div class="cus-content">
-                                                
+
                                             </div>
                                         </div>
                                         <div class="cus-info">
                                             <label class="cus-label">Nghề nghiệp</label>
                                             <div class="cus-content">
-                                                
+
                                             </div>
                                         </div>
                                         <div class="cus-info">
                                             <label class="cus-label">Tiểu sử bệnh</label>
                                             <div class="cus-content">
-                                                
+
                                             </div>
                                         </div>
                                     </div>
@@ -114,13 +121,13 @@
                                         <div class="cus-info">
                                             <label class="cus-label">Tuổi</label>
                                             <div class="cus-content">
-                                                
+
                                             </div>
                                         </div>
                                         <div class="cus-info">
                                             <label class="cus-label">Hạng thành viên</label>
                                             <div class="cus-content">
-                                                
+
                                             </div>
                                         </div>
                                     </div>
@@ -166,40 +173,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ngày lập phiếu
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'" formControlName="dateOrderObj">
-                                    </kendo-datetimepicker>
-                                    <div *ngIf="f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày lập phiếu</div>
-                                    </div>
-                                    <span [class.d-none]="saleOrder.state == 'draft'">
-                                        {{
-                                        saleOrder.dateOrder | date:
-                                        'short'
-                                        }}
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Trạng thái
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    {{getStateDisplay()}}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                   
                 </div> -->
             </div>
 
@@ -237,7 +211,7 @@
                                 <app-service-list-search-dropdown (onSelectService)="addLine($event)">
                                 </app-service-list-search-dropdown>
                             </div>
-                            <div class="d-flex w-100">
+                            <div class="d-flex w-100 overflow-auto">
                                 <div class="w-75 d-flex flex-column">
                                     <!-- saleorderline -->
 
@@ -249,7 +223,7 @@
                                     <div class="flex-1-1-100">
                                         <div *ngIf="saleOrder.orderLines.length == 0" class="pt-5 text-center">
                                             <img class="" [src]="'' || 'assets/images/box.svg'" alt=""
-                                            onerror="this.src='assets/images/box.svg';">
+                                                onerror="this.src='assets/images/box.svg';">
                                             <p>Chưa có dịch vụ nào</p>
                                         </div>
                                         <ng-container *ngFor="let line of saleOrder.orderLines; let i=index">
@@ -285,7 +259,9 @@
                                                 <span>{{item.amount | number}}</span>
                                             </div>
                                             <div class="w-100 text-right">
-                                                <button type="button" *ngIf="saleOrder.state != 'done'" class="btn btn-primary btn-sm ml-auto" (click)="onOpenSaleOrderPromotion()">
+                                                <button type="button" *ngIf="saleOrder.state != 'done'"
+                                                    class="btn btn-primary btn-sm ml-auto"
+                                                    (click)="onOpenSaleOrderPromotion()">
                                                     <img src="/assets/icons/promotion-white.svg" alt="">
                                                     Thêm ưu đãi
                                                 </button>
@@ -325,10 +301,10 @@
                                     <div class="card mb-3">
                                         <div class="card-header bg-primary text-white px-3 py-1">Thông tin phiếu</div>
                                         <div class="card-body px-3 py-2">
-                                            <div class="d-flex justify-content-between align-items-center mb-0">
+                                            <div class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Ngày lập phiếu</label>
-                                                <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'" style="max-height: 36px"
-                                                    formControlName="dateOrderObj">
+                                                <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'"
+                                                    style="max-height: 36px" formControlName="dateOrderObj">
                                                 </kendo-datetimepicker>
                                                 <div *ngIf="f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)"
                                                     class="text-danger">
@@ -336,22 +312,29 @@
                                                     </div>
                                                 </div>
                                                 <span [class.d-none]="saleOrder.state == 'draft'">
-                                                    {{ saleOrder.dateOrder | date: 'short'}}
+                                                    {{ saleOrder.dateOrder | date: 'M/d/yy, H:mm'}}
                                                 </span>
                                             </div>
                                             <div class="d-flex justify-content-between mb-0">
                                                 <label class="font-weight-600">Trạng thái</label>
                                                 <label class="font-weight-600">
-                                                    <span *ngIf="saleOrder.state == 'draft'">Nháp</span>
-                                                    <span *ngIf="saleOrder.state == 'done'">Hoàn thành</span>
-                                                    <span *ngIf="saleOrder.state == 'sale'">Đang điều trị</span>
-                                                    <span *ngIf="saleOrder.state == 'cancel'">Hủy</span>
+                                                    {{getStateDisplay()}}
                                                 </label>
                                             </div>
-                                            <div class="d-flex justify-content-between mb-0" *ngIf="saleOrder.quotation && saleOrder.quotation?.id">
+                                            <div class="d-flex justify-content-between mb-0"
+                                                *ngIf="saleOrder.quote && saleOrder.quote?.id">
+                                                <label class="font-weight-600">Tư vấn</label>
+                                                <label class="font-weight-600">
+                                                    <a class="text-primary" [routerLink]="['/sale-quotations/form']"
+                                                        [queryParams]="{id: saleOrder.quote?.Id}">{{saleOrder.quote?.name}}</a>
+                                                </label>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-0"
+                                                *ngIf="saleOrder.quotation && saleOrder.quotation?.id">
                                                 <label class="font-weight-600">Báo giá</label>
                                                 <label class="font-weight-600">
-                                                    <a class="text-primary" [routerLink]="['/quotations/form']" [queryParams]="{ id: saleOrder.quotation?.id}">
+                                                    <a class="text-primary" [routerLink]="['/quotations/form']"
+                                                        [queryParams]="{ id: saleOrder.quotation?.id}">
                                                         {{saleOrder.quotation?.name}}
                                                     </a>
                                                 </label>
