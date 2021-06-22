@@ -52,10 +52,10 @@
     </div>
 </div>
 
-<div class="o_content h-100 overflow-hidden" *ngIf="saleOrder">
+<div class="o_content h-100 overflow-auto" *ngIf="saleOrder">
     <form class="o_form_view h-100" [formGroup]="formGroup">
-        <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
-            <div class="flex-0-0-auto">
+        <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100 overflow-hidden">
+            <div class="flex-0-0-auto overflow-auto">
                 <div class="t-accordion">
                     <div class="tab">
                         <input type="checkbox" id="tab-checkbox-1" checked />
@@ -129,7 +129,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="o_group">
+                <!-- <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
@@ -200,10 +200,10 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
+                </div> -->
             </div>
 
-            <div class="o_notebook flex-1-1-100 overflow-hidden d-flex flex-column">
+            <div class="o_notebook flex-1-1-100 overflow-auto d-flex flex-column">
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs flex-0-0-auto" id="myTab" role="tablist">
                     <li class="nav-item">
@@ -229,7 +229,7 @@
                 </ul>
 
                 <!-- Tab panes -->
-                <div class="tab-content flex-1-1-100 overflow-hidden">
+                <div class="tab-content flex-1-1-100 overflow-auto">
                     <div class="tab-pane active h-100" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <div class="w-100 h-100 d-flex flex-column">
                             <!-- && isEditting -->
@@ -237,23 +237,16 @@
                                 <app-service-list-search-dropdown (onSelectService)="addLine($event)">
                                 </app-service-list-search-dropdown>
                             </div>
-                            <div class="d-flex overflow-hidden w-100">
+                            <div class="d-flex w-100">
                                 <div class="w-75 d-flex flex-column">
                                     <!-- saleorderline -->
 
-                                    <div class="div-table w-100 flex-0-0-auto overflow-auto">
+                                    <div class="div-table w-100 flex-0-0-auto">
                                         <div class="div-row bg-primary text-white">
-                                            <div style="width: 200px;" class="div-cell py-1 pl-2">Dịch vụ</div>
-                                            <div style="width: 130px;" class="div-cell py-1 text-right">Đơn giá</div>
-                                            <div style="width: 100px;" class="div-cell py-1 text-right">Số lượng</div>
-                                            <div style="width: 100px;" class="div-cell py-1 text-right">Thành tiền</div>
-                                            <div style="width: 100px;" class="div-cell py-1 text-right">Thanh toán</div>
-                                            <div style="width: 100px;" class="div-cell py-1 text-right">Còn lại</div>
-                                            <div style="width: 100px;" class="div-cell py-1 text-center"
-                                                *ngIf="saleOrder.state != 'done'">Thao tác</div>
+                                            <div class="py-1 pl-2">Danh sách dịch vụ</div>
                                         </div>
                                     </div>
-                                    <div class="flex-1-1-100 overflow-auto">
+                                    <div class="flex-1-1-100">
                                         <div *ngIf="saleOrder.orderLines.length == 0" class="pt-5 text-center">
                                             <img class="" [src]="'' || 'assets/images/box.svg'" alt=""
                                             onerror="this.src='assets/images/box.svg';">
@@ -335,9 +328,9 @@
                                     <div class="card mb-3">
                                         <div class="card-header bg-primary text-white px-3 py-1">Thông tin phiếu</div>
                                         <div class="card-body px-3 py-2">
-                                            <div class="d-flex justify-content-between mb-0">
+                                            <div class="d-flex justify-content-between align-items-center mb-0">
                                                 <label class="font-weight-600">Ngày lập phiếu</label>
-                                                <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'"
+                                                <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'" style="max-height: 36px"
                                                     formControlName="dateOrderObj">
                                                 </kendo-datetimepicker>
                                                 <div *ngIf="f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)"
@@ -356,6 +349,14 @@
                                                     <span *ngIf="saleOrder.state == 'done'">Hoàn thành</span>
                                                     <span *ngIf="saleOrder.state == 'sale'">Đang điều trị</span>
                                                     <span *ngIf="saleOrder.state == 'cancel'">Hủy</span>
+                                                </label>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-0" *ngIf="saleOrder.quotation && saleOrder.quotation?.id">
+                                                <label class="font-weight-600">Báo giá</label>
+                                                <label class="font-weight-600">
+                                                    <a class="text-primary" [routerLink]="['/quotations/form']" [queryParams]="{ id: saleOrder.quotation?.id}">
+                                                        {{saleOrder.quotation?.name}}
+                                                    </a>
                                                 </label>
                                             </div>
 
