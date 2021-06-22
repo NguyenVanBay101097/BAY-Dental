@@ -1,5 +1,4 @@
 <div [formGroup]="formGroupInfo" class="bg-white my-2">
-
     <div class="div-table w-100">
         <div class="div-row border-left border-right border-top">
             <div style="width: 200px; font-size: 1.1rem;" class="div-cell font-weight-600 pl-3 pt-3">
@@ -8,71 +7,6 @@
         </div>
     </div>
     <div class="border-right border-left border-bottom px-3 w-100 pb-2">
-        <!-- <label class="font-weight-600 mb-0">THÔNG TIN BỔ SUNG</label>
-        <div *ngIf="isEditting" class="w-100 mt-2 row">
-
-            <div class="col-3 row">
-                <div *ngFor="let item of filteredToothCategories; let cateIndex = index" class="col-6 pr-0">
-                    <input [attr.disabled]=" !isEditting ? true : null" [checked]=" item.id === getToothCateLine().id"
-                        (change)="onChangeToothCategory(item)" class="btn-check hide" type="radio"
-                        [name]="'toothCategory'" formControlName="toothCategory" [id]="'toothCategory' + cateIndex">
-                    <label [ngClass]="{'disabled': !isEditting}" class="btn btn-sm btn-radio w-100 p-0"
-                        [class.btn-radio-active]="item.id === getToothCateLine().id"
-                        [for]="'toothCategory' + cateIndex ">{{item.name}}</label>
-                </div>
-            </div>
-
-            <div class=" col-9">
-
-            </div>
-        </div>
-        <ng-container *ngIf="!isEditting; else elseTemplateTeeth">
-            <div class="row mx-0">
-                <label class="col-sm-2 font-weight-600 p-0">
-                    Răng
-                </label>
-                <div class="col-sm-10">
-                    <span>{{viewTeeth()}}</span>
-                </div>
-            </div>
-        </ng-container>
-        <ng-template #elseTemplateTeeth>
-            <div class="teeth-map mb-2 row mx-0 w-100">
-                <div class="col-sm-3 row">
-                    <ng-container *ngFor="let item of toothTypeDict; let toothTypeIndex = index">
-                        <div class="col-6 pl-0">
-                            <input (change)="onChangeToothTypeLine(item.value)"
-                                [attr.disabled]="!isEditting ? true : null" [value]='item.value'
-                                [checked]=" item.value === getToothTypeLine()" class="btn-check hide" type="radio"
-                                name="toothType" formControlName="toothType" [id]="'toothType' + toothTypeIndex">
-                            <label [ngClass]="{'disabled':  !isEditting}"
-                                [class]="item.value === getToothTypeLine() ? 'btn btn-sm btn-radio-active w-100':'btn btn-sm btn-radio w-100'"
-                                class="btn" [for]="'toothType' + toothTypeIndex">{{item.name}}</label>
-                        </div>
-                    </ng-container>
-                </div>
-
-                <div class="col-sm-9">
-                    <table class="table-tooth table table-sm w-auto mw-100">
-                        <tr *ngFor="let ham of hamList | keyvalue">
-                            <td [ngClass]="{'text-right': vitri.key === '0_right'}"
-                                *ngFor="let vitri of ham.value | keyvalue">
-                                <div class="tooth-wrapper">
-                                    <button
-                                        [attr.disabled]="!isEditting || formInfoControl('toothType').value != 'manual' ? true : null"
-                                        (click)="onSelected(rang)" class="btn btn-sm tooth-item-collapsed"
-                                        [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
-                                        {{rang.name}}
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </ng-template>
- -->
-    
         <div class="o_group">
             <table class="o_group o_inner_group o_group_col_4">
                 <tbody>
@@ -182,89 +116,87 @@
                                     </span>
                                 </ng-template>
 
-                                            <ng-template #popContent let-greeting="greeting">
-                                                <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'"
-                                                    [spinners]="false" formControlName="priceUnit">
-                                                </kendo-numerictextbox>
-                                            </ng-template>
-                                            <ng-template #popTitle let-language="language">Giá gốc</ng-template>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label_help">
-                                            Số lượng
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%; text-align: end;">
-                                        <ng-container *ngIf="!isEditting; else elseTemplateQty">
-                                            <span class="font-weight-600">
-                                                {{line.productUOMQty | number}}
-                                            </span>
-                                        </ng-container>
-                                        <ng-template #elseTemplateQty>
-                                            <kendo-numerictextbox required style="width:60%;" [format]="'n0'" [min]="0"
-                                                [spinners]="false" formControlName="productUOMQty">
-                                            </kendo-numerictextbox>
-                                        </ng-template>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label_help">
-                                            Thành tiền
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%; text-align: end;">
-                                        <div class="font-weight-600">
-                                            <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
-                                                {{line.priceSubTotal | number: '1.0-0'}}
-                                            </ng-container>
-                                            <ng-template #elseTemplatePriceSub>
-                                                {{getPriceSubTotalFormGroup() | number}}
-                                            </ng-template>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" style="padding: 0 45px 0 0;">
-                                        <hr>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label_help">
-                                            Thanh toán
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%; text-align: end;">
-                                        <div *ngIf="!isFast" class="font-weight-600">
-                                            {{line.amountInvoiced | number}}
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label_help">
-                                            Còn lại
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%; text-align: end;">
-                                        <div *ngIf="!isFast" class="font-weight-600">
-                                            {{((isEditting? getPriceSubTotalFormGroup(): line.priceSubTotal)-
-                                            line.amountInvoiced) |
-                                            number}}
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                                <ng-template #popContent let-greeting="greeting">
+                                    <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'"
+                                        [spinners]="false" formControlName="priceUnit">
+                                    </kendo-numerictextbox>
+                                </ng-template>
+                                <ng-template #popTitle let-language="language">Giá gốc</ng-template>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label_help">
+                                Số lượng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%; text-align: end;">
+                            <ng-container *ngIf="!isEditting; else elseTemplateQty">
+                                <span class="font-weight-600">
+                                    {{line.productUOMQty | number}}
+                                </span>
+                            </ng-container>
+                            <ng-template #elseTemplateQty>
+                                <kendo-numerictextbox required style="width:60%;" [format]="'n0'" [min]="0"
+                                    [spinners]="false" formControlName="productUOMQty">
+                                </kendo-numerictextbox>
+                            </ng-template>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label_help">
+                                Thành tiền
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%; text-align: end;">
+                            <div class="font-weight-600">
+                                <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
+                                    {{line.priceSubTotal | number: '1.0-0'}}
+                                </ng-container>
+                                <ng-template #elseTemplatePriceSub>
+                                    {{getPriceSubTotalFormGroup() | number}}
+                                </ng-template>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding: 0 45px 0 0;">
+                            <hr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label_help">
+                                Thanh toán
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%; text-align: end;">
+                            <div *ngIf="!isFast" class="font-weight-600">
+                                {{line.amountInvoiced | number}}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label_help">
+                                Còn lại
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%; text-align: end;">
+                            <div *ngIf="!isFast" class="font-weight-600">
+                                {{((isEditting? getPriceSubTotalFormGroup(): line.priceSubTotal)-
+                                line.amountInvoiced) |
+                                number}}
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-
+    </div>
+</div>
 <!-- ưu đãi -->
 <div class="d-flex justify-content-between">
     <div class="card border promotions">
