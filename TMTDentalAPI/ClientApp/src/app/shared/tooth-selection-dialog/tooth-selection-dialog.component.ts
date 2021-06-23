@@ -22,7 +22,8 @@ export class ToothSelectionDialogComponent implements OnInit {
   teethSelected: ToothDisplay[] = [];
   filteredToothCategories: any[] = [];
   cateId: string;
-
+  submitted: boolean = false;
+  toothData: any;
   get f() { return this.myForm.controls; }
 
   getFormValue(key: string) {
@@ -38,7 +39,7 @@ export class ToothSelectionDialogComponent implements OnInit {
 
   ngOnInit() {
     this.myForm = this.fb.group({
-      toothCategoryId:[null],
+      toothCategory: '',
       toothType: "manual",
       teeth: [],
     })
@@ -46,8 +47,17 @@ export class ToothSelectionDialogComponent implements OnInit {
     setTimeout(() => {
       this.loadToothCategories();
       this.loadDefaultToothCategory().subscribe(result => {
-        this.cateId = result.id;
-        this.loadTeethMap(result);
+        if (this.toothData) {
+          this.myForm.patchValue(this.toothData);
+          this.teethSelected = this.toothData.teeth;
+          this.cateId = this.toothData.toothCategory ? this.toothData.toothCategory.id : '';
+          this.loadTeethMap(this.toothData.toothCategory);
+        }
+        else {
+          this.cateId = result.id;
+          this.f.toothCategory.setValue(this.filteredToothCategories[0]);
+          this.loadTeethMap(result);
+        }
       })
     });
   }
@@ -88,6 +98,7 @@ export class ToothSelectionDialogComponent implements OnInit {
       this.f.teeth.setValue(this.teethSelected);
       this.loadTeethMap(value);
       this.cateId = value.id;
+      this.f.toothCategory.setValue(value);
     }
   }
 
@@ -107,7 +118,7 @@ export class ToothSelectionDialogComponent implements OnInit {
 
     return false;
   }
-  
+
   onSelected(tooth: ToothDisplay) {
     if (this.getFormValue("toothType") == "manual") {
       if (this.isSelected(tooth)) {
@@ -131,7 +142,9 @@ export class ToothSelectionDialogComponent implements OnInit {
   }
 
   onSave() {
-    this.activeModal.close(true);
+    var val = this.myForm.value;
+    val.toothCategoryId = val.toothCategory ? val.toothCategory.id : '';
+    this.activeModal.close(val);
   }
 
   onCancel() {

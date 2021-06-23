@@ -57,6 +57,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   ];
   formGroupInfo: FormGroup;
   submitted = false;
+  get f() { return this.formGroupInfo.controls; }
 
   constructor(
     private fb: FormBuilder,
@@ -127,7 +128,6 @@ export class SaleOrderLineCuComponent implements OnInit {
     this.formGroupInfo.get('toothType').setValue(this.line.toothType);
 
     this.loadTeethMap(this.line.toothCategory);
-    console.log(this.initialListEmployees);
     this.filteredEmployeesDoctor = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
     this.filteredEmployeesCounselor = this.initialListEmployees.slice();
     this.filteredEmployeesAssistant = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
@@ -261,10 +261,10 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   loadTeethMap(categ: any) {
-    const result = this.initialListTeeths.filter(
-      (x) => x.categoryId === categ.id
-    );
-    this.processTeeth(result);
+    // const result = this.initialListTeeths.filter(
+    //   (x) => x.categoryId === categ.id
+    // );
+    // this.processTeeth(result);
   }
 
   processTeeth(teeth: any[]) {
@@ -301,8 +301,8 @@ export class SaleOrderLineCuComponent implements OnInit {
     //   this.notify('error', 'Chọn răng');
     //   return false;
     // }
-
-    this.onUpdateEvent.emit(this.formGroupInfo.value);
+    var val = this.formGroupInfo.value;
+    this.onUpdateEvent.emit(val);
     this.isEditting = false;
 
     // this.isItSeff = this.isItSeff;
@@ -401,12 +401,26 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   toothSelection() {
+    var toothData;
+    if (this.line.toothCategoryId) {
+      toothData = {
+        teeth: this.line.teeth,
+        toothCategory: this.line.toothCategory,
+        toothType: this.line.toothType
+      };
+    }
+    else {
+      toothData = null;
+    }
     let modalRef = this.modalService.open(ToothSelectionDialogComponent, { size: 'md', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        // modalRef.componentInstance.title = 'Thanh toán';
+    modalRef.componentInstance.toothData = toothData;
 
-        modalRef.result.then(result => {
-
-        }, () => {
-        });
+    modalRef.result.then(result => {
+      this.line.toothType = result.toothType;
+      this.line.toothCategory = result.toothCategory;
+      this.line.toothCategoryId = result.toothCategoryId;
+      this.line.teeth = result.teeth;
+    }, () => {
+    });
   }
 }
