@@ -30,4 +30,21 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
         public string Search { get; set; }
     }
+
+    public class MemberLevelAutoCompleteReq
+    {
+        public MemberLevelAutoCompleteReq()
+        {
+            Limit = 20;
+        }
+        public int Limit { get; set; }
+        public int Offset { get; set; }
+        public string Search { get; set; }
+    }
+
+    public class MemberLevelSimple
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
 }

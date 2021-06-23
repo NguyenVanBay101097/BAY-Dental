@@ -13,6 +13,7 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<MemberLevelSave, MemberLevel>();
             CreateMap<MemberLevel, MemberLevelBasic>();
+            CreateMap<MemberLevel, MemberLevelSimple>();
         }
     }
 }
