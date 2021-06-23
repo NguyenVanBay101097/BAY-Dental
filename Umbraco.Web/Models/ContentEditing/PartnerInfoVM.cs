@@ -10,6 +10,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateCreated { get; set; }
 
         public string Ref { get; set; }
+        public string Avatar { get; set; }
         public string DisplayName { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
@@ -22,7 +23,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? TotalDebit { get; set; }
         public Guid? MemberLevelId { get; set; }
         public MemberLevelBasic MemberLevel { get; set; }
-        public string PartnerCategIds { get; set; }
+        public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
         public string DateOfBirth
         {
             get
@@ -58,14 +59,20 @@ namespace Umbraco.Web.Models.ContentEditing
             Offset = 0;
             Limit = 20;
         }
-        public string Search { get; set; }
         public int Limit { get; set; }
         public int Offset { get; set; }
-        public Guid? CategId { get; set; }
-        public bool? IsResidual { get; set; }
-        public bool? IsTotalDebit { get; set; }
+        public string Search { get; set; }
+        public IEnumerable<Guid> CategIds { get; set; } = new List<Guid>();
+        /// <summary>
+        /// 0: không có doanh thu, 1: có doanh thu
+        /// </summary>
+        public int? HasOrderResidual { get; set; }
+        /// <summary>
+        /// 0: không có , 1: có 
+        /// </summary>
+        public int? HasTotalDebit { get; set; }
         public Guid? MemberLevelId { get; set; }
-        public string State { get; set; }
+        public string OrderState { get; set; }
 
     }
 }

@@ -3,9 +3,8 @@ import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable, Subject } from 'rxjs';
 import { of } from 'rxjs/internal/observable/of';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
-import { PartnerCategoryDisplay, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
+import { PartnerCategoryDisplay, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
-import { PartnerCategoriesService } from 'src/app/shared/services/partner-categories.service';
 import { PartnerAddRemoveTags, PartnerService } from '../../partner.service';
 
 @Component({
@@ -33,7 +32,6 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   @ViewChild("list", { static: true }) public list: MultiSelectComponent;
 
   constructor(
-    private partnerCategoriesService: PartnerCategoriesService,
     private partnerCategoryService: PartnerCategoryService,
     private partnerService: PartnerService,
     private checkPermissionService: CheckPermissionService
@@ -60,7 +58,11 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   }
 
   loadPartnerCategoryPopOver(q?: string) {
-    this.partnerCategoriesService.searchCombobox(q).subscribe((res: any) => {
+    var val = new PartnerCategoryPaged();
+    val.offset = 0;
+    val.limit = 20;
+    val.search = q || '';
+    this.partnerCategoryService.autocomplete(val).subscribe((res: any) => {
       this.dataPopOver = res;
     }, err => {
       console.log(err);
@@ -81,7 +83,7 @@ export class PartnerCategoryPopoverComponent implements OnInit {
     tags = tags || [];
     const val = new PartnerAddRemoveTags();
     val.id = this.rowPartnerId;
-    val.tagIds = tags.map(x => x.Id);
+    val.tagIds = tags.map(x => x.id);
     this.partnerService.updateTags(val).subscribe(() => {
       this.popover.close();
       this.onSave.emit(tags);
@@ -97,7 +99,7 @@ export class PartnerCategoryPopoverComponent implements OnInit {
       // Search in values
       const matchingValue: any = this.tags.find((item: any) => {
         // Search for matching item to avoid duplicates
-        return item['Name'].toLowerCase() === text.toLowerCase();
+        return item['name'].toLowerCase() === text.toLowerCase();
       });
 
       if (matchingValue) {
@@ -107,7 +109,7 @@ export class PartnerCategoryPopoverComponent implements OnInit {
 
       // Search in data
       const matchingItem: any = this.dataPopOver.find((item: any) => {
-        return item['Name'].toLowerCase() === text.toLowerCase();
+        return item['name'].toLowerCase() === text.toLowerCase();
       });
 
       if (matchingItem) {
@@ -125,8 +127,8 @@ export class PartnerCategoryPopoverComponent implements OnInit {
       .pipe(
         map((result: any) => {
           return {
-            Id: result.id,
-            Name: result.name
+            id: result.id,
+            name: result.name
           }
         })
       );

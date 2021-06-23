@@ -11,6 +11,7 @@ namespace ApplicationCore.Entities
     {
         public Guid Id { get; set; }
         public DateTime? DateCreated { get; set; }
+        public string? Avatar { get; set; }
 
         /// <summary>
         /// Mã khách hàng

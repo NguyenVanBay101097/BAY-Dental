@@ -11,7 +11,7 @@ import { PartnerImportComponent } from '../partner-import/partner-import.compone
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { PartnerService } from '../partner.service';
+import { PartnerInfoPaged, PartnerService } from '../partner.service';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
 import { PartnerCategoryPopoverComponent } from './partner-category-popover/partner-category-popover.component';
 import { PartnersBindingDirective } from 'src/app/shared/directives/partners-binding.directive';
@@ -30,32 +30,16 @@ import { CheckPermissionService } from 'src/app/shared/check-permission.service'
 export class PartnerCustomerListComponent implements OnInit {
 
   gridData: GridDataResult;
-  limit = 10;
-  skip = 0;
+  filter = new PartnerInfoPaged();
   loading = false;
   opened = false;
 
-  search: string;
   searchCategs: PartnerCategoryBasic[];
   filteredCategs: PartnerCategoryBasic[];
   searchUpdate = new Subject<string>();
 
   @ViewChild("categMst", { static: true }) categMst: MultiSelectComponent;
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
-  @ViewChild(PartnersBindingDirective, { static: true }) dataBinding: PartnersBindingDirective;
-
-  gridFilter: CompositeFilterDescriptor = {
-    logic: "and",
-    filters: [
-      { field: "Customer", operator: "eq", value: true },
-    ]
-  };
-
-  gridSort = [{ field: 'DateCreated', dir: 'desc' }];
-  advanceFilter: any = {
-    // expand: 'Tags,Source',
-    params: {}
-  };
 
   canExport = false;
   canAdd = false;
@@ -63,41 +47,44 @@ export class PartnerCustomerListComponent implements OnInit {
   canFilterPartnerCategory = false;
   canUpdateExcel = false;
   
-  expectedStatus: { text: string, value: string }[] = [
-    { text: 'Tất cả dự kiến thu', value: '' },
-    { text: 'Có dự kiến thu', value: 'has_expected' },
-    { text: 'Không có dự kiến thu', value: 'has_not_expected' }
+  expectedStatus: { text: string, value: number }[] = [
+    { text: 'Tất cả dự kiến thu', value: -1 },
+    { text: 'Có dự kiến thu', value: 1 },
+    { text: 'Không có dự kiến thu', value: 1}
   ];
-  expectedStatusSelected = this.expectedStatus[0];
 
-  debtStatus: { text: string, value: string }[] = [
-    { text: 'Tất cả công nợ', value: '' },
-    { text: 'Có công nợ', value: 'has_expected' },
-    { text: 'Không có công nợ', value: 'has_not_expected' }
+  debtStatus: { text: string, value: number }[] = [
+    { text: 'Tất cả công nợ', value: -1 },
+    { text: 'Có công nợ', value: 1 },
+    { text: 'Không có công nợ', value: 0 }
   ];
-  debtStatusSelected = this.debtStatus[0];
 
   memberLevel: { text: string, value: string }[] = [
     { text: 'Tất cả hạng thành viên', value: '' },
     { text: 'Vàng', value: 'has_expected' },
     { text: 'Bạc', value: 'has_not_expected' }
   ];
-  memberLevelSelected = this.memberLevel[0];
+
+  orderStateDisplay = {
+    'sale':'Đang điều trị',
+    'done':'Hoàn thành',
+    'draft':'Chưa phát sinh'
+  };
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
     private checkPermissionService: CheckPermissionService) { }
 
   ngOnInit() {
+    this.initFilter();
+    this.refreshData();
     this.checkRole();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
-        this.dataBinding.filter = this.generateFilter();
-        this.dataBinding.skip = 0;
         this.refreshData();
-        this.skip = 0;
+        this.filter.offset = 0;
       });
 
     if (this.canFilterPartnerCategory && this.categMst) {
@@ -119,37 +106,27 @@ export class PartnerCustomerListComponent implements OnInit {
     }
   }
 
-  updateFilter() {
-    this.gridFilter = this.generateFilter();
+  initFilter() {
+    this.filter.limit = 20;
+    this.filter.offset = 0;
+    this.filter.hasOrderResidual = -1;
+    this.filter.hasTotalDebit = -1;
+    this.filter.orderState='';
   }
 
   refreshData() {
-    debugger
-    this.dataBinding.rebind();
-  }
-
-  generateFilter() {
-    var filter: CompositeFilterDescriptor = {
-      logic: "and",
-      filters: [
-        { field: "Customer", operator: "eq", value: true },
-      ]
-    };
-
-    if (this.search) {
-      filter.filters.push({
-        logic: "or",
-        filters: [
-          { field: "Name", operator: "contains", value: this.search },
-          { field: "NameNoSign", operator: "contains", value: this.search },
-          { field: "Ref", operator: "contains", value: this.search },
-          { field: "Phone", operator: "contains", value: this.search }
-        ]
-      });
-    }
-
-    return filter;
-
+    var val = Object.assign({}, this.filter);
+    this.loading = true;
+   this.partnerService.getPartnerInfoPaged(val).subscribe(res => {
+     this.gridData = <GridDataResult> {
+      data : res.items,
+      total : res.totalItems
+     };
+   },()=> {},
+   ()=>{
+     this.loading = false;
+   }
+   );
   }
 
   toggleTagsPopOver(popover: any, dataItem: any) {
@@ -191,12 +168,12 @@ export class PartnerCustomerListComponent implements OnInit {
     this.searchCategs = value;
     var tagIds = this.searchCategs.map(x => x.id);
     if (tagIds.length) {
-      this.advanceFilter.params.tagIds = tagIds;
+      // this.advanceFilter.params.tagIds = tagIds;
     } else {
-      delete this.advanceFilter.params.tagIds;
+      // delete this.advanceFilter.params.tagIds;
     }
 
-    this.dataBinding.skip = 0;
+    this.filter.offset = 0;
     this.refreshData();
   }
 
@@ -209,7 +186,7 @@ export class PartnerCustomerListComponent implements OnInit {
   exportPartnerExcelFile() {
     var paged = new PartnerPaged();
     paged.customer = true;
-    paged.search = this.search || "";
+    // paged.search = this.search || "";
 
     var categs = this.searchCategs || [];
     paged.tagIds = categs.map(x => x.id);

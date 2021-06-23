@@ -64,6 +64,9 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Source, x => x.Ignore())
                 .ForMember(x => x.ReferralUser, x => x.Ignore())
                 .ForMember(x => x.Title, x => x.Ignore());
+
+            CreateMap<PartnerInfo, PartnerInfoDisplay>();
+
         }
     }
 }

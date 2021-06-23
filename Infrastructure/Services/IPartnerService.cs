@@ -75,7 +75,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<PartnerBasic>> GetCustomerAppointments(PartnerPaged val);
         Task<IEnumerable<Guid>> GetPartnerForTCare(PartnerForTCarePaged val);
         Task<IEnumerable<PartnerSaleOrderDone>> GetPartnerOrderDone(PartnerPaged val);
-        Task<PagedResult2<PartnerInfoDisplay>> GetViewPartnerInfoPaged(PartnerInfoPaged val);
+        Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged(PartnerInfoPaged val);
 
     }
 }

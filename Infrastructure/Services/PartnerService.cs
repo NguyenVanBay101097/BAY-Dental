@@ -2184,9 +2184,69 @@ namespace Infrastructure.Services
             return list;
         }
 
-        public async Task<PagedResult2<PartnerInfoDisplay>> GetViewPartnerInfoPaged(PartnerInfoPaged val)
+        public async Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged(PartnerInfoPaged val)
         {
-            throw new Exception();
+         
+            var query = _context.PartnerInfos.FromSqlRaw(@$"select * from fn_PartnerInfoList('{CompanyId}')");
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
+                || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
+            }
+
+            if(val.CategIds.Any())
+            {
+                var partnerCategoryRelService = GetService<IPartnerPartnerCategoryRelService>();
+                var filterPartnerIds = await partnerCategoryRelService.SearchQuery(x => val.CategIds.Contains(x.CategoryId)).Select(x => x.PartnerId).Distinct().ToListAsync();
+                query = query.Where(x => filterPartnerIds.Contains(x.Id));
+            }
+
+            if(val.HasOrderResidual.HasValue && val.HasOrderResidual.Value == 1)
+            {
+                query = query.Where(x => x.OrderResidual > 0);
+            }
+
+            if (val.HasOrderResidual.HasValue && val.HasOrderResidual.Value == 0)
+            {
+                query = query.Where(x => x.OrderResidual == 0 || x.OrderResidual == null);
+            }
+
+            if (val.HasTotalDebit.HasValue && val.HasTotalDebit.Value == 1)
+            {
+                query = query.Where(x => x.TotalDebit > 0);
+            }
+
+            if (val.HasTotalDebit.HasValue && val.HasTotalDebit.Value == 0)
+            {
+                query = query.Where(x => x.TotalDebit == 0 || x.TotalDebit == null);
+            }
+
+            if(val.MemberLevelId.HasValue)
+            {
+                query = query.Where(x => x.MemberLevelId == val.MemberLevelId);
+            }
+
+            if(!string.IsNullOrEmpty(val.OrderState))
+            {
+                query = query.Where(x => x.OrderState == val.OrderState);
+            }
+
+            var count = await query.CountAsync();
+            var res = await query.Include(x=> x.MemberLevel).Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var items = _mapper.Map<IEnumerable<PartnerInfoDisplay>>(res);
+
+            var cateObj = GetService<IPartnerCategoryService>();
+            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
+                                                                                           .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
+            foreach (var item in items)
+            {
+                item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
+            }
+
+            return new PagedResult2<PartnerInfoDisplay>(count, val.Offset,val.Limit)
+            {
+                Items = items
+            };
 
         }
     }

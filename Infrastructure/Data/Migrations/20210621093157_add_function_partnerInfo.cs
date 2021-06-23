@@ -13,10 +13,8 @@ DROP function fn_PartnerInfoList
 ");
             migrationBuilder.Sql(@"
 create function [dbo].[fn_PartnerInfoList] (
-@CompanyId nvarchar(255),
-@OrderBy nvarchar(255),
-@pageSize int,
-@pageNumer int)
+@CompanyId nvarchar(255)
+)
 
 returns TABLE
 
@@ -31,12 +29,12 @@ return
 --        SET @offset = (@pageNumer-1)*@pageSize
 --        SET @newsize = @pageSize
 
-select  pn.id, pn.DateCreated,pn.Ref, pn.name, pn.NameNoSign, pn.DisplayName ,pn.phone, pn.Email,pn.BirthDay,pn.BirthMonth,pn.BirthYear,pn.CompanyId,
+select  pn.id, pn.Avatar, pn.DateCreated,pn.Ref, pn.name, pn.NameNoSign, pn.DisplayName ,pn.phone, pn.Email,pn.BirthDay,pn.BirthMonth,pn.BirthYear,pn.CompanyId,
 case when pn.OrderStates like N'%sale%' then 'sale' when pn.OrderStates like N'%sale%' then 'sale'
 when REPLACE(REPLACE(pn.OrderStates, 'done' ,''), ',', '') = '' then 'done' else 'draft' 
 end as OrderState,
 
-(select sum(AmountTotal - TotalPaid) from SaleOrders where PartnerId = pn.Id and CompanyId = @CompanyId) as OrderResidual,
+(select sum(AmountTotal - TotalPaid) from SaleOrders where PartnerId = pn.Id and State in ('sale','done') and CompanyId = @CompanyId) as OrderResidual,
 
 (select SUM(Balance) from AccountMoveLines aml inner join AccountAccounts acc on acc.Id = aml.AccountId 
 where aml.PartnerId = pn.Id  and acc.Code ='CNKH' and aml.CompanyId = @CompanyId) as TotalDebit
@@ -45,7 +43,7 @@ where aml.PartnerId = pn.Id  and acc.Code ='CNKH' and aml.CompanyId = @CompanyId
 --where id in (select  SUBSTRING(ValueReference,CHARINDEX(',',ValueReference,0)+1,LEN(ValueReference)) from IRProperties
 --where ResId = 'res.partner,'+CONVERT(nvarchar(max),pn.Id) and Name = 'member_level' and CompanyId = @CompanyId
 --)) as MemberLevelId
-,(select  SUBSTRING(ValueReference,CHARINDEX(',',ValueReference,0)+1,LEN(ValueReference)) from IRProperties
+,(select cast(SUBSTRING(ValueReference,CHARINDEX(',',ValueReference,0)+1,LEN(ValueReference)) as UNIQUEIDENTIFIER) from IRProperties
 where ResId = 'res.partner,'+CONVERT(nvarchar(max),pn.Id) and Name = 'member_level' and CompanyId = @CompanyId) as MemberLevelId
 
 ,stuff((select ','+Convert(nvarchar(max),pnr.CategoryId) 

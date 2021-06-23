@@ -4,8 +4,7 @@
     </ol>
     <div class="o_cp_searchview">
         <div class="o_searchview">
-            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo mã, họ tên, số điện thoại khách hàng" 
-                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo mã, họ tên, số điện thoại khách hàng" [(ngModel)]="this.filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
         </div>
     </div>
     <div class="o_cp_left">
@@ -20,43 +19,35 @@
     <div class="o_cp_right">
         <div class="d-flex align-items-center">
             <div class="mr-1" *ngIf="canFilterPartnerCategory">
-                <kendo-multiselect [data]="filteredCategs"
-                    [valueField]="'id'" [textField]="'name'" [(ngModel)]="searchCategs" [placeholder]="'Lọc theo nhãn'"
-                    [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
+                <kendo-multiselect [data]="filteredCategs" [valueField]="'id'" [textField]="'name'" [(ngModel)]="searchCategs" [placeholder]="'Lọc theo nhãn...'" [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
                 </kendo-multiselect>
             </div>
             <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle mr-1" type="button" id="dropdownMenuButton"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-filter"></i> {{expectedStatusSelected.text}}
+                <button class="btn btn-secondary btn-sm dropdown-toggle mr-1" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-filter"></i> "tat ca"
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <button class="dropdown-item" type="button" *ngFor="let item of expectedStatus"
-                        (click)="expectedStatusSelected = item">
+                    <button class="dropdown-item" type="button" *ngFor="let item of expectedStatus" (click)="expectedStatusSelected = item">
                         {{item.text}}
                     </button>
                 </div>
             </div>
             <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle mr-1" type="button" id="dropdownMenuButton"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-filter"></i> {{debtStatusSelected.text}}
+                <button class="btn btn-secondary btn-sm dropdown-toggle mr-1" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-filter"></i> "tat ca"
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <button class="dropdown-item" type="button" *ngFor="let item of debtStatus" 
-                        (click)="debtStatusSelected = item">
+                    <button class="dropdown-item" type="button" *ngFor="let item of debtStatus" (click)="debtStatusSelected = item">
                         {{item.text}}
                     </button>
                 </div>
             </div>
             <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle mr-1" type="button" id="dropdownMenuButton"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-filter"></i> {{memberLevelSelected.text}}
+                <button class="btn btn-secondary btn-sm dropdown-toggle mr-1" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-filter"></i> "tat ca"
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <button class="dropdown-item" type="button" *ngFor="let item of memberLevel"
-                        (click)="memberLevelSelected = item">
+                    <button class="dropdown-item" type="button" *ngFor="let item of memberLevel" (click)="memberLevelSelected = item">
                         {{item.text}}
                     </button>
                 </div>
@@ -86,51 +77,81 @@
 
 <div class="o_content">
     <div class="d-flex py-2 px-3">
+        <!-- <div class=" d-flex flex-column border type p-1">
+            <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="sale" type="radio" class="btn-check hidden" name="typegg" id="type-time" autocomplete="off" [checked]="true">
+            <label class="mb-0 p-2" for="type-time"><i class="far fa-clock"></i> Thời gian</label>
+            <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="done" type="radio" class="btn-check hidden" name="typegg" id="type-service" autocomplete="off">
+            <label class="mb-0 p-2" for="type-service"><i class="fas fa-bars"></i> Doanh thu dịch vụ</label>
+
+        </div> -->
         <div class="btn-group-sm btn-group-toggle " data-toggle="buttons">
-            <label class="btn btn-outline-primary btn-sm mr-2 active" (click)="setStateFilter('all')">
-                <input type="radio" checked autocomplete="off">Tất cả
+            <input id="alls" class="hidden" [(ngModel)]="this.filter.orderState" (ngModelChange)="refreshData()" name="orderStates" value="" type="radio" autocomplete="off">
+
+            <label for="alls" class="btn btn-outline-primary btn-sm mr-2 active">
+                Tất cả
             </label>
-            <label class="btn btn-outline-primary btn-sm mr-2" (click)="setStateFilter('confirmed')">
-                <input type="radio" checked autocomplete="off">Đang điều trị
+            <input id="sales" class="hidden" [(ngModel)]="this.filter.orderState" (ngModelChange)="refreshData()" name="orderStates" value="sale" type="radio" autocomplete="off">
+
+            <label for="sales" class="btn btn-outline-primary btn-sm mr-2">
+                Đang điều trị
             </label>
-            <label class="btn btn-outline-primary btn-sm mr-2" (click)="setStateFilter('done')">
-                <input type="radio" checked autocomplete="off">Hoàn thành
+            <label for="dones" class="btn btn-outline-primary btn-sm mr-2">
+                <input id="dones" [(ngModel)]="this.filter.orderState" (ngModelChange)="refreshData()" name="orderStates" value="done" type="radio" autocomplete="off">Hoàn thành
             </label>
-            <label class="btn btn-outline-primary btn-sm mr-2" (click)="setStateFilter('cancel')">
-                <input type="radio" checked autocomplete="off">Chưa phát sinh
+            <label for="drafts" class="btn btn-outline-primary btn-sm mr-2">
+                <input id="drafts"  [(ngModel)]="this.filter.orderState" (ngModelChange)="refreshData()" name="orderStates" value="draft" type="radio" autocomplete="off">Chưa phát sinh
             </label>
+
+
         </div>
     </div>
-    <kendo-grid partnersBinding [resizable]="true" [sort]="gridSort" [advanceFilter]="advanceFilter" [skip]="skip" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="limit">
-        <kendo-grid-column field="Name" title="Họ tên" width="250" [locked]="true">
+    <kendo-grid [data]="gridData" [resizable]="true" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid [pageable]="true">
+        <kendo-grid-column field="name" title="Họ tên" width="250" [locked]="true">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div class="d-flex">
                     <div class="customer-avatar">
-                        <img src="" alt="">
+                        <img [src]="dataItem.avatar || '../../../assets/icons/none_person.svg'" alt="">
                     </div>
                     <div>
-                        <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.Id]">
-                            {{dataItem.Name}}
+                        <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.id]">
+                            {{dataItem.name}}
                         </a>
-                        <div *ngIf="dataItem.Ref">
-                            <small>{{dataItem.Ref}}</small>
+                        <div *ngIf="dataItem.ref">
+                            <small>{{dataItem.ref}}</small>
                         </div>
                     </div>
                 </div>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="Phone" title="Điện thoại" width="130" [locked]="true"></kendo-grid-column>
-        <kendo-grid-column field="DateOfBirth" title="Ngày sinh" width="130" [locked]="true"></kendo-grid-column>
+        <kendo-grid-column field="phone" title="Điện thoại" width="130" [locked]="true"></kendo-grid-column>
+        <kendo-grid-column field="dateOfBirth" title="Ngày sinh" width="130" [locked]="true"></kendo-grid-column>
         <!-- <kendo-grid-column field="Ref" title="Mã KH" width="120"></kendo-grid-column> -->
-        <kendo-grid-column field="Age" title="Tuổi" width="60"></kendo-grid-column>
-        <kendo-grid-column field="" title="Dự kiến thu" width="200"></kendo-grid-column>
-        <kendo-grid-column field="" title="Công nợ" width="200"></kendo-grid-column>
-        <kendo-grid-column field="" title="Hạng thành viên" width="200"></kendo-grid-column>
+        <kendo-grid-column field="age" title="Tuổi" width="60"></kendo-grid-column>
+        <kendo-grid-column field="orderState" title="Trình trạng điều trị" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{orderStateDisplay[dataItem.orderState] || 'Chưa phát sinh'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="orderResidual" title="Dự kiến thu" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{(dataItem.orderResidual || 0) | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="totalDebit" title="Công nợ" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{(dataItem.totalDebit || 0) | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="memberLevel" title="Hạng thành viên" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.memberLevel?.name}}
+            </ng-template>
+        </kendo-grid-column>
         <!-- <kendo-grid-column field="GenderDisplay" title="Giới tính" width="90"></kendo-grid-column>
         <kendo-grid-column field="Address" title="Địa chỉ" width="300"></kendo-grid-column> -->
         <kendo-grid-column title="Nhãn khách hàng" width="300">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <app-partner-category-popover [tags]="dataItem.Tags" (onSave)="dataItem.Tags = $event" [rowPartnerId]="dataItem.Id">
+                <app-partner-category-popover [tags]="dataItem.categories" (onSave)="dataItem.categories = $event" [rowPartnerId]="dataItem.id">
                 </app-partner-category-popover>
             </ng-template>
         </kendo-grid-column>
