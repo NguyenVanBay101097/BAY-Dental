@@ -1219,7 +1219,8 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderDisplay> GetSaleOrderForDisplayAsync(Guid id)
         {
-            var display = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            var saleOrder = await SearchQuery(x => x.Id == id).Include(x => x.Partner).FirstOrDefaultAsync();
+            var display =  _mapper.Map<SaleOrderDisplay>(saleOrder);
             var lineObj = GetService<ISaleOrderLineService>();
             var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))
                 .Include(x => x.Advisory)
