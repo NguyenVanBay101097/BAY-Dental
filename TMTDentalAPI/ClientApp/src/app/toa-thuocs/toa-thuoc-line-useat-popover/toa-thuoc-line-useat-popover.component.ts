@@ -13,7 +13,7 @@ export class ToaThuocLineUseatPopoverComponent implements OnInit {
   @Input() index: number;
   submitted = false;
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
-  @ViewChild('myDrop', { static: true }) myDrop: NgbDropdown;
+  @ViewChild('myDrop', { static: true }) public myDrop: NgbDropdown;
   formGroup: FormGroup;
 
   useAtFilterOptions: any[] = [
@@ -68,6 +68,16 @@ export class ToaThuocLineUseatPopoverComponent implements OnInit {
       this.formGroup.reset();
       this.reLoad();
       popOver.open();
+    }
+  }
+
+  toggleDropdown(myDrop) {
+    if (!myDrop) {
+      myDrop.close();
+    } else {
+      this.formGroup.reset();
+      this.reLoad();
+      myDrop.open();
     }
   }
 

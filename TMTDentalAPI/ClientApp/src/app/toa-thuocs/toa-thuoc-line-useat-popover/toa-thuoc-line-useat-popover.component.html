@@ -1,6 +1,6 @@
-<div class="d-inline-block dropup" ngbDropdown container="body" #myDrop="ngbDropdown">
+<div class="d-inline-block dropup" ngbDropdown container="body" #myDrop="ngbDropdown" (openChange)="toggleDropdown($event)">
     <div class="edit_remove_action">
-        <button type="button" id="dropdownManual" class="o-no-caret" ngbDropdownToggle>
+        <button type="button" id="dropdownManual" class="o-no-caret" ngbDropdownToggle >
             <i class="far fa-edit"></i>
         </button>
 
@@ -17,10 +17,7 @@
                     </div>
                 </ng-container>
                 <div *ngIf="useAtControl == 'other'" class="mt-1">
-                    <input formControlName='note' class="form-control" placeholder="Nhập nôi dung" />
-                    <!-- <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)" class="text-danger">
-                        <div *ngIf="f.reason.errors.required">Nhập lý do hủy hẹn</div>
-                    </div> -->
+                    <input formControlName='note' class="form-control" placeholder="Nhập nôi dung" />               
                 </div>
                 <div class="d-flex mt-2">
                     <button (click)="onSave()" class="btn btn-sm btn-primary mr-1">Lưu</button>
@@ -31,3 +28,4 @@
 
     </div>
 </div>
+
