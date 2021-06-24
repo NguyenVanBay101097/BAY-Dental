@@ -393,10 +393,12 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   viewTeeth() {
-    var toothType = this.line.toothType ? this.line.toothType : this.formGroupInfo.get("toothType").value;
+    var toothType = this.line.toothType ? this.line.toothType : (this.formGroupInfo.value.toothType ? this.formGroupInfo.value.toothType : '');
+    if(!toothType) return '';
     if (toothType == "manual") {
       let teeth;
-      if (this.formGroupInfo.value.teeth) {
+      var rs = this.formGroupInfo.value.teeth as any[];
+      if (rs !=null && rs !=undefined && rs.length!=0) {
         teeth = this.formGroupInfo.value.teeth;
       }
       else {

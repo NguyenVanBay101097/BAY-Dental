@@ -619,7 +619,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       toothCategoryId: '',
       counselor: null,
       counselorId: null,
-      toothType: 'manual',
+      toothType: '',
       isActive: true,
       amountPromotionToOrder: 0,
       amountPromotionToOrderLine: 0,
