@@ -1,282 +1,279 @@
-<div [formGroup]="formGroupInfo" class="bg-white my-2">
-
-    <div class="div-table w-100">
-        <div class="div-row border-left border-right border-top">
-            <div style="width: 200px; font-size: 1.1rem;" class="div-cell font-weight-600 pl-2">
-                {{line.name}}
+<div class="border rounded p-2 mt-2">
+    <div [formGroup]="formGroupInfo" class="bg-white my-2">
+        <div class="div-table w-100">
+            <div class="div-row">
+                <div style="width: 200px; font-size: 1.1rem;" class="div-cell font-weight-600 pl-2">
+                    {{line.name}}
+                </div>
             </div>
-
         </div>
-    </div>
-    <div class="border-right border-left border-bottom px-2 w-100 pb-2">
-
-        <div class="row">
-            <div class="col-xl-4 col-md-6 col-xs-12">
-                <table class="o_group o_inner_group o_group_col_4">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label_help">
-                                    Răng
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <span>{{viewTeeth()}}</span>
-                                <img *ngIf="isEditting" class="ml-2" style="cursor: pointer;" [src]="'' || 'assets/icons/teeth.svg'" alt=""
-                                    (click)="toothSelection()" onerror="this.src='assets/teeth/box.svg';">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label_help">
-                                    Chẩn đoán
-                                </label>
-                            </td>
-                            <td colspan="1" class="o_td_label">
-                                <span *ngIf="!isEditting">{{line.diagnostic}}</span>
-                            </td>
-                        </tr>
-                        <tr *ngIf="isEditting">
-                            <td colspan="2" class="o_td_label">
-                                <textarea formControlName="diagnostic" class="form-control"></textarea>
-                            </td>
-                        </tr>
-                        <tr *ngIf="line.id  && line.productIsLabo && line.state == 'sale'">
-                            <td colspan="2" class="o_td_label">
-                                <label class="o_form_label_help">
-                                    Danh sách Labo
-                                </label>
-                                <img class="ml-2" style="cursor: pointer;" [src]="'' || 'assets/icons/labo.svg'" alt=""
-                                    onerror="this.src='assets/labo/box.svg';" (click)="showLaboList(line.id)">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-xl-8 col-md-6 col-xs-12">
-                <div class="row">
-                    <div class="col-xl-6 col-md-12 col-xs-12">
-                        <table class="o_group o_inner_group o_group_col_4">
-                            <tbody>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label_help">
-                                            Bác sĩ
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <span class="" *ngIf="!isEditting">{{line.employee?.name}}</span>
-                                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)"
-                                            *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesDoctor"
-                                            [textField]="'name'" #employeeCbx formControlName="employee"
-                                            [valueField]="'id'">
-                                        </kendo-combobox>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label_help">
-                                            Phụ tá
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <span class="form-control-plaintext"
-                                            *ngIf="!isEditting">{{line.assistant?.name}}</span>
-                                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeAssistant($event)"
-                                            *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesAssistant"
-                                            [textField]="'name'" #assistantCbx formControlName="assistant"
-                                            [valueField]="'id'">
-                                        </kendo-combobox>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label_help">
-                                            Người tư vấn
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <span class="form-control-plaintext"
-                                            *ngIf="!isEditting">{{line.counselor?.name}}</span>
-                                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeCounselor($event)"
-                                            *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesCounselor"
-                                            [textField]="'name'" #counselorCbx formControlName="counselor"
-                                            [valueField]="'id'">
-                                        </kendo-combobox>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-xl-6 col-md-12 col-xs-12">
-                        <table class="o_group o_inner_group o_group_col_4">
-                            <tbody>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label_help">
-                                            Đơn giá
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%; text-align: end;">
-                                        <div class="font-weight-600">
-                                            <ng-container *ngIf="!isEditting; else elseTemplatePriceUnitPro">
-                                                {{getPriceUnitLinePromotion(line) | number}}
-                                            </ng-container>
-                                            <ng-template #elseTemplatePriceUnitPro>
-                                                {{(formInfoControl('priceUnit').value - (line.amountDiscountTotal || 0))
-                                                | number}}
-                                            </ng-template>
-                                        </div>
-                                        <div>
-                                            <ng-container *ngIf="!isEditting; else elseTemplatePriceUnit">
-                                                <span class="font-weight-lighter">
-                                                    Giá gốc: <span class="font-weight-600"> {{line.priceUnit |
-                                                        number}}</span>
+        <div class="px-2 w-100 pb-2">
+            <div class="row">
+                <div class="col-xl-4 col-md-6 col-xs-12">
+                    <table class="o_group o_inner_group o_group_col_4">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label_help">
+                                        Răng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>{{viewTeeth()}}</span>
+                                    <img *ngIf="isEditting" class="ml-2" style="cursor: pointer;" [src]="'' || 'assets/icons/teeth.svg'" alt=""
+                                        (click)="toothSelection()" onerror="this.src='assets/teeth/box.svg';">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label_help">
+                                        Chẩn đoán
+                                    </label>
+                                </td>
+                                <td colspan="1" class="o_td_label">
+                                    <span *ngIf="!isEditting">{{line.diagnostic}}</span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="isEditting">
+                                <td colspan="2" class="o_td_label">
+                                    <textarea formControlName="diagnostic" class="form-control"></textarea>
+                                </td>
+                            </tr>
+                            <tr *ngIf="line.id  && line.productIsLabo && line.state == 'sale'">
+                                <td colspan="2" class="o_td_label">
+                                    <label class="o_form_label_help">
+                                        Danh sách Labo
+                                    </label>
+                                    <img class="ml-2" style="cursor: pointer;" [src]="'' || 'assets/icons/labo.svg'" alt=""
+                                        onerror="this.src='assets/labo/box.svg';" (click)="showLaboList(line.id)">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-xl-8 col-md-6 col-xs-12">
+                    <div class="row">
+                        <div class="col-xl-6 col-md-12 col-xs-12">
+                            <table class="o_group o_inner_group o_group_col_4">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label_help">
+                                                Bác sĩ
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <span class="" *ngIf="!isEditting">{{line.employee?.name}}</span>
+                                            <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)"
+                                                *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesDoctor"
+                                                [textField]="'name'" #employeeCbx formControlName="employee"
+                                                [valueField]="'id'">
+                                            </kendo-combobox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label_help">
+                                                Phụ tá
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <span class="form-control-plaintext"
+                                                *ngIf="!isEditting">{{line.assistant?.name}}</span>
+                                            <kendo-combobox [filterable]="true" (filterChange)="onEmployeeAssistant($event)"
+                                                *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesAssistant"
+                                                [textField]="'name'" #assistantCbx formControlName="assistant"
+                                                [valueField]="'id'">
+                                            </kendo-combobox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label_help">
+                                                Người tư vấn
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <span class="form-control-plaintext"
+                                                *ngIf="!isEditting">{{line.counselor?.name}}</span>
+                                            <kendo-combobox [filterable]="true" (filterChange)="onEmployeeCounselor($event)"
+                                                *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesCounselor"
+                                                [textField]="'name'" #counselorCbx formControlName="counselor"
+                                                [valueField]="'id'">
+                                            </kendo-combobox>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-xl-6 col-md-12 col-xs-12">
+                            <table class="o_group o_inner_group o_group_col_4">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label_help">
+                                                Đơn giá
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%; text-align: end;">
+                                            <div class="font-weight-600">
+                                                <ng-container *ngIf="!isEditting; else elseTemplatePriceUnitPro">
+                                                    {{getPriceUnitLinePromotion(line) | number}}
+                                                </ng-container>
+                                                <ng-template #elseTemplatePriceUnitPro>
+                                                    {{(formInfoControl('priceUnit').value - (line.amountDiscountTotal || 0))
+                                                    | number}}
+                                                </ng-template>
+                                            </div>
+                                            <div>
+                                                <ng-container *ngIf="!isEditting; else elseTemplatePriceUnit">
+                                                    <span class="font-weight-lighter">
+                                                        Giá gốc: <span class="font-weight-600"> {{line.priceUnit |
+                                                            number}}</span>
+                                                    </span>
+                                                </ng-container>
+                                                <ng-template #elseTemplatePriceUnit>
+                                                    <span class="font-weight-lighter">
+                                                        Giá gốc: <span class="mr-1 font-weight-600"
+                                                            [class.text-danger]="formInfoControl('priceUnit').errors">{{formInfoControl('priceUnit').value
+                                                            | number}}</span>
+                                                        <i _ngcontent-sgd-c6="" class="far fa-edit text-success pointer"
+                                                            [ngbPopover]="popContent" [popoverTitle]="popTitle"
+                                                            [autoClose]="'outside'"></i>
+                                                    </span>
+                                                </ng-template>
+    
+                                                <ng-template #popContent let-greeting="greeting">
+                                                    <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'"
+                                                        [spinners]="false" formControlName="priceUnit">
+                                                    </kendo-numerictextbox>
+                                                </ng-template>
+                                                <ng-template #popTitle let-language="language">Giá gốc</ng-template>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label_help">
+                                                Số lượng
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%; text-align: end;">
+                                            <ng-container *ngIf="!isEditting; else elseTemplateQty">
+                                                <span class="font-weight-600">
+                                                    {{line.productUOMQty | number}}
                                                 </span>
                                             </ng-container>
-                                            <ng-template #elseTemplatePriceUnit>
-                                                <span class="font-weight-lighter">
-                                                    Giá gốc: <span class="mr-1 font-weight-600"
-                                                        [class.text-danger]="formInfoControl('priceUnit').errors">{{formInfoControl('priceUnit').value
-                                                        | number}}</span>
-                                                    <i _ngcontent-sgd-c6="" class="far fa-edit text-success pointer"
-                                                        [ngbPopover]="popContent" [popoverTitle]="popTitle"
-                                                        [autoClose]="'outside'"></i>
-                                                </span>
-                                            </ng-template>
-
-                                            <ng-template #popContent let-greeting="greeting">
-                                                <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'"
-                                                    [spinners]="false" formControlName="priceUnit">
+                                            <ng-template #elseTemplateQty>
+                                                <kendo-numerictextbox required style="width:100%;" [format]="'n0'" [min]="0"
+                                                    [spinners]="false" formControlName="productUOMQty">
                                                 </kendo-numerictextbox>
                                             </ng-template>
-                                            <ng-template #popTitle let-language="language">Giá gốc</ng-template>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label_help">
-                                            Số lượng
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%; text-align: end;">
-                                        <ng-container *ngIf="!isEditting; else elseTemplateQty">
-                                            <span class="font-weight-600">
-                                                {{line.productUOMQty | number}}
-                                            </span>
-                                        </ng-container>
-                                        <ng-template #elseTemplateQty>
-                                            <kendo-numerictextbox required style="width:100%;" [format]="'n0'" [min]="0"
-                                                [spinners]="false" formControlName="productUOMQty">
-                                            </kendo-numerictextbox>
-                                        </ng-template>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label_help">
-                                            Thành tiền
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%; text-align: end;">
-                                        <div class="font-weight-600">
-                                            <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
-                                                {{line.priceSubTotal | number: '1.0-0'}}
-                                            </ng-container>
-                                            <ng-template #elseTemplatePriceSub>
-                                                {{getPriceSubTotalFormGroup() | number}}
-                                            </ng-template>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" style="padding: 0 45px 0 0;">
-                                        <hr>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label_help">
-                                            Thanh toán
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%; text-align: end;">
-                                        <div *ngIf="!isFast" class="font-weight-600">
-                                            {{line.amountInvoiced | number}}
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label_help">
-                                            Còn lại
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%; text-align: end;">
-                                        <div *ngIf="!isFast" class="font-weight-600">
-                                            {{((isEditting? getPriceSubTotalFormGroup(): line.priceSubTotal)-
-                                            line.amountInvoiced) |
-                                            number}}
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label_help">
+                                                Thành tiền
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%; text-align: end;">
+                                            <div class="font-weight-600">
+                                                <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
+                                                    {{line.priceSubTotal | number: '1.0-0'}}
+                                                </ng-container>
+                                                <ng-template #elseTemplatePriceSub>
+                                                    {{getPriceSubTotalFormGroup() | number}}
+                                                </ng-template>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="padding: 0 45px 0 0;">
+                                            <hr>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label_help">
+                                                Thanh toán
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%; text-align: end;">
+                                            <div *ngIf="!isFast" class="font-weight-600">
+                                                {{line.amountInvoiced | number}}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label_help">
+                                                Còn lại
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%; text-align: end;">
+                                            <div *ngIf="!isFast" class="font-weight-600">
+                                                {{((isEditting? getPriceSubTotalFormGroup(): line.priceSubTotal)-
+                                                line.amountInvoiced) |
+                                                number}}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- ưu đãi -->
-        <div class="d-flex justify-content-between">
-            <div class="card border promotions">
-                <div class="card-body px-3 py-2">
-                    <div class="d-flex">
-                        <span>Ưu đãi phiếu điều trị</span>
-                        <span class="ml-auto">{{line.amountPromotionToOrder | number}}</span>
-                    </div>
-                    <div class="d-flex">
-                        <span>Ưu đãi dịch vụ</span>
-                        <img *ngIf="line.state != 'done'" (click)="onOpenPromotion()" class="ml-2 pointer"
-                            src="../../../assets/icons/promotion-bg-primary.svg" alt="">
-                        <span class="ml-auto">{{line.amountPromotionToOrderLine | number}}</span>
-                    </div>
+    </div>
+    <!-- ưu đãi -->
+    <div class="d-flex justify-content-between">
+        <div class="card border promotions">
+            <div class="card-body px-3 py-2">
+                <div class="d-flex">
+                    <span>Ưu đãi phiếu điều trị</span>
+                    <span class="ml-auto">{{line.amountPromotionToOrder | number}}</span>
+                </div>
+                <div class="d-flex">
+                    <span>Ưu đãi dịch vụ</span>
+                    <img *ngIf="line.state != 'done'" (click)="onOpenPromotion()" class="ml-2 pointer"
+                        src="../../../assets/icons/promotion-bg-primary.svg" alt="">
+                    <span class="ml-auto">{{line.amountPromotionToOrderLine | number}}</span>
                 </div>
             </div>
-            <div class="popover-footer d-flex" style="padding-top: 2.5rem">
-                <button *ngIf="!isEditting" type="button" (click)="editLine()" title="Sửa dịch vụ"
-                    class="btn btn-sm btn-primary">
-                    <i class="far fa-edit pr-1"></i>
-                    <span>Chỉnh sửa</span>
-                </button>
-                <button *ngIf="isEditting" (click)="updateLineInfo(true)" class="btn btn-sm btn-primary">
-                    <i class="far fa-edit pr-1"></i>
-                    <span>Cập nhật</span>
-                </button>
-                <button (click)="deleteLine()" class="btn btn-danger btn-sm ml-2" title="Xóa dịch vụ">
-                    <i class="fas fa-trash pr-1"></i>
-                    <span>Xóa</span>
-                </button>
-                <ng-container *ngIf="line.id">
-                    <ng-container *ngIf="line.isActive == true; else elseTemplateActive">
-                        <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-secondary ml-2"
-                            title="Ngừng dịch vụ">
-                            <i class="fas fa-minus-circle text-white pr-1"></i>
-                            <span>Ngừng dịch vụ</span>
-                        </button>
-                    </ng-container>
-                    <ng-template #elseTemplateActive>
-                        <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-danger ml-2"
-                            title="Làm dịch vụ">
-                            <i class="fas fa-minus-circle text-white pr-1"></i>
-                            <span>Đã ngừng dịch vụ</span>
-                        </button>
-                    </ng-template>
+        </div>
+        <div class="popover-footer d-flex" style="padding-top: 2.5rem">
+            <button *ngIf="!isEditting" type="button" (click)="editLine()" title="Sửa dịch vụ"
+                class="btn btn-sm btn-primary">
+                <i class="far fa-edit pr-1"></i>
+                <span>Chỉnh sửa</span>
+            </button>
+            <button *ngIf="isEditting" (click)="updateLineInfo(true)" class="btn btn-sm btn-primary">
+                <i class="far fa-edit pr-1"></i>
+                <span>Cập nhật</span>
+            </button>
+            <button (click)="deleteLine()" class="btn btn-danger btn-sm ml-2" title="Xóa dịch vụ">
+                <i class="fas fa-trash pr-1"></i>
+                <span>Xóa</span>
+            </button>
+            <ng-container *ngIf="line.id">
+                <ng-container *ngIf="line.isActive == true; else elseTemplateActive">
+                    <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-secondary ml-2"
+                        title="Ngừng dịch vụ">
+                        <i class="fas fa-minus-circle text-white pr-1"></i>
+                        <span>Ngừng dịch vụ</span>
+                    </button>
                 </ng-container>
-                <button *ngIf="isEditting" (click)="onCancel()" class="btn btn-sm btn-danger ml-2">Hủy</button>
-            </div>
+                <ng-template #elseTemplateActive>
+                    <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-danger ml-2"
+                        title="Làm dịch vụ">
+                        <i class="fas fa-minus-circle text-white pr-1"></i>
+                        <span>Đã ngừng dịch vụ</span>
+                    </button>
+                </ng-template>
+            </ng-container>
+            <button *ngIf="isEditting" (click)="onCancel()" class="btn btn-sm btn-danger ml-2">Hủy</button>
         </div>
-
     </div>
 </div>
