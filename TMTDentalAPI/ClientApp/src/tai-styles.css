@@ -1609,3 +1609,13 @@ span.char-count {
     position: relative;
     overflow: hidden;
 }
+
+.b-sticky-right {
+    position: sticky;
+    right: 0;
+    background-color: #f9f9f9;
+    border: 1px solid #314f6e;
+    z-index: 3;
+    overflow-wrap: break-word;
+}
+

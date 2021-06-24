@@ -16,3 +16,15 @@
     background-color: #007bff;
     border-color: #007bff;
 }
+
+.member-Color {
+    border-left: 4px solid red;
+}
+
+.search-icon {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: hsl(208deg 7% 46%);
+    padding: 7px;
+}

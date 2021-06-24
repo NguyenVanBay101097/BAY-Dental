@@ -1,5 +1,5 @@
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { PartnerPaged, PartnerBasic } from '../partner-simple';
 import { map, debounceTime, distinctUntilChanged, tap, switchMap, subscribeOn } from 'rxjs/operators';
@@ -41,6 +41,7 @@ export class PartnerCustomerListComponent implements OnInit {
 
   @ViewChild("categMst", { static: true }) categMst: MultiSelectComponent;
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
+  @ViewChild('cbxLevel', { static: true }) public cbxLevel: ComboBoxComponent;
 
   canExport = false;
   canAdd = false;
@@ -68,6 +69,8 @@ export class PartnerCustomerListComponent implements OnInit {
     width: 'auto'
   };
 
+  color='red';
+
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
     private checkPermissionService: CheckPermissionService,
@@ -80,6 +83,14 @@ export class PartnerCustomerListComponent implements OnInit {
     this.refreshData();
     this.checkRole();
     this.loadMemberLevel();
+    this.cbxLevel.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.cbxLevel.loading = true)),
+      switchMap(value => this.searchMemberLevel(value))
+    ).subscribe(result => {
+      this.memberLevels = result.items;
+      this.cbxLevel.loading = false;
+    });
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -141,7 +152,7 @@ export class PartnerCustomerListComponent implements OnInit {
   searchMemberLevel(s?) {
     var val = new MemberLevelAutoCompleteReq();
     val.offset = 0;
-    val.limit = 0;
+    val.limit = 20;
     val.search = s || '';
     return this.memberLevelService.autoComplete(val);
   }
@@ -293,4 +304,5 @@ export class PartnerCustomerListComponent implements OnInit {
     this.filter.offset = 0;
     this.refreshData();
   }
+
 }

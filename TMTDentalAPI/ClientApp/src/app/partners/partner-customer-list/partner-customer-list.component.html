@@ -3,21 +3,18 @@
         <li class="active">Khách hàng</li>
     </ol>
     <div class="o_cp_searchview">
-        <div class="o_searchview">
-            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo mã, họ tên, số điện thoại khách hàng" [(ngModel)]="this.filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
+        <div class="o_searchview position-relative">
+            <input type="text" class="o_searchview_input pl-4" placeholder="Tìm kiếm theo mã, họ tên, số điện thoại khách hàng" [(ngModel)]="this.filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
+            <span class="fas fa-search search-icon"></span>
         </div>
     </div>
-    <div class="o_cp_left">
+    <div class="d-flex align-items-center mt-1 w-100">
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <button *ngIf="canAdd" type="button" accesskey="c" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
             </div>
         </div>
-        <div class="o_cp_sidebar">
-        </div>
-    </div>
-    <div class="o_cp_right">
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center ml-auto">
             <div class="mr-1" *ngIf="canFilterPartnerCategory">
                 <kendo-multiselect [data]="filteredCategs" [valueField]="'id'" [textField]="'name'" [placeholder]="'Lọc theo nhãn...'" [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
                 </kendo-multiselect>
@@ -26,7 +23,7 @@
             </kendo-combobox>
             <kendo-combobox style="width: 230px;" [popupSettings]="cbxPopupSettings" class="mr-1" [placeholder]="'Tất cả Công nợ'" [data]="totalDebits" [valueField]="'value'" [textField]="'text'" (valueChange)="onDebitSelect($event)">
             </kendo-combobox>
-            <kendo-combobox style="width: 250px;" #cbxLevel [popupSettings]="cbxPopupSettings" class="mr-1" [placeholder]="'Tất cả hạng thành viên'" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberLevelSelect($event)">
+            <kendo-combobox style="width: 250px;" [filterable]="true" #cbxLevel [popupSettings]="cbxPopupSettings" class="mr-1" [placeholder]="'Tất cả hạng thành viên'" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberLevelSelect($event)">
             </kendo-combobox>
             <div ngbDropdown>
                 <button type="button" id="dropdownBasic1" ngbDropdownToggle class="btn btn-secondary btn-sm">
@@ -64,17 +61,16 @@
 
     </div>
     <kendo-grid [data]="gridData" [resizable]="true" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid [pageable]="true">
-        <kendo-grid-column field="name" title="Họ tên" width="250" [locked]="true">
+        <kendo-grid-column class="" field="name" title="Họ tên" width="250" [locked]="true">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <div></div>
-                <div class="d-flex">
+                <div [ngClass]="'d-flex o_tag_bordercolor_' + dataItem.memberLevel?.color" [ngStyle]="{'border-left': '4px solid white'}" class="">
                     <div class="customer-avatar">
-                        <img [src]="dataItem.avatar || '../../../assets/icons/none_person.svg'" alt="">
+                        <img style="border-radius: 50%;" [src]="dataItem.avatar || '../../../assets/icons/none_person.svg'" alt="">
                     </div>
                     <div>
                         <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.id]">
-                            {{dataItem.name}}
-                        </a>
+                        {{dataItem.name}}
+                    </a>
                         <div *ngIf="dataItem.ref">
                             <small>{{dataItem.ref}}</small>
                         </div>
@@ -114,57 +110,14 @@
                 </app-partner-category-popover>
             </ng-template>
         </kendo-grid-column>
-        <!-- <kendo-grid-column field="Date" title="Ngày tạo" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.Date | date : 'shortDate'}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="SourceName" title="Nguồn" width="150">
-        </kendo-grid-column>
-        <kendo-grid-column field="JobTitle" title="Nghề nghiệp" width="150">
-        </kendo-grid-column>
-        <kendo-grid-column field="Email" title="Email" width="200">
-        </kendo-grid-column>
-        <kendo-grid-column field="Comment" title="Ghi chú" width="150">
-        </kendo-grid-column> -->
 
-        <!-- <kendo-grid-column field="lastAppointmentDate" title="Lịch hẹn tiếp theo/gần đây" width="150">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.LastAppointmentDate | date: 'HH:mm - EEEE, dd/MM/yyyy'}}
-            </ng-template>
-        </kendo-grid-column> -->
-        <!-- <div *kendoGridDetailTemplate="let dataItem">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info_{{dataItem.id}}" role="tab"
-                        aria-controls="info" aria-selected="true">Thông tin</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="invoice-tab" data-toggle="tab" href="#invoice_{{dataItem.id}}" role="tab"
-                        aria-controls="invoice" aria-selected="false">Phiếu điều trị</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment_{{dataItem.id}}" role="tab"
-                        aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
-                </li>
-            </ul>
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane py-2 fade show active" id="info_{{dataItem.id}}" role="tabpanel"
-                    aria-labelledby="info-tab">
-                    <app-partner-customer-info [partnerId]="dataItem.id"></app-partner-customer-info>
-                </div>
-                <div class="tab-pane py-2 fade" id="invoice_{{dataItem.id}}" role="tabpanel"
-                    aria-labelledby="invoice-tab">
-                    <app-partner-tab-sale-order-list [item]="dataItem"></app-partner-tab-sale-order-list>
-                </div>
-                <div class="tab-pane py-2 fade" id="payment_{{dataItem.id}}" role="tabpanel"
-                    aria-labelledby="payment-tab">
-                    <app-partner-payments (paymentChange)="onPaymentChange()" [partnerId]="dataItem.id">
-                    </app-partner-payments>
-                </div>
-            </div>
-        </div> -->
-        <kendo-grid-column field="Id" title="Thao tác" [lockable]="true" [sticky]="true" width="100">
+        <kendo-grid-column [headerStyle]="{
+            'position': 'sticky',
+            'righ': '0',
+             'z-index':'3',
+             'overflow-wrap': 'break-word',
+             'border-left': '1px solid #615959'
+          }" [headerClass]="'b-sticky-right'" [style]="{'right':'-1px'}" class="b-sticky-right" field="Id" title="Thao tác" [lockable]="true" [sticky]="true" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-dataItem>
                 <!-- <button class="btn btn-info btn-sm mr-2" title="In Hồ sơ khách hàng" (click)="printItem(dataItem)">
                     <span class="fas fa-print"></span></button> -->
@@ -177,23 +130,4 @@
     </kendo-grid>
     <app-partner-profile-print></app-partner-profile-print>
 
-    <!-- <ng-template #popContent let-dataItem="dataItem">
-        <div>
-            <kendo-multiselect class="mr-1" [data]="dataItem.Tags" [filterable]="true"
-                (filterChange)="handleFilterCategoryPopOver($event); this.searchUpdatePopOver.next($event)"
-                [textField]="'name'" [valueField]="'id'" placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true"
-                [valueNormalizer]="valueNormalizer">
-            </kendo-multiselect>
-            <button type="button" class="btn mt-1 btn-primary" (click)="SavePartnerCategories()" accesskey="c">
-                Lưu
-            </button>
-        </div>
-    </ng-template>
-
-    <ng-template #popTitle>
-        <div class="d-flex align-items-center">
-            <span>Nhãn khách hàng</span>
-            <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
-        </div>
-    </ng-template> -->
 </div>
