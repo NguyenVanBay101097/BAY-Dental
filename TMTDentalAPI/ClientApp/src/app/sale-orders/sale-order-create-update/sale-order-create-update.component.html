@@ -64,18 +64,41 @@
             <div class="flex-0-0-auto overflow-auto mb-2">
                 <div class="t-accordion">
                     <div class="tab">
-                        <input type="checkbox" id="tab-checkbox-1" checked />
+                        <input type="checkbox" id="tab-checkbox-1" [checked]="checkedAccordion" (change)="checkedAccordion = !checkedAccordion"/>
                         <label class="tab-label" for="tab-checkbox-1">
-                            <b>Thông tin khách hàng</b>
-                            <i class="fas fa-chevron-down"></i>
+                            <b *ngIf="checkedAccordion">Thông tin khách hàng</b>
+                            <div *ngIf="!checkedAccordion" class="d-flex justify-content-between w-100">
+                                <div class="cus-info">
+                                    <label class="cus-label">Khách hàng:</label>
+                                    <div class="cus-content">
+                                        <a *ngIf="saleOrder.partner"
+                                            [routerLink]="['/partners/customer/' + saleOrder.partner.id]">
+                                            {{saleOrder.partner?.displayName}}
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="cus-info">
+                                    <label class="cus-label">Ngày sinh:</label>
+                                    <div class="cus-content">
+                                        {{saleOrder.partner?.dateOfBirth}}
+                                    </div>
+                                </div>
+                                <div class="cus-info mr-3">
+                                    <label class="cus-label">Tuổi:</label>
+                                    <div class="cus-content">
+                                        {{saleOrder.partner?.age}}
+                                    </div>
+                                </div>
+                            </div>
+                            <i class="fas" [ngClass]="checkedAccordion ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
                         </label>
                         <div class="tab-content">
                             <div class="d-flex">
-                                <img class="cus-avatar" [src]="'' || 'assets/images/no-avatar.png'" alt=""
+                                <img class="cus-avatar" [src]="saleOrder.partner?.avatar || 'assets/images/no-avatar.png'" alt=""
                                     onerror="this.src='assets/images/no-avatar.png';">
                                 <div class="row cus-row">
                                     <div class="col cus-col">
-                                        <div class="cus-info">
+                                        <div class="cus-info mb-2">
                                             <label class="cus-label">Khách hàng:</label>
                                             <div class="cus-content">
                                                 <a *ngIf="saleOrder.partner"
@@ -84,13 +107,13 @@
                                                 </a>
                                             </div>
                                         </div>
-                                        <div class="cus-info">
+                                        <div class="cus-info mb-2">
                                             <label class="cus-label">Giới tính:</label>
                                             <div class="cus-content">
                                                 {{saleOrder.partner?.genderConvertcom}}
                                             </div>
                                         </div>
-                                        <div class="cus-info">
+                                        <div class="cus-info mb-2">
                                             <label class="cus-label">Nhãn:</label>
                                             <div class="cus-content">
                                                 <span *ngFor="let tag of tags" class="badge badge-secondary mr-1"
@@ -101,33 +124,33 @@
                                         </div>
                                     </div>
                                     <div class="col cus-col">
-                                        <div class="cus-info">
+                                        <div class="cus-info mb-2">
                                             <label class="cus-label">Ngày sinh:</label>
                                             <div class="cus-content">
                                                 {{saleOrder.partner?.dateOfBirth}}
                                             </div>
                                         </div>
-                                        <div class="cus-info">
+                                        <div class="cus-info mb-2">
                                             <label class="cus-label">Nghề nghiệp:</label>
                                             <div class="cus-content">
                                                 {{saleOrder.partner?.jobTitle}}
                                             </div>
                                         </div>
-                                        <div class="cus-info">
+                                        <div class="cus-info mb-2">
                                             <label class="cus-label">Tiểu sử bệnh:</label>
                                             <div class="cus-content">
-                                                {{saleOrder.partner?.medicalHistory}}
+                                                {{saleOrder.partner?.historiesString}}
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col cus-col">
-                                        <div class="cus-info">
+                                        <div class="cus-info mb-2">
                                             <label class="cus-label">Tuổi:</label>
                                             <div class="cus-content">
                                                 {{saleOrder.partner?.age}}
                                             </div>
                                         </div>
-                                        <div class="cus-info">
+                                        <div class="cus-info mb-2">
                                             <label class="cus-label">Hạng thành viên:</label>
                                             <div class="cus-content">
                                                 <span *ngIf="saleOrder.partner.memberLevel" class="badge badge-secondary" [ngClass]="'o_tag_color_' + saleOrder.partner.memberLevel?.color">
@@ -188,8 +211,7 @@
                                     </div>
                                     <div class="flex-1-1-100">
                                         <div *ngIf="saleOrder.orderLines.length == 0" class="pt-5 text-center">
-                                            <img class="" [src]="'' || 'assets/images/box.svg'" alt=""
-                                                onerror="this.src='assets/images/box.svg';">
+                                            <img class="" src="assets/images/box.svg" alt="">
                                             <p>Chưa có dịch vụ nào</p>
                                         </div>
                                         <ng-container *ngFor="let line of saleOrder.orderLines; let i=index">
@@ -201,7 +223,8 @@
                                                 (onCancelEvent)="onCancelEditLine($event)"
                                                 (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)"
                                                 (onUpdateEvent)="updateLineInfo($event, i)"
-                                                (onActiveEvent)="onActiveLine($event, line)"></app-sale-order-line-cu>
+                                                (onActiveEvent)="onActiveLine($event, line)">
+                                            </app-sale-order-line-cu>
                                         </ng-container>
                                     </div>
                                 </div>
@@ -228,7 +251,7 @@
                                                 <button type="button" *ngIf="saleOrder.state != 'done'"
                                                     class="btn btn-primary btn-sm ml-auto"
                                                     (click)="onOpenSaleOrderPromotion()">
-                                                    <img src="/assets/icons/promotion-white.svg" alt="">
+                                                    <img src="assets/icons/promotion-white.svg" alt="">
                                                     Thêm ưu đãi
                                                 </button>
                                             </div>

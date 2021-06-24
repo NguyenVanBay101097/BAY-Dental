@@ -109,6 +109,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   amountAdvanceBalance: number = 0;
   defaultToothCate: ToothCategoryBasic;
   tags: any[] = [];
+  checkedAccordion: boolean = true;
 
   childEmiter = new BehaviorSubject<any>(null);
   @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
