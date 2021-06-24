@@ -23,13 +23,17 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private UserManager<ApplicationUser> _userManager;
+        private readonly IIRPropertyService _propertyService;
+        private readonly IMemberLevelService _memberLevelService;
 
         public SaleOrderService(IAsyncRepository<SaleOrder> repository, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager,
-            IMapper mapper)
+            IMapper mapper, IIRPropertyService propertyService, IMemberLevelService memberLevelService)
         : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _userManager = userManager;
+            _propertyService = propertyService;
+            _memberLevelService = memberLevelService;
         }
 
         // Tao moi 1 phieu dieu tri
@@ -446,7 +450,7 @@ namespace Infrastructure.Services
                 await cardObj._CheckUpgrade(new List<CardCard>() { card });
 
                 //tạo 1 message chờ gửi
-                
+
 
             }
 
@@ -1219,50 +1223,7 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderDisplay> GetSaleOrderForDisplayAsync(Guid id)
         {
-            var saleOrder = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            var display =  _mapper.Map<SaleOrderDisplay>(saleOrder);
-
-            var partnerObj = GetService<IPartnerService>();
-            var partner = await partnerObj.SearchQuery(x => x.Id == display.PartnerId).Select(x => new PartnerDisplay
-            {
-                Id = x.Id,
-                DisplayName = x.DisplayName,
-                Avatar = x.Avatar,
-                Gender = x.Gender,
-                BirthDay = x.BirthDay,
-                BirthMonth = x.BirthMonth,
-                BirthYear = x.BirthYear,
-                JobTitle = x.JobTitle,
-                MedicalHistory = x.MedicalHistory,
-                Histories = x.PartnerHistoryRels.Select(x => new HistorySimple()
-                {
-                    Id = x.HistoryId,
-                    Name = x.History.Name
-                }),
-                Categories = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryBasic
-                {
-                    Id = s.CategoryId,
-                    Name = s.Category.Name,
-                    Color = s.Category.Color
-                }),
-            }).FirstOrDefaultAsync();
-            display.Partner = _mapper.Map<PartnerDisplay>(partner);
-
-            var propertyObj = GetService<IIRPropertyService>();
-            var partnerPointsProp = propertyObj.get("loyalty_points", "res.partner", res_id: $"res.partner,{display.PartnerId}", force_company: CompanyId);
-            var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
-            display.Partner.Point = partnerPoints;
-
-            var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{display.PartnerId}", force_company: CompanyId);
-            var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-            var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
-            if (partnerLevelId.HasValue)
-            {
-                var memberLevelObj = GetService<IMemberLevelService>();
-                var level = await memberLevelObj.GetByIdAsync(partnerLevelId);
-                display.Partner.MemberLevel = _mapper.Map<MemberLevelBasic>(level);
-            }
-
+            var display = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             var lineObj = GetService<ISaleOrderLineService>();
             var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))
                 .Include(x => x.Advisory)

@@ -10,7 +10,7 @@
         <div class="mb-2 d-flex">
             <div class="form-check t-form-check mr-2" *ngFor="let item of filteredToothCategories; let toothCategoryIndex = index">
                 <input class="form-check-input" type="radio" name="toothCategory" [checked]="cateId === item.id"
-                    [id]="'toothCategory' + toothCategoryIndex">
+                    [id]="'toothCategory' + toothCategoryIndex" [value]="item.id" formControlName="toothCategory">
                 <label class="form-check-label" [for]="'toothCategory' + toothCategoryIndex"
                     (click)="onChangeToothCategory(item)">
                     {{item.name}}
