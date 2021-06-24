@@ -169,7 +169,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     } else if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((res: any) => {
         this.saleOrder = res;
-        console.log(this.saleOrder);
         this.saleOrder.partner.categories.forEach(item => {
           var category = {
             Id: item.id,
@@ -771,7 +770,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   resetData(data) {
-    console.log('reset data');
     this.saleOrder = data;
     this.resetFormPristine();
   }
@@ -792,7 +790,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         mergeMap(() => this.saleOrderService.get(this.saleOrderId))
       )
         .subscribe(res => {
-          debugger
           this.resetData(res);
           modalRef.componentInstance.saleOrder = this.saleOrder;
         });

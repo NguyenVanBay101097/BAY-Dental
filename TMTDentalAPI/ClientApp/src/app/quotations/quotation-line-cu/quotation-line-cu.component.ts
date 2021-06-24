@@ -176,6 +176,7 @@ export class QuotationLineCuComponent implements OnInit {
     } else {
       this.TeethFA.push(this.fb.group(tooth));
     }
+console.log(this.line);
 
     this.onChangeToothTypeLine(this.getValueFormControl("toothType"));
   }
@@ -213,6 +214,8 @@ export class QuotationLineCuComponent implements OnInit {
       this.formGroup.markAllAsTouched();
       return false;
     }
+    console.log(this.line);
+    console.log(this.formGroup.value);
     this.isEditting = false;
     var value = this.formGroup.value;
     this.onUpdateEvent.emit(value);

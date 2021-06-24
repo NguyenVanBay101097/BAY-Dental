@@ -43,22 +43,23 @@ export class ToothSelectionDialogComponent implements OnInit {
       toothType: "manual",
       teeth: [],
     })
+    
+    if (this.toothData) {
+      this.myForm.patchValue(this.toothData);
+      this.teethSelected = this.toothData.teeth;
+      this.cateId = this.toothData.toothCategory ? this.toothData.toothCategory.id : '';
+      this.loadTeethMap(this.toothData.toothCategory);
+    }
+    else {
+      this.loadDefaultToothCategory().subscribe(result => {
+        this.cateId = result.id;
+        this.f.toothCategory.setValue(result);
+        this.loadTeethMap(result);
+      })
+    }
 
     setTimeout(() => {
       this.loadToothCategories();
-      this.loadDefaultToothCategory().subscribe(result => {
-        if (this.toothData) {
-          this.myForm.patchValue(this.toothData);
-          this.teethSelected = this.toothData.teeth;
-          this.cateId = this.toothData.toothCategory ? this.toothData.toothCategory.id : '';
-          this.loadTeethMap(this.toothData.toothCategory);
-        }
-        else {
-          this.cateId = result.id;
-          this.f.toothCategory.setValue(this.filteredToothCategories[0]);
-          this.loadTeethMap(result);
-        }
-      })
     });
   }
 
