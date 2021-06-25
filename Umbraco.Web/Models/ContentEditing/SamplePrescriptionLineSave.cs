@@ -46,5 +46,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Trước khi đi ngủ: before_sleep
         /// </summary>
         public string UseAt { get; set; }
+
+        public string Note { get; set; }
     }
 }

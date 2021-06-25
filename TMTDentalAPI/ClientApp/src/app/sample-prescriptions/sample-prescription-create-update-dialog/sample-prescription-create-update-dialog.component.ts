@@ -22,7 +22,7 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
   filteredProducts: ProductSimple[];
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   title: string;
- 
+
   get f() { return this.PrescriptionForm.controls; }
   get lines() { return this.PrescriptionForm.get('lines') as FormArray; }
 
@@ -32,21 +32,21 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
 
   ngOnInit() {
     this.PrescriptionForm = this.fb.group({
-      name: [null , Validators.required],
+      name: [null, Validators.required],
       note: null,
       lines: this.fb.array([]),
     });
 
     if (this.id) {
       setTimeout(() => {
-        this.loadRecord();       
+        this.loadRecord();
       });
     }
-    
-    setTimeout(() => {    
+
+    setTimeout(() => {
       this.loadFilteredProducts();
     });
-   
+
   }
 
   loadRecord() {
@@ -60,11 +60,12 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
           this.lines.push(this.fb.group({
             product: line.product,
             productUoM: line.productUoM,
-            numberOfTimes: line.numberOfTimes, 
-            amountOfTimes: line.amountOfTimes, 
-            quantity: line.quantity,  
-            numberOfDays: line.numberOfDays, 
+            numberOfTimes: line.numberOfTimes,
+            amountOfTimes: line.amountOfTimes,
+            quantity: line.quantity,
+            numberOfDays: line.numberOfDays,
             useAt: line.useAt,
+            note: line.note
           }));
         });
       });
@@ -80,9 +81,9 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
       this.filteredProducts = result;
     });
   }
- 
+
   deleteLine(index: number) {
-    this.lines.removeAt(index);      
+    this.lines.removeAt(index);
   }
 
   searchProducts(search?: string) {
@@ -94,7 +95,7 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-    
+
     if (!this.PrescriptionForm.valid) {
       return false;
     }
@@ -108,7 +109,7 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
       i++;
     }
 
-    var val = Object.assign({}, this.PrescriptionForm.value);   
+    var val = Object.assign({}, this.PrescriptionForm.value);
     val.lines.forEach(line => {
       line.productId = line.product.id;
       line.productUoMId = line.productUoM ? line.productUoM.id : null;
@@ -116,14 +117,14 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
 
     if (this.id) {
       this.samplePrescriptionsService.update(this.id, val).subscribe(() => {
-       this.activeModal.close();
+        this.activeModal.close();
       }, err => {
       });
     } else {
       this.samplePrescriptionsService.create(val).subscribe(result => {
         this.activeModal.close({
           item: result,
-          
+
         });
       }, err => {
       });
@@ -132,9 +133,19 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
 
   onChangeProduct(data: any, item: FormControl) {
     if (data) {
-      this.samplePrescriptionLineService.onChangeProduct({productId: data.id}).subscribe((result: any) => {
+      this.samplePrescriptionLineService.onChangeProduct({ productId: data.id }).subscribe((result: any) => {
         item.get('productUoM').setValue(result.uoM);
       });
+    }
+  }
+
+  onChangeUseAt(index, val) {
+    var item = this.lines.controls[index];
+    if (val.useAt == 'other') {
+      item.get('useAt').setValue(val.useAt);
+      item.get('note').setValue(val.note);
+    } else {
+      item.get('useAt').setValue(val.useAt);
     }
   }
 
@@ -143,11 +154,12 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
     lines.push(this.fb.group({
       product: null,
       productUoM: null,
-      numberOfTimes: 1, 
-      amountOfTimes: 1, 
-      quantity: 1,  
-      numberOfDays: 1, 
+      numberOfTimes: 1,
+      amountOfTimes: 1,
+      quantity: 1,
+      numberOfDays: 1,
       useAt: 'after_meal',
+      note: null
     }));
   }
 
@@ -165,7 +177,7 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
   }
 
 
-   getUsedAt(useAt) {
+  getUsedAt(useAt) {
     switch (useAt) {
       case 'before_meal':
         return 'trước khi ăn';
@@ -174,6 +186,8 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
       case 'after_wakeup':
         return 'sau khi thức dậy';
       case 'before_sleep':
+        return 'trước khi đi ngủ';
+      case 'other':
         return 'trước khi đi ngủ';
       default:
         return 'sau khi ăn';

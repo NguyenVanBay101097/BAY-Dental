@@ -62,12 +62,14 @@ namespace Umbraco.Web.Models.ContentEditing
                 case "in_meal": return "Trong khi ăn";
                 case "after_wakeup": return "Sau khi dậy";
                 case "before_sleep": return "Trước khi đi ngủ";
+                case "other": return "Khác";
                 default:
                     return "";
             }
         }
+
         /// <summary>
-        /// Ghi chú
+        /// sử dụng cho UseAt = other
         /// </summary>
         public string Note { get; set; }
 
