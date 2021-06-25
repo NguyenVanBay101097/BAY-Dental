@@ -41,7 +41,7 @@
                         <button type="button" accesskey="1" *ngIf="saleOrder.state == 'draft'" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
                             Lưu và xác nhận
                         </button>
-                        <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
+                        <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1 && canPayment" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
                             Thanh toán
                         </button>
                         <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">

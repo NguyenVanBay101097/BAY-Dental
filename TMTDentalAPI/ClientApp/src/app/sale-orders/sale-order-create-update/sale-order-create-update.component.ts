@@ -58,6 +58,7 @@ import { SaleOrderLinePromotionDialogComponent } from '../sale-order-line-promot
 import { Location } from '@angular/common';
 import { SaleOrderPromotionService } from '../sale-order-promotion.service';
 import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 declare var $: any;
 
 @Component({
@@ -106,7 +107,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   submitted = false;
   amountAdvanceBalance: number = 0;
   defaultToothCate: ToothCategoryBasic;
-
+  canPayment: false;
   childEmiter = new BehaviorSubject<any>(null);
   @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
   lineSelected = null;
@@ -134,7 +135,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private employeeService: EmployeeService,
     private saleOrderPromotionService: SaleOrderPromotionService,
     private differs: KeyValueDiffers,
-    private saleOrderPaymentService: SaleOrderPaymentService
+    private saleOrderPaymentService: SaleOrderPaymentService,
+    private checkPermissionService: CheckPermissionService
   ) {
   }
 
@@ -163,6 +165,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadTeethList();
     this.loadToothCategories();
     this.loadEmployees();
+    this.checkPermission();
 
   }
 
@@ -1101,6 +1104,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         });
       });
     }
+  }
+
+  checkPermission(){
+    this.canPayment = this.checkPermissionService.check(["Basic.SaleOrder.Payment"]);
   }
 }
 
