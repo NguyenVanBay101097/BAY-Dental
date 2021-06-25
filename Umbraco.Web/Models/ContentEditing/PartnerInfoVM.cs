@@ -1,14 +1,28 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
+
+    public class PartnerInfoTemplate : PartnerInfoDisplay
+    {
+        public string MemberLevelReferenceId { get; set; }
+        public string NameNoSign { get; set; }
+
+        public DateTime? Date { get; set; }
+        public string Gender { get; set; }
+        public string CityName { get; set; }
+        public string DistrictName { get; set; }
+        public string WardName { get; set; }
+        public string Street { get; set; }
+        public string JobTitle { get; set; }
+        public string Comment { get; set; }
+    }
     public class PartnerInfoDisplay
     {
         public Guid Id { get; set; }
-        public DateTime? DateCreated { get; set; }
-
         public string Ref { get; set; }
         public string Avatar { get; set; }
         public string DisplayName { get; set; }

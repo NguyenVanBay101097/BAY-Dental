@@ -583,6 +583,10 @@ export class PartnerService {
     getPartnerInfoPaged(val) {
         return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged', {params: new HttpParams({fromObject: val})});
     }
+
+    getPartnerInfoPaged2(val) {
+        return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged2', {params: new HttpParams({fromObject: val})});
+    }
 }
 
 

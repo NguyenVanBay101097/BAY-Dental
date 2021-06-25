@@ -129,7 +129,7 @@ export class PartnerCustomerListComponent implements OnInit {
   refreshData() {
     var val = Object.assign({}, this.filter);
     this.loading = true;
-   this.partnerService.getPartnerInfoPaged(val).subscribe(res => {
+   this.partnerService.getPartnerInfoPaged2(val).subscribe(res => {
      this.gridData = <GridDataResult> {
       data : res.items,
       total : res.totalItems
@@ -203,14 +203,8 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   exportPartnerExcelFile() {
-    var paged = new PartnerPaged();
-    paged.customer = true;
-    // paged.search = this.search || "";
-
-    var categs = [];
-    paged.tagIds = categs.map(x => x.id);
-    // paged.categoryId = this.searchCateg ? this.searchCateg.id : null;
-    this.partnerService.exportPartnerExcelFile(paged).subscribe((rs) => {
+    var val = Object.assign({}, this.filter);
+    this.partnerService.exportPartnerExcelFile(val).subscribe((rs) => {
       let filename = "danh_sach_khach_hang";
       let newBlob = new Blob([rs], {
         type:

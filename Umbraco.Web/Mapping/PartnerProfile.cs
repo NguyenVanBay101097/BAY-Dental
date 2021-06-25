@@ -66,6 +66,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Title, x => x.Ignore());
 
             CreateMap<PartnerInfo, PartnerInfoDisplay>();
+            CreateMap<PartnerInfoTemplate, PartnerInfoDisplay>();
 
         }
     }
