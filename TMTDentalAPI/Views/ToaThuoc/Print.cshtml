@@ -129,17 +129,14 @@
                         </td>
                         <td colspan="1" style="width: 100%;">@Model.Note</td>
                     </tr>
-                    @if (!string.IsNullOrEmpty(Model.Diagnostic))
-                    {
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Chuẩn đoán bệnh
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">@Model.Diagnostic</td>
-                        </tr>
-                    }
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Chẩn đoán bệnh
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@Model.Diagnostic</td>
+                    </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
