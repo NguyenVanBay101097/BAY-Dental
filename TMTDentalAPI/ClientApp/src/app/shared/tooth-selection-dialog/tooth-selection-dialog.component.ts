@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
@@ -23,7 +23,8 @@ export class ToothSelectionDialogComponent implements OnInit {
   filteredToothCategories: any[] = [];
   cateId: string;
   submitted: boolean = false;
-  toothData: any;
+  @Input() toothDataInfo: any;
+  toothRemove: any[]=[];
   get f() { return this.myForm.controls; }
 
   getFormValue(key: string) {
@@ -43,12 +44,11 @@ export class ToothSelectionDialogComponent implements OnInit {
       toothType: "manual",
       teeth: [],
     })
-    
-    if (this.toothData) {
-      this.myForm.patchValue(this.toothData);
-      this.teethSelected = this.toothData.teeth;
-      this.cateId = this.toothData.toothCategory ? this.toothData.toothCategory.id : '';
-      this.loadTeethMap(this.toothData.toothCategory);
+    if (this.toothDataInfo.toothType && this.toothDataInfo.toothCategory) {
+      this.myForm.setValue(this.toothDataInfo);
+      this.teethSelected = this.toothDataInfo.teeth;
+      this.cateId = this.toothDataInfo.toothCategory ? this.toothDataInfo.toothCategory.id : '';
+      this.loadTeethMap(this.toothDataInfo.toothCategory);
     }
     else {
       this.loadDefaultToothCategory().subscribe(result => {
@@ -121,6 +121,7 @@ export class ToothSelectionDialogComponent implements OnInit {
   }
 
   onSelected(tooth: ToothDisplay) {
+    this.toothRemove.push(tooth.name);
     if (this.getFormValue("toothType") == "manual") {
       if (this.isSelected(tooth)) {
         var index = this.getSelectedIndex(tooth);
@@ -149,6 +150,19 @@ export class ToothSelectionDialogComponent implements OnInit {
   }
 
   onCancel() {
-    this.activeModal.dismiss();
+    const rs = [];
+    for (var i = 0; i < this.toothDataInfo.teeth.length;i++) {
+      for (var t = 0; t < this.toothRemove.length;t++){
+        if(this.toothRemove[t] == this.toothDataInfo.teeth[i].name){
+          rs.push(i)
+        }
+      }
+    }
+    const a = rs;
+    rs.reverse().forEach(index=>{
+      this.toothDataInfo.teeth.splice(index, 1);
+    })
+    this.activeModal.close(this.toothDataInfo);
+    // this.activeModal.close(false);
   }
 }

@@ -58,7 +58,19 @@ export class SaleOrderLineCuComponent implements OnInit {
   formGroupInfo: FormGroup;
   submitted = false;
   get f() { return this.formGroupInfo.controls; }
-
+  teethList: string = '';
+  toothData = {
+    teeth: [],
+    toothCategory: null,
+    toothType: ''
+  };
+  toothDataLine = {
+    teeth: [],
+    toothCategory: null,
+    toothType: ''
+  };
+  isUpdated: boolean = false;
+  lineId: string = '';
   constructor(
     private fb: FormBuilder,
     private employeeService: EmployeeService,
@@ -80,6 +92,12 @@ export class SaleOrderLineCuComponent implements OnInit {
     // this.loadEmployees();
     // this.loadToothCategories();
     // this.loadTeethList();
+    this.toothData = {
+      teeth: this.line.teeth,
+      toothCategory: this.line.toothCategory,
+      toothType: this.line.toothType
+    }
+    this.viewTeeth(this.toothData);
   }
 
   get TeethFA() {
@@ -106,6 +124,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   editLine() {
+    this.viewTeeth(this.toothDataLine);
     this.onEditEvent.emit(this.line);
   }
 
@@ -126,7 +145,14 @@ export class SaleOrderLineCuComponent implements OnInit {
     });
 
     this.formGroupInfo.get('toothType').setValue(this.line.toothType);
+    this.lineId = this.line.id ? this.line.id : ''
 
+    this.toothDataLine = {
+      teeth: (this.isUpdated || this.lineId) ? this.line.teeth : [],
+      toothCategory: (this.isUpdated || this.lineId) ? this.line.toothCategory : null,
+      toothType: (this.isUpdated || this.lineId) ? this.line.toothType : ''
+    }
+    this.viewTeeth(this.toothDataLine)
     // this.loadTeethMap(this.line.toothCategory);
     this.filteredEmployeesDoctor = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
     this.filteredEmployeesCounselor = this.initialListEmployees.slice();
@@ -292,11 +318,11 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   updateLineInfo() {
+    this.isUpdated = true;
     if (this.formGroupInfo.invalid) {
       this.formGroupInfo.markAllAsTouched();
       return false;
     }
-
     // if(this.formInfoControl('toothType').value == 'manual' && this.formInfoControl('teeth').value.length == 0) {
     //   this.notify('error', 'Chọn răng');
     //   return false;
@@ -306,7 +332,15 @@ export class SaleOrderLineCuComponent implements OnInit {
     // this.line.teeth.forEach(value => {
     //   this.onSelected(value);
     // })
-    var val = this.formGroupInfo.value;
+
+    let val = this.formGroupInfo.value;
+
+    this.toothData = {
+      teeth: val.teeth,
+      toothCategory: val.toothCategory,
+      toothType: val.toothType
+    }
+    this.viewTeeth(this.toothData);
     this.onUpdateEvent.emit(val);
     this.isEditting = false;
 
@@ -387,34 +421,26 @@ export class SaleOrderLineCuComponent implements OnInit {
   // }
 
   onCancel() {
-    this.TeethFA.clear()
+    this.TeethFA.clear();
+    this.toothDataLine = {
+      teeth: (this.isUpdated || this.lineId) ? this.line.teeth : [],
+      toothCategory: (this.isUpdated || this.lineId) ? this.line.toothCategory : null,
+      toothType: (this.isUpdated || this.lineId) ? this.line.toothType : ''
+    }
+    this.viewTeeth(this.toothDataLine);
     this.isEditting = false;
     this.onCancelEvent.emit(this.line);
   }
 
-  viewTeeth() {
-    var toothType = this.line.toothType ? this.line.toothType : (this.formGroupInfo.value.toothType ? this.formGroupInfo.value.toothType : '');
-    if(!toothType) return '';
-    if (toothType == "manual") {
-      let teeth;
-      var rs = this.formGroupInfo.value.teeth as any[];
-      if (rs !=null && rs !=undefined && rs.length!=0) {
-        teeth = this.formGroupInfo.value.teeth;
-      }
-      else {
-        teeth = this.line.teeth as any[];
-      }
-      return teeth.map(x => x.name).join(',');
-    } else {
-      return this.toothTypeDict.find(x => x.value == toothType).name;
+  viewTeeth(toothData: any) {
+    if (toothData.toothType && toothData.toothType == "manual") {
+      this.teethList = toothData.teeth.map(x => x.name).join(',');
+    } else if (toothData.toothType && toothData.toothType != "manual") {
+      this.teethList = this.toothTypeDict.find(x => x.value == toothData.toothType).name;
     }
-    // var toothType = this.line.toothType || 'manual';
-    // if (toothType == "manual") {
-    //   var teeth = this.line.teeth as any[];
-    //   return teeth.map(x => x.name).join(',');
-    // } else {
-    //   return this.toothTypeDict.find(x => x.value == toothType).name;
-    // }
+    else {
+      this.teethList = '';
+    }
   }
 
   onActive(active) {
@@ -422,28 +448,30 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   toothSelection() {
-    var toothData;
-    if (this.formGroupInfo.value.toothCategory != null) {
-      toothData = {
-        teeth: this.formInfoControl('teeth').value,
-        toothCategory: this.formInfoControl('toothCategory').value,
-        toothType: this.formInfoControl('toothType').value
-      };
-    }
-    else {
-      toothData = null;
+    var val = this.formGroupInfo.value;
+    this.toothData = {
+      teeth: val.teeth,
+      toothCategory: val.toothCategory,
+      toothType: val.toothType
     }
     let modalRef = this.modalService.open(ToothSelectionDialogComponent, { size: 'md', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.toothData = toothData;
-
+    modalRef.componentInstance.toothDataInfo = this.toothData;
     modalRef.result.then(result => {
+      // var val = this.formGroupInfo.value;
+      this.toothDataLine = {
+        teeth: this.isUpdated ? this.line.teeth : [],
+        toothCategory: this.isUpdated ? this.line.toothCategory : null,
+        toothType: this.isUpdated ? this.line.toothType : ''
+      }
       this.formGroupInfo.get("toothCategory").setValue(result.toothCategory);
       this.formGroupInfo.get("toothType").setValue(result.toothType);
       this.TeethFA.clear();
       result.teeth.forEach(value => {
-        this.onSelected(value);
+        this.TeethFA.push(this.fb.group(value));
+        this.onChangeToothTypeLine(this.formInfoControl("toothType").value);
       })
-    }, () => {
+      this.viewTeeth(result);
+    }, (reason) => {
     });
   }
 }
