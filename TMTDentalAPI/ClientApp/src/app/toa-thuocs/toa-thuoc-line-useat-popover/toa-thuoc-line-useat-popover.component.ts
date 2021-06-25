@@ -36,6 +36,9 @@ export class ToaThuocLineUseatPopoverComponent implements OnInit {
   }
 
   reLoad() {
+    this.formGroup.markAsPristine();
+    this.formGroup.updateValueAndValidity();
+    this.submitted = false;
     if (this.item) {
       var line = this.item.value;
       this.formGroup.get('useAt').setValue(line.useAt);
