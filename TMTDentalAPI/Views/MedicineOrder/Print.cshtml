@@ -148,18 +148,14 @@
                         </td>
                         <td colspan="1" style="width: 100%;">@Model.ToaThuoc.Note</td>
                     </tr>
-                    @if (!string.IsNullOrEmpty(Model.ToaThuoc.Diagnostic))
-                    {
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Chuẩn đoán bệnh
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">@Model.ToaThuoc.Diagnostic</td>
-                        </tr>
-                    }
-
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Chẩn đoán bệnh
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@Model.ToaThuoc.Diagnostic</td>
+                    </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
