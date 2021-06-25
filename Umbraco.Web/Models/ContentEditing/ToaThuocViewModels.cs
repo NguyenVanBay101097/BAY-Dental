@@ -65,6 +65,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? SaleOrderId { get; set; }
         public string Name { get; set; }
         public DateTime? ReExaminationDate { get; set; }
+
+        public string Diagnostic { get; set; }
     }
 
     public class ToaThuocDefaultGet

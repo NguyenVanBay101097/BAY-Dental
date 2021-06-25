@@ -29,6 +29,7 @@ export class ToaThuocDisplay {
     reExaminationDate: string;
     lines: [];
     saleOrderId: string;
+    diagnostic: string;
 }
 
 export class ToaThuocDisplayFromUI {
@@ -49,6 +50,7 @@ export class ToaThuocDisplayFromUI {
     reExaminationDate: string;
     saveSamplePrescription: boolean;
     nameSamplePrescription: string;
+    diagnostic: string;
 }
 
 export class ToaThuocSave {
@@ -80,6 +82,7 @@ export class ToaThuocLineSave {
     unit: string;
     numberOfDays: number;
     useAt: string;
+    note: string;
 }
 
 export class ToaThuocLineDefaultGet {

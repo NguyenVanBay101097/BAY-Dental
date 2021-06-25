@@ -148,19 +148,31 @@
                         </td>
                         <td colspan="1" style="width: 100%;">@Model.ToaThuoc.Note</td>
                     </tr>
+                    @if (!string.IsNullOrEmpty(Model.ToaThuoc.Diagnostic))
+                    {
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Chuẩn đoán bệnh
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@Model.ToaThuoc.Diagnostic</td>
+                        </tr>
+                    }
+
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
                                 Tái khám
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">@Model.ToaThuoc.Date.ToString("dd/MM/yyyy")</td>
+                        <td colspan="1" style="width: 100%;">@(Model.ToaThuoc.ReExaminationDate.HasValue ? Model.ToaThuoc.ReExaminationDate.Value.ToString("dd/MM/yyyy") : "")</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="d-flex">
+    <div class="d-flex mt-2">
         <div class="col">
             <div class="text-center">
                 <span class="font-semibold">Người lập phiếu</span> <br />

@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210622024833_thuong_AddcolumnNoteInSamplePrescriptionLine")]
+    partial class thuong_AddcolumnNoteInSamplePrescriptionLine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,119 +186,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("FinancialReportId");
 
                     b.ToTable("AccountFinancialReportAccountAccountTypeRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AccountFinancialRevenueReport", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DisplayDetail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("Level")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("Sequence")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Sign")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("ParentId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("AccountFinancialRevenueReports");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AccountFinancialRevenueReportAccountAccountRel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AccountCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Column")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("FinancialRevenueReportId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("JournalTypes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("FinancialRevenueReportId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("AccountFinancialRevenueReportAccountAccountRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AccountFinancialRevenueReportAccountAccountTypeRel", b =>
-                {
-                    b.Property<Guid>("AccountTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FinancialRevenueReportId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Column")
-                        .HasColumnType("int");
-
-                    b.Property<string>("JournalTypes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AccountTypeId", "FinancialRevenueReportId");
-
-                    b.HasIndex("FinancialRevenueReportId");
-
-                    b.ToTable("AccountFinancialRevenueReportAccountAccountTypeRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.AccountFullReconcile", b =>
@@ -829,9 +718,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal>("AmountResidual")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("AssistantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
 
@@ -864,9 +750,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("DiscountType")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool?>("ExcludeFromInvoiceTab")
                         .HasColumnType("bit");
@@ -945,13 +828,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("AssistantId");
-
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("FullReconcileId");
 
@@ -1288,70 +1167,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("AdvisoryToothRels");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.Agent", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("BirthDay")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BirthMonth")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BirthYear")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("JobTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("PartnerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("PartnerId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("Agents");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
@@ -1523,13 +1338,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateAppointmentReminder")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateTimeAppointment")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DoctorId")
@@ -1969,16 +1778,10 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("MoveLineId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PartnerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal?>("Percentage")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SaleOrderLineId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("TotalAmount")
@@ -1997,11 +1800,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("MoveLineId");
 
-                    b.HasIndex("PartnerId");
-
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("SaleOrderLineId");
 
                     b.HasIndex("WriteById");
 
@@ -5058,48 +4857,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("MedicineOrderLines");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.MemberLevel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Point")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("MemberLevels");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.Partner", b =>
                 {
                     b.Property<Guid>("Id")
@@ -5108,9 +4865,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
-
-                    b.Property<Guid?>("AgentId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
@@ -5137,6 +4891,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ConsultantId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedById")
@@ -5171,9 +4928,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsAgent")
-                        .HasColumnType("bit");
 
                     b.Property<string>("JobTitle")
                         .HasColumnType("nvarchar(max)");
@@ -5229,9 +4983,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AgentId");
-
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("ConsultantId");
 
                     b.HasIndex("CreatedById");
 
@@ -5593,17 +5347,8 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AccountType")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("AgentId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
@@ -5629,7 +5374,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("LoaiThuChiId")
+                    b.Property<Guid>("LoaiThuChiId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -5657,10 +5402,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("AgentId");
 
                     b.HasIndex("CompanyId");
 
@@ -6950,7 +6691,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("PromotionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("QuotationLineId")
+                    b.Property<Guid?>("QuotationLineId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("WriteById")
@@ -7058,9 +6799,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("GroupServiceCard")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("GroupSms")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("GroupSurvey")
@@ -7700,21 +7438,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("SaleCouponPrograms");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramMemberLevelRel", b =>
-                {
-                    b.Property<Guid>("ProgramId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MemberLevelId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ProgramId", "MemberLevelId");
-
-                    b.HasIndex("MemberLevelId");
-
-                    b.ToTable("SaleCouponProgramMemberLevelRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramPartnerRel", b =>
@@ -9053,670 +8776,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("setupChamcongs");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsAccount", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ApiKey")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BrandName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClientId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClientSecret")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DisplayName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Provider")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Secretkey")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SmsAccounts");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsAppointmentAutomationConfig", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Body")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("SmsAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SmsCampaignId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("TemplateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("TimeBeforSend")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TypeTimeBeforSend")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("SmsAccountId");
-
-                    b.HasIndex("SmsCampaignId");
-
-                    b.HasIndex("TemplateId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SmsAppointmentAutomationConfigs");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsBirthdayAutomationConfig", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Body")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DayBeforeSend")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ScheduleTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("SmsAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SmsCampaignId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("TemplateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("SmsAccountId");
-
-                    b.HasIndex("SmsCampaignId");
-
-                    b.HasIndex("TemplateId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SmsBirthdayAutomationConfigs");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsCampaign", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateStart")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DefaultType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("LimitMessage")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TypeDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SmsCampaign");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsCareAfterOrderAutomationConfig", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Body")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ScheduleTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("SmsAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SmsCampaignId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("TemplateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("TimeBeforSend")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TypeTimeBeforSend")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("SmsAccountId");
-
-                    b.HasIndex("SmsCampaignId");
-
-                    b.HasIndex("TemplateId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SmsCareAfterOrderAutomationConfigs");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsComposer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Body")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CompositionMode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ResIds")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ResModel")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("TemplateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("TemplateId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SmsComposers");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsConfigProductCategoryRel", b =>
-                {
-                    b.Property<Guid>("SmsConfigId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("SmsConfigId", "ProductCategoryId");
-
-                    b.HasIndex("ProductCategoryId");
-
-                    b.ToTable("SmsConfigProductCategoryRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsConfigProductRel", b =>
-                {
-                    b.Property<Guid>("SmsConfigId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("SmsConfigId", "ProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("SmsConfigProductRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Body")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ResCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ResModel")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ScheduleDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("SmsAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SmsCampaignId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SmsTemplateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("SmsAccountId");
-
-                    b.HasIndex("SmsCampaignId");
-
-                    b.HasIndex("SmsTemplateId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SmsMessages");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsMessageAppointmentRel", b =>
-                {
-                    b.Property<Guid>("AppointmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SmsMessageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AppointmentId", "SmsMessageId");
-
-                    b.HasIndex("SmsMessageId");
-
-                    b.ToTable("SmsMessageAppointmentRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsMessageDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Body")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Cost")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ErrorCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Number")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("PartnerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SmsAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SmsCampaignId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SmsMessageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("PartnerId");
-
-                    b.HasIndex("SmsAccountId");
-
-                    b.HasIndex("SmsCampaignId");
-
-                    b.HasIndex("SmsMessageId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SmsMessageDetails");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsMessagePartnerRel", b =>
-                {
-                    b.Property<Guid>("PartnerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SmsMessageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("PartnerId", "SmsMessageId");
-
-                    b.HasIndex("SmsMessageId");
-
-                    b.ToTable("SmsMessagePartnerRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsMessageSaleOrderLineRel", b =>
-                {
-                    b.Property<Guid>("SaleOrderLineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SmsMessageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("SaleOrderLineId", "SmsMessageId");
-
-                    b.HasIndex("SmsMessageId");
-
-                    b.ToTable("SmsMessageSaleOrderLineRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsMessageSaleOrderRel", b =>
-                {
-                    b.Property<Guid>("SaleOrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SmsMessageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("SaleOrderId", "SmsMessageId");
-
-                    b.HasIndex("SmsMessageId");
-
-                    b.ToTable("SmsMessageSaleOrderRels");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsTemplate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Body")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SmsTemplates");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsThanksCustomerAutomationConfig", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Body")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("SmsAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SmsCampaignId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("TemplateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("TimeBeforSend")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TypeTimeBeforSend")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("SmsAccountId");
-
-                    b.HasIndex("SmsCampaignId");
-
-                    b.HasIndex("TemplateId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SmsThanksCustomerAutomationConfigs");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.StockInventory", b =>
@@ -11771,53 +10830,6 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.AccountFinancialRevenueReport", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.AccountFinancialRevenueReport", "Parent")
-                        .WithMany("Childs")
-                        .HasForeignKey("ParentId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AccountFinancialRevenueReportAccountAccountRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.AccountFinancialRevenueReport", "FinancialRevenueReport")
-                        .WithMany("FinancialRevenueReportAccountRels")
-                        .HasForeignKey("FinancialRevenueReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.AccountFinancialRevenueReportAccountAccountTypeRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.AccountAccountType", "AccountType")
-                        .WithMany()
-                        .HasForeignKey("AccountTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.AccountFinancialRevenueReport", "FinancialRevenueReport")
-                        .WithMany("FinancialRevenueReportAccountTypeRels")
-                        .HasForeignKey("FinancialRevenueReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.AccountFullReconcile", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
@@ -12060,10 +11072,6 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ApplicationCore.Entities.Employee", "Assistant")
-                        .WithMany()
-                        .HasForeignKey("AssistantId");
-
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId");
@@ -12071,10 +11079,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("ApplicationCore.Entities.AccountFullReconcile", "FullReconcile")
                         .WithMany("ReconciledLines")
@@ -12322,28 +11326,6 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.Agent", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
-                        .HasForeignKey("PartnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.ApplicationRoleFunction", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
@@ -12589,17 +11571,9 @@ namespace Infrastructure.Data.Migrations
                         .WithMany("CommissionSettlements")
                         .HasForeignKey("MoveLineId");
 
-                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
-                        .HasForeignKey("PartnerId");
-
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany("CommissionSettlements")
-                        .HasForeignKey("SaleOrderLineId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
@@ -13818,32 +12792,15 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.MemberLevel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.Partner", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.Agent", "Agent")
-                        .WithMany("Partners")
-                        .HasForeignKey("AgentId");
-
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Consultant")
+                        .WithMany()
+                        .HasForeignKey("ConsultantId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
@@ -14013,14 +12970,6 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.PhieuThuChi", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.AccountAccount", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId");
-
-                    b.HasOne("ApplicationCore.Entities.Agent", "Agent")
-                        .WithMany()
-                        .HasForeignKey("AgentId");
-
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
@@ -14038,7 +12987,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("ApplicationCore.Entities.LoaiThuChi", "LoaiThuChi")
                         .WithMany()
-                        .HasForeignKey("LoaiThuChiId");
+                        .HasForeignKey("LoaiThuChiId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
                         .WithMany()
@@ -14632,9 +13583,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("ApplicationCore.Entities.QuotationLine", "QuotationLine")
                         .WithMany("PromotionLines")
-                        .HasForeignKey("QuotationLineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("QuotationLineId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
@@ -14940,21 +13889,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramMemberLevelRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.MemberLevel", "MemberLevel")
-                        .WithMany()
-                        .HasForeignKey("MemberLevelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "Program")
-                        .WithMany("DiscountMemberLevels")
-                        .HasForeignKey("ProgramId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleCouponProgramPartnerRel", b =>
@@ -15651,324 +14585,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsAccount", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsAppointmentAutomationConfig", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.SmsAccount", "SmsAccount")
-                        .WithMany()
-                        .HasForeignKey("SmsAccountId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsCampaign", "SmsCampaign")
-                        .WithMany()
-                        .HasForeignKey("SmsCampaignId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsTemplate", "Template")
-                        .WithMany()
-                        .HasForeignKey("TemplateId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsBirthdayAutomationConfig", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.SmsAccount", "SmsAccount")
-                        .WithMany()
-                        .HasForeignKey("SmsAccountId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsCampaign", "SmsCampaign")
-                        .WithMany()
-                        .HasForeignKey("SmsCampaignId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsTemplate", "Template")
-                        .WithMany()
-                        .HasForeignKey("TemplateId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsCampaign", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsCareAfterOrderAutomationConfig", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.SmsAccount", "SmsAccount")
-                        .WithMany()
-                        .HasForeignKey("SmsAccountId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsCampaign", "SmsCampaign")
-                        .WithMany()
-                        .HasForeignKey("SmsCampaignId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsTemplate", "Template")
-                        .WithMany()
-                        .HasForeignKey("TemplateId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsComposer", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.SmsTemplate", "Template")
-                        .WithMany()
-                        .HasForeignKey("TemplateId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsConfigProductCategoryRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ProductCategory", "ProductCategory")
-                        .WithMany()
-                        .HasForeignKey("ProductCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SmsCareAfterOrderAutomationConfig", "SmsConfig")
-                        .WithMany("SmsConfigProductCategoryRels")
-                        .HasForeignKey("SmsConfigId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsConfigProductRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SmsCareAfterOrderAutomationConfig", "SmsConfig")
-                        .WithMany("SmsConfigProductRels")
-                        .HasForeignKey("SmsConfigId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsMessage", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.SmsAccount", "SmsAccount")
-                        .WithMany()
-                        .HasForeignKey("SmsAccountId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsCampaign", "SmsCampaign")
-                        .WithMany()
-                        .HasForeignKey("SmsCampaignId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsTemplate", "SmsTemplate")
-                        .WithMany()
-                        .HasForeignKey("SmsTemplateId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsMessageAppointmentRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Appointment", "Appointment")
-                        .WithMany()
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SmsMessage", "SmsMessage")
-                        .WithMany("SmsMessageAppointmentRels")
-                        .HasForeignKey("SmsMessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsMessageDetail", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
-                        .HasForeignKey("PartnerId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsAccount", "SmsAccount")
-                        .WithMany()
-                        .HasForeignKey("SmsAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SmsCampaign", "SmsCampaign")
-                        .WithMany()
-                        .HasForeignKey("SmsCampaignId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsMessage", "SmsMessage")
-                        .WithMany()
-                        .HasForeignKey("SmsMessageId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsMessagePartnerRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
-                        .HasForeignKey("PartnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SmsMessage", "SmsMessage")
-                        .WithMany("SmsMessagePartnerRels")
-                        .HasForeignKey("SmsMessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsMessageSaleOrderLineRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany()
-                        .HasForeignKey("SaleOrderLineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SmsMessage", "SmsMessage")
-                        .WithMany("SmsMessageSaleOrderLineRels")
-                        .HasForeignKey("SmsMessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsMessageSaleOrderRel", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
-                        .WithMany()
-                        .HasForeignKey("SaleOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SmsMessage", "SmsMessage")
-                        .WithMany("SmsMessageSaleOrderRels")
-                        .HasForeignKey("SmsMessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsTemplate", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SmsThanksCustomerAutomationConfig", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.SmsAccount", "SmsAccount")
-                        .WithMany()
-                        .HasForeignKey("SmsAccountId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsCampaign", "SmsCampaign")
-                        .WithMany()
-                        .HasForeignKey("SmsCampaignId");
-
-                    b.HasOne("ApplicationCore.Entities.SmsTemplate", "Template")
-                        .WithMany()
-                        .HasForeignKey("TemplateId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

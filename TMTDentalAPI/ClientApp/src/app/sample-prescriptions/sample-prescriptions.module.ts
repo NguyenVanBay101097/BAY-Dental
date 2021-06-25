@@ -7,6 +7,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SamplePrescriptionsRoutingModule } from './sample-prescriptions-routing.module';
 import { SamplePrescriptionLineCreateUpdateDialogComponent } from './sample-prescription-line-create-update-dialog/sample-prescription-line-create-update-dialog.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToaThuocsModule } from '../toa-thuocs/toa-thuocs.module';
 
 @NgModule({
   declarations: [SamplePrescriptionListComponent, SamplePrescriptionCreateUpdateDialogComponent, SamplePrescriptionLineCreateUpdateDialogComponent],
@@ -15,6 +16,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     CommonModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
+    ToaThuocsModule,
     FormsModule,
     NgbModule
   ],  

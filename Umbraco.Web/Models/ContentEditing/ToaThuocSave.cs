@@ -29,6 +29,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
 
         /// <summary>
+        /// Chuẩn đoán bệnh
+        /// </summary>
+        public string Diagnostic { get; set; }
+
+        /// <summary>
         /// Ngày Tái Khám
         /// </summary>
         public DateTime Date { get; set; }
@@ -57,6 +62,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Lời dặn
         /// </summary>
         public string Note { get; set; }
+
+        public string Diagnostic { get; set; }
 
         /// <summary>
         /// Ngày Tái Khám

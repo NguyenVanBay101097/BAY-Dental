@@ -175,6 +175,7 @@ namespace Infrastructure.Services
             toathuoc.ReExaminationDate = val.ReExaminationDate;
             toathuoc.EmployeeId = val.EmployeeId;
             toathuoc.Note = val.Note;
+            toathuoc.Diagnostic = val.Diagnostic;
 
             SaveOrderLines(val, toathuoc);
 
@@ -202,7 +203,8 @@ namespace Infrastructure.Services
                     NumberOfDays = line.NumberOfDays,
                     Quantity = line.Quantity,
                     UseAt = line.UseAt,
-                    ProductUoMId = line.ProductUoMId
+                    ProductUoMId = line.ProductUoMId,
+                    Note = line.Note
                 });
             }
 

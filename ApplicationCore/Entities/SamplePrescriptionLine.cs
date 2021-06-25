@@ -53,7 +53,10 @@ namespace ApplicationCore.Entities
         /// Trong khi ăn: in_meal
         /// Sau khi dậy: after_wakeup
         /// Trước khi đi ngủ: before_sleep
+        /// Khác: other 
         /// </summary>
         public string UseAt { get; set; }
+
+        public string Note { get; set; }
     }
 }

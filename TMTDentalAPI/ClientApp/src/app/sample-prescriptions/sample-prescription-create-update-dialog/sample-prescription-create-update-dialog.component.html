@@ -97,13 +97,26 @@
                                         </kendo-numerictextbox>
                                     </td>
                                     <td>
-                                        <select class="form-control" formControlName="useAt">
+                                        <div class="d-flex">
+                                            <div>
+                                                <app-toa-thuoc-line-useat-popover [item]="item" [index]="i" class="ml-3"
+                                                (useAtFormGroup)="onChangeUseAt(i,$event)">
+                                                </app-toa-thuoc-line-useat-popover>
+                                            </div>
+                                            
+                                            <div class="ml-2">
+                                                <span>
+                                                    {{item.get('useAt').value != 'other' ? getUsedAt(item.get('useAt').value) : item.get('note').value}}
+                                                </span>
+                                            </div>                                         
+                                        </div>
+                                        <!-- <select class="form-control" formControlName="useAt">
                                             <option value="after_meal">Sau khi ăn</option>
                                             <option value="before_meal">Trước khi ăn</option>
                                             <option value="in_meal">Trong khi ăn</option>
                                             <option value="after_wakeup">Sau khi thức dậy</option>
                                             <option value="before_sleep">Trước khi đi ngủ</option>
-                                        </select>
+                                        </select> -->
                                     </td>
                                     <td>
                                         <button type="button" title="Hủy" class="btn btn-danger btn-sm"
