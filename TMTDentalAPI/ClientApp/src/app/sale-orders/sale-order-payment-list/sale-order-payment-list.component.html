@@ -7,6 +7,7 @@
                 <th>Số tiền</th>
                 <th>Phương thức</th>
                 <th>Thanh toán</th>
+                <th>Nội dung</th>
                 <th>Trạng thái</th>
                 <th>Thao tác</th>
             </tr>
@@ -19,6 +20,7 @@
                     <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="text-right">{{payment.amount | number}}</td>
                     <td>{{item.journalName}}</td>
                     <td class="text-right">{{item.amount | number}}</td>
+                    <td>{{item.communication}}</td>
                     <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="text-center">{{getPaymentState(payment.state)}}</td>
                     <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="text-center">
                         <button type="button" class="btn btn-icon btn-sm btn-light mr-1" (click)="printPayment(payment)">
