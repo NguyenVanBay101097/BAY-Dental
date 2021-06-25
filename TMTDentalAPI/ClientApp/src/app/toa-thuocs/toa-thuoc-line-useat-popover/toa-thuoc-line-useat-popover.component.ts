@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbDropdown, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -41,6 +41,8 @@ export class ToaThuocLineUseatPopoverComponent implements OnInit {
       this.formGroup.get('useAt').setValue(line.useAt);
       if (line.useAt == 'other') {
         this.formGroup.get('note').setValue(line.note);
+        this.formGroup.get('note').setValidators(Validators.required);
+        this.formGroup.get('note').updateValueAndValidity();
       }
     }
   }
@@ -57,8 +59,13 @@ export class ToaThuocLineUseatPopoverComponent implements OnInit {
 
   onChangeUseAt() {
     if (this.useAtControl != 'other') {
-      this.formGroup.get('note').setValue(null);
-    } 
+      this.formGroup.get('note').clearValidators();
+      this.formGroup.get('note').updateValueAndValidity();
+      this.onSave();
+    } else {
+      this.formGroup.get('note').setValidators(Validators.required);
+      this.formGroup.get('note').updateValueAndValidity();
+    }
   }
 
   togglePopover(popOver) {

@@ -113,12 +113,12 @@
                                     <td>
                                         <div class="d-flex">
                                             <div>
-                                                <app-toa-thuoc-line-useat-popover [item]="item" [index]="i" class="ml-3"
+                                                <app-toa-thuoc-line-useat-popover [item]="item" [index]="i"
                                                 (useAtFormGroup)="onChangeUseAt(i,$event)">
                                                 </app-toa-thuoc-line-useat-popover>
                                             </div>
                                             
-                                            <div class="ml-2">
+                                            <div class="ml-1">
                                                 <span>
                                                     {{item.get('useAt').value != 'other' ? getUsedAt(item.get('useAt').value) : item.get('note').value}}
                                                 </span>

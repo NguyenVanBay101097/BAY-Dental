@@ -216,41 +216,41 @@
                     <table class="o_group o_inner_group o_group_col_12">
                         <tbody>
                             <tr>
-                                <th colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Trạng thái
                                     </label>
-                                </th>
+                                </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span>{{getState(precscriptPayment.state)}}</span>
                                 </td>
                             </tr>
                             <tr *ngIf="precscriptPayment.toaThuoc?.note">
-                                <th colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Lời dặn
                                     </label>
-                                </th>
+                                </td>
                                 <td colspan="1" style="width: 100%;">
                                     {{precscriptPayment.toaThuoc ? precscriptPayment.toaThuoc.note : ''}}
                                 </td>
                             </tr>
                             <tr *ngIf="precscriptPayment.toaThuoc?.diagnostic">
-                                <th colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Chuẩn đoán bệnh
                                     </label>
-                                </th>
+                                </td>
                                 <td colspan="1" style="width: 100%;">
                                     {{precscriptPayment.toaThuoc ? precscriptPayment.toaThuoc.diagnostic : ''}}
                                 </td>
                             </tr>
                             <tr *ngIf="precscriptPayment.toaThuoc?.reExaminationDate">
-                                <th colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Tái khám
                                     </label>
-                                </th>
+                                </td>
                                 <td colspan="1" style="width: 100%;">
                                     {{precscriptPayment.toaThuoc ? (precscriptPayment.toaThuoc.reExaminationDate | date:'shortDate') : ''}}
                                 </td>
