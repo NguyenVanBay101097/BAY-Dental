@@ -6,6 +6,8 @@ export class ListPagedBirthdayCustomerRequest {
     limit: number;
     search: string;
     companyId: string;
+    day: number;
+    month: number;
 }
 
 @Injectable({ providedIn: 'root' })

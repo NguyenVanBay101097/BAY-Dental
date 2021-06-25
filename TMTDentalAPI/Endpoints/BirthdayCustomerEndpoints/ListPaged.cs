@@ -55,10 +55,16 @@ namespace TMTDentalAPI.Endpoints.BirthdayCustomerEndpoints
                          };
 
             var today = DateTime.Today;
-            var partnerQuery = _partnerService.SearchQuery(x => x.Customer == true && x.BirthDay == today.Day && x.BirthMonth == today.Month);
+            var partnerQuery = _partnerService.SearchQuery(x => x.Customer == true);
+            if (request.Day.HasValue && request.Day != 0)
+                partnerQuery = partnerQuery.Where(x => x.BirthDay == request.Day.Value);
+            if (request.Month.HasValue && request.Month != 0)
+                partnerQuery = partnerQuery.Where(x => x.BirthMonth == request.Month.Value);
+            if (request.Day.HasValue && request.Day == 0 && request.Month.HasValue && request.Month == 0)
+                partnerQuery = partnerQuery.Where(x => x.BirthDay == today.Day && x.BirthMonth == today.Month);
             if (!string.IsNullOrEmpty(request.Search))
                 partnerQuery = partnerQuery.Where(x => x.Name.Contains(request.Search) || x.NameNoSign.Contains(request.Search) || x.Phone.Contains(request.Search));
-
+            
             var query = from partner in partnerQuery
                         from sale_report in partnerSaleReport.Where(x => x.PartnerId == partner.Id).DefaultIfEmpty()
                         select new BirthdayCustomerDto

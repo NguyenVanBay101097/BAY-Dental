@@ -10,5 +10,7 @@ namespace TMTDentalAPI.Endpoints.BirthdayCustomerEndpoints
         public int Limit { get; set; }
         public int Offset { get; set; }
         public string Search { get; set; }
+        public int? Day { get; set; }
+        public int? Month { get; set; }
     }
 }
