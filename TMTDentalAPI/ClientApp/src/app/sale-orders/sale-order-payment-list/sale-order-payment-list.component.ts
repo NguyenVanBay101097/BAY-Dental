@@ -19,7 +19,7 @@ export class SaleOrderPaymentListComponent implements OnInit {
   @Output() paymentOutput = new EventEmitter<any>();
 
   paymentHistories: any = [];
-
+  canCancel = false;
   constructor(
     private saleOrderService: SaleOrderService,
     private paymentService: AccountPaymentService,

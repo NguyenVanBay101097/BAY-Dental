@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -56,6 +57,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.SaleOrderPayment.Full")]
         public async Task<IActionResult> Create(SaleOrderPaymentSave val)
         {
             var saleOrderPayment = await _saleOrderPaymentService.CreateSaleOrderPayment(val);
@@ -73,6 +75,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrderPayment.Full")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();

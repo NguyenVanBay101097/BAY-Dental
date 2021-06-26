@@ -106,7 +106,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   submitted = false;
   amountAdvanceBalance: number = 0;
   defaultToothCate: ToothCategoryBasic;
-
   childEmiter = new BehaviorSubject<any>(null);
   @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
   lineSelected = null;
@@ -163,7 +162,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadTeethList();
     this.loadToothCategories();
     this.loadEmployees();
-
   }
 
   loadEmployees() {
