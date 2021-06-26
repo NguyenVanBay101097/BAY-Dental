@@ -91,15 +91,5 @@
       "Basic.AccountPayment.Create",
       "Basic.AccountPayment.Update"
     ]
-  },
-  {
-    "Permissions": [
-      "Basic.SaleOrder.Payment"
-    ],
-    "Additionals": [
-      "Basic.Partner.Read",
-      "Basic.SaleOrder.Read",
-      "Basic.SaleOrder.CancelPayment"
-    ]
   }
 ]

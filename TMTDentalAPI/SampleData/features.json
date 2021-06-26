@@ -47,12 +47,8 @@
             "Permission": "Basic.SaleOrder.Delete"
           },
           {
-            "Name": "Hủy phiếu",
-            "Permission": "Basic.SaleOrder.Cancel"
-          },
-          {
             "Name": "Thanh toán",
-            "Permission": "Basic.SaleOrder.Payment"
+            "Permission": "Basic.SaleOrderPayment.Full"
           }
         ]
       },

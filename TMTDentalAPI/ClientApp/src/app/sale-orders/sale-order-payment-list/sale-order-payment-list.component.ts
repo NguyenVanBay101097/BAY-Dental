@@ -5,7 +5,6 @@ import { AccountPaymentBasic, AccountPaymentService } from 'src/app/account-paym
 import { SaleOrderPaymentPaged, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
-import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { AccountPaymentsOdataService } from 'src/app/shared/services/account-payments-odata.service';
 import { PrintService } from 'src/app/shared/services/print.service';
@@ -28,13 +27,11 @@ export class SaleOrderPaymentListComponent implements OnInit {
     private modalService: NgbModal,
     private printService: PrintService,
     private accountPaymentOdataService: AccountPaymentsOdataService,
-    private saleOrderPaymentService: SaleOrderPaymentService,
-    private checkPermissionService: CheckPermissionService
+    private saleOrderPaymentService: SaleOrderPaymentService
   ) { }
 
   ngOnInit() {
     this.loadPayments();
-    this.checkPermission();
   }
   loadPayments() {
     var val = new SaleOrderPaymentPaged();
@@ -101,9 +98,5 @@ export class SaleOrderPaymentListComponent implements OnInit {
     else {
       return 'Hủy'
     }
-  }
-
-  checkPermission(){
-    this.canCancel = this.checkPermissionService.check(["Basic.SaleOrder.CancelPayment"]);
   }
 }

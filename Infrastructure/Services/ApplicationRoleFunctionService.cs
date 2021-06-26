@@ -88,7 +88,7 @@ namespace Infrastructure.Services
                             continue;
 
                         var op = functionObj.Ops.FirstOrDefault(x => x.Permission == func);
-                        var msg = $"Bạn không có quyền {(op != null ? op.Name.ToLower() : "xem")} {functionObj.Name}";
+                        var msg = $"Bạn không có quyền: {functionObj.Name} - {op.Name}";
                         errors.Add(msg);
                     }
                 }
