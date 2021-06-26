@@ -24,7 +24,7 @@ export class ToothSelectionDialogComponent implements OnInit {
   cateId: string;
   submitted: boolean = false;
   @Input() toothDataInfo: any;
-  toothRemove: any[]=[];
+  toothRemove: any[] = [];
   get f() { return this.myForm.controls; }
 
   getFormValue(key: string) {
@@ -150,19 +150,7 @@ export class ToothSelectionDialogComponent implements OnInit {
   }
 
   onCancel() {
-    const rs = [];
-    for (var i = 0; i < this.toothDataInfo.teeth.length;i++) {
-      for (var t = 0; t < this.toothRemove.length;t++){
-        if(this.toothRemove[t] == this.toothDataInfo.teeth[i].name){
-          rs.push(i)
-        }
-      }
-    }
-    const a = rs;
-    rs.reverse().forEach(index=>{
-      this.toothDataInfo.teeth.splice(index, 1);
-    })
+    this.toothDataInfo.teeth = this.toothDataInfo.teeth.filter(item => !this.toothRemove.includes(item.name));
     this.activeModal.close(this.toothDataInfo);
-    // this.activeModal.close(false);
   }
 }
