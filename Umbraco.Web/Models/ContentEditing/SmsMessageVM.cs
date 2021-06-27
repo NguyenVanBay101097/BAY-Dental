@@ -29,8 +29,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public string BrandName { get; set; }
         public DateTime? Date { get; set; }
-        public DateTime? DateCreated { get; set; }
         public int ResCount { get; set; }
+        public DateTime? ScheduleDate { get; set; }
+        public int Total { get; set; }
+        public int TotalSent { get; set; }
+        public int TotalError { get; set; }
+        public DateTime? DateCreated { get; set; }
     }
 
     public class SmsMessageSimple
@@ -58,8 +62,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SmsMessageSave
     {
+        public string Name { get; set; }
         public string Body { get; set; }
-        public DateTime? ScheduleDate { get; set; }
         public Guid? SmsTemplateId { get; set; }
         public Guid? SmsAccountId { get; set; }
         public Guid? SmsCampaignId { get; set; }

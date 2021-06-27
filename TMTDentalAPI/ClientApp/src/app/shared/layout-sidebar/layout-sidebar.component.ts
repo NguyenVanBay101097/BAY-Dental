@@ -174,15 +174,15 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'SMS',
       icon: 'fas fa-sms',
       children: [
-        { name: 'Danh sách Brandname', link: '/sms/accounts', permissions: ['SMS.Account.Read'] },
         { name: 'Chúc mừng sinh nhật', link: '/sms/birthday-partners', permissions: ['SMS.Message.Read'] },
         { name: 'Nhắc lịch hẹn', link: '/sms/appointment-reminder', permissions: ['SMS.Message.Read'] },
-        { name: 'Tin nhắn mẫu', link: '/sms/templates', permissions: ['SMS.Template.Read'] },
         { name: 'Chăm sóc sau điều trị', link: '/sms/care-after-order', permissions: ['SMS.Message.Read'] },
-        { name: 'Cảm ơn', link: '/sms/thanks-customer', permissions: ['SMS.Message.Read'] },
+        { name: 'Tin nhắn cảm ơn', link: '/sms/thanks-customer', permissions: ['SMS.Message.Read'] },
         { name: 'Quản lý chiến dịch', link: '/sms/campaign', permissions: ['SMS.Campaign.Read'] },
         { name: 'Theo dõi tin nhắn', link: '/sms/statistic', permissions: ['SMS.Report.AllMessage'] },
         { name: 'Báo cáo', link: '/sms/report', permissions: ['SMS.Report.AllSMS'] },
+        { name: 'Tin nhắn mẫu', link: '/sms/templates', permissions: ['SMS.Template.Read'] },
+        { name: 'Danh sách Brandname', link: '/sms/accounts', permissions: ['SMS.Account.Read'] },
       ],
       groups: 'sms.group_sms',
       permissions: ['SMS.Account.Read', 'SMS.Campaign.Read', 'SMS.Message.Read', 'SMS.Template.Read', 'SMS.Config.Read', 'SMS.Report.AllMessage', 'SMS.Report.AllSMS']

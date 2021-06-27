@@ -23,7 +23,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <input type="text" class="form-control" formControlName="name">
+                                                <input type="text" class="form-control" formControlName="name"
+                                                    [class.border-danger]="submitted && f.name.value==''">
                                                 <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
                                                     class="text-danger">
                                                     <div *ngIf="f.name.errors.required">Nhập tên tin nhắn</div>
@@ -37,8 +38,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <input type="text" [attr.disabled]="true"
-                                                    [value]="campaign?.name" class="mt-2 form-control">
+                                                <input type="text" [attr.disabled]="true" [value]="campaign?.name"
+                                                    class="mt-2 form-control">
                                             </td>
                                         </tr>
                                         <tr>
@@ -96,23 +97,28 @@
                                                     #smsTemplateCbx (valueChange)="onChangeTemplate($event)"
                                                     [valueField]="'id'" class="mb-2">
                                                 </kendo-combobox>
-                                                <!-- <a class="btn btn-sm btn-light" (click)="addTemplate()">
-                                                    <span class="k-icon k-i-plus"></span>
-                                                </a> -->
                                             </td>
                                         </tr>
                                         <tr>
-                                            <!-- <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Nội dung</label>
-                                            </td> -->
                                             <td colspan="2" style="width: 80%;">
-                                                <app-sms-template-content [type]="templateTypeTab"
-                                                    [textareaLength]="textareaLimit" [template]="template">
-                                                </app-sms-template-content>
+                                                <textarea type="text" my-autosize
+                                                    class="form-control textarea textarea-required"
+                                                    [class.border-danger]="submitted && f.body.value==''"
+                                                    id="textarea_mass" formControlName="body" rows="5"
+                                                    #textarea></textarea>
+                                                <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
+                                                    class="text-danger">
+                                                    <div *ngIf="f.body.errors.required">Nhập nội dung tin nhắn</div>
+                                                    <div *ngIf="f.body.errors.maxlength">Số kí tự đã vượt quá cho phép !
+                                                    </div>
+                                                </div>
+                                                <app-sms-note-content></app-sms-note-content>
+                                                <app-sms-personalized-tabs [type]="templateTypeTab"
+                                                    (contentEmit)="addToContent($event)"></app-sms-personalized-tabs>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>
+                                            <td colspan="1">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" value=""
                                                         id="flexCheckChecked" (change)="checkedTemplateCopy($event)">
@@ -123,11 +129,14 @@
                                             </td>
                                             <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
                                                 <input type="text" class="form-control mt-2"
-                                                    formControlName="templateName" style="height:36px;">
-                                                <span class="text-danger"
-                                                    *ngIf="formGroup.controls.templateName.value==''">
-                                                    Nhập tiêu đề tin nhắn mẫu
-                                                </span>
+                                                    formControlName="templateName"
+                                                    [class.border-danger]="submitted && f.templateName.value==''"
+                                                    style="height:36px;">
+                                                <div *ngIf="f.templateName.errors && (f.templateName.touched || f.templateName.dirty || submitted)"
+                                                    class="text-danger">
+                                                    <div *ngIf="f.templateName.errors.required">Nhập tiêu đề tin nhắn
+                                                        mẫu</div>
+                                                </div>
                                             </td>
                                         </tr>
                                     </table>

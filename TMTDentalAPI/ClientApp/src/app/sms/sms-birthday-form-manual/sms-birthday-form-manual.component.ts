@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import * as _ from 'lodash';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
+import { BirthdayCustomerService, ListPagedBirthdayCustomerRequest } from 'src/app/core/services/birthday-customer.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { SmsCampaignService } from '../sms-campaign.service';
@@ -21,33 +25,25 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   filteredTemplate: any[];
   skip: number = 0;
   limit: number = 20;
+  day: number = 0;
+  month: number = 0;
   isBirthday: boolean = true;
   isRowSelected: any[];
   search: string = '';
   selectedIds: string[] = [];
-  month: any;
   searchUpdate = new Subject<string>();
   campaign: any;
-  months = [
-    { name: 'Tháng 1', value: 1 },
-    { name: 'Tháng 2', value: 2 },
-    { name: 'Tháng 3', value: 3 },
-    { name: 'Tháng 4', value: 4 },
-    { name: 'Tháng 5', value: 5 },
-    { name: 'Tháng 6', value: 6 },
-    { name: 'Tháng 7', value: 7 },
-    { name: 'Tháng 8', value: 8 },
-    { name: 'Tháng 9', value: 9 },
-    { name: 'Tháng 10', value: 10 },
-    { name: 'Tháng 11', value: 11 },
-    { name: 'Tháng 12', value: 12 },
-  ]
+  dayList: number[] = [];
+  monthList: number[] = [];
+
   constructor(
     private partnerService: PartnerService,
     private smsTemplateService: SmsTemplateService,
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private smsCampaignService: SmsCampaignService,
+    private birthCustomerService: BirthdayCustomerService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -63,24 +59,36 @@ export class SmsBirthdayFormManualComponent implements OnInit {
         this.skip = 0;
         this.loadDataFromApi();
       });
+    this.dayList = _.range(1, 32);
+    this.monthList = _.range(1, 13);
   }
 
   loadDataFromApi() {
-    var val = new PartnerPaged();
+    var val = new ListPagedBirthdayCustomerRequest();
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.customer = true;
-    val.supplier = false;
+    val.day = this.day;
     val.month = this.month;
-    val.isBirthday = this.isBirthday;
-    this.partnerService.getCustomerBirthDay(val)
-      .subscribe((res: any[]) => {
-        this.gridData = res;
-      }, err => {
-        console.log(err);
-      }
+    this.birthCustomerService
+      .getListPaged(val)
+      .pipe(
+        map(
+          (response: any) =>
+            <GridDataResult>{
+              data: response.items,
+              total: response.totalItems,
+            }
+        )
       )
+      .subscribe(
+        (res) => {
+          this.gridData = res;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
   }
 
   searchSmsTemplate(q?: string) {
@@ -132,14 +140,14 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     });
   }
 
+  selectDayChange(event) {
+    this.day = Number(event.target.value);
+    this.skip = 0;
+    this.loadDataFromApi();
+  }
+
   selectMonthChange(event) {
-    this.month = event.target.value;
-    if (this.month != '0') {
-      this.isBirthday = false;
-    } else {
-      this.isBirthday = true;
-      this.month = '';
-    }
+    this.month = Number(event.target.value);
     this.skip = 0;
     this.loadDataFromApi();
   }

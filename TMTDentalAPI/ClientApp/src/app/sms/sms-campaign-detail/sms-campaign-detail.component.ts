@@ -8,6 +8,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsMessageDetailDialogComponent } from '../sms-message-detail-dialog/sms-message-detail-dialog.component';
@@ -74,6 +75,7 @@ export class SmsCampaignDetailComponent implements OnInit {
       distinctUntilChanged())
       .subscribe((value) => {
         this.offset = 0;
+        this.selectedIds = [];
         this.loadDataFromApi();
       });
 
@@ -111,6 +113,7 @@ export class SmsCampaignDetailComponent implements OnInit {
     )
       .subscribe(
         (res) => {
+          console.log(res);
           this.gridData = res;
           this.loading = false;
         },
@@ -123,6 +126,7 @@ export class SmsCampaignDetailComponent implements OnInit {
 
   pageChange(event): void {
     this.offset = event.offset;
+    this.selectedIds = [];
     this.loadDataFromApi();
   }
 
@@ -153,10 +157,13 @@ export class SmsCampaignDetailComponent implements OnInit {
   }
 
   changeState() {
+    this.selectedIds = [];
+    this.offset = 0;
     this.loadDataFromApi();
   }
 
   onSearchDateChange(data) {
+    this.selectedIds = [];
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.offset = 0;
@@ -166,13 +173,20 @@ export class SmsCampaignDetailComponent implements OnInit {
   cancelSend() {
     if (this.selectedIds && this.selectedIds.length <= 0) {
       this.notify("Bạn chưa chọn tin nhắn nào để hủy gửi. Vui lòng chọn và thử lại", false);
+      return;
     }
-    this.smsMessageService.actionCancelSendSMS(this.selectedIds).subscribe(
-      () => {
-        this.notify("Hủy thành công", true);
-        this.loadDataFromApi();
-      }
-    )
+
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Hủy gửi';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy gửi?';
+    modalRef.result.then(() => {
+      this.smsMessageService.actionCancelSendSMS(this.selectedIds).subscribe(
+        () => {
+          this.notify("Hủy thành công", true);
+          this.loadDataFromApi();
+        }
+      )
+    });
   }
 
   onEditCampaign() {
@@ -185,24 +199,6 @@ export class SmsCampaignDetailComponent implements OnInit {
       totalMessageCampaign = this.campaign.totalFailedMessages || 0 + this.campaign.totalSuccessfulMessages || 0 + this.campaign.totalWaitedMessages || 0;
     }
     return this.f.limitMessage.value - totalMessageCampaign;
-  }
-
-  onSaveCampaign() {
-    this.submitted = true;
-    if (this.formGroup.invalid) return false;
-    var val = this.formGroup.value;
-    if (val.typeDate == 'period') {
-      val.dateEnd = this.intlService.formatDate(val.endDateObj, "yyyy-MM-ddT23:59");
-      val.dateStart = this.intlService.formatDate(val.startDateObj, "yyyy-MM-dd")
-    }
-    val.state = this.formGroup.get('stateCheck') && this.formGroup.get('stateCheck').value == true ? 'running' : 'shutdown';
-    this.smsCampaignService.update(this.campaignId, val).subscribe(
-      result => {
-        this.notify("Cập nhật chiến dịch thành công");
-        this.isEdit = false;
-      }
-    )
-    this.campaignName = val.name;
   }
 
   getValueFormControl(key) {
@@ -230,6 +226,18 @@ export class SmsCampaignDetailComponent implements OnInit {
     modalRef.result.then((val) => {
       this.loadDataFromApi();
     })
+  }
+
+  onSaveCampaign() {
+    this.smsCampaignService.get(this.campaignId)
+      .subscribe(
+        (res: any) => {
+          this.campaign = res;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
   }
 
   onChangeAccount(event) {

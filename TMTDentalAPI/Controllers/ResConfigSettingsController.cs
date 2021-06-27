@@ -76,16 +76,6 @@ namespace TMTDentalAPI.Controllers
 
             await _unitOfWork.BeginTransactionAsync();
             await _configSettingsService.Excute(config);
-
-            if (config.GroupMedicine.HasValue && config.GroupMedicine.Value)
-            {
-                var purchaseOK = config.GroupMedicine == true;
-                var medicines = await _productService.SearchQuery(x => x.Type2 == "medicine").ToListAsync();
-                foreach (var medicine in medicines)
-                    medicine.PurchaseOK = purchaseOK;
-                await _productService.UpdateAsync(medicines);
-            }
-
             _unitOfWork.Commit();
 
             return NoContent();

@@ -29,7 +29,11 @@ namespace ApplicationCore.Entities
         public Guid? TemplateId { get; set; }
         public SmsTemplate Template { get; set; }
 
+        public string ApplyOn { get; set; }
+
         public ICollection<SmsConfigProductCategoryRel> SmsConfigProductCategoryRels { get; set; } = new List<SmsConfigProductCategoryRel>();
         public ICollection<SmsConfigProductRel> SmsConfigProductRels { get; set; } = new List<SmsConfigProductRel>();
+
+        public DateTime? LastCron { get; set; }
     }
 }

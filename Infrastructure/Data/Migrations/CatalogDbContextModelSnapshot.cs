@@ -9132,6 +9132,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("LastCron")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -9268,6 +9271,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("TypeDate")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("UserCampaign")
+                        .HasColumnType("bit");
+
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
@@ -9291,6 +9297,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ApplyOn")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Body")
                         .HasColumnType("nvarchar(max)");
 
@@ -9301,6 +9310,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastCron")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("LastUpdated")
@@ -9679,6 +9691,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastCron")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("LastUpdated")

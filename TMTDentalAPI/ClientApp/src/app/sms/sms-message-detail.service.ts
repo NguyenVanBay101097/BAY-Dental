@@ -10,6 +10,7 @@ export class SmsMessageDetailPaged {
     dateTo: string;
     state: string;
     smsMessageId: string;
+    companyId: string;
 }
 
 export class ReportTotalInput {

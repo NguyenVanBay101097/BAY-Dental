@@ -25,14 +25,16 @@ namespace TMTDentalAPI.Controllers
         private readonly ISmsMessageService _smsMessageService;
         private readonly IUnitOfWorkAsync _unitOfWorkAsync;
         private readonly AppTenant _tenant;
+        private readonly ISmsCampaignService _smsCampaignService;
 
-
-        public SmsMessagesController(ITenant<AppTenant> tenant, IUnitOfWorkAsync unitOfWorkAsync, IMapper mapper, ISmsMessageService smsMessageService)
+        public SmsMessagesController(ITenant<AppTenant> tenant, IUnitOfWorkAsync unitOfWorkAsync, IMapper mapper, ISmsMessageService smsMessageService,
+            ISmsCampaignService smsCampaignService)
         {
             _smsMessageService = smsMessageService;
             _mapper = mapper;
             _unitOfWorkAsync = unitOfWorkAsync;
             _tenant = tenant?.Value;
+            _smsCampaignService = smsCampaignService;
         }
 
         [HttpGet]
@@ -100,7 +102,7 @@ namespace TMTDentalAPI.Controllers
         {
             var hostName = _tenant != null ? _tenant.Hostname : "localhost";
             var jobId = $"{hostName}_Send_Sms_message_detail";
-            RecurringJob.AddOrUpdate<ISmsMessageJobService>(jobId, x => x.RunJobFindSmsMessage(hostName, CompanyId), $"*/30 * * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate<ISmsMessageJobService>(jobId, x => x.RunJobFindSmsMessage(hostName), $"*/30 * * * *", TimeZoneInfo.Local);
 
             return NoContent();
         }
@@ -133,6 +135,31 @@ namespace TMTDentalAPI.Controllers
             var entity = await _smsMessageService.GetByIdAsync(id);
             if (entity == null) return NotFound();
             await _smsMessageService.DeleteAsync(entity);
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "SMS.Message.Update")]
+        public async Task<IActionResult> ActionSchedule(SmsMessageScheduleViewModel val)
+        {
+            var message = await _smsMessageService.GetByIdAsync(val.Id);
+            if (message == null)
+                return NotFound();
+
+            if (message.SmsCampaignId.HasValue)
+            {
+                var campaign = await _smsCampaignService.SearchQuery(x => x.Id == message.SmsCampaignId).Include(x => x.MessageDetails).FirstOrDefaultAsync();
+                if (campaign.LimitMessage > 0)
+                {
+                    var remain = Math.Max(campaign.LimitMessage - campaign.MessageDetails.Count, 0);
+                    if ((message.ResCount ?? 0) > remain)
+                        throw new Exception("Vượt hạn mức gửi tin cho phép");
+                }
+            }
+
+            message.ScheduleDate = val.ScheduleDate;
+            message.State = "in_queue";
+            await _smsMessageService.UpdateAsync(message);
             return NoContent();
         }
     }

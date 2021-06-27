@@ -1,3 +1,4 @@
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -26,7 +27,8 @@ export class SmsAccountListComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private notificationService: NotificationService,
-    private smsAccountService: SmsAccountService
+    private smsAccountService: SmsAccountService,
+    private notifyService: NotifyService
   ) { }
 
   ngOnInit() {
@@ -66,6 +68,7 @@ export class SmsAccountListComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm Brandname';
     modalRef.result.then(() => {
       this.loadDataFromApi();
+      this.notifyService.notify('success','Cấu hình thành công');
     }, () => {
     });
   }
@@ -81,6 +84,7 @@ export class SmsAccountListComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();
+      this.notifyService.notify('success','Cập nhật cấu hình thành công');
     }, () => {
     });
   }

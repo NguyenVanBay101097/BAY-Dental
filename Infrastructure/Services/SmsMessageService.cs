@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Infrastructure.Helpers;
@@ -9,10 +10,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using RestSharp;
 using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -30,6 +33,7 @@ namespace Infrastructure.Services
         private readonly IAsyncRepository<Appointment> _appointmentRepository;
         private readonly IAsyncRepository<SaleOrderLine> _saleLineRepository;
         private readonly IAsyncRepository<SaleOrder> _saleOrderRepository;
+        private readonly IAsyncRepository<SmsCampaign> _smsCampaignRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly string SpecialCharactors = "@,_,{,},[,],|,~,\\,\\,$";
@@ -40,11 +44,12 @@ namespace Infrastructure.Services
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
             IAsyncRepository<SaleOrderLine> saleLineRepository,
-             IAsyncRepository<SaleOrder> saleOrderRepository,
+            IAsyncRepository<SaleOrder> saleOrderRepository,
             IAsyncRepository<SmsMessage> repository,
             IAsyncRepository<Partner> partnerRepository,
             IAsyncRepository<SmsMessageDetail> messageDetailRepository,
-            IAsyncRepository<Appointment> appointmentRepository)
+            IAsyncRepository<Appointment> appointmentRepository,
+            IAsyncRepository<SmsCampaign> smsCampaignRepository)
         {
             _mapper = mapper;
             _context = context;
@@ -55,6 +60,7 @@ namespace Infrastructure.Services
             _partnerRepository = partnerRepository;
             _messageDetailRepository = messageDetailRepository;
             _appointmentRepository = appointmentRepository;
+            _smsCampaignRepository = smsCampaignRepository;
         }
 
         private IQueryable<SmsMessage> GetQueryable(SmsMessagePaged val)
@@ -79,16 +85,38 @@ namespace Infrastructure.Services
         {
             var query = GetQueryable(val);
             var totalItems = await query.CountAsync();
-            var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SmsMessageBasic
+            var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).Select(x => new SmsMessageBasic
             {
                 Id = x.Id,
                 Date = x.Date,
-                DateCreated = x.DateCreated,
+                ScheduleDate = x.ScheduleDate,
                 Name = x.Name,
                 ResCount = x.ResCount.HasValue ? x.ResCount.Value : 0,
                 BrandName = x.SmsAccount != null ? x.SmsAccount.DisplayName : "",
+                DateCreated = x.DateCreated
             }).ToListAsync();
 
+            var ids = items.Select(x => x.Id).ToList();
+            var statistics = await _messageDetailRepository.SearchQuery(x => x.SmsMessageId.HasValue && ids.Contains(x.SmsMessageId.Value))
+                .GroupBy(x => x.SmsMessageId.Value)
+                .Select(x => new
+                {
+                    MessageId = x.Key,
+                    Total = x.Sum(s => 1),
+                    TotalSent = x.Sum(s => s.State == "sent" ? 1 : 0),
+                    TotalError = x.Sum(s => s.State == "error" ? 1 : 0),
+                }).ToListAsync();
+            var statistics_dict = statistics.ToDictionary(x => x.MessageId, x => x);
+
+            foreach (var item in items)
+            {
+                if (!statistics_dict.ContainsKey(item.Id))
+                    continue;
+                var statistic = statistics_dict[item.Id];
+                item.Total = statistic.Total;
+                item.TotalSent = statistic.TotalSent;
+                item.TotalError = statistic.TotalError;
+            }
 
             return new PagedResult2<SmsMessageBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -173,6 +201,20 @@ namespace Infrastructure.Services
         public async Task ActionSend(Guid id)
         {
             var self = await _messageRepository.GetByIdAsync(id);
+            if (self == null)
+                return;
+
+            if (self.SmsCampaignId.HasValue)
+            {
+                var campaign = await _smsCampaignRepository.SearchQuery(x => x.Id == self.SmsCampaignId).Include(x => x.MessageDetails).FirstOrDefaultAsync();
+                if (campaign.LimitMessage > 0)
+                {
+                    var remain = Math.Max(campaign.LimitMessage - campaign.MessageDetails.Count, 0);
+                    if ((self.ResCount ?? 0) > remain)
+                        throw new Exception("Vượt hạn mức gửi tin cho phép");
+                }
+            }
+
             IDictionary<Guid, string> dict = null; //noi dung
             IEnumerable<object> objs = null;
             if (self.ResModel == "appointment")
@@ -252,9 +294,16 @@ namespace Infrastructure.Services
 
         public async Task ActionSendSmsMessageDetail(IEnumerable<SmsMessageDetail> sefts, SmsAccount account)
         {
+
             var backlists = BacklistString.Split(",");
             var specialChars = SpecialCharactors.Split(",");
-            var senderService = new ESmsSenderService(account.BrandName, account.ApiKey, account.Secretkey);
+            // lấy random
+            var sessionId = StringUtils.RandomString(20);
+            var acesstoken = await GetAccessToken(account.ClientId, account.ClientSecret, sessionId);
+            if (acesstoken == null)
+                return;
+
+            var senderService = new FptSenderService(account.BrandName, acesstoken.access_token , sessionId);
             foreach (var detail in sefts)
             {
                 //neu truong hop detail ma co noi dung trong blacklist thi chuyen sang state canceled
@@ -265,15 +314,15 @@ namespace Infrastructure.Services
                 }
                 else
                 {
-                    var sendResult = await senderService.SendAsync(detail.Number, detail.Body);
+                    var sendResult = await senderService.SendSMS(detail.Number, detail.Body);
                     if (sendResult != null)
                     {
-                        if (sendResult.CodeResult == "100")
+                        if (!sendResult.Error.HasValue)
                             detail.State = "sent";
                         else
                         {
                             detail.State = "error";
-                            detail.ErrorCode = ESmsErrorCode[sendResult.CodeResult];
+                            detail.ErrorCode = sendResult.Error_description;
                         }
                     }
                     else
@@ -286,6 +335,41 @@ namespace Infrastructure.Services
             }
 
             await _messageDetailRepository.UpdateAsync(sefts);
+        }
+
+        public async Task<FPTAccessTokenResponseModel> GetAccessToken( string clientId, string clientsecret, string sessionId)
+        {
+            ////url dev test IP : 14.169.99.3
+            ///var url = "http://sandbox.sms.fpt.net/oauth2/token";
+
+            //url production IP: 14.169.99.3
+           var url = "https://app.sms.fpt.net/oauth2/token";
+
+            var data = new FPTAccessTokenRequestModel
+            {
+                client_id = clientId,
+                client_secret = clientsecret,
+                scope = "send_brandname_otp send_brandname",
+                session_id = sessionId,
+                grant_type = "client_credentials"              
+            };
+
+
+            var client = new HttpClient();
+
+            var jsonObject = JsonConvert.SerializeObject(data);
+            var stringContent = new StringContent(jsonObject, Encoding.UTF8, "application/json");
+            var result = await client.PostAsync(url, stringContent);
+
+            if (result.IsSuccessStatusCode)
+            {
+                var response = await result.Content.ReadAsStringAsync();
+                var tokenResponse = JsonConvert.DeserializeObject<FPTAccessTokenResponseModel>(response);
+
+                return tokenResponse;
+            }
+
+            return null;
         }
 
         private Partner GetPartnerFromObject(object item)
@@ -368,10 +452,11 @@ namespace Infrastructure.Services
         public async Task ActionCancel(IEnumerable<Guid> messIds)
         {
             var messes = await SearchQuery().Where(x => messIds.Contains(x.Id) && x.CompanyId == CompanyId).ToListAsync();
-            if (messes.Any())
-            {
-                await _messageRepository.DeleteAsync(messes);
-            }
+            if (messes.Any(x => x.State != "in_queue"))
+                throw new Exception("Bạn chỉ có thể hủy tin nhắn chờ gửi");
+            foreach (var item in messes)
+                item.State = "cancelled";
+            await _messageRepository.UpdateAsync(messes);
         }
 
         public async Task SetupSendSmsOrderAutomatic(Guid orderId)
@@ -457,7 +542,6 @@ namespace Infrastructure.Services
                 return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
             }
         }
-
         //public override ISpecification<SmsMessage> RuleDomainGet(IRRule rule)
         //{
         //    switch (rule.Code)

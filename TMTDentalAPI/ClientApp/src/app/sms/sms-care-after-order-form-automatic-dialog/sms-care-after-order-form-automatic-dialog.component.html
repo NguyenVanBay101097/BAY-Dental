@@ -36,7 +36,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <input class="form-control" formControlName="name" />
+                                                <input class="form-control" formControlName="name"
+                                                    [class.border-danger]="submitted && f.name.value==''" />
                                                 <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
                                                     class="text-danger">
                                                     <div *ngIf="f.name.errors.required">Nhập tên tin nhắn</div>
@@ -112,15 +113,15 @@
                                     <div class="d-flex ml-5">
                                         <div class="form-check mr-2">
                                             <input (change)="onChangeRadioButton($event)" class="form-check-input"
-                                                formControlName="filter" type="radio" name="filter" id="productCategory"
-                                                value="productCategory" checked>
+                                                formControlName="applyOn" type="radio" name="applyOn"
+                                                id="productCategory" value="product_category">
                                             <label class="form-check-label font-weight-600" for="productCategory">
                                                 Nhóm dịch vụ
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input (change)="onChangeRadioButton($event)" formControlName="filter"
-                                                class="form-check-input font-weight-600" type="radio" name="filter"
+                                            <input (change)="onChangeRadioButton($event)" formControlName="applyOn"
+                                                class="form-check-input font-weight-600" type="radio" name="applyOn"
                                                 id="product" value="product">
                                             <label class="form-check-label" for="product">
                                                 Dịch vụ
@@ -128,7 +129,7 @@
                                         </div>
                                     </div>
                                     <div class="ml-5">
-                                        <div *ngIf="filter=='productCategory'">
+                                        <div *ngIf="filter=='product_category'">
                                             <kendo-multiselect (filterChange)="loadProductCategory($event)"
                                                 [filterable]="true" style="min-height: 100px;" class="mr-3"
                                                 [data]="filteredProductCategories" [textField]="'name'"
@@ -172,19 +173,25 @@
                                                     #smsTemplateCbx (valueChange)="onChangeTemplate($event)"
                                                     [valueField]="'id'" class="mb-2">
                                                 </kendo-combobox>
-                                                <!-- <a class="btn btn-sm btn-light" (click)="addTemplate()">
-                                                    <span class="k-icon k-i-plus"></span>
-                                                </a> -->
                                             </td>
                                         </tr>
                                         <tr>
-                                            <!-- <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Nội dung</label>
-                                            </td> -->
                                             <td colspan="2" style="width: 80%;">
-                                                <app-sms-template-content [type]="'saleOrderLine'"
-                                                    [textareaLength]="textareaLimit" [template]="template">
-                                                </app-sms-template-content>
+                                                <textarea type="text" my-autosize
+                                                    class="form-control textarea textarea-required"
+                                                    [class.border-danger]="submitted && f.body.value==''"
+                                                    id="textarea_mass" formControlName="body" rows="5"
+                                                    #textarea></textarea>
+                                                <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
+                                                    class="text-danger">
+                                                    <div *ngIf="f.body.errors.required">Nhập nội dung tin nhắn</div>
+                                                    <div *ngIf="f.body.errors.maxlength">Số kí tự đã vượt quá cho phép !
+                                                    </div>
+                                                </div>
+                                                <app-sms-note-content></app-sms-note-content>
+                                                <app-sms-personalized-tabs [type]="'saleOrderLine'"
+                                                    (contentEmit)="addToContent($event)"></app-sms-personalized-tabs>
+
                                             </td>
                                         </tr>
                                         <tr>
@@ -199,11 +206,13 @@
                                             </td>
                                             <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
                                                 <input type="text" class="form-control mt-2"
-                                                    formControlName="templateName">
-                                                <span class="text-danger"
-                                                    *ngIf="formGroup.controls.templateName.value==''">
-                                                    Nhập tiêu đề tin nhắn mẫu
-                                                </span>
+                                                    formControlName="templateName"
+                                                    [class.border-danger]="submitted && f.templateName.value==''">
+                                                <div *ngIf="f.templateName.errors && (f.templateName.touched || f.templateName.dirty || submitted)"
+                                                    class="text-danger">
+                                                    <div *ngIf="f.templateName.errors.required">Nhập tiêu đề tin nhắn
+                                                        mẫu</div>
+                                                </div>
                                             </td>
                                         </tr>
                                     </table>

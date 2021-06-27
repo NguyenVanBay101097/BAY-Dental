@@ -61,7 +61,7 @@ namespace TMTDentalAPI.Controllers
         {
             var entity = _mapper.Map<SmsCareAfterOrderAutomationConfig>(val);
             entity.CompanyId = CompanyId;
-            if (val.ProductCategoryIds.Any())
+            if (entity.ApplyOn == "product_category")
             {
                 foreach (var id in val.ProductCategoryIds)
                 {
@@ -71,7 +71,7 @@ namespace TMTDentalAPI.Controllers
                     });
                 }
             }
-            else if (val.ProductIds.Any())
+            else if (entity.ApplyOn == "product")
             {
                 foreach (var id in val.ProductIds)
                 {
@@ -81,10 +81,12 @@ namespace TMTDentalAPI.Controllers
                     });
                 }
             }
+          
             await _unitOfWorkAsync.BeginTransactionAsync();
             entity = await _smsConfigService.CreateAsync(entity);
             _unitOfWorkAsync.Commit();
-            return NoContent();
+
+            return Ok(_mapper.Map<SmsCareAfterOrderAutomationConfigDisplay>(entity));
         }
 
         [HttpPut("{id}")]

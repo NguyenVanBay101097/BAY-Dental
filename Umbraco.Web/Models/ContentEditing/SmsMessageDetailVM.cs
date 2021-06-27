@@ -34,7 +34,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? SmsCampaignId { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
-
+        public Guid? CompanyId { get; set; }
     }
 
     public class SmsMessageDetailStatistic
@@ -52,17 +52,29 @@ namespace Umbraco.Web.Models.ContentEditing
         public string SmsMessageName { get; set; }
     }
 
-    public class ReportTotalInput
+    public class SmsMessageDetailReportSummaryRequest
     {
-        public DateTime? Date { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
         public Guid? SmsAccountId { get; set; }
         public Guid? SmsCampaignId { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
-    public class ReportTotalOutputItem
+    public class SmsMessageDetailReportSummaryResponse
     {
         public string State { get; set; }
-        public string StateDisplay { get; set; }
+        public string StateDisplay 
+        {
+            get
+            {
+                if (State == "sent")
+                    return "Thành công";
+                if (State == "error")
+                    return "Thất bại";
+                return string.Empty;
+            }
+        }
         public int Total { get; set; }
         public float Percentage { get; set; }
     }

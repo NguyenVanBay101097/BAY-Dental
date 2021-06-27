@@ -28,3 +28,14 @@
 .form-control{
     height: 36px !important;
 }
+
+.form-control.textarea{
+    overflow: hidden !important;
+    overflow-wrap: break-word!important;
+    resize: none!important;
+    height: 134px!important;
+}
+
+.textarea-required.ng-touched.ng-dirty.ng-invalid, .textarea-required.ng-touched.ng-invalid {
+    border: 1px solid red;
+}

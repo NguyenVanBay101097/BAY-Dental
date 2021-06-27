@@ -34,8 +34,6 @@ namespace TMTDentalAPI.Controllers
             _tenant = tenant?.Value;
         }
 
-
-
         [HttpGet("[action]")]
         [CheckAccess(Actions = "SMS.Campaign.Read")]
         public async Task<IActionResult> GetPaged([FromQuery] SmsCampaignPaged val)
@@ -43,8 +41,6 @@ namespace TMTDentalAPI.Controllers
             var res = await _smsCampaignService.GetPaged(val);
             return Ok(res);
         }
-
-
 
         [HttpGet("{id}")]
         [CheckAccess(Actions = "SMS.Campaign.Read")]
@@ -118,11 +114,10 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "SMS.Campaign.Update")]
-        public async Task<IActionResult> UpdateAsync(Guid id, SmsCampaignSave val)
+        public async Task<IActionResult> UpdateAsync(Guid id, SmsCampaignUpdateVM val)
         {
             var entity = await _smsCampaignService.GetByIdAsync(id);
             if (entity == null) return NotFound();
-            entity.CompanyId = CompanyId;
             await _smsCampaignService.UpdateAsync(id, val);
             return NoContent();
         }

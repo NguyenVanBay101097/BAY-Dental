@@ -4,6 +4,7 @@ import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { SmsCampaignPaged, SmsCampaignService } from '../sms-campaign.service';
 import { SmsMessageDetailPaged, SmsMessageDetailService } from '../sms-message-detail.service';
 
@@ -17,8 +18,8 @@ export class SmsStatisticComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   filteredState: any[] = [
-    { name: 'Đang gửi', value: 'outgoing' },
-    { name: 'Hủy', value: 'canceled' },
+    // { name: 'Đang gửi', value: 'outgoing' },
+    // { name: 'Hủy', value: 'canceled' },
     { name: 'Thất bại', value: 'error' },
     { name: 'Thành công', value: 'sent' }
   ]
@@ -37,7 +38,8 @@ export class SmsStatisticComponent implements OnInit {
   constructor(
     private intlService: IntlService,
     private smsCampaignService: SmsCampaignService,
-    private smsMessageDetailService: SmsMessageDetailService
+    private smsMessageDetailService: SmsMessageDetailService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -75,6 +77,7 @@ export class SmsStatisticComponent implements OnInit {
     val.smsCampaignId = this.smsCampaignId || '';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
+    val.companyId = this.authService.userInfo.companyId;
     this.smsMessageDetailService.getPagedStatistic(val)
       .pipe(map((response: any) => (<GridDataResult>{
         data: response.items,

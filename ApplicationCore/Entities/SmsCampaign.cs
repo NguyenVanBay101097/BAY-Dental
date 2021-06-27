@@ -43,5 +43,9 @@ namespace ApplicationCore.Entities
         /// default_default
         /// </summary>
         public string DefaultType { get; set; }
+
+        public bool UserCampaign { get; set; }
+
+        public ICollection<SmsMessageDetail> MessageDetails { get; set; } = new List<SmsMessageDetail>();
     }
 }

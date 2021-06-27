@@ -27,9 +27,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
   @ViewChild('papersizeCbx', { static: true }) papersizeCbx: ComboBoxComponent;
   constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService, private printPaperSizeService: PrintPaperSizeService,
     private authService: AuthService,
-    private smsMessageService: SmsMessageService,
-    private smsCampaignService: SmsCampaignService
-    , private notificationService: NotificationService, private intlService: IntlService) {
+    private intlService: IntlService) {
   }
 
   ngOnInit() {
@@ -55,18 +53,6 @@ export class ResConfigSettingsFormComponent implements OnInit {
 
     this.configSettingsService.defaultGet().subscribe((result: any) => {
       this.formGroup.patchValue(result);
-
-      if (result.tCareRunAt) {
-        var tCareRunAt = new Date(result.tCareRunAt);
-        this.formGroup.get('tCareRunAtObj').patchValue(tCareRunAt);
-      }
-      if (result.groupSms) {
-        this.actionStartJobSmsMessage();
-        this.setupDefaultSmsCampaign();
-      } else {
-        this.actionStopJobSmsMessage();
-      }
-
     });
   }
 
@@ -89,27 +75,6 @@ export class ResConfigSettingsFormComponent implements OnInit {
     var val = new PrintPaperSizePaged();
     val.search = q || '';
     return this.printPaperSizeService.getPaged(val);
-  }
-
-  actionStartJobSmsMessage() {
-    this.smsMessageService.actionStartJobAutomatic().subscribe(
-      res => { }
-    )
-  }
-
-  actionStopJobSmsMessage() {
-    this.smsMessageService.actionStopJobAutomatic().subscribe(
-      res => { }
-    )
-  }
-
-  setupDefaultSmsCampaign() {
-    var url1 = this.smsCampaignService.getDefaultCampaign();
-    var url2 = this.smsCampaignService.getDefaultCampaignAppointmentReminder();
-    var url3 = this.smsCampaignService.getDefaultCampaignBirthday();
-    var url4 = this.smsCampaignService.getDefaultCareAfterOrder();
-    var url5 = this.smsCampaignService.getDefaultThanksCustomer();
-    forkJoin(url1, url2, url3, url4, url5).subscribe(() => { })
   }
 
   onSave() {

@@ -2,14 +2,22 @@
     <div class="o_control_panel">
         <div class="o_cp_left">
             <div class="o_cp_buttons d-flex">
-                <!-- <div>
-                    <select name="" id="" (change)="selectMonthChange($event)" class="form-control btn-sm" style="height: 32px;">
-                        <option selected value="0"><i class="fas fa-filter"></i> Tháng sinh</option>
-                        <option [value]="item.value" *ngFor="let item of months">{{item.name}}</option>
+                <div class="mr-2">
+                    <select class="form-control btn-sm" style="height: 32px;" (change)="selectDayChange($event)">
+                        <option value="">Ngày sinh</option>
+                        <option *ngFor="let i of dayList">
+                            {{i}}</option>
                     </select>
-                </div> -->
-                <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm ml-2" (click)="onSend()">Tạo tin nhắn</button>
+                </div>
+                <div class="mr-2">
+                    <select class="form-control btn-sm" style="height: 32px;" (change)="selectMonthChange($event)">
+                        <option value="">Tháng sinh</option>
+                        <option *ngFor="let i of monthList">
+                            {{i}}</option>
+                    </select>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSend()">Tạo tin nhắn</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -31,11 +39,15 @@
     <kendo-grid-column field="name" title="Họ tên" width="200"></kendo-grid-column>
     <kendo-grid-column field="phone" title="Số điện thoại" width="120"></kendo-grid-column>
     <kendo-grid-column field="dateOfBirth" title="Ngày sinh" width="120"></kendo-grid-column>
-    <kendo-grid-column field="gender" title="Giới tính" width="120"></kendo-grid-column>
-    <kendo-grid-column field="countLine" title="Số dịch vụ" width="120"></kendo-grid-column>
-    <kendo-grid-column title="Doanh thu" class="text-right" width="120">
+    <kendo-grid-column field="displayGender" title="Giới tính" width="120"></kendo-grid-column>
+    <kendo-grid-column field="totalQty" title="Số dịch vụ"  class="text-right" width="120">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{dataItem?.debit | number}}
+            {{dataItem.totalQty | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="priceTotal" title="Doanh thu" class="text-right" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.priceTotal | number}}
         </ng-template>
     </kendo-grid-column>
 </kendo-grid>

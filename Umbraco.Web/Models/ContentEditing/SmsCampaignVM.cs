@@ -19,19 +19,44 @@ namespace Umbraco.Web.Models.ContentEditing
         public int TotalSuccessfulMessages { get; set; }
         public int TotalCancelMessages { get; set; }
         public int TotalErrorMessages { get; set; }
-        public int TotaOutgoingMessages { get; set; }
-        public int TotalWaitedMessages { get; set; }
         public DateTime? DateStart { get; set; }
         public string TypeDate { get; set; }
         public string State { get; set; }
         public string DefaultType { get; set; }
+        public string DisplayTypeDate 
+        { 
+            get
+            {
+                if (TypeDate == "period")
+                    return "Khoảng thời gian";
+                return "Vô thời hạn";
+            }
+        }
+    }
+
+    public class SmsCampaignDisplay
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public int LimitMessage { get; set; }
+        public DateTime? DateEnd { get; set; }
+        public DateTime? DateStart { get; set; }
+        public string TypeDate { get; set; }
+        public string DisplayTypeDate
+        {
+            get
+            {
+                if (TypeDate == "period")
+                    return "Khoảng thời gian";
+                return "Vô thời hạn";
+            }
+        }
     }
 
     public class SmsCampaignPaged
     {
         public SmsCampaignPaged()
         {
-            Combobox = false;
             Limit = 20;
             Offset = 0;
         }
@@ -39,7 +64,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
         public string Search { get; set; }
         public string State { get; set; }
-        public bool? Combobox { get; set; }
+        public Guid? CompanyId { get; set; }
+        public bool? UserCampaign { get; set; }
     }
 
     public class SmsCampaignSave
@@ -49,6 +75,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateEnd { get; set; }
         public DateTime? DateStart { get; set; }
         public string TypeDate { get; set; }
-        public string State { get; set; }
+        public bool UserCampaign { get; set; }
+    }
+
+    public class SmsCampaignUpdateVM
+    {
+        public string Name { get; set; }
+        public int LimitMessage { get; set; }
+        public DateTime? DateEnd { get; set; }
+        public DateTime? DateStart { get; set; }
+        public string TypeDate { get; set; }
     }
 }

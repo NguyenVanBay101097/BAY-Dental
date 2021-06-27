@@ -33,5 +33,33 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
             return _mapper.Map<SmsThanksCustomerAutomationConfigDisplay>(entity);
         }
+
+        public override async Task<SmsThanksCustomerAutomationConfig> CreateAsync(SmsThanksCustomerAutomationConfig entity)
+        {
+            entity = await base.CreateAsync(entity);
+            ActionSetupJob(entity);
+            return entity;
+        }
+
+        public override async Task UpdateAsync(SmsThanksCustomerAutomationConfig entity)
+        {
+            await base.UpdateAsync(entity);
+            ActionSetupJob(entity);
+        }
+
+        public void ActionSetupJob(SmsThanksCustomerAutomationConfig model)
+        {
+            var hostName = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobId = $"{hostName}_Sms_ThankCustomerAutomaticReminder_{model.CompanyId}";
+
+            if (model.Active)
+            {
+                RecurringJob.AddOrUpdate<ISmsJobService>(jobId, x => x.RunThankCustomerAutomatic(hostName, model.CompanyId.Value), $"*/30 * * * *", TimeZoneInfo.Local);
+            }
+            else
+            {
+                RecurringJob.RemoveIfExists(jobId);
+            }
+        }
     }
 }

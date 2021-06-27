@@ -1,0 +1,10 @@
+<p class="color-custom">
+    (Lưu ý: Không nhập ký tự đặc biệt hoặc các từ khóa quảng cáo)
+    <span class="text-primary t-tooltip t-tooltip-500 ml-1" placement="top" [ngbTooltip]="tipContent">
+        <i class="fas fa-exclamation-circle"></i>
+    </span>
+
+    <ng-template #tipContent>
+        <app-sms-tooltips-content></app-sms-tooltips-content>
+    </ng-template>
+</p>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -23,6 +23,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
 
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent
+  @ViewChild('textarea', { static: false }) textarea: ElementRef;
 
   formGroup: FormGroup;
   filteredConfigSMS: any[];
@@ -40,9 +41,13 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     text: '',
     templateType: 'text'
   };
+  submitted: boolean = false;
   public today: Date = new Date;
   public timeReminder: Date = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDay(), 0, 30, 0);
   public timeRunJob: Date = new Date();
+  get f() { return this.formGroup.controls; }
+  get textValue() { return this.formGroup.get('body').value; }
+
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -63,6 +68,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
       scheduleTimeObj: new Date(),
       dayBeforeSend: 0,
       templateName: '',
+      body: ['', Validators.required]
     })
     var user_change_company_vm = localStorage.getItem('user_change_company_vm');
     if (user_change_company_vm) {
@@ -129,8 +135,12 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     var check = event.target.checked
     if (check) {
       this.isTemplateCopy = true;
+      this.f.templateName.setValidators(Validators.required);
+      this.f.templateName.updateValueAndValidity();
     } else {
       this.isTemplateCopy = false;
+      this.f.templateName.clearValidators();
+      this.f.templateName.updateValueAndValidity();
     }
 
   }
@@ -170,6 +180,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
         templateType: 'text'
       }
     }
+    this.f.body.setValue(this.template.text);
   }
 
   searchSmsTemplate(q?: string) {
@@ -180,8 +191,8 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid) return;
-    if (!this.template.text) return;
     var val = this.formGroup.value;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.scheduleTime = this.intlService.formatDate(val.scheduleTimeObj, "yyyy-MM-ddTHH:mm");
@@ -189,10 +200,8 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     val.companyId = this.companyId;
     val.templateId = val.template ? val.template.id : null;
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
-    val.body = this.template ? this.template.text : '';
     this.smsConfigService.saveConfig(val).subscribe(
       res => {
-        // console.log(res);
         this.notify("Thiết lập thành công", true);
         this.loadDataFormApi();
       }
@@ -214,6 +223,27 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
         }
       )
     }
+  }
+
+  addToContent(tabValue) {
+    const selectionStart = this.textarea.nativeElement.selectionStart;
+    const selectionEnd = this.textarea.nativeElement.selectionEnd;
+    var tabValueNew = tabValue;
+    if (this.textValue) {
+      tabValueNew = ((selectionStart > 0 && this.textValue[selectionStart - 1] == ' ') ? "" : " ")
+        + tabValue
+        + (this.textValue[selectionEnd] == ' ' ? "" : " ");
+      this.f.body.setValue(
+        this.textValue.slice(0, selectionStart)
+        + tabValueNew
+        + this.textValue.slice(this.textarea.nativeElement.selectionEnd)
+      );
+    } else {
+      this.f.body.setValue(tabValue);
+    }
+
+    this.textarea.nativeElement.focus();
+    this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
   }
 
   notify(title, isSuccess = true) {

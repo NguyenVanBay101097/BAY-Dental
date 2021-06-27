@@ -401,7 +401,6 @@ namespace Infrastructure.Services
 
             foreach (var sale in self)
             {
-
                 if (sale.OrderLines.Count == 0) throw new Exception("Bạn không thể hoàn thoành phiếu điều trị khi không có dịch vụ");
                 foreach (var line in sale.OrderLines)
                 {
@@ -411,28 +410,6 @@ namespace Infrastructure.Services
                 sale.State = "done";
                 sale.DateDone = DateTime.Now;
 
-                var config = await configObj.SearchQuery(x => x.CompanyId == sale.CompanyId).FirstOrDefaultAsync();
-                if (config != null && config.Active)
-                {
-                    var smsMessage = new SmsMessage();
-                    var smsCampaignObj = GetService<ISmsCampaignService>();
-                    var campaign = await smsCampaignObj.GetDefaultThanksCustomer();
-                    smsMessage.SmsCampaignId = campaign.Id;
-                    smsMessage.ResModel = "sale-order";
-                    smsMessage.Body = config.Body;
-                    smsMessage.ScheduleDate = config.TypeTimeBeforSend == "day" ? sale.DateDone.Value.AddDays(config.TimeBeforSend) : sale.DateDone.Value.AddHours(config.TimeBeforSend);
-                    smsMessage.SmsAccountId = config.SmsAccountId;
-                    smsMessage.SmsTemplateId = config.TemplateId;
-                    smsMessage.CompanyId = config.CompanyId;
-                    smsMessage.State = "in_queue";
-                    smsMessage.Name = $"Cảm ơn";
-                    smsMessage.SmsMessageSaleOrderRels.Add(new SmsMessageSaleOrderRel()
-                    {
-                        SaleOrderId = sale.Id
-                    });
-
-                    await smsMessageObj.CreateAsync(smsMessage);
-                }
 
                 var card = await cardObj.GetValidCard(sale.PartnerId);
                 if (card == null)

@@ -88,4 +88,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public string BrandName { get; set; }
         public string Provider { get; set; }
     }
+
+    public class SmsMessageScheduleViewModel
+    {
+        public Guid Id { get; set; }
+        public DateTime ScheduleDate { get; set; }
+    }
 }

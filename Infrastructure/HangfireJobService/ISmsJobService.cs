@@ -12,5 +12,6 @@ namespace Infrastructure.HangfireJobService
         Task RunAppointmentAutomatic(string db, Guid configId);
         Task RunBirthdayAutomatic(string db, Guid configId);
         Task RunCareAfterOrderAutomatic(string db, Guid configId);
+        Task RunThankCustomerAutomatic(string db, Guid companyId);
     }
 }

@@ -20,14 +20,19 @@ namespace Infrastructure.HangfireJobService
     public class SmsMessageJobService : ISmsMessageJobService
     {
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public SmsMessageJobService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public SmsMessageJobService(IConfiguration configuration)
         {
             _configuration = configuration;
-            _httpContextAccessor = httpContextAccessor;
         }
-        public async Task RunJobFindSmsMessage(string db, Guid companyId)
+
+        public async Task RunJobFindSmsMessage(string db)
         {
+            var now = DateTime.Now;
+            var morning = DateTime.Today.AddHours(6).AddMinutes(0);
+            var night = DateTime.Today.AddHours(22).AddMinutes(0);
+            if (now < morning || now > night)
+                return;
+
             await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
@@ -38,19 +43,19 @@ namespace Infrastructure.HangfireJobService
                             new EfRepository<SmsMessage>(context),
                             new EfRepository<Partner>(context),
                             new EfRepository<SmsMessageDetail>(context),
-                            new EfRepository<Appointment>(context));
-                var now = DateTime.Now;
-                var morning = DateTime.Today.AddHours(6).AddMinutes(0);
-                var night = DateTime.Today.AddHours(22).AddMinutes(0);
+                            new EfRepository<Appointment>(context),
+                            new EfRepository<SmsCampaign>(context));
+             
                 var query = context.SmsMessages.Where(
                     x =>
                     x.State == "in_queue" &&
                     x.ScheduleDate.HasValue &&
-                    x.ScheduleDate.Value <= now &&
-                    (now >= morning && now <= night)
+                    x.ScheduleDate.Value <= now
                 ).Include(x => x.SmsAccount)
                 .Include(x => x.SmsMessagePartnerRels)
-                .Include(x => x.SmsMessageSaleOrderRels).ThenInclude(x => x.SaleOrder);
+                .Include(x => x.SmsMessageSaleOrderRels)
+                .ThenInclude(x => x.SaleOrder);
+
                 var smsMessages = await query.ToListAsync();
                 var partnerIds = new List<Guid>();
                 foreach (var item in smsMessages)

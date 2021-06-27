@@ -115,8 +115,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool? Customer { get; set; }
 
-        public bool? IsBirthday { get; set; }
-
         public bool? Employee { get; set; }
 
         public bool? Supplier { get; set; }
@@ -124,13 +122,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> TagIds { get; set; } = new List<Guid>();
 
         public bool ComputeCreditDebit { get; set; }
-        public int? Month { get; set; }
         public bool? Active { get; set; }
-        public bool? isBoth { get; set; } // get both customer and supplier
-        public bool? OrderDone { get; set; }
     }
-
-    
 
     public class PartnerGetDebtPagedFilter
     {

@@ -81,23 +81,15 @@ namespace Infrastructure.Services
                  .Include(x => x.SmsConfigProductRels)
                  .Include(x => x.SmsConfigProductCategoryRels).FirstOrDefaultAsync();
             entity = _mapper.Map(val, entity);
-            if (val.ProductIds.Any())
+            if (entity.ApplyOn == "product")
             {
                 entity.SmsConfigProductRels = ComputeProduct(val.ProductIds, entity);
             }
-            else
-            {
-                entity.SmsConfigProductRels = new List<SmsConfigProductRel>();
-            }
-
-            if (val.ProductCategoryIds.Any())
+            else if (entity.ApplyOn == "product_category")
             {
                 entity.SmsConfigProductCategoryRels = ComputeProductCategory(val.ProductCategoryIds, entity);
             }
-            else
-            {
-                entity.SmsConfigProductCategoryRels = new List<SmsConfigProductCategoryRel>();
-            }
+         
             await UpdateAsync(entity);
             ActionRunJob(entity);
         }
