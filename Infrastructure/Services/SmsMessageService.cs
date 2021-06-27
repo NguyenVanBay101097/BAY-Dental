@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Infrastructure.Helpers;
@@ -9,10 +10,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using RestSharp;
 using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -41,7 +44,7 @@ namespace Infrastructure.Services
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
             IAsyncRepository<SaleOrderLine> saleLineRepository,
-             IAsyncRepository<SaleOrder> saleOrderRepository,
+            IAsyncRepository<SaleOrder> saleOrderRepository,
             IAsyncRepository<SmsMessage> repository,
             IAsyncRepository<Partner> partnerRepository,
             IAsyncRepository<SmsMessageDetail> messageDetailRepository,
@@ -291,9 +294,16 @@ namespace Infrastructure.Services
 
         public async Task ActionSendSmsMessageDetail(IEnumerable<SmsMessageDetail> sefts, SmsAccount account)
         {
+
             var backlists = BacklistString.Split(",");
             var specialChars = SpecialCharactors.Split(",");
-            var senderService = new ESmsSenderService(account.BrandName, account.ApiKey, account.Secretkey);
+            // lấy random
+            var sessionId = StringUtils.RandomString(20);
+            var acesstoken = await GetAccessToken(account.ClientId, account.ClientSecret, sessionId);
+            if (acesstoken == null)
+                return;
+
+            var senderService = new FptSenderService(account.BrandName, acesstoken.access_token , sessionId);
             foreach (var detail in sefts)
             {
                 //neu truong hop detail ma co noi dung trong blacklist thi chuyen sang state canceled
@@ -304,15 +314,15 @@ namespace Infrastructure.Services
                 }
                 else
                 {
-                    var sendResult = await senderService.SendAsync(detail.Number, detail.Body);
+                    var sendResult = await senderService.SendSMS(detail.Number, detail.Body);
                     if (sendResult != null)
                     {
-                        if (sendResult.CodeResult == "100")
+                        if (!sendResult.Error.HasValue)
                             detail.State = "sent";
                         else
                         {
                             detail.State = "error";
-                            detail.ErrorCode = ESmsErrorCode[sendResult.CodeResult];
+                            detail.ErrorCode = sendResult.Error_description;
                         }
                     }
                     else
@@ -325,6 +335,41 @@ namespace Infrastructure.Services
             }
 
             await _messageDetailRepository.UpdateAsync(sefts);
+        }
+
+        public async Task<FPTAccessTokenResponseModel> GetAccessToken( string clientId, string clientsecret, string sessionId)
+        {
+            ////url dev test IP : 14.169.99.3
+            ///var url = "http://sandbox.sms.fpt.net/oauth2/token";
+
+            //url production IP: 14.169.99.3
+           var url = "https://app.sms.fpt.net/oauth2/token";
+
+            var data = new FPTAccessTokenRequestModel
+            {
+                client_id = clientId,
+                client_secret = clientsecret,
+                scope = "send_brandname_otp send_brandname",
+                session_id = sessionId,
+                grant_type = "client_credentials"              
+            };
+
+
+            var client = new HttpClient();
+
+            var jsonObject = JsonConvert.SerializeObject(data);
+            var stringContent = new StringContent(jsonObject, Encoding.UTF8, "application/json");
+            var result = await client.PostAsync(url, stringContent);
+
+            if (result.IsSuccessStatusCode)
+            {
+                var response = await result.Content.ReadAsStringAsync();
+                var tokenResponse = JsonConvert.DeserializeObject<FPTAccessTokenResponseModel>(response);
+
+                return tokenResponse;
+            }
+
+            return null;
         }
 
         private Partner GetPartnerFromObject(object item)

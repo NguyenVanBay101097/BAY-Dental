@@ -12,7 +12,7 @@ import { SmsAccountService, SmsAccountBasic } from '../sms-account.service';
 export class SmsAccountSettingDialogComponent implements OnInit {
 
   formGroup: FormGroup;
-  switchBrand: string = "esms";
+  switchBrand: string = "fpt";
   id: string;
   submitted: boolean = false;
   title: string;
@@ -27,14 +27,15 @@ export class SmsAccountSettingDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       provider: [this.switchBrand, Validators.required],
       brandName: ['', Validators.required],
-      clientId: '',
-      clientSecret: '',
+      clientId: ['', Validators.required],
+      clientSecret: ['', Validators.required],
       userName: '',
       password: '',
-      apiKey: ['', Validators.required],
-      secretkey: ['', Validators.required],
+      apiKey: '',
+      secretkey: '',
     });
-    if(this.id){
+
+    if (this.id) {
       this.loadDataFromApi();
     }
   }
@@ -49,6 +50,7 @@ export class SmsAccountSettingDialogComponent implements OnInit {
         var obj = new SmsAccountBasic();
         this.formGroup.patchValue(obj);
         if (result) {
+          debugger
           this.formGroup.patchValue(result);
           this.formGroup.get('provider').patchValue(result.provider);
         } else {
@@ -67,8 +69,10 @@ export class SmsAccountSettingDialogComponent implements OnInit {
 
   getFormGroup() {
     var value: any;
-    if (this.switchBrand == 'fpt' && (this.f.clientId.value == '' || this.f.clientSecret.value == '')) return;
-    else if (this.switchBrand == 'esms' && (this.f.apiKey.value == '' || this.f.secretkey.value == '')) return;
+    if (this.switchBrand == 'fpt' && (this.f.clientId.value == '' || this.f.clientSecret.value == ''))
+      return;
+    else if (this.switchBrand == 'esms' && (this.f.apiKey.value == '' || this.f.secretkey.value == ''))
+      return;
     else {
       value = this.formGroup.value;
       value.name = this.switchBrand == "fpt" ? "FPT" : "E-SMS";
@@ -78,21 +82,19 @@ export class SmsAccountSettingDialogComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-    if (this.formGroup.invalid) return false;
+    
+    if (this.formGroup.invalid)
+      return false;
+
     var val = this.getFormGroup();
-    if (!val) return;
+    if (!val)
+      return;
+
     if (this.id) {
       this.smsAccountService.update(this.id, val).subscribe(
         () => {
           this.loadDataFromApi();
           this.activeModal.close();
-          this.notificationService.show({
-            content: 'Cập nhật cấu hình thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
         }
       )
     } else {
@@ -100,13 +102,6 @@ export class SmsAccountSettingDialogComponent implements OnInit {
         () => {
           this.loadDataFromApi();
           this.activeModal.close();
-          this.notificationService.show({
-            content: 'Cấu hình thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
         }
       )
     }

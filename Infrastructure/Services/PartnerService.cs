@@ -539,7 +539,7 @@ namespace Infrastructure.Services
         }
 
         public async Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerPaged val)
-        {
+        {      
             var query = GetQueryPaged(val);
             if (val.TagIds.Any())
             {

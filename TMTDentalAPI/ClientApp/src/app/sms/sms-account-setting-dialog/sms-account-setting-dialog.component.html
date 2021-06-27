@@ -21,8 +21,8 @@
                         <label class="o_form_label">Nhà cung cấp</label>
                     </div>
                     <select (change)="onItemChange($event.target.value)" class="form-control" style="width: 372px;">
-                        <!-- <option selected value="fpt">FPT</option> -->
-                        <option value="esms">ESMS</option>
+                        <option selected value="fpt">FPT</option>
+                        <!-- <option value="esms">ESMS</option> -->
                     </select>
                 </div>
                 <div class="o_group">
@@ -75,7 +75,7 @@
                             </table>
                         </ng-template>
 
-                        <ng-template [ngIf]="switchBrand=='esms'">
+                        <!-- <ng-template [ngIf]="switchBrand=='esms'">
                             <table class="o_group o_inner_group o_group_col_12 modal-body m-0">
                                 <tbody>
                                     <tr>
@@ -120,7 +120,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </ng-template>
+                        </ng-template> -->
                         <!-- <ng-template [ngIf]="switchBrand=='vietguys'">
                             <table class="o_group o_inner_group o_group_col_12 modal-body">
                                 <tbody>

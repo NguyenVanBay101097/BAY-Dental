@@ -5,9 +5,11 @@ using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -17,7 +19,8 @@ namespace Infrastructure.Services
     public class SmsAccountService : BaseService<SmsAccount>, ISmsAccountService
     {
         private readonly IMapper _mapper;
-        public SmsAccountService(IMapper mapper, IAsyncRepository<SmsAccount> repository, IHttpContextAccessor httpContextAccessor) : base(repository, httpContextAccessor)
+        public SmsAccountService(IMapper mapper, IAsyncRepository<SmsAccount> repository, IHttpContextAccessor httpContextAccessor) 
+            : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
         }
@@ -54,6 +57,8 @@ namespace Infrastructure.Services
 
             return items;
         }
+
+      
 
         public override Task<SmsAccount> CreateAsync(SmsAccount entity)
         {
