@@ -2,14 +2,22 @@
     <div class="o_control_panel">
         <div class="o_cp_left">
             <div class="o_cp_buttons d-flex">
-                <!-- <div>
-                    <select name="" id="" (change)="selectMonthChange($event)" class="form-control btn-sm" style="height: 32px;">
-                        <option selected value="0"><i class="fas fa-filter"></i> Tháng sinh</option>
-                        <option [value]="item.value" *ngFor="let item of months">{{item.name}}</option>
+                <div class="mr-2">
+                    <select class="form-control btn-sm" style="height: 32px;" (change)="selectDayChange($event)">
+                        <option value="">Ngày sinh</option>
+                        <option *ngFor="let i of dayList">
+                            {{i}}</option>
                     </select>
-                </div> -->
-                <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm ml-2" (click)="onSend()">Tạo tin nhắn</button>
+                </div>
+                <div class="mr-2">
+                    <select class="form-control btn-sm" style="height: 32px;" (change)="selectMonthChange($event)">
+                        <option value="">Tháng sinh</option>
+                        <option *ngFor="let i of monthList">
+                            {{i}}</option>
+                    </select>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSend()">Tạo tin nhắn</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
