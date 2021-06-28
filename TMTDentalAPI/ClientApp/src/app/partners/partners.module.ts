@@ -95,6 +95,7 @@ import { PartnerCustomerDebtPaymentHistoryListComponent } from './partner-custom
 import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-management/partner-customer-debt-management.component';
 
 
+
 @NgModule({
   declarations: [
     PartnerListComponent,

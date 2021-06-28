@@ -218,6 +218,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Loại thu chi', link: '/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
         { name: 'Tiêu chí kiểm kho', link: '/stock/criterias', permissions: ['Stock.StockInventoryCriteria.Read'] },
         { name: 'Thông tin chẩn đoán răng', link: '/tooth-diagnosis', permissions: ['Catalog.ToothDiagnosis.Read'] },
+        
         // { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' }},
         // { name: 'Vật liệu Labo', link: '/products/labos' },
         // { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
@@ -266,6 +267,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Khách hàng lân cận phòng khám', link: '/partner-report-location', permissions: ['Report.PartnerLocation'] },
         { name: 'Thống kê nguồn khách hàng', link: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
         { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/partner', permissions: ['Report.PartnerOldNew'] },
+        { name: 'Quản lý điều trị', link: '/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
         // { name: 'Thống kê khách hàng', link: '/customer-statistics' },
         // { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/old-new-partner' },
       ],

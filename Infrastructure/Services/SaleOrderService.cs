@@ -264,6 +264,52 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<IEnumerable<SaleOrderManagementExcel>> GetExcel(SaleOrderPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(
+                    x => x.Name.Contains(val.Search) ||
+                    x.Partner.Name.Contains(val.Search) ||
+                    x.Partner.NameNoSign.Contains(val.Search)
+                );
+            }
+            if (val.DateOrderTo.HasValue)
+            {
+                var dateTo = val.DateOrderTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateOrder <= dateTo);
+            }
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+            }
+            query = query.Where(x => x.State == "sale");
+            var results = await query.Select(x => new SaleOrderManagementExcel
+            {
+                DateOrder = x.DateOrder,
+                Name = x.Name,
+                PartnerName = x.Partner.Name,
+                AmountTotal = x.AmountTotal,
+                TotalPaid = x.TotalPaid,
+                Residual = x.Residual,
+               SaleOrderLineDisplays = x.OrderLines.Any() ? x.OrderLines.Select(s=> new SaleOrderLineDisplay
+               { 
+                    Name = s.Name,
+                    ProductUOMQty = s.ProductUOMQty,
+                    PriceSubTotal = s.PriceSubTotal,
+                    AmountPaid = s.AmountPaid,
+                    AmountResidual = s.AmountResidual
+                    
+                    
+               }).ToList() : new List<SaleOrderLineDisplay>(),
+
+            }).ToListAsync();
+
+            return results;
+
+        }
+
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))

@@ -247,4 +247,10 @@ export class SaleOrderService {
     getRevenueSumTotal(val: GetRevenueSumTotalReq):any{
         return this.http.post(this.baseApi + this.apiUrl + '/GetRevenueSumTotal', val);
     }
+    exportExcelFile(val: any) {
+        return this.http.get(this.baseApi + this.apiUrl + "/ExportExcelFile", {
+          responseType: "blob",
+          params: val,
+        });
+      }
 }
