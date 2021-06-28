@@ -25,13 +25,13 @@
                 {{ partner.dateOfBirth }}
             </div>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="showInfo">
             <label class="col-sm-4 t_col_form_lable">Địa chỉ</label>
             <div class="col-sm-8">
                 {{partner ? partner.address: ''}}
             </div>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="showInfo">
             <label class="col-sm-4 t_col_form_lable">Điện thoại</label>
             <div class="col-sm-8">
                 {{partner ?partner.phone:''}}
@@ -43,7 +43,7 @@
                 {{partner ?partner.jobTitle:''}}
             </div>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="showInfo">
             <label class="col-sm-4 t_col_form_lable">Email</label>
             <div class="col-sm-8">
                 {{partner ?partner.email:''}}

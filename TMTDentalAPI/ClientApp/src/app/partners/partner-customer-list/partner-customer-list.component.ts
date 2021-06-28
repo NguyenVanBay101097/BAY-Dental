@@ -71,6 +71,8 @@ export class PartnerCustomerListComponent implements OnInit {
 
   color='red';
 
+  showInfo = false;
+
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
     private checkPermissionService: CheckPermissionService,
@@ -276,6 +278,7 @@ export class PartnerCustomerListComponent implements OnInit {
     this.canImport = this.checkPermissionService.check(['Basic.Partner.Create']);
     this.canFilterPartnerCategory = this.checkPermissionService.check(["Catalog.PartnerCategory.Read"])
     this.canUpdateExcel = this.checkPermissionService.check(["Basic.Partner.Update"]);
+    this.showInfo = this.checkPermissionService.check(["Basic.Partner.ContactInfo"]);
   }
 
   onResidualSelect(e)
