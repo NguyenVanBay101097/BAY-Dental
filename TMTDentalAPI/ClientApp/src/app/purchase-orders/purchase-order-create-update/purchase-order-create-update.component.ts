@@ -54,7 +54,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   uomByProduct: { [id: string]: UoMDisplay[] } = {};
   listType: string = 'medicine'
   submitted = false;
-
+  amountTotal = 0;
   get f() { return this.formGroup.controls; }
 
   constructor(
@@ -217,6 +217,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   removeOrderLine(index) {
     this.orderLines.removeAt(index);
+    this.countAmountTotal();
+    this.f.amountPayment.setValue(this.amountTotal);
   }
 
   removeAllLine() {
@@ -228,6 +230,12 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     delete valueCopy['id'];
     var copy = this.fb.group(valueCopy);
     this.orderLines.insert(index, copy);
+  }
+
+  countAmountTotal(){
+    this.amountTotal = this.orderLines.value.reduce((total, cur) => {
+      return total + cur.priceUnit * (1 - cur.discount / 100) * cur.productQty;
+    }, 0);
   }
 
   get getAmountTotal() {
@@ -250,7 +258,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-    debugger
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
@@ -366,6 +373,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
       this.orderLines.push(group);
       this.focusLastRow();
+      this.countAmountTotal();
     });
   }
 
