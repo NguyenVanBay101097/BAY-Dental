@@ -68,5 +68,6 @@ namespace Infrastructure.Services
 
         Task<PagedResult2<SmsCareAfterOrder>> GetPagedSmsCareAfterOrderAsync(SmsCareAfterOrderPaged val);
         Task<IEnumerable<ProductSimple>> GetProductSmsCareAfterOrder(DateTime? dateFrom, DateTime? dateTo, Guid? companyId);
+        Task<Dictionary<DateTime, IEnumerable<SaleOrderLineHistoryRes>>> GetHistory(SaleOrderLineHistoryReq val);
     }
 }

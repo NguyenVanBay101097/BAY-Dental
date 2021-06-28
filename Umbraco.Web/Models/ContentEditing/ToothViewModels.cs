@@ -13,6 +13,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CategoryId { get; set; }
     }
 
+    public class ToothSimple
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+    }
+
     public class ToothDisplay: ToothBasic
     {
         public string ViTriHam { get; set; }

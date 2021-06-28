@@ -111,4 +111,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal PriceSubTotal { get; set; }
     }
 
+    public class SumRevenueReportPar
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
+        public Guid? PartnerId { get; set; }
+    }
+
+
 }

@@ -1,0 +1,32 @@
+<div class="card overflow-hidden">
+  <div class="card-body p-3 overflow-auto h-100">
+    <div class="d-flex justify-content-between align-items-center">
+      <h5 class="card-title t_title">
+        Lịch sử điều trị
+      </h5>
+      <button type="button" (click)="createNewSaleOrder()" class="px-2 btn btn-sm btn-primary">
+        <i class="fas fa-plus pr-1"></i>
+        <span>Tạo điều trị</span>
+      </button>
+    </div>
+    <div class="container_treatment">
+      <div class="wrapper_treatment">
+        <ul class="sessions_treatment">
+          <li *ngFor="let treatment of listTreatments | keyvalue: reverseKeyTreatment">
+            <div class="time t_sub_title"> {{formatDate(treatment.key)==today ? 'Hôm nay' : formatDate(treatment.key)}}</div>
+            <div *ngFor="let item of treatment.value">
+              <div class="card_border">
+                <div class="card_treatment">
+                  <p class="font-weight-bold">{{item?.name}}</p>
+                  <p>Răng: {{viewTeeth(item.teeth)}} </p>
+                  <p>Bác sĩ: {{item?.employeeName}}</p>
+                  <p>Chuẩn đoán: {{item?.diagnostic}}</p>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

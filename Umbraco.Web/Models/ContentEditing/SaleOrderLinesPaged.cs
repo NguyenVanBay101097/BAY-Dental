@@ -76,4 +76,5 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool IsActive { get; set; }
  
     }
+
 }

@@ -193,5 +193,12 @@ namespace TMTDentalAPI.Controllers
             var result = await _saleLineService.GetProductSmsCareAfterOrder(dateFrom, dateTo, companyId);
             return Ok(result);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetHistory([FromQuery]SaleOrderLineHistoryReq val)
+        {
+            var res = await _saleLineService.GetHistory(val);
+            return Ok(res);
+        }
     }
 }
