@@ -26,6 +26,21 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        public async Task<PagedResult2<MemberLevelSimple>> AutoComplete(MemberLevelAutoCompleteReq val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrWhiteSpace(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+            var count = await query.CountAsync();
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+            var res = await query.ToListAsync();
+            return new PagedResult2<MemberLevelSimple>(count, val.Offset, val.Limit)
+            {
+                Items = _mapper.Map<IEnumerable<MemberLevelSimple>>(res)
+            };
+        }
+
         public async Task<IEnumerable<MemberLevel>> Get()
         {
             var result = await SearchQuery(x => x.CompanyId == CompanyId).ToListAsync();

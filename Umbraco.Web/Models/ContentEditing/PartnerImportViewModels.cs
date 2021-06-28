@@ -69,6 +69,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class PartnerCustomerExportExcelVM
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
 
         public string Ref { get; set; }
