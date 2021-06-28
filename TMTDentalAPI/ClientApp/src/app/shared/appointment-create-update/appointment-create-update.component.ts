@@ -63,6 +63,13 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       name: '120 phút', value: 120
     },
   ]
+  states: any[] = [
+    {name: 'Đang hẹn', value:'confirmed'},
+    {name: 'Chờ khám', value:'waiting'},
+    {name: 'Đang khám', value:'examination'},
+    {name: 'Hoàn thành', value:'done'},
+    {name: 'Hủy hẹn', value:'cancel'},
+  ]
   defaultVal: any;
   formGroup: FormGroup;
   dotKhamId: any;
@@ -98,7 +105,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       partnerTags: this.fb.array([]),
       user: [null],
       apptDate: [null, Validators.required],
-      appTime: '00:00',
+      appTime: ['00:00',Validators.required],
       note: null,
       companyId: null,
       doctor: null,
@@ -106,7 +113,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       state: 'confirmed',
       reason: null,
       saleOrderId: null,
-      services: []
+      services: [],
+      isRepeatCustomer:false
     })
 
     setTimeout(() => {

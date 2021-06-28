@@ -76,5 +76,6 @@ namespace ApplicationCore.Entities
 
         public Guid? SaleOrderId { get; set; }
         public SaleOrder SaleOrder { get; set; }
+        public bool IsRepeatCustomer { get; set; }
     }
 }
