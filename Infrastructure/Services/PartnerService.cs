@@ -2200,19 +2200,39 @@ namespace Infrastructure.Services
             var accObj = GetService<IAccountAccountService>();
             var irProperyObj = GetService<IIRPropertyService>();
 
-            var saleOrderQr = from s in saleOrderObj.SearchQuery()
-                              select s;
+            var partnerOrderStateQr =from v in saleOrderObj.SearchQuery()
+                               group v by v.PartnerId into g
+                              select new { 
+                                  PartnerId = g.Key,
+                                 CountSale = g.Sum(x=> x.State == "sale" ? 1: 0),
+                                  CountDone = g.Sum(x=> x.State == "done" ? 1: 0)
+                              };
 
-            var amlQr = from aml in amlObj.SearchQuery()
+            var PartnerResidualQr = (from s in saleOrderObj.SearchQuery()
+                              where s.State == "sale" || s.State == "done"
+                              group s by s.PartnerId into g
+                              select new {
+                              PartnerId = g.Key,
+                              OrderResidual = g.Sum(x=> x.AmountTotal - x.TotalPaid)
+                              });
+
+            var partnerDebQr = from aml in amlObj.SearchQuery()
                         join acc in accObj.SearchQuery()
                         on aml.AccountId equals acc.Id
                         where acc.Code == "CNKH"
-                        select aml;
+                        group aml by aml.PartnerId into g
+                        select new {
+                            PartnerId = g.Key,
+                            TotalDebit = g.Sum(x => x.Balance)
+                        };
 
             var irPropertyQr = from ir in irProperyObj.SearchQuery(x => x.Name == "member_level" && !string.IsNullOrEmpty(x.ResId))
                                select ir;
 
             var ResponseQr = from p in SearchQuery(x => x.Customer)
+                             from pr in PartnerResidualQr.Where(x=> x.PartnerId == p.Id).DefaultIfEmpty()
+                             from pd in partnerDebQr.Where(x=> x.PartnerId == p.Id).DefaultIfEmpty()
+                             from pos in partnerOrderStateQr.Where(x=> x.PartnerId == p.Id).DefaultIfEmpty()
                              from ir in irPropertyQr.Where(x => !string.IsNullOrEmpty(x.ResId) && x.ResId.Contains(p.Id.ToString())).DefaultIfEmpty()
                              select new PartnerInfoTemplate
                              {
@@ -2235,9 +2255,9 @@ namespace Infrastructure.Services
                                  Gender = p.Gender,
                                  Comment = p.Comment,
                                  Date = p.Date,
-                                 OrderState = saleOrderQr.Where(x => x.PartnerId == p.Id).Any(x => x.State == "sale") ? "sale" : (saleOrderQr.Where(x => x.PartnerId == p.Id).Any(x => x.State == "done") ? "done" : "draft"),
-                                 OrderResidual = saleOrderQr.Where(x => x.PartnerId == p.Id && (x.State == "sale" || x.State == "done")).Sum(x => x.AmountTotal - x.TotalPaid),
-                                 TotalDebit = amlQr.Where(x => x.PartnerId == p.Id).Sum(x => x.Balance),
+                                 OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done":"draft"),
+                                 OrderResidual = pr.OrderResidual,
+                                 TotalDebit = pd.TotalDebit ,
                                  MemberLevelReferenceId = ir == null ? null : ir.ValueReference
                              };
 
@@ -2250,8 +2270,17 @@ namespace Infrastructure.Services
             if (val.CategIds.Any())
             {
                 var partnerCategoryRelService = GetService<IPartnerPartnerCategoryRelService>();
-                var filterPartnerIds = await partnerCategoryRelService.SearchQuery(x => val.CategIds.Contains(x.CategoryId)).Select(x => x.PartnerId).Distinct().ToListAsync();
-                ResponseQr = ResponseQr.Where(x => filterPartnerIds.Contains(x.Id));
+
+                var filterPartnerQr =
+                       from pcr in partnerCategoryRelService.SearchQuery(x=> val.CategIds.Contains(x.CategoryId))
+                       select new
+                       {
+                           PartnerId = pcr.PartnerId
+                       };
+
+                ResponseQr = from r in ResponseQr
+                             join pf in filterPartnerQr on r.Id equals pf.PartnerId
+                             select r;
             }
 
             if (val.HasOrderResidual.HasValue && val.HasOrderResidual.Value == 1)
@@ -2297,14 +2326,15 @@ namespace Infrastructure.Services
 
             var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => res.Select(i => i.Id).Contains(s.PartnerId)))
                                                                                            .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
+            var pnLevelIdDict = res.ToDictionary(x=> x.Id, x=> !string.IsNullOrEmpty(x.MemberLevelReferenceId) ? Guid.Parse(x.MemberLevelReferenceId.Split(",")[1]) : (Guid?)null);
+            var memberLevels = await memberLevelObj.SearchQuery(x => pnLevelIdDict.Values.Contains(x.Id)).ToListAsync();
             foreach (var item in res)
             {
-                var partnerLevelId = !string.IsNullOrEmpty(item.MemberLevelReferenceId) ? Guid.Parse(item.MemberLevelReferenceId.Split(",")[1]) : (Guid?)null;
-                if (partnerLevelId.HasValue)
+                if (pnLevelIdDict[item.Id].HasValue)
                 {
-                    var level = await memberLevelObj.GetByIdAsync(partnerLevelId);
+                    var level = memberLevels.FirstOrDefault(x => x.Id == pnLevelIdDict[item.Id]);
                     item.MemberLevel = _mapper.Map<MemberLevelBasic>(level);
-                    item.MemberLevelId = partnerLevelId;
+                    item.MemberLevelId = level.Id;
                 }
                  item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
             }
