@@ -2319,13 +2319,14 @@ namespace Infrastructure.Services
         {
             var memberLevelObj = GetService<IMemberLevelService>();
             var cateObj = GetService<IPartnerCategoryService>();
+            var partnerCategoryRelObj = GetService<IPartnerPartnerCategoryRelService>();
 
             var ResponseQr = await GetQueryPartnerInfoPaged2(val);
             var count = await ResponseQr.CountAsync();
             var res = await ResponseQr.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
-            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => res.Select(i => i.Id).Contains(s.PartnerId)))
-                                                                                           .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
+            var cateList = await partnerCategoryRelObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).Include(x => x.Category).ToListAsync();
+            var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));
             var pnLevelIdDict = res.ToDictionary(x=> x.Id, x=> !string.IsNullOrEmpty(x.MemberLevelReferenceId) ? Guid.Parse(x.MemberLevelReferenceId.Split(",")[1]) : (Guid?)null);
             var memberLevels = await memberLevelObj.SearchQuery(x => pnLevelIdDict.Values.Contains(x.Id)).ToListAsync();
             foreach (var item in res)
@@ -2336,7 +2337,7 @@ namespace Infrastructure.Services
                     item.MemberLevel = _mapper.Map<MemberLevelBasic>(level);
                     item.MemberLevelId = level.Id;
                 }
-                 item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
+                 item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(categDict.ContainsKey(item.Id) ? categDict[item.Id] : new List<PartnerCategory>());
             }
             var items = _mapper.Map<IEnumerable<PartnerInfoDisplay>>(res);
 
