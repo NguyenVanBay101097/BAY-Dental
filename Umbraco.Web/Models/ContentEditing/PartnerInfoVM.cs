@@ -8,7 +8,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class PartnerInfoTemplate : PartnerInfoDisplay
     {
-        public string MemberLevelReferenceId { get; set; }
+        public string MemberLevelId { get; set; }
         public string NameNoSign { get; set; }
 
         public DateTime? Date { get; set; }
@@ -35,7 +35,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string OrderState { get; set; }
         public decimal? OrderResidual { get; set; }
         public decimal? TotalDebit { get; set; }
-        public Guid? MemberLevelId { get; set; }
         public MemberLevelBasic MemberLevel { get; set; }
         public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
         public string DateOfBirth

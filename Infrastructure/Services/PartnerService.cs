@@ -543,7 +543,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerInfoPaged val)
         {
-            var query = await  GetQueryPartnerInfoPaged2(val);
+            var query = await GetQueryPartnerInfoPaged2(val);
             if (val.CategIds.Any())
             {
                 //filter query
@@ -578,7 +578,7 @@ namespace Infrastructure.Services
                                                 .Include(x => x.PartnerHistoryRels).ToListAsync();
             foreach (var item in res)
             {
-                item.MedicalHistories = Histories.Where(x => x.PartnerHistoryRels.Any(z => z.PartnerId == item.Id)).Select(x=> x.Name).ToList();
+                item.MedicalHistories = Histories.Where(x => x.PartnerHistoryRels.Any(z => z.PartnerId == item.Id)).Select(x => x.Name).ToList();
             }
 
             return res;
@@ -2185,40 +2185,44 @@ namespace Infrastructure.Services
             var accObj = GetService<IAccountAccountService>();
             var irProperyObj = GetService<IIRPropertyService>();
 
-            var partnerOrderStateQr =from v in saleOrderObj.SearchQuery()
-                               group v by v.PartnerId into g
-                              select new { 
-                                  PartnerId = g.Key,
-                                 CountSale = g.Sum(x=> x.State == "sale" ? 1: 0),
-                                  CountDone = g.Sum(x=> x.State == "done" ? 1: 0)
-                              };
+            var companyId = CompanyId;
+            var partnerOrderStateQr = from v in saleOrderObj.SearchQuery(x => x.CompanyId == companyId)
+                                      group v by v.PartnerId into g
+                                      select new
+                                      {
+                                          PartnerId = g.Key,
+                                          CountSale = g.Sum(x => x.State == "sale" ? 1 : 0),
+                                          CountDone = g.Sum(x => x.State == "done" ? 1 : 0)
+                                      };
 
-            var PartnerResidualQr = (from s in saleOrderObj.SearchQuery()
-                              where s.State == "sale" || s.State == "done"
-                              group s by s.PartnerId into g
-                              select new {
-                              PartnerId = g.Key,
-                              OrderResidual = g.Sum(x=> x.AmountTotal - x.TotalPaid)
-                              });
+            var PartnerResidualQr = (from s in saleOrderObj.SearchQuery(x => x.CompanyId == companyId)
+                                     where s.State == "sale" || s.State == "done"
+                                     group s by s.PartnerId into g
+                                     select new
+                                     {
+                                         PartnerId = g.Key,
+                                         OrderResidual = g.Sum(x => x.AmountTotal - x.TotalPaid)
+                                     });
 
-            var partnerDebQr = from aml in amlObj.SearchQuery()
-                        join acc in accObj.SearchQuery()
-                        on aml.AccountId equals acc.Id
-                        where acc.Code == "CNKH"
-                        group aml by aml.PartnerId into g
-                        select new {
-                            PartnerId = g.Key,
-                            TotalDebit = g.Sum(x => x.Balance)
-                        };
+            var partnerDebQr = from aml in amlObj.SearchQuery(x => x.CompanyId == companyId)
+                               join acc in accObj.SearchQuery()
+                               on aml.AccountId equals acc.Id
+                               where acc.Code == "CNKH"
+                               group aml by aml.PartnerId into g
+                               select new
+                               {
+                                   PartnerId = g.Key,
+                                   TotalDebit = g.Sum(x => x.Balance)
+                               };
 
-            var irPropertyQr = from ir in irProperyObj.SearchQuery(x => x.Name == "member_level" && !string.IsNullOrEmpty(x.ResId))
+            var irPropertyQr = from ir in irProperyObj.SearchQuery(x => x.Name == "member_level" && x.Field.Model == "Partner" && x.CompanyId == companyId)
                                select ir;
 
             var ResponseQr = from p in SearchQuery(x => x.Customer)
-                             from pr in PartnerResidualQr.Where(x=> x.PartnerId == p.Id).DefaultIfEmpty()
-                             from pd in partnerDebQr.Where(x=> x.PartnerId == p.Id).DefaultIfEmpty()
-                             from pos in partnerOrderStateQr.Where(x=> x.PartnerId == p.Id).DefaultIfEmpty()
-                             from ir in irPropertyQr.Where(x => !string.IsNullOrEmpty(x.ResId) && x.ResId.Contains(p.Id.ToString())).DefaultIfEmpty()
+                             from pr in PartnerResidualQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
+                             from pd in partnerDebQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
+                             from pos in partnerOrderStateQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
+                             from ir in irPropertyQr.Where(x => !string.IsNullOrEmpty(x.ResId) && x.ResId.Contains(p.Id.ToString().ToLower())).DefaultIfEmpty()
                              select new PartnerInfoTemplate
                              {
                                  Id = p.Id,
@@ -2232,18 +2236,18 @@ namespace Infrastructure.Services
                                  BirthYear = p.BirthYear,
                                  DisplayName = p.DisplayName,
                                  Email = p.Email,
-                                 CityName = p .CityName,
-                                 DistrictName= p.DistrictName,
+                                 CityName = p.CityName,
+                                 DistrictName = p.DistrictName,
                                  JobTitle = p.JobTitle,
                                  Street = p.Street,
                                  WardName = p.WardName,
                                  Gender = p.Gender,
                                  Comment = p.Comment,
                                  Date = p.Date,
-                                 OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done":"draft"),
+                                 OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done" : "draft"),
                                  OrderResidual = pr.OrderResidual,
-                                 TotalDebit = pd.TotalDebit ,
-                                 MemberLevelReferenceId = ir == null ? null : ir.ValueReference
+                                 TotalDebit = pd.TotalDebit,
+                                 MemberLevelId = ir.ValueReference
                              };
 
             if (!string.IsNullOrEmpty(val.Search))
@@ -2257,7 +2261,7 @@ namespace Infrastructure.Services
                 var partnerCategoryRelService = GetService<IPartnerPartnerCategoryRelService>();
 
                 var filterPartnerQr =
-                       from pcr in partnerCategoryRelService.SearchQuery(x=> val.CategIds.Contains(x.CategoryId))
+                       from pcr in partnerCategoryRelService.SearchQuery(x => val.CategIds.Contains(x.CategoryId))
                        select new
                        {
                            PartnerId = pcr.PartnerId
@@ -2290,7 +2294,7 @@ namespace Infrastructure.Services
 
             if (val.MemberLevelId.HasValue)
             {
-                ResponseQr = ResponseQr.Where(x => x.MemberLevelReferenceId.Contains(val.MemberLevelId.Value.ToString()));
+                ResponseQr = ResponseQr.Where(x => x.MemberLevelId == val.MemberLevelId.Value.ToString());
             }
 
             if (!string.IsNullOrEmpty(val.OrderState))
@@ -2312,17 +2316,17 @@ namespace Infrastructure.Services
 
             var cateList = await partnerCategoryRelObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).Include(x => x.Category).ToListAsync();
             var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));
-            var pnLevelIdDict = res.ToDictionary(x=> x.Id, x=> !string.IsNullOrEmpty(x.MemberLevelReferenceId) ? Guid.Parse(x.MemberLevelReferenceId.Split(",")[1]) : (Guid?)null);
-            var memberLevels = await memberLevelObj.SearchQuery(x => pnLevelIdDict.Values.Contains(x.Id)).ToListAsync();
+            var memberLevelIds = res.Where(x => !string.IsNullOrEmpty(x.MemberLevelId)).Select(x => new Guid(x.MemberLevelId.Substring(x.MemberLevelId.IndexOf(",") + 1))).Distinct().ToList();
+            var memberLevels = await memberLevelObj.SearchQuery(x => memberLevelIds.Contains(x.Id)).ToListAsync();
+            var memberLevelDict = memberLevels.ToDictionary(x => x.Id, x => x);
             foreach (var item in res)
             {
-                if (pnLevelIdDict[item.Id].HasValue)
+                if (!string.IsNullOrEmpty(item.MemberLevelId))
                 {
-                    var level = memberLevels.FirstOrDefault(x => x.Id == pnLevelIdDict[item.Id]);
+                    var level = memberLevelDict[new Guid(item.MemberLevelId.Substring(item.MemberLevelId.IndexOf(",") + 1))];
                     item.MemberLevel = _mapper.Map<MemberLevelBasic>(level);
-                    item.MemberLevelId = level.Id;
                 }
-                 item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(categDict.ContainsKey(item.Id) ? categDict[item.Id] : new List<PartnerCategory>());
+                item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(categDict.ContainsKey(item.Id) ? categDict[item.Id] : new List<PartnerCategory>());
             }
             var items = _mapper.Map<IEnumerable<PartnerInfoDisplay>>(res);
 
@@ -2334,7 +2338,7 @@ namespace Infrastructure.Services
         }
 
         public async Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged(PartnerInfoPaged val)
-            {
+        {
 
             var query = _context.PartnerInfos.FromSqlRaw(@$"select * from fn_PartnerInfoList('{CompanyId}')");
             if (!string.IsNullOrEmpty(val.Search))
