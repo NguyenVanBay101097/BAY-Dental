@@ -119,8 +119,8 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   initFilter() {
-    this.filter.limit = 1;
-    this.filter.offset = 20;
+    this.filter.limit = 20;
+    this.filter.offset = 1;
     this.filter.hasOrderResidual = -1;
     this.filter.hasTotalDebit = -1;
     this.filter.orderState='';
