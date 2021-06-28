@@ -51,7 +51,7 @@ export class PartnerCustomerListComponent implements OnInit {
   
   OrderResiduals: { text: string, value: number }[] = [
     { text: 'Có dự kiến thu', value: 1 },
-    { text: 'Không có dự kiến thu', value: 1}
+    { text: 'Không có dự kiến thu', value: 0}
   ];
 
   totalDebits: { text: string, value: number }[] = [
@@ -119,8 +119,8 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   initFilter() {
-    this.filter.limit = 20;
-    this.filter.offset = 0;
+    this.filter.limit = 1;
+    this.filter.offset = 20;
     this.filter.hasOrderResidual = -1;
     this.filter.hasTotalDebit = -1;
     this.filter.orderState='';
@@ -299,4 +299,8 @@ export class PartnerCustomerListComponent implements OnInit {
     this.refreshData();
   }
 
+  public onPageChange(event: PageChangeEvent): void {
+    this.filter.offset = event.skip;;
+    this.refreshData();
+  }
 }

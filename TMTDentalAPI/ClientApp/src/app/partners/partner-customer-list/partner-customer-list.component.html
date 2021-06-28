@@ -50,17 +50,17 @@
 
 <div class="o_content">
     <div class="d-flex py-2 px-3 order-state">
-        <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="" type="radio" class="btn-check hidden" name="orderStates" id="all" autocomplete="off" [checked]="true">
+        <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="" type="radio" class="btn-check hidden hide" name="orderStates" id="all" autocomplete="off" [checked]="true">
         <label class="btn btn-outline-primary btn-sm mr-2" for="all">Tất cả</label>
-        <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="sale" type="radio" class="btn-check hidden" name="orderStates" id="sale" autocomplete="off" [checked]="true">
+        <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="sale" type="radio" class="btn-check hidden hide" name="orderStates" id="sale" autocomplete="off" [checked]="true">
         <label class="btn btn-outline-primary btn-sm mr-2" for="sale">Đang điều trị</label>
-        <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="done" type="radio" class="btn-check hidden" name="orderStates" id="done" autocomplete="off" [checked]="true">
+        <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="done" type="radio" class="btn-check hidden hide" name="orderStates" id="done" autocomplete="off" [checked]="true">
         <label class="btn btn-outline-primary btn-sm mr-2" for="done">Hoàn thành</label>
-        <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="draft" type="radio" class="btn-check hidden" name="orderStates" id="draft" autocomplete="off" [checked]="true">
+        <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="draft" type="radio" class="btn-check hidden hide" name="orderStates" id="draft" autocomplete="off" [checked]="true">
         <label class="btn btn-outline-primary btn-sm mr-2" for="draft">Chưa phát sinh</label>
 
     </div>
-    <kendo-grid [data]="gridData" [resizable]="true" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid [pageable]="true">
+    <kendo-grid [data]="gridData" [pageable]="true" (pageChange)="onPageChange($event)" [resizable]="true" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid>
         <kendo-grid-column class="" field="name" title="Họ tên" width="250" [locked]="true">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div [ngClass]="'d-flex o_tag_bordercolor_' + dataItem.memberLevel?.color" [ngStyle]="{'border-left': '4px solid white'}" class="">
