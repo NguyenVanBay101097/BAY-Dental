@@ -95,9 +95,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult DefaultGet(PurchaseOrderDefaultGet val)
+        public async Task<IActionResult> DefaultGetAsync(PurchaseOrderDefaultGet val)
         {
-            var res = _purchaseOrderService.DefaultGet(val);
+            var res = await _purchaseOrderService.DefaultGet(val);
             return Ok(res);
         }
 

@@ -202,7 +202,7 @@
                         <p class="t_tilte">Danh sách hàng hóa</p>
 
                         <div class="group_product h-90">
-                            <app-purchase-order-list-product-tabpanel (onSelectService)="selectProduct($event)">
+                            <app-purchase-order-list-product-tabpanel [listProducts]="productList" (onSelectService)="selectProduct($event)">
                             </app-purchase-order-list-product-tabpanel>
                         </div>
                        

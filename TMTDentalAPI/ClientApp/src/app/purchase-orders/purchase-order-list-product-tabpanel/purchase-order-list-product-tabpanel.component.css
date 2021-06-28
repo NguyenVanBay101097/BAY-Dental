@@ -123,5 +123,15 @@ tbody>.cursor:hover {
     border-spacing: 0 !important;
 }
 
+@media (min-width: 1300px) and (max-width: 1450px){
+
+    .form-check-label {
+        padding: 2px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+}
+
 
 

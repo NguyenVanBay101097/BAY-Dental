@@ -46,13 +46,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
 
-  productList: ProductBasic2[] = [];
+  productList: ProductSimple[] = [];
   filteredJournals: any = [];
   productSearch: string;
   searchUpdate = new Subject<string>();
   productSelectedIndex = 0;
   uomByProduct: { [id: string]: UoMDisplay[] } = {};
-  listType: string = 'medicine'
+  listType: string = 'medicine,product'
   submitted = false;
 
   get f() { return this.formGroup.controls; }
@@ -102,13 +102,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
     this.loadPartners();
     this.loadFilteredJournals();
-
-    this.searchUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.loadProductList(this.listType);
-      });
+    this.loadProductList();
 
     this.authService.getGroups().subscribe((result: any) => {
       this.permissionService.define(result);
@@ -153,6 +147,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     });
   }
 
+
+
   actionRegisterPayment() {
     if (this.id) {
       this.paymentService.purchaseDefaultGet([this.id]).subscribe(rs2 => {
@@ -183,19 +179,23 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     return this.partnerService.getAutocompleteSimple(val);
   }
 
-  loadProductList(type?: string) {
-    this.listType = type;
+  loadProductList() {
     var val = new ProductPaged();
-    val.limit = 10;
+    val.limit = 20;
     val.offset = 0;
     val.purchaseOK = true;
-    val.search = this.productSearch || '';
-    val.type2 = this.listType;
     val.type = 'product';
-    this.productService.getPaged(val).subscribe(res => {
-      this.productList = res.items;
-    }, err => {
-    });
+    val.type2 = this.listType;
+    this.productService
+      .autocomplete2(val).subscribe(
+        (res) => {
+          console.log(res)
+          this.productList = res;
+        },
+        (err) => {
+          console.log(err);
+        }
+    );
   }
 
   loadFilteredJournals() {

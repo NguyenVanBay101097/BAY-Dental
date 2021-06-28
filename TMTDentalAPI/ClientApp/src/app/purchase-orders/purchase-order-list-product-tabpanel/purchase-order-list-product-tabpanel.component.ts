@@ -1,4 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ProductSimple } from './../../products/product-simple';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
@@ -9,12 +10,13 @@ import { ProductPaged, ProductService } from 'src/app/products/product.service';
   styleUrls: ['./purchase-order-list-product-tabpanel.component.css']
 })
 export class PurchaseOrderListProductTabpanelComponent implements OnInit {
-  listProducts = [];
+  @Input() listProducts: ProductSimple[];
   model: any;
   searching = false;
   searchFailed = false;
   type2: string = 'medicine';
   search: string;
+  listProductFilter: ProductSimple[];
   searchUpdate = new Subject<string>();
 
   @Output() onSelectService = new EventEmitter<any>();
@@ -24,33 +26,20 @@ export class PurchaseOrderListProductTabpanelComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.searchUpdate
-      .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe((value) => {
-        this.LoadDataProduct();
-      });
-
-    this.LoadDataProduct();
+   this.loadData();
   }
 
-    LoadDataProduct() {
-    var val = new ProductPaged();
-    val.limit = 20;
-    val.offset = 0;
-    val.purchaseOK = true;
-    val.type = 'product';
-    val.search = this.search ? this.search : '';
-    val.type2 = this.type2;
-    this.productService
-      .autocomplete2(val).subscribe(
-        (res) => {
-          console.log(res)
-          this.listProducts = res;
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+  loadData() {
+    this.listProductFilter = this.listProducts.filter(x => x.type2.includes(this.type2));   
+  }
+
+  onChangeSearch(value) {
+    if (value == '' || !value) {
+      this.loadData();
+    } else {
+      this.listProductFilter = this.listProductFilter.filter(x => this.RemoveVietnamese(x.name).includes(value));
+    }
+    return this.listProductFilter;
   }
 
   onSelectValue(event) {
@@ -65,14 +54,24 @@ export class PurchaseOrderListProductTabpanelComponent implements OnInit {
     });
   }
 
-  onChangeSearch(value) {
-    this.search = value;
-    this.LoadDataProduct();
-  }
-
   onChangeType(value) {
     this.type2 = value;
-    this.LoadDataProduct();
+    this.loadData();
+  }
+
+  RemoveVietnamese(text) {
+    text = text.toLowerCase().trim();
+    text = text.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+    text = text.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+    text = text.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+    text = text.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+    text = text.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+    text = text.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+    text = text.replace(/đ/g, "d");
+    // Some system encode vietnamese combining accent as individual utf-8 characters
+    text = text.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ""); // Huyền sắc hỏi ngã nặng 
+    text = text.replace(/\u02C6|\u0306|\u031B/g, ""); // Â, Ê, Ă, Ơ, Ư
+    return text;
   }
 
 }

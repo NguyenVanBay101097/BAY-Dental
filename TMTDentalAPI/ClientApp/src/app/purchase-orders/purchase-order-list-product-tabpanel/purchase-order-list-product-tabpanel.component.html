@@ -25,7 +25,7 @@
         <table class="table table-sm table-list-product">        
             <tbody>
                 <tr class="cursor" (click)="onSelectValue(item)"
-                    *ngFor="let item of listProducts;let i = index">
+                    *ngFor="let item of listProductFilter;let i = index">
                     <td class="sticky-td">{{item.name}}</td>
                     <td class="sticky-td text-right">{{item.purchasePrice | number}}</td>
                 </tr>

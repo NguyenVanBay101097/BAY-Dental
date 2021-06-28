@@ -200,19 +200,18 @@ namespace Infrastructure.Services
             }
         }
 
-        public PurchaseOrderDisplay DefaultGet(PurchaseOrderDefaultGet val)
+        public async Task<PurchaseOrderDisplay> DefaultGet(PurchaseOrderDefaultGet val)
         {
             var journalObj = GetService<IAccountJournalService>();
             var pickingTypeObj = GetService<IStockPickingTypeService>();
-            var companyId = CompanyId;
 
-            var pickingType = pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse.CompanyId == CompanyId).FirstOrDefault();
+            var pickingType = await pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse.CompanyId == CompanyId).FirstOrDefaultAsync();
             if (pickingType == null)
-                pickingType = pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse == null).FirstOrDefault();
+                pickingType = await pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse == null).FirstOrDefaultAsync();
             if (pickingType == null)
                 throw new Exception("Không tìm thấy hoạt động nhập kho nào");
 
-            var cashJournal = journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefault();
+            var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
             if (cashJournal == null)
                 throw new Exception("Không tìm thấy phương thức thanh toán tiền mặt");
 
