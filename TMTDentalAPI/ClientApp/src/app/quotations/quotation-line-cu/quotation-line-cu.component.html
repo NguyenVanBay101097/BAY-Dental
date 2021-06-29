@@ -10,29 +10,29 @@
         <div class="px-2 w-100 pb-2">
             <div class="row">
                 <div class="col-xl-4 col-md-6 col-xs-12">
-                    <table class="mw-100">
+                    <table class="mw-100 o_form_view o_group">
                         <tbody>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label" style="width: 110px;">
                                     <label class="o_form_label_help">
                                         Răng
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <span>{{teethList}}</span>
+                                <td colspan="1" style="vertical-align: top;">
+                                    <span class="font-weight-600">{{teethList}}</span>
                                     <img *ngIf="isEditting" class="ml-2" style="cursor: pointer;"
                                         [src]="'' || 'assets/icons/teeth.svg'" alt="" (click)="toothSelection()"
                                         onerror="this.src='assets/teeth/box.svg';">
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="o_td_label" style="width: 35%;">
+                                <td colspan="1" class="o_td_label" style="width: 110px;">
                                     <label class="o_form_label_help">
                                         Chẩn đoán
                                     </label>
                                 </td>
-                                <td colspan="1" class="o_td_label">
-                                    <span *ngIf="!isEditting">{{line.diagnostic}}</span>
+                                <td colspan="1" class="o_td_label" style="vertical-align: top;">
+                                    <span class="font-weight-600" *ngIf="!isEditting">{{line.diagnostic}}</span>
                                 </td>
                             </tr>
                             <tr *ngIf="isEditting">
@@ -45,8 +45,8 @@
                 </div>
                 <div class="col-xl-8 col-md-6 col-xs-12">
                     <div class="row">
-                        <div class="col-xl-6 col-md-12 col-xs-12">
-                            <table class="o_group o_inner_group o_group_col_4">
+                        <div class="col-xl-6 col-md-12 col-xs-12" style="padding: 0;">
+                            <table class="o_group o_inner_group ">
                                 <tbody>
                                     <tr>
                                         <td colspan="1" class="o_td_label">
@@ -54,11 +54,12 @@
                                                 Bác sĩ
                                             </label>
                                         </td>
-                                        <td colspan="1" style="width: 100%; padding: 0 7px 7px 0;">
-                                            <span class="" *ngIf="!isEditting">{{line.employee?.name}}</span>
+                                        <td colspan="1" style="width: 100%; padding: 0 0 7px 0;">
+                                            <span class="font-weight-600"
+                                                *ngIf="!isEditting">{{line.employee?.name}}</span>
                                             <kendo-combobox [filterable]="true"
                                                 (filterChange)="onEmployeeDoctor($event)" *ngIf="isEditting"
-                                                style="width:100%;" [data]="filteredEmployeesDoctor"
+                                                style="width: 100%;" [data]="filteredEmployeesDoctor"
                                                 [textField]="'name'" #employeeCbx formControlName="employee"
                                                 [valueField]="'id'">
                                             </kendo-combobox>
@@ -70,12 +71,12 @@
                                                 Phụ tá
                                             </label>
                                         </td>
-                                        <td colspan="1" style="width: 100%; padding: 0 7px 7px 0;">
-                                            <span class="form-control-plaintext"
+                                        <td colspan="1" style="width: 100%; padding: 0 0 7px 0;">
+                                            <span class="font-weight-600"
                                                 *ngIf="!isEditting">{{line.assistant?.name}}</span>
                                             <kendo-combobox [filterable]="true"
                                                 (filterChange)="onEmployeeAssistant($event)" *ngIf="isEditting"
-                                                style="width:100%;" [data]="filteredEmployeesAssistant"
+                                                style="width: 100%;" [data]="filteredEmployeesAssistant"
                                                 [textField]="'name'" #assistantCbx formControlName="assistant"
                                                 [valueField]="'id'">
                                             </kendo-combobox>
@@ -87,12 +88,12 @@
                                                 Người tư vấn
                                             </label>
                                         </td>
-                                        <td colspan="1" style="width: 100%; padding: 0 7px 7px 0;">
-                                            <span class="form-control-plaintext"
+                                        <td colspan="1" style="width: 100%; padding: 0 0 7px 0;">
+                                            <span class="font-weight-600"
                                                 *ngIf="!isEditting">{{line.counselor?.name}}</span>
                                             <kendo-combobox [filterable]="true"
                                                 (filterChange)="onEmployeeCounselor($event)" *ngIf="isEditting"
-                                                style="width:100%;" [data]="filteredEmployeesCounselor"
+                                                style="width: 100%;" [data]="filteredEmployeesCounselor"
                                                 [textField]="'name'" #counselorCbx formControlName="counselor"
                                                 [valueField]="'id'">
                                             </kendo-combobox>
@@ -102,7 +103,7 @@
                             </table>
                         </div>
                         <div class="col-xl-6 col-md-12 col-xs-12">
-                            <table class="o_group o_inner_group o_group_col_4">
+                            <table class="o_group o_inner_group ">
                                 <tbody>
                                     <tr>
                                         <td colspan="1" class="o_td_label">
@@ -121,17 +122,16 @@
                                             </div>
                                             <div>
                                                 <ng-container *ngIf="!isEditting; else elseTemplatePriceUnit">
-                                                    <span class="font-weight-lighter">
-                                                        Giá gốc: {{line.subPrice | number}}
-                                                    </span>
+                                                    Giá gốc: <span class="font-weight-600">{{line.subPrice |
+                                                        number}}</span>
                                                 </ng-container>
                                                 <ng-template #elseTemplatePriceUnit>
-                                                    <span class="font-weight-lighter">
-                                                        Giá gốc: {{getValueFormControl('subPrice') | number}}
-                                                        <i _ngcontent-sgd-c6="" class="far fa-edit text-success pointer"
-                                                            [ngbPopover]="popContent" [popoverTitle]="popTitle"
-                                                            [autoClose]="'outside'"></i>
-                                                    </span>
+                                                    Giá gốc: <span
+                                                        class="font-weight-600 mr-2">{{getValueFormControl('subPrice') |
+                                                        number}}</span>
+                                                    <i _ngcontent-sgd-c6="" class="far fa-edit text-success pointer"
+                                                        [ngbPopover]="popContent" [popoverTitle]="popTitle"
+                                                        [autoClose]="'outside'"></i>
                                                 </ng-template>
 
                                                 <ng-template #popContent let-greeting="greeting">
@@ -151,7 +151,9 @@
                                         </td>
                                         <td colspan="1" style="width: 100%; text-align: end; padding: 0 7px 7px 0;">
                                             <ng-container *ngIf="!isEditting; else elseTemplateQty">
-                                                {{line.qty | number}}
+                                                <span class="font-weight-600">
+                                                    {{line.qty | number}}
+                                                </span>
                                             </ng-container>
                                             <ng-template #elseTemplateQty>
                                                 <kendo-numerictextbox style="width: 80px;" [format]="'n0'" [min]="0"
