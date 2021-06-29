@@ -11,6 +11,7 @@ import { ProductPaged, ProductService } from 'src/app/products/product.service';
 })
 export class PurchaseOrderListProductTabpanelComponent implements OnInit {
   @Input() listProducts: ProductSimple[];
+  @Input() isStock: boolean;
   model: any;
   searching = false;
   searchFailed = false;
@@ -20,17 +21,19 @@ export class PurchaseOrderListProductTabpanelComponent implements OnInit {
   searchUpdate = new Subject<string>();
 
   @Output() onSelectService = new EventEmitter<any>();
-  
+
   constructor(
     private productService: ProductService
   ) { }
 
   ngOnInit() {
-   this.loadData();
+    this.loadData();
+    console.log(this.isStock);
+    
   }
 
   loadData() {
-    this.listProductFilter = this.listProducts.filter(x => x.type2.includes(this.type2));   
+    this.listProductFilter = this.listProducts.filter(x => x.type2.includes(this.type2));
   }
 
   onChangeSearch(value) {
@@ -50,7 +53,9 @@ export class PurchaseOrderListProductTabpanelComponent implements OnInit {
     this.onSelectService.emit({
       id: item.id,
       name: item.name,
-      purchasePrice: item.purchasePrice
+      purchasePrice: item.purchasePrice,
+      defaultCode: item.defaultCode,
+      type2: item.type2
     });
   }
 

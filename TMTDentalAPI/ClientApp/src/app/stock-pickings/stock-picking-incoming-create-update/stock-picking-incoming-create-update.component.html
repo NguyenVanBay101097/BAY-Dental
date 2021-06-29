@@ -146,9 +146,11 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td *ngIf="picking?.state == 'draft'">
+                                <td [class.d-none]="picking.state == 'done'">
                                     <div class="mt-2 h-100">
-                                        <div class="d-flex pl-2">
+                                        <app-purchase-order-list-product-tabpanel [listProducts]="listProducts" (onSelectService)="selectProduct($event)" [isStock]="true">
+                                        </app-purchase-order-list-product-tabpanel>
+                                        <!-- <div class="d-flex pl-2">
                                             <div class="form-check">
                                                 <input class="form-check-input" [hidden]="true" type="radio"
                                                     name="radioButton" id="medicine" value="medicine" checked
@@ -180,7 +182,7 @@
                                             <app-tai-product-list-selectable #productListSelectable
                                                 [productList]="productList" (changeProduct)="onChangeProduct($event)">
                                             </app-tai-product-list-selectable>
-                                        </div>
+                                        </div> -->
                                     </div>
 
                                 </td>

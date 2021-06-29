@@ -49,6 +49,8 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   productSearch: string;
   productList: ProductBasic2[] = [];
   sourceProductList = [];
+  listProducts: ProductSimple[] = [];
+  listType: string = 'medicine,product';
 
   canCreateUpdate = false;
   canActionDone = false;
@@ -121,46 +123,62 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   get note() { return this.pickingForm.get('note').value; }
 
   loadProductList() {
+    // var val = new ProductPaged();
+    // val.limit = 0;
+    // val.offset = 0;
+    // val.type = 'product,consu';
+    // val.search = this.productSearch || '';
+    // val.type2 = this.type2;
+
+    // this.productService.getPaged(val).subscribe(res => {
+    //   this.productList = res.items;
+    //   this.sourceProductList = res.items;
+    //   this.productListSelectable.resetIndex();
+    // }, err => {
+    // });
     var val = new ProductPaged();
-    val.limit = 0;
+    val.limit = 20;
     val.offset = 0;
-    val.type = 'product,consu';
-    val.search = this.productSearch || '';
-    val.type2 = this.type2;
-
-    this.productService.getPaged(val).subscribe(res => {
-      this.productList = res.items;
-      this.sourceProductList = res.items;
-      this.productListSelectable.resetIndex();
-    }, err => {
-    });
-  }
-
-  upDownEnterChange(code) {
-    if (code == 40) {
-      this.productListSelectable.moveUp();
-    } else if (code == 38) {
-      this.productListSelectable.moveDown();
-    } else if (code == 13) {
-      this.productListSelectable.selectCurrent();
-    }
-  }
-
-  onProductInputSearchChange(text) {
-    this.productSearch = text;
-
-    if (!this.productSearch || this.productSearch.trim() == '')
-      this.productList = this.sourceProductList;
-    else {
-      this.productSearch = this.productSearch.trim().toLocaleLowerCase();
-      this.productList = this.sourceProductList.filter(x => x.name.toLocaleLowerCase().indexOf(this.productSearch) >= 0
-        || x.nameNoSign.toLocaleLowerCase().indexOf(this.productSearch) >= 0
-        || x.defaultCode.toLocaleLowerCase().indexOf(this.productSearch) >= 0
+    val.purchaseOK = true;
+    val.type = 'product';
+    val.type2 = this.listType;
+    this.productService
+      .autocomplete2(val).subscribe(
+        (res) => {
+          console.log(res)
+          this.listProducts = res;
+        },
+        (err) => {
+          console.log(err);
+        }
       );
-    }
-
-    this.productListSelectable.resetIndex();
   }
+
+  // upDownEnterChange(code) {
+  //   if (code == 40) {
+  //     this.productListSelectable.moveUp();
+  //   } else if (code == 38) {
+  //     this.productListSelectable.moveDown();
+  //   } else if (code == 13) {
+  //     this.productListSelectable.selectCurrent();
+  //   }
+  // }
+
+  // onProductInputSearchChange(text) {
+  //   this.productSearch = text;
+
+  //   if (!this.productSearch || this.productSearch.trim() == '')
+  //     this.productList = this.sourceProductList;
+  //   else {
+  //     this.productSearch = this.productSearch.trim().toLocaleLowerCase();
+  //     this.productList = this.sourceProductList.filter(x => x.name.toLocaleLowerCase().indexOf(this.productSearch) >= 0
+  //       || x.nameNoSign.toLocaleLowerCase().indexOf(this.productSearch) >= 0
+  //       || x.defaultCode.toLocaleLowerCase().indexOf(this.productSearch) >= 0
+  //     );
+  //   }
+
+  //   this.productListSelectable.resetIndex();
+  // }
 
   loadFilteredPartners() {
     this.searchPartners().subscribe(
@@ -426,6 +444,40 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   onChangeType(value) {
     this.type2 = value;
     this.loadProductList();
+  }
+
+  selectProduct(product){
+    var index = _.findIndex(this.moveLines.controls, o => {
+      return o.get('product').value.id == product.id && o.get('productUOMId').value == product.uomId;
+    });
+
+    if (index !== -1) {
+      var control = this.moveLines.controls[index];
+      control.patchValue({ productUOMQty: control.get('productUOMQty').value + 1 });
+    } else {
+      var val = new StockMoveOnChangeProduct();
+      val.productId = product.id;
+
+      var productSimple = new ProductSimple();
+      productSimple.id = product.id;
+      productSimple.name = product.name;
+      productSimple.defaultCode = product.defaultCode;
+      productSimple.type2 = product.type2
+
+      this.stockMoveService.onChangeProduct(val).subscribe((result: any) => {
+        var group = this.fb.group({
+          name: result.name,
+          productUOMId: result.productUOM.id,
+          productUOM: result.productUOM,
+          product: productSimple,
+          productId: product.id,
+          productUOMQty: [1, Validators.required]
+        });
+
+        this.moveLines.push(group);
+        this.focusLastRow();
+      });
+    }
   }
 }
 

@@ -7,4 +7,5 @@ export class ProductSimple {
     laboPrice: number;
     defaultCode: string;
     type2: string;
+    purchasePrice: number;
 }

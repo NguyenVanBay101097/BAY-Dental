@@ -23,6 +23,7 @@ import { StockInventoryFormComponent } from '../stock-inventories/stock-inventor
 import { StockPickingRequestProductComponent } from './stock-picking-request-product/stock-picking-request-product.component';
 import { StockPickingRequestProductDialogComponent } from './stock-picking-request-product-dialog/stock-picking-request-product-dialog.component';
 import { StockXuatNhapTonDetailDialogComponent } from './stock-xuat-nhap-ton-detail-dialog/stock-xuat-nhap-ton-detail-dialog.component';
+import { PurchaseOrderListProductTabpanelComponent } from '../purchase-orders/purchase-order-list-product-tabpanel/purchase-order-list-product-tabpanel.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { StockXuatNhapTonDetailDialogComponent } from './stock-xuat-nhap-ton-det
     StockPickingIncomingDetailComponent,
     StockPickingRequestProductComponent,
     StockXuatNhapTonDetailDialogComponent,
-    StockPickingRequestProductDialogComponent],
+    StockPickingRequestProductDialogComponent,
+    PurchaseOrderListProductTabpanelComponent],
   imports: [
     CommonModule,
     StockPickingsRoutingModule,
