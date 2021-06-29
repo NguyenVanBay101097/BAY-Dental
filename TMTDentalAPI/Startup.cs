@@ -708,7 +708,6 @@ namespace TMTDentalAPI
 
             app.UseMiddleware<GetTokenFromQueryStringMiddleware>();
             app.UseMiddleware<CheckTenantMiddleware>();
-            app.UseMiddleware<MigrateDbMiddleware>();
             app.UseMiddleware(typeof(ProcessUpdateMiddleware));
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
