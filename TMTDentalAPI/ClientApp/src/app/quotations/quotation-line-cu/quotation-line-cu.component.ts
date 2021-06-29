@@ -357,7 +357,7 @@ export class QuotationLineCuComponent implements OnInit {
       }
       this.formGroup.get("toothCategory").setValue(result.toothCategory);
       this.formGroup.get("toothType").setValue(result.toothType);
-      this.TeethFA.reset();
+      this.TeethFA.clear();
       result.teeth.forEach(value => {
         this.TeethFA.push(this.fb.group(value));
         this.onChangeToothTypeLine(this.getValueFormControl("toothType"));

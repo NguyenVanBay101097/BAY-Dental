@@ -24,7 +24,7 @@ export class ToothSelectionDialogComponent implements OnInit {
   cateId: string;
   submitted: boolean = false;
   @Input() toothDataInfo: any;
-  toothRemove: any[] = [];
+  toothSource: any[] = [];
   get f() { return this.myForm.controls; }
 
   getFormValue(key: string) {
@@ -46,6 +46,9 @@ export class ToothSelectionDialogComponent implements OnInit {
     })
     if (this.toothDataInfo.toothType && this.toothDataInfo.toothCategory) {
       this.myForm.setValue(this.toothDataInfo);
+      this.toothDataInfo.teeth.forEach(teeth => {
+        this.toothSource.push(Object.assign({}, teeth))
+      });
       this.teethSelected = this.toothDataInfo.teeth;
       this.cateId = this.toothDataInfo.toothCategory ? this.toothDataInfo.toothCategory.id : '';
       this.loadTeethMap(this.toothDataInfo.toothCategory);
@@ -121,7 +124,6 @@ export class ToothSelectionDialogComponent implements OnInit {
   }
 
   onSelected(tooth: ToothDisplay) {
-    this.toothRemove.push(tooth.name);
     if (this.getFormValue("toothType") == "manual") {
       if (this.isSelected(tooth)) {
         var index = this.getSelectedIndex(tooth);
@@ -150,7 +152,7 @@ export class ToothSelectionDialogComponent implements OnInit {
   }
 
   onCancel() {
-    this.toothDataInfo.teeth = this.toothDataInfo.teeth.filter(item => !this.toothRemove.includes(item.name));
+    this.toothDataInfo.teeth = this.toothSource;
     this.activeModal.close(this.toothDataInfo);
   }
 }
