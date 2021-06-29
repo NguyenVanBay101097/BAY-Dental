@@ -154,4 +154,77 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal End { get; set; }
     }
+
+    public class ReportSummaryPartnerDebitReq
+    {
+        public ReportSummaryPartnerDebitReq()
+        {
+
+        }
+
+        public DateTime? FromDate { get; set; }
+
+        public DateTime? ToDate { get; set; }
+
+        public Guid? PartnerId { get; set; }
+
+        public string Search { get; set; }
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class ReportSummaryPartnerDebitRes
+    {
+        public Guid PartnerId { get; set; }
+
+        public string PartnerName { get; set; }
+
+        public string PartnerRef { get; set; }
+
+        public string PartnerPhone { get; set; }
+
+        public decimal Begin { get; set; }
+
+        public decimal Debit { get; set; }
+
+        public decimal Credit { get; set; }
+
+        public decimal End { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
+
+    }
+
+    public class ReportSummaryPartnerDebitDetailReq
+    {
+        public ReportSummaryPartnerDebitDetailReq()
+        {
+
+        }
+
+        public DateTime? FromDate { get; set; }
+
+        public DateTime? ToDate { get; set; }
+
+        public Guid? PartnerId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class ReportSummaryPartnerDebitDetailRes
+    {
+        public DateTime? Date { get; set; }
+        public string InvoiceOrigin { get; set; }
+        public decimal Begin { get; set; }
+
+        public decimal Debit { get; set; }
+
+        public decimal Credit { get; set; }
+
+        public decimal End { get; set; }
+
+    }
 }

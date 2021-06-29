@@ -62,7 +62,7 @@ namespace TMTDentalAPI.Controllers
             var res = await _reportService.ReportSalaryEmployee(val);
             return Ok(res);
         }
-        
+
         [HttpPost("ReportSalaryEmployeeDetail")]
         [CheckAccess(Actions = "Report.AccountPartner")]
         public async Task<IActionResult> ReportSalaryEmployeeDetail(AccountCommonPartnerReportItem val)
@@ -100,7 +100,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 2].Value = item.PartnerRef;
                     worksheet.Cells[row, 3].Value = item.PartnerPhone;
                     worksheet.Cells[row, 4].Value = item.Begin;
-                    worksheet.Cells[row, 4].Style.Numberformat.Format = item.Begin >0? "#,###" : "";
+                    worksheet.Cells[row, 4].Style.Numberformat.Format = item.Begin > 0 ? "#,###" : "";
                     worksheet.Cells[row, 5].Value = item.Debit;
                     worksheet.Cells[row, 5].Style.Numberformat.Format = item.Debit > 0 ? "#,###" : "";
                     worksheet.Cells[row, 6].Value = item.Credit;
@@ -122,6 +122,22 @@ namespace TMTDentalAPI.Controllers
             stream.Position = 0;
 
             return new FileContentResult(fileContent, mimeType);
+        }
+
+        [HttpPost("GetSummary")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> ReportSummaryPartnerDebit(ReportSummaryPartnerDebitReq val)// công nợ khách hàng
+        {
+            var res = await _reportService.ReportSummaryPartnerDebit(val);
+            return Ok(res);
+        }
+
+        [HttpPost("GetSummary")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> ReportSummaryPartnerDebitDetail(ReportSummaryPartnerDebitDetailReq val)// công nợ khách hàng
+        {
+            var res = await _reportService.ReportSummaryPartnerDebitDetail(val);
+            return Ok(res);
         }
     }
 }
