@@ -21,6 +21,9 @@ import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/
 import { PartnersService } from '../services/partners.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { NotifyService } from '../services/notify.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-appointment-create-update',
@@ -70,6 +73,12 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     {name: 'Đang khám', value:'examination'},
     {name: 'Hoàn thành', value:'done'},
     {name: 'Hủy hẹn', value:'cancel'},
+    {name: 'Đã đến', value:'arrived'}
+  ]
+  statesReceive: any[] = [
+    {name: 'Chờ khám', value:'waiting'},
+    {name: 'Đang khám', value:'examination'},
+    {name: 'Hoàn thành', value:'done'}
   ]
   defaultVal: any;
   formGroup: FormGroup;
@@ -81,6 +90,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   timeSource: string[] = [];
 
   submitted = false;
+  private btnDeleteSubject = new Subject<any>();
 
   get f() { return this.formGroup.controls; }
 
@@ -95,7 +105,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     private errorService: AppSharedShowErrorService,
     private odataPartnerService: PartnersService,
     private productService: ProductService,
-    private employeeService: EmployeeService) { }
+    private employeeService: EmployeeService,
+    private notificationService: NotificationService
+   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -166,6 +178,23 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     )
   }
 
+  loadAppointmentToFormByType(){
+    if (this.appointId && this.type == 'receive'){
+      this.f.name.disable();
+      this.f.doctor.setValidators(Validators.required);
+      this.f.doctor.updateValueAndValidity();
+    }
+    if (this.appointId && this.type == 'receive_create'){
+      this.f.doctor.setValidators(Validators.required);
+      this.f.doctor.updateValueAndValidity();
+    }
+    if (this.appointId && this.type == 'receive_update'){
+      this.f.doctor.disable();
+      this.f.name.disable();
+      this.f.appTime.disable();
+    }
+  }
+
   searchService(q?: string) {
     var val = new ProductPaged();
     val.limit = 20;
@@ -215,11 +244,19 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.date = `${apptDate}T00:00:00`;
     appoint.time = appTime;
     appoint.timeExpected = Number.parseInt(appoint.timeExpected);
+
+    
     if (this.state != 'cancel') {
       appoint.reason = null;
     }
 
     if (this.appointId) {
+      if(this.type == 'receive'){
+        appoint.state = 'arrived';
+      }
+      if(this.type == 'receive_update'){
+
+      }
       this.appointmentService.update(this.appointId, appoint).subscribe(
         () => {
           appoint.id = this.appointId;
@@ -231,6 +268,12 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         },
       )
     } else {
+      if(this.type == 'receive_create'){
+        appoint.state = 'waiting';
+      }
+      else {
+        appoint.state = 'confirmed';
+      }
       this.appointmentService.create(appoint).subscribe(
         res => {
           this.activeModal.close(res);
@@ -244,7 +287,47 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   onDelete(){
-    
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa lịch hẹn';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.appointmentService.removeAppointment(this.appointId).subscribe(()=>{
+        this.notify("success","Xóa thành công");
+        this.activeModal.close(true);
+        this.btnDeleteSubject.next();
+      })
+      
+    });
+  }
+
+  onDuplicate(){
+    this.appointId = null;
+  }
+
+  onChange(value){
+    if(this.appointId && this.type == 'create'){
+      if (value == 'cancel'){
+        this.f.reason.setValidators(Validators.required);
+        this.f.reason.updateValueAndValidity();
+      }
+      else{
+        this.f.reason.clearValidators();
+        this.f.reason.updateValueAndValidity();
+      }
+    }
+    if(this.appointId && this.type == 'receive_update'){
+
+    }
+  }
+
+  notify(style, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: style, icon: true }
+    });
   }
 
   searchCustomerDialog() {
@@ -338,6 +421,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       rs => {
         this.userSimpleFilter = rs;
       });
+  }
+
+  getBtnDeleteObs() {
+    return this.btnDeleteSubject.asObservable();
   }
 
   loadAppointmentToForm() {

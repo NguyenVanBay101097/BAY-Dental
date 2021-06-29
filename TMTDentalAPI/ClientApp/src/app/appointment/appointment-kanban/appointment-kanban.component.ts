@@ -127,6 +127,10 @@ export class AppointmentKanbanComponent implements OnInit {
     modalRef.result.then(result => {
       this.loadData();
     }, () => { });
+
+    modalRef.componentInstance.getBtnDeleteObs.subscribe(()=>{
+      this.loadData();
+    })
   }
 
   refreshData() {
