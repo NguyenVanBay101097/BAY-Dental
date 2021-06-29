@@ -37,6 +37,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   filteredServices: ProductSimple[] = [];
   filteredEmployees: EmployeeBasic[] = [];
   appointId: string;
+  type: string = "create";
   timeExpecteds: any[] = [
     {
       name: '0 phút', value: 0
@@ -240,6 +241,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         },
       )
     }
+  }
+
+  onDelete(){
+    
   }
 
   searchCustomerDialog() {
