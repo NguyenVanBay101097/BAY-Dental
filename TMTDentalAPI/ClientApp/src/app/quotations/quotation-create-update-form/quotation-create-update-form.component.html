@@ -35,7 +35,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="o_group">
+                <div class="o_group" style="width: 80%;">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
@@ -291,7 +291,7 @@
                                     <div *ngFor="let item of quotation.promotions"
                                         class="d-flex justify-content-between mb-1">
                                         <span>{{item.name}}</span>
-                                        <span>{{item.amount | number}}</span>
+                                        <span class="font-weight-600">{{item.amount | number}}</span>
                                     </div>
                                     <div class="w-100 text-right">
                                         <button type="button" class="btn btn-primary btn-sm ml-auto"
@@ -307,15 +307,15 @@
                                 <div class="card-header bg-primary text-white px-3 py-1">Thanh toán</div>
                                 <div class="card-body px-3 py-2">
                                     <p class="d-flex justify-content-between mb-0">
-                                        <label class="font-weight-600">Thành tiền</label>
+                                        <label class="">Thành tiền</label>
                                         <label class="font-weight-600">{{getAmountSubTotal() | number}}</label>
                                     </p>
                                     <p class="d-flex justify-content-between mb-0">
-                                        <label class="font-weight-600">Tổng giảm giá</label>
+                                        <label class="">Tổng giảm giá</label>
                                         <label class="font-weight-600">{{getTotalDiscount() | number : '1.0-0'}}</label>
                                     </p>
                                     <p class="d-flex justify-content-between mb-0">
-                                        <label class="font-weight-600">Tổng tiền</label>
+                                        <label class="">Tổng tiền</label>
                                         <label class="font-weight-600">{{getAmountSubTotal() - getTotalDiscount() |
                                             number}}</label>
                                     </p>
