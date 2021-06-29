@@ -1,3 +1,4 @@
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { ProductBasic2, ProductService, ProductPaged } from 'src/app/products/product.service';
@@ -5,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PurchaseOrderService, PurchaseOrderDisplay, PurchaseOrderLineDisplay } from '../purchase-order.service';
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, distinctUntilChanged, mergeMap } from 'rxjs/operators';
 import { PartnerService } from 'src/app/partners/partner.service';
 import * as _ from 'lodash';
 import { ProductSimple } from 'src/app/products/product-simple';
@@ -67,6 +68,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     private intlService: IntlService,
     private notificationService: NotificationService,
     private accountJournalService: AccountJournalService,
+    private notifyService : NotifyService,
     private router: Router,
     private permissionService: PermissionService,
     private authService: AuthService,
@@ -264,20 +266,30 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     val.journalId = val.journal.id;
 
     var data = Object.assign(this.purchaseOrder, val);
-    this.purchaseOrderService.create(data).subscribe((result: any) => {
-      this.purchaseOrderService.buttonConfirm([result.id]).subscribe(() => {
-        this.notificationService.show({
-          content: 'Xác nhận thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.router.navigate(['/purchase/orders/edit/' + result.id]);
-      }, () => {
-        this.router.navigate(['/purchase/orders/edit/' + result.id]);
+    if(this.id){
+      this.purchaseOrderService.update(this.id, data)
+      .pipe(
+        mergeMap(() => {
+          return this.purchaseOrderService.buttonConfirm([this.id]);
+        })
+      )
+      .subscribe(() => {
+        this.notifyService.notify('success', 'Xác nhận thành công');
+        this.loadRecord();
       });
-    });
+    }else{
+      this.purchaseOrderService.create(data)
+      .pipe(
+        mergeMap((rs : any) => {
+          this.id = rs.id;
+          return this.purchaseOrderService.buttonConfirm([rs.id]);
+        })
+      )
+      .subscribe(rs => {
+        this.notifyService.notify('success', 'Xác nhận thành công');
+        this.router.navigate(['/purchase/orders/edit/' + this.id]);
+      });
+    }
   }
 
   getPicking(pickingid) {
@@ -293,13 +305,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   buttonConfirm() {
     if (this.id) {
       this.purchaseOrderService.buttonConfirm([this.id]).subscribe(() => {
-        this.notificationService.show({
-          content: 'Xác nhận thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
+        this.notifyService.notify('success', 'Xác nhận thành công');
         this.loadRecord();
       });
     }
