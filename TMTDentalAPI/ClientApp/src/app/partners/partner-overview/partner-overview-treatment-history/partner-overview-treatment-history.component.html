@@ -17,7 +17,14 @@
             <div *ngFor="let item of treatment.value">
               <div class="card_border">
                 <div class="card_treatment">
-                  <p class="font-weight-bold">{{item?.name}}</p>
+                  <p class="d-flex justify-content-between">
+                    <span class="font-weight-bold">
+                      {{item?.name}}
+                    </span>
+                    <span style="min-width: 60px;">
+                      <a href="">Chi tiết</a>
+                    </span>
+                  </p>
                   <p>Răng: {{viewTeeth(item.teeth)}} </p>
                   <p>Bác sĩ: {{item?.employeeName}}</p>
                   <p>Chuẩn đoán: {{item?.diagnostic}}</p>
