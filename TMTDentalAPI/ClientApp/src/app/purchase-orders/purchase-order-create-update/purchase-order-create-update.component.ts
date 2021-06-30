@@ -1,3 +1,4 @@
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { ProductBasic2, ProductService, ProductPaged } from 'src/app/products/product.service';
@@ -5,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PurchaseOrderService, PurchaseOrderDisplay, PurchaseOrderLineDisplay } from '../purchase-order.service';
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, distinctUntilChanged, mergeMap } from 'rxjs/operators';
 import { PartnerService } from 'src/app/partners/partner.service';
 import * as _ from 'lodash';
 import { ProductSimple } from 'src/app/products/product-simple';
@@ -20,6 +21,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 declare var $: any;
 
 @Component({
@@ -34,20 +37,25 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
   type: string;
+  orderId: string;
   purchaseOrderLineOnChangeProductResult: PurchaseOrderLineOnChangeProductResult = new PurchaseOrderLineOnChangeProductResult();
-  purchaseOrder: PurchaseOrderDisplay = new PurchaseOrderDisplay();
+  purchaseOrder: any;
   hasDefined = false;
   filteredPartners: PartnerSimple[];
+
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
+  @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
-  productList: ProductBasic2[] = [];
+
+  productList: ProductSimple[] = [];
+  filteredJournals: any = [];
   productSearch: string;
   searchUpdate = new Subject<string>();
   productSelectedIndex = 0;
-  uomByProduct: { [id: string]: UoMDisplay[] } = {}
-
+  uomByProduct: { [id: string]: UoMDisplay[] } = {};
+  listType: string = 'medicine,product'
   submitted = false;
-
+  amountTotal = 0;
   get f() { return this.formGroup.controls; }
 
   constructor(
@@ -59,42 +67,31 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     private purchaseLineService: PurchaseOrderLineService,
     private intlService: IntlService,
     private notificationService: NotificationService,
+    private accountJournalService: AccountJournalService,
+    private notifyService : NotifyService,
     private router: Router,
     private permissionService: PermissionService,
     private authService: AuthService,
     private modalService: NgbModal,
-    private paymentService: AccountPaymentService
+    private paymentService: AccountPaymentService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
-      pickingTypeId: null,
+      journal: null,
+      amountPayment: [0, Validators.required],
+      notes: null,
       orderLines: this.fb.array([]),
     });
 
     this.id = this.route.snapshot.paramMap.get('id');
     this.type = this.route.snapshot.queryParamMap.get('type');
+    this.orderId = this.route.snapshot.queryParamMap.get('orderId');
 
-    if (this.id) {
-      this.loadRecord();
-    } else {
-      this.purchaseOrderService.defaultGet({ type: this.type }).subscribe(result => {
-        this.purchaseOrder = result;
-
-        this.formGroup.patchValue(result);
-        let dateOrder = new Date(result.dateOrder);
-        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
-
-        const control = this.formGroup.get('orderLines') as FormArray;
-        control.clear();
-        result.orderLines.forEach(line => {
-          var g = this.fb.group(line);
-          control.push(g);
-        });
-      });
-    }
+    this.loadRecord();
 
     this.partnerCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -106,41 +103,43 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     });
 
     this.loadPartners();
-
+    this.loadFilteredJournals();
     this.loadProductList();
-
-    this.searchUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(value => {
-        this.loadProductList();
-      });
-
-    $('#productSearchInput').focus(function () {
-      $(this).select();
-    });
 
     this.authService.getGroups().subscribe((result: any) => {
       this.permissionService.define(result);
       this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+
     });
   }
 
-  loadRecord() {
-    if (this.id) {
-      this.purchaseOrderService.get(this.id).subscribe(result => {
-        this.purchaseOrder = result;
-        this.formGroup.patchValue(this.purchaseOrder);
-        let dateOrder = new Date(result.dateOrder);
-        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-        let control = this.formGroup.get('orderLines') as FormArray;
-        control.clear();
-        result.orderLines.forEach(line => {
-          var g = this.fb.group(line);
-          control.push(g);
-        });
+
+  loadRecord() {
+    this.loadDataApi().subscribe((result: any) => {
+      this.purchaseOrder = result;
+
+      this.formGroup.patchValue(this.purchaseOrder);
+      let dateOrder = new Date(result.dateOrder);
+      this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+
+      let control = this.formGroup.get('orderLines') as FormArray;
+      control.clear();
+      result.orderLines.forEach(line => {
+        var g = this.fb.group(line);
+        control.push(g);
       });
+    });
+  }
+
+  loadDataApi() {
+    if (this.id) {
+      return this.purchaseOrderService.get(this.id);
+    }
+    else if (this.orderId && this.type == "refund") {
+      return this.purchaseOrderService.getRefundByOrder(this.orderId);
+    } else {
+      return this.purchaseOrderService.defaultGet({ type: this.type });
     }
   }
 
@@ -149,6 +148,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       this.filteredPartners = _.unionBy(this.filteredPartners, result, 'id');
     });
   }
+
+
 
   actionRegisterPayment() {
     if (this.id) {
@@ -182,14 +183,34 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   loadProductList() {
     var val = new ProductPaged();
-    val.limit = 10;
+    val.limit = 20;
     val.offset = 0;
     val.purchaseOK = true;
-    val.search = this.productSearch || '';
-    this.productService.getPaged(val).subscribe(res => {
-      this.productList = res.items;
-    }, err => {
-    });
+    val.type = 'product';
+    val.type2 = this.listType;
+    this.productService
+      .autocomplete2(val).subscribe(
+        (res) => {
+          console.log(res)
+          this.productList = res;
+        },
+        (err) => {
+          console.log(err);
+        }
+    );
+  }
+
+  loadFilteredJournals() {
+    var val = new AccountJournalFilter();
+    val.type = "bank,cash";
+    val.companyId = this.authService.userInfo.companyId;
+    this.accountJournalService.autocomplete(val).subscribe((res) => {
+      this.filteredJournals = _.unionBy(this.filteredJournals, res, 'id');
+    },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   get orderLines() {
@@ -198,6 +219,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   removeOrderLine(index) {
     this.orderLines.removeAt(index);
+    this.countAmountTotal();
+    this.f.amountPayment.setValue(this.amountTotal);
   }
 
   removeAllLine() {
@@ -211,26 +234,24 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.orderLines.insert(index, copy);
   }
 
-  get getAmountTotal() {
-    var total = 0;
-    this.orderLines.controls.forEach(c => {
-      total += this.computeLinePriceSubtotal(c);
-    });
-    return total;
+  countAmountTotal(){
+    this.amountTotal = this.orderLines.value.reduce((total, cur) => {
+      return total + cur.priceUnit * (1 - cur.discount / 100) * cur.productQty;
+    }, 0);
   }
+
+  get getAmountTotal() {
+    return this.orderLines.value.reduce((total, cur) => {
+      return total + cur.priceUnit * (1 - cur.discount / 100) * cur.productQty;
+    }, 0);
+  }
+
 
   onSaveConfirm() {
     var index = _.findIndex(this.orderLines.controls, o => {
       return o.get('productQty').value == null || o.get('priceUnit').value == null;
     });
     if (index !== -1) {
-      this.notificationService.show({
-        content: 'Vui lòng nhập số lượng và đơn giá',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'warning', icon: true }
-      });
       return false;
     }
 
@@ -239,24 +260,52 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
+    val.journalId = val.journal.id;
+
     var data = Object.assign(this.purchaseOrder, val);
-    this.purchaseOrderService.create(data).subscribe(result => {
-      this.purchaseOrderService.buttonConfirm([result.id]).subscribe(() => {
-        this.router.navigate(['/purchase/orders/edit/' + result.id]);
-      }, () => {
-        this.router.navigate(['/purchase/orders/edit/' + result.id]);
+    if(this.id){
+      this.purchaseOrderService.update(this.id, data)
+      .pipe(
+        mergeMap(() => {
+          return this.purchaseOrderService.buttonConfirm([this.id]);
+        })
+      )
+      .subscribe(() => {
+        this.notifyService.notify('success', 'Xác nhận thành công');
+        this.loadRecord();
       });
-    });
+    }else{
+      this.purchaseOrderService.create(data)
+      .pipe(
+        mergeMap((rs : any) => {
+          this.id = rs.id;
+          return this.purchaseOrderService.buttonConfirm([rs.id]);
+        })
+      )
+      .subscribe(rs => {
+        this.notifyService.notify('success', 'Xác nhận thành công');
+        this.router.navigate(['/purchase/orders/edit/' + this.id]);
+      });
+    }
+  }
+
+  getPicking(pickingid) {
+    if (this.type == 'order') {
+      this.router.navigate(['/stock/incoming-pickings/edit/' + pickingid]);
+    } else {
+      this.router.navigate(['/stock/outgoing-pickings/edit/' + pickingid]);
+    }
+
   }
 
 
   buttonConfirm() {
     if (this.id) {
       this.purchaseOrderService.buttonConfirm([this.id]).subscribe(() => {
+        this.notifyService.notify('success', 'Xác nhận thành công');
         this.loadRecord();
       });
     }
@@ -272,6 +321,10 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   createNew() {
     this.router.navigate(['/purchase/orders/create'], { queryParams: { type: this.purchaseOrder.type } });
+  }
+
+  actionRefund() {
+    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: 'refund', orderId: this.id } });
   }
 
   focusProductSearchInput() {
@@ -296,39 +349,38 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  selectProduct(i) {
-    var product = this.productList[i];
-    var index = _.findIndex(this.orderLines.controls, o => {
-      return o.get('product').value.id == product.id;
-    });
+  selectProduct(item) {
+    var product = item;
 
-    if (index !== -1) {
-      var control = this.orderLines.controls[index];
-      control.patchValue({ productQty: control.get('productQty').value + 1 });
-    } else {
-      var val = new PurchaseOrderLineOnChangeProduct();
-      val.productId = product.id;
+    // var index = _.findIndex(this.orderLines.controls, o => {
+    //   return o.get('product').value.id == product.id;
+    // });
 
-      var productSimple = new ProductSimple();
-      productSimple.id = product.id;
-      productSimple.name = product.name;
-      this.purchaseLineService.onChangeProduct(val).subscribe(result => {
-        var group = this.fb.group({
-          name: result.name,
-          priceUnit: result.priceUnit,
-          productUOMId: result.productUOMId,
-          productUOM: result.productUOM,
-          product: productSimple,
-          productId: product.id,
-          priceSubtotal: null,
-          productQty: 1,
-          discount: 0,
-        });
+    var val = new PurchaseOrderLineOnChangeProduct();
+    val.productId = product.id;
 
-        this.orderLines.push(group);
-        this.focusLastRow();
+    var productSimple = new ProductSimple();
+    productSimple.id = product.id;
+    productSimple.name = product.name;
+    this.purchaseLineService.onChangeProduct(val).subscribe(result => {
+      console.log(result);
+
+      var group = this.fb.group({
+        name: result.name,
+        priceUnit: [result.priceUnit, Validators.required],
+        productUOMId: result.productUOMId,
+        productUOM: result.productUOM,
+        product: productSimple,
+        productId: product.id,
+        priceSubtotal: null,
+        productQty: [1, Validators.required],
+        discount: [0, Validators.required],
       });
-    }
+
+      this.orderLines.push(group);
+      this.focusLastRow();
+      this.countAmountTotal();
+    });
   }
 
   changeUoM(line: AbstractControl) {
@@ -371,13 +423,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       return o.get('productQty').value == null || o.get('priceUnit').value == null;
     });
     if (index !== -1) {
-      this.notificationService.show({
-        content: 'Vui lòng nhập số lượng và đơn giá',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'warning', icon: true }
-      });
       return false;
     }
 
@@ -386,10 +431,12 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
+    val.journalId = val.journal.id;
+    // val.productId = this.purchaseOrder.product ? this.purchaseOrder.prpduct.id : null;
+    // val.productUOMId = this.purchaseOrder.productUOM ? this.purchaseOrder.productUOM.id : null;
     var data = Object.assign(this.purchaseOrder, val);
     if (this.id) {
       this.purchaseOrderService.update(this.id, data).subscribe(() => {
@@ -403,9 +450,16 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         this.loadRecord();
       });
     } else {
-      this.purchaseOrderService.create(data).subscribe(result => {
+      this.purchaseOrderService.create(data).subscribe((result: any) => {
         this.router.navigate(['/purchase/orders/edit/' + result.id]);
       });
     }
   }
+
+  getPrint(id) {
+    this.purchaseOrderService.getPrint(id).subscribe((data: any) => {
+      this.printService.printHtml(data);
+    });
+  }
+
 }

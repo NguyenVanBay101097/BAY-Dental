@@ -29,59 +29,40 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<PurchaseOrderBasic>> GetPagedResultAsync(PurchaseOrderPaged val)
         {
-            ISpecification<PurchaseOrder> spec = new InitialSpecification<PurchaseOrder>(x => true);
+            var query = SearchQuery();
+
             if (!string.IsNullOrEmpty(val.Search))
-                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.Name.Contains(val.Search) ||
-                x.Partner.Name.Contains(val.Search) ||
-                x.Partner.NameNoSign.Contains(val.Search) ||
-                x.Partner.Phone.Contains(val.Search)));
+                query = query.Where(x => x.Name.Contains(x.Name));
 
-            string[] typeArr = null;
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateOrder >= val.DateFrom.Value);
+
+
+            if (val.DateTo.HasValue)
+            {
+                var datetimeTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateOrder <= datetimeTo);
+            }
+
             if (!string.IsNullOrEmpty(val.Type))
-            {
-                typeArr = (val.Type).Split(",");
-                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => typeArr.Contains(x.Type)));
-            }
-            if (val.PartnerId.HasValue)
-                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.PartnerId.Equals(val.PartnerId)));
-            spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.Type == val.Type));
-            if (val.DateOrderFrom.HasValue)
-            {
-                var dateFrom = val.DateOrderFrom.Value.AbsoluteBeginOfDate();
-                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.DateOrder >= dateFrom));
-            }
-            if (val.DateOrderTo.HasValue)
-            {
-                var dateTo = val.DateOrderTo.Value.AbsoluteEndOfDate();
-                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => x.DateOrder <= dateTo));
-            }
+                query = query.Where(x => x.Type == val.Type);
+
             if (!string.IsNullOrEmpty(val.State))
-            {
-                var states = val.State.Split(",");
-                spec = spec.And(new InitialSpecification<PurchaseOrder>(x => states.Contains(x.State)));
-            }
+                query = query.Where(x => x.State == val.State);
 
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-
-            var items = await query.Select(x => new PurchaseOrderBasic
-            {
-                Id = x.Id,
-                AmountTotal = x.AmountTotal,
-                DateOrder = x.DateOrder,
-                Name = x.Name,
-                PartnerName = x.Partner.Name,
-                Type = x.Type,
-                State = x.State,
-            }).Skip(val.Offset).Take(val.Limit).ToListAsync();
-
-            var residual_dict = await _ComputeAmountResidualDict(items.Select(x => x.Id));
-            foreach (var item in items)
-                item.AmountResidual = residual_dict[item.Id];
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
 
             var totalItems = await query.CountAsync();
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await query.Include(x => x.Partner).ToListAsync();
+
             return new PagedResult2<PurchaseOrderBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = _mapper.Map<IEnumerable<PurchaseOrderBasic>>(items)
             };
         }
 
@@ -91,7 +72,8 @@ namespace Infrastructure.Services
             var moveObj = GetService<IAccountMoveService>();
 
             var groups = await amlObj.SearchQuery(x => ids.Contains(x.PurchaseLine.OrderId))
-                .Select(x => new { 
+                .Select(x => new
+                {
                     OrderId = x.PurchaseLine.OrderId,
                     MoveId = x.MoveId
                 }).Distinct().ToListAsync();
@@ -99,7 +81,7 @@ namespace Infrastructure.Services
             var move_ids = groups.Select(x => x.MoveId).ToList();
             var moves = await moveObj.SearchQuery(x => move_ids.Contains(x.Id)).ToListAsync();
             var res = ids.ToDictionary(x => x, x => 0M);
-            foreach(var group in groups)
+            foreach (var group in groups)
             {
                 var move = moves.FirstOrDefault(x => x.Id == group.MoveId);
                 if (move != null)
@@ -111,19 +93,22 @@ namespace Infrastructure.Services
 
         public async Task<PurchaseOrderDisplay> GetPurchaseDisplay(Guid id)
         {
-            var purchase = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
-                .Include(x => x.OrderLines)
-                .Include("OrderLines.Product")
-                .Include("OrderLines.ProductUOM")
+            var lineObj = GetService<IPurchaseOrderLineService>();
+            var purchase = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .Include(x => x.Journal)
+                .Include(x => x.User)
+                .Include(x => x.PickingType)
+                .Include(x => x.Picking)
                 .FirstOrDefaultAsync();
-            var res = _mapper.Map<PurchaseOrderDisplay>(purchase);
-            res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
 
-            res.AmountResidual = await _ComputeAmountResidual(purchase);
+            purchase.OrderLines = await lineObj.SearchQuery(x => x.OrderId == purchase.Id).Include(x => x.Product).Include(x => x.ProductUOM).OrderBy(x => x.Sequence).ToListAsync();
+            var res = _mapper.Map<PurchaseOrderDisplay>(purchase);
+
             return res;
         }
 
-        private async Task<decimal> _ComputeAmountResidual(PurchaseOrder self)
+        private async Task<decimal> _ComputeTotalPaid(PurchaseOrder self)
         {
             var amlObj = GetService<IAccountMoveLineService>();
             var moveObj = GetService<IAccountMoveService>();
@@ -133,11 +118,24 @@ namespace Infrastructure.Services
             return res ?? 0;
         }
 
-        public async Task<PurchaseOrder> CreateLabo(PurchaseOrderDisplay val)
+        public async Task<PurchaseOrder> CreatePurchaseOrder(PurchaseOrderSave val)
         {
             var purchase = _mapper.Map<PurchaseOrder>(val);
             purchase.CompanyId = CompanyId;
-            SaveOrderLines(val, purchase);
+            purchase.UserId = UserId;
+
+            var lines = new List<PurchaseOrderLine>();
+            var sequence = 1;
+            foreach (var item in val.OrderLines)
+            {
+                var line = _mapper.Map<PurchaseOrderLine>(item);
+                line.PartnerId = purchase.PartnerId;
+                line.CompanyId = purchase.CompanyId;
+                line.State = purchase.State;
+                line.Sequence = sequence++;
+                purchase.OrderLines.Add(line);
+            }
+
             var purchaseLineObj = GetService<IPurchaseOrderLineService>();
             purchaseLineObj._ComputeAmount(purchase.OrderLines);
 
@@ -146,12 +144,16 @@ namespace Infrastructure.Services
             return purchase;
         }
 
-        public async Task UpdateLabo(Guid id, PurchaseOrderDisplay val)
+        public async Task UpdatePurchaseOrder(Guid id, PurchaseOrderSave val)
         {
-            var purchase = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines)
+            var purchase = await SearchQuery(x => x.Id == id)
+                .Include(x => x.OrderLines)
+                .ThenInclude(x => x.MoveLines)
+                .Include(x => x.Journal)
                 .FirstOrDefaultAsync();
+
             purchase = _mapper.Map(val, purchase);
-            SaveOrderLines(val, purchase);
+            SavePurchaseLines(val, purchase);
 
             var purchaseLineObj = GetService<IPurchaseOrderLineService>();
             purchaseLineObj._ComputeAmount(purchase.OrderLines);
@@ -167,7 +169,7 @@ namespace Infrastructure.Services
             foreach (var order in self)
             {
                 if (!states.Contains(order.State))
-                    throw new Exception("Chỉ có thể xóa phiếu mua hàng ở trạng thái nháp.");
+                    throw new Exception("Bạn chỉ được xóa phiếu mua hàng ở trạng thái nháp");
             }
 
             await DeleteAsync(self);
@@ -198,24 +200,34 @@ namespace Infrastructure.Services
             }
         }
 
-        public PurchaseOrderDisplay DefaultGet(PurchaseOrderDefaultGet val)
+        public async Task<PurchaseOrderDisplay> DefaultGet(PurchaseOrderDefaultGet val)
         {
-            var res = new PurchaseOrderDisplay();
-            res.Type = val.Type;
-            var companyId = CompanyId;
+            var journalObj = GetService<IAccountJournalService>();
             var pickingTypeObj = GetService<IStockPickingTypeService>();
-            var pickingType = pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse.CompanyId == companyId).FirstOrDefault();
+
+            var pickingType = await pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse.CompanyId == CompanyId).FirstOrDefaultAsync();
             if (pickingType == null)
-                pickingType = pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse == null).FirstOrDefault();
+                pickingType = await pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse == null).FirstOrDefaultAsync();
             if (pickingType == null)
                 throw new Exception("Không tìm thấy hoạt động nhập kho nào");
+
+            var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+            if (cashJournal == null)
+                throw new Exception("Không tìm thấy phương thức thanh toán tiền mặt");
+
+            var res = new PurchaseOrderDisplay();
+            res.Type = val.Type;
             res.PickingTypeId = pickingType.Id;
+            res.JournalId = cashJournal.Id;
+            res.Journal = _mapper.Map<AccountJournalSimple>(cashJournal);
+            res.AmountPayment = 0;
 
             return res;
         }
 
         public void _AmountAll(IEnumerable<PurchaseOrder> orders)
         {
+            var moveObj = GetService<IAccountMoveService>();
             foreach (var order in orders)
             {
                 var totalAmountUntaxed = 0M;
@@ -223,15 +235,22 @@ namespace Infrastructure.Services
                 foreach (var orderLine in order.OrderLines)
                 {
                     totalAmountUntaxed += (orderLine.PriceSubtotal ?? 0);
+
                 }
 
+                var move_ids = order.OrderLines.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList();
+                var totalAmountResidual = moveObj.SearchQuery(x => move_ids.Contains(x.Id)).Sum(x => (x.AmountResidual ?? 0));
+
                 order.AmountTotal = totalAmountUntaxed;
+                order.AmountResidual = totalAmountResidual;
+                if (order.AmountPayment.HasValue)
+                    order.AmountPayment = order.AmountPayment > totalAmountUntaxed ? totalAmountUntaxed : order.AmountPayment;
             }
         }
 
-        private void SaveOrderLines(PurchaseOrderDisplay val, PurchaseOrder order)
+        private void SavePurchaseLines(PurchaseOrderSave val, PurchaseOrder purchase)
         {
-            var existLines = order.OrderLines.ToList();
+            var existLines = purchase.OrderLines.ToList();
             var lineToRemoves = new List<PurchaseOrderLine>();
             foreach (var existLine in existLines)
             {
@@ -253,32 +272,32 @@ namespace Infrastructure.Services
             {
                 if (line.State != "draft")
                     continue;
-                order.OrderLines.Remove(line);
+                purchase.OrderLines.Remove(line);
             }
 
             //Cập nhật sequence cho tất cả các line của val
-            int sequence = 0;
-            foreach (var line in val.OrderLines)
-            {
-                line.Sequence = sequence++;
-            }
+            int sequence = 1;
 
             foreach (var line in val.OrderLines)
             {
                 if (line.Id == Guid.Empty)
                 {
                     var lbLine = _mapper.Map<PurchaseOrderLine>(line);
-                    lbLine.CompanyId = order.CompanyId;
-                    lbLine.PartnerId = order.PartnerId;
-                    lbLine.State = order.State;
-                    order.OrderLines.Add(lbLine);
+                    lbLine.PartnerId = purchase.PartnerId;
+                    lbLine.CompanyId = purchase.CompanyId;
+                    lbLine.State = purchase.State;
+                    lbLine.Sequence = sequence++;
+                    purchase.OrderLines.Add(lbLine);
                 }
                 else
                 {
-                    var lbLine = order.OrderLines.SingleOrDefault(c => c.Id == line.Id);
+                    var lbLine = purchase.OrderLines.SingleOrDefault(c => c.Id == line.Id);
                     if (lbLine != null)
                     {
+
                         _mapper.Map(line, lbLine);
+                        lbLine.Sequence = sequence++;
+
                     }
                 }
             }
@@ -287,11 +306,14 @@ namespace Infrastructure.Services
         public async Task ButtonConfirm(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.OrderLines).Include("OrderLines.Product")
+                .Include(x => x.OrderLines).ThenInclude(x => x.MoveLines)
+                .Include("OrderLines.Product")
                 .Include("OrderLines.ProductUOM").Include("OrderLines.Product.UOM")
                 .Include(x => x.PickingType).Include(x => x.PickingType.DefaultLocationDest)
                 .Include(x => x.PickingType.DefaultLocationSrc)
+                .Include(x => x.Journal)
                 .ToListAsync();
+
             foreach (var order in self)
             {
                 if (order.State != "draft" && order.State != "sent")
@@ -311,7 +333,12 @@ namespace Infrastructure.Services
 
             await _CreatePicking(self);
 
+            await _CreatePayment(self);
+
             _GetInvoiced(self);
+            _AmountAll(self);
+            ComputeState(self);
+
             await UpdateAsync(self);
         }
 
@@ -397,6 +424,9 @@ namespace Infrastructure.Services
                     var moves = await CreateStockMoves(order.OrderLines, picking);
 
                     await pickingObj.ActionDone(new List<Guid>() { picking.Id });
+
+                    order.PickingId = picking.Id;
+
                 }
             }
         }
@@ -460,6 +490,86 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task _CreatePayment(IEnumerable<PurchaseOrder> self)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var paymentObj = GetService<IAccountPaymentService>();
+
+            var payments = new List<AccountPayment>();
+            foreach (var order in self)
+            {
+                if (!order.JournalId.HasValue || order.AmountPayment <= 0)
+                    continue;
+
+                var payment = new AccountPayment
+                {
+                    JournalId = order.JournalId.Value,
+                    PartnerId = order.PartnerId,
+                    Amount = (order.AmountPayment ?? 0),
+                    PartnerType = "supplier",
+                    PaymentDate = DateTime.Now,
+                    PaymentType = order.Type == "order" ? "outbound" : "inbound",
+                    CompanyId = order.CompanyId
+                };
+                var line_ids = order.OrderLines.Select(x => x.Id).ToList();
+                var invoice_id = await amlObj.SearchQuery(x => x.PurchaseLineId.HasValue && line_ids.Contains(x.PurchaseLineId.Value)).Select(x => x.MoveId).Distinct().FirstOrDefaultAsync();
+                payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = invoice_id });
+                payments.Add(payment);
+
+            }
+
+            await paymentObj.CreateAsync(payments);
+            await paymentObj.Post(payments.Select(x => x.Id).ToList());
+
+        }
+
+        public async Task<PurchaseOrderDisplay> GetRefundByOrder(Guid id)
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            var pickingTypeObj = GetService<IStockPickingTypeService>();
+            var purchaseLineObj = GetService<IPurchaseOrderLineService>();
+
+            var purchase = await SearchQuery(x => x.Id == id && x.Type == "order" && x.State != "draft")
+                .Include(x => x.Partner)
+                .FirstOrDefaultAsync();
+
+            if (purchase == null)
+                throw new Exception("Phiếu mua hàng không tồn tại");
+
+            var pickingType = pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse.CompanyId == purchase.CompanyId).FirstOrDefault();
+            if (pickingType == null)
+                pickingType = pickingTypeObj.SearchQuery(x => x.Code == "incoming" && x.Warehouse == null).FirstOrDefault();
+            if (pickingType == null)
+                throw new Exception("Không tìm thấy hoạt động nhập kho nào");
+
+            var cashJournal = journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == purchase.CompanyId).FirstOrDefault();
+            if (cashJournal == null)
+                throw new Exception("Không tìm thấy phương thức thanh toán tiền mặt");
+
+            var res = new PurchaseOrderDisplay();
+            res.Type = "refund";
+            res.PickingTypeId = pickingType.Id;
+            res.JournalId = cashJournal.Id;
+            res.Journal = _mapper.Map<AccountJournalSimple>(cashJournal);
+            res.AmountPayment = 0;
+            res.Partner = _mapper.Map<PartnerSimple>(purchase.Partner);
+            res.OrderLines = await purchaseLineObj.SearchQuery(x=>x.OrderId == purchase.Id).Select(x => new PurchaseOrderLineDisplay
+            {
+                Name = x.Name,
+                PriceTotal = x.PriceTotal,
+                PriceUnit = x.PriceUnit,
+                PriceSubtotal = x.PriceSubtotal,
+                Discount = x.Discount,
+                ProductId = x.ProductId,
+                Product = _mapper.Map<ProductSimple>(x.Product),
+                ProductQty = x.ProductQty,
+                ProductUOMId = x.ProductUOMId,
+                ProductUOM = _mapper.Map<UoMDisplay>(x.ProductUOM),
+            }).ToListAsync();
+
+            return res;
+        }
+
         public async Task ButtonCancel(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
@@ -493,6 +603,7 @@ namespace Infrastructure.Services
             }
 
             _GetInvoiced(self);
+            _AmountAll(self);
             await UpdateAsync(self);
         }
 
@@ -503,6 +614,36 @@ namespace Infrastructure.Services
                 .Select(x => x.PickingId.Value).Distinct().ToList();
         }
 
+        public void ComputeState(IEnumerable<PurchaseOrder> self)
+        {
+            var states = new string[] { "draft", "cancel" };
+            foreach (var order in self)
+            {
+                if (states.Contains(order.State) || order.AmountResidual > 0)
+                    continue;
+
+                order.State = "done";
+                foreach (var line in order.OrderLines)
+                    line.State = "done";
+            }
+        }
+
+        public async Task PreparePurchase(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+              .Include(x => x.OrderLines).ThenInclude(x => x.MoveLines)
+              .Include(x => x.Journal)
+              .ToListAsync();
+
+            var poLineObj = GetService<IPurchaseOrderLineService>();
+            poLineObj._ComputeQtyInvoiced(self.SelectMany(x => x.OrderLines));
+
+            _GetInvoiced(self);
+            _AmountAll(self);
+            ComputeState(self);
+
+            await UpdateAsync(self);
+        }
 
         public async Task<IEnumerable<StockMove>> CreateStockMoves(IEnumerable<PurchaseOrderLine> self, StockPicking picking)
         {
@@ -600,6 +741,56 @@ namespace Infrastructure.Services
             if (order.PickingType.DefaultLocationDest == null)
                 throw new Exception("Vui lòng xác định địa điểm đến cho hoạt động " + order.PickingType.Name);
             return order.PickingType.DefaultLocationDest;
+        }
+
+        public async Task<PurchaseOrderPrintVm> GetPrint(Guid id)
+        {
+            var userObj = GetService<IUserService>();
+            var lineObj = GetService<IPurchaseOrderLineService>();
+
+            var purchaseOrder = await SearchQuery(x => x.Id == id).Select(x => new PurchaseOrderPrintVm
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Date = x.DateOrder,
+                Note = x.Notes,
+                Company = x.Company != null ? new CompanyPrintVM
+                {
+                    Name = x.Company.Name,
+                    Email = x.Company.Email,
+                    Phone = x.Company.Phone,
+                    Logo = x.Company.Logo,
+                    PartnerCityName = x.Company.Partner.CityName,
+                    PartnerDistrictName = x.Company.Partner.DistrictName,
+                    PartnerWardName = x.Company.Partner.WardName,
+                    PartnerStreet = x.Company.Partner.Street,
+                } : null,         
+                AmountTotal = (x.AmountTotal ?? 0),
+                PartnerName = x.Partner != null ? x.Partner.Name : null,
+                StockPickingName = x.Picking != null ? x.Picking.Name : null,
+                Type = x.Type,
+                UserName = x.User != null ? x.User.Name : null,
+                CreatedById = x.CreatedById
+            }).FirstOrDefaultAsync();
+
+            purchaseOrder.Lines = await lineObj.SearchQuery(x=> x.OrderId == purchaseOrder.Id).Select(s => new PurchaseOrderLinePrintVm
+            {
+                Sequence = s.Sequence,
+                Name = s.Name,
+                ProductQty = s.ProductQty,
+                ProductUOMName = s.ProductUOM != null ? s.ProductUOM.Name : null,
+                PriceUnit = s.PriceUnit,
+                Discount = (s.Discount ?? 0),
+                PriceSubtotal = (s.PriceSubtotal ?? 0)
+            }).ToListAsync();
+
+            if (string.IsNullOrEmpty(purchaseOrder.UserName))
+            {
+                var user = await userObj.GetByIdAsync(purchaseOrder.CreatedById);
+                purchaseOrder.UserName = user.Name;
+            }
+
+            return purchaseOrder;
         }
     }
 }

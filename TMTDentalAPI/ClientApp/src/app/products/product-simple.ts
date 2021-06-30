@@ -5,4 +5,7 @@ export class ProductSimple {
     name: string;
     priceUnit: number;
     laboPrice: number;
+    defaultCode: string;
+    type2: string;
+    purchasePrice: number;
 }

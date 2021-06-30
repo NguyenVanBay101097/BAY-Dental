@@ -112,7 +112,7 @@
                                                 </kendo-combobox>
                                             </td>
                                         </tr>
-                                        <tr hasGroups [groups]="'product.group_uom'">
+                                        <tr hasGroups [groups]="'product.group_uom'" *ngIf="hasDefined">
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
                                                     Đơn vị mua

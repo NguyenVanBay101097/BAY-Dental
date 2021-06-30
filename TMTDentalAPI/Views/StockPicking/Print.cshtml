@@ -75,7 +75,9 @@
         <thead>
             <tr>
                 <th class="text-center">STT</th>
+                <th class="text-center">Mã sản phẩm</th>
                 <th class="text-center">Sản phẩm</th>
+                <th class="text-center">Loại sản phẩm</th>
                 <th class="text-center">Số lượng</th>
                 <th class="text-center">Đơn vị tính</th>
             </tr>
@@ -84,12 +86,14 @@
             @{
                 foreach (var item in Model.MoveLines.Select((value, i) => (value, i)))
                 {
-                    <tr>
-                        <td class="text-center">@(item.i + 1)</td>
-                        <td class="text-center">@item.value.Name</td>
-                        <td class="text-center">@item.value.ProductUOMQty.ToString("n0")</td>
-                        <td class="text-center">@item.value.ProductUOM.Name</td>
-                    </tr>
+                        <tr>
+                            <td class="text-center">@(item.i + 1)</td>
+                            <td class="text-center">@item.value.Product.DefaultCode</td>
+                            <td class="text-center">@item.value.Name</td>
+                            <td class="text-center">@item.value.Product.Categ.Name</td>
+                            <td class="text-center">@item.value.ProductUOMQty.ToString("n0")</td>
+                            <td class="text-center">@item.value.ProductUOM.Name</td>
+                        </tr>
                 }
             }
         </tbody>

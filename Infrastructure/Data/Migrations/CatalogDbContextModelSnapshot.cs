@@ -6522,6 +6522,12 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal?>("AmountPayment")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("AmountResidual")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal?>("AmountTax")
                         .HasColumnType("decimal(18,2)");
 
@@ -6552,6 +6558,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("InvoiceStatus")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("JournalId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -6570,6 +6579,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("PartnerRef")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PickingId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("PickingTypeId")
                         .HasColumnType("uniqueidentifier");
@@ -6595,7 +6607,11 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("JournalId");
+
                     b.HasIndex("PartnerId");
+
+                    b.HasIndex("PickingId");
 
                     b.HasIndex("PickingTypeId");
 
@@ -14465,11 +14481,19 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("ApplicationCore.Entities.AccountJournal", "Journal")
+                        .WithMany()
+                        .HasForeignKey("JournalId");
+
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
                         .WithMany()
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.StockPicking", "Picking")
+                        .WithMany()
+                        .HasForeignKey("PickingId");
 
                     b.HasOne("ApplicationCore.Entities.StockPickingType", "PickingType")
                         .WithMany()

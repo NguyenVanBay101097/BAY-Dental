@@ -23,6 +23,18 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid PickingTypeId { get; set; }
 
+        public Guid? JournalId { get; set; }
+        public AccountJournalSimple Journal { get; set; }
+
+        public string UserId { get; set; }
+        public ApplicationUserSimple User { get; set; }
+
+        /// <summary>
+        /// phiếu nhập/xuất kho
+        /// </summary>
+        public Guid? PickingId { get; set; }
+        public StockPickingSimple Picking { get; set; }
+
         /// <summary>
         /// Nhà cung cấp
         /// </summary>
@@ -33,8 +45,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal AmountTotal { get; set; }
 
+        public decimal? AmountPayment { get; set; }
+
         public IEnumerable<PurchaseOrderLineDisplay> OrderLines { get; set; } = new List<PurchaseOrderLineDisplay>();
 
         public decimal AmountResidual { get; set; }
+
+        public string Note { get; set; }
     }
 }

@@ -13,6 +13,37 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
         public decimal? AmountTotal { get; set; }
         public string Type { get; set; }
-        public decimal AmountResidual { get; set; }
+        public decimal? AmountResidual { get; set; }
+
     }
+
+    public class PurchaseOrderPrintVm
+    {
+        public Guid Id { get; set; }
+        public CompanyPrintVM Company { get; set; }
+        public string Name { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public string Note { get; set; }
+
+        public string Type { get; set; }
+
+        public string PartnerName { get; set; }
+
+        public string UserName { get; set; }
+
+        public string StockPickingName { get; set; }
+
+        public IEnumerable<PurchaseOrderLinePrintVm> Lines { get; set; } = new List<PurchaseOrderLinePrintVm>();
+
+        public decimal AmountTotal { get; set; }
+
+        public string CreatedById { get; set; }
+
+       
+
+    }
+
+   
 }

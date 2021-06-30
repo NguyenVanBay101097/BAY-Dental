@@ -23,6 +23,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Reference
         /// </summary>
         public string Name { get; set; }
+        public string CreatedByName { get; set; }
     }
 
     public class StockPickingPaged
@@ -91,6 +92,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Destination Location Zone
         /// </summary>
         public Guid LocationDestId { get; set; }
+        public string CreatedByName { get; set; }
     }
 
     public class StockPickingDefaultGet

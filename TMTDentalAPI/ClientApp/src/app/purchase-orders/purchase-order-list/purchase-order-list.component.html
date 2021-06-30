@@ -9,21 +9,27 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, nhà cung cấp, SĐT" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu"
+                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c" *ngIf="canAdd">Thêm
+                    <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c"
+                        *ngIf="canAdd">Thêm
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm mr-2" (click)="exportExcelFile()">
+                        <i class="fas fa-download mr-2"></i>Xuất file
                     </button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
                 <div class="btn-group">
                     <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                             Thao tác
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -35,30 +41,43 @@
         </div>
         <div class="o_cp_right">
             <div class="o_search_options">
-                <app-tai-date-range-filter-dropdown title="Ngày" [dateFrom]="dateOrderFrom" [dateTo]="dateOrderTo" (searchChange)="onDateSearchChange($event)">
+                <app-tai-date-range-filter-dropdown title="Ngày" [dateFrom]="dateOrderFrom" [dateTo]="dateOrderTo"
+                    (searchChange)="onDateSearchChange($event)">
                 </app-tai-date-range-filter-dropdown>
-                <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions" (selectChange)="onStateSelectChange($event)">
+                <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
+                    (selectChange)="onStateSelectChange($event)">
                 </app-tmt-option-select-dropdown>
+                <kendo-combobox [data]="supplierData" [textField]="'displayName'" [valueField]="'id'" [filterable]="true" 
+                (selectionChange)="handleFilter($event)" [placeholder]="'Nhà cung cấp'"
+                    #supplierCbx
+                    class="kendo-combobox-sm">
+                </kendo-combobox>
             </div>
         </div>
     </div>
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
         <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
         <kendo-grid-column field="name" title="Số phiếu" width="100">
         </kendo-grid-column>
         <kendo-grid-column field="partnerName" title="Nhà cung cấp" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="dateOrder" title="Ngày" width="120">
+        <kendo-grid-column field="dateOrder" title="Ngày mua hàng" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.dateOrder | date : 'short'}}
+                {{dataItem.dateOrder | date : 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="amountTotal" title="Tổng tiền" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.amountTotal | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="amountTotal" title="Đã thanh toán" class="text-right" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amountTotal - dataItem.amountResidual | number}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="amountResidual" title="Còn nợ" class="text-right" width="120">

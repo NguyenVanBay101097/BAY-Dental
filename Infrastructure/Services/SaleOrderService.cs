@@ -1920,6 +1920,8 @@ namespace Infrastructure.Services
             return invoices;
         }
 
+
+
         public async Task<SaleOrderPrintVM> GetPrint(Guid id)
         {
             var companyObj = GetService<ICompanyService>();

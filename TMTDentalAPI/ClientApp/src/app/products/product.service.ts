@@ -45,6 +45,7 @@ export class ProductBasic2 {
   qtyAvailable: number;
   uomId: string;
   uom: UoMBasic;
+  type2: string;
 }
 
 export class ProductBasic3 {

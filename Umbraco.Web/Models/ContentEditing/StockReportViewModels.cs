@@ -71,5 +71,33 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public double? PriceUnitOnQuant { get; set; }
     }
+    public class GetStockHistoryReq
+    {
+        public GetStockHistoryReq()
+        {
+            Limit = 20;
+        }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? ProductId { get; set; }
+        public int Limit { get; set; }
+        public int Offset { get; set; }
+    }
+
+    public class GetStockHistoryRes
+    {
+        public string MovePickingName { get; set; }
+        public DateTime? Date { get; set; }
+        public decimal? Quantity { get; set; }
+    }
+    public class GetStockHistoryResExcel
+    {
+        [EpplusDisplay("Số phiếu")]
+        public string MovePickingName { get; set; }
+        [EpplusDisplay("Ngày nhập xuất")]
+        public DateTime? Date { get; set; }
+        [EpplusDisplay("Tổng số lượng")]
+        public decimal? Quantity { get; set; }
+    }
 }
 

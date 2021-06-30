@@ -16,6 +16,8 @@ import { UoMBasic, UomService, UoMPaged } from 'src/app/uoms/uom.service';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
 import { StockInventoryCriteriaService } from 'src/app/stock-inventories/stock-inventory-criteria.service';
 import { StockInventoryCriteriaPaged } from 'src/app/stock-inventories/stock-inventory-criteria.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { PermissionService } from 'src/app/shared/permission.service';
 
 @Component({
   selector: 'app-product-product-cu-dialog',
@@ -34,7 +36,7 @@ export class ProductProductCuDialogComponent implements OnInit {
   categoryIdSave: string;
   opened = true;
   submitted = false;
-
+  hasDefined = false;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('uoMCbx', { static: true }) uoMCbx: ComboBoxComponent;
   @ViewChild('uoMPOCbx', { static: true }) uoMPOCbx: ComboBoxComponent;
@@ -47,7 +49,9 @@ export class ProductProductCuDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
     private uoMService: UomService,
-    private productCriteriaService : StockInventoryCriteriaService
+    private productCriteriaService : StockInventoryCriteriaService,
+    private authService: AuthService,
+    private permissionService: PermissionService
   ) {
   }
 
@@ -102,6 +106,12 @@ export class ProductProductCuDialogComponent implements OnInit {
       this.categCbxFilterChange();
       this.uoMCbxFilterChange();
       this.uoMPOCbxFilterChange();
+
+      this.authService.getGroups().subscribe((result: any) => {
+        this.permissionService.define(result);
+        this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+        
+      });
     });
   }
 
