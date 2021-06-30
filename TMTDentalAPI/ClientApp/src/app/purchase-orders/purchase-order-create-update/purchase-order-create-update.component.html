@@ -151,7 +151,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-numerictextbox [min]="0" [max]="amountTotal" [format]="'n0'"
+                                        <kendo-numerictextbox [min]="0" (valueChange)="onChange($event)" [format]="'n0'"
                                             [autoCorrect]="true" formControlName="amountPayment">
                                         </kendo-numerictextbox>
                                     </td>
@@ -235,7 +235,7 @@
                                         <td class="align-middle">
                                             <kendo-numerictextbox [min]="0" [format]="'n0'"
                                                 *ngIf="purchaseOrder?.state == 'draft'" formControlName="productQty"
-                                                style="width: 80px;" [spinners]="false">
+                                                style="width: 80px;" [spinners]="false" (valueChange)="countAmountTotal()">
                                             </kendo-numerictextbox>
                                             <span *ngIf="purchaseOrder?.state != 'draft'">
                                                 {{line.get('productQty').value | number}}
@@ -261,7 +261,7 @@
                                         <td class="align-middle">
                                             <kendo-numerictextbox [min]="0" *ngIf="purchaseOrder?.state == 'draft'"
                                                 [format]="'n0'" formControlName="discount" style="width: 60px;"
-                                                [spinners]="false">
+                                                [spinners]="false" (valueChange)="countAmountTotal()">
                                             </kendo-numerictextbox>
                                             <span *ngIf="purchaseOrder?.state != 'draft'">
                                                 {{line.get('discount').value | number}}
@@ -270,8 +270,8 @@
                                         <td class="align-middle text-right">
                                             {{computeLinePriceSubtotal(line) | number}}
                                         </td>
-                                        <td class="text-center align-middle" *ngIf="purchaseOrder?.state == 'draft'">
-                                            <button type="button" class="btn btn-xs btn-info" title="Tạo bản sao"
+                                        <td class="text-center align-middle btnAction" *ngIf="purchaseOrder?.state == 'draft'">
+                                            <button type="button" class="btn btn-xs btn-info mr-2" title="Tạo bản sao"
                                                 (click)="duplicateLine(i, line)">
                                                 <i class="far fa-copy"></i>
                                             </button>

@@ -238,6 +238,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.amountTotal = this.orderLines.value.reduce((total, cur) => {
       return total + cur.priceUnit * (1 - cur.discount / 100) * cur.productQty;
     }, 0);
+    if(this.f.amountPayment.value > this.getAmountTotal){
+      this.f.amountPayment.setValue(this.getAmountTotal);
+    }
   }
 
   get getAmountTotal() {
@@ -289,6 +292,12 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         this.notifyService.notify('success', 'Xác nhận thành công');
         this.router.navigate(['/purchase/orders/edit/' + this.id]);
       });
+    }
+  }
+
+  onChange(value){
+    if(value > this.amountTotal){
+      this.f.amountPayment.setValue(this.getAmountTotal);
     }
   }
 
@@ -363,8 +372,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     productSimple.id = product.id;
     productSimple.name = product.name;
     this.purchaseLineService.onChangeProduct(val).subscribe(result => {
-      console.log(result);
-
       var group = this.fb.group({
         name: result.name,
         priceUnit: [result.priceUnit, Validators.required],
@@ -401,7 +408,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   }
 
   changePrice(price, line: AbstractControl) {
-    line.get('oldPriceUnit').patchValue(price)
+    //line.get('oldPriceUnit').patchValue(price);
+    this.countAmountTotal();
   }
 
   focusLastRow() {
