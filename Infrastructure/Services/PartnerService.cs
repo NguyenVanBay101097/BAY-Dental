@@ -2215,7 +2215,7 @@ namespace Infrastructure.Services
                                    TotalDebit = g.Sum(x => x.Balance)
                                };
 
-            var irPropertyQr = from ir in irProperyObj.SearchQuery(x => x.Name == "member_level" && x.Field.Model == "Partner" && x.CompanyId == companyId)
+            var irPropertyQr = from ir in irProperyObj.SearchQuery(x => x.Name == "member_level" && x.Field.Model == "res.partner" && x.CompanyId == companyId)
                                select ir;
 
             var ResponseQr = from p in SearchQuery(x => x.Customer)

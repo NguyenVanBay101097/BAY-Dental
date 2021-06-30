@@ -111,13 +111,7 @@
             </ng-template>
         </kendo-grid-column>
 
-        <kendo-grid-column [headerStyle]="{
-            'position': 'sticky',
-            'righ': '0',
-             'z-index':'3',
-             'overflow-wrap': 'break-word',
-             'border-left': '1px solid #615959'
-          }" [headerClass]="'b-sticky-right'" [style]="{'right':'-1px'}" class="b-sticky-right" field="Id" title="Thao tác" [lockable]="true" [sticky]="true" width="100">
+        <kendo-grid-column field="Id" title="Thao tác" [lockable]="true" [sticky]="true" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-dataItem>
                 <!-- <button class="btn btn-info btn-sm mr-2" title="In Hồ sơ khách hàng" (click)="printItem(dataItem)">
                     <span class="fas fa-print"></span></button> -->
