@@ -204,9 +204,13 @@
                                 <kendo-combobox formControlName="doctor" [filterable]="true" [data]="filteredEmployees"
                                     #doctorCbx [valueField]="'id'" [textField]="'name'">
                                 </kendo-combobox>
+                                <div *ngIf="f.doctor.errors && (f.doctor.touched || f.doctor.dirty || submitted)"
+                                    class="text-danger">
+                                    <div *ngIf="f.doctor.errors.required">Chọn bác sĩ</div>
+                                </div>
                             </td>
                         </tr>
-                        <tr [class.d-none]="type!=='create'">
+                        <tr [class.d-none]="type =='receive'">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Ngày hẹn</label>
                             </td>
@@ -219,7 +223,7 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
+                        <tr [class.d-none]="type =='receive'">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">{{type == 'create'? 'Giờ hẹn':'Giờ tiếp nhận'}}</label>
                             </td>
@@ -287,23 +291,48 @@
                                     [placeholder]="'Nhập nội dung'"></textarea>
                             </td>
                         </tr>
-                        <tr *ngIf="appointId">
+                        <tr *ngIf="appointId && type == 'create'">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Trạng thái</label>
                             </td>
                             <td colspan="1">
-                                <select class="form-control btn-sm mr-1" formControlName="state">
+                                <select class="form-control btn-sm mr-1" formControlName="state" (change)="onChange($event.target.value)">
                                     <option [value]="item.value" *ngFor="let item of states">
                                         {{item.name}}</option>
                                 </select>
                             </td>
                         </tr>
-                        <tr *ngIf="appointId">
+                        <tr *ngIf="appointId && type == 'receive_update'">
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Trạng thái</label>
+                            </td>
+                            <td colspan="1">
+                                <select class="form-control btn-sm mr-1" formControlName="state" (change)="onChange($event.target.value)">
+                                    <option [value]="item.value" *ngFor="let item of statesReceive">
+                                        {{item.name}}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr *ngIf="showIsNotExamination && f.isRepeatCustomer.value == false">
+                            <td colspan="1" class="o_td_label">
+                                
+                            </td>
+                            <td colspan="1">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck2"
+                                formControlName="showReason" (change)="eventCheck($event.target)">
+                                <label class="form-check-label" for="exampleCheck2">Khách không điều trị</label>
+                            </td>
+                        </tr>
+                        <tr *ngIf="appointId && type == 'create' || this.f.showReason.value == true && f.isRepeatCustomer.value == false">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Lý do</label>
                             </td>
                             <td colspan="1">
                                 <input type="text" class="form-control" formControlName="reason">
+                                <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"
+                                    class="text-danger">
+                                    <div *ngIf="f.reason.errors.required">Nhập lý do</div>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -314,11 +343,11 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-primary btn-sm mr-2" accesskey="s" (click)="onSave()">
-        <i class="fas fa-save"></i>&nbsp;Lưu</button>
+        Lưu</button>
     <button *ngIf="appointId && type == 'create'" type="button" class="btn btn-danger btn-sm mr-2" accesskey="s" (click)="onDelete()">
         Xóa</button>
-    <button *ngIf="appointId && type == 'create'" type="button" class="btn btn-light btn-sm mr-2" accesskey="s" (click)="onDuplicate()">
+    <button *ngIf="appointId && type == 'create'" type="button" class="btn btn-secondary btn-sm mr-2" accesskey="s" (click)="onDuplicate()">
         Sao chép</button>
-    <button type="button" class="btn btn-light btn-sm mr-2" accesskey="q" (click)="activeModal.dismiss()">
-        <i class="fas fa-window-close"></i>&nbsp;Đóng</button>
+    <button type="button" class="btn btn-secondary btn-sm mr-2" accesskey="q" (click)="activeModal.dismiss()">
+        Đóng</button>
 </div>
