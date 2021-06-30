@@ -88,3 +88,14 @@
 .t_col_form_lable {
     font-weight: 600;
 }
+
+.t_col_form_content {
+    font-weight: 600;
+}
+
+.btn-edit-customer{
+    height: fit-content;
+    width: fit-content;
+    margin-top: 5px;
+    border: 1px solid rgba(0,0,0,.125);
+}

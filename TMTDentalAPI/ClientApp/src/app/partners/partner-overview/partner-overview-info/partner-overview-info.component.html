@@ -3,82 +3,97 @@
         <app-image-file-upload [supportWebcam]="true" class="t_avatar" (uploaded)="onAvatarUploaded($event)" [imageId]="partner.avatar" [width]="100" [height]="100">
         </app-image-file-upload>
         <div class="media-body">
-            <h3>{{partner? partner.name: ''}}</h3>
-            <div class="t_sub_title">
-                Mã khách hàng: {{partner ? partner.ref : ''}} <br /> Ngày tạo: {{partner.date | date:'shortDate' }}
+            <div class="d-flex justify-content-between">
+                <h3>{{partner? partner.name: ''}}</h3>
+                <button class="btn btn-light btn-sm btn-edit-customer d-flex align-items-center" (click)="editCustomer()">
+                    <i class="fas fa-pencil-alt mr-2"></i>
+                    <span class="font-weight-600">Chỉnh sửa</span>
+                </button>
             </div>
-            <button class="btn btn-success btn-sm" (click)="editCustomer()">
-                <i class="fas fa-user-edit"></i> Sửa
-            </button>
+
+            <div class="">
+                <div class="row">
+                    <label class="col-sm-5">Mã khách hàng</label>
+                    <div class="col-sm-7 t_col_form_content">
+                        {{partner ? partner.ref : ''}}
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-sm-5">Ngày tạo</label>
+                    <div class="col-sm-7 t_col_form_content">
+                        {{partner.date | date:'shortDate' }}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="">
         <div class="row">
-            <label class="col-sm-4 t_col_form_lable">Giới tính</label>
-            <div class="col-sm-8">
+            <label class="col-sm-4">Giới tính</label>
+            <div class="col-sm-8 t_col_form_content">
                 {{partner ? partner.genderConvertcom : ''}}
             </div>
         </div>
         <div class="row">
-            <label class="col-sm-4 t_col_form_lable">Ngày sinh</label>
-            <div class="col-sm-8">
+            <label class="col-sm-4">Ngày sinh</label>
+            <div class="col-sm-8 t_col_form_content">
                 {{ partner.dateOfBirth }}
             </div>
         </div>
         <div class="row" *ngIf="showInfo">
-            <label class="col-sm-4 t_col_form_lable">Địa chỉ</label>
-            <div class="col-sm-8">
+            <label class="col-sm-4">Địa chỉ</label>
+            <div class="col-sm-8 t_col_form_content">
                 {{partner ? partner.address: ''}}
             </div>
         </div>
         <div class="row" *ngIf="showInfo">
-            <label class="col-sm-4 t_col_form_lable">Điện thoại</label>
-            <div class="col-sm-8">
+            <label class="col-sm-4">Điện thoại</label>
+            <div class="col-sm-8 t_col_form_content">
                 {{partner ?partner.phone:''}}
             </div>
         </div>
         <div class="row">
-            <label class="col-sm-4 t_col_form_lable">Nghề nghiệp</label>
-            <div class="col-sm-8">
+            <label class="col-sm-4">Nghề nghiệp</label>
+            <div class="col-sm-8 t_col_form_content">
                 {{partner ?partner.jobTitle:''}}
             </div>
         </div>
         <div class="row" *ngIf="showInfo">
-            <label class="col-sm-4 t_col_form_lable">Email</label>
-            <div class="col-sm-8">
+            <label class="col-sm-4">Email</label>
+            <div class="col-sm-8 t_col_form_content">
                 {{partner ?partner.email:''}}
             </div>
         </div>
         <div class="row">
-            <label class="col-sm-4 t_col_form_lable">Tiểu sử bệnh</label>
-            <div class="col-sm-8">
+            <label class="col-sm-4">Tiểu sử bệnh</label>
+            <div class="col-sm-8 t_col_form_content">
                 {{partner ?partner.historiesString:''}}
             </div>
         </div>
         <div class="row">
-            <label class="col-sm-4 t_col_form_lable">Tiểu sử bệnh khác</label>
-            <div class="col-sm-8">
+            <label class="col-sm-4">Tiểu sử bệnh khác</label>
+            <div class="col-sm-8 t_col_form_content">
                 {{partner ? partner.medicalHistory : ''}}
             </div>
         </div>
         <div class="row">
-            <label class="col-sm-4 t_col_form_lable">Nhãn</label>
+            <label class="col-sm-4">Nhãn</label>
             <div class="col-sm-8">
                 <app-partner-category-popover [popOverPlace]="'top'" [tags]="categoriesOdata" (onSave)="categoriesOdata = $event" [rowPartnerId]="partner.id">
                 </app-partner-category-popover>
             </div>
         </div>
         <div class="row">
-            <label class="col-sm-4 t_col_form_lable">Hạng thành viên</label>
-            <div class="col-sm-8">
-                <span *ngIf="partner.memberLevel" class="badge badge-secondary" [ngClass]="'o_tag_color_' + partner.memberLevel.color">
+            <label class="col-sm-4">Hạng thành viên</label>
+            <div class="col-sm-8 t_col_form_content">
+                <span *ngIf="partner.memberLevel">
                     {{partner.memberLevel.name}}
                 </span>
             </div>
         </div>
         <div class="row">
-            <label class="col-sm-4 t_col_form_lable">Điểm tích lũy</label>
-            <div class="col-sm-8">
+            <label class="col-sm-4">Điểm tích lũy</label>
+            <div class="col-sm-8 t_col_form_content">
                 {{partner.point}}
             </div>
         </div>

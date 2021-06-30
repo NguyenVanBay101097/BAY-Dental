@@ -1,8 +1,9 @@
 .oe_avatar>img {
-    max-height: 100px;
-    max-width: 100px;
-    margin-bottom: 10px;
-    border: 1px solid #a8a8a8;
+    min-height: 100px;
+    min-width: 100px;
+    /* margin-bottom: 10px; */
+    /* border: 1px solid #a8a8a8; */
+    object-fit: cover;
     border-radius: 50%;
 }
 
