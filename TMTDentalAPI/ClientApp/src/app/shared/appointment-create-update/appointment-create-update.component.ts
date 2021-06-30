@@ -24,6 +24,7 @@ import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { NotifyService } from '../services/notify.service';
 import { Subject } from 'rxjs';
+import { FacebookUserProfileService } from 'src/app/facebook-config/shared/facebook-user-profile.service';
 
 @Component({
   selector: 'app-appointment-create-update',
@@ -40,7 +41,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   filteredServices: ProductSimple[] = [];
   filteredEmployees: EmployeeBasic[] = [];
   appointId: string;
-  type: string = "create";
+  type: string = "receive_update";
+  showIsNotExamination = false;
   timeExpecteds: any[] = [
     {
       name: '0 phút', value: 0
@@ -118,7 +120,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       partnerTags: this.fb.array([]),
       user: [null],
       apptDate: [null, Validators.required],
-      appTime: ['00:00',Validators.required],
+      appTime: ['00:00'],
       note: null,
       companyId: null,
       doctor: null,
@@ -127,7 +129,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       reason: null,
       saleOrderId: null,
       services: [],
-      isRepeatCustomer:false
+      isRepeatCustomer:false,
+      isNotExamination: false,
+      showReason: false
     })
 
     setTimeout(() => {
@@ -147,6 +151,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       this.filterChangeCombobox();
       this.filterChangeMultiselect();
       this.loadService();
+      this.loadAppointmentToFormByType();
     });
   }
 
@@ -180,18 +185,26 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   loadAppointmentToFormByType(){
     if (this.appointId && this.type == 'receive'){
-      this.f.name.disable();
+      this.f.partner.disable();
       this.f.doctor.setValidators(Validators.required);
       this.f.doctor.updateValueAndValidity();
     }
-    if (this.appointId && this.type == 'receive_create'){
+    if (this.type == 'receive_create'){
       this.f.doctor.setValidators(Validators.required);
       this.f.doctor.updateValueAndValidity();
     }
     if (this.appointId && this.type == 'receive_update'){
       this.f.doctor.disable();
-      this.f.name.disable();
+      this.f.partner.disable();
       this.f.appTime.disable();
+      if (this.f.state.value == 'done'){
+        this.f.timeExpected.disable();
+        this.f.isRepeatCustomer.disable();
+        this.f.services.disable();
+        this.f.note.disable();
+        this.f.state.disable();
+        this.f.reason.disable();
+      }
     }
   }
 
@@ -236,7 +249,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       return false;
     }
 
-    var appoint = this.formGroup.value;
+    var appoint = this.formGroup.getRawValue();
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
     var apptDate = this.intlService.formatDate(appoint.apptDate, 'yyyy-MM-dd');
@@ -245,6 +258,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.time = appTime;
     appoint.timeExpected = Number.parseInt(appoint.timeExpected);
 
+    console.log(appoint);
+    
     
     if (this.state != 'cancel') {
       appoint.reason = null;
@@ -259,8 +274,14 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       }
       this.appointmentService.update(this.appointId, appoint).subscribe(
         () => {
-          appoint.id = this.appointId;
-          this.activeModal.close(appoint);
+          if (this.type == 'receive_update' && appoint.status == 'done'){
+            this.loadAppointmentToFormByType();
+          }
+          else{
+            appoint.id = this.appointId;
+            this.activeModal.close(appoint);
+          }
+          
         },
         er => {
           this.errorService.show(er);
@@ -316,7 +337,17 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       }
     }
     if(this.appointId && this.type == 'receive_update'){
-
+      if(value == 'waiting'){
+        this.f.appTime.setValue('00:00');
+      }
+      if(value == 'done'){
+        this.f.appTime.setValue(null);
+        if (this.f.isRepeatCustomer.value == false){
+          this.showIsNotExamination = true;
+        }
+      }
+      console.log(this.showIsNotExamination);
+      
     }
   }
 

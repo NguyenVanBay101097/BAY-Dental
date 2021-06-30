@@ -66,7 +66,7 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// Trạng thái cuộc hẹn: Đang hẹn, Chờ khám, Đang khám, Hoàn thành, Hủy hẹn, Đã đến
-        /// confirmed,      , examination, done, cancel, arrived
+        /// confirmed, waitting, examination, done, cancel, arrived
         /// </summary>
         public string State { get; set; }
 
