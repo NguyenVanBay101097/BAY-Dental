@@ -23,7 +23,7 @@ import { StockInventoryFormComponent } from '../stock-inventories/stock-inventor
 import { StockPickingRequestProductComponent } from './stock-picking-request-product/stock-picking-request-product.component';
 import { StockPickingRequestProductDialogComponent } from './stock-picking-request-product-dialog/stock-picking-request-product-dialog.component';
 import { StockXuatNhapTonDetailDialogComponent } from './stock-xuat-nhap-ton-detail-dialog/stock-xuat-nhap-ton-detail-dialog.component';
-import { PurchaseOrderListProductTabpanelComponent } from '../purchase-orders/purchase-order-list-product-tabpanel/purchase-order-list-product-tabpanel.component';
+import { PurchaseOrdersModule } from '../purchase-orders/purchase-orders.module';
 
 @NgModule({
   declarations: [
@@ -39,8 +39,8 @@ import { PurchaseOrderListProductTabpanelComponent } from '../purchase-orders/pu
     StockPickingIncomingDetailComponent,
     StockPickingRequestProductComponent,
     StockXuatNhapTonDetailDialogComponent,
-    StockPickingRequestProductDialogComponent,
-    PurchaseOrderListProductTabpanelComponent],
+    StockPickingRequestProductDialogComponent
+  ],
   imports: [
     CommonModule,
     StockPickingsRoutingModule,
@@ -48,7 +48,8 @@ import { PurchaseOrderListProductTabpanelComponent } from '../purchase-orders/pu
     ReactiveFormsModule,
     StockInventoriesModule,
     FormsModule,
-    SharedModule
+    SharedModule,
+    PurchaseOrdersModule
   ],
   providers: [
     StockPickingService, StockReportService

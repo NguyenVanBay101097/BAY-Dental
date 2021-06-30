@@ -27,6 +27,9 @@ import { NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
   providers: [
     PurchaseOrderService,
     PurchaseOrderLineService
+  ],
+  exports: [
+    PurchaseOrderListProductTabpanelComponent
   ]
 })
 export class PurchaseOrdersModule { }

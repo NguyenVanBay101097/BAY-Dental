@@ -145,7 +145,6 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     this.productService
       .autocomplete2(val).subscribe(
         (res) => {
-          console.log(res)
           this.listProducts = res;
         },
         (err) => {

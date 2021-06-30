@@ -28,8 +28,6 @@ export class PurchaseOrderListProductTabpanelComponent implements OnInit {
 
   ngOnInit() {
     this.loadData();
-    console.log(this.isStock);
-    
   }
 
   loadData() {
