@@ -21,11 +21,13 @@ import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-cre
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
 
 @Component({
   selector: 'app-appointment-kanban',
   templateUrl: './appointment-kanban.component.html',
-  styleUrls: ['./appointment-kanban.component.css']
+  styleUrls: ['./appointment-kanban.component.css'],
+  host: {'class': 'h-100'}
 })
 export class AppointmentKanbanComponent implements OnInit {
   @ViewChild('dropdownMenuBtn', { static: false }) dropdownMenuBtn: NgbDropdownToggle;
@@ -39,10 +41,6 @@ export class AppointmentKanbanComponent implements OnInit {
   showDropdown = false;
   dateList: Date[];
 
-  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
-  listEmployees: EmployeeBasic[] = [];
-  filterEmployee: any;
-
   // permission
   canAppointmentCreate = this.checkPermissionService.check(["Basic.Appointment.Create"]);
   canAppointmentEdit = this.checkPermissionService.check(["Basic.Appointment.Update"]);
@@ -54,9 +52,31 @@ export class AppointmentKanbanComponent implements OnInit {
   public next3days: Date = new Date(new Date(new Date().setDate(new Date().getDate() + 3)).toDateString());
 
   appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
-  constructor(private appointmentService: AppointmentService,
-    private intlService: IntlService, private modalService: NgbModal, private dotkhamService: DotKhamService,
-    private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService, 
+
+  filter = new RevenueTimeReportPar();
+
+  states: { text: string, value: string }[] = [
+    { text: 'Tất cả', value: ''},
+    { text: 'Đang hẹn', value: 'confirmed'},
+    // { text: 'Chờ khám', value: 'waiting', class: 'text-warning' },
+    // { text: 'Đang khám', value: 'examination', class: 'text-info' },
+    // { text: 'Hoàn thành', value: 'done', class: 'text-success' },
+    { text: 'Đã đến', value: 'done'},
+    { text: 'Hủy hẹn', value: 'cancel'},
+    { text: 'Quá hạn', value: 'overdue' }
+  ];
+  stateSelected: string = this.states[0].value;
+  listEmployees: EmployeeBasic[] = [];
+  employeeSelected: string = '';
+
+  constructor(
+    private appointmentService: AppointmentService,
+    private intlService: IntlService, 
+    private modalService: NgbModal, 
+    private dotkhamService: DotKhamService,
+    private notificationService: NotificationService, 
+    private router: Router, 
+    private employeeService: EmployeeService, 
     private checkPermissionService: CheckPermissionService
   ) { }
 
@@ -74,50 +94,29 @@ export class AppointmentKanbanComponent implements OnInit {
       });
 
     this.loadListEmployees();
-
-    if (this.employeeCbx) {
-      this.employeeCbx.filterChange.asObservable().pipe(
-        debounceTime(300),
-        tap(() => this.employeeCbx.loading = true),
-        switchMap(val => this.searchEmployees(val))
-      ).subscribe(
-        rs => {
-          this.listEmployees = rs.items;
-          this.employeeCbx.loading = false;
-        }
-      )
-    }
-  }
-
-  searchEmployees(search?: string) {
-    var paged = new EmployeePaged();
-    paged.search = search || '';
-    paged.isDoctor = true;
-    return this.employeeService.getEmployeePaged(paged);
-  }
-
-  valueChangeUser(employee) {
-    this.filterEmployee = employee;
-    this.loadData();
   }
 
   loadListEmployees() {
-    this.searchEmployees().subscribe(
-      rs => {
-        this.listEmployees = rs.items;
-      });
+    var paged = new EmployeePaged();
+    paged.isDoctor = true;
+    this.employeeService.getEmployeePaged(paged).subscribe((res) => {
+      this.listEmployees = res.items;
+    });
   }
 
+  onChangeEmployee(employeeId) {
+    this.employeeSelected = employeeId;
+    this.loadData();
+  }
 
-  onDateSearchChange(filter) {
+  onChangeDate(filter) {
     this.dateFrom = filter.dateFrom;
     this.dateTo = filter.dateTo;
     this.dateList = this.getDateList();
     this.loadData();
   }
 
-
-  onStateSearchChange(state) {
+  onChangeState(state) {
     this.state = state;
     this.loadData();
   }
@@ -145,7 +144,7 @@ export class AppointmentKanbanComponent implements OnInit {
       val.search = this.search;
     }
 
-    val.doctorId = this.filterEmployee ? this.filterEmployee.id : '';
+    val.doctorId = this.employeeSelected;
 
     val.dateTimeFrom = this.intlService.formatDate(this.dateList[0], 'yyyy-MM-dd');
     val.dateTimeTo = this.intlService.formatDate(this.dateList[this.dateList.length - 1], 'yyyy-MM-dd');
@@ -303,7 +302,7 @@ export class AppointmentKanbanComponent implements OnInit {
       val.search = this.search;
     }
 
-    val.doctorId = this.filterEmployee ? this.filterEmployee.id : '';
+    val.doctorId = this.employeeSelected;
 
     val.dateTimeFrom = this.intlService.formatDate(this.dateList[0], 'yyyy-MM-dd');
     val.dateTimeTo = this.intlService.formatDate(this.dateList[this.dateList.length - 1], 'yyyy-MM-dd');

@@ -1,106 +1,155 @@
-<div class="o_cp_controller">
-    <div class="o_control_panel">
-        <ol class="breadcrumb">
-            <li class="active">Lịch hẹn</li>
-        </ol>
-        <div class="o_cp_searchview">
-            <div class="o_cp_searchview_group">
-                <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã lịch hẹn, khách hàng, SĐT..."
-                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+<div class="h-100 w-100 d-flex flex-column">
+    <div class="o_cp_controller flex-0-0-auto">
+        <div class="o_control_panel">
+            <ol class="breadcrumb">
+                <li class="active">Lịch hẹn</li>
+            </ol>
+            <div class="o_cp_searchview">
+    
+            </div>
+            <div class="o_cp_left">
+                <div class="o_cp_buttons">
+                    <div class="o_form_buttons_view">
+                        <button *ngIf="canAppointmentCreate" class="btn btn-primary btn-sm" (click)="createAppointment()">
+                            <i class="fas fa-calendar-plus"></i>&nbsp;Tạo lịch hẹn</button>
+                        <button class="btn btn-primary btn-sm" (click)="refreshData()">
+                            <i class="fas fa-sync"></i>&nbsp;Làm mới</button>
+                        <button type="button" class="btn btn-primary btn-sm" (click)="exportExcelFile()">
+                            <i class="fas fa-download"></i>&nbsp;Xuất Excel</button>
+                    </div>
+                </div>
+                <div class="o_cp_sidebar">
+                    <!-- <div *ngIf="canEmployeeRead">
+                        <kendo-combobox [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)"
+                            class="kendo-combobox-sm" [filterable]="true" [data]="listEmployees" #employeeCbx
+                            [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
+                        </kendo-combobox>
+                    </div> -->
                 </div>
             </div>
-        </div>
-        <div class="o_cp_left">
-            <div class="o_cp_buttons">
-                <div class="o_form_buttons_view">
-                    <button *ngIf="canAppointmentCreate" class="btn btn-primary btn-sm" (click)="createAppointment()">
-                        <i class="fas fa-calendar-plus"></i>&nbsp;Tạo lịch hẹn</button>
-                    <button class="btn btn-primary btn-sm" (click)="refreshData()">
-                        <i class="fas fa-sync"></i>&nbsp;Làm mới</button>
-                    <button type="button" class="btn btn-primary btn-sm" (click)="exportExcelFile()">
-                        <i class="fas fa-download"></i>&nbsp;Xuất Excel</button>
+            <div class="o_cp_right">
+                <!-- <input class="o_searchview_input" placeholder="Tìm kiếm theo mã lịch hẹn, khách hàng, SĐT..."
+                    type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"> -->
+                <!-- <div class="btn-group o_search_options">
+                    <app-appointment-state-filter (searchChange)="onStateSearchChange($event)">
+                    </app-appointment-state-filter>
+                    <app-appointment-date-filter [dateFrom]="dateFrom" [dateTo]="dateTo"
+                        (searchChange)="onDateSearchChange($event)">
+                    </app-appointment-date-filter>
+                </div> -->
+                <div class="t-search t-search-left w-100">
+                    <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo họ tên, số điện thoại khách hàng"
+                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <span class="fas fa-search form-control-icon form-control-sm"></span>
                 </div>
-            </div>
-            <div class="o_cp_sidebar">
-                <div *ngIf="canEmployeeRead">
-                    <kendo-combobox [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)"
-                        class="kendo-combobox-sm" [filterable]="true" [data]="listEmployees" #employeeCbx
-                        [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
-                    </kendo-combobox>
-                </div>
-            </div>
-        </div>
-        <div class="o_cp_right">
-            <div class="btn-group o_search_options">
-                <app-appointment-state-filter (searchChange)="onStateSearchChange($event)">
-                </app-appointment-state-filter>
-                <app-appointment-date-filter [dateFrom]="dateFrom" [dateTo]="dateTo"
-                    (searchChange)="onDateSearchChange($event)">
-                </app-appointment-date-filter>
             </div>
         </div>
     </div>
-</div>
-
-<div class="o_content">
-    <div class="o_view_controller">
-        <div class="o_kanban_view o_kanban_small_column o_kanban_grouped">
-            <div class="o_kanban_group o_kanban_has_progressbar" *ngFor="let date of dateList">
-                <div class="o_kanban_header">
-                    <div class="o_kanban_header_title">
-                        <span class="o_column_title" *ngIf="date.toDateString() != today.toDateString()">{{date | date:
-                            'EEEE'}},
-                            {{date | date: 'dd/MM'}}</span>
-                        <span class="o_column_title text-success"
-                            *ngIf="date.toDateString() == today.toDateString()">Hôm
-                            nay,
-                            {{date | date: 'dd/MM'}}</span>
+    <div class="o_content flex-1-1-100 h-100 overflow-hidden">
+        <div class="o_view_controller">
+            <!-- <div class="o_kanban_view o_kanban_small_column o_kanban_grouped">
+                <div class="o_kanban_group o_kanban_has_progressbar" *ngFor="let date of dateList">
+                    <div class="o_kanban_header">
+                        <div class="o_kanban_header_title">
+                            <span class="o_column_title" *ngIf="date.toDateString() != today.toDateString()">{{date | date:
+                                'EEEE'}},
+                                {{date | date: 'dd/MM'}}</span>
+                            <span class="o_column_title text-success"
+                                *ngIf="date.toDateString() == today.toDateString()">Hôm
+                                nay,
+                                {{date | date: 'dd/MM'}}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="oe_kanban_color_0 oe_kanban_card o_kanban_record" [ngClass]="{'oe_kanban_color_11': appointment.state == 'confirmed', 
-                        'oe_kanban_color_3': appointment.state == 'waiting', 
-                        'oe_kanban_color_7': appointment.state == 'examination', 
-                        'oe_kanban_color_2': appointment.state == 'done', 
-                        'oe_kanban_color_5': appointment.state == 'cancel'}"
-                    *ngFor="let appointment of appointmentByDate[date.toDateString()]">
-                    <div class="oe_kanban_content">
-                        <div class="o_kanban_record_top">
-                            <div class="o_kanban_record_headings">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <a class="text-primary o_kanban_record_title" title="Xem hồ sơ khách hàng"
-                                            [routerLink]="['/partners/customer/' + appointment.partnerId]" 
-                                            [class.disabled]="!canCustomerLink">
-                                            {{appointment.partnerDisplayName}}
-                                        </a>
-                                    </div>
-                                    <div>
-                                        <div class="d-flex">
-                                            <i *ngIf="canAppointmentEdit" class="far fa-edit text-success mr-1 click_i "
-                                                (click)="editAppointment(appointment);$event.stopPropagation();"></i>
-                                            <i *ngIf="canAppointmentDelete" class="far fa-trash-alt text-danger click_i "
-                                                (click)="deleteAppointment(appointment)"></i>
+                    <div class="oe_kanban_color_0 oe_kanban_card o_kanban_record" [ngClass]="{'oe_kanban_color_11': appointment.state == 'confirmed', 
+                            'oe_kanban_color_3': appointment.state == 'waiting', 
+                            'oe_kanban_color_7': appointment.state == 'examination', 
+                            'oe_kanban_color_2': appointment.state == 'done', 
+                            'oe_kanban_color_5': appointment.state == 'cancel'}"
+                        *ngFor="let appointment of appointmentByDate[date.toDateString()]">
+                        <div class="oe_kanban_content">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <a class="text-primary o_kanban_record_title" title="Xem hồ sơ khách hàng"
+                                                [routerLink]="['/partners/customer/' + appointment.partnerId]" 
+                                                [class.disabled]="!canCustomerLink">
+                                                {{appointment.partnerDisplayName}}
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <div class="d-flex">
+                                                <i *ngIf="canAppointmentEdit" class="far fa-edit text-success mr-1 click_i "
+                                                    (click)="editAppointment(appointment);$event.stopPropagation();"></i>
+                                                <i *ngIf="canAppointmentDelete" class="far fa-trash-alt text-danger click_i "
+                                                    (click)="deleteAppointment(appointment)"></i>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <small class="o_kanban_record_subtitle text-muted">
-                                    <span class="oe_kanban_text_red">
-                                        <i><span>{{appointment.time}}</span></i>
-                                    </span>
-                                </small>
-                                <small class="o_kanban_record_subtitle text-muted" *ngIf="appointment.partnerPhone">
-                                    SĐT KH: {{appointment.partnerPhone}}
-                                </small>
-                                <strong class="o_kanban_record_title" *ngIf="appointment.doctorName">
-                                    Bác sĩ: {{appointment.doctorName}}
-                                </strong>
-                                <div class="o_kanban_record_description" *ngIf="appointment.note">{{appointment.note}}
+    
+                                    <small class="o_kanban_record_subtitle text-muted">
+                                        <span class="oe_kanban_text_red">
+                                            <i><span>{{appointment.time}}</span></i>
+                                        </span>
+                                    </small>
+                                    <small class="o_kanban_record_subtitle text-muted" *ngIf="appointment.partnerPhone">
+                                        SĐT KH: {{appointment.partnerPhone}}
+                                    </small>
+                                    <strong class="o_kanban_record_title" *ngIf="appointment.doctorName">
+                                        Bác sĩ: {{appointment.doctorName}}
+                                    </strong>
+                                    <div class="o_kanban_record_description" *ngIf="appointment.note">{{appointment.note}}
+                                    </div>
                                 </div>
                             </div>
+    
                         </div>
-
+                    </div>
+                </div>
+            </div> -->
+            <div class="cont-wrapper">
+                <div class="cont-left">
+                    
+                </div>
+                <div class="cont-right">
+                    <div class="filter">
+                        <div class="filter-title">Bộ lọc</div>
+                        <div class="filter-label">Thời gian</div>
+                        <div class="filter-content">
+                            <app-date-range-picker-filter opens="left" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" 
+                                (searchChange)="onChangeDate($event)">
+                            </app-date-range-picker-filter>
+                        </div>
+                        <div class="filter-label">Trạng thái</div>
+                        <div class="filter-content">
+                            <div class="form-check t-form-check mb-1" *ngFor="let state of states; index as i">
+                                <input class="form-check-input" type="radio" name="state" [id]="'state-' + i" 
+                                    [value]="state.value" [(ngModel)]="stateSelected">
+                                <label class="form-check-label" [for]="'state-' + i"
+                                    (click)="onChangeState(state.value)">
+                                    {{state.text}}
+                                </label>
+                            </div>               
+                        </div>
+                        <div class="filter-label">Bác sĩ</div>
+                        <div class="filter-content">
+                            <div class="form-check t-form-check mb-1">
+                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-default'" 
+                                    [value]="''" [(ngModel)]="employeeSelected">
+                                <label class="form-check-label" [for]="'employee-default'"
+                                    (click)="onChangeEmployee('')">
+                                    Tất cả
+                                </label>
+                            </div>  
+                            <div class="form-check t-form-check mb-1" *ngFor="let employee of listEmployees; index as i">
+                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i" 
+                                    [value]="employee.id" [(ngModel)]="employeeSelected">
+                                <label class="form-check-label" [for]="'employee-' + i"
+                                    (click)="onChangeEmployee(employee.id)">
+                                    {{employee.name}}
+                                </label>
+                            </div>  
+                        </div>
                     </div>
                 </div>
             </div>
