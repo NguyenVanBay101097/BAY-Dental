@@ -74,7 +74,7 @@ export class SaleOrderLineService {
         return this.http.post<SaleOrderLineOnChangeProductResult>(this.baseApi + this.apiUrl + '/OnChangeProduct', val);
     }
 
-    get(val: any) {
+    getPaged(val: any) {
         return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 

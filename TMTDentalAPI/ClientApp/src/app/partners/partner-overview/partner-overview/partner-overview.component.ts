@@ -134,7 +134,7 @@ export class PartnerOverviewComponent implements OnInit {
     val.offset = 0;
     val.limit = 0;
     val.isQuotation = true;
-    this.saleOrderLineService.get(val).subscribe((res: any) => {
+    this.saleOrderLineService.getPaged(val).subscribe((res: any) => {
       this.saleQuotations = res.items;
     });
   }

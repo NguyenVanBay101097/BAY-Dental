@@ -6,11 +6,6 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class SaleOrderPaged
     {
-        public SaleOrderPaged()
-        {
-            Limit = 20;
-        }
-
         public int Offset { get; set; }
 
         public int Limit { get; set; }
@@ -28,7 +23,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? IsQuotation { get; set; }
 
         public Guid? Id { get; set; }
+
         public Guid? CompanyId { get; set; }
+
+        /// <summary>
+        /// Interval Nbr
+        /// </summary>
+        public int? OverIntervalNbr { get; set; }
+
+        /// <summary>
+        /// Over interval: 'month'
+        /// </summary>
+        public string OverInterval { get; set; }
     }
 
     public class ApplyDiscountRequest

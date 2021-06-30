@@ -11,18 +11,15 @@
                     <div class="breadcrumb">
                         <div class="d-flex">
                             <kendo-combobox [data]="ranges" [valueField]="'value'" [textField]="'text'"
-                                class="mr-2 kendo-combobox-sm cmb"
-                                [(ngModel)]="dateOrderTo" [placeholder]="'Thời gian'"
-                                [filterable]="true" 
-                                (ngModelChange)="handleFilterDateOrder()">
+                                class="mr-2 kendo-combobox-sm cmb" [(ngModel)]="dateOrderTo" [placeholder]="'Thời gian'"
+                                [filterable]="true" (valueChange)="handleFilterDateOrder()">
                             </kendo-combobox>
                             <kendo-combobox [data]="companies" [valueField]="'id'" [textField]="'name'"
-                                class="mr-2 kendo-combobox-sm cmb"
-                                [(ngModel)]="company" [placeholder]="'Tất cả chi nhánh'"
-                                (ngModelChange)="handleFilterCompany()">
+                                class="mr-2 kendo-combobox-sm cmb" [(ngModel)]="company"
+                                [placeholder]="'Tất cả chi nhánh'" (valueChange)="handleFilterCompany()">
                             </kendo-combobox>
-                            <button class="btn btn-primary btn-sm mr-2 btnExport w-30" title="xuất file" (click)="exportExcelFile()"> <i
-                                class="fas fa-download mr-2"></i>Xuất file
+                            <button class="btn btn-primary btn-sm mr-2 btnExport w-30" title="xuất file"
+                                (click)="exportExcelFile(grid)"> <i class="fas fa-download mr-2"></i>Xuất file
                             </button>
                         </div>
                     </div>
@@ -34,59 +31,50 @@
                     </div>
                     <div class="o_cp_left">
                         <div class="o_cp_buttons">
-    
+
                         </div>
                         <div class="o_cp_sidebar">
                         </div>
                     </div>
                     <div class="o_cp_right">
-    
+
                     </div>
                 </div>
             </div>
             <div class="t_treatment_grid">
                 <div class="kendo-grid-data">
-                    <kendo-grid [data]="saleOrdersData" [pageable]="true" [pageSize]="limit" [skip]="skip"
-                        (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading">
+                    <kendo-grid #grid [data]="saleOrdersData" [pageable]="true" [pageSize]="limit" [skip]="skip"
+                        (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading"
+                        (excelExport)="onExcelExport($event)">
                         <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}"
-                            field="DateOrder" title="Ngày lập phiếu" width="120">
-                            <ng-template kendoGridCellTemplate let-dataItem>
-                                {{dataItem.dateOrder | date:'short'}}
-                            </ng-template>
+                            field="dateOrder" format="{0:g}" title="Ngày lập phiếu" width="120">
                         </kendo-grid-column>
                         <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-                            field="Name" title="Số phiếu" width="100">
+                            field="name" title="Số phiếu" width="100">
                             <ng-template kendoGridCellTemplate let-dataItem>
                                 <a class="text-primary" (click)="getFormSaleOrder(dataItem.id)">{{dataItem.name}}</a>
                             </ng-template>
                         </kendo-grid-column>
                         <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-                            field="Name" title="Khách hàng" width="100">
+                            field="partnerName" title="Khách hàng" width="100">
                             <ng-template kendoGridCellTemplate let-dataItem>
                                 {{dataItem.partnerName}}
                             </ng-template>
                         </kendo-grid-column>
                         <kendo-grid-column class="text-right"
-                            [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="AmountTotal"
-                            title="Tiền điều trị" width="120">
-                            <ng-template kendoGridCellTemplate let-dataItem>
-                                {{dataItem.amountTotal | number}}
-                            </ng-template>
+                            [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}"
+                            field="amountTotal" title="Tiền điều trị" width="120" format="{0:n0}">
                         </kendo-grid-column>
                         <kendo-grid-column class="text-right"
-                            [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="Thanh Toán"
-                            width="120">
-                            <ng-template kendoGridCellTemplate let-dataItem>
-                                {{ dataItem.state != "draft" ? (dataItem.amountTotal - dataItem.residual | number) : 0 }}
-                            </ng-template>
+                            [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}"
+                            field="totalPaid" title="Thanh Toán" width="120" format="{0:n0}">
                         </kendo-grid-column>
                         <kendo-grid-column class="text-right"
-                            [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="Residual"
-                            title="Còn lại" width="120">
-                            <ng-template kendoGridCellTemplate let-dataItem>
-                                {{dataItem.residual | number}}
-                            </ng-template>
+                            [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="residual"
+                            title="Còn lại" width="120" format="{0:n0}">
                         </kendo-grid-column>
+                        <kendo-grid-excel [fetchData]="allData">
+                        </kendo-grid-excel>
                         <div *kendoGridDetailTemplate="let dataItem">
                             <app-sale-order-line-management [saleOrderId]="dataItem.id">
                             </app-sale-order-line-management>

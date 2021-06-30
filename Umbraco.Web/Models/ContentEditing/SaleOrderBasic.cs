@@ -33,6 +33,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string UserName { get; set; }
 
         public decimal? Residual { get; set; }
+
+        public decimal? TotalPaid { get; set; }
     }
 
     public class SaleOrderSimple

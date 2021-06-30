@@ -14,6 +14,7 @@ import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display'
 import { SaleOrderLineForProductRequest } from './sale-order-line.service';
 import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 import { RegisterSaleOrderPayment } from './sale-order-payment.service';
+import { map } from 'rxjs/operators';
 
 export class SaleOrderPaged {
     limit: number;
@@ -25,6 +26,8 @@ export class SaleOrderPaged {
     state: string;
     isQuotation: boolean;
     companyId: string;
+    overIntervalNbr: number;
+    overInterval: string;
 }
 
 export class AccountPaymentFilter {
@@ -54,19 +57,19 @@ export class SaleOrderToSurveyFilter {
 }
 // report doanh thu dự kiến
 export class SaleOrderReportRevenuePaged {
-	limit: number;
-	offset: number;
-	companyId: string;
-	search: string;
+    limit: number;
+    offset: number;
+    companyId: string;
+    search: string;
 }
 
 export class SaleOrderReportRevenue {
-	id: string;
-	name: string;
-	partnerName: string;
-	amountTotal: number;
-	residual: number;
-	totalPaid?: any;
+    id: string;
+    name: string;
+    partnerName: string;
+    amountTotal: number;
+    residual: number;
+    totalPaid?: any;
 }
 
 export class GetRevenueSumTotalReq {
@@ -80,7 +83,16 @@ export class SaleOrderService {
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<PagedResult2<SaleOrderBasic>> {
-        return this.http.get<PagedResult2<SaleOrderBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
+        return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) })
+            .pipe(
+                map((response: any) => (<PagedResult2<SaleOrderBasic>>{
+                    totalItems: response.totalItems,
+                    items: response.items.map(x => <SaleOrderBasic>{
+                        ...x,
+                        dateOrder: new Date(x.dateOrder)
+                    })
+                }))
+            );
     }
 
     getSaleOrderForSms(val: any) {
@@ -228,7 +240,7 @@ export class SaleOrderService {
         return this.http.post<SaleOrderLineForProductRequest[]>(this.baseApi + this.apiUrl + '/' + id + '/GetLineForProductRequest', {});
     }
 
-    getSaleOrderPaymentBySaleOrderId(id: string): Observable<RegisterSaleOrderPayment>{
+    getSaleOrderPaymentBySaleOrderId(id: string): Observable<RegisterSaleOrderPayment> {
         return this.http.get<RegisterSaleOrderPayment>(this.baseApi + this.apiUrl + '/' + id + '/GetSaleOrderPaymentBySaleOrderId');
     }
 
@@ -244,13 +256,13 @@ export class SaleOrderService {
         return this.http.post<PagedResult2<SaleOrderReportRevenue>>(this.baseApi + this.apiUrl + '/GetRevenueReport', val);
     }
 
-    getRevenueSumTotal(val: GetRevenueSumTotalReq):any{
+    getRevenueSumTotal(val: GetRevenueSumTotalReq): any {
         return this.http.post(this.baseApi + this.apiUrl + '/GetRevenueSumTotal', val);
     }
     exportExcelFile(val: any) {
         return this.http.get(this.baseApi + this.apiUrl + "/ExportExcelFile", {
-          responseType: "blob",
-          params: val,
+            responseType: "blob",
+            params: val,
         });
-      }
+    }
 }

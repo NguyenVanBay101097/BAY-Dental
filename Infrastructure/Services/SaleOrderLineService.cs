@@ -395,16 +395,16 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Labos.Any(s => s.State == val.LaboState));
             }
 
+            var totalItems = await query.CountAsync();
 
             query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
-
             if (val.Limit > 0)
             {
                 query = query.Take(val.Limit).Skip(val.Offset);
             }
-            var items = await _mapper.ProjectTo<SaleOrderLineBasic>(query).ToListAsync();
 
-            var totalItems = await query.CountAsync();
+            var items = await _mapper.ProjectTo<SaleOrderLineBasic>(query).ToListAsync();
+           
             return new PagedResult2<SaleOrderLineBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items

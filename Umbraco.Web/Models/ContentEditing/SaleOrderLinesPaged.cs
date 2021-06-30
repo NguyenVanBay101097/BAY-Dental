@@ -6,11 +6,6 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class SaleOrderLinesPaged
     {
-        public SaleOrderLinesPaged()
-        {
-            Limit = 20;
-        }
-
         public int Offset { get; set; }
 
         public int Limit { get; set; }

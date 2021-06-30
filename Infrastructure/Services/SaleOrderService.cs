@@ -255,9 +255,21 @@ namespace Infrastructure.Services
             if (val.IsQuotation.HasValue)
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => (!x.IsQuotation.HasValue && val.IsQuotation == false) || x.IsQuotation == val.IsQuotation));
 
+            if (!string.IsNullOrEmpty(val.OverInterval)&& val.OverIntervalNbr.HasValue)
+            {
+                if (val.OverInterval == "month")
+                    spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder.AddMonths(val.OverIntervalNbr.Value) < DateTime.Now));
+            }
+
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-            var items = await _mapper.ProjectTo<SaleOrderBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
+
             var totalItems = await query.CountAsync();
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await _mapper.ProjectTo<SaleOrderBasic>(query).ToListAsync();
+          
             return new PagedResult2<SaleOrderBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
