@@ -155,12 +155,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal End { get; set; }
     }
 
-    public class ReportSummaryPartnerDebitReq
+    public class ReportPartnerDebitReq
     {
-        public ReportSummaryPartnerDebitReq()
-        {
-
-        }
 
         public DateTime? FromDate { get; set; }
 
@@ -172,7 +168,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
     }
 
-    public class ReportSummaryPartnerDebitRes
+    public class ReportPartnerDebitRes
     {
         public Guid PartnerId { get; set; }
 
@@ -198,12 +194,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
-    public class ReportSummaryPartnerDebitDetailReq
+    public class ReportPartnerDebitDetailReq
     {
-        public ReportSummaryPartnerDebitDetailReq()
-        {
-
-        }
 
         public DateTime? FromDate { get; set; }
 
@@ -214,7 +206,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
     }
 
-    public class ReportSummaryPartnerDebitDetailRes
+    public class ReportPartnerDebitDetailRes
     {
         public DateTime? Date { get; set; }
         public string InvoiceOrigin { get; set; }

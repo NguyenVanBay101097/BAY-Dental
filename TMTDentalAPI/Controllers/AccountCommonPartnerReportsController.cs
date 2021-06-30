@@ -124,19 +124,19 @@ namespace TMTDentalAPI.Controllers
             return new FileContentResult(fileContent, mimeType);
         }
 
-        [HttpPost("GetSummary")]
+        [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.AccountPartner")]
-        public async Task<IActionResult> ReportSummaryPartnerDebit(ReportSummaryPartnerDebitReq val)// công nợ khách hàng
+        public async Task<IActionResult> ReportPartnerDebit(ReportPartnerDebitReq val)// công nợ khách hàng
         {
-            var res = await _reportService.ReportSummaryPartnerDebit(val);
+            var res = await _reportService.ReportPartnerDebit(val);
             return Ok(res);
         }
 
-        [HttpPost("GetSummary")]
+        [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.AccountPartner")]
-        public async Task<IActionResult> ReportSummaryPartnerDebitDetail(ReportSummaryPartnerDebitDetailReq val)// công nợ khách hàng
+        public async Task<IActionResult> ReportPartnerDebitDetail(ReportPartnerDebitDetailReq val)// công nợ khách hàng chi tiết
         {
-            var res = await _reportService.ReportSummaryPartnerDebitDetail(val);
+            var res = await _reportService.ReportPartnerDebitDetail(val);
             return Ok(res);
         }
     }

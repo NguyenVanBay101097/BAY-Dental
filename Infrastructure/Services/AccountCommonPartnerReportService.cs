@@ -452,7 +452,7 @@ namespace Infrastructure.Services
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
         }
-        public async Task<IEnumerable<ReportSummaryPartnerDebitRes>> ReportSummaryPartnerDebit(ReportSummaryPartnerDebitReq val)
+        public async Task<IEnumerable<ReportPartnerDebitRes>> ReportPartnerDebit(ReportPartnerDebitReq val)
         {
             var amlObj = GetService<IAccountMoveLineService>();
             var accObj = GetService<IAccountAccountService>();
@@ -460,7 +460,7 @@ namespace Infrastructure.Services
             if (account == null)
                 throw new Exception("Không tìm thấy tài khoản công nợ!");
 
-            IQueryable<AccountMoveLine> getQueryable(IQueryable<AccountMoveLine> query, ReportSummaryPartnerDebitReq val)
+            IQueryable<AccountMoveLine> getQueryable(IQueryable<AccountMoveLine> query, ReportPartnerDebitReq val)
             {
                 query = query.Where(x => x.AccountId == account.Id);
                 if (val.PartnerId.HasValue)
@@ -478,7 +478,7 @@ namespace Infrastructure.Services
             var date_from = val.FromDate.HasValue ? val.FromDate.Value.AbsoluteBeginOfDate() : (DateTime?)null;
             var date_to = val.ToDate.HasValue ? val.ToDate.Value.AbsoluteEndOfDate() : (DateTime?)null;
 
-            var res = new List<ReportSummaryPartnerDebitRes>();
+            var res = new List<ReportPartnerDebitRes>();
             if (date_from.HasValue)
             {
                 var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, companyId: val.CompanyId);
@@ -492,7 +492,7 @@ namespace Infrastructure.Services
                        PartnerRef = x.Partner.Ref,
                        PartnerPhone = x.Partner.Phone,
                    })
-                   .Select(x => new ReportSummaryPartnerDebitRes
+                   .Select(x => new ReportPartnerDebitRes
                    {
                        PartnerId = x.Key.PartnerId,
                        PartnerName = x.Key.PartnerName,
@@ -513,7 +513,7 @@ namespace Infrastructure.Services
                           PartnerRef = x.Partner.Ref,
                           PartnerPhone = x.Partner.Phone,
                       })
-                    .Select(x => new ReportSummaryPartnerDebitRes
+                    .Select(x => new ReportPartnerDebitRes
                     {
                         PartnerId = x.Key.PartnerId,
                         PartnerName = x.Key.PartnerName,
@@ -540,13 +540,16 @@ namespace Infrastructure.Services
 
             foreach (var item in res)
             {
-                item.End = item.Begin - item.Debit - item.Credit;
+                item.End = item.Begin + item.Debit - item.Credit;
+                item.DateFrom = val.FromDate;
+                item.DateTo = val.ToDate;
+                item.CompanyId = val.CompanyId;
             }
 
             return res;
         }
 
-        public async Task<IEnumerable<ReportSummaryPartnerDebitDetailRes>> ReportSummaryPartnerDebitDetail(ReportSummaryPartnerDebitDetailReq val)
+        public async Task<IEnumerable<ReportPartnerDebitDetailRes>> ReportPartnerDebitDetail(ReportPartnerDebitDetailReq val)
         {
             var today = DateTime.Today;
             var date_from = val.FromDate.HasValue ? val.FromDate.Value.AbsoluteBeginOfDate() : (DateTime?)null;
@@ -574,7 +577,7 @@ namespace Infrastructure.Services
                 query2 = query2.Where(x => x.PartnerId == val.PartnerId);
 
             var list2 = query2.OrderBy(x => x.DateCreated)
-                    .Select(x => new ReportSummaryPartnerDebitDetailRes
+                    .Select(x => new ReportPartnerDebitDetailRes
                     {
                         Date = x.Date,
                         Debit = x.Debit,
