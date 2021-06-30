@@ -313,17 +313,17 @@
                                 </select>
                             </td>
                         </tr>
-                        <tr *ngIf="showIsNotExamination">
+                        <tr *ngIf="showIsNotExamination && f.isRepeatCustomer.value == false">
                             <td colspan="1" class="o_td_label">
                                 
                             </td>
                             <td colspan="1">
                                 <input type="checkbox" class="form-check-input" id="exampleCheck2"
-                                formControlName="showReason">
+                                formControlName="showReason" (change)="eventCheck($event.target)">
                                 <label class="form-check-label" for="exampleCheck2">Khách không điều trị</label>
                             </td>
                         </tr>
-                        <tr *ngIf="appointId && type == 'create' || this.f.showReason.value == 'true'">
+                        <tr *ngIf="appointId && type == 'create' || this.f.showReason.value == true && f.isRepeatCustomer.value == false">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Lý do</label>
                             </td>
@@ -346,8 +346,8 @@
         Lưu</button>
     <button *ngIf="appointId && type == 'create'" type="button" class="btn btn-danger btn-sm mr-2" accesskey="s" (click)="onDelete()">
         Xóa</button>
-    <button *ngIf="appointId && type == 'create'" type="button" class="btn btn-light btn-sm mr-2" accesskey="s" (click)="onDuplicate()">
+    <button *ngIf="appointId && type == 'create'" type="button" class="btn btn-secondary btn-sm mr-2" accesskey="s" (click)="onDuplicate()">
         Sao chép</button>
-    <button type="button" class="btn btn-light btn-sm mr-2" accesskey="q" (click)="activeModal.dismiss()">
+    <button type="button" class="btn btn-secondary btn-sm mr-2" accesskey="q" (click)="activeModal.dismiss()">
         Đóng</button>
 </div>

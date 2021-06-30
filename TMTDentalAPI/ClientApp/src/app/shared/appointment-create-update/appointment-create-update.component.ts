@@ -184,6 +184,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   loadAppointmentToFormByType(){
+    if (this.appointId && this.type == 'create'){
+      this.f.reason.setValidators(Validators.required);
+      this.f.reason.updateValueAndValidity();
+    }
     if (this.appointId && this.type == 'receive'){
       this.f.partner.disable();
       this.f.doctor.setValidators(Validators.required);
@@ -205,6 +209,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.f.state.disable();
         this.f.reason.disable();
       }
+
     }
   }
 
@@ -257,9 +262,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.date = `${apptDate}T00:00:00`;
     appoint.time = appTime;
     appoint.timeExpected = Number.parseInt(appoint.timeExpected);
-
-    console.log(appoint);
-    
     
     if (this.state != 'cancel') {
       appoint.reason = null;
@@ -342,12 +344,19 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       }
       if(value == 'done'){
         this.f.appTime.setValue(null);
-        if (this.f.isRepeatCustomer.value == false){
-          this.showIsNotExamination = true;
-        }
+        this.showIsNotExamination = true;
       }
-      console.log(this.showIsNotExamination);
-      
+    }
+  }
+
+  eventCheck(value){
+    if (value == true && this.f.isRepeatCustomer.value == false){
+      this.f.reason.setValidators(Validators.required);
+      this.f.reason.updateValueAndValidity();
+    }
+    else{
+      this.f.reason.clearValidators();
+      this.f.reason.updateValueAndValidity();
     }
   }
 
