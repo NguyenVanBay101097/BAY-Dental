@@ -1,4 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { LegendLabelsContentArgs } from '@progress/kendo-angular-charts';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { AppointmentGetCountVM } from 'src/app/appointment/appointment';
+import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { CheckPermissionService } from '../../check-permission.service';
 
 @Component({
@@ -20,8 +26,63 @@ export class ReceptionDashboardComponent implements OnInit {
   canPartnerCustomerReport = this.checkPermissionService.check(['Report.PartnerOldNew']);
   canSaleReport = this.checkPermissionService.check(['Report.Sale']);
   canAppointment = this.checkPermissionService.check(['Report.Appointment']);
+  public today: Date = new Date(new Date().toDateString());
 
-  constructor(private checkPermissionService: CheckPermissionService) { }
+  stateFilter: string = '';
+  stateCount: any = {};
+  states: any[] = [
+    { value: '', text: 'Tất cả'},
+    { value: 'waiting', text: 'Chờ khám'},
+    { value: 'examination', text: 'Đang khám'},
+    { value: 'done', text: 'Hoàn thành'},
+  ]
+
+  appointmentstates: any[] = [
+    { value: '', text: 'Tất cả'},
+    { value: 'examination', text: 'Đang hẹn'},
+    { value: 'arrived', text: 'Đã đến'},
+    { value: 'cancel', text: 'Hủy hẹn'},
+  ]
+
+  public pieData: any[] = [
+    { category: "Tiền mặt", value:  30.000},
+    { category: "Ngân hàng", value: 20.000 },
+    { category: "Khác", value: 10.000 },
+   
+  ];
+
+  constructor(private checkPermissionService: CheckPermissionService , private appointmentService: AppointmentService,
+    private intlService: IntlService) { 
+      this.labelContent = this.labelContent.bind(this);
+    }
 
   ngOnInit() { }
+
+  loadStateCount() {
+    forkJoin(this.states.map(x => {
+      var val = new AppointmentGetCountVM();
+      val.state = x.value;
+      val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+      val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+      return this.appointmentService.getCount(val).pipe(
+        switchMap(count => of({state: x.value, count: count}))
+      );
+    })).subscribe((result) => {
+      result.forEach(item => {
+        this.stateCount[item.state] = item.count;
+      });
+    });
+  }
+
+  setStateFilter(state: any) {
+    this.stateFilter = state;  
+  }
+
+  public labelContent(args: LegendLabelsContentArgs): string {
+    return `${args.dataItem.category} years old: ${this.intlService.formatNumber(
+      args.dataItem.value,
+      "p2"
+    )}`;
+  }
+
 }
