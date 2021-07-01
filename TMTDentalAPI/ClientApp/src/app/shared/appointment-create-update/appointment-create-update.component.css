@@ -38,7 +38,6 @@ kendo-window-titlebar.k-window-titlebar.k-dialog-titlebar.k-header {
 }
 
 .o_form_view .o_group {
-  display: inline-block;
   width: 100%;
   margin: 0 0;
 }
@@ -52,4 +51,12 @@ kendo-window-titlebar.k-window-titlebar.k-dialog-titlebar.k-header {
   text-overflow: ellipsis;
   white-space: pre;
   overflow: hidden;
+}
+
+tbody {
+  width: 100% !important;
+}
+
+.o_td_label{
+  width: 200px !important;
 }

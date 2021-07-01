@@ -65,8 +65,8 @@ namespace ApplicationCore.Entities
 
 
         /// <summary>
-        /// Trạng thái cuộc hẹn: Đang hẹn, Chờ khám, Đang khám, Hoàn thành, Hủy hẹn
-        /// confirmed, waiting, examination, done, cancel
+        /// Trạng thái cuộc hẹn: Đang hẹn, Chờ khám, Đang khám, Hoàn thành, Hủy hẹn, Đã đến
+        /// confirmed, waitting, examination, done, cancel, arrived
         /// </summary>
         public string State { get; set; }
 
@@ -76,5 +76,6 @@ namespace ApplicationCore.Entities
 
         public Guid? SaleOrderId { get; set; }
         public SaleOrder SaleOrder { get; set; }
+        public bool IsRepeatCustomer { get; set; }
     }
 }
