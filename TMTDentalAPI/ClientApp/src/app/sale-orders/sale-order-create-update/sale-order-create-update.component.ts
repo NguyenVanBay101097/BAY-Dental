@@ -311,6 +311,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     );
   }
 
+  updateLineInfoLocal(value, index) {
+    var line = this.saleOrder.orderLines[index];
+    Object.assign(line, value);
+
+    this.computeAmountLine([line]);
+    this.computeAmountTotal();
+    this.lineSelected = null;
+    this.linesDirty = true;
+  }
 
   updateLineInfo(value, index) {
     var line = this.saleOrder.orderLines[index];
@@ -320,6 +329,45 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.computeAmountTotal();
     this.lineSelected = null;
     this.linesDirty = true;
+
+    if (!this.saleOrderId) {
+      const val = this.getFormDataSave();
+      this.saleOrderService.create(val).subscribe((result: any) => {
+        this.saleOrderId = result.id;
+        this.notify('success', 'Lưu thành công');
+        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
+        this.loadSaleOrder();
+      });
+    } else {
+      var val = {
+        id: line.id,
+        name: line.name,
+        productId: line.product.id,
+        priceUnit: line.priceUnit,
+        productUOMQty: line.productUOMQty,
+        employeeId: line.employee != null ? line.employee.id : null,
+        assistantId: line.assistant != null ? line.assistant.id : null,
+        counselorId: line.counselor != null ? line.counselor.id : null,
+        toothIds: line.teeth.map(s => s.id),
+        toothCategoryId: line.toothCategory != null ? line.toothCategory.id : null,
+        diagnostic: line.diagnostic,
+        toothType: line.toothType,
+        isActive: line.isActive,
+        orderId: this.saleOrderId
+      };
+      if (!line.id) {
+        this.saleOrderLineService.create(val).subscribe(res => {
+          this.notify('success', 'Lưu thành công');
+          this.loadSaleOrder();
+        })
+      }
+      else {
+        this.saleOrderLineService.update(line.id, val).subscribe(res => {
+          this.notify('success', 'Lưu thành công');
+          this.loadSaleOrder();
+        })
+      }
+    }
   }
 
   computeAmountLine(lines) {
@@ -433,7 +481,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     //update line trước khi lưu
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      var rs = viewChild.updateLineInfo();
+      var rs = viewChild.updateLineInfo(false);
       if (!rs) return;
     }
 
@@ -482,7 +530,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     //update line trước khi lưu
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      var rs = viewChild.updateLineInfo();
+      var rs = viewChild.updateLineInfo(false);
       if (!rs) return;
     }
 
@@ -757,11 +805,18 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   onDeleteLine(index) {
     var line = this.saleOrder.orderLines[index];
-    if (line == this.lineSelected) {
-      this.lineSelected = null;
+    if (line.id) {
+      this.saleOrderLineService.remove(line.id).subscribe(res => {
+        this.notify('success', 'Lưu thành công');
+        this.loadSaleOrder();
+      })
+    } else {
+      if (line == this.lineSelected) {
+        this.lineSelected = null;
+      }
+      this.saleOrder.orderLines.splice(index, 1);
+      this.linesDirty = true;
     }
-    this.saleOrder.orderLines.splice(index, 1);
-    this.linesDirty = true;
   }
 
   resetFormPristine() {
@@ -864,7 +919,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     //Nếu có chi tiết đang chỉnh sửa thì cập nhật
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      var rs = viewChild.updateLineInfo();
+      var rs = viewChild.updateLineInfo(false);
       if (!rs) return;
     }
 
@@ -1022,7 +1077,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     //Nếu có chi tiết đang chỉnh sửa thì cập nhật
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      var rs = viewChild.updateLineInfo();
+      var rs = viewChild.updateLineInfo(false);
       if (!rs) return;
     }
 

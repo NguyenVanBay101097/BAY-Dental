@@ -114,4 +114,12 @@ export class SaleOrderLineService {
     getSmsCareAfterOrderManual(val: any):Observable<PagedResult2<any>> {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetSmsCareAfterOrderManual', { params: new HttpParams({ fromObject: val }) });
     }
+
+    update(id,val) {
+        return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
+    }
+
+    remove(id) {
+        return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+    }
 }

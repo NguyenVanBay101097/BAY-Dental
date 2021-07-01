@@ -37,6 +37,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Output() onEditEvent = new EventEmitter<any>();
   @Output() onCancelEvent = new EventEmitter<any>();
   @Output() onActiveEvent = new EventEmitter<any>();
+  @Output() onUpdateLocalEvent = new EventEmitter<any>();
 
   isEditting: boolean = false;
   isItSeff = false;
@@ -317,7 +318,7 @@ export class SaleOrderLineCuComponent implements OnInit {
     });
   }
 
-  updateLineInfo() {
+  updateLineInfo(sendServer = true) {
     this.isUpdated = true;
     if (this.formGroupInfo.invalid) {
       this.formGroupInfo.markAllAsTouched();
@@ -341,11 +342,15 @@ export class SaleOrderLineCuComponent implements OnInit {
       toothType: val.toothType
     }
     this.viewTeeth(this.toothData);
-    this.onUpdateEvent.emit(val);
     this.isEditting = false;
 
     // this.isItSeff = this.isItSeff;
     // this.notify('success', 'Cập nhật thành công');
+    if(sendServer) {
+      this.onUpdateEvent.emit(val);
+    } else {
+      this.onUpdateLocalEvent.emit(val);
+    }
     return true;
   }
 

@@ -11,6 +11,7 @@ import {
   SaleCouponProgramService,
 } from "src/app/sale-coupon-promotion/sale-coupon-program.service";
 import { CheckPermissionService } from "src/app/shared/check-permission.service";
+import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { NotifyService } from "src/app/shared/services/notify.service";
 import { setTimeout } from "timers";
 import { SaleOrderDisplay } from "../sale-order-display";
@@ -141,7 +142,13 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
   }
 
   onDeletePromotion(item) {
-    this.btnDeletePromoSubject.next(item);
+    let modalRef = this.modelService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa khuyến mãi';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa khuyến mãi?';
+    modalRef.result.then(() => {
+      this.btnDeletePromoSubject.next(item);
+
+    });
   }
 
   onClose() {

@@ -1340,6 +1340,12 @@ namespace Infrastructure.Services
             await SaveOrderLines(val, order);
             await UpdateAsync(order); //update trước để generate id cho những sale order line
 
+            await ComputeToUpdateSaleOrder(order);
+            await UpdateAsync(order);
+        }
+
+        public async Task ComputeToUpdateSaleOrder(SaleOrder order)
+        {
             var saleLineObj = GetService<ISaleOrderLineService>();
             saleLineObj.UpdateOrderInfo(order.OrderLines, order);
             saleLineObj.ComputeAmount(order.OrderLines);
@@ -1360,8 +1366,6 @@ namespace Infrastructure.Services
 
             _AmountAll(order);
             _GetInvoiced(new List<SaleOrder>() { order });
-
-            await UpdateAsync(order);
 
         }
 
@@ -1521,6 +1525,7 @@ namespace Infrastructure.Services
                         saleLine.PriceUnit = line.PriceUnit;
                         saleLine.Sequence = sequence++;
                         saleLine.Order = order;
+                        saleLine.OrderId = order.Id;
                         saleLine.SaleOrderLineToothRels.Clear();
                         if (line.ToothType == "manual")
                         {

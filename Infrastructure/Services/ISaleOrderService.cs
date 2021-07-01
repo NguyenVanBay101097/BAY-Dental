@@ -86,5 +86,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<SaleOrderRevenueReport>> GetRevenueReport(SaleOrderRevenueReportPaged val);
 
         Task<GetRevenueSumTotalRes> GetRevenueSumTotal(GetRevenueSumTotalReq val);
+
+        Task ComputeToUpdateSaleOrder(SaleOrder order);
     }
 }
