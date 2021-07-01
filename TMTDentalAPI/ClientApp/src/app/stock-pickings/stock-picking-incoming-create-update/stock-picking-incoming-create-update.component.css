@@ -15,10 +15,20 @@
 .form-check{
     padding: 0;
 }
-.table_none_border td, .table_none_border th{
-    border-left: none !important;
-    border-top: none !important;
-    border-right: none !important;
+
+.table thead th{
+    border-bottom: none;
+}
+.table td, .table th{
+    border-top: none;
+}
+
+.o_form_section_right table tbody tr{
+    border-bottom: 1px solid #dee2e6;
+}
+
+.o_form_section_right table tbody tr:last-child{
+    border-bottom: none;
 }
 
 .group_product{
@@ -29,10 +39,6 @@
 .btn.btn_none_radius{
     border-bottom-left-radius:0 !important;
     border-bottom-right-radius:0 !important;
-}
-
-.o_form_view .o_form_sheet_bg .o_form_sheet{
-    padding: 0;
 }
 
 .o_form_view .o_group{
@@ -51,6 +57,22 @@
     background-color: #F2F2F2;
 }
 
-.o_form_view .o_form_sheet_bg .o_form_sheet{
-    max-width: 100%!important;
+.o_form_section .o_form_section_left {
+    -webkit-box-flex: 1;
+    flex: 0 0 300px;
+    padding-right: 0;
+  }
+
+  .o_form_section .o_form_section_right {
+    -webkit-box-flex: 1;
+    flex: 1 1 auto;
+    padding-right: 0;
+  }
+.t_tilte{
+    padding-left: 5px;
+    background-color: #F2F2F2;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    border: 1px solid #dee2e6;
 }
