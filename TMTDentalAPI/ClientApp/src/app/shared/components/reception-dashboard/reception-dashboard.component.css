@@ -10,7 +10,7 @@
 }
 
 .app-content {
-  display: flex;
+  display: -webkit-box;
   overflow: auto;
   padding: 20px 20px 0 20px;
 }
