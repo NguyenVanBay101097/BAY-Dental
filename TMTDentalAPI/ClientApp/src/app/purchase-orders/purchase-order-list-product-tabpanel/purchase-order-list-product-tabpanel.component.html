@@ -1,31 +1,25 @@
 <div class="d-flex flex-column h-100">
-    <div class="d-flex pb-1 pt-1">
-        <div class="form-check">
-            <input class="form-check-input" [hidden]="true" type="radio" name="radioButton" id="medicine"
-                value="medicine" checked (change)="onChangeType($event.target.value)">
-            <label class="form-check-label btn btn_none_radius btn-outline-primary" for="medicine">
-                Thuốc
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" [hidden]="true" type="radio" name="radioButton" id="product"
-                value="product" (change)="onChangeType($event.target.value)">
-            <label class="form-check-label btn btn_none_radius btn-outline-primary" for="product">
-                Vật tư
-            </label>
-        </div>
+    <div class="product-type-filter">
+        <input class="btn-check" type="radio" [(ngModel)]="type2" name="radioButton" id="product" value="product"
+            (change)="onChangeType($event.target.value)">
+        <label class="btn btn-sm btn-outline-primary" for="product">
+            Vật tư
+        </label>
+        <input class="btn-check" type="radio" [(ngModel)]="type2" name="radioButton" id="medicine" value="medicine" (change)="onChangeType($event.target.value)">
+        <label class="btn btn-sm btn-outline-primary" for="medicine">
+            Thuốc
+        </label>
     </div>
-    <div class="flex-0-0-auto has-search">
+    <div class="flex-0-0-auto has-search mb-1">
         <span class="fa fa-search form-control-feedback"></span>
         <input #search accesskey="Q" class="form-control size-text-14" placeholder="Tìm kiếm theo tên [Alt + Q]"
             type="text" id="search" (keyup)="onChangeSearch($event.target.value);">
     </div>
     <!-- Component Form Service List -->
     <div class="flex--1-1-100 overflow-auto _wrapper">
-        <table class="table table-sm table-list-product">        
+        <table class="table table-sm table-list-product">
             <tbody>
-                <tr class="cursor" (click)="onSelectValue(item)"
-                    *ngFor="let item of listProductFilter;let i = index">
+                <tr class="cursor" (click)="onSelectValue(item)" *ngFor="let item of listProductFilter;let i = index">
                     <td class="sticky-td">{{item.name}}</td>
                     <td *ngIf="!isStock" class="sticky-td text-right">{{item.purchasePrice | number}}</td>
                 </tr>
@@ -33,5 +27,3 @@
         </table>
     </div>
 </div>
-
-

@@ -151,7 +151,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-numerictextbox [min]="0" (valueChange)="onChange($event)" [format]="'n0'"
+                                        <kendo-numerictextbox [min]="0" (valueChange)="onChangeAmountPayment($event)" [format]="'n0'"
                                             [autoCorrect]="true" formControlName="amountPayment">
                                         </kendo-numerictextbox>
                                     </td>
@@ -189,8 +189,9 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <textarea class="form-control" rows="3" id="comment"
+                                        <textarea *ngIf="purchaseOrder?.state == 'draft'" class="form-control" rows="3" id="comment"
                                             formControlName="notes"></textarea>
+                                        <span *ngIf="purchaseOrder?.state == 'draft'">{{purchaseOrder?.note}}</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -214,13 +215,12 @@
                         <table class="table table-sm mb-0" id="table_details">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="text-center" width="80">STT</th>
-                                    <th scope="col" width="200">Tên hàng hóa</th>
-                                    <th scope="col" width="120">Số lượng</th>
-                                    <th scope="col" width="120">ĐVT</th>
-                                    <th scope="col" width="180">Đơn giá</th>
-                                    <th scope="col" width="120">CK(%)</th>
-                                    <th scope="col" class="text-right" width="180">Thành tiền</th>
+                                    <th scope="col" width="250">Tên hàng hóa</th>
+                                    <th scope="col" width="100">Số lượng</th>
+                                    <th scope="col" width="60">ĐVT</th>
+                                    <th scope="col" width="120">Đơn giá</th>
+                                    <th scope="col" width="60">CK(%)</th>
+                                    <th scope="col" class="text-right" width="120">Thành tiền</th>
                                     <th scope="col" width="50" class="text-center"
                                         *ngIf="purchaseOrder?.state == 'draft'">
                                         <i class="far fa-trash-alt"></i>
@@ -230,7 +230,6 @@
                             <tbody formArrayName="orderLines">
                                 <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                     <tr [formGroupName]="i">
-                                        <td class="text-center align-middle">{{ i + 1 }}</td>
                                         <td class="align-middle">{{ line.get('product').value?.name}}</td>
                                         <td class="align-middle">
                                             <kendo-numerictextbox [min]="0" [format]="'n0'"
@@ -316,7 +315,7 @@
                                          </label>
                                     </td> 
                                     <td colspan="1">
-                                        <span class="oe_subtotal_footer_separator text-danger o_form_field o_form_field_number o_field_widget">
+                                        <span class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">
                                             {{purchaseOrder?.amountResidual | number}}
                                         </span>
                                     </td>                                    

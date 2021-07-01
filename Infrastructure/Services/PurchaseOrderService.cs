@@ -498,7 +498,7 @@ namespace Infrastructure.Services
             var payments = new List<AccountPayment>();
             foreach (var order in self)
             {
-                if (!order.JournalId.HasValue || order.AmountPayment <= 0)
+                if (!order.JournalId.HasValue || (order.AmountPayment.HasValue && order.AmountPayment.Value <= 0))
                     continue;
 
                 var payment = new AccountPayment
@@ -507,10 +507,10 @@ namespace Infrastructure.Services
                     PartnerId = order.PartnerId,
                     Amount = (order.AmountPayment ?? 0),
                     PartnerType = "supplier",
-                    PaymentDate = DateTime.Now,
                     PaymentType = order.Type == "order" ? "outbound" : "inbound",
                     CompanyId = order.CompanyId
                 };
+
                 var line_ids = order.OrderLines.Select(x => x.Id).ToList();
                 var invoice_id = await amlObj.SearchQuery(x => x.PurchaseLineId.HasValue && line_ids.Contains(x.PurchaseLineId.Value)).Select(x => x.MoveId).Distinct().FirstOrDefaultAsync();
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = invoice_id });

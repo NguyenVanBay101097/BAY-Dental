@@ -19,8 +19,8 @@
 </div>
 
 <div class="o_content">
-    <div class="o_form_view h-100" [formGroup]="pickingForm">
-        <div class="o_form_sheet_bg h-100 d-flex flex-column">
+    <div class="o_form_view" [formGroup]="pickingForm">
+        <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
                     <button type="button" *ngIf="pickingState != 'done' && canCreateUpdate"
@@ -51,7 +51,7 @@
                     </button>
                 </div>
             </div>
-            <div class="o_form_sheet h-100 d-flex flex-column" style="width:95%">
+            <div class="o_form_sheet">
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
@@ -110,9 +110,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <h5 class="hidden-xs text-primary text-weight-bold" *ngIf="pickingName != '/'"><span
+                                    <strong class="hidden-xs text-primary text-weight-bold" *ngIf="pickingName != '/'"><span
                                             class="">{{pickingName}}</span>
-                                    </h5>
+                                    </strong>
                                 </td>
                             </tr>
                             <tr>
@@ -145,7 +145,7 @@
                         <tbody>
                             <tr>
                                 <td [class.d-none]="picking.state == 'done'">
-                                    <div class="mt-2 h-100">
+                                    <div class="h-100">
                                         <app-purchase-order-list-product-tabpanel [listProducts]="listProducts" (onSelectService)="selectProduct($event)" [isStock]="true">
                                         </app-purchase-order-list-product-tabpanel>
                                         <!-- <div class="d-flex pl-2">
@@ -185,16 +185,15 @@
 
                                 </td>
                                 <td>
-                                    <div class="pl-4 pr-4 overflow-auto h-100">
+                                    <div class="overflow-auto h-100">
                                         <table class="table table-sm table_none_border" id="table_details">
                                             <thead>
                                                 <tr>
-                                                    <th width="50" class="text-center">STT</th>
-                                                    <th width="150" class="text-center">Mã sản phẩm</th>
-                                                    <th width="180" class="text-center">Tên sản phẩm</th>
-                                                    <th width="150" class="text-center">Loại sản phẩm</th>
-                                                    <th width="100" class="text-center">Số lượng</th>
-                                                    <th width="80" hasGroups [groups]="'product.group_uom'" class="text-center">Đơn vị</th>
+                                                    <th width="120">Mã sản phẩm</th>
+                                                    <th width="250">Tên sản phẩm</th>
+                                                    <th width="120">Loại sản phẩm</th>
+                                                    <th width="100">Số lượng</th>
+                                                    <th width="80" hasGroups [groups]="'product.group_uom'">Đơn vị</th>
                                                     <th width="90"
                                                         *ngIf="['done', 'cancel'].indexOf(picking.state) === -1" class="text-center">
                                                         Thao tác</th>
@@ -203,20 +202,19 @@
                                             <tbody formArrayName="moveLines">
                                                 <ng-container *ngFor="let line of moveLines.controls; let i=index">
                                                     <tr [formGroupName]="i">
-                                                        <td class="align-middle text-center">{{ i + 1 }}</td>
-                                                        <td class="align-middle text-center">{{
+                                                        <td class="align-middle">{{
                                                             line.get('product').value.defaultCode}}
                                                         </td>
-                                                        <td class="align-middle text-center">{{ line.get('product').value.name}}
+                                                        <td class="align-middle">{{ line.get('product').value.name}}
                                                         </td>
-                                                        <td class="align-middle text-center">
+                                                        <td class="align-middle">
                                                             <span
                                                                 *ngIf="line.get('product').value.type2 == 'medicine'">Thuốc</span>
                                                             <span
                                                                 *ngIf="line.get('product').value.type2 == 'product'">Vật
                                                                 tư</span>
                                                         </td>
-                                                        <td class="align-middle text-center">
+                                                        <td class="align-middle">
                                                             <kendo-numerictextbox [min]="0" [format]="'n0'"
                                                                 *ngIf="['done', 'cancel'].indexOf(picking.state) === -1"
                                                                 formControlName="productUOMQty" style="width: 80px;"
@@ -226,7 +224,7 @@
                                                                 *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1">{{
                                                                 line.get('productUOMQty').value | number}}</span>
                                                         </td>
-                                                        <td class="align-middle text-center" hasGroups
+                                                        <td class="align-middle" hasGroups
                                                             [groups]="'product.group_uom'">
                                                             <a class="text-primary"
                                                                 *ngIf="['done', 'cancel'].indexOf(picking.state) === -1 && hasDefined"

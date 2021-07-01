@@ -1,5 +1,5 @@
 import { ProductSimple } from './../../products/product-simple';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
@@ -9,13 +9,13 @@ import { ProductPaged, ProductService } from 'src/app/products/product.service';
   templateUrl: './purchase-order-list-product-tabpanel.component.html',
   styleUrls: ['./purchase-order-list-product-tabpanel.component.css']
 })
-export class PurchaseOrderListProductTabpanelComponent implements OnInit {
-  @Input() listProducts: ProductSimple[];
+export class PurchaseOrderListProductTabpanelComponent implements OnInit, OnChanges {
+  @Input() listProducts: ProductSimple[]= [];
   @Input() isStock: boolean;
   model: any;
   searching = false;
   searchFailed = false;
-  type2: string = 'medicine';
+  type2: string = 'product';
   search: string;
   listProductFilter: ProductSimple[];
   searchUpdate = new Subject<string>();
@@ -25,6 +25,10 @@ export class PurchaseOrderListProductTabpanelComponent implements OnInit {
   constructor(
     private productService: ProductService
   ) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.loadData();
+  }
 
   ngOnInit() {
     this.loadData();
