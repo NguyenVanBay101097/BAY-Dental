@@ -19,7 +19,7 @@
 </div>
 
 <div class="o_content h-100 overflow-hidden">
-    <div class="o_form_view t_custom_form" [formGroup]="pickingForm">
+    <div class="o_form_view t_custom_form h-100 overflow-auto" [formGroup]="pickingForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
@@ -138,8 +138,6 @@
                         </table>
                     </div>
                 </div>
-
-
                 <div class="o_form_section">
                     <div class="o_form_section_left" *ngIf="picking?.state == 'draft'">
                         <p class="t_tilte">Danh sách hàng hóa</p>
