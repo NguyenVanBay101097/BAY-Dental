@@ -246,9 +246,17 @@ export class PartnerCustomerListComponent implements OnInit {
   deleteItem(item: any) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa khách hàng';
+    modalRef.componentInstance.body = 'Bạn có muốn xóa khách hàng không?';
 
     modalRef.result.then(() => {
-      this.partnerService.delete(item.Id).subscribe(() => {
+      this.partnerService.delete(item.id).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xóa khách hàng thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.refreshData();
       }, () => {
       });

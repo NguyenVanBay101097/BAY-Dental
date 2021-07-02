@@ -1471,7 +1471,8 @@ span.char-count {
     width: 400px;
 }
 
-.kendo-combobox-sm.k-combobox {
+.kendo-combobox-sm.k-combobox,
+.kendo-combobox-sm.k-multiselect {
     font-size: 0.875rem;
     line-height: 1.5;
 }
@@ -1480,9 +1481,14 @@ span.char-count {
     top: 0.25rem;
 }
 
-.kendo-combobox-sm.k-combobox .k-input {
+.kendo-combobox-sm.k-combobox .k-input,
+.kendo-combobox-sm.k-multiselect .k-input {
     padding: 0.25rem .5rem!important;
     height: auto;
+}
+
+.kendo-combobox-sm.k-multiselect .k-multiselect-wrap::before {
+    display: none;
 }
 
 .popover-d-contents {
@@ -1612,4 +1618,3 @@ span.char-count {
     z-index: 3;
     overflow-wrap: break-word;
 }
-
