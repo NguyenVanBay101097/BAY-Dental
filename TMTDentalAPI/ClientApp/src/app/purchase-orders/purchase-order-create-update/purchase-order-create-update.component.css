@@ -32,12 +32,6 @@ input[type="radio"]{
     flex: 0 0 auto;
 }
 
-.t_custom_form .o_form_sheet {
-    max-width: 85%;
-    margin-top: 15px;
-    margin-bottom: 0;
-}
-
 .t_scroll {
     flex: 1 1 100%;
     overflow-y: auto;
@@ -100,7 +94,7 @@ input[type="radio"]{
 
 .o_form_section .o_form_section_left {
     -webkit-box-flex: 1;
-    flex: 0 1 250px;
+    flex: 0 0 300px;
     padding-right: 0;
   }
 
@@ -206,42 +200,6 @@ input[type="radio"]{
 
 .o_form_view .o_group.o_inner_group.oe_subtotal_footer {
     border-top: none;
-}
-
-@media (min-width: 1300px) and (max-width: 1450px) {
-    .t_tilte{
-        padding-left: 3px;
-        font-size: 16px;
-        font-weight: 600;
-    }
-
-    #table_details th {
-        font-size: 14px;
-        font-weight: 600;
-    }
-
-    .t_custom_form .o_form_sheet {    
-        max-width: 1000px;
-        margin-top: 10px;  
-        margin-bottom: 0;
-    }
-
-    .o_form_view .o_group.o_inner_group.oe_subtotal_footer .oe_subtotal_footer_separator {
-        font-weight: 600;
-        font-size: 1em;
-    }
-
-    .o_form_view .o_group.o_inner_group>tbody>tr>td.o_td_label {
-        width: 0%;
-        padding: 0px 15px 0px 0px;
-        min-width: 130px;
-        font-size: 0.9em;
-    }
-
-    .o_form_view .o_group.o_inner_group>tbody>tr>td {
-        padding: 0 30px 7px 0;
-    }
-
 }
 
 .btnAction {

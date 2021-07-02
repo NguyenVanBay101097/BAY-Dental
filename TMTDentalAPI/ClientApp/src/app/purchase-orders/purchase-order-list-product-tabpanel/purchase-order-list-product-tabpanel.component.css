@@ -35,8 +35,6 @@
 }
 
 .table-list-product td {
-    padding: .55rem;
-    vertical-align: top;
     border-top: none !important;
 }
 
@@ -131,6 +129,10 @@ tbody>.cursor:hover {
         cursor: pointer;
     }
     
+}
+
+.product-type-filter .btn {
+    margin: .25rem .125rem;
 }
 
 

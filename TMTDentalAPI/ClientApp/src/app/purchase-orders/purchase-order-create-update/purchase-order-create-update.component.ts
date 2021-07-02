@@ -68,7 +68,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     private intlService: IntlService,
     private notificationService: NotificationService,
     private accountJournalService: AccountJournalService,
-    private notifyService : NotifyService,
+    private notifyService: NotifyService,
     private router: Router,
     private permissionService: PermissionService,
     private authService: AuthService,
@@ -197,7 +197,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         (err) => {
           console.log(err);
         }
-    );
+      );
   }
 
   loadFilteredJournals() {
@@ -220,7 +220,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   removeOrderLine(index) {
     this.orderLines.removeAt(index);
     this.countAmountTotal();
-    this.f.amountPayment.setValue(this.amountTotal);
   }
 
   removeAllLine() {
@@ -234,13 +233,11 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.orderLines.insert(index, copy);
   }
 
-  countAmountTotal(){
+  countAmountTotal() {
     this.amountTotal = this.orderLines.value.reduce((total, cur) => {
       return total + cur.priceUnit * (1 - cur.discount / 100) * cur.productQty;
     }, 0);
-    if(this.f.amountPayment.value > this.getAmountTotal){
-      this.f.amountPayment.setValue(this.getAmountTotal);
-    }
+    this.onChangeAmountTotal();
   }
 
   get getAmountTotal() {
@@ -269,35 +266,44 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     val.journalId = val.journal.id;
 
     var data = Object.assign(this.purchaseOrder, val);
-    if(this.id){
+    if (this.id) {
       this.purchaseOrderService.update(this.id, data)
-      .pipe(
-        mergeMap(() => {
-          return this.purchaseOrderService.buttonConfirm([this.id]);
-        })
-      )
-      .subscribe(() => {
-        this.notifyService.notify('success', 'Xác nhận thành công');
-        this.loadRecord();
-      });
-    }else{
+        .pipe(
+          mergeMap(() => {
+            return this.purchaseOrderService.buttonConfirm([this.id]);
+          })
+        )
+        .subscribe(() => {
+          this.notifyService.notify('success', 'Xác nhận thành công');
+          this.loadRecord();
+        });
+    } else {
       this.purchaseOrderService.create(data)
-      .pipe(
-        mergeMap((rs : any) => {
-          this.id = rs.id;
-          return this.purchaseOrderService.buttonConfirm([rs.id]);
-        })
-      )
-      .subscribe(rs => {
-        this.notifyService.notify('success', 'Xác nhận thành công');
-        this.router.navigate(['/purchase/orders/edit/' + this.id]);
-      });
+        .pipe(
+          mergeMap((rs: any) => {
+            this.id = rs.id;
+            return this.purchaseOrderService.buttonConfirm([rs.id]);
+          })
+        )
+        .subscribe(rs => {
+          this.notifyService.notify('success', 'Xác nhận thành công');
+          this.router.navigate(['/purchase/orders/edit/' + this.id]);
+        });
     }
   }
 
-  onChange(value){
-    if(value > this.amountTotal){
-      this.f.amountPayment.setValue(this.getAmountTotal);
+  onChangeAmountPayment(value) {
+    var amountTotal = this.getAmountTotal;
+    if (value > amountTotal) {
+      this.f.amountPayment.setValue(amountTotal);
+    }
+  }
+
+  onChangeAmountTotal() {
+    var amountPayment = this.f.amountPayment.value || 0;
+    var amountTotal = this.getAmountTotal;
+    if (amountPayment > amountTotal) {
+      this.f.amountPayment.setValue(amountTotal);
     }
   }
 
