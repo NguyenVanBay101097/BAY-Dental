@@ -747,29 +747,19 @@
                                 <kendo-chart-legend-item cursor="crosshair"></kendo-chart-legend-item>
                             </kendo-chart-legend> -->
                             <kendo-chart-series>
-                                <kendo-chart-series-item [autoFit]="true" type="pie" [data]="pieData" field="value"
-                                    categoryField="category" colorField="color">
+                                <kendo-chart-series-item type="pie" [data]="pieData" field="value"
+                                    categoryField="category" colorField="color" [minSize]="100">
                                 </kendo-chart-series-item>
                             </kendo-chart-series>
                         </kendo-chart>
                         <div class="d-flex justify-content-center">
-                            <table style="width:80%">
+                            <table style="width:90%">
                                 <tr *ngFor="let item of pieData">
-                                    <td><i class="fas fa-circle"[style.color]="item.color" >{{item.category}}</i></td>
-                                    <td>{{item.value | number}}</td>
+                                    <td><i class="fas fa-circle mr-2"[style.color]="item.color" ></i><span style="color: gray;">{{item.category}}</span></td>
+                                    <th>{{item.value | number}}</th>
                                 </tr>
                             </table>
                         </div>
-                        <!-- <ng-container *ngFor="let item of pieData">
-                            <div class="d-flex justify-content-around w-70">
-                                <div>
-                                    <i class="fas fa-circle"[style.color]="item.color" >{{item.category}}</i>
-                                </div>
-                                <div>
-                                    {{item.value | number}}
-                                </div>
-                            </div>
-                        </ng-container> -->
                         
                     </div>
                 </div>
