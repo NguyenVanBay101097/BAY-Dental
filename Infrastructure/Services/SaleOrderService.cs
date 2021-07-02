@@ -1276,6 +1276,7 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderPartner).ToListAsync();
 
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
+            display.AmountDiscountTotal = Math.Round(lines.Sum(z => (decimal)z.AmountDiscountTotal * z.ProductUOMQty));
 
             var promotionObj = GetService<ISaleOrderPromotionService>();
             display.Promotions = await promotionObj.SearchQuery(x => x.SaleOrderId.HasValue && x.SaleOrderId == display.Id && !x.SaleOrderLineId.HasValue).Select(x => new SaleOrderPromotionBasic
