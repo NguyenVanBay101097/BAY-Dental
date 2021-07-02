@@ -45,9 +45,9 @@ export class ReceptionDashboardComponent implements OnInit {
   ]
 
   public pieData: any[] = [
-    { category: "Tiền mặt", value:  30.000},
-    { category: "Ngân hàng", value: 20.000 },
-    { category: "Khác", value: 10.000 },
+    { category: "Tiền mặt", value:  30000, color:"#0066cc"},
+    { category: "Ngân hàng", value: 20000, color:"#99ccff" },
+    { category: "Khác", value: 10000, color: "#b3b3b3" },
    
   ];
 
