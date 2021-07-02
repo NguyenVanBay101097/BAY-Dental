@@ -145,7 +145,7 @@ namespace Infrastructure.Services
                     advisory.AdvisoryToothDiagnosisRels.Add(new AdvisoryToothDiagnosisRel() { ToothDiagnosisId = toothDiagnosisId });
                 }
             }
-            // Thêm dịch vụ tư vấn
+            // Thêm dịch vụ tiểu sử răng
             if (val.ProductIds.Any())
             {
                 foreach (var productId in val.ProductIds)
@@ -190,9 +190,9 @@ namespace Infrastructure.Services
                 }
             }
 
-            // Xóa dịch vụ tư vấn
+            // Xóa dịch vụ tiểu sử răng
             advisory.AdvisoryProductRels.Clear();
-            // Thêm dịch vụ tư vấn
+            // Thêm dịch vụ tiểu sử răng
             if (val.ProductIds.Any())
             {
                 foreach (var productId in val.ProductIds)
@@ -212,7 +212,7 @@ namespace Infrastructure.Services
             var quotationLines = await quotationLineService.SearchQuery(x => x.AdvisoryId == id).ToListAsync();
             if (saleOrderLines.Count() > 0 || quotationLines.Count() > 0)
             {
-                throw new Exception("Bạn không thể xóa tư vấn đã tạo phiếu điều trị hoặc báo giá");
+                throw new Exception("Bạn không thể xóa tiểu sử răng đã tạo phiếu điều trị hoặc báo giá");
             }
             var advisory = await SearchQuery(x => x.Id == id)
                 .Include(x => x.AdvisoryToothRels)
