@@ -86,6 +86,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? HasTotalDebit { get; set; }
         public Guid? MemberLevelId { get; set; }
         public string OrderState { get; set; }
+        public Boolean? ShowInfo { get; set; }
 
     }
 }

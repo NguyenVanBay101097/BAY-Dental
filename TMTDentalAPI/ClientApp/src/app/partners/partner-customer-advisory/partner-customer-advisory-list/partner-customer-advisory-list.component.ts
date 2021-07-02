@@ -81,7 +81,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
 
   createAdvisory() {
     const modalRef = this.modalService.open(PartnerCustomerAdvisoryCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm thông tin tư vấn';
+    modalRef.componentInstance.title = 'Thêm thông tin tiểu sử răng';
     modalRef.componentInstance.customerId = this.customerId;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -91,7 +91,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   createQuotations() {
     if (!this.mySelection || this.mySelection.length == 0) 
     {
-      this.notify('error', 'Bạn chưa chọn thông tin tư vấn');
+      this.notify('error', 'Bạn chưa chọn thông tin tiểu sử răng');
       return;
     }
     var val = new CreateFromAdvisoryInput();
@@ -111,7 +111,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   createSaleOrder() {
     if (!this.mySelection || this.mySelection.length == 0) 
     {
-      this.notify('error', 'Bạn chưa chọn thông tin tư vấn');
+      this.notify('error', 'Bạn chưa chọn thông tin tiểu sử răng');
       return;
     }
     var val = new CreateFromAdvisoryInput();
@@ -274,7 +274,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
 
   editItem(data){
     const modalRef = this.modalService.open(PartnerCustomerAdvisoryCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa thông tin tư vấn';
+    modalRef.componentInstance.title = 'Sửa thông tin tiểu sử răng';
     modalRef.componentInstance.customerId = this.customerId;
     modalRef.componentInstance.id = data.id;
     modalRef.result.then(() => {
@@ -288,7 +288,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
       keyboard: false,
       backdrop: "static",
     });
-    modalRef.componentInstance.body = "Bạn có chắc chắn xóa tư vấn?";
+    modalRef.componentInstance.body = "Bạn có chắc chắn xóa tiểu sử răng?";
     modalRef.result.then(() => {
       this.advisoryService.remove(data.id).subscribe(() => {
         this.notificationService.show({
@@ -319,7 +319,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     if(!this.customerId) return;
     if (!this.mySelection || this.mySelection.length == 0) 
     {
-      this.notify('error', 'Bạn chưa chọn thông tin tư vấn');
+      this.notify('error', 'Bạn chưa chọn thông tin tiểu sử răng');
       return;
     }
     this.advisoryService.getPrint(this.mySelection).subscribe((res: any) => {
