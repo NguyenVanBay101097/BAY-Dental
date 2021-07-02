@@ -127,7 +127,8 @@ export class AdvisoryService {
   }
 
   getPrint(ids) {
-    return this.http.get(this.baseApi + this.apiUrl + "/GetPrint", { params: new HttpParams({ fromObject: { ids: ids } }) });
+    var p = ids.map(x => 'ids=' + x).join('&');
+    return this.http.get(this.baseApi + "Advisory/Print?" + p, { responseType: 'text' });
   }
 
   getToothAdvise(val?: AdvisoryToothAdvise) {

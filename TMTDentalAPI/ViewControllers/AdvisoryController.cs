@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Constants;
 using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.ViewControllers
@@ -14,14 +16,15 @@ namespace TMTDentalAPI.ViewControllers
     {
         private readonly IAdvisoryService _advisoryService;
         private readonly IPartnerService _partnerService;
-        private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public AdvisoryController(IAdvisoryService advisoryService, IPartnerService partnerService, IMapper mapper, IUserService userService)
+        public AdvisoryController(IAdvisoryService advisoryService, IPartnerService partnerService, IMapper mapper)
         {
             _partnerService = partnerService;
             _advisoryService = advisoryService;
             _mapper = mapper;
         }
+
+        [PrinterNameFilterAttribute(Name = AppConstants.AdvisoryPaperCode)]
         public async Task<IActionResult> Print(IEnumerable<Guid> ids)
         {
             var res = await _advisoryService.Print(ids);

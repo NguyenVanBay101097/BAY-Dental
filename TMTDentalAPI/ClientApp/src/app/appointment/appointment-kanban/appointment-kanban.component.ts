@@ -45,7 +45,7 @@ export class AppointmentKanbanComponent implements OnInit {
 
   // permission
   canAppointmentCreate = this.checkPermissionService.check(["Basic.Appointment.Create"]);
-  canAppointmentEdit = this.checkPermissionService.check(["Basic.Appointment.Edit"]);
+  canAppointmentEdit = this.checkPermissionService.check(["Basic.Appointment.Update"]);
   canAppointmentDelete = this.checkPermissionService.check(["Basic.Appointment.Delete"]);
   canEmployeeRead = this.checkPermissionService.check(["Catalog.Employee.Read"]);
   canCustomerLink = this.checkPermissionService.check(["Basic.Partner.Read"]);

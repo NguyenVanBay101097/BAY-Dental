@@ -323,7 +323,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
       return;
     }
     this.advisoryService.getPrint(this.mySelection).subscribe((res: any) => {
-      this.printService.printHtml(res.html);
+      this.printService.printHtml(res);
     });
   }
 
