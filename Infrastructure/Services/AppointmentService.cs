@@ -401,6 +401,8 @@ namespace Infrastructure.Services
             await UpdateAsync(appointment);
         }
 
+        
+
         public async Task ComputeAppointmentService(Appointment app, AppointmentDisplay appD)
         {
             var listAdd = new List<ProductAppointmentRel>();

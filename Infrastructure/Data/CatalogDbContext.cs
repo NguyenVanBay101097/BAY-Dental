@@ -303,6 +303,12 @@ namespace Infrastructure.Data
 
         public DbSet<Agent> Agents { get; set; }
 
+        /// <summary>
+        /// tiep nhan khach hang
+        /// </summary>
+        public DbSet<CustomerReceipt> CustomerReceipts { get; set; }
+        public DbSet<CustomerReceiptProductRel> CustomerReceiptProductRels { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -547,6 +553,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountTypeRelConfiguration());
             builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountRelConfiguration());
             builder.ApplyConfiguration(new AgentConfiguration());
+            builder.ApplyConfiguration(new CustomerReceiptConfiguration());
+            builder.ApplyConfiguration(new CustomerReceiptProductRelConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

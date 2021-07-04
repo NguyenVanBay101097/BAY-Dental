@@ -5,29 +5,29 @@ using System.Text;
 namespace ApplicationCore.Entities
 {
     /// <summary>
-    /// Quản lý cuộc hẹn
+    /// Tiếp nhận khách hàng
     /// </summary>
-    public class Appointment : BaseEntity
+    public class CustomerReceipt : BaseEntity
     {
-        /// <summary>
-        /// Mã phiếu hẹn
-        /// </summary>
-        public string Name { get; set; }
+        public CustomerReceipt()
+        {
+            State = "waitting";
+        }
 
         /// <summary>
-        /// Ngày hẹn
+        /// thời gian chờ khám
         /// </summary>
-        public DateTime Date { get; set; }
+        public DateTime? DateWaitting { get; set; }
 
         /// <summary>
-        /// thời gian hẹn
+        /// thời gian đang khám
         /// </summary>
-        public string Time { get; set; }
+        public DateTime? DateExamination { get; set; }
 
-        public DateTime? DateTimeAppointment { get; set; }
-
-        //ko cần cột này
-        public DateTime? DateAppointmentReminder { get; set; }
+        /// <summary>
+        /// thời gian hoàn thành
+        /// </summary>
+        public DateTime? DateDone { get; set; }
 
         /// <summary>
         /// Thời gian dự kiến
@@ -37,7 +37,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Danh sách dịch vụ
         /// </summary>
-        public ICollection<ProductAppointmentRel> AppointmentServices { get; set; } = new List<ProductAppointmentRel>();
+        public ICollection<CustomerReceiptProductRel> CustomerReceiptProductRels { get; set; } = new List<CustomerReceiptProductRel>();
 
         /// <summary>
         /// Ghi chú, nội dung
@@ -45,7 +45,7 @@ namespace ApplicationCore.Entities
         public string Note { get; set; }
 
         /// <summary>
-        /// Người hẹn
+        /// Người tiếp nhận khách hàng
         /// </summary>
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
@@ -57,31 +57,31 @@ namespace ApplicationCore.Entities
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
 
-        public Guid? DotKhamId { get; set; }
-        public DotKham DotKham { get; set; }
-
         public Guid? DoctorId { get; set; }
         public Employee Doctor { get; set; }
 
 
         /// <summary>
-        /// confirmed : đang hẹn
-        /// arrived : đã đến
-        /// cancel : hủy hẹn
+        /// waitting : chờ khám
+        /// examination : đang khám 
+        /// done : hoàn thành
         /// </summary>
         public string State { get; set; }
 
+        /// <summary>
+        /// lý do không điều trị
+        /// </summary>
         public string Reason { get; set; }
-
-        public ICollection<AppointmentMailMessageRel> AppointmentMailMessageRels { get; set; } = new List<AppointmentMailMessageRel>();
-
-        public Guid? SaleOrderId { get; set; }
-        public SaleOrder SaleOrder { get; set; }
 
         /// <summary>
         /// Khách hàng tái khám
         /// </summary>
         public bool IsRepeatCustomer { get; set; }
 
+
+        /// <summary>
+        /// không điều trị
+        /// </summary>
+        public bool IsNoTreatment { get; set; }
     }
 }
