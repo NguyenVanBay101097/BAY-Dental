@@ -206,5 +206,10 @@ input[type="radio"]{
     width: 100px;
 }
 
+.o_form_sheet{
+    height: 650px;
+    overflow-y: scroll;
+}
+
 
 

@@ -212,77 +212,79 @@
 
                     <div class="o_form_section_right">
                         <p class="t_tilte">Danh sách {{this.purchaseOrder?.type == 'order' ? 'mua hàng' : 'trả hàng'}} </p>
-                        <table class="table table-sm mb-0" id="table_details">
-                            <thead>
-                                <tr>
-                                    <th scope="col" width="250">Tên hàng hóa</th>
-                                    <th scope="col" width="100">Số lượng</th>
-                                    <th scope="col" width="60">ĐVT</th>
-                                    <th scope="col" width="120">Đơn giá</th>
-                                    <th scope="col" width="60">CK(%)</th>
-                                    <th scope="col" class="text-right" width="120">Thành tiền</th>
-                                    <th scope="col" width="50" class="text-center"
-                                        *ngIf="purchaseOrder?.state == 'draft'">
-                                        <i class="far fa-trash-alt"></i>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody formArrayName="orderLines">
-                                <ng-container *ngFor="let line of orderLines.controls; let i=index">
-                                    <tr [formGroupName]="i">
-                                        <td class="align-middle">{{ line.get('product').value?.name}}</td>
-                                        <td class="align-middle">
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                *ngIf="purchaseOrder?.state == 'draft'" formControlName="productQty"
-                                                style="width: 80px;" [spinners]="false" (valueChange)="countAmountTotal()">
-                                            </kendo-numerictextbox>
-                                            <span *ngIf="purchaseOrder?.state != 'draft'">
-                                                {{line.get('productQty').value | number}}
-                                            </span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <a title="Click vào để thay đổi đơn vị" class="text-primary" *ngIf="purchaseOrder.state == 'draft' && hasDefined"
-                                                (click)="changeUoM(line)">{{line.get('productUOM').value?.name}}</a>
-                                            <span *ngIf="purchaseOrder?.state != 'draft' || (!hasDefined && purchaseOrder.state == 'draft')">
-                                                {{line.get('productUOM').value?.name}}
-                                            </span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                (valueChange)="changePrice($event,line)"
-                                                *ngIf="purchaseOrder?.state == 'draft'" formControlName="priceUnit"
-                                                style="width: 120px;" [spinners]="false">
-                                            </kendo-numerictextbox>
-                                            <span *ngIf="purchaseOrder?.state != 'draft'">
-                                                {{line.get('priceUnit').value | number}}
-                                            </span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <kendo-numerictextbox [min]="0" *ngIf="purchaseOrder?.state == 'draft'"
-                                                [format]="'n0'" formControlName="discount" style="width: 60px;"
-                                                [spinners]="false" (valueChange)="countAmountTotal()">
-                                            </kendo-numerictextbox>
-                                            <span *ngIf="purchaseOrder?.state != 'draft'">
-                                                {{line.get('discount').value | number}}
-                                            </span>
-                                        </td>
-                                        <td class="align-middle text-right">
-                                            {{computeLinePriceSubtotal(line) | number}}
-                                        </td>
-                                        <td class="text-center align-middle btnAction" *ngIf="purchaseOrder?.state == 'draft'">
-                                            <button type="button" class="btn btn-xs btn-info mr-2" title="Tạo bản sao"
-                                                (click)="duplicateLine(i, line)">
-                                                <i class="far fa-copy"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-xs btn-danger " title="Xóa"
-                                                (click)="removeOrderLine(i)">
-                                                <i class="far fa-trash-alt"></i>
-                                            </button>
-                                        </td>
+                        <div class="table-scroll">
+                            <table class="table table-sm mb-0" id="table_details">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" width="250">Tên hàng hóa</th>
+                                        <th scope="col" width="100">Số lượng</th>
+                                        <th scope="col" width="60">ĐVT</th>
+                                        <th scope="col" width="120">Đơn giá</th>
+                                        <th scope="col" width="60">CK(%)</th>
+                                        <th scope="col" class="text-right" width="120">Thành tiền</th>
+                                        <th scope="col" width="50" class="text-center"
+                                            *ngIf="purchaseOrder?.state == 'draft'">
+                                            <i class="far fa-trash-alt"></i>
+                                        </th>
                                     </tr>
-                                </ng-container>                                                         
-                            </tbody>
-                        </table>                      
+                                </thead>
+                                <tbody formArrayName="orderLines">
+                                    <ng-container *ngFor="let line of orderLines.controls; let i=index">
+                                        <tr [formGroupName]="i">
+                                            <td class="align-middle">{{ line.get('product').value?.name}}</td>
+                                            <td class="align-middle">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                    *ngIf="purchaseOrder?.state == 'draft'" formControlName="productQty"
+                                                    style="width: 80px;" [spinners]="false" (valueChange)="countAmountTotal()">
+                                                </kendo-numerictextbox>
+                                                <span *ngIf="purchaseOrder?.state != 'draft'">
+                                                    {{line.get('productQty').value | number}}
+                                                </span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <a title="Click vào để thay đổi đơn vị" class="text-primary" *ngIf="purchaseOrder.state == 'draft' && hasDefined"
+                                                    (click)="changeUoM(line)">{{line.get('productUOM').value?.name}}</a>
+                                                <span *ngIf="purchaseOrder?.state != 'draft' || (!hasDefined && purchaseOrder.state == 'draft')">
+                                                    {{line.get('productUOM').value?.name}}
+                                                </span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                    (valueChange)="changePrice($event,line)"
+                                                    *ngIf="purchaseOrder?.state == 'draft'" formControlName="priceUnit"
+                                                    style="width: 120px;" [spinners]="false">
+                                                </kendo-numerictextbox>
+                                                <span *ngIf="purchaseOrder?.state != 'draft'">
+                                                    {{line.get('priceUnit').value | number}}
+                                                </span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <kendo-numerictextbox [min]="0" *ngIf="purchaseOrder?.state == 'draft'"
+                                                    [format]="'n0'" formControlName="discount" style="width: 60px;"
+                                                    [spinners]="false" (valueChange)="countAmountTotal()">
+                                                </kendo-numerictextbox>
+                                                <span *ngIf="purchaseOrder?.state != 'draft'">
+                                                    {{line.get('discount').value | number}}
+                                                </span>
+                                            </td>
+                                            <td class="align-middle text-right">
+                                                {{computeLinePriceSubtotal(line) | number}}
+                                            </td>
+                                            <td class="text-center align-middle btnAction" *ngIf="purchaseOrder?.state == 'draft'">
+                                                <button type="button" class="btn btn-xs btn-info mr-2" title="Tạo bản sao"
+                                                    (click)="duplicateLine(i, line)">
+                                                    <i class="far fa-copy"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-xs btn-danger " title="Xóa"
+                                                    (click)="removeOrderLine(i)">
+                                                    <i class="far fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>                                                         
+                                </tbody>
+                            </table>   
+                        </div>                   
                         <table class="o_group o_inner_group oe_subtotal_footer oe_right pr-0 o_group_col_4">
                             <tbody>
                                 <tr>
