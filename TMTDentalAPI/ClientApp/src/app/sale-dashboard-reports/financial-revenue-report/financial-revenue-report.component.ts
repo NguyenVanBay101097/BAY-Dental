@@ -20,8 +20,8 @@ export class FinancialRevenueReportComponent implements OnInit {
 
   ngOnInit() {
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-    this.filter.dateFrom = new Date(y, m, 1);
-    this.filter.dateTo = new Date(y, m + 1, 0);
+    this.filter.dateFrom = new Date();
+    this.filter.dateTo = new Date();
 
     this.loadReport();
 
