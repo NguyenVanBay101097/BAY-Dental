@@ -121,7 +121,7 @@ namespace Infrastructure.Services
                                                     new AccountFinancialRevenueReportAccountAccountRel()
                                                 {
                                                     AccountCode = "331",
-                                                    Column = 2,
+                                                    Column = 1,
                                                      JournalTypes = "cash,bank"
                                                 } }
                          },

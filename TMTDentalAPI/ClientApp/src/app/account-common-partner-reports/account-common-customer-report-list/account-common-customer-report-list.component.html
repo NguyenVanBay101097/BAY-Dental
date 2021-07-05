@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời hẹn" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="searchChangeDate($event)">
+            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
             <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
             </kendo-combobox>
@@ -50,6 +50,9 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="partnerName" [title]="resultSelection === 'supplier'?'Nhà cung cấp':'Khách hàng'">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a routerLink="/partners/supplier/{{dataItem.partnerId}}" class="text-primary">{{dataItem.partnerName}}</a>
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="partnerRef" [title]="resultSelection === 'supplier'? 'Mã NCC':'Mã KH'">
         </kendo-grid-column>

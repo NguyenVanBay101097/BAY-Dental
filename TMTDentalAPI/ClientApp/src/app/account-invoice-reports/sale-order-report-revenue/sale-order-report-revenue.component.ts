@@ -184,7 +184,7 @@ export class SaleOrderReportRevenueComponent implements OnInit {
 
     new Workbook(workbook).toDataURL().then((dataUrl: string) => {
       // https://www.telerik.com/kendo-angular-ui/components/filesaver/
-      saveAs(dataUrl, 'baocaodukienthu.xlsx');
+      saveAs(dataUrl, 'Dự kiến doanh thu.xlsx');
       this.loading = false;
     });
 
