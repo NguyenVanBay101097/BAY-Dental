@@ -60,7 +60,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
       template: null,
       smsAccount: [null, Validators.required],
       active: false,
-      typeTimeBeforSend: 'hour',
+      typeTimeBeforSend: 'day',
       timeBeforSend: [1, Validators.required],
       templateName: '',
       body: ['', Validators.required]
@@ -141,7 +141,10 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     this.searchAccount().subscribe(
       (result: any) => {
         if (result && result.items) {
-          this.filteredSmsAccount = result.items
+          this.filteredSmsAccount = result.items;
+          if (result.items[0]) {
+            this.formGroup.get('smsAccount').patchValue(result.items[0]);
+          }
         }
       }
     )

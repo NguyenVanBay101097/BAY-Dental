@@ -1,5 +1,5 @@
 <header class="modal-header">
-    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <h5 class="modal-title font-weight-700" style="font-size: 1.5rem;">{{title}}</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onCancel()"
         tabindex="-1">×</button>
 </header>
@@ -34,7 +34,7 @@
                                         <tr *ngIf="campaign">
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label o_form_label_help mt-2">
-                                                    Tên chiến dịch
+                                                    Chọn chiến dịch
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
@@ -128,7 +128,7 @@
                                                 </div>
                                             </td>
                                             <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                                <input type="text" class="form-control mt-2"
+                                                <input type="text" class="form-control mt-2" placeholder="Tiêu đề tin nhắn mẫu"
                                                     formControlName="templateName"
                                                     [class.border-danger]="submitted && f.templateName.value==''"
                                                     style="height:36px;">
