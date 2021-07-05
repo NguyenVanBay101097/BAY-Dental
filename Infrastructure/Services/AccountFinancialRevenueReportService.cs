@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -222,6 +223,8 @@ namespace Infrastructure.Services
 
         public async Task<FinancialRevenueReportItem> getRevenueReport(RevenueReportPar val)
         {
+            val.DateFrom = val.DateFrom.HasValue? val.DateFrom.Value.AbsoluteBeginOfDate() : (DateTime?)null;
+            val.DateTo = val.DateTo.HasValue? val.DateTo.Value.AbsoluteEndOfDate() : (DateTime?)null;
             //lấy ra đối tượng revenue record
             var report = await GetRevenueRecord();
             // biến thành list revenue  include accounttype and acocunt account and childs
