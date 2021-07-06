@@ -97,5 +97,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ToothSimple> Teeth { get; set; } = new List<ToothSimple>();
         public string EmployeeName { get; set; }
         public string Diagnostic { get; set; }
+        public string OrderId { get; set; }
     }
 }

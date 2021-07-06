@@ -13,14 +13,22 @@
       <div class="wrapper_treatment">
         <ul class="sessions_treatment">
           <li *ngFor="let treatment of listTreatments | keyvalue: reverseKeyTreatment">
-            <div class="time t_sub_title"> {{formatDate(treatment.key)==today ? 'Hôm nay' : formatDate(treatment.key)}}</div>
+            <div class="time t_sub_title"> {{formatDate(treatment.key)==today ? 'Hôm nay' : formatDate(treatment.key)}}
+            </div>
             <div *ngFor="let item of treatment.value">
               <div class="card_border">
                 <div class="card_treatment">
-                  <p class="font-weight-bold">{{item?.name}}</p>
-                  <p>Răng: {{viewTeeth(item.teeth)}} </p>
-                  <p>Bác sĩ: {{item?.employeeName}}</p>
-                  <p>Chuẩn đoán: {{item?.diagnostic}}</p>
+                  <p class="d-flex justify-content-between">
+                    <span class="font-weight-600">
+                      {{item?.name}}
+                    </span>
+                    <span style="min-width: 60px;">
+                      <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: item?.orderId}">Chi tiết</a>
+                    </span>
+                  </p>
+                  <p class="opacity-8">Răng: {{viewTeeth(item.teeth)}} </p>
+                  <p class="opacity-8">Bác sĩ: {{item?.employeeName}}</p>
+                  <p class="opacity-8">Chuẩn đoán: {{item?.diagnostic}}</p>
                 </div>
               </div>
             </div>

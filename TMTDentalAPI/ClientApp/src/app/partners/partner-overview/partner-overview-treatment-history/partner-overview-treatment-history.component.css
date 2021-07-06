@@ -11,6 +11,10 @@ li {
   padding: 0;
 }
 
+a{
+  text-decoration: none;
+}
+
 p {
   margin: 0.3rem;
 }
@@ -44,8 +48,6 @@ li {
 }
 
 .time {
-  color: #2a2839;
-  font-family: "Poppins", sans-serif;
   font-weight: 500;
   margin-left: -22px;
   padding: 0 10px 10px 20px;
@@ -94,7 +96,10 @@ ul li div:last-child .card_border:last-child {
 
 
 .t_sub_title {
-  color: #6c757d!important;
   margin-bottom: 5px;
   font-weight: 600;
+}
+
+.opacity-8{
+  opacity: 0.8;
 }

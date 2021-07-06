@@ -9,7 +9,7 @@
                     <i class="fas fa-plus text-primary"></i>
                 </a>
                 <a *ngIf="customerAppointment" (click)="editAppointment()" title="Sửa" class="px-2">
-                    <i class="fas fa-edit text-success"></i>
+                    <i class="fas fa-pencil-alt text-primary"></i>
                 </a>
                 <!-- <a *ngIf="customerAppointment" (click)="removeAppointment()" title="Xóa" class="px-2">
                     <i class="far fa-trash-alt text-danger"></i>
@@ -30,19 +30,19 @@
                     {{customerAppointment.name}}
                 </div>
             </div>
-            <div class="row">
+            <div class="row opacity-8">
                 <label>Bác sĩ:&nbsp;</label>
                 <div>
                     {{customerAppointment.doctorName}}
                 </div>
             </div>
-            <div class="row">
+            <div class="row opacity-8">
                 <label>Nội dung:&nbsp;</label>
                 <div>
                     {{customerAppointment.note}}
                 </div>
             </div>
-            <div class="row">
+            <div class="row opacity-8">
                 <label>Ngày hẹn:&nbsp;</label>
                 <div>
                     {{customerAppointment.time}} {{customerAppointment.date | date:'EEEE, dd/MM/yyyy'}}
@@ -50,7 +50,7 @@
             </div>
             
         </div>
-        <div *ngIf="!customerAppointment" class="text-center">
+        <div *ngIf="!customerAppointment" class="text-center opacity-8">
             <span>Chưa có lịch hẹn nào.</span>
         </div>
     </div>
