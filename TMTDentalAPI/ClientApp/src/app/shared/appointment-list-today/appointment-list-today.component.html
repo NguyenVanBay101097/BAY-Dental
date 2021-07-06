@@ -1,9 +1,5 @@
-<div class="header-title pb-3">THEO DÕI KHÁCH HÀNG TẠI PHÒNG KHÁM</div>
+<!-- <div class="header-title pb-3">THEO DÕI KHÁCH HÀNG TẠI PHÒNG KHÁM</div>
 <div class="state-filter-wrapper">
-    <!-- <button type="button" class="btn active" (click)="setStateFilter('')" [class.btn-primary]="!stateFilter"
-        [class.btn-light]="stateFilter">
-        Tổng hẹn <span class="badge badge-light bg-white">{{total || 0}}</span>
-    </button> -->
     <button type="button" *ngFor="let state of states" class="btn active" (click)="setStateFilter(state.value)"
         [class.btn-primary]="stateFilter == state.value" [class.btn-light]="stateFilter != state.value">
         {{state.text}} <span class="badge badge-light bg-white">{{stateCount[state.value] || 0}}</span>
@@ -12,8 +8,6 @@
 <div>
     <kendo-grid [height]="300" [resizable]="true" [data]="gridData" [loading]="loading" [sortable]="true"
         (pageChange)="pageChange($event)">
-        <!-- <ng-template kendoGridToolbarTemplate>          
-        </ng-template> -->
         <kendo-grid-column title="Khách hàng" width="120">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <div>
@@ -52,9 +46,6 @@
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái" width="80">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <!-- <app-popover-state-appointment [item]="dataItem" class="ml-3"
-                            (stateFormGroup)="onChangeState(dataItem.id,$event)">
-                        </app-popover-state-appointment> -->
                 <div class="d-flex justify-content-between">
                     <div>
                         <span class="align-items-">
@@ -68,14 +59,173 @@
 
             </ng-template>
         </kendo-grid-column>
-        <!-- <kendo-grid-column field="id" width="50">
-            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                Thao tác
-            </ng-template>
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            
-                   
-            </ng-template>
-        </kendo-grid-column> -->
     </kendo-grid>
+</div> -->
+
+<div class="appointments-today">
+    <div class="appointments-today-header ">
+        <div class="d-flex justify-content-between mb-2">
+            <div>
+                <h6 class="text-primary">LỊCH HẸN HÔM NAY</h6>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-sm"><i class="fas fa-plus-circle mr-1"></i>Thêm lịch
+                    hẹn</button>
+            </div>
+        </div>
+        <div class="has-search">
+            <span class="fa fa-search form-control-feedback"></span>
+            <input #searchInput accesskey="C" class="form-control header-search size-text-12"
+                placeholder="Tìm kiếm theo bác sĩ, họ tên, sđt " type="text" [(ngModel)]="search"
+                (ngModelChange)="this.searchUpdate.next($event)" (keyup)="onKeyUp($event);">
+
+        </div>
+        <div class="appointments-today-filter-state">
+            <button type="button" *ngFor="let state of appointmentstates" class="btn active"
+                (click)="setStateFilter(state.value)" [class.btn-primary]="stateFilter == state.value"
+                [class.btn-light]="stateFilter != state.value">
+                {{state.text}} <span class="ml-1">0</span>
+            </button>
+        </div>
+    </div>
+    <div class="appointment-today-items">
+        <div class="appointment-today-box">
+            <div class="box-content appointment-today-box_examination">
+                <div class="box-header">
+                    <div class="appointment-state">
+                        <span class="text-primary">Đang hẹn</span>
+                    </div>
+                    <div class="appointment-manipulation text-center">
+                        <i class="fas fa-pen text-primary icon-more"></i>
+                        <i class="fas fa-sign-in-alt text-primary icon-more"></i>
+                    </div>
+                </div>
+                <ul class="info_nav">
+                    <li>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <i class="fas fa-user"></i>
+                                <a [routerLink]="">Nguyễn Tuấn Anh</a>
+                            </div>
+                            <div class="timer">
+                                <span>7:00</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <span>0758425612</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-user"></i>
+                        <span>Nguyễn Tuấn Anh</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="appointment-today-box ">
+            <div class="box-content appointment-today-box_arrived">
+                <div class="box-header">
+                    <div class="appointment-state">
+                        <span class="text-success">Đã đến</span>
+                    </div>
+                    <div class="appointment-manipulation text-center">
+                        <i class="fas fa-pen text-primary project-btn-more"></i>
+                        <i class="fas fa-sign-in-alt text-primary project-btn-more"></i>
+                    </div>
+                </div>
+                <ul class="info_nav">
+                    <li>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <i class="fas fa-user"></i>
+                                <a [routerLink]="">Nguyễn Tuấn Anh</a>
+                            </div>
+                            <div class="timer">
+                                <span>7:00</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <span>0758425612</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-user"></i>
+                        <span>Nguyễn Tuấn Anh</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="appointment-today-box ">
+            <div class="box-content appointment-today-box_cancel">
+                <div class="box-header">
+                    <div class="appointment-state">
+                        <span class="text-danger">Hủy hẹn</span>
+                    </div>
+                    <div class="appointment-manipulation text-center">
+                        <i class="fas fa-pen text-primary project-btn-more"></i>
+                        <i class="fas fa-sign-in-alt text-primary project-btn-more"></i>
+                    </div>
+                </div>
+                <ul class="info_nav">
+                    <li>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <i class="fas fa-user"></i>
+                                <a [routerLink]="">Nguyễn Tuấn Anh</a>
+                            </div>
+                            <div class="timer">
+                                <span>7:00</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <span>0758425612</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-user"></i>
+                        <span>Nguyễn Tuấn Anh</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="appointment-today-box ">
+            <div class="box-content appointment-today-box_examination">
+                <div class="box-header">
+                    <div class="appointment-state">
+                        <span class="text-primary">Đang hẹn</span>
+                    </div>
+                    <div class="appointment-manipulation text-center">
+                        <i class="fas fa-pen text-primary project-btn-more"></i>
+                        <i class="fas fa-sign-in-alt text-primary project-btn-more"></i>
+                    </div>
+                </div>
+                <ul class="info_nav">
+                    <li>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <i class="fas fa-user"></i>
+                                <a [routerLink]="">Nguyễn Tuấn Anh</a>
+                            </div>
+                            <div class="timer">
+                                <span>7:00</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <span>0758425612</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-user"></i>
+                        <span>Nguyễn Tuấn Anh</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
+
+

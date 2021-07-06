@@ -5,14 +5,13 @@
   transition: 0.2s;
   max-width: 1800px;
   background-color: #8080801f;
-  height: 100%;
   position: relative;
 }
 
 .app-content {
   display: -webkit-box;
   overflow: auto;
-  padding: 20px 20px 0 20px;
+  padding: 15px;
 }
 
 .app-content-left {
@@ -47,18 +46,6 @@
   color: #aaa;
 }
 
-.add-btn {
-  color: #fff;
-  background-color: var(--button-bg);
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .section-header {
   align-items: center;
@@ -134,116 +121,17 @@
   margin-bottom: 16px;
 }
 
-.appointments-section {
+.customer-receipt-section {
   background-color: #fff;
   border-radius: 6px;
   padding: 15px;
-  overflow: hidden;
-  min-height: 400px;
-  max-height: 460px;
-  display: flex;
-  flex-direction: column;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   -ms-border-radius: 6px;
   -o-border-radius: 6px;
 }
 
-.appointments-status {
-  display: flex;
-}
 
-.item-status {
-  display: flex;
-  flex-direction: column;
-  margin-right: 16px;
-}
-
-.state-filter-wrapper {
-  padding: 15px 0;
-}
-
-.state-filter-wrapper button {
-  padding: 5px 10px;
-  margin-right: 5px;
-  border-radius: 16px;
-  border: none;
-  background: #f2f7ff !important;
-  color: #1a6de3 !important;
-  -webkit-border-radius: 16px;
-  -moz-border-radius: 16px;
-  -ms-border-radius: 16px;
-  -o-border-radius: 16px;
-}
-
-.state-filter-wrapper button span {
-  color: #828588;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.btn-primary:not(:disabled):not(.disabled).active,
-.btn-primary:not(:disabled):not(.disabled):active,
-.show > .btn-primary.dropdown-toggle {
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff;
-}
-
-.item-status:not(:last-child) .status-type:after {
-  content: "";
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translatey(-50%);
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  border: 1px solid var(--secondary-color);
-}
-
-.status-number {
-  font-size: 24px;
-  line-height: 32px;
-  font-weight: 700;
-  color: var(--main-color);
-}
-
-.status-type {
-  position: relative;
-  padding-right: 24px;
-  color: var(--secondary-color);
-}
-
-.view-actions {
-  display: flex;
-  align-items: center;
-}
-
-.view-btn {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 6px;
-  border-radius: 4px;
-  background-color: transparent;
-  border: none;
-  color: var(--main-color);
-  margin-left: 8px;
-  transition: 0.2s;
-}
-
-.view-btn.active {
-  background-color: var(--link-color-active-bg);
-  color: var(--link-color-active);
-}
-
-.view-btn:not(.active):hover {
-  background-color: var(--link-color-hover);
-  color: var(--link-color-active);
-}
 
 .appointments-today-section {
   flex-shrink: 0;
@@ -259,7 +147,7 @@
   -o-border-radius: 6px;
 }
 
-.appointments-today {
+/* .appointments-today {
   padding: 15px;
 }
 
@@ -363,9 +251,9 @@
   padding-top: 10px;
   font-size: 14px;
   position: relative;
-}
+} */
 
-.appoinment-boxes {
+/* .appoinment-boxes {
   margin: 0 -8px;
   overflow-y: auto;
 }
@@ -474,9 +362,8 @@
 
 .project-btn-more {
   padding: 0;
-  height: 14px;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   position: relative;
   background-color: transparent;
   border: none;
@@ -489,7 +376,7 @@
   justify-content: space-between;
   padding-top: 10px;
   position: relative;
-}
+} */
 
 .box-content-header {
   font-weight: 600;
@@ -539,7 +426,7 @@
 }
 
 /*--Report doanh thu --*/
-.income-report-section {
+.revenue-report-section {
   flex-shrink: 0;
   background-color: #fff;
   margin-left: 24px;
@@ -553,13 +440,6 @@
   -o-border-radius: 6px;
 }
 
-.income-report {
-  padding: 15px;
-}
-
-.income-report-chart {
-  width: 100%;
-}
 
 /*-- SaleOrder today --*/
 .sale-order-line-section {

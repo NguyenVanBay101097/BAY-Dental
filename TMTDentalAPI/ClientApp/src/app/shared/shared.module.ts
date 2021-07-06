@@ -95,6 +95,8 @@ import { DaterangepickerDirective } from './date-range-picker-filter/config/date
 import { LocaleService } from './date-range-picker-filter/config/locale.service';
 import { DateRangePickerDropdownComponent } from './date-range-picker-filter/date-range-picker-dropdown/date-range-picker-dropdown.component';
 import { AgentCreateUpdateDialogComponent } from './agent-create-update-dialog/agent-create-update-dialog.component';
+import { DashboardRevenueTodayReportComponent } from './components/dashboard-revenue-today-report/dashboard-revenue-today-report.component';
+import { DashboardCustomerReceiptListTodayComponent } from './components/dashboard-customer-receipt-list-today/dashboard-customer-receipt-list-today.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -177,6 +179,8 @@ const config: LocaleConfig = {};
         DashboardPartnerCustomerReportComponent,
         DashboardSaleReportComponent,
         DashboardServiceTodayReportComponent,
+        DashboardRevenueTodayReportComponent,
+        DashboardCustomerReceiptListTodayComponent,
         SaleOrderLineCuComponent,
         CashBankTodayReportComponent,
         SaleOrderLineCuComponent,
@@ -255,6 +259,8 @@ const config: LocaleConfig = {};
         DashboardPartnerCustomerReportComponent,
         DashboardSaleReportComponent,
         DashboardServiceTodayReportComponent,
+        DashboardRevenueTodayReportComponent,
+        DashboardCustomerReceiptListTodayComponent,
         SaleOrderLineCuComponent,
         CashBankTodayReportComponent,
         SaleOrderLineCuComponent,

@@ -44,16 +44,11 @@ export class ReceptionDashboardComponent implements OnInit {
     { value: 'cancel', text: 'Hủy hẹn'},
   ]
 
-  public pieData: any[] = [
-    { category: "Tiền mặt", value:  300000, color:"#0066cc"},
-    { category: "Ngân hàng", value: 200000, color:"#99ccff" },
-    { category: "Khác", value: 100000, color: "#b3b3b3" },
-   
-  ];
+ 
 
   constructor(private checkPermissionService: CheckPermissionService , private appointmentService: AppointmentService,
     private intlService: IntlService) { 
-      this.labelContent = this.labelContent.bind(this);
+     
     }
 
   ngOnInit() { }
@@ -78,11 +73,6 @@ export class ReceptionDashboardComponent implements OnInit {
     this.stateFilter = state;  
   }
 
-  public labelContent(args: LegendLabelsContentArgs): string {
-    return `${args.dataItem.category} years old: ${this.intlService.formatNumber(
-      args.dataItem.value,
-      "p2"
-    )}`;
-  }
+  
 
 }

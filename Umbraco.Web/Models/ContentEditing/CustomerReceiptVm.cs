@@ -192,6 +192,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool IsNoTreatment { get; set; }
     }
 
+    public class CustomerReceiptStatePatch
+    {
+        public string State { get; set; }
+
+        public bool IsNoTreatment { get; set; }
+
+        public string Reason { get; set; }
+    }
+
     public class CustomerReceiptGetCountVM
     {
         public string Search { get; set; }

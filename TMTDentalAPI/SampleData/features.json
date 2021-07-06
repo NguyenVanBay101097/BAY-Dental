@@ -103,6 +103,27 @@
         ]
       },
       {
+        "Name": "Tiếp nhận khách hàng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.CustomerReceipt.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.CustomerReceipt.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.CustomerReceipt.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.CustomerReceipt.Delete"
+          }
+        ]
+      },
+      {
         "Name": "Đợt khám",
         "Ops": [
           {

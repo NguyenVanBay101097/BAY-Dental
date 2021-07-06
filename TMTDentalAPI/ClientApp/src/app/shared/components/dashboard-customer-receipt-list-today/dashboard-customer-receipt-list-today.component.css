@@ -1,0 +1,235 @@
+.customer-receipt-list {
+    overflow: hidden;
+    min-height: 350px;
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-header {
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+    padding-bottom: 15px;
+}
+
+.section-header-left {
+    flex: 1;
+}
+
+.section-header-right {
+    flex: 2;
+}
+
+.header-buttons-view button {
+    padding: 3px 6px;
+}
+
+.header-buttons-view .header-combobox, .header-search {
+    height: 2.1rem;
+}
+
+.has-search {
+    flex: 1 1 300px;
+}
+
+.has-search .form-control {
+    padding-left: 2rem;
+}
+
+.has-search .form-control:focus {
+    box-shadow: none !important;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2rem;
+    height: 2rem;
+    line-height: 2rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+.state-filter-wrapper {
+    padding: 15px 0;
+}
+
+.state-filter-wrapper button {
+    padding: 5px 10px;
+    margin-right: 5px;
+    border-radius: 16px;
+    border: none;
+    background: #f2f7ff !important;
+    color: #1a6de3 !important;
+    -webkit-border-radius: 16px;
+    -moz-border-radius: 16px;
+    -ms-border-radius: 16px;
+    -o-border-radius: 16px;
+}
+
+.state-filter-wrapper button span {
+    color: #828588;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.gridView {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.gridView {
+    margin: 0 2px;
+    overflow-y: auto;
+}
+
+.appointment-boxes.gridView .project-box-wrapper {
+    width: 25%;
+}
+
+.project-boxes.jsListView .project-box {
+    display: flex;
+    border-radius: 10px;
+    position: relative;
+}
+
+.project-boxes.jsListView .project-box>* {
+    margin-right: 24px;
+}
+
+.project-boxes.jsListView .more-wrapper {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+}
+
+.project-boxes.jsListView .project-box-header {
+    order: 2;
+}
+
+.project-boxes.jsListView .participants {
+    margin-bottom: 8px;
+}
+
+.project-boxes.jsListView .project-box-header>span {
+    position: absolute;
+    bottom: 20px;
+    left: 16px;
+}
+
+.box-header-badge {
+    padding: 3px 6px;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    min-width: 10px;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+}
+
+.badge-outline-warning {
+    color: #f3a72e;
+    background: #fcf0cb;
+    border: 1px solid #f8ce8b;
+}
+
+.badge-outline-success {
+    color: #20913a;
+    background: #dffce6;
+    border: 1px solid #88ce97;
+}
+
+.badge-outline-info {
+    color: #0184ff;
+    background: #cce7ff;
+    border: 1px solid #72b7fb;
+}
+
+.project-box {
+    border-radius: 6px;
+    padding: 10px;
+    border: 1px solid #e2e7ed;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -ms-border-radius: 6px;
+    -o-border-radius: 6px;
+}
+
+.project-box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.project-box-wrapper {
+    padding: 8px;
+    transition: 0.2s;
+}
+
+.project-btn-more {
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    background-color: transparent;
+    border: none;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.more-wrapper {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+    position: relative;
+}
+
+.box-content-header {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 20px;
+    color: #2c333a;
+    margin: 16px 0 0 0;
+}
+
+.box-content-subheader {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 30px;
+    color: #0184ff;
+}
+
+.box-progress {
+    display: block;
+    height: 4px;
+    border-radius: 6px;
+}
+
+.info_nav {
+    list-style: none;
+    color: #929daa;
+    font-size: 14px;
+    padding: 0;
+    margin: 0;
+}
+
+.info_nav li i {
+    margin-right: 10px;
+}

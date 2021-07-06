@@ -6,11 +6,12 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface IOverviewReportService
+    public interface IDashboardReportService
     {
         Task<CustomerReceiptDisplay> GetDefaultCustomerReceipt(GetDefaultRequest val);
         Task CreateCustomerReceiptToAppointment(CustomerReceiptRequest val);
 
         Task<GetCountMedicalXamination> GetCountMedicalXaminationToday();
+        Task<RevenueTodayReponse> GetSumary(RevenueTodayRequest val);
     }
 }

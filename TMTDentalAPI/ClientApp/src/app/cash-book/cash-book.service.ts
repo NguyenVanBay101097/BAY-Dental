@@ -69,7 +69,7 @@ export class CashBookService {
   constructor(
     private http: HttpClient,
     @Inject("BASE_API") private baseApi: string
-  ) {}
+  ) { }
 
   getMoney(val: CashBookPaged): Observable<PagedResult2<AccountMoveLineCashBookVM>> {
     return this.http.post<PagedResult2<AccountMoveLineCashBookVM>>(
@@ -105,7 +105,7 @@ export class CashBookService {
     });
   }
 
-  changeData(){
+  changeData() {
     return this.http.post(this.baseApi + this.apiUrl + "/ChangeData", null);
   }
 }

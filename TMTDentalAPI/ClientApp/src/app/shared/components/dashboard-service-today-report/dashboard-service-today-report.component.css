@@ -3,3 +3,52 @@
     font-weight: bolder;
     color: #007bff!important;
 }
+
+.section-header {
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+    padding-bottom: 15px;
+  }
+  
+  .section-header-left {
+    flex: 1;
+  }
+  
+  .section-header-right {
+    flex: 2;
+  }
+  
+  .header-buttons-view button {
+    padding: 3px 6px;
+  }
+  
+  .header-buttons-view .header-combobox,
+  .header-search {
+    height: 2.1rem;
+  }
+
+  .has-search {
+    flex: 1 1 300px;
+    position: relative;
+  }
+  
+  .has-search .form-control {
+    padding-left: 2rem;
+  }
+  
+  .has-search .form-control:focus {
+    box-shadow: none !important;
+  }
+  
+  .has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2rem;
+    height: 2rem;
+    line-height: 2rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+  }

@@ -24,6 +24,13 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<CustomerReceiptSave, CustomerReceipt>()
                 .ForMember(x => x.Id, x => x.Ignore());
+
+            CreateMap<CustomerReceipt, CustomerReceiptStatePatch>();
+            CreateMap<CustomerReceiptStatePatch, CustomerReceipt>()
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.User, x => x.Ignore())
+                .ForMember(x => x.Partner, x => x.Ignore())
+                .ForMember(x => x.Doctor, x => x.Ignore());
         }
     }
 }
