@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AppointmentGetCountVM } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
+import { CustomerReceipCreateUpdateComponent } from '../../customer-receip-create-update/customer-receip-create-update.component';
 
 @Component({
   selector: 'app-dashboard-customer-receipt-list-today',
@@ -22,7 +24,8 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
     { value: 'done', text: 'Hoàn thành'},
   ]
 
-  constructor(private intlService: IntlService,private appointmentService: AppointmentService,) { }
+  constructor(private intlService: IntlService,private appointmentService: AppointmentService,
+    private modalService: NgbModal) { }
 
   ngOnInit() {
   }
@@ -47,4 +50,16 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
     this.stateFilter = state;  
   }
 
+  addReceipt(){
+    let modalRef = this.modalService.open(CustomerReceipCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Tiếp nhận';
+        modalRef.componentInstance.type = 'receipt';
+  }
+
+  editReceipt(){
+    let modalRef = this.modalService.open(CustomerReceipCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Tiếp nhận';
+        modalRef.componentInstance.type = 'receipt_update';
+        modalRef.componentInstance.appointId = '6a72767b-e5e4-4825-8898-08d93b70c03f';
+  }
 }
