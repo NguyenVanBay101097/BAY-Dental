@@ -24,8 +24,8 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
   loading = false;
   items: AccountCommonPartnerReportItem[] = [];
   gridData: GridDataResult;
-  limit = 1;
-  skip = 20; 
+  limit = 20;
+  skip = 0; 
   dateFrom: Date;
   dateTo: Date;
   resultSelection: string;
