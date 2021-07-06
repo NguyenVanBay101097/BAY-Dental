@@ -171,7 +171,7 @@ export class LayoutSidebarComponent implements OnInit {
       permissions: ['TCare.Channel.Read', 'TCare.Scenario.Read', 'TCare.Messaging.Read', 'TCare.MessTemplate.Read', 'TCare.Config.Create']
     },
     {
-      name: 'SMS',
+      name: 'SMS Brandname',
       icon: 'fas fa-sms',
       children: [
         { name: 'Chúc mừng sinh nhật', link: '/sms/birthday-partners', permissions: ['SMS.Message.Read'] },

@@ -179,8 +179,22 @@ export class SmsManualDialogComponent implements OnInit {
     val.resModel = this.resModel;
     val.date = this.intlService.formatDate(new Date(), "yyyy-MM-ddTHH:mm");
     val.resIds = this.resIds;
-    // val.body = JSON.stringify(this.template);
-    // val.body = this.template ? this.template.text : '';
+    if (this.isTemplateCopy && val.templateName != '') {
+      let template = {
+        text: val.body,
+        templateType: 'text'
+      }
+      var valueTemplate = {
+        name: val.templateName,
+        body: JSON.stringify(template),
+        type: this.templateTypeTab
+      }
+      this.smsTemplateService.create(valueTemplate).subscribe(
+        () => {
+          this.loadSmsTemplate();
+        }
+      )
+    }
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.campaign = this.campaign ? this.campaign : null;
@@ -197,22 +211,6 @@ export class SmsManualDialogComponent implements OnInit {
               this.activeModal.close(res);
             }
           )
-          if (this.isTemplateCopy && val.templateName != '') {
-            let template = {
-              text: val.body,
-              templateType: 'text'
-            }
-            var valueTemplate = {
-              name: val.templateName,
-              body: JSON.stringify(template),
-              type: this.templateTypeTab
-            }
-            this.smsTemplateService.create(valueTemplate).subscribe(
-              () => {
-                this.loadSmsTemplate();
-              }
-            )
-          }
         }
       )
     });

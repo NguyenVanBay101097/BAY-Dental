@@ -53,8 +53,8 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd;
+    // this.dateFrom = this.monthStart;
+    // this.dateTo = this.monthEnd;
     this.smsCampaignId = this.activatedRoute.snapshot.queryParams.campaignId;
     this.loadDataFromApi();
     this.searchUpdate.pipe(
@@ -74,8 +74,8 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.smsCampaignId = this.smsCampaignId || '';
-    val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
-    val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
+    val.dateTo = this.dateFrom ? this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59") : '';
     val.state = this.state ? this.state : '';
     this.smsMessageDetailService.getPaged(val).pipe(
       map((response: any) =>

@@ -81,7 +81,6 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
   loadProducts() {
     this.onSearchProduct().subscribe(
       res => {
-        console.log(res);
         this.listProducts = res;
         this.filteredProducts = this.listProducts.slice();
       }
