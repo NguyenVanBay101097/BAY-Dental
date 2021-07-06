@@ -50,7 +50,6 @@ export class SmsAccountSettingDialogComponent implements OnInit {
         var obj = new SmsAccountBasic();
         this.formGroup.patchValue(obj);
         if (result) {
-          debugger
           this.formGroup.patchValue(result);
           this.formGroup.get('provider').patchValue(result.provider);
         } else {

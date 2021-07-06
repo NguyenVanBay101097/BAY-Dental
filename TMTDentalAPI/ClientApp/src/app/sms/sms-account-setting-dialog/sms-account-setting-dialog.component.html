@@ -47,9 +47,7 @@
                                             <label class="o_form_label">Client Id</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control"
-                                                [class.border-outline]="f.clientId.value==''"
-                                                formControlName="clientId">
+                                            <input type="text" class="form-control" formControlName="clientId">
                                             <div *ngIf="f.clientId.errors && (f.clientId.touched || f.clientId.dirty || submitted)"
                                                 class="text-danger">
                                                 <div *ngIf="f.clientId.errors.required">Nhập Client Id</div>
@@ -62,9 +60,7 @@
                                             <label class="o_form_label">Client Secret</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control"
-                                                [class.border-outline]="f.clientSecret.value==''"
-                                                formControlName="clientSecret">
+                                            <input type="text" class="form-control" formControlName="clientSecret">
                                             <div *ngIf="f.clientSecret.errors && (f.clientSecret.touched || f.clientSecret.dirty || submitted)"
                                                 class="text-danger">
                                                 <div *ngIf="f.clientSecret.errors.required">Nhập Client Secret</div>
