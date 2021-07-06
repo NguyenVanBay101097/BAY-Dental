@@ -31,7 +31,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetCount()
+        public async Task<IActionResult> GetCountMedicalXamination()
         {
             var result = await _dashboardService.GetCountMedicalXaminationToday();
             return Ok(result);

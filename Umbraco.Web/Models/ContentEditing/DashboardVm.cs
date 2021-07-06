@@ -67,19 +67,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
 
         public Guid? CompanyId { get; set; }
-
-        /// <summary>
-        /// bank: ngan hang
-        /// cash: tien mat
-        /// cash_bank: tong quy
-        /// </summary>
-        public string ResultSelection { get; set; }
     }
 
     public class RevenueTodayReponse
     {
         public RevenueTodayReponse()
         {
+            TotalAmountYesterday = 0;
             TotalOther = 0;
             TotalBank = 0;
             TotalCash = 0;

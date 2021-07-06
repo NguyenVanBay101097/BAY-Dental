@@ -45,7 +45,7 @@ export class CustomerDebtReportService {
 
   getAmountDebtTotal(val){
     return this.http.get(this.baseApi + this.apiUrl  + '/GetAmountDebtTotal' , { params: val });
-}
+  }
 
   exportExcelFile(val: any) {
     return this.http.get(this.baseApi + this.apiUrl + "/ExportExcelFile", {
