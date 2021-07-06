@@ -24,8 +24,12 @@ namespace Infrastructure.Services
 
         public async Task<FPTSendSMSResponseModel> SendSMS(string phone, string content)
         {
+
+
             ////url dev test IP : 14.169.99.3
             ///var url = "http://sandbox.sms.fpt.net/api/push-brandname-otp";
+            if (string.IsNullOrEmpty(_accesstoken))
+                return null;
 
             //url production IP: 14.169.99.3
             var url = "https://app.sms.fpt.net/api/push-brandname-otp";                   

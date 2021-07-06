@@ -35,7 +35,7 @@
                                             <label class="o_form_label">Brand Name</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control" formControlName="brandName">
+                                            <input type="text"  [class.border-danger]="submitted && f.brandName.value==''" class="form-control" formControlName="brandName">
                                             <div *ngIf="f.brandName.errors && (f.brandName.touched || f.brandName.dirty || submitted)"
                                                 class="text-danger">
                                                 <div *ngIf="f.brandName.errors.required">Nhập Brandname</div>
@@ -47,7 +47,9 @@
                                             <label class="o_form_label">Client Id</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control" formControlName="clientId">
+                                            <input type="text" class="form-control"
+                                            [class.border-danger]="submitted && f.clientId.value==''"
+                                                formControlName="clientId">
                                             <div *ngIf="f.clientId.errors && (f.clientId.touched || f.clientId.dirty || submitted)"
                                                 class="text-danger">
                                                 <div *ngIf="f.clientId.errors.required">Nhập Client Id</div>
@@ -60,7 +62,9 @@
                                             <label class="o_form_label">Client Secret</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control" formControlName="clientSecret">
+                                            <input type="text" class="form-control"
+                                            [class.border-danger]="submitted && f.clientSecret.value==''"
+                                                formControlName="clientSecret">
                                             <div *ngIf="f.clientSecret.errors && (f.clientSecret.touched || f.clientSecret.dirty || submitted)"
                                                 class="text-danger">
                                                 <div *ngIf="f.clientSecret.errors.required">Nhập Client Secret</div>
