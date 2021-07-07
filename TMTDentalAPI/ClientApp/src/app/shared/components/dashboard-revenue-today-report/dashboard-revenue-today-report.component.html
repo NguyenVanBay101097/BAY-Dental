@@ -8,13 +8,12 @@
         <div class="revenue-report-chart-header">
             <div class="text-center justify-content-center">
                 <p class="box-content-header">Tổng doanh thu</p>
-                <p class="box-content-subheader">60.000.000</p>
+                <p class="box-content-subheader">{{revenue.totalAmount | number}}</p>
             </div>
         </div>
         <kendo-chart class="size-chart">
             <kendo-chart-series >
-                <kendo-chart-series-item type="pie" [data]="pieData" field="value" categoryField="category"
-                    colorField="color" >
+                <kendo-chart-series-item type="pie" [data]="pieData" field="value" categoryField="category" colorField="color" >
                 </kendo-chart-series-item>
             </kendo-chart-series>
             <kendo-chart-legend [visible]="false"></kendo-chart-legend>
@@ -24,7 +23,7 @@
                 <div *ngFor="let item of pieData" class=" d-flex justify-content-between">
                     <div>
                         <i class="fas fa-circle mr-2" [style.color]="item.color"></i><span
-                            style="color: gray;">{{item.category}}</span>
+                            style="color: gray;">{{getType(item.category)}}</span>
                     </div>
                     <div>
                         <span class="numeric-revenue">{{item.value | number}}</span>

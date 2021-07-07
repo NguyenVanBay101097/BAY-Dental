@@ -36,7 +36,7 @@
   display: block;
   width: 2rem;
   height: 2rem;
-  line-height: 2rem;
+  line-height: 2.375rem;
   text-align: center;
   pointer-events: none;
   color: #aaa;
@@ -74,8 +74,8 @@
   border-radius: 16px;
   font-size: 14px;
   border: none;
-  background: #f2f7ff !important;
-  color: #1a6de3 !important;
+  background: #f2f7ff;
+  color: #1a6de3;
 }
 
 .appointments-today-filter-state button:last-child {
@@ -84,8 +84,8 @@
   border-radius: 16px;
   font-size: 14px;
   border: none;
-  background: #f2f7ff !important;
-  color: #1a6de3 !important;
+  background: #f2f7ff;
+  color: #1a6de3;
   margin-top: 2px;
 }
 
@@ -103,11 +103,18 @@
 }
 
 .appointment-today-box {
-  border-top: 1px solid var(--message-box-border);
   display: flex;
   align-items: flex-start;
   width: 100%;
   margin-bottom: 5px;
+}
+
+.appointment-today-box div.show-on-hover {
+  visibility: hidden;
+}
+
+.appointment-today-box:hover div.show-on-hover {
+  visibility: visible;
 }
 
 .box-header {
@@ -148,4 +155,35 @@
   padding-top: 10px;
   font-size: 14px;
   position: relative;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+  color: #fff !important;
+  background-color: #007bff !important;
+  border-color: #007bff !important;
+}
+
+@media (min-width: 1300px) and (max-width: 1500px) {
+  .title-header {
+    font-size: 14px;
+  }
+  .btn-header {
+    padding: 0.2rem 0.3rem;
+  }
+  .has-search input {
+    height: calc(1.5em + .55rem + 2px);
+    font-size: 14px;
+  }
+  
+  .has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2rem;
+    height: 1.5rem;
+    line-height: 2.3rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+  }
 }

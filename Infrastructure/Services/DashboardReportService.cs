@@ -142,12 +142,15 @@ namespace Infrastructure.Services
             var query2 = movelineObj._QueryGet(companyId: val.CompanyId, state: "posted", dateFrom: yesterday.AbsoluteBeginOfDate(),
              dateTo: yesterday.AbsoluteEndOfDate());
 
-            query = query.Where(x => x.Account.Code == "5111");
+            query = query.Where(x => x.AccountInternalType == "receivable" && x.Reconciled == true && x.ExcludeFromInvoiceTab == false);
 
-            revenue.TotalBank = await query.Where(x => x.Journal.Type == "bank").SumAsync(x => x.Debit - x.Credit);
-            revenue.TotalCash = await query.Where(x => x.Journal.Type == "cash").SumAsync(x => x.Debit - x.Credit);
-            revenue.TotalAmount = await query.SumAsync(x => x.Debit - x.Credit);
-            revenue.TotalAmountYesterday = await query2.SumAsync(x => x.Debit - x.Credit);
+            var items = await query.Include(x => x.Journal).ToListAsync();
+
+            var sign = -1;
+            revenue.TotalBank = items.Where(x => x.Journal.Type == "bank").Sum(x => x.Debit - x.Credit * sign);
+            revenue.TotalCash = items.Where(x => x.Journal.Type == "cash").Sum(x => x.Debit - x.Credit * sign);
+            revenue.TotalAmount = items.Sum(x => x.Debit - x.Credit * sign);
+            revenue.TotalAmountYesterday = await query2.Where(x => x.AccountInternalType == "receivable" && x.Reconciled == true && x.ExcludeFromInvoiceTab == false).SumAsync(x => x.Debit - x.Credit * sign);
 
             return revenue;
         }

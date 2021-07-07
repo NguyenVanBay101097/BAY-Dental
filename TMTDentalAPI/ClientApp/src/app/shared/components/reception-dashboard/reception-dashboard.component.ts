@@ -1,3 +1,4 @@
+import { AuthService } from 'src/app/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { LegendLabelsContentArgs } from '@progress/kendo-angular-charts';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -5,6 +6,7 @@ import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AppointmentGetCountVM } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
+import { CashBookService, CashBookSummarySearch } from 'src/app/cash-book/cash-book.service';
 import { CheckPermissionService } from '../../check-permission.service';
 
 @Component({
@@ -27,7 +29,7 @@ export class ReceptionDashboardComponent implements OnInit {
   canSaleReport = this.checkPermissionService.check(['Report.Sale']);
   canAppointment = this.checkPermissionService.check(['Report.Appointment']);
   public today: Date = new Date(new Date().toDateString());
-
+  totalCash : number = 0;
   stateFilter: string = '';
   stateCount: any = {};
   states: any[] = [
@@ -37,42 +39,31 @@ export class ReceptionDashboardComponent implements OnInit {
     { value: 'done', text: 'Hoàn thành'},
   ]
 
-  appointmentstates: any[] = [
-    { value: '', text: 'Tất cả'},
-    { value: 'examination', text: 'Đang hẹn'},
-    { value: 'arrived', text: 'Đã đến'},
-    { value: 'cancel', text: 'Hủy hẹn'},
-  ]
-
- 
 
   constructor(private checkPermissionService: CheckPermissionService , private appointmentService: AppointmentService,
-    private intlService: IntlService) { 
+    private intlService: IntlService,
+    private authService: AuthService,
+    private cashBookService: CashBookService) { 
      
     }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.loadTotalCash();
+   }
 
-  loadStateCount() {
-    forkJoin(this.states.map(x => {
-      var val = new AppointmentGetCountVM();
-      val.state = x.value;
-      val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-      val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-      return this.appointmentService.getCount(val).pipe(
-        switchMap(count => of({state: x.value, count: count}))
-      );
-    })).subscribe((result) => {
-      result.forEach(item => {
-        this.stateCount[item.state] = item.count;
-      });
+  loadTotalCash() {
+    var val = new CashBookSummarySearch();
+    val.companyId = this.authService.userInfo.companyId;
+    // val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+    // val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+    val.resultSelection = 'cash';
+    this.cashBookService.getTotal(val).subscribe(rs =>{
+      
+      this.totalCash = rs;
+    }, () => {
+
     });
-  }
 
-  setStateFilter(state: any) {
-    this.stateFilter = state;  
   }
-
-  
 
 }

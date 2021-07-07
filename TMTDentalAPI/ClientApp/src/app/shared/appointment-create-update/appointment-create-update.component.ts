@@ -151,7 +151,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       this.filterChangeCombobox();
       this.filterChangeMultiselect();
       this.loadService();
-      this.loadAppointmentToFormByType();
     });
   }
 
@@ -181,36 +180,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.filteredServices = result;
       }
     )
-  }
-
-  loadAppointmentToFormByType(){
-    if (this.appointId && this.type == 'create'){
-      this.f.reason.setValidators(Validators.required);
-      this.f.reason.updateValueAndValidity();
-    }
-    if (this.appointId && this.type == 'receive'){
-      this.f.partner.disable();
-      this.f.doctor.setValidators(Validators.required);
-      this.f.doctor.updateValueAndValidity();
-    }
-    if (this.type == 'receive_create'){
-      this.f.doctor.setValidators(Validators.required);
-      this.f.doctor.updateValueAndValidity();
-    }
-    if (this.appointId && this.type == 'receive_update'){
-      this.f.doctor.disable();
-      this.f.partner.disable();
-      this.f.appTime.disable();
-      if (this.f.state.value == 'done'){
-        this.f.timeExpected.disable();
-        this.f.isRepeatCustomer.disable();
-        this.f.services.disable();
-        this.f.note.disable();
-        this.f.state.disable();
-        this.f.reason.disable();
-      }
-
-    }
   }
 
   searchService(q?: string) {
@@ -267,22 +236,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       appoint.reason = null;
     }
 
-    if (this.appointId) {
-      if(this.type == 'receive'){
-        appoint.state = 'arrived';
-      }
-      if(this.type == 'receive_update'){
-
-      }
+    if (this.appointId) {   
       this.appointmentService.update(this.appointId, appoint).subscribe(
         () => {
-          if (this.type == 'receive_update' && appoint.status == 'done'){
-            this.loadAppointmentToFormByType();
-          }
-          else{
-            appoint.id = this.appointId;
-            this.activeModal.close(appoint);
-          }
+          appoint.id = this.appointId;
+          this.activeModal.close(appoint);
           
         },
         er => {

@@ -56,15 +56,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class RevenueTodayRequest
     {
-        /// <summary>
-        /// Ngay bat dau
-        /// </summary>
-        public DateTime? DateTo { get; set; }
-
-        /// <summary>
-        /// ngay ket thuc
-        /// </summary>
         public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
 
         public Guid? CompanyId { get; set; }
     }

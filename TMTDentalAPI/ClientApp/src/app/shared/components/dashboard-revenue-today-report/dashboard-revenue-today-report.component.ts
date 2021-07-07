@@ -13,10 +13,13 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
   public today: Date = new Date(new Date().toDateString());
   loading = false;
   revenue = new RevenueTodayReponse;
-  public pieData: any[] = [
-    { category: "Tiền mặt", value: 0, color: "#0066cc" },
-    { category: "Ngân hàng", value: 0, color: "#99ccff" },
-    { category: "Khác", value: 0, color: "#b3b3b3" },
+
+  // Pie
+  public pieData: any[] = [];
+  public pieData2 = [
+    { category: "cash", value: 300000, color: "#0066cc" },
+    { category: "bank", value: 200000, color: "#99ccff" },
+    { category: "other", value: 100000, color: "#b3b3b3" },
   ];
 
   constructor(private intlService: IntlService,
@@ -25,6 +28,7 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.loadDataFromApi();
   }
 
   loadDataFromApi() {
@@ -35,12 +39,52 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
     val.companyId = this.authService.userInfo.companyId;
     this.dashboardService.getSumary(val).subscribe(result => {
       this.revenue = result;
-      this.pieData = [];
-      this.loadItems();
+      this.loadPieData();
       this.loading = false;
     }, () => {
       this.loading = false;
     });
+  }
+
+  loadPieData() {
+    var cash = new Object({ category: "cash", value: this.revenue.totalCash, color: "#0066cc" });
+    var bank = new Object({ category: "bank", value: this.revenue.totalBank, color: "#99ccff" });
+    var other = new Object({ category: "other", value: this.totalOther, color: "#b3b3b3" });
+    this.pieData.push(cash, bank, other);
+  }
+
+  get isIncrease() {
+    if (this.revenue.totalAmount >= this.revenue.totalAmountYesterday) {
+      return true;
+    }
+    return false;
+  }
+
+  get percentRevenue() {
+    if (this.revenue) {
+      return (this.revenue.totalAmount - this.revenue.totalAmountYesterday / this.revenue.totalAmountYesterday) * 100;
+    }
+
+    return 0;
+  }
+
+  get totalOther() {
+    if (this.revenue) {
+      return (this.revenue.totalAmount - (this.revenue.totalBank + this.revenue.totalCash));
+    }
+
+    return 0;
+  }
+
+  getType(value) {
+    switch (value) {
+      case 'cash':
+        return 'Tiền mặt';
+      case 'bank':
+        return 'Ngân hàng';
+      case 'other':
+        return 'Khác';
+    }
   }
 
 }

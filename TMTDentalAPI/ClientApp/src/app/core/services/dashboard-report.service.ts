@@ -30,11 +30,10 @@ export class RevenueTodayRequest {
 }
 
 export class RevenueTodayReponse {
-  TotalBank: number;
-  TotalCash: number;
-  TotalOther: number;
-  TotalAmountYesterday: number;
-  TotalAmount: number;
+  totalBank: number;
+  totalCash: number;
+  totalAmountYesterday: number;
+  totalAmount: number;
 }
 
 @Injectable({
@@ -54,7 +53,7 @@ export class DashboardReportService {
   }
 
   getSumary(val) {
-    return this.http.get<RevenueTodayReponse>(this.baseApi + this.apiUrl + '/GetSumary', { params: new HttpParams({ fromObject: val }) });
+    return this.http.post<RevenueTodayReponse>(this.baseApi + this.apiUrl + '/GetSumary', val);
   }
 
   createCustomerReceiptToAppointment(val) {

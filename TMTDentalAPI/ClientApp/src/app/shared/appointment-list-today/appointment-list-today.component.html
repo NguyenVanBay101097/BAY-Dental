@@ -66,166 +66,67 @@
     <div class="appointments-today-header ">
         <div class="d-flex justify-content-between mb-2">
             <div>
-                <h6 class="text-primary">LỊCH HẸN HÔM NAY</h6>
+                <h6 class="text-primary title-header">LỊCH HẸN HÔM NAY</h6>
             </div>
             <div>
-                <button class="btn btn-primary btn-sm"><i class="fas fa-plus-circle mr-1"></i>Thêm lịch
+                <button class="btn btn-primary btn-sm btn-header" (click)=" createItem()"><i class="fas fa-plus-circle mr-1"></i>Thêm lịch
                     hẹn</button>
             </div>
         </div>
         <div class="has-search">
             <span class="fa fa-search form-control-feedback"></span>
-            <input #searchInput accesskey="C" class="form-control header-search size-text-12"
+            <input #searchInput class="form-control header-search size-text-12"
                 placeholder="Tìm kiếm theo bác sĩ, họ tên, sđt " type="text" [(ngModel)]="search"
                 (ngModelChange)="this.searchUpdate.next($event)" (keyup)="onKeyUp($event);">
 
         </div>
         <div class="appointments-today-filter-state">
-            <button type="button" *ngFor="let state of appointmentstates" class="btn active"
+            <button type="button" *ngFor="let state of states" class="btn active"
                 (click)="setStateFilter(state.value)" [class.btn-primary]="stateFilter == state.value"
-                [class.btn-light]="stateFilter != state.value">
-                {{state.text}} <span class="ml-1">0</span>
+                [class.appointments-today-filter-state]="stateFilter != state.value">
+                {{state.text}} <span class="ml-1" [class.text-white]="stateFilter == state.value">{{stateCount[state.value] || 0}}</span>
             </button>
         </div>
     </div>
     <div class="appointment-today-items">
-        <div class="appointment-today-box">
-            <div class="box-content appointment-today-box_examination">
-                <div class="box-header">
-                    <div class="appointment-state">
-                        <span class="text-primary">Đang hẹn</span>
-                    </div>
-                    <div class="appointment-manipulation text-center">
-                        <i class="fas fa-pen text-primary icon-more"></i>
-                        <i class="fas fa-sign-in-alt text-primary icon-more"></i>
-                    </div>
-                </div>
-                <ul class="info_nav">
-                    <li>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <i class="fas fa-user"></i>
-                                <a [routerLink]="">Nguyễn Tuấn Anh</a>
-                            </div>
-                            <div class="timer">
-                                <span>7:00</span>
-                            </div>
+        <ng-container *ngFor="let item of gridData?.data">
+            <div class="appointment-today-box">
+                <div class="box-content" [ngClass]="getBgBoxContent(item.state)">
+                    <div class="box-header">
+                        <div class="appointment-state">
+                            <span [ngClass]="getTextColorState(item.state)">{{stateGet(item.state)}}</span>
                         </div>
-                    </li>
-                    <li>
-                        <i class="fas fa-phone"></i>
-                        <span>0758425612</span>
-                    </li>
-                    <li>
-                        <i class="fas fa-user"></i>
-                        <span>Nguyễn Tuấn Anh</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="appointment-today-box ">
-            <div class="box-content appointment-today-box_arrived">
-                <div class="box-header">
-                    <div class="appointment-state">
-                        <span class="text-success">Đã đến</span>
-                    </div>
-                    <div class="appointment-manipulation text-center">
-                        <i class="fas fa-pen text-primary project-btn-more"></i>
-                        <i class="fas fa-sign-in-alt text-primary project-btn-more"></i>
-                    </div>
-                </div>
-                <ul class="info_nav">
-                    <li>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <i class="fas fa-user"></i>
-                                <a [routerLink]="">Nguyễn Tuấn Anh</a>
-                            </div>
-                            <div class="timer">
-                                <span>7:00</span>
-                            </div>
+                        <div class="appointment-manipulation text-center show-on-hover">
+                            <i class="fas fa-pen text-primary icon-more" (click)="editItem(item)"></i>
+                            <i class="fas fa-sign-in-alt text-primary icon-more font-size-14"></i>
                         </div>
-                    </li>
-                    <li>
-                        <i class="fas fa-phone"></i>
-                        <span>0758425612</span>
-                    </li>
-                    <li>
-                        <i class="fas fa-user"></i>
-                        <span>Nguyễn Tuấn Anh</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="appointment-today-box ">
-            <div class="box-content appointment-today-box_cancel">
-                <div class="box-header">
-                    <div class="appointment-state">
-                        <span class="text-danger">Hủy hẹn</span>
                     </div>
-                    <div class="appointment-manipulation text-center">
-                        <i class="fas fa-pen text-primary project-btn-more"></i>
-                        <i class="fas fa-sign-in-alt text-primary project-btn-more"></i>
-                    </div>
+                    <ul class="info_nav">
+                        <li>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <i class="fas fa-user"></i>
+                                    <a class="text-primary" title="Xem hồ sơ khách hàng"
+                                        [routerLink]="['/partners/customer/' + item.partnerId]">
+                                        <span> {{item.partnerName}}</span>
+                                    </a>
+                                </div>
+                                <div class="timer">
+                                    <span>{{item.time}}</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            <span>{{item.partnerPhone}}</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-user"></i>
+                            <span>{{item.doctorName}}</span>
+                        </li>
+                    </ul>
                 </div>
-                <ul class="info_nav">
-                    <li>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <i class="fas fa-user"></i>
-                                <a [routerLink]="">Nguyễn Tuấn Anh</a>
-                            </div>
-                            <div class="timer">
-                                <span>7:00</span>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <i class="fas fa-phone"></i>
-                        <span>0758425612</span>
-                    </li>
-                    <li>
-                        <i class="fas fa-user"></i>
-                        <span>Nguyễn Tuấn Anh</span>
-                    </li>
-                </ul>
             </div>
-        </div>
-        <div class="appointment-today-box ">
-            <div class="box-content appointment-today-box_examination">
-                <div class="box-header">
-                    <div class="appointment-state">
-                        <span class="text-primary">Đang hẹn</span>
-                    </div>
-                    <div class="appointment-manipulation text-center">
-                        <i class="fas fa-pen text-primary project-btn-more"></i>
-                        <i class="fas fa-sign-in-alt text-primary project-btn-more"></i>
-                    </div>
-                </div>
-                <ul class="info_nav">
-                    <li>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <i class="fas fa-user"></i>
-                                <a [routerLink]="">Nguyễn Tuấn Anh</a>
-                            </div>
-                            <div class="timer">
-                                <span>7:00</span>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <i class="fas fa-phone"></i>
-                        <span>0758425612</span>
-                    </li>
-                    <li>
-                        <i class="fas fa-user"></i>
-                        <span>Nguyễn Tuấn Anh</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        </ng-container>
     </div>
 </div>
-
-

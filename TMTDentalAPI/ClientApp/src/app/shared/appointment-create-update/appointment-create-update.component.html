@@ -344,9 +344,9 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-primary btn-sm mr-2" accesskey="s" (click)="onSave()">
         Lưu</button>
-    <button *ngIf="appointId && type == 'create'" type="button" class="btn btn-danger btn-sm mr-2" accesskey="s" (click)="onDelete()">
+    <button *ngIf="appointId" type="button" class="btn btn-danger btn-sm mr-2" accesskey="s" (click)="onDelete()">
         Xóa</button>
-    <button *ngIf="appointId && type == 'create'" type="button" class="btn btn-secondary btn-sm mr-2" accesskey="s" (click)="onDuplicate()">
+    <button *ngIf="appointId" type="button" class="btn btn-secondary btn-sm mr-2" accesskey="s" (click)="onDuplicate()">
         Sao chép</button>
     <button type="button" class="btn btn-secondary btn-sm mr-2" accesskey="q" (click)="activeModal.dismiss()">
         Đóng</button>
