@@ -14,7 +14,7 @@ import { CheckPermissionService } from 'src/app/shared/check-permission.service'
 })
 export class PartnerOverviewInfoComponent implements OnInit {
   @Input() partner: any;
-  categoriesOdata: any[] = [];
+  categories: any[] = [];
   @Output() updateEvent = new EventEmitter<any>();
   showInfo = false;
 
@@ -26,15 +26,7 @@ export class PartnerOverviewInfoComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.partner.categories.forEach(item => {
-      var category = {
-        Id: item.id,
-        Name: item.name,
-        CompleteName: item.completeName,
-        Color: item.color
-      };
-      this.categoriesOdata.push(category);
-    });
+    this.categories = this.partner.categories
     this.checkPermission()
   }
 
@@ -64,19 +56,10 @@ export class PartnerOverviewInfoComponent implements OnInit {
     // });
     this.partnerService.getPartner(id).subscribe((result) => {
       this.partner = result;
-      this.partner.categories.forEach(item => {
-        var category = {
-          Id: item.id,
-          Name: item.name,
-          CompleteName: item.completeName,
-          Color: item.color
-        };
-        this.categoriesOdata.push(category);
-      });
     });
   }
 
-  checkPermission(){
+  checkPermission() {
     this.showInfo = this.checkPermissionService.check(["Basic.Partner.ContactInfo"]);
   }
 
