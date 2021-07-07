@@ -24,57 +24,41 @@
 </div>
 
 <div class="o_content h-100 overflow-hidden">
-    <form class="o_form_view t_custom_form" [formGroup]="formGroup">
-        <div class="o_form_sheet_bg">
+    <form class="o_form_view t_custom_form h-100" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg d-flex flex-column h-100">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button *ngIf="purchaseOrder?.state == 'draft'" type="button" class="btn btn-primary btn-sm"
-                        (click)="onSave()" accesskey="s">
+                    <button *ngIf="purchaseOrder?.state == 'draft'" type="button" class="btn btn-primary btn-sm" (click)="onSave()" accesskey="s">
                         Lưu
                     </button>
-                    <button type="button" *ngIf="!id" class="btn btn-primary btn-sm" (click)="onSaveConfirm()"
-                        accesskey="1">
+                    <button type="button" *ngIf="!id" class="btn btn-primary btn-sm" (click)="onSaveConfirm()" accesskey="1">
                         Xác nhận
                     </button>
-                    <button type="button" accesskey="1" *ngIf="id && purchaseOrder?.state == 'draft'"
-                        class="btn btn-primary btn-sm" (click)="buttonConfirm()">
+                    <button type="button" accesskey="1" *ngIf="id && purchaseOrder?.state == 'draft'" class="btn btn-primary btn-sm" (click)="buttonConfirm()">
                         Xác nhận
                     </button>
-                    <button
-                        *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1 && purchaseOrder?.amountResidual > 0"
-                        type="button" class="btn btn-primary btn-sm" (click)="actionRegisterPayment()">
+                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1 && purchaseOrder?.amountResidual > 0" type="button" class="btn btn-primary btn-sm" (click)="actionRegisterPayment()">
                         Thanh toán
                     </button>
-                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1" type="button"
-                        class="btn btn-primary btn-sm" (click)="getPrint(purchaseOrder?.id)">
+                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1" type="button" class="btn btn-primary btn-sm" (click)="getPrint(purchaseOrder?.id)">
                         In phiếu
                     </button>
-                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1 && purchaseOrder?.type != 'refund'" type="button"
-                        class="btn btn-primary btn-sm" (click)="actionRefund()">
+                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1 && purchaseOrder?.type != 'refund'" type="button" class="btn btn-primary btn-sm" (click)="actionRefund()">
                         Trả hàng
                     </button>
 
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="purchaseOrder?.state !== 'done'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': purchaseOrder?.state === 'done', 'btn-secondary': purchaseOrder?.state !== 'done'}"
-                        type="button">
+                    <button [disabled]="purchaseOrder?.state !== 'done'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': purchaseOrder?.state === 'done', 'btn-secondary': purchaseOrder?.state !== 'done'}" type="button">
                         Hoàn thành
                     </button>
-                    <button *ngIf="purchaseOrder?.state === 'cancel'" [disabled]="purchaseOrder?.state !== 'cancel'"
-                        class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': purchaseOrder?.state === 'cancel', 'btn-secondary': purchaseOrder?.state !== 'cancel'}"
-                        type="button">
+                    <button *ngIf="purchaseOrder?.state === 'cancel'" [disabled]="purchaseOrder?.state !== 'cancel'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': purchaseOrder?.state === 'cancel', 'btn-secondary': purchaseOrder?.state !== 'cancel'}" type="button">
                         Đã hủy
                     </button>
-                    <button [disabled]="purchaseOrder?.state !== 'purchase'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': purchaseOrder?.state === 'purchase', 'btn-secondary': purchaseOrder?.state !== 'purchase'}"
-                        type="button">
+                    <button [disabled]="purchaseOrder?.state !== 'purchase'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': purchaseOrder?.state === 'purchase', 'btn-secondary': purchaseOrder?.state !== 'purchase'}" type="button">
                         Đơn hàng
                     </button>
-                    <button [disabled]="purchaseOrder?.state !== 'draft'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': purchaseOrder?.state === 'draft', 'btn-secondary': purchaseOrder?.state !== 'draft'}"
-                        type="button">
+                    <button [disabled]="purchaseOrder?.state !== 'draft'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': purchaseOrder?.state === 'draft', 'btn-secondary': purchaseOrder?.state !== 'draft'}" type="button">
                         Nháp
                     </button>
 
@@ -82,7 +66,7 @@
                 </div>
             </div>
 
-            <div class="o_form_sheet">
+            <div class="o_form_sheet d-flex flex-column overflow-hidden h-100 pb-0 mb-0">
                 <div class="t_upper">
                     <div class="o_group">
                         <table class="o_group o_inner_group o_group_col_4">
@@ -94,12 +78,9 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-combobox [data]="filteredPartners" [textField]="'name'"
-                                            [class.d-none]="purchaseOrder?.state != 'draft'" [filterable]="true"
-                                            #partnerCbx formControlName="partner" [valueField]="'id'">
+                                        <kendo-combobox [data]="filteredPartners" [textField]="'name'" [class.d-none]="purchaseOrder?.state != 'draft'" [filterable]="true" #partnerCbx formControlName="partner" [valueField]="'id'">
                                         </kendo-combobox>
-                                        <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
-                                            class="text-danger">
+                                        <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
                                             <div *ngIf="f.partner.errors.required">Chọn cung cấp</div>
                                         </div>
                                         <span [class.d-none]="purchaseOrder?.state == 'draft'">
@@ -115,13 +96,10 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-datepicker [format]="'dd/MM/yyyy'"
-                                            *ngIf="purchaseOrder?.state == 'draft'" formControlName="dateOrderObj">
+                                        <kendo-datepicker [format]="'dd/MM/yyyy'" *ngIf="purchaseOrder?.state == 'draft'" formControlName="dateOrderObj">
                                         </kendo-datepicker>
-                                        <div *ngIf="purchaseOrder?.state == 'draft' && f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)"
-                                            class="text-danger">
-                                            <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày {{purchaseOrder?.type
-                                                == 'order' ? 'mua' : 'trả'}}</div>
+                                        <div *ngIf="purchaseOrder?.state == 'draft' && f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày {{purchaseOrder?.type == 'order' ? 'mua' : 'trả'}}</div>
                                         </div>
                                         <span *ngIf="purchaseOrder?.state != 'draft'">
                                             {{purchaseOrder?.dateOrder | date: 'shortDate'}}
@@ -139,8 +117,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-combobox [data]="filteredJournals" [textField]="'name'"
-                                            [filterable]="true" formControlName="journal" [valueField]="'id'">
+                                        <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true" formControlName="journal" [valueField]="'id'">
                                         </kendo-combobox>
                                     </td>
                                 </tr>
@@ -151,8 +128,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-numerictextbox [min]="0" (valueChange)="onChangeAmountPayment($event)" [format]="'n0'"
-                                            [autoCorrect]="true" formControlName="amountPayment">
+                                        <kendo-numerictextbox [min]="0" (valueChange)="onChangeAmountPayment($event)" [format]="'n0'" [autoCorrect]="true" formControlName="amountPayment">
                                         </kendo-numerictextbox>
                                     </td>
                                 </tr>
@@ -175,7 +151,7 @@
                                     <td colspan="1" style="width: 100%;">
                                         <a [routerLink]="" (click)="getPicking(purchaseOrder?.picking?.id)">
                                            {{purchaseOrder?.picking?.name}}
-                                        </a>                                      
+                                        </a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -189,8 +165,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <textarea *ngIf="purchaseOrder?.state == 'draft'" class="form-control" rows="3" id="comment"
-                                            formControlName="notes"></textarea>
+                                        <textarea *ngIf="purchaseOrder?.state == 'draft'" class="form-control" rows="3" id="comment" formControlName="notes"></textarea>
                                         <span *ngIf="purchaseOrder?.state == 'draft'">{{purchaseOrder?.note}}</span>
                                     </td>
                                 </tr>
@@ -198,23 +173,23 @@
                         </table>
                     </div>
                 </div>
-                <div class="o_form_section">
-                    <div class="o_form_section_left" *ngIf="purchaseOrder?.state == 'draft'">
-                        <p class="t_tilte">Danh sách hàng hóa</p>
+                <div class="o_form_section overflow-hidden h-100">
+                    <div class="o_form_section_left d-flex flex-column h-100" *ngIf="purchaseOrder?.state == 'draft'">
+                        <p class="t_tilte flex-0-0-auto">Danh sách hàng hóa</p>
 
-                        <div class="group_product h-90">
+                        <div class="group_product flex-1-1-100 overflow-hidden">
                             <app-purchase-order-list-product-tabpanel [listProducts]="productList" (onSelectService)="selectProduct($event)">
                             </app-purchase-order-list-product-tabpanel>
                         </div>
-                       
+
 
                     </div>
 
-                    <div class="o_form_section_right">
-                        <p class="t_tilte">Danh sách {{this.purchaseOrder?.type == 'order' ? 'mua hàng' : 'trả hàng'}} </p>
-                        <div class="table-scroll">
+                    <div class="o_form_section_right d-flex flex-column">
+                        <p class="t_tilte flex-0-0-auto">Danh sách {{this.purchaseOrder?.type == 'order' ? 'mua hàng' : 'trả hàng'}} </p>
+                        <div class="table-scroll overflow-auto">
                             <table class="table table-sm mb-0" id="table_details">
-                                <thead>
+                                <thead class="sticky-header">
                                     <tr>
                                         <th scope="col" width="250">Tên hàng hóa</th>
                                         <th scope="col" width="100">Số lượng</th>
@@ -222,8 +197,7 @@
                                         <th scope="col" width="120">Đơn giá</th>
                                         <th scope="col" width="60">CK(%)</th>
                                         <th scope="col" class="text-right" width="120">Thành tiền</th>
-                                        <th scope="col" width="50" class="text-center"
-                                            *ngIf="purchaseOrder?.state == 'draft'">
+                                        <th scope="col" width="50" class="text-center" *ngIf="purchaseOrder?.state == 'draft'">
                                             <i class="far fa-trash-alt"></i>
                                         </th>
                                     </tr>
@@ -233,35 +207,27 @@
                                         <tr [formGroupName]="i">
                                             <td class="align-middle">{{ line.get('product').value?.name}}</td>
                                             <td class="align-middle">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                    *ngIf="purchaseOrder?.state == 'draft'" formControlName="productQty"
-                                                    style="width: 80px;" [spinners]="false" (valueChange)="countAmountTotal()">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'" *ngIf="purchaseOrder?.state == 'draft'" formControlName="productQty" style="width: 80px;" [spinners]="false" (valueChange)="countAmountTotal()">
                                                 </kendo-numerictextbox>
                                                 <span *ngIf="purchaseOrder?.state != 'draft'">
                                                     {{line.get('productQty').value | number}}
                                                 </span>
                                             </td>
                                             <td class="align-middle">
-                                                <a title="Click vào để thay đổi đơn vị" class="text-primary" *ngIf="purchaseOrder.state == 'draft' && hasDefined"
-                                                    (click)="changeUoM(line)">{{line.get('productUOM').value?.name}}</a>
+                                                <a title="Click vào để thay đổi đơn vị" class="text-primary" *ngIf="purchaseOrder.state == 'draft' && hasDefined" (click)="changeUoM(line)">{{line.get('productUOM').value?.name}}</a>
                                                 <span *ngIf="purchaseOrder?.state != 'draft' || (!hasDefined && purchaseOrder.state == 'draft')">
                                                     {{line.get('productUOM').value?.name}}
                                                 </span>
                                             </td>
                                             <td class="align-middle">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                    (valueChange)="changePrice($event,line)"
-                                                    *ngIf="purchaseOrder?.state == 'draft'" formControlName="priceUnit"
-                                                    style="width: 120px;" [spinners]="false">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'" (valueChange)="changePrice($event,line)" *ngIf="purchaseOrder?.state == 'draft'" formControlName="priceUnit" style="width: 120px;" [spinners]="false">
                                                 </kendo-numerictextbox>
                                                 <span *ngIf="purchaseOrder?.state != 'draft'">
                                                     {{line.get('priceUnit').value | number}}
                                                 </span>
                                             </td>
                                             <td class="align-middle">
-                                                <kendo-numerictextbox [min]="0" *ngIf="purchaseOrder?.state == 'draft'"
-                                                    [format]="'n0'" formControlName="discount" style="width: 60px;"
-                                                    [spinners]="false" (valueChange)="countAmountTotal()">
+                                                <kendo-numerictextbox [min]="0" *ngIf="purchaseOrder?.state == 'draft'" [format]="'n0'" formControlName="discount" style="width: 60px;" [spinners]="false" (valueChange)="countAmountTotal()">
                                                 </kendo-numerictextbox>
                                                 <span *ngIf="purchaseOrder?.state != 'draft'">
                                                     {{line.get('discount').value | number}}
@@ -271,60 +237,59 @@
                                                 {{computeLinePriceSubtotal(line) | number}}
                                             </td>
                                             <td class="text-center align-middle btnAction" *ngIf="purchaseOrder?.state == 'draft'">
-                                                <button type="button" class="btn btn-xs btn-info mr-2" title="Tạo bản sao"
-                                                    (click)="duplicateLine(i, line)">
+                                                <button type="button" class="btn btn-xs btn-info mr-2" title="Tạo bản sao" (click)="duplicateLine(i, line)">
                                                     <i class="far fa-copy"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-xs btn-danger " title="Xóa"
-                                                    (click)="removeOrderLine(i)">
+                                                <button type="button" class="btn btn-xs btn-danger " title="Xóa" (click)="removeOrderLine(i)">
                                                     <i class="far fa-trash-alt"></i>
                                                 </button>
                                             </td>
                                         </tr>
-                                    </ng-container>                                                         
+                                    </ng-container>
                                 </tbody>
-                            </table>   
-                        </div>                   
-                        <table class="o_group o_inner_group oe_subtotal_footer oe_right pr-0 o_group_col_4">
-                            <tbody>
-                                <tr>
-                                    <td colspan="1" class="o_td_label pb-0">
-                                        <label class="o_form_label oe_subtotal_footer_separator">
+                            </table>
+                        </div>
+                        <div>
+                            <table class="o_group o_inner_group oe_subtotal_footer oe_right pr-0 o_group_col_4">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label pb-0">
+                                            <label class="o_form_label oe_subtotal_footer_separator">
                                             Tổng tiền
                                         </label>
-                                    </td>
-                                    <td colspan="1">
-                                        <span
-                                            class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="purchaseOrder?.state != 'draft'">
-                                    <td colspan="1" class="o_td_label pb-0">
-                                        <label class="o_form_label oe_subtotal_footer_separator">
+                                        </td>
+                                        <td colspan="1">
+                                            <span class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="purchaseOrder?.state != 'draft'">
+                                        <td colspan="1" class="o_td_label pb-0">
+                                            <label class="o_form_label oe_subtotal_footer_separator">
                                            Đã thanh toán
                                         </label>
-                                    </td>     
-                                    <td colspan="1">
-                                        <span class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">
+                                        </td>
+                                        <td colspan="1">
+                                            <span class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">
                                             {{((getAmountTotal - purchaseOrder?.amountResidual) || 0) | number}}
                                         </span>
-                                    </td>                                                                  
-                                </tr>
-                                <tr *ngIf="purchaseOrder?.state != 'draft'" class="line-amount-residual">
-                                    <td colspan="1" class="o_td_label pb-0">
-                                        <label class="o_form_label oe_subtotal_footer_separator">
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="purchaseOrder?.state != 'draft'" class="line-amount-residual">
+                                        <td colspan="1" class="o_td_label pb-0">
+                                            <label class="o_form_label oe_subtotal_footer_separator">
                                             Còn nợ
                                          </label>
-                                    </td> 
-                                    <td colspan="1">
-                                        <span class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">
+                                        </td>
+                                        <td colspan="1">
+                                            <span class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">
                                             {{purchaseOrder?.amountResidual | number}}
                                         </span>
-                                    </td>                                    
-                                  
-                                </tr>
-                            </tbody>
-                        </table>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                         <div class="clearfix"></div>
                     </div>
                 </div>
