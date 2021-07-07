@@ -1,3 +1,4 @@
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { state } from '@angular/animations';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
@@ -53,6 +54,7 @@ export class AppointmentListTodayComponent implements OnInit {
 
   constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal,
+    private notifyService: NotifyService,
     private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService) { }
 
 
@@ -125,9 +127,10 @@ export class AppointmentListTodayComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: "lg", windowClass: "o_technical_modal modal-appointment", keyboard: false, backdrop: "static", });
+    let modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: "sm", windowClass: "o_technical_modal modal-appointment", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Đặt lịch hẹn";
     modalRef.result.then(() => {
+      this.notifyService.notify('success','Lưu thành công');
       this.loadDataFromApi();
       this.loadStateCount();
     }, () => { }
@@ -135,10 +138,11 @@ export class AppointmentListTodayComponent implements OnInit {
   }
 
   editItem(item) {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'sm', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Cập nhật lịch hẹn";
     modalRef.componentInstance.appointId = item.id;
     modalRef.result.then(() => {
+      this.notifyService.notify('success','Lưu thành công');
       this.loadDataFromApi();
       this.loadStateCount();
     }, () => {

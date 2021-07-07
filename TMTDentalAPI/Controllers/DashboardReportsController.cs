@@ -30,10 +30,10 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetCountMedicalXamination()
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCountMedicalXamination(ReportTodayRequest val)
         {
-            var result = await _dashboardService.GetCountMedicalXaminationToday();
+            var result = await _dashboardService.GetCountMedicalXaminationToday(val);
             return Ok(result);
         }
 
@@ -45,7 +45,14 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetSumary(RevenueTodayRequest val)
+        public async Task<IActionResult> GetCountSaleOrder(ReportTodayRequest val)
+        {
+            var res = await _dashboardService.GetCountSaleOrder(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetSumary(ReportTodayRequest val)
         {
             var res = await _dashboardService.GetSumary(val);
             return Ok(res);

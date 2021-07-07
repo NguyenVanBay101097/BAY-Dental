@@ -1,5 +1,5 @@
 import { AuthService } from 'src/app/auth/auth.service';
-import { DashboardReportService, RevenueTodayReponse, RevenueTodayRequest } from './../../../core/services/dashboard-report.service';
+import { DashboardReportService, ReportTodayRequest, RevenueTodayReponse } from './../../../core/services/dashboard-report.service';
 import { Component, OnInit } from '@angular/core';
 import { LegendLabelsContentArgs } from '@progress/kendo-angular-charts';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -16,11 +16,7 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
 
   // Pie
   public pieData: any[] = [];
-  public pieData2 = [
-    { category: "cash", value: 300000, color: "#0066cc" },
-    { category: "bank", value: 200000, color: "#99ccff" },
-    { category: "other", value: 100000, color: "#b3b3b3" },
-  ];
+
 
   constructor(private intlService: IntlService,
     private dashboardService: DashboardReportService,
@@ -33,7 +29,7 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var val = new RevenueTodayRequest();
+    var val = new ReportTodayRequest();
     val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
     val.companyId = this.authService.userInfo.companyId;

@@ -69,19 +69,13 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       name: '120 phút', value: 120
     },
   ]
+
   states: any[] = [
-    {name: 'Đang hẹn', value:'confirmed'},
-    {name: 'Chờ khám', value:'waiting'},
-    {name: 'Đang khám', value:'examination'},
-    {name: 'Hoàn thành', value:'done'},
-    {name: 'Hủy hẹn', value:'cancel'},
-    {name: 'Đã đến', value:'arrived'}
+    { value: 'confirmed', text: 'Đang hẹn' },
+    { value: 'arrived', text: 'Đã đến' },
+    { value: 'cancel', text: 'Hủy hẹn' },
   ]
-  statesReceive: any[] = [
-    {name: 'Chờ khám', value:'waiting'},
-    {name: 'Đang khám', value:'examination'},
-    {name: 'Hoàn thành', value:'done'}
-  ]
+
   defaultVal: any;
   formGroup: FormGroup;
   dotKhamId: any;
@@ -206,8 +200,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     return times;
   }
 
-
-
+  get stateControl() {
+    return this.formGroup.get('state').value;
+  }
 
   searchEmployees(filter?: string) {
     var val = new EmployeePaged();
@@ -249,12 +244,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         },
       )
     } else {
-      if(this.type == 'receive_create'){
-        appoint.state = 'waiting';
-      }
-      else {
-        appoint.state = 'confirmed';
-      }
       this.appointmentService.create(appoint).subscribe(
         res => {
           this.activeModal.close(res);
@@ -285,24 +274,15 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     this.appointId = null;
   }
 
-  onChange(value){
-    if(this.appointId && this.type == 'create'){
-      if (value == 'cancel'){
-        this.f.reason.setValidators(Validators.required);
-        this.f.reason.updateValueAndValidity();
-      }
-      else{
-        this.f.reason.clearValidators();
-        this.f.reason.updateValueAndValidity();
-      }
-    }
-    if(this.appointId && this.type == 'receive_update'){
-      if(value == 'waiting'){
-        this.f.appTime.setValue('00:00');
-      }
-      if(value == 'done'){
-        this.f.appTime.setValue(null);
-        this.showIsNotExamination = true;
+  onChange(){
+    if(this.appointId){
+      if (this.stateControl == 'cancel') {
+        this.formGroup.get("reason").setValidators([Validators.minLength(0), Validators.required]);
+        this.formGroup.get("reason").updateValueAndValidity();
+      } else {
+        this.formGroup.get('reason').clearValidators();
+        this.formGroup.get('reason').updateValueAndValidity();
+        this.formGroup.get('reason').setValue(null);
       }
     }
   }

@@ -100,18 +100,40 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<GetCountMedicalXamination> GetCountMedicalXaminationToday()
+        public async Task<GetCountMedicalXamination> GetCountMedicalXaminationToday(ReportTodayRequest val)
         {
-            var today = DateTime.Today;
             var customerReceiptObj = GetService<ICustomerReceiptService>();
             var appointmentObj = GetService<IAppointmentService>();
 
+            var query = appointmentObj.SearchQuery();
 
-            var appointmentNewToday = await appointmentObj.SearchQuery(x => x.Date >= today.AbsoluteBeginOfDate() && x.Date <= today.AbsoluteEndOfDate() && !x.IsRepeatCustomer).CountAsync();
-            var appointmentOldToday = await appointmentObj.SearchQuery(x => x.Date >= today.AbsoluteBeginOfDate() && x.Date <= today.AbsoluteEndOfDate() && x.IsRepeatCustomer).CountAsync();
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
-            var customerReceiptNewToday = await customerReceiptObj.SearchQuery(x => x.DateWaitting >= today.AbsoluteBeginOfDate() && x.DateWaitting <= today.AbsoluteEndOfDate() && !x.IsRepeatCustomer).CountAsync();
-            var customerReceiptOldToday = await customerReceiptObj.SearchQuery(x => x.DateWaitting >= today.AbsoluteBeginOfDate() && x.DateWaitting <= today.AbsoluteEndOfDate() && x.IsRepeatCustomer).CountAsync();
+            if (val.DateFrom.HasValue)             
+                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
+
+            var appointmentNewToday = await query.Where(x=> !x.IsRepeatCustomer).CountAsync();
+            var appointmentOldToday = await query.Where(x => x.IsRepeatCustomer).CountAsync();
+
+            var query2 = customerReceiptObj.SearchQuery();
+
+            if (val.DateFrom.HasValue)
+                query2 = query2.Where(x => x.DateWaitting >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateFrom.HasValue)
+                query2 = query2.Where(x => x.DateWaitting <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            if (val.CompanyId.HasValue)
+                query2 = query2.Where(x => x.CompanyId == val.CompanyId);
+
+
+            var customerReceiptNewToday = await query2.Where(x => !x.IsRepeatCustomer).CountAsync();
+            var customerReceiptOldToday = await query2.Where(x => x.IsRepeatCustomer).CountAsync();    
 
             var res = new GetCountMedicalXamination
             {
@@ -122,7 +144,27 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<RevenueTodayReponse> GetSumary(RevenueTodayRequest val)
+        public async Task<long> GetCountSaleOrder(ReportTodayRequest val)
+        {
+            var appointmentObj = GetService<IAppointmentService>();
+
+            var query = appointmentObj.SearchQuery();
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
+            return await query.LongCountAsync();
+        }
+
+
+
+        public async Task<RevenueTodayReponse> GetSumary(ReportTodayRequest val)
         {
             var movelineObj = GetService<IAccountMoveLineService>();
             var yesterday = DateTime.Today.AddDays(-1);

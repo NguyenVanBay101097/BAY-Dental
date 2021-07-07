@@ -1,3 +1,4 @@
+import { DashboardReportService, ReportTodayRequest } from './../../../core/services/dashboard-report.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { LegendLabelsContentArgs } from '@progress/kendo-angular-charts';
@@ -30,8 +31,11 @@ export class ReceptionDashboardComponent implements OnInit {
   canAppointment = this.checkPermissionService.check(['Report.Appointment']);
   public today: Date = new Date(new Date().toDateString());
   totalCash : number = 0;
+  countSaleOrder: number = 0;
+  medicalXamination : any;
   stateFilter: string = '';
   stateCount: any = {};
+
   states: any[] = [
     { value: '', text: 'Tất cả'},
     { value: 'waiting', text: 'Chờ khám'},
@@ -40,7 +44,7 @@ export class ReceptionDashboardComponent implements OnInit {
   ]
 
 
-  constructor(private checkPermissionService: CheckPermissionService , private appointmentService: AppointmentService,
+  constructor(private checkPermissionService: CheckPermissionService , private dashboardReportService: DashboardReportService,
     private intlService: IntlService,
     private authService: AuthService,
     private cashBookService: CashBookService) { 
@@ -49,6 +53,8 @@ export class ReceptionDashboardComponent implements OnInit {
 
   ngOnInit() {
     this.loadTotalCash();
+    this.loadCountSaleOrder();
+    this.loadMedicalXamination();
    }
 
   loadTotalCash() {
@@ -60,6 +66,32 @@ export class ReceptionDashboardComponent implements OnInit {
     this.cashBookService.getTotal(val).subscribe(rs =>{
       
       this.totalCash = rs;
+    }, () => {
+
+    });
+
+  }
+
+  loadCountSaleOrder() {
+    var val = new ReportTodayRequest();
+    val.companyId = this.authService.userInfo.companyId;
+    val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+    this.dashboardReportService.getCountSaleOrder(val).subscribe(rs =>{      
+      this.countSaleOrder = rs;
+    }, () => {
+
+    });
+
+  }
+
+  loadMedicalXamination() {
+    var val = new ReportTodayRequest();
+    val.companyId = this.authService.userInfo.companyId;
+    val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+    this.dashboardReportService.getCountMedicalXamination(val).subscribe((rs:any) =>{      
+      this.medicalXamination = rs;
     }, () => {
 
     });

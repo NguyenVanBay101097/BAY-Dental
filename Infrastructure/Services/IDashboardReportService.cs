@@ -11,7 +11,9 @@ namespace Infrastructure.Services
         Task<CustomerReceiptDisplay> GetDefaultCustomerReceipt(GetDefaultRequest val);
         Task CreateCustomerReceiptToAppointment(CustomerReceiptRequest val);
 
-        Task<GetCountMedicalXamination> GetCountMedicalXaminationToday();
-        Task<RevenueTodayReponse> GetSumary(RevenueTodayRequest val);
+        Task<GetCountMedicalXamination> GetCountMedicalXaminationToday(ReportTodayRequest val);
+
+        Task<long> GetCountSaleOrder(ReportTodayRequest val);
+        Task<RevenueTodayReponse> GetSumary(ReportTodayRequest val);
     }
 }

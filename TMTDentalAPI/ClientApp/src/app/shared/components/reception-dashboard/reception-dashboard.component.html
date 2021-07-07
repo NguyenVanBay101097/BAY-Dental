@@ -90,7 +90,7 @@
                         <div class="box-item">
                             <div class="box-item-content">
                                 <p class="box-content-header">Phiếu điều trị mới</p>
-                                <p class="box-content-subheader">5</p>
+                                <p class="box-content-subheader">{{countSaleOrder || 0}}</p>
                             </div>
                         </div>
                     </div>
@@ -98,7 +98,7 @@
                         <div class="box-item">
                             <div class="box-item-content">
                                 <p class="box-content-header">Khám mới</p>
-                                <p class="box-content-subheader">10</p>
+                                <p class="box-content-subheader">{{medicalXamination?.newMedical || 0 }}</p>
                             </div>
                         </div>
                     </div>
@@ -106,7 +106,7 @@
                         <div class="box-item">
                             <div class="box-item-content">
                                 <p class="box-content-header">Tái khám</p>
-                                <p class="box-content-subheader">5</p>
+                                <p class="box-content-subheader">{{medicalXamination?.reMedical || 0}}</p>
                             </div>
                         </div>
                     </div>

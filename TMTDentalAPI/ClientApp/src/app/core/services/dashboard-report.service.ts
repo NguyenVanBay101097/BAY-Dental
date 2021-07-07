@@ -6,9 +6,9 @@ export class GetDefaultRequest {
   appointmentId: string;
 }
 
-export class GetCountMedicalXamination {
-  NewMedical: number;
-  ReMedical: number;
+export class CountMedicalXamination {
+  newMedical: number;
+  reMedical: number;
 }
 
 export class CustomerReceiptRequest {
@@ -23,7 +23,7 @@ export class CustomerReceiptRequest {
   appointmentId: string;
 }
 
-export class RevenueTodayRequest {
+export class ReportTodayRequest {
   dateTo: string;
   dateFrom: string;
   companyId: string;
@@ -48,8 +48,12 @@ export class DashboardReportService {
     return this.http.get(this.baseApi + this.apiUrl + "/GetDefaultCustomerReceipt", { params: new HttpParams({ fromObject: val }) });
   }
 
-  getCountMedicalXamination() {
-    return this.http.get(this.baseApi + this.apiUrl + '/GetCountMedicalXamination');
+  getCountMedicalXamination(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/GetCountMedicalXamination' , val);
+  }
+
+  getCountSaleOrder(val) {
+    return this.http.post<number>(this.baseApi + this.apiUrl + '/GetCountSaleOrder', val);
   }
 
   getSumary(val) {

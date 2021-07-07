@@ -46,7 +46,6 @@
   color: #aaa;
 }
 
-
 .section-header {
   align-items: center;
   display: flex;
@@ -66,8 +65,7 @@
   padding: 3px 6px;
 }
 
-.header-buttons-view .header-combobox,
-.header-search {
+.header-buttons-view .header-combobox, .header-search {
   height: 2.1rem;
 }
 
@@ -130,8 +128,6 @@
   -ms-border-radius: 6px;
   -o-border-radius: 6px;
 }
-
-
 
 .appointments-today-section {
   flex-shrink: 0;
@@ -426,6 +422,7 @@
 }
 
 /*--Report doanh thu --*/
+
 .revenue-report-section {
   flex-shrink: 0;
   background-color: #fff;
@@ -440,8 +437,8 @@
   -o-border-radius: 6px;
 }
 
-
 /*-- SaleOrder today --*/
+
 .sale-order-line-section {
   margin-top: 10px;
   background-color: #fff;
@@ -459,8 +456,8 @@
 }
 
 .sale-order-line {
-	max-width: 1000px;
-	width:100%;
+  max-width: 1000px;
+  width: 100%;
 }
 
 .table {
@@ -494,6 +491,7 @@
   height: 100%;
   overflow: auto;
 }
+
 .table .table-cell {
   padding: 0 15px;
   background-color: white;
@@ -515,6 +513,7 @@
   background-repeat: repeat;
   margin-top: -1px;
 }
+
 .table .table-cell.optimistic::after {
   content: "";
   position: absolute;
@@ -536,15 +535,11 @@
   }
 }
 
-
-
-
 @media screen and (max-width: 980px) {
   .appointment-boxes.gridView .project-box-wrapper {
     width: 50%;
   }
-  .status-number,
-  .status-type {
+  .status-number, .status-type {
     font-size: 14px;
   }
   .status-type:after {
@@ -575,19 +570,14 @@
 }
 
 @media screen and (max-width: 720px) {
-  .app-name,
-  .profile-btn span {
+  .app-name, .profile-btn span {
     display: none;
   }
-  .add-btn,
-  .notification-btn,
-  .mode-switch {
+  .add-btn, .notification-btn, .mode-switch {
     width: 20px;
     height: 20px;
   }
-  .add-btn svg,
-  .notification-btn svg,
-  .mode-switch svg {
+  .add-btn svg, .notification-btn svg, .mode-switch svg {
     width: 16px;
     height: 16px;
   }
@@ -603,15 +593,13 @@
   .project-boxes {
     overflow-y: visible;
   }
-  .app-sidebar,
-  .app-icon {
+  .app-sidebar, .app-icon {
     display: none;
   }
   .app-content {
     padding: 14px;
   }
-  .status-number,
-  .status-type {
+  .status-number, .status-type {
     font-size: 10px;
   }
   .view-btn {
@@ -637,8 +625,7 @@
   .app-header {
     padding: 10px;
   }
-  .appointments-section-header p,
-  .appointments-section-header .time {
+  .appointments-section-header p, .appointments-section-header .time {
     font-size: 18px;
   }
   .status-type {
@@ -661,14 +648,33 @@
     font-size: 12px;
     line-height: 12px;
   }
-  .project-boxes.jsListView .project-box-header > span {
+  .project-boxes.jsListView .project-box-header>span {
     font-size: 14px;
   }
-  .project-boxes.jsListView .project-box > * {
+  .project-boxes.jsListView .project-box>* {
     margin-right: 10px;
   }
   .project-boxes.jsListView .more-wrapper {
     right: 2px;
     top: 10px;
+  }
+ 
+}
+
+@media (min-width: 1300px) and (max-width: 1500px) {
+    
+  .box-content-header {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    color: #2c333a;
+    margin: 16px 0 0 0;
+  }
+
+  .box-content-subheader {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 30px;
+    color: #0184ff;
   }
 }

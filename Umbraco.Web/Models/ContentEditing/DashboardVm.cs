@@ -10,6 +10,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? AppointmentId { get; set; }
     }
 
+
     public class GetCountMedicalXamination
     {
         public int NewMedical { get; set; }
@@ -54,7 +55,7 @@ namespace Umbraco.Web.Models.ContentEditing
     }
 
 
-    public class RevenueTodayRequest
+    public class ReportTodayRequest
     {
         public DateTime? DateFrom { get; set; }
 
