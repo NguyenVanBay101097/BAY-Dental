@@ -59,7 +59,7 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
   editReceipt(){
     let modalRef = this.modalService.open(CustomerReceipCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Tiếp nhận';
-        modalRef.componentInstance.type = 'receipt_update';
-        modalRef.componentInstance.appointId = '6a72767b-e5e4-4825-8898-08d93b70c03f';
+       // modalRef.componentInstance.type = 'receipt_waitting';
+        modalRef.componentInstance.receiptId = '898c2032-eb9e-4032-2bcf-08d94062441c';
   }
 }

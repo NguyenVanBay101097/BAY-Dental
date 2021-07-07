@@ -58,7 +58,7 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
             var entity = _mapper.Map<CustomerReceipt>(val);
             entity = await _customerReceiptService.CreateAsync(entity);
-            var res = _mapper.Map<SmsAccountBasic>(entity);
+            var res = _mapper.Map<CustomerReceiptDisplay>(entity);
             return Ok(res);
         }
 
