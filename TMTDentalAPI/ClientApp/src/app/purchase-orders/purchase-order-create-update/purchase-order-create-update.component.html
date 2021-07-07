@@ -66,7 +66,7 @@
                 </div>
             </div>
 
-            <div class="o_form_sheet d-flex flex-column overflow-hidden">
+            <div class="o_form_sheet d-flex flex-column overflow-hidden h-100 pb-0 mb-0">
                 <div class="t_upper">
                     <div class="o_group">
                         <table class="o_group o_inner_group o_group_col_4">
@@ -173,11 +173,11 @@
                         </table>
                     </div>
                 </div>
-                <div class="o_form_section overflow-hidden">
-                    <div class="o_form_section_left" *ngIf="purchaseOrder?.state == 'draft'">
-                        <p class="t_tilte">Danh sách hàng hóa</p>
+                <div class="o_form_section overflow-hidden h-100">
+                    <div class="o_form_section_left d-flex flex-column h-100" *ngIf="purchaseOrder?.state == 'draft'">
+                        <p class="t_tilte flex-0-0-auto">Danh sách hàng hóa</p>
 
-                        <div class="group_product h-90">
+                        <div class="group_product flex-1-1-100 overflow-hidden">
                             <app-purchase-order-list-product-tabpanel [listProducts]="productList" (onSelectService)="selectProduct($event)">
                             </app-purchase-order-list-product-tabpanel>
                         </div>

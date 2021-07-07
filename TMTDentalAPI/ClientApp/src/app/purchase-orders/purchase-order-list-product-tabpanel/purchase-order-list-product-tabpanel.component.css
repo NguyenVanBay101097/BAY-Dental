@@ -22,34 +22,30 @@
 
 ._wrapper {
     min-height: 300px;
-    max-height: 400px;
+    /* max-height: 400px; */
 }
-
-
 
 .form-check-input:checked+.form-check-label {
     color: #fff;
     background-color: #0d6efd;
     border-color: #0d6efd;
-   
 }
 
 .table-list-product td {
     border-top: none !important;
 }
 
-
-.form-check-label{
+.form-check-label {
     padding: 4px;
     border-radius: 5px;
     cursor: pointer;
 }
 
-.form-check{
+.form-check {
     padding-left: 2px;
 }
 
-.has-search{
+.has-search {
     position: relative;
 }
 
@@ -73,7 +69,7 @@
     color: #aaa;
 }
 
-.has-search input{
+.has-search input {
     border-radius: 5px;
 }
 
@@ -125,19 +121,14 @@ tbody>.cursor:hover {
     border-spacing: 0 !important;
 }
 
-@media (min-width: 1300px) and (max-width: 1450px){
-
+@media (min-width: 1300px) and (max-width: 1450px) {
     .form-check-label {
         padding: 2px;
         border-radius: 5px;
         cursor: pointer;
     }
-    
 }
 
 .product-type-filter .btn {
     margin: .25rem .125rem;
 }
-
-
-
