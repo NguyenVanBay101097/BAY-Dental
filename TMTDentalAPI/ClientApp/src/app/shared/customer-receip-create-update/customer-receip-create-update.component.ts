@@ -39,8 +39,10 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   filteredServices: ProductSimple[] = [];
   filteredEmployees: EmployeeBasic[] = [];
   appointId: string;
+  receiptId: string;
   type: string = "receipt";
   showIsNoTreatment = false;
+  value: any;
   timeExpecteds: any[] = [
     {
       name: '0 phút', value: 0
@@ -110,8 +112,6 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       partnerPhone: null,
       partnerTags: this.fb.array([]),
       user: [null],
-      apptDate: [null, Validators.required],
-      appTime: ['00:00'],
       note: null,
       companyId: null,
       doctor: null,
@@ -121,7 +121,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       saleOrderId: null,
       services: [],
       isRepeatCustomer:false,
-      IsNoTreatment: false
+      isNoTreatment: false
     })
 
     setTimeout(() => {
@@ -129,11 +129,9 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       this.timeSource = this.TimeInit();
       this.timeList = this.timeSource;
 
-      if (this.appointId) {
+      if (this.receiptId) {
         this.loadDataFromApi();
-      } else {
-        this.defaultGet();
-      }
+      } 
 
       this.loadEmployees();
       this.getCustomerList();
@@ -194,10 +192,6 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     }
     return times;
   }
-
-
-
-
   searchEmployees(filter?: string) {
     var val = new EmployeePaged();
     val.search = filter || '';
@@ -206,59 +200,74 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
+    console.log(this.value);
+    
     this.submitted = true;
 
-    if (!this.formGroup.valid) {
+    if (!this.formGroup.valid || this.value == undefined) {
       return false;
     }
-
-    var appoint = this.formGroup.getRawValue();
-    appoint.partnerId = appoint.partner ? appoint.partner.id : null;
-    appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
-    var apptDate = this.intlService.formatDate(appoint.apptDate, 'yyyy-MM-dd');
-    var appTime = appoint.appTime;
-    appoint.date = `${apptDate}T00:00:00`;
-    appoint.time = appTime;
-    appoint.timeExpected = Number.parseInt(appoint.timeExpected);
-    
-    if (this.appointId) {
-      if(this.type == 'receipt'){
-        appoint.state = 'arrived';
-        this.appointmentService.update(this.appointId, appoint).subscribe(
-          () => {
-            this.activeModal.close(appoint);
-          },
-          er => {
-            this.errorService.show(er);
-            this.submitted = false;
-          },
-        )
+    var receipt = this.formGroup.getRawValue();
+    receipt.partnerId = receipt.partner ? receipt.partner.id : null;
+    receipt.doctorId = receipt.doctor ? receipt.doctor.id : null;
+    receipt.timeExpected = Number.parseInt(receipt.timeExpected);
+    if (this.receiptId) {
+      if (receipt.state == 'waitting'){
+        receipt.dateWaitting = this.value;
       }
-      if(this.type == 'receipt_update'){
-        this.customerReceiptService.updateState(this.appointId,appoint).subscribe(
-          () => {
-            if (appoint.state == 'done'){
-              this.f.timeExpected.disable();
-              this.f.isRepeatCustomer.disable();
-              this.f.services.disable();
-              this.f.note.disable();
-              this.f.state.disable();
-              this.f.reason.disable();
-            }
-            else{
-              this.activeModal.close(appoint);
-            }
-          },
-          er => {
-            this.errorService.show(er);
-            this.submitted = false;
-          },
-        )
+      if (receipt.state == 'examination'){
+        receipt.dateExamination = this.value;
       }
+      this.customerReceiptService.updateState(this.receiptId, receipt).subscribe(
+        () => {
+          this.activeModal.close(receipt);
+        },
+        er => {
+          this.errorService.show(er);
+          this.submitted = false;
+        },
+      )
+      // if(this.type == 'create_receipt'){
+      //   appoint.state = 'waitting';
+      //   appoint.dateWaitting = this.value;
+      //   console.log(appoint.dateWaitting);
+        
+      //   this.customerReceiptService.update(this.appointId, appoint).subscribe(
+      //     () => {
+      //       this.activeModal.close(appoint);
+      //     },
+      //     er => {
+      //       this.errorService.show(er);
+      //       this.submitted = false;
+      //     },
+      //   )
+      // }
+      // if(this.type == 'receipt_update'){
+      //   this.customerReceiptService.updateState(this.appointId,appoint).subscribe(
+      //     () => {
+      //       if (appoint.state == 'done'){
+      //         this.f.timeExpected.disable();
+      //         this.f.isRepeatCustomer.disable();
+      //         this.f.services.disable();
+      //         this.f.note.disable();
+      //         this.f.state.disable();
+      //         this.f.reason.disable();
+      //       }
+      //       else{
+      //         this.activeModal.close(appoint);
+      //       }
+      //     },
+      //     er => {
+      //       this.errorService.show(er);
+      //       this.submitted = false;
+      //     },
+      //   )
+      // }
       
     } else {
-      appoint.state = 'waitting';
-      this.customerReceiptService.create(appoint).subscribe(
+      receipt.state = 'create_receipt';
+      receipt.dateWaitting = this.value;
+      this.customerReceiptService.create(receipt).subscribe(
         res => {
           this.activeModal.close(res);
         },
@@ -289,13 +298,16 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   }
 
   onChange(value){
-    if(this.appointId && this.type == 'receipt_update'){
+    if(this.receiptId){
       if(value == 'waiting'){
-        this.f.appTime.setValue('00:00');
+        this.value = new Date(Date.now());
       }
       if(value == 'done'){
-        this.f.appTime.setValue(null);
+        this.value = null;
         this.showIsNoTreatment = true;
+      }
+      else{
+        this.showIsNoTreatment = false;
       }
     }
   }
@@ -309,6 +321,10 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       this.f.reason.clearValidators();
       this.f.reason.updateValueAndValidity();
     }
+    console.log(value);
+    
+    console.log(this.f.isNoTreatment.value);
+    
   }
 
   notify(style, content) {
@@ -419,15 +435,21 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    if (this.appointId) {
-      this.appointmentService.get(this.appointId).subscribe(
+    if (this.receiptId) {
+      this.customerReceiptService.get(this.receiptId).subscribe(
         (rs: any) => {
           this.formGroup.patchValue(rs);
-          let date = new Date(rs.date);
+          if (rs.state == 'waitting'){
+            this.value = new Date(rs.dateWaitting);
+          }
+          if (rs.state == 'examination'){
+            this.value = new Date(rs.dateExamination);
+          }
 
-          this.formGroup.get('apptDate').patchValue(date);
-          this.formGroup.get('appTime').patchValue(rs.time);
-
+          if (rs.state == 'done'){
+            this.value = new Date(rs.dateExamination);
+          }
+          
           if (rs.partner) {
             this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
             this.onChangePartner();
@@ -436,13 +458,20 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
           if (rs.doctor) {
             this.filteredEmployees = _.unionBy(this.filteredEmployees, [rs.doctor], 'id');
           }
-          if (rs.state == 'confirmed'){
-            this.f.partner.disable();
-          }
           if (rs.state == 'waitting' || rs.state == 'examination'){
             this.f.doctor.disable();
             this.f.partner.disable();
-            this.f.appTime.disable();
+          }
+          if (rs.state == 'done'){
+            this.f.doctor.disable();
+            this.f.partner.disable();
+            this.f.timeExpected.disable();
+            this.f.isRepeatCustomer.disable();
+            this.f.services.disable();
+            this.f.note.disable();
+            this.f.state.disable();
+            this.f.isNoTreatment.disable();
+            this.f.reason.disable();
           }
         },
         er => {
@@ -531,9 +560,9 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       (rs: any) => {
         this.formGroup.patchValue(rs);
 
-        let date = new Date(rs.date);
-        this.formGroup.get('apptDate').patchValue(date);
-        this.formGroup.get('appTime').patchValue('07:00');
+        // let date = new Date(rs.date);
+        // this.formGroup.get('apptDate').patchValue(date);
+        // this.formGroup.get('appTime').patchValue('07:00');
         this.formGroup.get('timeExpected').patchValue('30');
 
         if (rs.partner) {

@@ -15,4 +15,8 @@ export class CustomerReceiptService {
   updateState(id: string, val: any) {
     return this.http.patch(this.baseApi + "api/CustomerReceipts/PatchState" + id, val);
   }
+
+  get(id: string) {
+    return this.http.get(this.baseApi + "api/CustomerReceipts/" + id);
+  }
 }
