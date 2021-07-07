@@ -1,6 +1,7 @@
 <div class="t_wrapper">
     <div class="media mb-3">
-        <app-image-file-upload [supportWebcam]="true" class="t_avatar" (uploaded)="onAvatarUploaded($event)" [imageId]="partner.avatar" [width]="100" [height]="100">
+        <app-image-file-upload [supportWebcam]="true" class="t_avatar" (uploaded)="onAvatarUploaded($event)"
+            [imageId]="partner.avatar" [width]="100" [height]="100">
         </app-image-file-upload>
         <div class="media-body">
             <div class="d-flex justify-content-between">
@@ -79,7 +80,8 @@
         <div class="row">
             <label class="col-sm-4">Nhãn</label>
             <div class="col-sm-8">
-                <app-partner-category-popover [popOverPlace]="'top'" [tags]="categoriesOdata" (onSave)="categoriesOdata = $event" [rowPartnerId]="partner.id">
+                <app-partner-category-popover [popOverPlace]="'top'" [tags]="categories" (onSave)="categories=$event"
+                    [rowPartnerId]="partner.id">
                 </app-partner-category-popover>
             </div>
         </div>
