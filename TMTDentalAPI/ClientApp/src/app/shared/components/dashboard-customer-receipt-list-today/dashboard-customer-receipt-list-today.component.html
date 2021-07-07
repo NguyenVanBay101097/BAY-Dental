@@ -6,7 +6,7 @@
         <div class="section-header-right">
             <div class="d-flex header-buttons-view">
                 <div class="mr-1">
-                    <button class="btn btn-primary"><i class="fas fa-plus-circle mr-1"></i>Thêm tiếp
+                    <button class="btn btn-primary" (click)="addReceipt()"><i class="fas fa-plus-circle mr-1"></i>Thêm tiếp
                         nhận</button>
                 </div>
                 <kendo-combobox (selectionChange)="onChangeLaboStatus($event)" placeholder="Lọc theo bác sĩ"
@@ -36,7 +36,7 @@
                 <div class="project-box-header">
                     <span class="box-header-badge badge-outline-warning">Đang khám</span>
                     <div class="more-wrapper">
-                        <i class="fas fa-pen text-primary mr-1 project-btn-more"></i>
+                        <i class="fas fa-pen text-primary mr-1 project-btn-more" (click)="editReceipt()"></i>
                         <!-- <i class="far fa-trash-alt text-danger project-btn-more "></i> -->
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" class="project-btn-more"
                             xmlns="http://www.w3.org/2000/svg">

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, ViewChildren } from '@angular/core';
 import { AppointmentVMService } from '../appointment-vm.service';
 import { AppointmentService } from '../appointment.service';
 import { forkJoin, Subject } from 'rxjs';
@@ -22,6 +22,11 @@ import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
+//
+import { FullCalendarComponent } from '@fullcalendar/angular'; 
+import dayGridPlugin from '@fullcalendar/daygrid'; 
+import timeGrigPlugin from '@fullcalendar/timegrid'; 
+import interactionPlugin from '@fullcalendar/interaction'; 
 
 @Component({
   selector: 'app-appointment-kanban',
@@ -68,6 +73,12 @@ export class AppointmentKanbanComponent implements OnInit {
   stateSelected: string = this.states[0].value;
   listEmployees: EmployeeBasic[] = [];
   employeeSelected: string = '';
+  //
+  @ViewChildren('fullcalendar') calendarComponent: FullCalendarComponent;
+  
+  // calendarEvents: EventInput[] = [];
+
+  calendarPlugins = [dayGridPlugin, timeGrigPlugin, interactionPlugin];
 
   constructor(
     private appointmentService: AppointmentService,

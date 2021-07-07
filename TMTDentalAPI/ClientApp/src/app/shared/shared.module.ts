@@ -97,6 +97,7 @@ import { DateRangePickerDropdownComponent } from './date-range-picker-filter/dat
 import { AgentCreateUpdateDialogComponent } from './agent-create-update-dialog/agent-create-update-dialog.component';
 import { DashboardRevenueTodayReportComponent } from './components/dashboard-revenue-today-report/dashboard-revenue-today-report.component';
 import { DashboardCustomerReceiptListTodayComponent } from './components/dashboard-customer-receipt-list-today/dashboard-customer-receipt-list-today.component';
+import { CustomerReceipCreateUpdateComponent } from './customer-receip-create-update/customer-receip-create-update.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -187,7 +188,8 @@ const config: LocaleConfig = {};
         DateRangePickerFilterComponent,
         DaterangepickerDirective,
         DateRangePickerDropdownComponent,
-        AgentCreateUpdateDialogComponent
+        AgentCreateUpdateDialogComponent,
+        CustomerReceipCreateUpdateComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -267,7 +269,8 @@ const config: LocaleConfig = {};
         DateRangePickerFilterComponent,
         DaterangepickerDirective,
         DateRangePickerDropdownComponent,
-        AgentCreateUpdateDialogComponent
+        AgentCreateUpdateDialogComponent,
+        CustomerReceipCreateUpdateComponent
     ],
     imports: [
         NgbModule,
@@ -316,7 +319,8 @@ const config: LocaleConfig = {};
         CashBookCuDialogComponent,
         DateRangePickerFilterComponent,
         DateRangePickerDropdownComponent,
-        AgentCreateUpdateDialogComponent
+        AgentCreateUpdateDialogComponent,
+        CustomerReceipCreateUpdateComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

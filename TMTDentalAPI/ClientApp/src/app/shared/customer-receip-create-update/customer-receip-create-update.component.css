@@ -1,0 +1,4 @@
+.border-invalid{
+    border: 1px solid red;
+    border-radius: .25rem .25rem .25rem .25rem;
+}
