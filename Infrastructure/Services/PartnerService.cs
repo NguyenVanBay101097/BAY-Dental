@@ -2323,7 +2323,10 @@ namespace Infrastructure.Services
             {
                 if (!string.IsNullOrEmpty(item.MemberLevelId))
                 {
-                    var level = memberLevelDict[new Guid(item.MemberLevelId.Substring(item.MemberLevelId.IndexOf(",") + 1))];
+                    var pnMemberLevelId = new Guid(item.MemberLevelId.Substring(item.MemberLevelId.IndexOf(",") + 1));
+                    if (!memberLevelDict.ContainsKey(pnMemberLevelId))
+                        continue;
+                    var level = memberLevelDict[pnMemberLevelId];
                     item.MemberLevel = _mapper.Map<MemberLevelBasic>(level);
                 }
                 item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(categDict.ContainsKey(item.Id) ? categDict[item.Id] : new List<PartnerCategory>());
