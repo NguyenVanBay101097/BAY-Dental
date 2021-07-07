@@ -109,7 +109,19 @@
             </div> -->
             <div class="cont-wrapper">
                 <div class="cont-left">
-                    
+                    <full-calendar
+                        #fullcalendar
+                        [plugins]="calendarPlugins" 
+                        [editable]="true"
+                        [defaultView]="'timeGridWeek'"
+                        [header]="{
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                            }"
+                        [height]="'auto'"
+                        [dir]="'ltr'">
+                        </full-calendar>
                 </div>
                 <div class="cont-right">
                     <div class="filter">
