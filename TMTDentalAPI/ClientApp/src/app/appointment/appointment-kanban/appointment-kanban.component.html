@@ -5,7 +5,7 @@
                 <li class="active">Lịch hẹn</li>
             </ol>
             <div class="o_cp_searchview">
-    
+
             </div>
             <div class="o_cp_left">
                 <div class="o_cp_buttons">
@@ -38,8 +38,7 @@
                     </app-appointment-date-filter>
                 </div> -->
                 <div class="t-search t-search-left w-100">
-                    <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo họ tên, số điện thoại khách hàng"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo họ tên, số điện thoại khách hàng" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                     <span class="fas fa-search form-control-icon form-control-sm"></span>
                 </div>
             </div>
@@ -108,59 +107,46 @@
                 </div>
             </div> -->
             <div class="cont-wrapper">
-                <div class="cont-left">
-                    <full-calendar
-                        #fullcalendar
-                        [plugins]="calendarPlugins" 
-                        [editable]="true"
-                        [defaultView]="'timeGridWeek'"
-                        [header]="{
+                <div class="cont-left overflow-auto">
+                    <full-calendar #fullcalendar [plugins]="calendarPlugins" [editable]="true" [defaultView]="'timeGridWeek'" [header]="{
                             left: 'prev,next today',
                             center: 'title',
                             right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-                            }"
-                        [height]="'auto'"
-                        [dir]="'ltr'">
-                        </full-calendar>
+                            }" [height]="'auto'" [dir]="'ltr'" (eventRender)="handleEventRender($event)" [events]="events" (eventClick)="handleEventClick($event)" [locale]="'vi'" [firstDay]="1">
+
+                    </full-calendar>
                 </div>
                 <div class="cont-right">
                     <div class="filter">
                         <div class="filter-title">Bộ lọc</div>
                         <div class="filter-label">Thời gian</div>
                         <div class="filter-content">
-                            <app-date-range-picker-filter opens="left" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" 
-                                (searchChange)="onChangeDate($event)">
+                            <app-date-range-picker-filter opens="left" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onChangeDate($event)">
                             </app-date-range-picker-filter>
                         </div>
                         <div class="filter-label">Trạng thái</div>
                         <div class="filter-content">
                             <div class="form-check t-form-check mb-1" *ngFor="let state of states; index as i">
-                                <input class="form-check-input" type="radio" name="state" [id]="'state-' + i" 
-                                    [value]="state.value" [(ngModel)]="stateSelected">
-                                <label class="form-check-label" [for]="'state-' + i"
-                                    (click)="onChangeState(state.value)">
+                                <input class="form-check-input" type="radio" name="state" [id]="'state-' + i" [value]="state.value" [(ngModel)]="stateSelected">
+                                <label class="form-check-label" [for]="'state-' + i" (click)="onChangeState(state.value)">
                                     {{state.text}}
                                 </label>
-                            </div>               
+                            </div>
                         </div>
                         <div class="filter-label">Bác sĩ</div>
                         <div class="filter-content">
                             <div class="form-check t-form-check mb-1">
-                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-default'" 
-                                    [value]="''" [(ngModel)]="employeeSelected">
-                                <label class="form-check-label" [for]="'employee-default'"
-                                    (click)="onChangeEmployee('')">
+                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-default'" [value]="''" [(ngModel)]="employeeSelected">
+                                <label class="form-check-label" [for]="'employee-default'" (click)="onChangeEmployee('')">
                                     Tất cả
                                 </label>
-                            </div>  
+                            </div>
                             <div class="form-check t-form-check mb-1" *ngFor="let employee of listEmployees; index as i">
-                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i" 
-                                    [value]="employee.id" [(ngModel)]="employeeSelected">
-                                <label class="form-check-label" [for]="'employee-' + i"
-                                    (click)="onChangeEmployee(employee.id)">
+                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i" [value]="employee.id" [(ngModel)]="employeeSelected">
+                                <label class="form-check-label" [for]="'employee-' + i" (click)="onChangeEmployee(employee.id)">
                                     {{employee.name}}
                                 </label>
-                            </div>  
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -27,7 +27,7 @@ import { FullCalendarComponent } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid'; 
 import timeGrigPlugin from '@fullcalendar/timegrid'; 
 import interactionPlugin from '@fullcalendar/interaction'; 
-
+import { EventInput } from '@fullcalendar/core';
 @Component({
   selector: 'app-appointment-kanban',
   templateUrl: './appointment-kanban.component.html',
@@ -60,16 +60,17 @@ export class AppointmentKanbanComponent implements OnInit {
 
   filter = new RevenueTimeReportPar();
 
-  states: { text: string, value: string }[] = [
-    { text: 'Tất cả', value: ''},
-    { text: 'Đang hẹn', value: 'confirmed'},
+  states: { text: string, value: string, bgColor?: string }[] = [
+    { text: 'Tất cả', value: '', bgColor: ''},
+    { text: 'Đang hẹn', value: 'confirmed', bgColor: '#007BFF'},
     // { text: 'Chờ khám', value: 'waiting', class: 'text-warning' },
     // { text: 'Đang khám', value: 'examination', class: 'text-info' },
     // { text: 'Hoàn thành', value: 'done', class: 'text-success' },
-    { text: 'Đã đến', value: 'done'},
-    { text: 'Hủy hẹn', value: 'cancel'},
-    { text: 'Quá hạn', value: 'overdue' }
+    { text: 'Đã đến', value: 'arrived',bgColor:'#28A745'},
+    { text: 'Hủy hẹn', value: 'cancel', bgColor:'#EB3B5B'},
+    { text: 'Quá hạn', value: 'overdue', bgColor: '#FFC107' }
   ];
+ 
   stateSelected: string = this.states[0].value;
   listEmployees: EmployeeBasic[] = [];
   employeeSelected: string = '';
@@ -79,6 +80,8 @@ export class AppointmentKanbanComponent implements OnInit {
   // calendarEvents: EventInput[] = [];
 
   calendarPlugins = [dayGridPlugin, timeGrigPlugin, interactionPlugin];
+  events=[];
+
 
   constructor(
     private appointmentService: AppointmentService,
@@ -226,18 +229,48 @@ export class AppointmentKanbanComponent implements OnInit {
     });
   }
 
-  addAppointments(paged: PagedResult2<AppointmentBasic>) {
-    for (var i = 0; i < paged.items.length; i++) {
-      var item = paged.items[i];
-      var date = new Date(item.date);
-      var key = date.toDateString();
-      if (!this.appointmentByDate[key]) {
-        this.appointmentByDate[key] = [];
-      }
+  formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
 
-      this.appointmentByDate[key].push(item);
-    }
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+  addAppointments(paged: PagedResult2<AppointmentBasic>) {
+    // for (var i = 0; i < paged.items.length; i++) {
+    //   var item = paged.items[i];
+    //   var date = new Date(item.date);
+    //   var key = date.toDateString();
+    //   if (!this.appointmentByDate[key]) {
+    //     this.appointmentByDate[key] = [];
+    //   }
+
+    //   this.appointmentByDate[key].push(item);
+    // }
+    this.events = [];
+      for (var i = 0; i < paged.items.length; i++) {
+        var item = paged.items[i];
+        this.events = this.events.concat([
+          <EventInput>{
+            title:item.time + '\n' + item.partnerName ,
+            date: this.formatDate(item.date),
+            backgroundColor: this.states.find(x=> x.value == item.state)?this.states.find(x=> x.value == item.state).bgColor : '',
+            id: item.id,
+            textColor: 'white'
+          }
+        ]);
+      }
   }
+  calendarEvents = [
+    { title: 'event 1', date: '2019-04-01' }
+  ];
 
   getDateList() {
     if (!this.dateFrom || !this.dateTo) {
@@ -333,5 +366,38 @@ export class AppointmentKanbanComponent implements OnInit {
         window.URL.revokeObjectURL(data);
       }, 100);
     });
+  }
+
+  handleEventClick(e) {
+   var id = e.event._def.publicId;
+   const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+   modalRef.componentInstance.appointId = id;
+   modalRef.result.then(() => {
+     this.loadData();
+     this.appointmentService.getBasic(id).subscribe(item => {
+       var date = new Date(item.date);
+       var key = date.toDateString();
+       if (this.appointmentByDate[key]) {
+         var index = _.findIndex(this.appointmentByDate[key], o => o.id == item.id);
+         if (index != -1) {
+           this.appointmentByDate[key][index] = item;
+         }
+       }
+     });
+   }, () => {
+   });
+  }
+
+  handleEventRender(e) {
+//     debugger;
+//    e.el.innerHTML = '<div>fdasf</div> <br> <button class="a"   (click)="a()">ddd</button>';
+//    (e.el.getElementsByClassName('a'))[0].click(function(){
+//     console.log('a')
+//  });
+ 
+  }
+  a() {
+    console.log('a');
+    
   }
 }
