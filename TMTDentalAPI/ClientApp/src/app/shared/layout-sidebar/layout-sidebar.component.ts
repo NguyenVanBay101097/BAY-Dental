@@ -60,23 +60,13 @@ export class LayoutSidebarComponent implements OnInit {
       ],
       permissions: ['Labo.LaboOrder.Read', 'Labo.OrderLabo.Read', 'Labo.ExportLabo.Read']
     },
-    // {
-    //   name: 'Khảo sát đánh giá',
-    //   icon: 'fas fa-poll',
-    //   children: [
-    //     { name: 'Danh sách khảo sát', link: '/surveys', groups:'survey_Nhanvien.survey_assignment_Nhanvien,survey_Quanly.survey_assignment_Quanly' },
-    //     { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey_Quanly.survey_assignment_Quanly' },
-    //     { name: 'Cấu hình đánh giá', link: '/surveys/config', groups: 'survey_Quanly.survey_assignment_Quanly' },
-    //   ],
-    //   groups: 'survey_Nhanvien.survey_assignment_Nhanvien,survey_Quanly.survey_assignment_Quanly'
-    // },
     {
       name: 'Khảo sát đánh giá',
       icon: 'fas fa-poll',
       children: [
-        { name: 'Danh sách khảo sát', link: '/surveys', permissions: ['Survey.UserInput.Read'] },
-        { name: 'Quản lý phân việc', link: '/surveys/manage', permissions: ['Survey.Assignment.Read'] },
-        { name: 'Câu hỏi khảo sát', link: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'] },
+        { name: 'Danh sách khảo sát', link: '/surveys', permissions: ['Survey.UserInput.Read'], groups:'survey.group_user,survey.group_manager' },
+        { name: 'Quản lý phân việc', link: '/surveys/manage', permissions: ['Survey.Assignment.Read'], groups:'survey.group_manager' },
+        { name: 'Câu hỏi khảo sát', link: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'], groups:'survey.group_manager' },
       ],
       groups: 'survey.group_survey',
       permissions: ['Survey.UserInput.Read', 'Survey.Assignment.Read', 'Survey.Question.Read']
