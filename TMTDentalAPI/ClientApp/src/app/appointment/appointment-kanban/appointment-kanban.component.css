@@ -1,4 +1,4 @@
-.click_i{
+.click_i {
     cursor: pointer;
 }
 
@@ -15,20 +15,49 @@
 .cont-right {
     -webkit-box-flex: 0;
     flex: 0 0 300px;
-    margin-left: .25rem;
-    border: 1px solid #E2E7ED;
+    margin-left: 0.25rem;
+    border: 1px solid #e2e7ed;
 }
 .filter-title {
     font-size: 1.05rem;
     font-weight: 500;
     width: 100%;
-    background: #F2F7FF;
-    padding: .5rem;
+    background: #f2f7ff;
+    padding: 0.5rem;
 }
 .filter-label {
     font-weight: 500;
-    padding: .5rem;
+    padding: 0.5rem;
 }
 .filter-content {
-    padding: 0 .5rem;
+    padding: 0 0.5rem;
+}
+.header-toolbar-calendar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.btn-check {
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+    pointer-events: none;
+}
+.btn-check + .btn-outline-secondary {
+    border-radius: 0;
+    border-right-width: 0;
+}
+.btn-check:first-of-type + .btn {
+    border-top-left-radius: .2rem;
+    border-bottom-left-radius: .2rem;
+}
+.btn-check:last-of-type + .btn {
+    border-top-right-radius: .2rem;
+    border-bottom-right-radius: .2rem;
+    border-right-width: 1px;
+}
+.btn-check:active + .btn-outline-secondary,
+.btn-check:checked + .btn-outline-secondary {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
 }

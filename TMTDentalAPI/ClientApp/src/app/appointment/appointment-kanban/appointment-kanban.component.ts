@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, ViewChildren } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, ViewChildren, AfterViewInit } from '@angular/core';
 import { AppointmentVMService } from '../appointment-vm.service';
 import { AppointmentService } from '../appointment.service';
 import { forkJoin, Subject } from 'rxjs';
@@ -23,11 +23,8 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
 //
-import { FullCalendarComponent } from '@fullcalendar/angular'; 
-import dayGridPlugin from '@fullcalendar/daygrid'; 
-import timeGrigPlugin from '@fullcalendar/timegrid'; 
-import interactionPlugin from '@fullcalendar/interaction'; 
-import { EventInput } from '@fullcalendar/core';
+import { Calendar, EventInput } from '@fullcalendar/core';
+
 @Component({
   selector: 'app-appointment-kanban',
   templateUrl: './appointment-kanban.component.html',
@@ -74,16 +71,10 @@ export class AppointmentKanbanComponent implements OnInit {
   stateSelected: string = this.states[0].value;
   listEmployees: EmployeeBasic[] = [];
   employeeSelected: string = '';
-  //
-  @ViewChildren('fullcalendar') calendarComponent: FullCalendarComponent;
-  
-  // calendarEvents: EventInput[] = [];
 
-  calendarPlugins = [dayGridPlugin, timeGrigPlugin, interactionPlugin];
   events=[];
 
-
-  constructor(
+  constructor (
     private appointmentService: AppointmentService,
     private intlService: IntlService, 
     private modalService: NgbModal, 
