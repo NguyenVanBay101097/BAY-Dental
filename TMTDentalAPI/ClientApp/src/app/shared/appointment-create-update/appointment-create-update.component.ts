@@ -41,6 +41,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   filteredServices: ProductSimple[] = [];
   filteredEmployees: EmployeeBasic[] = [];
   appointId: string;
+  title: string;
   type: string = "receive_update";
   showIsNotExamination = false;
   timeExpecteds: any[] = [

@@ -71,7 +71,7 @@ namespace Infrastructure.Services
             customerReceipt.CompanyId = val.CompanyId;
             customerReceipt.PartnerId = val.PartnerId;
             customerReceipt.DoctorId = val.DoctorId;
-            customerReceipt.DateWaitting = val.DateWaitting.HasValue ? val.DateWaitting.Value : DateTime.Now;
+            customerReceipt.DateWaiting = val.DateWaitting.HasValue ? val.DateWaitting.Value : DateTime.Now;
             customerReceipt.IsNoTreatment = val.IsRepeatCustomer;
             customerReceipt.Note = val.Note;
             if (val.Products.Any())
@@ -108,7 +108,7 @@ namespace Infrastructure.Services
             var query = appointmentObj.SearchQuery();
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+                query = query.Where(x => x.Date > val.DateFrom.Value.AbsoluteBeginOfDate());
 
             if (val.DateFrom.HasValue)             
                 query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
@@ -123,10 +123,10 @@ namespace Infrastructure.Services
             var query2 = customerReceiptObj.SearchQuery();
 
             if (val.DateFrom.HasValue)
-                query2 = query2.Where(x => x.DateWaitting >= val.DateFrom.Value.AbsoluteBeginOfDate());
+                query2 = query2.Where(x => x.DateWaiting > val.DateFrom.Value.AbsoluteBeginOfDate());
 
             if (val.DateFrom.HasValue)
-                query2 = query2.Where(x => x.DateWaitting <= val.DateTo.Value.AbsoluteEndOfDate());
+                query2 = query2.Where(x => x.DateWaiting <= val.DateTo.Value.AbsoluteEndOfDate());
 
             if (val.CompanyId.HasValue)
                 query2 = query2.Where(x => x.CompanyId == val.CompanyId);

@@ -6,154 +6,7 @@
 <div class="modal-body o_act_window">
     <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
-            <div class="o_form_sheet">
-
-                <!-- <div class="d-flex">
-                    <div class="mr-3">
-                        <div class="d-flex mb-1">
-                            <div class="mr-2 d-flex">
-                                <span class="mr-1 text-time p-1">Thời gian</span>
-                                <select class="form-control btn-sm" formControlName="appTime">
-                                    <option [value]="i" *ngFor="let i of timeList">
-                                        {{i}}</option>
-                                </select>
-                            </div>
-                            <div class="d-flex">
-                                <span class="mr-1 text-time p-1">Dự kiến</span>
-                                <select class="form-control btn-sm" style="max-width: 88px;"
-                                    formControlName="timeExpected">
-                                    <option [value]="item.value" *ngFor="let item of timeExpecteds">
-                                        {{item.name}}</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div>
-                            <kendo-calendar [navigation]="false" formControlName="apptDate">
-                            </kendo-calendar>
-                        </div>
-                    </div>
-                    <div>
-                        <table class="o_group o_inner_group">
-                            <tbody>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Khách hàng</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <div *ngIf="dotKhamId && partner">{{partner.name}}</div>
-                                        <div [ngClass]="dotKhamId ? 'd-none' : 'd-flex'">
-                                            <kendo-combobox formControlName="partner" [filterable]="true"
-                                                [data]="customerSimpleFilter" (valueChange)="onChangePartner()"
-                                                #partnerCbx [valueField]="'id'" [textField]="'displayName'">
-                                            </kendo-combobox>
-
-                                            <a type="button" title="Thêm khách hàng" class="pl-2 py-1"
-                                                (click)="quickCreateCustomerModal()">
-                                                <i class="fas fa-plus"></i>
-                                            </a>
-                                        </div>
-                                        <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
-                                            <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="partner && partnerAge">
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Tuổi</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <div>{{partnerAge}}</div>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="partner && partnerPhone">
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Điện thoại</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <div *ngIf="partner">{{partnerPhone}}</div>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="partner && tags.length > 0">
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Nhãn khách hàng</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <ng-container *ngFor="let item of tags.controls; let i = index;">
-                                            <span class="badge badge-secondary mr-1">
-                                                {{item.get('Name').value}}
-                                            </span>
-                                        </ng-container>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table class="o_group o_inner_group">
-                            <tbody>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Bác sĩ</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <kendo-combobox formControlName="doctor" [filterable]="true"
-                                            [data]="filteredEmployees" #doctorCbx [valueField]="'id'"
-                                            [textField]="'name'">
-                                        </kendo-combobox>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Dịch vụ</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <kendo-multiselect [data]="filteredServices" [valueField]="'id'"
-                                            [allowCustom]="true" [textField]="'name'" [placeholder]="'Chọn dịch vụ'"
-                                            formControlName="services" [filterable]="true" #serviceMultiSelect>
-                                            <ng-template kendoMultiSelectTagTemplate let-dataItem>
-                                                <div class="template">
-                                                    <span [title]="dataItem.name">{{dataItem.name}}</span>
-                                                </div>
-                                            </ng-template>
-                                        </kendo-multiselect>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="appointId">
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Trạng thái</label>
-                                    </td>
-                                    <td>
-                                        <select class="form-control" formControlName="state" (change)="onChangeState()">
-                                            <option value="confirmed">Đang hẹn</option>
-                                            <option value="waiting">Chờ khám</option>
-                                            <option value="examination">Đang khám</option>
-                                            <option value="done">Hoàn thành</option>
-                                            <option value="cancel">Hủy hẹn</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="state == 'cancel'">
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Lý do hủy hẹn</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <input type="text" class="form-control" formControlName="reason" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label o_td_label_right">
-                                        <label class="o_form_label">
-                                            Nội dung
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;" class="o_td_control_right">
-                                        <textarea class="form-control" rows="5" formControlName="note"></textarea>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div> -->
-
+            <div class="o_form_sheet">            
                 <table class="o_group o_inner_group o_group_col_12">
                     <tbody class="w-100">
                         <tr>
@@ -222,12 +75,12 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr [class.d-none]="type =='receive'">
+                        <tr [class.d-none]="type =='receive'">                      
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Giờ hẹn</label>
                             </td>
                             <td colspan="1">
-                                <div class="d-flex">
+                                <div class="d-flex justify-content-between">
                                     <div class="mr-2 d-flex">
                                         <select class="form-control btn-sm" style="width: 150px;"
                                             formControlName="appTime">

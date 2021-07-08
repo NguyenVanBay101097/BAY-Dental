@@ -25,7 +25,7 @@
                                     <div class="flex-grow-1">
                                         <kendo-combobox formControlName="partner" [filterable]="true"
                                             [data]="customerSimpleFilter" (valueChange)="onChangePartner()" #partnerCbx
-                                            [valueField]="'id'" [textField]="'displayName'">
+                                            [valueField]="'id'" [textField]="'name'">
                                         </kendo-combobox>
                                     </div>
                                     <div>
@@ -68,9 +68,12 @@
                                 <label class="o_form_label">Giờ tiếp nhận</label>
                             </td>
                             <td colspan="1">
-                                <div class="d-flex">
-                                    <div class="mr-2 d-flex">
-                                        <kendo-timepicker [(value)]="value" [(disabled)]="receiptId" [class.border-invalid]="value==undefined && submitted"></kendo-timepicker>
+                                <div class="d-flex justify-content-between">
+                                    <div class="mr-2 d-flex ">
+                                        <kendo-timepicker  formControlName="dateObj" format="HH:mm" [class.border-invalid]="f.dateObj.errors"></kendo-timepicker>
+                                        <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.dateObj.errors.required">Chọn giờ tiếp nhận</div>
+                                        </div>
                                     </div>
                                     <div class="d-flex">
                                         <span class="mr-1 text-time p-1" style="width: 100px;">Dự kiến</span>
@@ -79,7 +82,7 @@
                                         <span class="mr-1 text-time p-1">Phút</span>
                                     </div>
                                 </div>
-                                <div class="text-danger" *ngIf="value==undefined && submitted">Chọn giờ tiếp nhận</div>
+                               
                             </td>
                         </tr>
                         <tr>
@@ -92,7 +95,7 @@
                             <td colspan="1"></td>
                             <td colspan="1">
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck1" (change)="checkedRepeatCustomer($event.target.checked)"
                                         formControlName="isRepeatCustomer">
                                     <label class="form-check-label" for="exampleCheck1">Khách tái khám</label>
                                 </div>
@@ -104,7 +107,7 @@
                             </td>
                             <td colspan="1">
                                 <kendo-multiselect [data]="filteredServices" [valueField]="'id'" [allowCustom]="true"
-                                    [textField]="'name'" [placeholder]="'Chọn dịch vụ'" formControlName="services"
+                                    [textField]="'name'" [placeholder]="'Chọn dịch vụ'" formControlName="products"
                                     [filterable]="true" #serviceMultiSelect>
                                     <ng-template kendoMultiSelectTagTemplate let-dataItem>
                                         <div class="template">
@@ -123,28 +126,29 @@
                                     [placeholder]="'Nhập nội dung'"></textarea>
                             </td>
                         </tr>
-                        <tr *ngIf="receiptId">
+                        <tr *ngIf="id">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Trạng thái</label>
                             </td>
                             <td colspan="1">
-                                <select class="form-control btn-sm mr-1" formControlName="state" (change)="onChange($event.target.value)">
-                                    <option [value]="item.value" *ngFor="let item of statesReceipt">
-                                        {{item.name}}</option>
-                                </select>
+                                <select class="form-control btn-sm mr-1" formControlName="state">
+                                <option value="waiting">Đang hẹn</option>
+                                <option value="examination">Đang khám</option>
+                                <option value="done">Hoàn thành</option>
+                            </select>
                             </td>
                         </tr>
-                        <tr *ngIf="showIsNoTreatment && f.isRepeatCustomer?.value == false">
-                            <td colspan="1" class="o_td_label">
-                                
-                            </td>
+                        <tr *ngIf="stateControl == 'done' && !isRepeatCustomer">
+                            <td colspan="1"></td>
                             <td colspan="1">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck2"
-                                formControlName="isNoTreatment" (change)="eventCheck($event.target.checked)">
-                                <label class="form-check-label" for="exampleCheck2">Khách không điều trị</label>
-                            </td>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="Check2" (change)="eventCheck($event.target.checked)"
+                                        formControlName="isNoTreatment">
+                                    <label class="form-check-label" for="Check2">Khách không điều trị</label>
+                                </div>
+                            </td>                      
                         </tr>
-                        <tr *ngIf="f.isNoTreatment?.value == true && f.isRepeatCustomer?.value == false">
+                        <tr *ngIf="!isRepeatCustomer && isNoTreatment">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Lý do</label>
                             </td>

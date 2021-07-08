@@ -233,4 +233,17 @@
 
 .info_nav li i {
     margin-right: 10px;
+    font-size: 14px;
 }
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+    color: #fff !important;
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+  }
+
+  @media (min-width: 1300px) and (max-width: 1400px) {
+    .appointment-boxes.gridView .project-box-wrapper {
+        width: 33.3%;
+    }
+  }

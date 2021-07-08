@@ -11,13 +11,13 @@ namespace ApplicationCore.Entities
     {
         public CustomerReceipt()
         {
-            State = "waitting";
+            State = "waiting";
         }
 
         /// <summary>
         /// thời gian chờ khám
         /// </summary>
-        public DateTime? DateWaitting { get; set; }
+        public DateTime? DateWaiting { get; set; }
 
         /// <summary>
         /// thời gian đang khám
@@ -62,7 +62,7 @@ namespace ApplicationCore.Entities
 
 
         /// <summary>
-        /// waitting : chờ khám
+        /// waiting : chờ khám
         /// examination : đang khám 
         /// done : hoàn thành
         /// </summary>

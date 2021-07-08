@@ -34,7 +34,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// thời gian chờ khám
         /// </summary>
-        public DateTime? DateWaitting { get; set; }
+        public DateTime? DateWaiting { get; set; }
 
         /// <summary>
         /// thời gian đang khám
@@ -69,7 +69,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// thời gian chờ khám
         /// </summary>
-        public DateTime? DateWaitting { get; set; }
+        public DateTime? DateWaiting { get; set; }
 
         /// <summary>
         /// thời gian đang khám
@@ -135,7 +135,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// thời gian chờ khám
         /// </summary>
-        public DateTime? DateWaitting { get; set; }
+        public DateTime? DateWaiting { get; set; }
 
         /// <summary>
         /// thời gian đang khám
@@ -195,6 +195,16 @@ namespace Umbraco.Web.Models.ContentEditing
     public class CustomerReceiptStatePatch
     {
         public string State { get; set; }
+
+        /// <summary>
+        /// thời gian đang khám
+        /// </summary>
+        public DateTime? DateExamination { get; set; }
+
+        /// <summary>
+        /// thời gian hoàn thành
+        /// </summary>
+        public DateTime? DateDone { get; set; }
 
         public bool IsNoTreatment { get; set; }
 

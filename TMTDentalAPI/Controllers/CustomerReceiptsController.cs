@@ -52,7 +52,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost]
         [CheckAccess(Actions = "Basic.CustomerReceipt.Create")]
-        public async Task<IActionResult> CreateAsync(CustomerReceiptSave val)
+        public async Task<IActionResult> Create(CustomerReceiptSave val)
         {
             if (!ModelState.IsValid || val == null)
                 return BadRequest();
@@ -64,7 +64,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "Basic.CustomerReceipt.Update")]
-        public async Task<IActionResult> UpdateAsync(Guid id, CustomerReceiptSave val)
+        public async Task<IActionResult> Update(Guid id, CustomerReceiptSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -76,6 +76,13 @@ namespace TMTDentalAPI.Controllers
             entity = _mapper.Map(val, entity);
             await _customerReceiptService.UpdateAsync(entity);
             var res = _mapper.Map<SmsAccountBasic>(entity);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCount(CustomerReceiptGetCountVM val)
+        {
+            var res = await _customerReceiptService.GetCountToday(val);
             return Ok(res);
         }
 
@@ -91,6 +98,9 @@ namespace TMTDentalAPI.Controllers
             var patch = new JsonPatchDocument<CustomerReceiptStatePatch>();
             patch.Replace(x => x.State, result.State);
             patch.Replace(x => x.Reason, result.Reason);
+            patch.Replace(x => x.IsNoTreatment, result.IsNoTreatment);
+            patch.Replace(x => x.DateExamination, result.DateExamination);
+            patch.Replace(x => x.DateDone, result.DateDone);
             var entityMap = _mapper.Map<CustomerReceiptStatePatch>(entity);
             patch.ApplyTo(entityMap);
 

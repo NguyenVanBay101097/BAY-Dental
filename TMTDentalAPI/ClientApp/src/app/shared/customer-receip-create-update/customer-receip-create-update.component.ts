@@ -1,3 +1,4 @@
+import { AuthService } from './../../auth/auth.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -39,10 +40,10 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   filteredServices: ProductSimple[] = [];
   filteredEmployees: EmployeeBasic[] = [];
   appointId: string;
-  receiptId: string;
-  type: string = "receipt";
+  id: string;
+  title: string;
   showIsNoTreatment = false;
-  value: any;
+  dateValue: any;
   timeExpecteds: any[] = [
     {
       name: '0 phút', value: 0
@@ -69,11 +70,8 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       name: '120 phút', value: 120
     },
   ]
-  statesReceipt: any[] = [
-    {name: 'Chờ khám', value:'waiting'},
-    {name: 'Đang khám', value:'examination'},
-    {name: 'Hoàn thành', value:'done'}
-  ]
+
+
   defaultVal: any;
   formGroup: FormGroup;
   dotKhamId: any;
@@ -92,6 +90,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     private fb: FormBuilder,
     private appointmentService: AppointmentService,
     private partnerService: PartnerService,
+    private authService: AuthService,
     private intlService: IntlService,
     private userService: UserService,
     public activeModal: NgbActiveModal,
@@ -106,21 +105,18 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      name: null,
       partner: [null, Validators.required],
       partnerAge: null,
       partnerPhone: null,
-      partnerTags: this.fb.array([]),
-      user: [null],
+      dateObj: [null, Validators.required],
       note: null,
       companyId: null,
       doctor: null,
       timeExpected: '30',
-      state: 'confirmed',
+      state: 'waiting',
       reason: null,
-      saleOrderId: null,
-      services: [],
-      isRepeatCustomer:false,
+      products: [],
+      isRepeatCustomer: false,
       isNoTreatment: false
     })
 
@@ -129,9 +125,11 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       this.timeSource = this.TimeInit();
       this.timeList = this.timeSource;
 
-      if (this.receiptId) {
+      if (this.id) {
         this.loadDataFromApi();
-      } 
+      } else {
+        this.loadDefault();
+      }
 
       this.loadEmployees();
       this.getCustomerList();
@@ -192,6 +190,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     }
     return times;
   }
+
   searchEmployees(filter?: string) {
     var val = new EmployeePaged();
     val.search = filter || '';
@@ -199,77 +198,40 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     return this.employeeService.getEmployeePaged(val);
   }
 
+  get stateControl() {
+    return this.formGroup.get('state').value;
+  }
+
   onSave() {
-    console.log(this.value);
     
     this.submitted = true;
 
-    if (!this.formGroup.valid || this.value == undefined) {
+    if (!this.formGroup.valid) {
       return false;
     }
-    var receipt = this.formGroup.getRawValue();
+    
+    var receipt = this.formGroup.value;
     receipt.partnerId = receipt.partner ? receipt.partner.id : null;
     receipt.doctorId = receipt.doctor ? receipt.doctor.id : null;
-    receipt.timeExpected = Number.parseInt(receipt.timeExpected);
-    if (this.receiptId) {
-      if (receipt.state == 'waitting'){
-        receipt.dateWaitting = this.value;
-      }
-      if (receipt.state == 'examination'){
-        receipt.dateExamination = this.value;
-      }
-      this.customerReceiptService.updateState(this.receiptId, receipt).subscribe(
+    receipt.dateWaiting = this.intlService.formatDate(receipt.dateObj, 'yyyy-MM-ddTHH:mm:ss');
+    receipt.dateExamination = this.stateControl == 'examination' ? new Date() : null;
+    receipt.dateDone =  this.stateControl == 'done' ? new Date() : null;
+    receipt.timeExpected = Number.parseInt(receipt.timeExpected); 
+    receipt.companyId = this.authService.userInfo.companyId;
+    if (this.id) {   
+      this.customerReceiptService.update(this.id, receipt).subscribe(
         () => {
-          this.activeModal.close(receipt);
+          this.activeModal.close();
         },
         er => {
           this.errorService.show(er);
           this.submitted = false;
         },
-      )
-      // if(this.type == 'create_receipt'){
-      //   appoint.state = 'waitting';
-      //   appoint.dateWaitting = this.value;
-      //   console.log(appoint.dateWaitting);
-        
-      //   this.customerReceiptService.update(this.appointId, appoint).subscribe(
-      //     () => {
-      //       this.activeModal.close(appoint);
-      //     },
-      //     er => {
-      //       this.errorService.show(er);
-      //       this.submitted = false;
-      //     },
-      //   )
-      // }
-      // if(this.type == 'receipt_update'){
-      //   this.customerReceiptService.updateState(this.appointId,appoint).subscribe(
-      //     () => {
-      //       if (appoint.state == 'done'){
-      //         this.f.timeExpected.disable();
-      //         this.f.isRepeatCustomer.disable();
-      //         this.f.services.disable();
-      //         this.f.note.disable();
-      //         this.f.state.disable();
-      //         this.f.reason.disable();
-      //       }
-      //       else{
-      //         this.activeModal.close(appoint);
-      //       }
-      //     },
-      //     er => {
-      //       this.errorService.show(er);
-      //       this.submitted = false;
-      //     },
-      //   )
-      // }
-      
-    } else {
-      receipt.state = 'create_receipt';
-      receipt.dateWaitting = this.value;
+      )  
+    } else {    
       this.customerReceiptService.create(receipt).subscribe(
         res => {
-          this.activeModal.close(res);
+          this.activeModal.close();
         },
         er => {
           this.errorService.show(er);
@@ -279,38 +241,9 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     }
   }
 
-  onDelete(){
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa lịch hẹn';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
-    modalRef.result.then(() => {
-      this.appointmentService.removeAppointment(this.appointId).subscribe(()=>{
-        this.notify("success","Xóa thành công");
-        this.activeModal.close(true);
-        this.btnDeleteSubject.next();
-      })
-      
-    });
-  }
 
-  onDuplicate(){
-    this.appointId = null;
-  }
 
-  onChange(value){
-    if(this.receiptId){
-      if(value == 'waiting'){
-        this.value = new Date(Date.now());
-      }
-      if(value == 'done'){
-        this.value = null;
-        this.showIsNoTreatment = true;
-      }
-      else{
-        this.showIsNoTreatment = false;
-      }
-    }
-  }
+
 
   eventCheck(value){
     if (value == true && this.f.isRepeatCustomer.value == false){
@@ -320,11 +253,16 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     else{
       this.f.reason.clearValidators();
       this.f.reason.updateValueAndValidity();
+    }  
+  }
+
+  checkedRepeatCustomer(value){
+    if (value == true && this.isNoTreatment){
+      this.formGroup.get('isNoTreatment').setValue(false);
+      this.formGroup.get('reason').setValue(null);
+      this.f.reason.clearValidators();
+      this.f.reason.updateValueAndValidity();
     }
-    console.log(value);
-    
-    console.log(this.f.isNoTreatment.value);
-    
   }
 
   notify(style, content) {
@@ -434,21 +372,18 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     return this.btnDeleteSubject.asObservable();
   }
 
-  loadDataFromApi() {
-    if (this.receiptId) {
-      this.customerReceiptService.get(this.receiptId).subscribe(
-        (rs: any) => {
-          this.formGroup.patchValue(rs);
-          if (rs.state == 'waitting'){
-            this.value = new Date(rs.dateWaitting);
-          }
-          if (rs.state == 'examination'){
-            this.value = new Date(rs.dateExamination);
-          }
+  loadDefault(){
+    let date = new Date();
+    this.formGroup.get('dateObj').patchValue(date);
+  }
 
-          if (rs.state == 'done'){
-            this.value = new Date(rs.dateExamination);
-          }
+  loadDataFromApi() {
+    if (this.id) {
+      this.customerReceiptService.get(this.id).subscribe(
+        (rs: any) => {        
+          this.formGroup.patchValue(rs);  
+          let date = new Date(rs.dateWaiting);           
+          this.formGroup.get('dateObj').patchValue(date);
           
           if (rs.partner) {
             this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
@@ -458,21 +393,6 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
           if (rs.doctor) {
             this.filteredEmployees = _.unionBy(this.filteredEmployees, [rs.doctor], 'id');
           }
-          if (rs.state == 'waitting' || rs.state == 'examination'){
-            this.f.doctor.disable();
-            this.f.partner.disable();
-          }
-          if (rs.state == 'done'){
-            this.f.doctor.disable();
-            this.f.partner.disable();
-            this.f.timeExpected.disable();
-            this.f.isRepeatCustomer.disable();
-            this.f.services.disable();
-            this.f.note.disable();
-            this.f.state.disable();
-            this.f.isNoTreatment.disable();
-            this.f.reason.disable();
-          }
         },
         er => {
           console.log(er);
@@ -480,6 +400,15 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       )
     }
 
+  }
+
+  onChangeState(state){
+    if(state != 'done'){
+      this.formGroup.get('isNoTreatment').setValue(false);
+      this.formGroup.get('reason').setValue(null);
+      this.f.reason.clearValidators();
+      this.f.reason.updateValueAndValidity();
+    }
   }
 
   get partner() {
@@ -496,6 +425,15 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
 
   get state() {
     return this.formGroup.get('state').value;
+  }
+
+  get isRepeatCustomer() {
+    return this.formGroup.get('isRepeatCustomer').value;
+  }
+
+
+  get isNoTreatment() {
+    return this.formGroup.get('isNoTreatment').value;
   }
 
   updateCustomerModal() {
@@ -526,55 +464,15 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   }
 
   onChangePartner() {
-    if (this.partner) {
-      var expand: any = {
-        $expand: 'Tags'
-      };
-      this.odataPartnerService.get(this.partner.id, expand).subscribe(rs => {
-        this.formGroup.get('partnerAge').patchValue(rs.Age);
-        this.formGroup.get('partnerPhone').patchValue(rs.Phone);
-        this.tags.clear();
-        rs.Tags.forEach(tag => {
-          var g = this.fb.group(tag);
-          this.tags.push(g);
-        });
+    if (this.partner) {   
+      this.partnerService.getCustomerInfo(this.partner.id).subscribe((rs: any) => {
+        this.formGroup.get('partnerAge').patchValue(rs.age);
+        this.formGroup.get('partnerPhone').patchValue(rs.phone);
       });
     }
   }
 
-  get tags() {
-    return this.formGroup.get('partnerTags') as FormArray;
-  }
+  
 
-
-  partnercatolories(tags) {
-    return tags.map(x => x.name).join(', ');
-  }
-
-  defaultGet() {
-    var val = this.defaultVal || {};
-    if (this.dotKhamId) {
-      val.DotKhamId = this.dotKhamId;
-    }
-    this.appointmentService.defaultGet(val).subscribe(
-      (rs: any) => {
-        this.formGroup.patchValue(rs);
-
-        // let date = new Date(rs.date);
-        // this.formGroup.get('apptDate').patchValue(date);
-        // this.formGroup.get('appTime').patchValue('07:00');
-        this.formGroup.get('timeExpected').patchValue('30');
-
-        if (rs.partner) {
-          this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
-          this.onChangePartner();
-        }
-
-        if (rs.user) {
-          this.userSimpleFilter = _.unionBy(this.userSimpleFilter, [rs.user], 'id');
-        }
-      }
-    )
-  }
 
 }

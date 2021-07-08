@@ -34,13 +34,13 @@ namespace Infrastructure.Services
 
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.DateWaitting >= val.DateFrom.Value.AbsoluteBeginOfDate());
+                query = query.Where(x => x.DateWaiting >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
 
             if (val.DateFrom.HasValue)
             {
                 var datetimeTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.DateWaitting <= datetimeTo);
+                query = query.Where(x => x.DateWaiting <= datetimeTo);
             }
 
             if (val.DoctorId.HasValue)
@@ -134,13 +134,13 @@ namespace Infrastructure.Services
 
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.DateWaitting >= val.DateFrom.Value.AbsoluteBeginOfDate());
+                query = query.Where(x => x.DateWaiting >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
 
             if (val.DateFrom.HasValue)
             {
                 var datetimeTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.DateWaitting <= datetimeTo);
+                query = query.Where(x => x.DateWaiting <= datetimeTo);
             }
 
             if (val.DoctorId.HasValue)
