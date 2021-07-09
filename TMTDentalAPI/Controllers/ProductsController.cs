@@ -105,6 +105,12 @@ namespace TMTDentalAPI.Controllers
             var result = await _productService.GetLaboPagedResultAsync(val);
             return Ok(result);
         }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetProductsComingEnd(string type, string filter = "")
+        {
+            var results = await _productService.GetProductsComingEnd(type,filter);
+            return Ok(results);
+        }
 
         [HttpDelete("{id}")]
         [CheckAccess(Actions = "Catalog.Products.Delete")]

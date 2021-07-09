@@ -18,6 +18,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Search ma hoac ten san pham
         /// </summary>
         public string Search { get; set; }
+        public string MinInventoryFilter { get; set; }
     }
 
     public class StockReportXuatNhapTonItem
@@ -48,6 +49,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
         public string ProductUomName { get; set; }
+        public decimal? MinInventory { get; set; }
 
     }
 

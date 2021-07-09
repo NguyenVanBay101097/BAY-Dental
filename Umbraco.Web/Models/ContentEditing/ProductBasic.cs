@@ -76,6 +76,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? PurchasePrice { get; set; }
         public decimal? LaboPrice { get; set; }
 
+        public decimal? MinInventory { get; set; }
     }
 
     public class ProductPaged
@@ -205,5 +206,14 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid CategId { get; set; }
         public ProductCategorySimple Categ { get; set; }
+    }
+
+    public class ProductComingEnd
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public decimal PurchasePrice { get; set; }
+        public decimal Inventory { get; set; }
+        public decimal? MinInventory { get; set; }
     }
 }

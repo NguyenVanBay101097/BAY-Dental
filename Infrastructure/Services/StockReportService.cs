@@ -61,7 +61,8 @@ namespace Infrastructure.Services
                    ProductId = x.Product.Id,
                    ProductName = x.Product.Name,
                    ProductCode = x.Product.DefaultCode,
-                   ProductUomName = x.Product.UOM.Name
+                   ProductUomName = x.Product.UOM.Name,
+                   MinInventory = x.Product.MinInventory
                })
                .Select(x => new
                {
@@ -69,6 +70,7 @@ namespace Infrastructure.Services
                    ProductName = x.Key.ProductName,
                    ProductUomName = x.Key.ProductUomName,
                    ProductCode = x.Key.ProductCode,
+                   MinInventory = x.Key.MinInventory,
                    Begin = x.Sum(s => s.quantity),
                }).ToListAsync();
 
@@ -85,6 +87,7 @@ namespace Infrastructure.Services
                         DateFrom = date_from,
                         DateTo = date_to,
                         Begin = item.Begin,
+                        MinInventory = item.MinInventory
                     });
                 }
             }
@@ -106,6 +109,7 @@ namespace Infrastructure.Services
                 ProductName = x.Product.Name,
                 ProductCode = x.Product.DefaultCode,
                 ProductUomName = x.Product.UOM.Name,
+                MinInventory = x.Product.MinInventory,
                 Import = x.quantity > 0 ? x.quantity : 0,
                 Export = x.quantity < 0 ? -x.quantity : 0
             })
@@ -114,7 +118,8 @@ namespace Infrastructure.Services
                           ProductId = x.ProductId,
                           ProductName = x.ProductName,
                           ProductCode = x.ProductCode,
-                          ProductUomName = x.ProductUomName
+                          ProductUomName = x.ProductUomName,
+                          MinInventory = x.MinInventory
                       })
                     .Select(x => new
                     {
@@ -122,6 +127,7 @@ namespace Infrastructure.Services
                         ProductName = x.Key.ProductName,
                         ProductCode = x.Key.ProductCode,
                         productUomName = x.Key.ProductUomName,
+                        MinInventory = x.Key.MinInventory,
                         Import = x.Sum(s => s.Import),
                         Export = x.Sum(s => s.Export),
                     }).ToListAsync();
@@ -138,6 +144,7 @@ namespace Infrastructure.Services
                         ProductUomName = item.productUomName,
                         DateFrom = date_from,
                         DateTo = date_to,
+                        MinInventory = item.MinInventory,
                         Import = item.Import,
                         Export = item.Export
                     });
@@ -157,6 +164,10 @@ namespace Infrastructure.Services
             {
                 dict[item.Key].End = dict[item.Key].Begin + dict[item.Key].Import - dict[item.Key].Export;
             }
+            if (!string.IsNullOrEmpty(val.MinInventoryFilter) && val.MinInventoryFilter == "above_minInventory")
+              return dict.Values.Where(x => x.MinInventory <= x.End);
+            if (!string.IsNullOrEmpty(val.MinInventoryFilter) && val.MinInventoryFilter == "below_minInventory")
+              return dict.Values.Where(x => x.MinInventory > x.End);
 
             return dict.Values;
         }

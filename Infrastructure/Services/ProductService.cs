@@ -4,6 +4,7 @@ using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MyERP.Utilities;
@@ -21,16 +22,19 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly IUoMService _uoMService;
+        private readonly CatalogDbContext _context;
         public ProductService(
             IAsyncRepository<Product> repository,
             IHttpContextAccessor httpContextAccessor,
             IMapper mapper,
-            IUoMService uoMService
+            IUoMService uoMService,
+            CatalogDbContext context
             )
            : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _uoMService = uoMService;
+            _context = context;
         }
 
         public override async Task<IEnumerable<Product>> CreateAsync(IEnumerable<Product> entities)
@@ -250,6 +254,43 @@ namespace Infrastructure.Services
 
         }
 
+        public async Task<IEnumerable<ProductComingEnd>> GetProductsComingEnd(string type, string filter)
+        {
+            var date = DateTime.Now;
+            var companyId = CompanyId;
+            var query = _context.StockHistories.Where(x => x.date < date && x.company_id == companyId && x.Product.Type2 == type)
+                .GroupBy(x => new
+                {
+                    ProductId = x.Product.Id,
+                    ProductName = x.Product.Name,
+                    PurchaseOk = x.Product.PurchaseOK,
+                    MinInventory = x.Product.MinInventory
+                })
+                .Select(x => new
+                {
+                    ProductId = x.Key.ProductId,
+                    ProductName = x.Key.ProductName,
+                    MinInventory = x.Key.MinInventory,
+                    PurchaseOk = x.Key.PurchaseOk,
+                    Inventory = x.Sum(s => s.quantity)
+                });
+            if (!string.IsNullOrEmpty(filter))
+                query = query.Where(x => x.ProductName == filter);
+            if (!string.IsNullOrEmpty(type) && type == "medicine")
+                query = query.Where(x => x.PurchaseOk == true);
+            var results = await query.Where(x => x.Inventory < x.MinInventory)
+                .Select(x => new ProductComingEnd()
+                {
+                    Id = x.ProductId,
+                    Name = x.ProductName,
+                    Inventory = x.Inventory,
+                    MinInventory = x.MinInventory
+                }).ToListAsync();
+
+            return results;
+
+        }
+        
         private void _CalcQtyAvailable(IEnumerable<ProductBasic> items)
         {
             var compute_items = items.Where(x => x.Type == "product");
