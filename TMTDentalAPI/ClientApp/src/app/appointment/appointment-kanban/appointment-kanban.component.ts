@@ -8,7 +8,7 @@ import { PagedResult2 } from 'src/app/core/paged-result-2';
 import * as _ from 'lodash';
 import { NgbModal, NgbDropdownToggle } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap, switchMap, map } from 'rxjs/operators';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { DotkhamEntitySearchBy, DotKhamPaged } from 'src/app/dot-khams/dot-khams';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -29,6 +29,8 @@ import timeGrigPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { FullCalendarComponent } from '@fullcalendar/angular';
 import { DateRangeInput } from '@fullcalendar/core/datelib/date-range';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { MyDateRange } from '../my-date-range';
 @Component({
   selector: 'app-appointment-kanban',
   templateUrl: './appointment-kanban.component.html',
@@ -74,12 +76,17 @@ export class AppointmentKanbanComponent implements OnInit {
   listEmployees: EmployeeBasic[] = [];
   employeeSelected: string = '';
 
+  viewKanban: string = "th-large"; // "th-large", "list-ul"
+  gridData: GridDataResult;
+  limit: number = 20;
+  offset: number = 0
+  loading: boolean = false;
   events = [];
   calendarApi: Calendar;
   calendarPlugins = [dayGridPlugin, timeGrigPlugin, interactionPlugin];
   @ViewChild('fullcalendar',{static: true}) calendarComponent: FullCalendarComponent;
   titleDateToolbar: string = "";
-  viewToolbar: string = "dayGridMonth";
+  viewToolbar: string = "timeGridWeek"; // "timeGridDay", "timeGridWeek", "dayGridMonth"
   validRange: DateRangeInput;
   listData = [];
   doctors = [];
@@ -98,9 +105,11 @@ export class AppointmentKanbanComponent implements OnInit {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
     //Add 'implements AfterViewInit' to the class.
     this.calendarApi = this.calendarComponent.getApi();
+    this.calendarApi.changeView(this.viewToolbar);
     this.titleDateToolbar = this.getDateToolbar();
-// console.log(this.calendarApi.view.activeStart);
-// console.log(this.calendarApi.view.activeEnd);
+    this.loadGridData();
+    // console.log(this.calendarApi.view.activeStart);
+    // console.log(this.calendarApi.view.activeEnd);
 
     //     document.getElementsByClassName("fc-next-button")[0].addEventListener("click",()=> {
 
@@ -122,6 +131,7 @@ export class AppointmentKanbanComponent implements OnInit {
       distinctUntilChanged())
       .subscribe(() => {
         this.loadData();
+        this.loadGridData();
       });
 
     // this.loadListEmployees();
@@ -148,35 +158,39 @@ export class AppointmentKanbanComponent implements OnInit {
   onChangeEmployee(employeeId) {
     this.employeeSelected = employeeId;
     this.loadData();
+    this.loadGridData();
   }
 
   onChangeDate(e) {
     this.dateFrom = e.dateFrom;
     this.dateTo = e.dateTo;
     this.loadData();
+    this.loadGridData();
   }
 
   onChangeState(state) {
     this.state = state;
     this.loadData();
+    this.loadGridData();
   }
 
   createAppointment() {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.result.then(result => {
       this.loadData();
+      this.loadGridData();
     }, () => { });
 
     modalRef.componentInstance.getBtnDeleteObs.subscribe(() => {
       this.loadData();
+      this.loadGridData();
     })
   }
 
   refreshData() {
-
     this.loadData();
+    this.loadGridData();
   }
-
 
   loadData() {
     this.resetData();
@@ -191,6 +205,8 @@ export class AppointmentKanbanComponent implements OnInit {
     this.appointmentService.getPaged(val).subscribe((result: any) => {
       this.addAppointments(result);
       this.listData = result.items;
+    }, (error: any) => {
+      console.log(error);
     });
   }
 
@@ -221,6 +237,7 @@ export class AppointmentKanbanComponent implements OnInit {
     modalRef.componentInstance.appointId = appointment.id;
     modalRef.result.then(() => {
       this.loadData();
+      this.loadGridData();
       this.appointmentService.getBasic(appointment.id).subscribe(item => {
         var date = new Date(item.date);
         var key = date.toDateString();
@@ -422,14 +439,18 @@ export class AppointmentKanbanComponent implements OnInit {
     var today = this.calendarApi.getNow();
     if (today < currentStart || today > currentEnd) 
       this.calendarApi.today();
+    this.titleDateToolbar = this.getDateToolbar();
+    this.loadGridData();
   }
   datePrev() {
     this.calendarApi.prev();
     this.titleDateToolbar = this.getDateToolbar();
+    this.loadGridData();
   }
   dateNext() {
     this.calendarApi.next();
     this.titleDateToolbar = this.getDateToolbar();
+    this.loadGridData();
   }
   getDateToolbar() {
     var currentStart = this.calendarApi.view.currentStart;
@@ -451,7 +472,62 @@ export class AppointmentKanbanComponent implements OnInit {
   }
   changeViewToolbar(event) {
     this.viewToolbar = event;
-    this.calendarApi.changeView(event);
+    this.calendarApi.changeView(this.viewToolbar);
     this.titleDateToolbar = this.getDateToolbar();
+    this.loadGridData();
+  }
+  changeViewKanban(event) {
+    this.viewKanban = event;
+  }
+  loadGridData() {
+    var val = new AppointmentPaged();
+    val.limit = this.limit;
+    val.offset = this.offset;
+    val.doctorId = this.employeeSelected || '';
+    if (this.dateFrom || this.dateTo) {
+      var currentStart = this.calendarApi.view.currentStart;
+      var currentEnd = this.calendarApi.view.currentEnd;
+      currentEnd.setDate(currentEnd.getDate() - 1);
+      var dateRange_1 = new MyDateRange(currentStart, currentEnd);
+      const dateFrom_temp = this.dateFrom ? this.dateFrom : (this.dateTo >= currentStart ? currentStart : this.dateTo);
+      const dateTo_temp = this.dateTo ? this.dateTo : (this.dateFrom <= currentEnd ? currentEnd : this.dateFrom);
+      var dateRange_2 = new MyDateRange(dateFrom_temp, dateTo_temp);
+      const result_intersection = this.intersectionTwoDateRange(dateRange_1, dateRange_2);
+      if (result_intersection) {
+        val.dateTimeFrom = this.intlService.formatDate(result_intersection.start, 'yyyy-MM-dd');
+        val.dateTimeTo = this.intlService.formatDate(result_intersection.end, 'yyyy-MM-dd');
+      }
+    }
+
+    this.appointmentService.getPaged(val).pipe(
+      map((response: any) =>
+      (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe((result) => {
+      this.gridData = result;
+      this.loading = false;
+    }, (error) => {
+      console.log(error);
+      this.loading = false;
+    })
+  }
+  pageChange(event: PageChangeEvent): void {
+    this.offset = event.skip;
+    this.loadGridData();
+  }
+  computeNameSerivc(items: any[]) {
+    var serviceName = "";
+    if (items && items.length > 0) {
+      serviceName = items.map(x => x.name).join(', ');
+    }
+    return serviceName;
+  }
+  intersectionTwoDateRange(a: MyDateRange, b: MyDateRange) {
+    var min: MyDateRange = a.start < b.start ? a : b;
+    var max: MyDateRange = min == a ? b : a;
+    if (min.end < max.start) return null;
+    return new MyDateRange(max.start, min.end < max.end ? min.end : max.end);
   }
 }

@@ -47,14 +47,23 @@
     color: #929daa;
     border-color: #e2e7ed;
 }
+.btn-white {
+    color: #858f9b;
+    border-color: #e2e7ed;
+    background-color: #e2e7ed;
+}
 .btn-outline-gray:hover {
     border-color: #e2e7ed;
     background-color: #e2e7ed;
 }
+.btn-white:hover {
+    border-color: #e2e7ed;
+    background-color: #d7dadd;
+}
 .btn-check + label {
     margin-bottom: 0;
 }
-.btn-check + .btn-outline-gray {
+.btn-check + .btn {
     border-radius: 0;
     border-right-width: 0;
 }
@@ -72,6 +81,12 @@
     color: #fff;
     border-color: #0d6efd;
     background-color: #0d6efd;
+}
+.btn-check:active + .btn-white,
+.btn-check:checked + .btn-white {
+    color: #858f9b;
+    border-color: #e2e7ed;
+    background-color: #fff;
 }
 .btn-gray {
     color: #929daa;
@@ -92,10 +107,6 @@
 .toolbar-date .btn-gray {
     color: #2C333A;
 }
-.btn.focus, .btn:focus {
-    outline: 0;
-    box-shadow: none;
-}
 .toolbar-date .btn-gray:first-of-type {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -112,4 +123,8 @@
     width: 100%;
     background-color: #f8f9fb;
     text-align: center;
+}
+.btn.focus, .btn:focus {
+    outline: 0;
+    box-shadow: none;
 }
