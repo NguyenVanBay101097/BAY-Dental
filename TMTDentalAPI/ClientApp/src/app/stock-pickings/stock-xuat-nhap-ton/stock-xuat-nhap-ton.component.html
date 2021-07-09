@@ -1,10 +1,16 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <div class="breadcrumb">
-            <div class="d-flex">
-                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
-                    (searchChange)="onSearchChange($event)">
-                </app-tai-date-range-filter-dropdown>
+            <div class="d-flex flex-wrap">
+                <div class="mr-1">
+                    <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                        (searchChange)="onSearchChange($event)">
+                    </app-tai-date-range-filter-dropdown>
+                </div>
+                <kendo-combobox style="width: 200px;" [popupSettings]="" class="mr-1 kendo-combobox-sm"
+                    [placeholder]="'Tất cả sản phẩm'" [data]="filteredInventory" [valueField]="'value'"
+                    [textField]="'text'" (valueChange)="inventoryChange($event)">
+                </kendo-combobox>
                 <button type="button" class="btn btn-primary btn-sm mx-1" (click)="exportExcelFile(grid)">
                     <i class="fas fa-download"></i>&nbsp;Xuất file</button>
             </div>
@@ -29,8 +35,8 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" #grid="kendoGrid"
-        (pageChange)="pageChange($event)" (cellClick)="cellClick($event.dataItem)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        #grid="kendoGrid" (pageChange)="pageChange($event)" (cellClick)="cellClick($event.dataItem)">
         <kendo-grid-column field="productCode" title="Mã sản phẩm" width="150">
         </kendo-grid-column>
         <kendo-grid-column field="productName" title="Tên sản phẩm" width="200">
@@ -71,6 +77,9 @@
             <ng-template kendoGridFooterTemplate>
                 <span class="text_sum">{{sumEnd}}</span>
             </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column class="text-right" title="Mức tồn tối thiểu" width="150">
+            
         </kendo-grid-column>
         <kendo-grid-excel fileName="Xuất Nhập Tồn.xlsx"></kendo-grid-excel>
     </kendo-grid>
