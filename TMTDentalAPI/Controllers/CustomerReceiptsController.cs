@@ -56,9 +56,8 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid || val == null)
                 return BadRequest();
-            var entity = _mapper.Map<CustomerReceipt>(val);
-            entity = await _customerReceiptService.CreateAsync(entity);
-            var res = _mapper.Map<CustomerReceiptDisplay>(entity);
+            var res = await _customerReceiptService.CreateCustomerReceipt(val);
+            var basic = _mapper.Map<CustomerReceiptBasic>(res);
             return Ok(res);
         }
 
@@ -72,11 +71,8 @@ namespace TMTDentalAPI.Controllers
             var entity = await _customerReceiptService.GetByIdAsync(id);
             if (entity == null)
                 return NotFound();
-
-            entity = _mapper.Map(val, entity);
-            await _customerReceiptService.UpdateAsync(entity);
-            var res = _mapper.Map<SmsAccountBasic>(entity);
-            return Ok(res);
+            await _customerReceiptService.UpdateCustomerReceipt(id , val);
+            return NoContent();
         }
 
         [HttpPost("[action]")]

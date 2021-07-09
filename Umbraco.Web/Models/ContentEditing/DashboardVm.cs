@@ -22,7 +22,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// thời gian chờ khám
         /// </summary>
-        public DateTime? DateWaitting { get; set; }
+        public DateTime? DateWaiting { get; set; }
 
         /// <summary>
         /// Thời gian dự kiến

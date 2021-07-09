@@ -71,9 +71,10 @@ namespace Infrastructure.Services
             customerReceipt.CompanyId = val.CompanyId;
             customerReceipt.PartnerId = val.PartnerId;
             customerReceipt.DoctorId = val.DoctorId;
-            customerReceipt.DateWaiting = val.DateWaitting.HasValue ? val.DateWaitting.Value : DateTime.Now;
+            customerReceipt.DateWaiting = val.DateWaiting.HasValue ? val.DateWaiting.Value : DateTime.Now;
             customerReceipt.IsNoTreatment = val.IsRepeatCustomer;
             customerReceipt.Note = val.Note;
+            customerReceipt.State = "waiting";
             if (val.Products.Any())
             {
                 foreach (var product in val.Products)
@@ -146,15 +147,15 @@ namespace Infrastructure.Services
 
         public async Task<long> GetCountSaleOrder(ReportTodayRequest val)
         {
-            var appointmentObj = GetService<IAppointmentService>();
+            var saleOrderObj = GetService<ISaleOrderService>();
 
-            var query = appointmentObj.SearchQuery();
-
-            if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+            var query = saleOrderObj.SearchQuery();
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
+                query = query.Where(x => x.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateOrder <= val.DateTo.Value.AbsoluteEndOfDate());
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);

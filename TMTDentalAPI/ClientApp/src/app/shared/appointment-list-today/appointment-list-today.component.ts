@@ -1,3 +1,4 @@
+import { DashboardReportService, GetDefaultRequest } from './../../core/services/dashboard-report.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { state } from '@angular/animations';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
@@ -7,11 +8,12 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { forkJoin, of, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, mergeMap, switchMap } from 'rxjs/operators';
 import { AppointmentGetCountVM, AppointmentPaged, AppointmentPatch, AppointmentStatePatch, DateFromTo } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { AppointmentCreateUpdateComponent } from '../appointment-create-update/appointment-create-update.component';
+import { CustomerReceipCreateUpdateComponent } from '../customer-receip-create-update/customer-receip-create-update.component';
 
 @Component({
   selector: 'app-appointment-list-today',
@@ -55,6 +57,7 @@ export class AppointmentListTodayComponent implements OnInit {
   constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal,
     private notifyService: NotifyService,
+    private dashboardReportService : DashboardReportService,
     private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService) { }
 
 
@@ -146,6 +149,21 @@ export class AppointmentListTodayComponent implements OnInit {
       this.loadDataFromApi();
       this.loadStateCount();
     }, () => {
+    });
+  }
+
+  createCustomerReceipt(item) {   
+    this.dashboardReportService.getDefaultCustomerReceipt({appointmentId : item.id}).subscribe(res => {
+      let modalRef = this.modalService.open(CustomerReceipCreateUpdateComponent, { size: "lg", windowClass: "o_technical_modal modal-appointment", keyboard: false, backdrop: "static", });
+      modalRef.componentInstance.title = "Tiếp nhận";
+      modalRef.componentInstance.appointId = item.id;
+      modalRef.componentInstance.defaultData = res;
+      modalRef.result.then(() => {
+        this.notifyService.notify('success','Lưu thành công');
+        this.loadDataFromApi();
+        this.loadStateCount();
+      }, () => { }
+      );
     });
   }
 

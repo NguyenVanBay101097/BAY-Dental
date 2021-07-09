@@ -24,6 +24,7 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
 
   gridData: GridDataResult;
   loading = false;
+  hoveredIndex: number;
   search: string;
   searchUpdate = new Subject<string>();
   limit = 1000;

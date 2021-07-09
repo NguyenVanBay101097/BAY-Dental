@@ -1,0 +1,43 @@
+.customer-receipt-state {
+    padding: 15px;
+  }
+
+.change_state button {
+    background: none;
+    border: none;
+    border-style: none;
+    padding: 0;
+    outline: none;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.dropdown-wrapper {
+    width: 200px;
+}
+
+.cursor{
+    cursor: pointer;
+}
+
+textarea.ng-invalid {
+    border: 1px solid red;
+    box-shadow: none;
+}
+
+.style-header {
+    background-color: whitesmoke;
+    font-weight: 600;
+    padding: 8px 12px;
+}
+
+.dropdown-wrapper {
+    padding-top: 0;
+}
+
+.t_dropdown_header {
+    font-size: 1rem;
+    background-color: #f7f7f7;
+}

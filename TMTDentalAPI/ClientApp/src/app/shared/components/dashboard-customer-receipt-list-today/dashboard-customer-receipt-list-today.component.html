@@ -1,14 +1,13 @@
 <div class="customer-receipt-list">
     <div class="section-header">
         <div class="section-header-left">
-            <h5 class="text-primary">TIẾP NHẬN KHÁCH HÀNG</h5>
+            <h5 class="text-primary title-header">TIẾP NHẬN KHÁCH HÀNG</h5>
         </div>
         <div class="section-header-right">
             <div class="d-flex header-buttons-view">
-                <div class="mr-1">
-                    <button class="btn btn-primary" (click)="createItem()"><i class="fas fa-plus-circle mr-1"></i>Thêm
-                        tiếp
-                        nhận</button>
+                <div class="mr-1 button_create">
+                    <button class="btn btn-primary" (click)="createItem()"><i class="fas fa-plus-circle mr-1">
+                    </i>Thêm tiếp nhận</button>
                 </div>
                 <kendo-combobox #employeeCbx (selectionChange)="onChangeDoctor($event)" placeholder="Lọc theo bác sĩ"
                     class="header-combobox mr-1" [data]="listEmployees" [textField]="'name'" [valueField]="'value'">
@@ -31,28 +30,15 @@
         </button>
     </div>
     <div class="appointment-boxes gridView">
-        <ng-container *ngFor="let item of gridData?.data">
-            <div class="project-box-wrapper">
+        <ng-container *ngFor="let item of gridData?.data ;let i = index">
+            <div class="project-box-wrapper"  (mouseenter)="hoveredIndex = i" (mouseleave)="hoveredIndex = null">
                 <div class="project-box">
                     <div class="project-box-header">
                         <span class="box-header-badge"
                             [ngClass]="getColorState(item?.state)">{{getState(item?.state)}}</span>
-                        <div class="more-wrapper">
-                            <i class="fas fa-pen text-primary mr-1 project-btn-more" (click)="editItem(item)"></i>
-                            <!-- <i class="far fa-trash-alt text-danger project-btn-more "></i> -->
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" class="project-btn-more"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <g clip-path="url(#clip0)">
-                                    <path
-                                        d="M0.000218868 4.72656V3.55469H2.31389L2.32639 3.51563L1.44748 2.84727L2.14866 1.91406C2.81819 2.4168 3.47678 2.89648 4.11467 3.39844C4.30334 3.54609 4.48889 3.57734 4.72717 3.54063V2.3918H15.2787V3.55664C15.7475 3.55664 16.1971 3.54336 16.6459 3.55937C18.0338 3.60938 19.2971 4.53125 19.7658 5.83594C19.8686 6.12109 19.9221 6.42188 20.0002 6.71719V7.42031C19.9858 7.48242 19.9666 7.54414 19.9572 7.60742C19.7475 8.98516 18.7108 10.1441 17.3529 10.4613C16.9467 10.5563 16.5166 10.5555 16.0963 10.582C15.8268 10.5988 15.5549 10.5852 15.2643 10.5852V11.7473H4.72326V10.6195C4.18342 10.6195 3.6592 10.5711 3.14748 10.6293C2.1092 10.7465 1.30256 11.6305 1.18147 12.7047C1.06702 13.7176 1.70608 14.7629 2.67834 15.1086C2.94896 15.1986 3.2306 15.2512 3.51545 15.2648C3.91428 15.291 4.31584 15.2715 4.73147 15.2715V14.1113H15.2822V15.2578H17.2846L16.3674 14.568L17.0705 13.6305L20.0002 15.857L17.0705 18.0836L16.3674 17.1461L17.2822 16.4547H15.2635V17.6043H4.72288V16.4426C4.26623 16.4426 3.83108 16.4539 3.39475 16.4426C2.69746 16.4203 2.02286 16.1895 1.45797 15.7801C0.893087 15.3707 0.463839 14.8014 0.22561 14.1457C0.12522 13.8668 0.072876 13.5707 -0.00134277 13.2824V12.5781C0.0123291 12.5219 0.0310791 12.4664 0.0377197 12.4098C0.244751 11.0172 1.26975 9.86133 2.64475 9.5375C3.07444 9.43594 3.53342 9.44453 3.97991 9.41602C4.22327 9.40039 4.46897 9.41328 4.73342 9.41328V8.25117H15.2756V9.37813C15.8158 9.37813 16.3405 9.42695 16.8526 9.36797C17.9178 9.2457 18.7666 8.28516 18.8201 7.21133C18.8776 6.09531 18.1561 5.05586 17.0924 4.82031C16.6237 4.7168 16.124 4.75156 15.6381 4.72656C15.5182 4.72031 15.3975 4.72656 15.2623 4.72656V5.88438H4.72092V4.73711C4.48655 4.70547 4.30178 4.73711 4.1135 4.88359C3.53069 5.34258 2.92991 5.78125 2.33694 6.22422C2.27678 6.26953 2.21584 6.31289 2.14709 6.36289L1.44748 5.42969L2.37717 4.72656H0.000218868Z"
-                                        fill="#1A6DE3" />
-                                </g>
-                                <defs>
-                                    <clipPath id="clip0">
-                                        <rect width="20" height="20" fill="white" />
-                                    </clipPath>
-                                </defs>
-                            </svg>
+                        <div class="more-wrapper" *ngIf="hoveredIndex === i">
+                            <i class="fas fa-pen text-primary mr-1 project-btn-more " (click)="editItem(item)"></i>
+                           <app-customer-receipt-state-popover [item]="item"></app-customer-receipt-state-popover>                     
                         </div>
                     </div>
                     <div class="box-info-wrapper">

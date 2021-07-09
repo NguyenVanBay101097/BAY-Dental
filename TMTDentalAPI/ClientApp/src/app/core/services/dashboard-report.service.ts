@@ -12,9 +12,9 @@ export class CountMedicalXamination {
 }
 
 export class CustomerReceiptRequest {
-  dateWaitting: string;
+  dateWaiting: string;
   timeExpected: number;
-  products: ProductSimple[];
+  products: [];
   note: string;
   partnerId: string;
   companyId: string;
@@ -45,7 +45,7 @@ export class DashboardReportService {
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
   getDefaultCustomerReceipt(val) {
-    return this.http.get(this.baseApi + this.apiUrl + "/GetDefaultCustomerReceipt", { params: new HttpParams({ fromObject: val }) });
+    return this.http.post(this.baseApi + this.apiUrl + "/GetDefaultCustomerReceipt", val);
   }
 
   getCountMedicalXamination(val) {
@@ -61,7 +61,7 @@ export class DashboardReportService {
   }
 
   createCustomerReceiptToAppointment(val) {
-    return this.http.get(this.baseApi + this.apiUrl + '/CreateCustomerReceiptToAppointment', val);
+    return this.http.post(this.baseApi + this.apiUrl + '/CreateCustomerReceiptToAppointment', val);
   }
 
 

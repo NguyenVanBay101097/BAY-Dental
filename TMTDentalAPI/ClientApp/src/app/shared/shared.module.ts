@@ -98,6 +98,7 @@ import { AgentCreateUpdateDialogComponent } from './agent-create-update-dialog/a
 import { DashboardRevenueTodayReportComponent } from './components/dashboard-revenue-today-report/dashboard-revenue-today-report.component';
 import { DashboardCustomerReceiptListTodayComponent } from './components/dashboard-customer-receipt-list-today/dashboard-customer-receipt-list-today.component';
 import { CustomerReceipCreateUpdateComponent } from './customer-receip-create-update/customer-receip-create-update.component';
+import { CustomerReceiptStatePopoverComponent } from './customer-receipt-state-popover/customer-receipt-state-popover.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -189,7 +190,8 @@ const config: LocaleConfig = {};
         DaterangepickerDirective,
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
-        CustomerReceipCreateUpdateComponent
+        CustomerReceipCreateUpdateComponent,
+        CustomerReceiptStatePopoverComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -270,7 +272,8 @@ const config: LocaleConfig = {};
         DaterangepickerDirective,
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
-        CustomerReceipCreateUpdateComponent
+        CustomerReceipCreateUpdateComponent,
+        CustomerReceiptStatePopoverComponent
     ],
     imports: [
         NgbModule,

@@ -197,8 +197,8 @@
 .more-wrapper {
     display: flex;
     justify-content: space-between;
-    padding-top: 10px;
     position: relative;
+    align-items: baseline;
 }
 
 .box-content-header {
@@ -242,8 +242,43 @@
     border-color: #007bff !important;
   }
 
+  .project-box-wrapper div.show-on-hover {
+    visibility: hidden;
+  }
+  
+  .project-box-wrapper:hover div.show-on-hover {
+    visibility: visible;
+    
+  }
+
+  .active {
+    visibility: visible;
+  }
+
+  .project-box-wrapper:hover  .project-box{
+    background-color: #f3f9ff;
+  }
+
   @media (min-width: 1300px) and (max-width: 1400px) {
     .appointment-boxes.gridView .project-box-wrapper {
         width: 33.3%;
+    }
+
+    .button_create{
+        padding: 6px 6px;
+        font-size: 12px;
+    }
+
+    .header-combobox{
+        padding-right: 2px;
+    }
+
+    .has-search {
+        -webkit-box-flex: 1;
+        flex: 1 1 250px;
+    }
+
+    .title-header{
+        font-size: 16px;
     }
   }

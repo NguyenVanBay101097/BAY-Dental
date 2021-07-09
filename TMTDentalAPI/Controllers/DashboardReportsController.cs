@@ -23,8 +23,8 @@ namespace TMTDentalAPI.Controllers
             _dashboardService = dashboardService;
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetDefaultCustomerReceipt([FromQuery] GetDefaultRequest val)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetDefaultCustomerReceipt(GetDefaultRequest val)
         {
             var res = await _dashboardService.GetDefaultCustomerReceipt(val);
             return Ok(res);

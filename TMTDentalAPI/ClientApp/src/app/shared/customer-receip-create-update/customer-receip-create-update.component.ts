@@ -24,6 +24,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnersService } from '../services/partners.service';
 import { AppSharedShowErrorService } from '../shared-show-error.service';
+import { CustomerReceiptRequest, DashboardReportService } from 'src/app/core/services/dashboard-report.service';
 
 @Component({
   selector: 'app-customer-receip-create-update',
@@ -43,7 +44,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   id: string;
   title: string;
   showIsNoTreatment = false;
-  dateValue: any;
+  defaultData: any;
   timeExpecteds: any[] = [
     {
       name: '0 phút', value: 0
@@ -88,7 +89,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private appointmentService: AppointmentService,
+    private dashboardReportService : DashboardReportService,
     private partnerService: PartnerService,
     private authService: AuthService,
     private intlService: IntlService,
@@ -214,8 +215,8 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     receipt.partnerId = receipt.partner ? receipt.partner.id : null;
     receipt.doctorId = receipt.doctor ? receipt.doctor.id : null;
     receipt.dateWaiting = this.intlService.formatDate(receipt.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    receipt.dateExamination = this.stateControl == 'examination' ? new Date() : null;
-    receipt.dateDone =  this.stateControl == 'done' ? new Date() : null;
+    receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss')  : null;
+    receipt.dateDone =  this.stateControl == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss')  : null;
     receipt.timeExpected = Number.parseInt(receipt.timeExpected); 
     receipt.companyId = this.authService.userInfo.companyId;
     if (this.id) {   
@@ -290,20 +291,6 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     });
   }
 
-  createDoctorDialog() {
-    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm bác sĩ';
-
-    modalRef.result.then(result => {
-      var p = new UserSimple();
-      p.id = result.id;
-      p.name = result.name;
-      this.formGroup.get('user').patchValue(p);
-      this.userSimpleFilter = _.unionBy(this.userSimpleFilter, [p], 'id');
-    }, () => {
-    });
-  }
-
   getCustomerList() {
     var partnerPaged = new PartnerPaged();
     partnerPaged.employee = false;
@@ -373,6 +360,20 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   }
 
   loadDefault(){
+    if(this.appointId){
+      this.formGroup.patchValue(this.defaultData);
+
+      if (this.defaultData.partner) {
+        this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [this.defaultData.partner], 'id');
+        this.onChangePartner();
+      }
+
+      if (this.defaultData.doctor) {
+        this.filteredEmployees = _.unionBy(this.filteredEmployees, [this.defaultData.doctor], 'id');
+      }
+
+    }
+
     let date = new Date();
     this.formGroup.get('dateObj').patchValue(date);
   }
@@ -444,6 +445,36 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     modalRef.result.then(() => {
     }, () => {
     });
+  }
+
+  onSaveToAppoint(){
+    this.submitted = true;
+
+    if (!this.formGroup.valid) {
+      return false;
+    }
+    debugger
+    var receipt = this.formGroup.value;
+    var res = new CustomerReceiptRequest();
+    res.partnerId = receipt.partner ? receipt.partner.id : null;
+    res.doctorId = receipt.doctor ? receipt.doctor.id : null;
+    res.dateWaiting = this.intlService.formatDate(receipt.dateObj, 'yyyy-MM-ddTHH:mm:ss');
+    res.timeExpected = Number.parseInt(receipt.timeExpected); 
+    res.companyId = this.authService.userInfo.companyId;
+    res.products = receipt.products;
+    res.isRepeatCustomer = this.isRepeatCustomer;
+    res.note = receipt.note;
+    res.appointmentId = this.appointId;
+    this.dashboardReportService.createCustomerReceiptToAppointment(res).subscribe(
+      () => {
+        this.activeModal.close();
+      },
+      er => {
+        this.notify('error',er);
+        this.submitted = false;
+      },
+    )
+
   }
 
   quickCreateCustomerModal() {
