@@ -138,15 +138,19 @@
                         </div>
                     </div>
                     <full-calendar #fullcalendar [plugins]="calendarPlugins" [editable]="true" [defaultView]="'dayGridMonth'" [header]="false"
-                        [height]="'auto'" [dir]="'ltr'" [eventDurationEditable]="false" [eventStartEditable]="false" (eventRender)="handleEventRender($event)" [events]="events" (eventClick)="handleEventClick($event)" [locale]="'vi'" [firstDay]="1">
+                        [height]="'auto'" [dir]="'ltr'" [eventDurationEditable]="false" [eventStartEditable]="false" (eventRender)="handleEventRender($event)" [events]="events" (eventClick)="handleEventClick($event)" [locale]="'vi'" [firstDay]="1"
+                        [validRange]="{
+                            start: this.dateFrom,
+                            end: this.dateTo
+                        }" [fixedWeekCount]="false">
                     </full-calendar>
                 </div>
-                <div class="cont-right">
+                <div class="cont-right ov">
                     <div class="filter">
                         <div class="filter-title">Bộ lọc</div>
                         <div class="filter-label">Thời gian</div>
                         <div class="filter-content">
-                            <app-date-range-picker-filter opens="left" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onChangeDate($event)">
+                            <app-date-range-picker-filter opens="left" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onChangeDate($event)">
                             </app-date-range-picker-filter>
                         </div>
                         <div class="filter-label">Trạng thái</div>
@@ -161,14 +165,15 @@
                         <div class="filter-label">Bác sĩ</div>
                         <div class="filter-content">
                             <div class="form-check t-form-check mb-1">
-                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-default'" [value]="''" [(ngModel)]="employeeSelected">
-                                <label class="form-check-label" [for]="'employee-default'" (click)="onChangeEmployee('')">
+                                <input checked class="form-check-input" type="radio" name="employee" [id]="'employee-default'" [value]="''" (change)="onChangeEmployee('')">
+                                <label class="form-check-label" [for]="'employee-default'">
                                     Tất cả
                                 </label>
                             </div>
-                            <div class="form-check t-form-check mb-1" *ngFor="let employee of listEmployees; index as i">
-                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i" [value]="employee.id" [(ngModel)]="employeeSelected">
-                                <label class="form-check-label" [for]="'employee-' + i" (click)="onChangeEmployee(employee.id)">
+
+                            <div class="form-check t-form-check mb-1" *ngFor="let employee of doctors; index as i">
+                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i" [value]="employee.id" (change)="onChangeEmployee(employee.id)">
+                                <label class="form-check-label" [for]="'employee-' + i">
                                     {{employee.name}}
                                 </label>
                             </div>

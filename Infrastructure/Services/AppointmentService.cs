@@ -480,5 +480,12 @@ namespace Infrastructure.Services
             worksheet.Column(4).Style.Numberformat.Format = "@";
             worksheet.Cells.AutoFitColumns();
         }
+
+        public async Task<IEnumerable<EmployeeSimple>> GetListDoctor(AppointmentDoctorReq val)
+        {
+            var query = GetSearchQuery(dateFrom: val.DateFrom, dateTo: val.DateTo);
+            var res = await query.Where(x=> x.DoctorId.HasValue).Distinct().Select(x => new EmployeeSimple() { Id = x.DoctorId.Value, Name = x.Doctor.Name }).ToListAsync();
+            return res;
+        }
     }
 }
