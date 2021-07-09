@@ -79,6 +79,9 @@ export class AppointmentKanbanComponent implements OnInit {
   calendarApi: Calendar; 
   calendarPlugins = [dayGridPlugin, timeGrigPlugin, interactionPlugin];
   @ViewChild('fullcalendar',{static: true}) calendarComponent: FullCalendarComponent;
+  titleDateToolbar: string = "";
+  viewToolbar: string = "dayGridMonth";
+
   constructor (
     private appointmentService: AppointmentService,
     private intlService: IntlService, 
@@ -93,6 +96,7 @@ export class AppointmentKanbanComponent implements OnInit {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
     //Add 'implements AfterViewInit' to the class.
     this.calendarApi = this.calendarComponent.getApi();
+    this.titleDateToolbar = this.getDateToolbar();
 // console.log(this.calendarApi.view.activeStart);
 // console.log(this.calendarApi.view.activeEnd);
 
@@ -102,8 +106,8 @@ export class AppointmentKanbanComponent implements OnInit {
   }
   ngOnInit() {
     var curr = new Date; // get current date
-var first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
-var last = first + 6; // last day is the first day + 6
+    var first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
+    var last = first + 6; // last day is the first day + 6
 
     this.dateFrom = new Date(curr.setDate(first));
     this.dateTo = new Date(curr.setDate(last));
@@ -414,5 +418,43 @@ var last = first + 6; // last day is the first day + 6
   a() {
     console.log('a');
     
+  }
+  dateToday() {
+    var currentStart = this.calendarApi.view.currentStart;
+    var currentEnd = this.calendarApi.view.currentEnd;
+    var today = this.calendarApi.getNow();
+    if (today < currentStart || today > currentEnd) 
+      this.calendarApi.today();
+  }
+  datePrev() {
+    this.calendarApi.prev();
+    this.titleDateToolbar = this.getDateToolbar();
+  }
+  dateNext() {
+    this.calendarApi.next();
+    this.titleDateToolbar = this.getDateToolbar();
+  }
+  getDateToolbar() {
+    var currentStart = this.calendarApi.view.currentStart;
+    currentStart.setDate(currentStart.getDate() + 1);
+    var currentStartString = ("0" + currentStart.getUTCDate()).slice(-2) + "/" + 
+                            ("0" + (currentStart.getUTCMonth()+1)).slice(-2) + "/" + 
+                            currentStart.getUTCFullYear();
+
+    var currentEnd = this.calendarApi.view.currentEnd;
+    var currentEndString = ("0" + currentEnd.getUTCDate()).slice(-2) + "/" + 
+                          ("0" + (currentEnd.getUTCMonth()+1)).slice(-2) + "/" + 
+                          currentEnd.getUTCFullYear();
+                                                
+    if (currentStartString == currentEndString) {
+      return currentStartString;
+    } else {
+      return `${currentStartString} - ${currentEndString}`;
+    }
+  }
+  changeViewToolbar(event) {
+    this.viewToolbar = event;
+    this.calendarApi.changeView(event);
+    this.titleDateToolbar = this.getDateToolbar();
   }
 }

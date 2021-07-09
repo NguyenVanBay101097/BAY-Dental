@@ -108,26 +108,38 @@
             </div> -->
             <div class="cont-wrapper">
                 <div class="cont-left overflow-auto">
-                    <div class="header-toolbar-calendar">
-                        <!-- <div></div>
-                        <div></div>
+                    <div class="header-toolbar-calendar mb-3">
                         <div>
-                            <input type="radio" class="btn-check" name="time-period" id="day" autocomplete="off" checked>
-                            <label class="btn btn-outline-secondary btn-sm" for="day">Ngày</label>
-                            <input type="radio" class="btn-check" name="time-period" id="week" autocomplete="off">
-                            <label class="btn btn-outline-secondary btn-sm" for="week">Tuần</label>
-                            <input type="radio" class="btn-check" name="time-period" id="month" autocomplete="off">
-                            <label class="btn btn-outline-secondary btn-sm" for="month">Tháng</label>
-                        </div> -->
-                        <full-calendar #fullcalendar [plugins]="calendarPlugins" [editable]="true" [defaultView]="'dayGridMonth'" [header]="{
-                            left: 'prev,next today',
-                            center: 'title',
-                            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-                            }" [height]="'auto'" [dir]="'ltr'" [eventDurationEditable]="false" [eventStartEditable]="false" (eventRender)="handleEventRender($event)" [events]="events" (eventClick)="handleEventClick($event)" [locale]="'vi'" [firstDay]="1">
-
-                        </full-calendar>
+                            <button type="button" class="btn btn-primary btn-sm" (click)="dateToday()">
+                                Today
+                            </button>
+                        </div>
+                        <div class="toolbar-date">
+                            <button type="button" class="btn btn-gray btn-sm" (click)="datePrev()">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div class="date">
+                                {{titleDateToolbar}}
+                            </div>
+                            <button type="button" class="btn btn-gray btn-sm" (click)="dateNext()">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div>
+                            <input type="radio" class="btn-check" name="view" id="dayGridMonth" autocomplete="off" 
+                            [value]="'dayGridMonth'" [(ngModel)]="viewToolbar" (ngModelChange)="changeViewToolbar($event)">
+                            <label class="btn btn-outline-gray btn-sm" for="dayGridMonth">Tháng</label>
+                            <input type="radio" class="btn-check" name="view" id="timeGridWeek" autocomplete="off" 
+                            [value]="'timeGridWeek'" [(ngModel)]="viewToolbar" (ngModelChange)="changeViewToolbar($event)">
+                            <label class="btn btn-outline-gray btn-sm" for="timeGridWeek">Tuần</label>
+                            <input type="radio" class="btn-check" name="view" id="timeGridDay" autocomplete="off" 
+                            [value]="'timeGridDay'" [(ngModel)]="viewToolbar" (ngModelChange)="changeViewToolbar($event)">
+                            <label class="btn btn-outline-gray btn-sm" for="timeGridDay">Ngày</label>
+                        </div>
                     </div>
-
+                    <full-calendar #fullcalendar [plugins]="calendarPlugins" [editable]="true" [defaultView]="'dayGridMonth'" [header]="false"
+                        [height]="'auto'" [dir]="'ltr'" [eventDurationEditable]="false" [eventStartEditable]="false" (eventRender)="handleEventRender($event)" [events]="events" (eventClick)="handleEventClick($event)" [locale]="'vi'" [firstDay]="1">
+                    </full-calendar>
                 </div>
                 <div class="cont-right">
                     <div class="filter">

@@ -15,7 +15,6 @@ import { AppointmentDetailDialogComponent } from './appointment-detail-dialog/ap
 import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';
 import { AppointmentOverCancelComponent } from './appointment-over-cancel/appointment-over-cancel.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
-import { AppointmentFullCalendarComponent } from './appointment-full-calendar/appointment-full-calendar.component';
 
 @NgModule({
   declarations: [
@@ -26,8 +25,7 @@ import { AppointmentFullCalendarComponent } from './appointment-full-calendar/ap
     AppointmentStateFilterComponent,
     AppointmentKanbanComponent,
     AppointmentDetailDialogComponent,
-    AppointmentOverCancelComponent,
-    AppointmentFullCalendarComponent
+    AppointmentOverCancelComponent
   ],
   imports: [
     CommonModule,
