@@ -30,7 +30,7 @@ namespace Infrastructure.Services
             {
                 var productObj = GetService<IProductService>();
                 var product = await productObj.SearchQuery(x => x.Id == val.ProductId.Value).Include(x => x.UOM).Include(x => x.UOMPO).FirstOrDefaultAsync();
-                res.PriceUnit = product.PurchasePrice ?? 0;
+                res.PriceUnit = product.Type2 == "medicine" ? product.ListPrice : (product.PurchasePrice ?? 0);
                 res.Name = product.Name;
                 res.ProductUOMId = product.UOMPOId;
                 res.ProductUOM = _mapper.Map<UoMBasic>(product.UOMPO);

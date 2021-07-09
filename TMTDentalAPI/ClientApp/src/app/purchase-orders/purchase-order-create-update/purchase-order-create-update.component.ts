@@ -155,11 +155,12 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     if (this.id) {
       this.paymentService.purchaseDefaultGet([this.id]).subscribe(rs2 => {
         let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.title = 'Thanh toán';
+        modalRef.componentInstance.title = this.purchaseOrder.type == 'refund' ? 'Hoàn tiền' : 'Thanh toán';
+        modalRef.componentInstance.purchaseType = this.purchaseOrder.type;
         modalRef.componentInstance.defaultVal = rs2;
         modalRef.result.then(() => {
           this.notificationService.show({
-            content: 'Thanh toán thành công',
+            content: this.purchaseOrder.type == 'refund' ? 'Hoàn tiền thành công' : 'Thanh toán thành công',
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },
@@ -191,7 +192,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.productService
       .autocomplete2(val).subscribe(
         (res) => {
-          console.log(res)
+          console.log(res)         
           this.productList = res;
         },
         (err) => {
@@ -248,9 +249,11 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
 
   onSaveConfirm() {
+    
     var index = _.findIndex(this.orderLines.controls, o => {
       return o.get('productQty').value == null || o.get('priceUnit').value == null;
     });
+
     if (index !== -1) {
       return false;
     }
@@ -263,7 +266,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
-    val.journalId = val.journal.id;
+    val.journalId = val.journal ? val.jounral.id : null;
 
     var data = Object.assign(this.purchaseOrder, val);
     if (this.id) {
@@ -447,8 +450,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
-    val.journalId = val.journal.id;
+    val.partnerId = val.partner ? val.partner.id : null;
+    val.journalId = val.journal ? val.journal.id : null;
     // val.productId = this.purchaseOrder.product ? this.purchaseOrder.prpduct.id : null;
     // val.productUOMId = this.purchaseOrder.productUOM ? this.purchaseOrder.productUOM.id : null;
     var data = Object.assign(this.purchaseOrder, val);
@@ -465,6 +468,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       });
     } else {
       this.purchaseOrderService.create(data).subscribe((result: any) => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.router.navigate(['/purchase/orders/edit/' + result.id]);
       });
     }

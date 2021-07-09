@@ -21,7 +21,7 @@
                         *ngIf="canAdd">Thêm
                     </button>
                     <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="exportExcelFile()">
-                        <i class="fas fa-download mr-2"></i>Xuất file
+                        <i class="fas fa-download mr-2"></i>Xuất Excel
                     </button>
                 </div>
             </div>
@@ -41,12 +41,16 @@
         </div>
         <div class="o_cp_right">
             <div class="o_search_options">
-                <app-tai-date-range-filter-dropdown title="Ngày" [dateFrom]="dateFrom" [dateTo]="dateTo"
-                    (searchChange)="onDateSearchChange($event)">
+                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                    (searchChange)="onSearchDateChange($event)">
                 </app-tai-date-range-filter-dropdown>
-                <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
+                <kendo-combobox [data]="stateFilterOptions" [textField]="'text'" [valueField]="'value'" [filterable]="true" 
+                (selectionChange)="onStateSelectChange($event)" [placeholder]="'Trạng thái'"
+                    class="kendo-combobox-sm mr-1">
+                </kendo-combobox>
+                <!-- <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
                     (selectChange)="onStateSelectChange($event)">
-                </app-tmt-option-select-dropdown>
+                </app-tmt-option-select-dropdown> -->
                 <kendo-combobox [data]="supplierData" [textField]="'displayName'" [valueField]="'id'" [filterable]="true" 
                 (selectionChange)="handleFilter($event)" [placeholder]="'Nhà cung cấp'"
                     #supplierCbx

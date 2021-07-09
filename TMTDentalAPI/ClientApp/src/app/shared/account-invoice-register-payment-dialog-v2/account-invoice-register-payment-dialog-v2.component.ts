@@ -22,6 +22,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   loading = false;
   title: string;
+  purchaseType: string;
   showPrint = false;
   submitted = false;
 
@@ -33,7 +34,7 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
 
   ngOnInit() {
     this.paymentForm = this.fb.group({
-      amount: 0,
+      amount: [0, Validators.required],
       paymentDateObj: [null, Validators.required],
       paymentDate: null,
       communication: null,

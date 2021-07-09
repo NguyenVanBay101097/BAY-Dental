@@ -38,9 +38,9 @@
                         Xác nhận
                     </button>
                     <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1 && purchaseOrder?.amountResidual > 0" type="button" class="btn btn-primary btn-sm" (click)="actionRegisterPayment()">
-                        Thanh toán
+                       {{purchaseOrder?.type == 'refund' ? 'Hoàn tiền' : 'Thanh toán'}} 
                     </button>
-                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1" type="button" class="btn btn-primary btn-sm" (click)="getPrint(purchaseOrder?.id)">
+                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1" type="button" class="btn btn-secondary btn-sm" (click)="getPrint(purchaseOrder?.id)">
                         In phiếu
                     </button>
                     <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder?.state) !== -1 && purchaseOrder?.type != 'refund'" type="button" class="btn btn-primary btn-sm" (click)="actionRefund()">
@@ -145,7 +145,7 @@
                                 <tr *ngIf="purchaseOrder?.state != 'draft'">
                                     <td colspan="1" class="o_td_label">
                                         <label class="o_form_label o_form_label_help">
-                                            Tham chiếu {{purchaseOrder?.type == 'order' ? 'nhập kho' : 'xuất kho'}}
+                                            Tham chiếu
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
@@ -193,12 +193,12 @@
                                     <tr>
                                         <th scope="col" width="250">Tên hàng hóa</th>
                                         <th scope="col" width="100">Số lượng</th>
-                                        <th scope="col" width="60">ĐVT</th>
+                                        <th scope="col" width="60">Đơn vị</th>
                                         <th scope="col" width="120">Đơn giá</th>
                                         <th scope="col" width="60">CK(%)</th>
                                         <th scope="col" class="text-right" width="120">Thành tiền</th>
                                         <th scope="col" width="50" class="text-center" *ngIf="purchaseOrder?.state == 'draft'">
-                                            <i class="far fa-trash-alt"></i>
+                                            <i class="far fa-trash-alt cursor" (click)="removeAllLine()"></i>
                                         </th>
                                     </tr>
                                 </thead>
@@ -265,7 +265,7 @@
                                     <tr *ngIf="purchaseOrder?.state != 'draft'">
                                         <td colspan="1" class="o_td_label pb-0">
                                             <label class="o_form_label oe_subtotal_footer_separator">
-                                           Đã thanh toán
+                                           {{purchaseOrder?.type == 'order' ? 'Đã thanh toán' : 'Đã nhận hoàn '}}
                                         </label>
                                         </td>
                                         <td colspan="1">
