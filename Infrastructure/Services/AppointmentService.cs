@@ -214,6 +214,15 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(state))
             {
                 stateList = state.Split(",");
+                if (stateList.Contains("overdue"))
+                {
+                    query = query.Where(x => x.Date.Date < DateTime.Now.Date);
+                    stateList = stateList.Where(x=> !x.Contains("overdue")).ToArray();
+                } else
+                {
+                    query = query.Where(x => x.Date.Date >= DateTime.Now.Date);
+                }
+                if(stateList.Any())
                 query = query.Where(x => stateList.Contains(x.State));
             }
 

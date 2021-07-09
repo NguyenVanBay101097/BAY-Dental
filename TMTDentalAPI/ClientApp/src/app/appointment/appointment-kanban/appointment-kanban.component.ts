@@ -24,7 +24,10 @@ import { CheckPermissionService } from 'src/app/shared/check-permission.service'
 import { RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
 //
 import { Calendar, EventInput } from '@fullcalendar/core';
-
+import dayGridPlugin from '@fullcalendar/daygrid'; 
+import timeGrigPlugin from '@fullcalendar/timegrid'; 
+import interactionPlugin from '@fullcalendar/interaction';
+import { FullCalendarComponent } from '@fullcalendar/angular';
 @Component({
   selector: 'app-appointment-kanban',
   templateUrl: './appointment-kanban.component.html',
@@ -73,7 +76,9 @@ export class AppointmentKanbanComponent implements OnInit {
   employeeSelected: string = '';
 
   events=[];
-
+  calendarApi: Calendar; 
+  calendarPlugins = [dayGridPlugin, timeGrigPlugin, interactionPlugin];
+  @ViewChild('fullcalendar',{static: true}) calendarComponent: FullCalendarComponent;
   constructor (
     private appointmentService: AppointmentService,
     private intlService: IntlService, 
@@ -84,10 +89,24 @@ export class AppointmentKanbanComponent implements OnInit {
     private employeeService: EmployeeService, 
     private checkPermissionService: CheckPermissionService
   ) { }
+  ngAfterViewInit(): void {
+    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+    //Add 'implements AfterViewInit' to the class.
+    this.calendarApi = this.calendarComponent.getApi();
+// console.log(this.calendarApi.view.activeStart);
+// console.log(this.calendarApi.view.activeEnd);
 
+//     document.getElementsByClassName("fc-next-button")[0].addEventListener("click",()=> {
+    
+//     });
+  }
   ngOnInit() {
-    this.dateFrom = this.today;
-    this.dateTo = this.next3days;
+    var curr = new Date; // get current date
+var first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
+var last = first + 6; // last day is the first day + 6
+
+    this.dateFrom = new Date(curr.setDate(first));
+    this.dateTo = new Date(curr.setDate(last));
     this.dateList = this.getDateList();
     this.loadData();
 
@@ -98,7 +117,7 @@ export class AppointmentKanbanComponent implements OnInit {
         this.loadData();
       });
 
-    this.loadListEmployees();
+    // this.loadListEmployees();
   }
 
   loadListEmployees() {
@@ -248,16 +267,21 @@ export class AppointmentKanbanComponent implements OnInit {
     this.events = [];
       for (var i = 0; i < paged.items.length; i++) {
         var item = paged.items[i];
+        var d = new Date();
+        d.setHours(0,0,0,0);
         this.events = this.events.concat([
           <EventInput>{
             title:item.time + '\n' + item.partnerName ,
             date: this.formatDate(item.date),
-            backgroundColor: this.states.find(x=> x.value == item.state)?this.states.find(x=> x.value == item.state).bgColor : '',
+            backgroundColor: new Date(item.date) >= d?( this.states.find(x=> x.value == item.state)?this.states.find(x=> x.value == item.state).bgColor : ''): '#FFC107',
             id: item.id,
             textColor: 'white'
           }
         ]);
       }
+
+      console.log(this.events);
+      
   }
   calendarEvents = [
     { title: 'event 1', date: '2019-04-01' }

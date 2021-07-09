@@ -109,7 +109,7 @@
             <div class="cont-wrapper">
                 <div class="cont-left overflow-auto">
                     <div class="header-toolbar-calendar">
-                        <div></div>
+                        <!-- <div></div>
                         <div></div>
                         <div>
                             <input type="radio" class="btn-check" name="time-period" id="day" autocomplete="off" checked>
@@ -118,9 +118,16 @@
                             <label class="btn btn-outline-secondary btn-sm" for="week">Tuần</label>
                             <input type="radio" class="btn-check" name="time-period" id="month" autocomplete="off">
                             <label class="btn btn-outline-secondary btn-sm" for="month">Tháng</label>
-                        </div>
+                        </div> -->
+                        <full-calendar #fullcalendar [plugins]="calendarPlugins" [editable]="true" [defaultView]="'dayGridMonth'" [header]="{
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                            }" [height]="'auto'" [dir]="'ltr'" [eventDurationEditable]="false" [eventStartEditable]="false" (eventRender)="handleEventRender($event)" [events]="events" (eventClick)="handleEventClick($event)" [locale]="'vi'" [firstDay]="1">
+
+                        </full-calendar>
                     </div>
-                    <app-appointment-full-calendar></app-appointment-full-calendar>
+
                 </div>
                 <div class="cont-right">
                     <div class="filter">

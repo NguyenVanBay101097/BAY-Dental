@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, IterableDiffers, OnInit } from '@angular/core';
 import { Calendar, EventApi } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid'; 
 import timeGrigPlugin from '@fullcalendar/timegrid'; 
@@ -11,12 +11,10 @@ import interactionPlugin from '@fullcalendar/interaction';
 })
 export class AppointmentFullCalendarComponent implements OnInit {
   calendar: Calendar;
-  events=[
-    { title: 'event 1', date: '2021-07-09'},
-    { title: 'event 2', date: '2020-07-08'},
-  ];
+  @Input() events;
+  eventDiffer: any;
 
-  constructor(private el: ElementRef) {
+  constructor(private el: ElementRef, differs: IterableDiffers) {
     this.calendar = new Calendar(el.nativeElement, {
       plugins: [dayGridPlugin, timeGrigPlugin, interactionPlugin], 
       editable: true, 
@@ -35,10 +33,22 @@ export class AppointmentFullCalendarComponent implements OnInit {
     });
     this.calendar.render();
     // for 7
-    this.calendar.next();
+    // this.calendar.next();
     console.log(this.calendar.view.activeStart);
+    console.log(this.calendar.view.activeEnd);
     console.log(this.calendar.view.currentStart);
+    this.eventDiffer = differs.find([]).create(null);
+  }
 
+ 
+  ngDoCheck() {
+    const eventChanges = this.eventDiffer.diff(this.events);
+    if (this.calendar && eventChanges) {
+      this.calendar.removeAllEventSources();
+      if (this.events) {
+        this.calendar.addEventSource(this.events);
+      }
+    }
   }
 
   ngOnInit() {
