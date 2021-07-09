@@ -29,7 +29,7 @@ export const DefaultLocaleConfig: LocaleConfig = {
     weekLabel: 'W',
     applyLabel: 'Áp dụng',
     cancelLabel: 'Đóng',
-    clearLabel: 'Xóa',
+    clearLabel: 'Hủy',
     customRangeLabel: 'Chọn ngày',
     daysOfWeek: [
         "CN",

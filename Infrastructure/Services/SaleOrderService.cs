@@ -3067,7 +3067,8 @@ namespace Infrastructure.Services
             }
             if (!string.IsNullOrEmpty(val.Search))
             {
-                query = query.Where(x => x.Name.Contains(val.Search));
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Partner.Name.Contains(val.Search)
+                                         || x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
             }
 
             var count = await query.CountAsync();

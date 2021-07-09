@@ -20,7 +20,7 @@
         </kendo-combobox>
         <button class="btn btn-primary" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
             file</button>
-        <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo số phiếu" class="ml-auto form-control w-50">
+        <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo số phiếu, khách hàng" class="ml-auto form-control w-50">
     </div>
     <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
         <kendo-grid-column field="name" title="Số phiếu" width="120">
