@@ -28,6 +28,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGrigPlugin from '@fullcalendar/timegrid'; 
 import interactionPlugin from '@fullcalendar/interaction';
 import { FullCalendarComponent } from '@fullcalendar/angular';
+import { DateRangeInput } from '@fullcalendar/core/datelib/date-range';
 @Component({
   selector: 'app-appointment-kanban',
   templateUrl: './appointment-kanban.component.html',
@@ -58,8 +59,6 @@ export class AppointmentKanbanComponent implements OnInit {
 
   appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
 
-  filter = new RevenueTimeReportPar();
-
   states: { text: string, value: string, bgColor?: string }[] = [
     { text: 'Tất cả', value: '', bgColor: ''},
     { text: 'Đang hẹn', value: 'confirmed', bgColor: '#007BFF'},
@@ -79,6 +78,9 @@ export class AppointmentKanbanComponent implements OnInit {
   calendarApi: Calendar; 
   calendarPlugins = [dayGridPlugin, timeGrigPlugin, interactionPlugin];
   @ViewChild('fullcalendar',{static: true}) calendarComponent: FullCalendarComponent;
+  validRange: DateRangeInput;
+  listData= [];
+  doctors = [];
   constructor (
     private appointmentService: AppointmentService,
     private intlService: IntlService, 
@@ -107,7 +109,8 @@ var last = first + 6; // last day is the first day + 6
 
     this.dateFrom = new Date(curr.setDate(first));
     this.dateTo = new Date(curr.setDate(last));
-    this.dateList = this.getDateList();
+
+    // this.dateList = this.getDateList();
     this.loadData();
 
     this.searchUpdate.pipe(
@@ -118,8 +121,18 @@ var last = first + 6; // last day is the first day + 6
       });
 
     // this.loadListEmployees();
+    this.loadDoctorList();
   }
 
+  loadDoctorList() {
+    var val = {
+      dateTimeFrom: this.dateFrom? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd'): '',
+      dateTimeTo : this.dateTo? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd'): ''
+    };
+    this.appointmentService.getListDoctor(val).subscribe(res=>{
+      this.doctors = res;
+    })
+  }
   loadListEmployees() {
     var paged = new EmployeePaged();
     paged.isDoctor = true;
@@ -133,10 +146,9 @@ var last = first + 6; // last day is the first day + 6
     this.loadData();
   }
 
-  onChangeDate(filter) {
-    this.dateFrom = filter.dateFrom;
-    this.dateTo = filter.dateTo;
-    this.dateList = this.getDateList();
+  onChangeDate(e) {
+    this.dateFrom = e.dateFrom;
+    this.dateTo = e.dateTo;
     this.loadData();
   }
 
@@ -174,10 +186,11 @@ var last = first + 6; // last day is the first day + 6
 
     val.doctorId = this.employeeSelected;
 
-    val.dateTimeFrom = this.intlService.formatDate(this.dateList[0], 'yyyy-MM-dd');
-    val.dateTimeTo = this.intlService.formatDate(this.dateList[this.dateList.length - 1], 'yyyy-MM-dd');
+    val.dateTimeFrom = this.dateFrom? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd'): '';
+    val.dateTimeTo = this.dateTo? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd'): '';
     this.appointmentService.getPaged(val).subscribe((result: any) => {
       this.addAppointments(result);
+      this.listData = result.items;
     });
   }
 
@@ -279,9 +292,6 @@ var last = first + 6; // last day is the first day + 6
           }
         ]);
       }
-
-      console.log(this.events);
-      
   }
   calendarEvents = [
     { title: 'event 1', date: '2019-04-01' }
@@ -411,8 +421,5 @@ var last = first + 6; // last day is the first day + 6
 //  });
  
   }
-  a() {
-    console.log('a');
-    
-  }
+ 
 }
