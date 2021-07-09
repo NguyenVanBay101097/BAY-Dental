@@ -202,7 +202,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
     this.smsConfigService.saveConfig(val).subscribe(
       res => {
-        this.notify("Thiết lập thành công", true);
+        this.notify("Lưu thành công", true);
         this.loadDataFormApi();
       }
     )

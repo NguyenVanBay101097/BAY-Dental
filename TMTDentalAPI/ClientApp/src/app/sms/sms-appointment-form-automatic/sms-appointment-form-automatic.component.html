@@ -143,7 +143,10 @@
             </div>
             <div>
                 <div class="btns">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">Lưu</button>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
+                        <span *ngIf="!id; else elseBlock">Lưu</span>
+                        <ng-template #elseBlock>Sửa</ng-template>
+                    </button>
                 </div>
             </div>
         </div>

@@ -68,7 +68,7 @@ export class SmsAccountListComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm Brandname';
     modalRef.result.then(() => {
       this.loadDataFromApi();
-      this.notifyService.notify('success','Cấu hình thành công');
+      this.notifyService.notify('success','Lưu thành công');
     }, () => {
     });
   }
@@ -84,7 +84,7 @@ export class SmsAccountListComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();
-      this.notifyService.notify('success','Cập nhật cấu hình thành công');
+      this.notifyService.notify('success','Lưu thành công');
     }, () => {
     });
   }

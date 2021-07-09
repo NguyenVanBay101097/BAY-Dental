@@ -126,8 +126,6 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
         if (res) {
           this.id = res.id;
           this.formGroup.patchValue(res);
-          console.log(res);
-          
           if (res.body) {
             this.template = {
               text: res.body,
@@ -200,7 +198,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
     this.smsConfigService.saveConfig(val).subscribe(
       res => {
-        this.notify("Thiết lập thành công", true);
+        this.notify("Lưu thành công", true);
         this.loadDataFormApi();
       }
     )

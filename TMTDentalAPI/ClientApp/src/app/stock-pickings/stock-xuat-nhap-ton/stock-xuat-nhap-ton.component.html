@@ -30,7 +30,7 @@
 
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" #grid="kendoGrid"
-        (pageChange)="pageChange($event)" (cellClick)="cellClick($event.dataItem)">
+        (pageChange)="pageChange($event)" (dblclick)="cellClick($event)">
         <kendo-grid-column field="productCode" title="Mã sản phẩm" width="150">
         </kendo-grid-column>
         <kendo-grid-column field="productName" title="Tên sản phẩm" width="200">

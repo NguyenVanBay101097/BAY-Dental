@@ -86,7 +86,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   }
 
   deleteItem(item) {
-    if (item.isCareAfterOrderAutomation) {
+    if (item.active) {
       this.notify("Không thể xóa thiết lập đang kích hoạt", false);
       return;
     }

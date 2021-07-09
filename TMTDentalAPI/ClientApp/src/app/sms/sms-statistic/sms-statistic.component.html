@@ -4,16 +4,18 @@
             <li class="mb-2">Thống kê tin nhắn đã gửi</li>
         </ol>
         <div class="o_cp_left">
-            <div class="d-flex o_cp_buttons">
-                <kendo-combobox #campaignCbx [filterable]="true" class="kendo-combobox-sm mr-2"
+            <div class="d-flex o_cp_buttons flex-wrap">
+                <kendo-combobox #campaignCbx [filterable]="true" class="kendo-combobox-sm mr-2 mb-1"
                     placeholder="Lọc chiến dịch" [data]="campaignData" [textField]="'name'" [valueField]="'id'"
                     (valueChange)="onChangeCampaign($event)">
                 </kendo-combobox>
-                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
-                    (searchChange)="onSearchDateChange($event)">
-                </app-tai-date-range-filter-dropdown>
+                <div class="mr-2 mb-1">
+                    <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                        (searchChange)="onSearchDateChange($event)">
+                    </app-tai-date-range-filter-dropdown>
+                </div>
                 <kendo-combobox (valueChange)="onChangeState($event)" placeholder="Tất cả trạng thái"
-                    class="kendo-combobox-sm ml-2" [data]="filteredState" [textField]="'name'" [valueField]="'value'">
+                    class="kendo-combobox-sm" [data]="filteredState" [textField]="'name'" [valueField]="'value'">
                 </kendo-combobox>
             </div>
             <div class="o_cp_sidebar">
