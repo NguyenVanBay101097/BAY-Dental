@@ -44,6 +44,11 @@ export class StockXuatNhapTonComponent implements OnInit {
   sumEnd: number = 0;
   sumImport: number = 0;
   sumExport: number = 0;
+
+  filteredInventory: { text: string, value: number }[] = [
+    { text: 'Trên mức tối thiểu', value: 0 },
+    { text: 'Dưới mức tối thiểu', value: 1 }
+  ];
   constructor(
     private reportService: StockReportService,
     private intlService: IntlService,
@@ -134,4 +139,7 @@ export class StockXuatNhapTonComponent implements OnInit {
     grid.saveAsExcel();
   }
 
+  inventoryChange(event) {
+
+  }
 }

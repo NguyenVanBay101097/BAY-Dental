@@ -74,6 +74,7 @@ export class ProductProductCuDialogComponent implements OnInit {
       isLabo: false,
       purchasePrice: 0,
       productCriterias: null,
+      minInventory: 0
     });
 
     setTimeout(() => {
