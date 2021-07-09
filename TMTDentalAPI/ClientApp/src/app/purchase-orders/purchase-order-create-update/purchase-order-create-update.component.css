@@ -214,3 +214,7 @@ input[type="radio"] {
     background: white;
     z-index: 3;
 }
+
+.cursor {
+    cursor: pointer;
+}

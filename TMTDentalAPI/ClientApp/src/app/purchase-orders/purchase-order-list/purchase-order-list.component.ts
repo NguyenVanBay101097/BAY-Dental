@@ -38,9 +38,9 @@ export class PurchaseOrderListComponent implements OnInit {
   stateFilter: string;
   supplierFilter: string;
   stateFilterOptions: TmtOptionSelect[] = [
-    { text: 'Tất cả', value: '' },
-    { text: 'Đơn hàng', value: 'purchase,done' },
-    { text: 'Nháp', value: 'draft,cancel' }
+    { text: 'Nháp', value: 'draft' },
+    { text: 'Đơn hàng', value: 'purchase' },
+    { text: 'Hoàn thành', value: 'done' }
   ];
   supplierData: PartnerSimple[] = [];
   canAdd = true;
@@ -74,23 +74,30 @@ export class PurchaseOrderListComponent implements OnInit {
     this.suppliertCbxFilterChange();
   }
 
-  onDateSearchChange(data) {
+  onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.skip = 0;
     this.loadDataFromApi();
   }
 
-  onStateSelectChange(data: TmtOptionSelect) {
-    this.stateFilter = data.value;
+  onStateSelectChange(e) {
+    var value = e ? e.value : null;
+    if (value) {
+      this.stateFilter = value;
+    } else {
+      
+      this.stateFilter = null;
+    }
+
     this.skip = 0;
     this.loadDataFromApi();
   }
 
-  handleFilter(event) {
-    console.log(event);
+  
 
-    this.supplierFilter = event.id;
+  handleFilter(event) {
+    this.supplierFilter = event ? event.id : null;
     this.skip = 0;
     this.loadDataFromApi();
   }
@@ -134,8 +141,8 @@ export class PurchaseOrderListComponent implements OnInit {
     }
 
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa: ' + this.getTitle();
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.componentInstance.title = 'Xóa phiếu' + this.getTitle();
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu' + this.getTitle();
     modalRef.result.then(() => {
       this.purchaseOrderService.unlink(this.selectedIds).subscribe(() => {
         this.selectedIds = [];
@@ -145,6 +152,7 @@ export class PurchaseOrderListComponent implements OnInit {
   }
 
   loadDataFromApi() {
+    debugger
     this.loading = true;
     var val = new PurchaseOrderPaged();
     val.limit = this.limit;
@@ -153,8 +161,8 @@ export class PurchaseOrderListComponent implements OnInit {
     val.type = this.type || '';
     val.partnerId = this.supplierFilter || '';
     val.state = this.stateFilter || '';
-    val.dateOrderFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
-    val.dateOrderTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
   
 
     this.purchaseOrderService.getPaged(val).pipe(
@@ -220,8 +228,8 @@ export class PurchaseOrderListComponent implements OnInit {
     val.type = this.type || '';
     val.partnerId = this.supplierFilter || '';
     val.state = this.stateFilter || '';
-    val.dateOrderFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
-    val.dateOrderTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
   
     this.purchaseOrderService.exportExcelFile(val).subscribe((res) => {
       let filename = this.type == 'order' ? 'Mua-hang' : 'Tra-hang';

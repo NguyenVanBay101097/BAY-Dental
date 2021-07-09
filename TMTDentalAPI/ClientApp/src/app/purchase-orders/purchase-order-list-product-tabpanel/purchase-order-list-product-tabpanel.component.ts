@@ -10,14 +10,14 @@ import { ProductPaged, ProductService } from 'src/app/products/product.service';
   styleUrls: ['./purchase-order-list-product-tabpanel.component.css']
 })
 export class PurchaseOrderListProductTabpanelComponent implements OnInit, OnChanges {
-  @Input() listProducts: ProductSimple[]= [];
+  @Input() listProducts: any[]= [];
   @Input() isStock: boolean;
   model: any;
   searching = false;
   searchFailed = false;
   type2: string = 'product';
   search: string;
-  listProductFilter: ProductSimple[];
+  listProductFilter: any[];
   searchUpdate = new Subject<string>();
 
   @Output() onSelectService = new EventEmitter<any>();
@@ -56,6 +56,7 @@ export class PurchaseOrderListProductTabpanelComponent implements OnInit, OnChan
       id: item.id,
       name: item.name,
       purchasePrice: item.purchasePrice,
+      listPrice: item.listPrice,
       defaultCode: item.defaultCode,
       type2: item.type2
     });

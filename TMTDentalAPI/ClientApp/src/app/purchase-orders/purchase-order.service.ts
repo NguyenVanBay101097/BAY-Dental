@@ -13,8 +13,8 @@ export class PurchaseOrderPaged {
     search: string;
     type: string;
     partnerId: string;
-    dateOrderFrom: string;
-    dateOrderTo: string;
+    dateFrom: string;
+    dateTo: string;
     state: string;
 }
 

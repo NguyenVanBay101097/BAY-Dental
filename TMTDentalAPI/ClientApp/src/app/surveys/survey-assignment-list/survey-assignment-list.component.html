@@ -1,7 +1,7 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
-            <li class="active">Danh sách khảo sát</li>
+            <li class="active">Danh sách công việc</li>
         </ol>
         <div class="o_cp_searchview">
             <!-- <div class="o_cp_searchview_group">
@@ -73,22 +73,22 @@
                 </a>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="partnerRef" title="Mã khách hàng" width="135">
-            <!-- <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+        <!-- <kendo-grid-column field="partnerRef" title="Mã khách hàng" width="135">
+            <ng-template kendoGridCellTemplate let-dataItem let-column="column">
                 <a class="text-primary" routerLink="/partners/customer/{{dataItem.partnerId}}/overview">
                     {{dataItem.partnerRef}}
                 </a>
-            </ng-template> -->
+            </ng-template>
+        </kendo-grid-column> -->
+        <kendo-grid-column field="partnerPhone" title="Điện thoại" width="100">
         </kendo-grid-column>
-        <kendo-grid-column field="partnerPhone" title="Điện thoại" width="115">
-        </kendo-grid-column>
-        <kendo-grid-column field="age" title="Tuổi" width="58">
+        <kendo-grid-column field="age" title="Tuổi" width="60">
         </kendo-grid-column>
         <!-- <kendo-grid-column field="partnerGenderDisplay" title="Giới tính" width="88">
         </kendo-grid-column> -->
         <!-- <kendo-grid-column field="partnerCategoriesDisplay" title="Nhãn khách hàng" width="150">
         </kendo-grid-column> -->
-        <kendo-grid-column title="Phiếu điều trị" width="120">
+        <kendo-grid-column title="Phiếu điều trị" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <a routerLink="/sale-orders/form" [queryParams]="{id: dataItem.saleOrderId}" class="text-primary">
                     {{dataItem.saleOrder.name}}
@@ -105,14 +105,19 @@
                 {{dataItem.assignDate | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column [headerStyle]="{'white-space': 'initial'}" title="Ngày khảo sát" width="130">
+        <kendo-grid-column [headerStyle]="{'white-space': 'initial'}" title="Ngày hoàn thành" width="130">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.completeDate | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <!-- <kendo-grid-column field="userInputScore" title="Điểm" width="65">
-        </kendo-grid-column> -->
-        <kendo-grid-column title="Trạng thái" width="110">
+        <kendo-grid-column field="surveyTags" title="Nhãn khảo sát" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column title="Điểm khảo sát" class="text-right" width="80">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem?.userInputScore}}/{{dataItem?.userInputMaxScore}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Trạng thái" width="80">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{GetStatus(dataItem.status)}}
             </ng-template>

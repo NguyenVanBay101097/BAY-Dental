@@ -32,10 +32,10 @@ namespace Infrastructure.Services
             var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(x.Name));
+                query = query.Where(x => x.Name.Contains(val.Search));
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.DateOrder >= val.DateFrom.Value);
+                query = query.Where(x => x.DateOrder > val.DateFrom.Value);
 
 
             if (val.DateTo.HasValue)
