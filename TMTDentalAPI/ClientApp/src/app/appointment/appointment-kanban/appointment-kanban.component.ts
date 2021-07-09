@@ -24,8 +24,8 @@ import { CheckPermissionService } from 'src/app/shared/check-permission.service'
 import { RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
 //
 import { Calendar, EventInput } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid'; 
-import timeGrigPlugin from '@fullcalendar/timegrid'; 
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGrigPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { FullCalendarComponent } from '@fullcalendar/angular';
 import { DateRangeInput } from '@fullcalendar/core/datelib/date-range';
@@ -33,7 +33,7 @@ import { DateRangeInput } from '@fullcalendar/core/datelib/date-range';
   selector: 'app-appointment-kanban',
   templateUrl: './appointment-kanban.component.html',
   styleUrls: ['./appointment-kanban.component.css'],
-  host: {'class': 'h-100'}
+  host: { 'class': 'h-100' }
 })
 export class AppointmentKanbanComponent implements OnInit {
   @ViewChild('dropdownMenuBtn', { static: false }) dropdownMenuBtn: NgbDropdownToggle;
@@ -60,52 +60,52 @@ export class AppointmentKanbanComponent implements OnInit {
   appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
 
   states: { text: string, value: string, bgColor?: string }[] = [
-    { text: 'Tất cả', value: '', bgColor: ''},
-    { text: 'Đang hẹn', value: 'confirmed', bgColor: '#007BFF'},
+    { text: 'Tất cả', value: '', bgColor: '' },
+    { text: 'Đang hẹn', value: 'confirmed', bgColor: '#007BFF' },
     // { text: 'Chờ khám', value: 'waiting', class: 'text-warning' },
     // { text: 'Đang khám', value: 'examination', class: 'text-info' },
     // { text: 'Hoàn thành', value: 'done', class: 'text-success' },
-    { text: 'Đã đến', value: 'arrived',bgColor:'#28A745'},
-    { text: 'Hủy hẹn', value: 'cancel', bgColor:'#EB3B5B'},
+    { text: 'Đã đến', value: 'arrived', bgColor: '#28A745' },
+    { text: 'Hủy hẹn', value: 'cancel', bgColor: '#EB3B5B' },
     { text: 'Quá hạn', value: 'overdue', bgColor: '#FFC107' }
   ];
- 
+
   stateSelected: string = this.states[0].value;
   listEmployees: EmployeeBasic[] = [];
   employeeSelected: string = '';
 
-  events=[];
-  calendarApi: Calendar; 
+  events = [];
+  calendarApi: Calendar;
   calendarPlugins = [dayGridPlugin, timeGrigPlugin, interactionPlugin];
-  @ViewChild('fullcalendar',{static: true}) calendarComponent: FullCalendarComponent;
+  @ViewChild('fullcalendar', { static: true }) calendarComponent: FullCalendarComponent;
   validRange: DateRangeInput;
-  listData= [];
+  listData = [];
   doctors = [];
-  constructor (
+  constructor(
     private appointmentService: AppointmentService,
-    private intlService: IntlService, 
-    private modalService: NgbModal, 
+    private intlService: IntlService,
+    private modalService: NgbModal,
     private dotkhamService: DotKhamService,
-    private notificationService: NotificationService, 
-    private router: Router, 
-    private employeeService: EmployeeService, 
+    private notificationService: NotificationService,
+    private router: Router,
+    private employeeService: EmployeeService,
     private checkPermissionService: CheckPermissionService
   ) { }
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
     //Add 'implements AfterViewInit' to the class.
     this.calendarApi = this.calendarComponent.getApi();
-// console.log(this.calendarApi.view.activeStart);
-// console.log(this.calendarApi.view.activeEnd);
+    // console.log(this.calendarApi.view.activeStart);
+    // console.log(this.calendarApi.view.activeEnd);
 
-//     document.getElementsByClassName("fc-next-button")[0].addEventListener("click",()=> {
-    
-//     });
+    //     document.getElementsByClassName("fc-next-button")[0].addEventListener("click",()=> {
+
+    //     });
   }
   ngOnInit() {
     var curr = new Date; // get current date
-var first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
-var last = first + 6; // last day is the first day + 6
+    var first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
+    var last = first + 6; // last day is the first day + 6
 
     this.dateFrom = new Date(curr.setDate(first));
     this.dateTo = new Date(curr.setDate(last));
@@ -126,10 +126,10 @@ var last = first + 6; // last day is the first day + 6
 
   loadDoctorList() {
     var val = {
-      dateTimeFrom: this.dateFrom? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd'): '',
-      dateTimeTo : this.dateTo? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd'): ''
+      dateTimeFrom: this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '',
+      dateTimeTo: this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : ''
     };
-    this.appointmentService.getListDoctor(val).subscribe(res=>{
+    this.appointmentService.getListDoctor(val).subscribe(res => {
       this.doctors = res;
     })
   }
@@ -163,12 +163,13 @@ var last = first + 6; // last day is the first day + 6
       this.loadData();
     }, () => { });
 
-    modalRef.componentInstance.getBtnDeleteObs.subscribe(()=>{
+    modalRef.componentInstance.getBtnDeleteObs.subscribe(() => {
       this.loadData();
     })
   }
 
   refreshData() {
+
     this.loadData();
   }
 
@@ -177,17 +178,12 @@ var last = first + 6; // last day is the first day + 6
     this.resetData();
     var val = new AppointmentPaged();
     val.limit = 1000;
-    if (this.state) {
-      val.state = this.state;
-    }
-    if (this.search) {
-      val.search = this.search;
-    }
+    val.state = this.state || '';
+    val.search = this.search || '';
+    val.doctorId = this.employeeSelected || '';
+    val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
+    val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
 
-    val.doctorId = this.employeeSelected;
-
-    val.dateTimeFrom = this.dateFrom? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd'): '';
-    val.dateTimeTo = this.dateTo? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd'): '';
     this.appointmentService.getPaged(val).subscribe((result: any) => {
       this.addAppointments(result);
       this.listData = result.items;
@@ -254,17 +250,17 @@ var last = first + 6; // last day is the first day + 6
 
   formatDate(date) {
     var d = new Date(date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
 
-    if (month.length < 2) 
-        month = '0' + month;
-    if (day.length < 2) 
-        day = '0' + day;
+    if (month.length < 2)
+      month = '0' + month;
+    if (day.length < 2)
+      day = '0' + day;
 
     return [year, month, day].join('-');
-}
+  }
 
   addAppointments(paged: PagedResult2<AppointmentBasic>) {
     // for (var i = 0; i < paged.items.length; i++) {
@@ -278,20 +274,20 @@ var last = first + 6; // last day is the first day + 6
     //   this.appointmentByDate[key].push(item);
     // }
     this.events = [];
-      for (var i = 0; i < paged.items.length; i++) {
-        var item = paged.items[i];
-        var d = new Date();
-        d.setHours(0,0,0,0);
-        this.events = this.events.concat([
-          <EventInput>{
-            title:item.time + '\n' + item.partnerName ,
-            date: this.formatDate(item.date),
-            backgroundColor: new Date(item.date) >= d?( this.states.find(x=> x.value == item.state)?this.states.find(x=> x.value == item.state).bgColor : ''): '#FFC107',
-            id: item.id,
-            textColor: 'white'
-          }
-        ]);
-      }
+    for (var i = 0; i < paged.items.length; i++) {
+      var item = paged.items[i];
+      var d = new Date();
+      d.setHours(0, 0, 0, 0);
+      this.events = this.events.concat([
+        <EventInput>{
+          title: item.time + '\n' + item.partnerName,
+          date: this.formatDate(item.date),
+          backgroundColor: new Date(item.date) >= d ? (this.states.find(x => x.value == item.state) ? this.states.find(x => x.value == item.state).bgColor : '') : '#FFC107',
+          id: item.id,
+          textColor: 'white'
+        }
+      ]);
+    }
   }
   calendarEvents = [
     { title: 'event 1', date: '2019-04-01' }
@@ -367,21 +363,16 @@ var last = first + 6; // last day is the first day + 6
 
   exportExcelFile() {
     var val = new AppointmentPaged();
-    val.limit = 0;
-    if (this.state) {
-      val.state = this.state;
-    }
-    if (this.search) {
-      val.search = this.search;
-    }
+    val.limit = 1000;
+    val.state = this.state || '';
+    val.search = this.search || '';
+    val.doctorId = this.employeeSelected || '';
+    val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
+    val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
 
-    val.doctorId = this.employeeSelected;
-
-    val.dateTimeFrom = this.intlService.formatDate(this.dateList[0], 'yyyy-MM-dd');
-    val.dateTimeTo = this.intlService.formatDate(this.dateList[this.dateList.length - 1], 'yyyy-MM-dd');
     this.appointmentService.exportExcel(val).subscribe((result: any) => {
       let filenam = 'DanhSachLichHen';
-      let newBlob = new Blob([result], {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      let newBlob = new Blob([result], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
       let data = window.URL.createObjectURL(newBlob);
       let link = document.createElement('a');
       link.href = data;
@@ -394,32 +385,32 @@ var last = first + 6; // last day is the first day + 6
   }
 
   handleEventClick(e) {
-   var id = e.event._def.publicId;
-   const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
-   modalRef.componentInstance.appointId = id;
-   modalRef.result.then(() => {
-     this.loadData();
-     this.appointmentService.getBasic(id).subscribe(item => {
-       var date = new Date(item.date);
-       var key = date.toDateString();
-       if (this.appointmentByDate[key]) {
-         var index = _.findIndex(this.appointmentByDate[key], o => o.id == item.id);
-         if (index != -1) {
-           this.appointmentByDate[key][index] = item;
-         }
-       }
-     });
-   }, () => {
-   });
+    var id = e.event._def.publicId;
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.appointId = id;
+    modalRef.result.then(() => {
+      this.loadData();
+      this.appointmentService.getBasic(id).subscribe(item => {
+        var date = new Date(item.date);
+        var key = date.toDateString();
+        if (this.appointmentByDate[key]) {
+          var index = _.findIndex(this.appointmentByDate[key], o => o.id == item.id);
+          if (index != -1) {
+            this.appointmentByDate[key][index] = item;
+          }
+        }
+      });
+    }, () => {
+    });
   }
 
   handleEventRender(e) {
-//     debugger;
-//    e.el.innerHTML = '<div>fdasf</div> <br> <button class="a"   (click)="a()">ddd</button>';
-//    (e.el.getElementsByClassName('a'))[0].click(function(){
-//     console.log('a')
-//  });
- 
+    //     debugger;
+    //    e.el.innerHTML = '<div>fdasf</div> <br> <button class="a"   (click)="a()">ddd</button>';
+    //    (e.el.getElementsByClassName('a'))[0].click(function(){
+    //     console.log('a')
+    //  });
+
   }
- 
+
 }
