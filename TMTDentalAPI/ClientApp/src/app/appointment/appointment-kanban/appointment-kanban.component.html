@@ -5,7 +5,7 @@
                 <li class="active">Lịch hẹn</li>
             </ol>
             <div class="o_cp_searchview">
-    
+
             </div>
             <div class="o_cp_left">
                 <div class="o_cp_buttons">
@@ -25,6 +25,16 @@
                             [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
                         </kendo-combobox>
                     </div> -->
+                    <input type="radio" class="btn-check" name="view" id="th-large" autocomplete="off" 
+                    [value]="'th-large'" [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
+                    <label class="btn btn-white btn-sm" for="th-large">
+                        <i class="fas fa-th-large"></i>
+                    </label>
+                    <input type="radio" class="btn-check" name="view" id="list-ul" autocomplete="off" 
+                    [value]="'list-ul'" [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
+                    <label class="btn btn-white btn-sm" for="list-ul">
+                        <i class="fas fa-list-ul"></i>
+                    </label>
                 </div>
             </div>
             <div class="o_cp_right">
@@ -38,8 +48,7 @@
                     </app-appointment-date-filter>
                 </div> -->
                 <div class="t-search t-search-left w-100">
-                    <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo họ tên, số điện thoại khách hàng"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo họ tên, số điện thoại khách hàng" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                     <span class="fas fa-search form-control-icon form-control-sm"></span>
                 </div>
             </div>
@@ -108,59 +117,123 @@
                 </div>
             </div> -->
             <div class="cont-wrapper">
-                <div class="cont-left">
-                    <full-calendar
-                        #fullcalendar
-                        [plugins]="calendarPlugins" 
-                        [editable]="true"
-                        [defaultView]="'timeGridWeek'"
-                        [header]="{
-                            left: 'prev,next today',
-                            center: 'title',
-                            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-                            }"
-                        [height]="'auto'"
-                        [dir]="'ltr'">
-                        </full-calendar>
+                <div class="cont-left overflow-auto">
+                    <div class="header-toolbar-calendar mb-3">
+                        <div>
+                            <button type="button" class="btn btn-primary btn-sm" (click)="dateToday()">
+                                Today
+                            </button>
+                        </div>
+                        <div class="toolbar-date">
+                            <button type="button" class="btn btn-gray btn-sm" (click)="datePrev()">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div class="date">
+                                {{titleDateToolbar}}
+                            </div>
+                            <button type="button" class="btn btn-gray btn-sm" (click)="dateNext()">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div>
+                            <input type="radio" class="btn-check" name="viewToolbar" id="timeGridDay" autocomplete="off" 
+                            [value]="'timeGridDay'" [(ngModel)]="viewToolbar" (ngModelChange)="changeViewToolbar($event)">
+                            <label class="btn btn-outline-gray btn-sm" for="timeGridDay">Ngày</label>
+                            <input type="radio" class="btn-check" name="viewToolbar" id="timeGridWeek" autocomplete="off" 
+                            [value]="'timeGridWeek'" [(ngModel)]="viewToolbar" (ngModelChange)="changeViewToolbar($event)">
+                            <label class="btn btn-outline-gray btn-sm" for="timeGridWeek">Tuần</label>
+                            <input type="radio" class="btn-check" name="viewToolbar" id="dayGridMonth" autocomplete="off" 
+                            [value]="'dayGridMonth'" [(ngModel)]="viewToolbar" (ngModelChange)="changeViewToolbar($event)">
+                            <label class="btn btn-outline-gray btn-sm" for="dayGridMonth">Tháng</label>
+                        </div>
+                    </div>
+                    <full-calendar [class.d-none]="viewKanban!='th-large'" #fullcalendar [plugins]="calendarPlugins" [editable]="true" [defaultView]="'dayGridMonth'" [header]="false"
+                        [height]="'auto'" [dir]="'ltr'" [eventDurationEditable]="false" [eventStartEditable]="false" (eventRender)="handleEventRender($event)" [events]="events" (eventClick)="handleEventClick($event)" [locale]="'vi'" [firstDay]="1"
+                        [fixedWeekCount]="false">
+                    </full-calendar>
+                    <kendo-grid *ngIf="viewKanban=='list-ul'" [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset" [pageable]="true"
+                        [loading]="loading" (pageChange)="pageChange($event)">
+                        <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="250">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                <div>
+                                    <a class="text-primary" title="Xem hồ sơ khách hàng"
+                                        [routerLink]="['/partners/customer/' + dataItem.partner?.id]"
+                                        [class.disabled]="!canCustomerLink">
+                                        {{dataItem.partnerDisplayName}}
+                                    </a>
+                                </div>
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="partnerPhone" title="Số điện thoại" width="150">
+                        </kendo-grid-column>
+                        <kendo-grid-column field="name" title="Thời gian hẹn" width="170">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                <label class="mb-0" *ngIf="dataItem.time!=''">{{dataItem.time}}, <label class="mb-0"
+                                        *ngIf="dataItem.date"> {{dataItem.date |
+                                        date:'shortDate'}}</label></label>
+                
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column title="Dịch vụ" width="250">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                <span class="service">{{computeNameSerivc(dataItem.services)}}</span>
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="doctorName" title="Bác sĩ" width="150">
+                        </kendo-grid-column>
+                        <kendo-grid-column field="note" title="Nội dung" width="150">
+                        </kendo-grid-column>
+                        <kendo-grid-column title="Trạng thái" width="150">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                <label *ngIf="dataItem.state=='cancel'">Hủy hẹn</label>
+                                <label *ngIf="dataItem.state=='confirmed'">Đang hẹn</label>
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="reason" title="Lý do" width="150">
+                        </kendo-grid-column>
+                        <kendo-grid-column field="id" width="100" *ngIf="canAppointmentEdit">
+                            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                                Thao tác
+                            </ng-template>
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                <button *ngIf="canAppointmentEdit" class="btn btn-success btn-sm mr-2" (click)="editAppointment(dataItem)">
+                                    <i class="far fa-edit"></i></button>
+                            </ng-template>
+                        </kendo-grid-column>
+                    </kendo-grid>
                 </div>
-                <div class="cont-right">
+                <div class="cont-right ov">
                     <div class="filter">
                         <div class="filter-title">Bộ lọc</div>
                         <div class="filter-label">Thời gian</div>
                         <div class="filter-content">
-                            <app-date-range-picker-filter opens="left" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" 
-                                (searchChange)="onChangeDate($event)">
+                            <app-date-range-picker-filter opens="left" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onChangeDate($event)">
                             </app-date-range-picker-filter>
                         </div>
                         <div class="filter-label">Trạng thái</div>
                         <div class="filter-content">
                             <div class="form-check t-form-check mb-1" *ngFor="let state of states; index as i">
-                                <input class="form-check-input" type="radio" name="state" [id]="'state-' + i" 
-                                    [value]="state.value" [(ngModel)]="stateSelected">
-                                <label class="form-check-label" [for]="'state-' + i"
-                                    (click)="onChangeState(state.value)">
+                                <input class="form-check-input" type="radio" name="state" [id]="'state-' + i" [value]="state.value" [(ngModel)]="stateSelected">
+                                <label class="form-check-label" [for]="'state-' + i" (click)="onChangeState(state.value)">
                                     {{state.text}}
                                 </label>
-                            </div>               
+                            </div>
                         </div>
                         <div class="filter-label">Bác sĩ</div>
                         <div class="filter-content">
                             <div class="form-check t-form-check mb-1">
-                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-default'" 
-                                    [value]="''" [(ngModel)]="employeeSelected">
-                                <label class="form-check-label" [for]="'employee-default'"
-                                    (click)="onChangeEmployee('')">
+                                <input checked class="form-check-input" type="radio" name="employee" [id]="'employee-default'" [value]="''" (change)="onChangeEmployee('')">
+                                <label class="form-check-label" [for]="'employee-default'">
                                     Tất cả
                                 </label>
-                            </div>  
-                            <div class="form-check t-form-check mb-1" *ngFor="let employee of listEmployees; index as i">
-                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i" 
-                                    [value]="employee.id" [(ngModel)]="employeeSelected">
-                                <label class="form-check-label" [for]="'employee-' + i"
-                                    (click)="onChangeEmployee(employee.id)">
+                            </div>
+
+                            <div class="form-check t-form-check mb-1" *ngFor="let employee of doctors; index as i">
+                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i" [value]="employee.id" (change)="onChangeEmployee(employee.id)">
+                                <label class="form-check-label" [for]="'employee-' + i">
                                     {{employee.name}}
                                 </label>
-                            </div>  
+                            </div>
                         </div>
                     </div>
                 </div>

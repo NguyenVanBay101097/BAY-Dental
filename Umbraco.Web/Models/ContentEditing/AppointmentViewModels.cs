@@ -33,7 +33,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid? DoctorId { get; set; }
         public string DoctorName { get; set; }
-
+        public EmployeeSimple Doctor { get; set; }
         /// <summary>
         /// Trạng thái cuộc hẹn: xác nhận, khách đã tới hoặc đã hủy bỏ
         /// confirmed, done, cancel
@@ -230,6 +230,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
         public bool IsLate { get; set; }
+    }
+
+    public class AppointmentDoctorReq
+    {
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
     }
 
 }

@@ -214,6 +214,15 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(state))
             {
                 stateList = state.Split(",");
+                if (stateList.Contains("overdue"))
+                {
+                    query = query.Where(x => x.Date.Date < DateTime.Now.Date);
+                    stateList = stateList.Where(x=> !x.Contains("overdue")).ToArray();
+                } else
+                {
+                    query = query.Where(x => x.Date.Date >= DateTime.Now.Date);
+                }
+                if(stateList.Any())
                 query = query.Where(x => stateList.Contains(x.State));
             }
 
@@ -470,6 +479,13 @@ namespace Infrastructure.Services
             }
             worksheet.Column(4).Style.Numberformat.Format = "@";
             worksheet.Cells.AutoFitColumns();
+        }
+
+        public async Task<IEnumerable<EmployeeSimple>> GetListDoctor(AppointmentDoctorReq val)
+        {
+            var query = GetSearchQuery(dateFrom: val.DateFrom, dateTo: val.DateTo);
+            var res = await query.Where(x=> x.DoctorId.HasValue).Distinct().Select(x => new EmployeeSimple() { Id = x.DoctorId.Value, Name = x.Doctor.Name }).ToListAsync();
+            return res;
         }
     }
 }

@@ -308,7 +308,13 @@ namespace TMTDentalAPI.Controllers
             return new FileContentResult(fileContent, mimeType);
         }
 
-
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.Appointment.Read")]
+        public async Task<IActionResult> GetListDoctor([FromQuery] AppointmentDoctorReq val)
+        {
+            var result = await _appointmentService.GetListDoctor(val);
+            return Ok(result);
+        }
 
     }
 }
