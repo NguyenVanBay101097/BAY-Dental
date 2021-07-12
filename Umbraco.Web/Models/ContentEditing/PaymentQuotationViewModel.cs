@@ -6,6 +6,7 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class PaymentQuotationDisplay
     {
+        public Guid Id { get; set; }
         /// <summary>
         /// Số thứ tự thanh toán
         /// </summary>

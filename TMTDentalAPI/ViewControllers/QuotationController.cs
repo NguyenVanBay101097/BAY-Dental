@@ -1,9 +1,11 @@
-﻿using Infrastructure.Services;
+﻿using ApplicationCore.Constants;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TMTDentalAPI.JobFilters;
 
 namespace TMTDentalAPI.ViewControllers
 {
@@ -15,6 +17,7 @@ namespace TMTDentalAPI.ViewControllers
             _quotationService = quotationService;
         }
 
+        [PrinterNameFilterAttribute(Name = AppConstants.QuotationPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
             var res = await _quotationService.Print(id);

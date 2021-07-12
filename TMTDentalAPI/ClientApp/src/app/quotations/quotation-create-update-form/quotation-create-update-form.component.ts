@@ -144,7 +144,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   printQuotation() {
     if (this.quotationId) {
       this.quotationService.printQuotation(this.quotationId).subscribe((result: any) => {
-        this.printService.printHtml(result.html);
+        this.printService.printHtml(result);
       })
     }
   }
@@ -234,7 +234,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           id: x.id,
           payment: x.payment,
           discountPercentType: x.discountPercentType,
-          date: x.date,
+          date: this.intlService.formatDate(x.date,'yyyy-MM-dd'),
           amount: x.amount,
         }
       }),
@@ -528,7 +528,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         })
       )
         .subscribe(res => {
-          debugger
           this.quotation = res;
           modalRef.componentInstance.quotation = this.quotation;
         });

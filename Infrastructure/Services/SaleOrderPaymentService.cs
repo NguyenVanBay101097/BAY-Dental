@@ -97,10 +97,6 @@ namespace Infrastructure.Services
             return paged;
         }
 
-
-
-
-
         public async Task<SaleOrderPaymentDisplay> GetDisplay(Guid id)
         {
             var paymentJournalLineObj = GetService<ISaleOrderPaymentJournalLineService>();
@@ -132,7 +128,6 @@ namespace Infrastructure.Services
 
             return saleOrderPaymentDisplay;
         }
-
 
         public async Task<SaleOrderPayment> CreateSaleOrderPayment(SaleOrderPaymentSave val)
         {
@@ -177,7 +172,6 @@ namespace Infrastructure.Services
                 }
             }
         }
-
 
         public async Task ActionPayment(IEnumerable<Guid> ids)
         {

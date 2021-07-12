@@ -29,5 +29,7 @@ namespace ApplicationCore.Constants
         public const string StockInventoryPaperCode = "StockInventory";
         public const string SaleOrderPaymentPaperCode = "SaleOrderPayment";
         public const string PurchaseOrderPaperCode = "PurchaseOrder";
+        public const string QuotationPaperCode = "Quotation";
+
     }
 }

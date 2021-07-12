@@ -17,6 +17,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
+        public string DisplayName { get; set; }
+
         public string Phone { get; set; }
 
         public DateTime? DateCreated { get; set; }
@@ -219,12 +221,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string ZaloId { get; set; }
 
         public DateTime? Date { get; set; }
-
-
-        public string DisplayName
-        {
-            get;set;
-        }
 
         public string Age
         {

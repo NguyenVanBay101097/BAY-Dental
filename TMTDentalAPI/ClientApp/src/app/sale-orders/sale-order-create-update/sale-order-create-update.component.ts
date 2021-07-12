@@ -108,6 +108,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   submitted = false;
   amountAdvanceBalance: number = 0;
   defaultToothCate: ToothCategoryBasic;
+  tags: any[] = [];
+  checkedAccordion: boolean = true;
 
   childEmiter = new BehaviorSubject<any>(null);
   @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
@@ -153,11 +155,30 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.partnerId) {
       this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' }).subscribe((res: any) => {
         this.saleOrder = res;
+        console.log(this.saleOrder);
+        this.saleOrder.partner.categories.forEach(item => {
+          var category = {
+            Id: item.id,
+            Name: item.name,
+            CompleteName: item.completeName,
+            Color: item.color
+          };
+          this.tags.push(category);
+        });
         this.updateFormGroup(res);
       });
     } else if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((res: any) => {
         this.saleOrder = res;
+        this.saleOrder.partner.categories.forEach(item => {
+          var category = {
+            Id: item.id,
+            Name: item.name,
+            CompleteName: item.completeName,
+            Color: item.color
+          };
+          this.tags.push(category);
+        });
         this.updateFormGroup(res);
       });
     }
@@ -166,7 +187,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadTeethList();
     this.loadToothCategories();
     this.loadEmployees();
-
   }
 
   loadEmployees() {
@@ -600,11 +620,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       state: 'draft',
       teeth: [],
       promotions: [],
-      toothCategory: toothCategory,
-      toothCategoryId: toothCategory.id,
+      toothCategory: null,
+      toothCategoryId: '',
       counselor: null,
       counselorId: null,
-      toothType: 'manual',
+      toothType: '',
       isActive: true,
       amountPromotionToOrder: 0,
       amountPromotionToOrderLine: 0,
@@ -718,8 +738,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   dialogAppointment() {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
-
-    modalRef.componentInstance.defaultVal = { partnerId: (this.partnerId || this.partner.id), saleOrderId: this.saleOrderId };
+    modalRef.componentInstance.defaultVal = { partnerId: (this.saleOrder.partner && this.saleOrder.partner.id), saleOrderId: this.saleOrderId };
     modalRef.result.then(() => {
       this.notify('success', 'Tạo lịch hẹn thành công');
     }, () => {
@@ -756,7 +775,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   resetData(data) {
-    console.log('reset data');
     this.saleOrder = data;
     this.resetFormPristine();
   }
@@ -777,7 +795,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         mergeMap(() => this.saleOrderService.get(this.saleOrderId))
       )
         .subscribe(res => {
-          debugger
           this.resetData(res);
           modalRef.componentInstance.saleOrder = this.saleOrder;
         });

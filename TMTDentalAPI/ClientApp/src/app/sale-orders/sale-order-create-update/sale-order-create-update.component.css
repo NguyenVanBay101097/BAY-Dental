@@ -128,3 +128,27 @@
 .card.amount-summary {
     min-width: 200px;
 }
+
+.cus-avatar {
+    height: 90px;
+    width: 90px;
+}
+.cus-row {
+    margin: 0;
+    width: 100%;
+}
+.cus-col {
+    padding-left: 1rem;
+    padding-right: 0;
+}
+.cus-info {
+    display: flex;
+}
+.cus-label {
+    padding-right: .5rem;
+    margin-bottom: 0;
+    min-width: 130px;
+}
+.cus-content {
+    font-weight: bold;
+}

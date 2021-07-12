@@ -105,6 +105,7 @@
     border-radius: 4px;
     color: #007BFF !important;
     max-width: 350px;
+    width: 250px;
 }
 
 .btn-radio {
@@ -118,4 +119,17 @@
 .button_actions .btn {
     padding: 0.125rem 0.35rem;
     margin-right: 5px;
+}
+
+.mt-2-5{
+    margin: 2.5rem !important;
+}
+
+.btn-sm{
+    max-height: 31px !important;
+}
+
+.btn-teeth {
+    cursor: pointer;
+    margin-left: 1rem;
 }
