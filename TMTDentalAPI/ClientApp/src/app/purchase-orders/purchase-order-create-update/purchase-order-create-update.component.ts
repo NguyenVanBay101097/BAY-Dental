@@ -23,6 +23,7 @@ import { AccountPaymentService } from 'src/app/account-payments/account-payment.
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
+import { PurchaseOrderAlmostOutDialogComponent } from '../purchase-order-almost-out-dialog/purchase-order-almost-out-dialog.component';
 declare var $: any;
 
 @Component({
@@ -191,7 +192,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.productService
       .autocomplete2(val).subscribe(
         (res) => {
-          console.log(res)
           this.productList = res;
         },
         (err) => {
@@ -473,6 +473,17 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   getPrint(id) {
     this.purchaseOrderService.getPrint(id).subscribe((data: any) => {
       this.printService.printHtml(data);
+    });
+  }
+
+  purchaseOrderAlmostOut() {
+    let modalRef = this.modalService.open(PurchaseOrderAlmostOutDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Hàng sắp hết';
+    modalRef.result.then((result) => {
+      for (const item of result) {
+        this.selectProduct(item)
+      }
+    }, () => {
     });
   }
 

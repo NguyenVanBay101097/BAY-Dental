@@ -1,0 +1,45 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onCancel()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_cp_controller">
+        <div class="o_control_panel">
+            <div class="o_cp_t_left">
+                <input class="form-check-input" [hidden]="true" [(ngModel)]="productType" type="radio" name="radioButtonCheck"
+                    id="medicineCheck" value="medicine" (change)="onChangeType($event.target.value)">
+                <label class="form-check-label btn btn-sm btn-outline-primary" for="medicineCheck">
+                    Thuốc
+                </label>
+                <input class="form-check-input" [hidden]="true" [(ngModel)]="productType" type="radio" name="radioButtonCheck"
+                    id="productCheck" value="product" (change)="onChangeType($event.target.value)">
+                <label class="form-check-label btn btn-sm btn-outline-primary" for="productCheck">
+                    Vật tư
+                </label>
+            </div>
+            <div class="o_cp_t_right">
+                <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo tên" type="text" id="search"
+                    (keyup)="onChangeSearch($event.target.value);">
+            </div>
+        </div>
+    </div>
+
+    <div class="o_content">
+        <kendo-grid [data]="listProductFilter" [selectable]="true" [resizable]="true" [kendoGridSelectBy]="'id'"
+            [selectedKeys]="selectedIds">
+            <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
+            <kendo-grid-column field="name" [title]="productType=='medicine'?'Tên thuốc':'Tên vật tư'"></kendo-grid-column>
+            <kendo-grid-column field="purchasePrice" title="Giá mua"></kendo-grid-column>
+            <kendo-grid-column field="inventory" title="Tồn cuối kì"></kendo-grid-column>
+            <kendo-grid-column field="minInventory" title="Mức tồn tối thiểu"></kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q">Đóng</button>
+</footer>

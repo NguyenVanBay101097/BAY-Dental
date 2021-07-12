@@ -190,7 +190,7 @@
                             <span>
                                 Danh sách {{this.purchaseOrder?.type == 'order' ? 'mua hàng' : 'trả hàng'}} 
                             </span>
-                            <button class="btn btn-sm btn-primary">Hàng sắp hết</button>
+                            <button class="btn btn-sm btn-primary" (click)="purchaseOrderAlmostOut()">Hàng sắp hết</button>
                         </p>
                         <div class="table-scroll overflow-auto">
                             <table class="table table-sm mb-0" id="table_details">

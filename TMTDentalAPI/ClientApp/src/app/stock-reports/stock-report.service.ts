@@ -12,6 +12,7 @@ export class StockReportXuatNhapTonItem {
     end: number;
     dateFrom: string;
     dateTo: string;
+    minInventory: number;
 }
 
 export class StockReportXuatNhapTonItemDetail {
@@ -52,9 +53,9 @@ export class StockReportService {
     getXuatNhapTonDetail(val: StockReportXuatNhapTonItem): Observable<StockReportXuatNhapTonItemDetail[]> {
         return this.http.post<StockReportXuatNhapTonItemDetail[]>(this.baseApi + this.apiUrl + "/XuatNhapTonDetail", val);
     }
-    
+
     exportExcel(paged) {
-        return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFile", paged,{ responseType: "blob" });
+        return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFile", paged, { responseType: "blob" });
     }
 
     getStockHistory(val) {

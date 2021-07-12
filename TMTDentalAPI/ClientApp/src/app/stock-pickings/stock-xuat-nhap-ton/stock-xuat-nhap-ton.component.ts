@@ -87,6 +87,8 @@ export class StockXuatNhapTonComponent implements OnInit {
 
     this.reportService.getXuatNhapTonSummary(val).subscribe(res => {
       this.items = res;
+      console.log(res);
+
       this.loadItems();
       this.loading = false;
     }, err => {
@@ -140,6 +142,23 @@ export class StockXuatNhapTonComponent implements OnInit {
   }
 
   inventoryChange(event) {
-
+    let result = []
+    if (event) {
+      const state = event.value;
+      if (state) {
+        result = this.items.filter(x => x.end < x.minInventory)
+      }
+      else {
+        result = this.items.filter(x => x.end >= x.minInventory)
+      }
+    }
+    else {
+      result = this.items;
+    }
+    this.skip = 0;
+    this.gridData = {
+      data: result.slice(this.skip, this.skip + this.limit),
+      total: result.length
+    };
   }
 }
