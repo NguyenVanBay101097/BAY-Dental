@@ -45,10 +45,11 @@ export class StockXuatNhapTonComponent implements OnInit {
   sumImport: number = 0;
   sumExport: number = 0;
 
-  filteredInventory: { text: string, value: number }[] = [
-    { text: 'Trên mức tối thiểu', value: 0 },
-    { text: 'Dưới mức tối thiểu', value: 1 }
+  filteredInventory: { text: string, value: string }[] = [
+    { text: 'Trên mức tối thiểu', value: 'above_minInventory' },
+    { text: 'Dưới mức tối thiểu', value: 'below_minInventory' }
   ];
+  minInventoryFilter: string;
   constructor(
     private reportService: StockReportService,
     private intlService: IntlService,
@@ -84,11 +85,9 @@ export class StockXuatNhapTonComponent implements OnInit {
     val.productId = this.searchProduct ? this.searchProduct.id : null;
     val.productCategId = this.searchCateg ? this.searchCateg.id : null;
     val.search = this.search ? this.search : null;
-
+    val.minInventoryFilter = this.minInventoryFilter ? this.minInventoryFilter : null;
     this.reportService.getXuatNhapTonSummary(val).subscribe(res => {
       this.items = res;
-      console.log(res);
-
       this.loadItems();
       this.loading = false;
     }, err => {
@@ -103,6 +102,7 @@ export class StockXuatNhapTonComponent implements OnInit {
   }
 
   loadItems(): void {
+    this.items = this.items.filter(x => x.begin != 0 || x.end != 0 || x.import != 0 || x.export != 0)
     this.gridData = {
       data: this.items.slice(this.skip, this.skip + this.limit),
       total: this.items.length
@@ -127,7 +127,7 @@ export class StockXuatNhapTonComponent implements OnInit {
 
   cellClick(item: any) {
     const modalRef = this.modalService.open(StockXuatNhapTonDetailDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Lịch sử Nhập - Xuất';
+    modalRef.componentInstance.title = 'Lịch sử nhập - xuất';
     modalRef.componentInstance.productId = item.productId;
     modalRef.componentInstance.dateFrom = item.dateFrom;
     modalRef.componentInstance.dateTo = item.dateTo;
@@ -142,23 +142,8 @@ export class StockXuatNhapTonComponent implements OnInit {
   }
 
   inventoryChange(event) {
-    let result = []
-    if (event) {
-      const state = event.value;
-      if (state) {
-        result = this.items.filter(x => x.end < x.minInventory)
-      }
-      else {
-        result = this.items.filter(x => x.end >= x.minInventory)
-      }
-    }
-    else {
-      result = this.items;
-    }
+    this.minInventoryFilter = event ? event.value : null;
     this.skip = 0;
-    this.gridData = {
-      data: result.slice(this.skip, this.skip + this.limit),
-      total: result.length
-    };
+    this.loadDataFromApi();
   }
 }

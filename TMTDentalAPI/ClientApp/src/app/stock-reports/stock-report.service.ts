@@ -32,6 +32,7 @@ export class StockReportXuatNhapTonSearch {
     productId: string;
     productCategId: string;
     search: string;
+    minInventoryFilter: string;
 }
 export class GetStockHistoryReq {
     limit: number;
