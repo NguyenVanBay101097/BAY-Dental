@@ -215,5 +215,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal PurchasePrice { get; set; }
         public decimal Inventory { get; set; }
         public decimal? MinInventory { get; set; }
+        public string Type2 { get; set; }
     }
 }

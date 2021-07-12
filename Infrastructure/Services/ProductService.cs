@@ -264,7 +264,8 @@ namespace Infrastructure.Services
                     ProductId = x.Product.Id,
                     ProductName = x.Product.Name,
                     PurchaseOk = x.Product.PurchaseOK,
-                    MinInventory = x.Product.MinInventory
+                    MinInventory = x.Product.MinInventory,
+                    Type2 = x.Product.Type2
                 })
                 .Select(x => new
                 {
@@ -272,7 +273,8 @@ namespace Infrastructure.Services
                     ProductName = x.Key.ProductName,
                     MinInventory = x.Key.MinInventory,
                     PurchaseOk = x.Key.PurchaseOk,
-                    Inventory = x.Sum(s => s.quantity)
+                    Inventory = x.Sum(s => s.quantity),
+                    Type2 = x.Key.Type2
                 });
             if (!string.IsNullOrEmpty(filter))
                 query = query.Where(x => x.ProductName == filter);
@@ -282,7 +284,8 @@ namespace Infrastructure.Services
                     Id = x.ProductId,
                     Name = x.ProductName,
                     Inventory = x.Inventory,
-                    MinInventory = x.MinInventory
+                    MinInventory = x.MinInventory,
+                    Type2 = x.Type2
                 }).ToListAsync();
 
             return results;
