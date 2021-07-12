@@ -196,7 +196,8 @@ export class QuotationService {
                 amount: x.amount,
                 date: new Date(x.date),
                 discountPercentType: x.discountPercentType,
-                payment: x.payment
+                payment: x.payment,
+                id: x.id
               }),
               companyId: response.companyId,
               orders: response.orders.map(x => <SaleOrderSimple>{
@@ -217,7 +218,7 @@ export class QuotationService {
   }
 
   printQuotation(id: string) {
-    return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/Print');
+    return this.http.get(this.baseApi + 'Quotation' + '/Print' + `?id=${id}`, { responseType: 'text' });
   }
 
   defaultGet(partnerId: string): Observable<QuotationsDisplay> {
