@@ -254,11 +254,11 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<IEnumerable<ProductComingEnd>> GetProductsComingEnd(string type, string filter)
+        public async Task<IEnumerable<ProductComingEnd>> GetProductsComingEnd(string filter)
         {
             var date = DateTime.Now;
             var companyId = CompanyId;
-            var query = _context.StockHistories.Where(x => x.date < date && x.company_id == companyId && x.Product.Type2 == type)
+            var query = _context.StockHistories.Where(x => x.date < date && x.company_id == companyId && x.Product.PurchaseOK == true)
                 .GroupBy(x => new
                 {
                     ProductId = x.Product.Id,
@@ -276,8 +276,6 @@ namespace Infrastructure.Services
                 });
             if (!string.IsNullOrEmpty(filter))
                 query = query.Where(x => x.ProductName == filter);
-            if (!string.IsNullOrEmpty(type) && type == "medicine")
-                query = query.Where(x => x.PurchaseOk == true);
             var results = await query.Where(x => x.Inventory < x.MinInventory)
                 .Select(x => new ProductComingEnd()
                 {

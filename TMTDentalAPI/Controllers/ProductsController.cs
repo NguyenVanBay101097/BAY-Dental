@@ -106,9 +106,9 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetProductsComingEnd(string type, string filter = "")
+        public async Task<IActionResult> GetProductsComingEnd(string filter = "")
         {
-            var results = await _productService.GetProductsComingEnd(type,filter);
+            var results = await _productService.GetProductsComingEnd(filter);
             return Ok(results);
         }
 
