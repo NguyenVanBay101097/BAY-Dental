@@ -366,7 +366,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   selectProduct(item) {
     var product = item;
-
+    const qty = item.qty ? item.qty : 1;
     // var index = _.findIndex(this.orderLines.controls, o => {
     //   return o.get('product').value.id == product.id;
     // });
@@ -386,7 +386,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         product: productSimple,
         productId: product.id,
         priceSubtotal: null,
-        productQty: [1, Validators.required],
+        productQty: [qty, Validators.required],
         discount: [0, Validators.required],
       });
 

@@ -44,6 +44,9 @@ export class PurchaseOrderAlmostOutDialogComponent implements OnInit {
     this.selectedIds.forEach((val) => {
       const data = this.listProduct.find(x => x.id.includes(val));
       products.push(data);
+    });
+    products.map(product => {
+      return product.qty = product.minInventory - product.inventory;
     })
     this.activeModal.close(products);
   }

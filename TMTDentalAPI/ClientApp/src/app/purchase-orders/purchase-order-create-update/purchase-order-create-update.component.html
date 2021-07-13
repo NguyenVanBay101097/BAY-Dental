@@ -175,7 +175,7 @@
                 </div>
                 <div class="o_form_section overflow-hidden h-100">
                     <div class="o_form_section_left d-flex flex-column h-100" *ngIf="purchaseOrder?.state == 'draft'">
-                        <p class="t_tilte flex-0-0-auto">Danh sách hàng hóa</p>
+                        <p class="t_tilte flex-0-0-auto p-2">Danh sách hàng hóa</p>
 
                         <div class="group_product flex-1-1-100 overflow-hidden">
                             <app-purchase-order-list-product-tabpanel [listProducts]="productList" (onSelectService)="selectProduct($event)">
@@ -186,7 +186,7 @@
                     </div>
 
                     <div class="o_form_section_right d-flex flex-column">
-                        <p class="t_tilte flex-0-0-auto d-flex justify-content-between">
+                        <p class="t_tilte flex-0-0-auto d-flex justify-content-between p-1">
                             <span>
                                 Danh sách {{this.purchaseOrder?.type == 'order' ? 'mua hàng' : 'trả hàng'}} 
                             </span>
