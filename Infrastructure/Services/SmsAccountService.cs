@@ -19,7 +19,7 @@ namespace Infrastructure.Services
     public class SmsAccountService : BaseService<SmsAccount>, ISmsAccountService
     {
         private readonly IMapper _mapper;
-        public SmsAccountService(IMapper mapper, IAsyncRepository<SmsAccount> repository, IHttpContextAccessor httpContextAccessor) 
+        public SmsAccountService(IMapper mapper, IAsyncRepository<SmsAccount> repository, IHttpContextAccessor httpContextAccessor)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
@@ -58,7 +58,7 @@ namespace Infrastructure.Services
             return items;
         }
 
-      
+
 
         public override Task<SmsAccount> CreateAsync(SmsAccount entity)
         {
@@ -81,6 +81,30 @@ namespace Infrastructure.Services
                 default:
                     return null;
             }
+        }
+
+        public override Task DeleteAsync(SmsAccount entity)
+        {
+            var id = entity.Id;
+            var smsBirthdayAutomationConfigObj = GetService<ISmsBirthdayAutomationConfigService>();
+            var birthdayAutoCount = smsBirthdayAutomationConfigObj.SearchQuery(x => x.SmsAccountId == id).Count();
+
+            var smsAppointmentAutomationConfigObj = GetService<ISmsAppointmentAutomationConfigService>();
+            var appointmentAutoCount = smsAppointmentAutomationConfigObj.SearchQuery(x => x.SmsAccountId == id).Count();
+
+            var smsThanksCustomerAutomationConfigObj = GetService<ISmsThanksCustomerAutomationConfigService>();
+            var thanksCustomerAutoCount = smsThanksCustomerAutomationConfigObj.SearchQuery(x => x.SmsAccountId == id).Count();
+
+            var smsCareAfterAutomationConfigObj = GetService<ISmsCareAfterOrderAutomationConfigService>();
+            var careAfterAutoCount = smsCareAfterAutomationConfigObj.SearchQuery(x => x.SmsAccountId == id).Count();
+
+            var smsMessageObj = GetService<ISmsMessageService>();
+            var smsMessageCount = smsMessageObj.SearchQuery().Where(x => x.SmsAccountId == id).Count();
+
+            if (birthdayAutoCount > 0 || appointmentAutoCount > 0 || thanksCustomerAutoCount > 0 || careAfterAutoCount > 0 || smsMessageCount > 0)
+                throw new Exception("Không thể xóa Brandname đang có dữ liệu liên kết");
+
+            return base.DeleteAsync(entity);
         }
     }
 }
