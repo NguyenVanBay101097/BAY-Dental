@@ -117,6 +117,6 @@ export class CustomerReceiptService {
   }
 
   patchState(id, val): Observable<any> {
-    return this.http.patch(this.baseApi + this.apiUrl + id + '/PatchState', val);
+    return this.http.patch(this.baseApi + this.apiUrl + '/' + id + '/PatchState', val);
   }
 }

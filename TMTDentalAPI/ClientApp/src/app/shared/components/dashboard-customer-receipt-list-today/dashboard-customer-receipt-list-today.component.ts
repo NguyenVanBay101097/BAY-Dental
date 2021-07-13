@@ -31,7 +31,7 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
   listCustomerReceipt: CustomerReceiptBasic[];
   filteredEmployeesDoctor: any[] = [];
   loading = false;
-  hoveredIndex: number;
+  hoveredIndex: -1;
   search: string;
   limit = 1000;
   skip = 0;
@@ -169,11 +169,11 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
     res.dateDone = val.state == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : null;
     this.customerReceiptService.patchState(item.id, res).pipe(
       mergeMap((rs: any) => {
-        return this.customerReceiptService.get(rs.id);
+        return this.customerReceiptService.get(item.id);
       })
-    ).subscribe((res: CustomerReceiptDisplay) => {
+    ).subscribe((rs: CustomerReceiptDisplay) => {
       this.notifyService.notify('success', 'Lưu thành công');
-      var basic = this.getBasic(res);
+      var basic = this.getBasic(rs);
       this.onUpdateCREvent.emit(basic);
       this.loadStateCount();
     });

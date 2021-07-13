@@ -236,11 +236,11 @@
     border-color: #007bff !important;
   }
 
-  .project-box-wrapper div.show-on-hover {
+  .project-box div.show-on-hover {
     visibility: hidden;
   }
   
-  .project-box-wrapper:hover div.show-on-hover {
+  .project-box:hover div.show-on-hover {
     visibility: visible;
     
   }
@@ -251,6 +251,10 @@
 
   .project-box-wrapper:hover  .project-box{
     background-color: #f3f9ff;
+  }
+
+  .o-hide {
+    display: none;
   }
 
   @media (min-width: 1300px) and (max-width: 1400px) {

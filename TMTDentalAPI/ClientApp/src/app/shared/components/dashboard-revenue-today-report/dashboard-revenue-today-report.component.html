@@ -7,7 +7,7 @@
     <div class="revenue-report-chart">
         <div class="revenue-report-chart-header">
             <div class="text-center justify-content-center">
-                <p class="box-content-header">Tổng doanh thu <span *ngIf="revenue?.totalAmount > 0" [ngClass]="'isIncrease == true ? text-success : text-danger'">{{percentRevenue}} % </span></p>
+                <p class="box-content-header">Tổng doanh thu <span *ngIf="revenue?.totalAmount > 0 && revenue?.totalAmountYesterday > 0" [ngClass]="'isIncrease == true ? text-success : text-danger'">{{percentRevenue}} % </span></p>
                 <p class="box-content-subheader">{{revenue?.totalAmount | number}}</p>
             </div>
         </div>

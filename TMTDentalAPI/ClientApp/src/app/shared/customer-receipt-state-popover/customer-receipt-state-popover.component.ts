@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbDropdown, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbDropdownConfig, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-customer-receipt-state-popover',
@@ -20,7 +20,9 @@ export class CustomerReceiptStatePopoverComponent implements OnInit {
     { text: 'Đang khám', value: 'examination' },
     { text: 'Hoàn thành', value: 'done' },
   ];
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder,config: NgbDropdownConfig) { 
+    config.placement = 'bottom';
+  }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -30,6 +32,16 @@ export class CustomerReceiptStatePopoverComponent implements OnInit {
     });
 
     this.reLoad();
+  }
+
+  @HostListener('mouseover')
+  onMouseOver() {
+    event.stopPropagation();
+  }
+
+  @HostListener('mouseout')
+  onMouseOut() {
+    event.stopPropagation();
   }
 
   reLoad() {
