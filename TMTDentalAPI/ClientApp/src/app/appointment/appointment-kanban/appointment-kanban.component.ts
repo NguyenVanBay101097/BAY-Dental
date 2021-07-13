@@ -485,10 +485,10 @@ export class AppointmentKanbanComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.offset;
     val.doctorId = this.employeeSelected || '';
+    var currentStart = this.calendarApi.view.currentStart;
+    var currentEnd = this.calendarApi.view.currentEnd;
+    currentEnd.setDate(currentEnd.getDate() - 1);
     if (this.dateFrom || this.dateTo) {
-      var currentStart = this.calendarApi.view.currentStart;
-      var currentEnd = this.calendarApi.view.currentEnd;
-      currentEnd.setDate(currentEnd.getDate() - 1);
       var dateRange_1 = new MyDateRange(currentStart, currentEnd);
       const dateFrom_temp = this.dateFrom ? this.dateFrom : (this.dateTo >= currentStart ? currentStart : this.dateTo);
       const dateTo_temp = this.dateTo ? this.dateTo : (this.dateFrom <= currentEnd ? currentEnd : this.dateFrom);
@@ -497,7 +497,13 @@ export class AppointmentKanbanComponent implements OnInit {
       if (result_intersection) {
         val.dateTimeFrom = this.intlService.formatDate(result_intersection.start, 'yyyy-MM-dd');
         val.dateTimeTo = this.intlService.formatDate(result_intersection.end, 'yyyy-MM-dd');
+      } else {
+        this.gridData = null;
+        return;
       }
+    } else {
+      val.dateTimeFrom = this.intlService.formatDate(currentStart, 'yyyy-MM-dd');
+      val.dateTimeTo = this.intlService.formatDate(currentEnd, 'yyyy-MM-dd');
     }
 
     this.appointmentService.getPaged(val).pipe(
