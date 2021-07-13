@@ -1,3 +1,4 @@
+import { CustomerReceiptDisplay } from './../../customer-receipt/customer-receipt.service';
 import { AuthService } from './../../auth/auth.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -7,9 +8,9 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
-import { CustomerReceiptService } from 'src/app/customer-receipt/customer-receipt.service';
+import { CustomerReceiptBasic, CustomerReceiptService } from 'src/app/customer-receipt/customer-receipt.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
@@ -45,32 +46,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   title: string;
   showIsNoTreatment = false;
   defaultData: any;
-  timeExpecteds: any[] = [
-    {
-      name: '0 phút', value: 0
-    },
-    {
-      name: '30 phút', value: 30
-    },
-    {
-      name: '45 phút', value: 45
-    },
-    {
-      name: '60 phút', value: 60
-    },
-    {
-      name: '75 phút', value: 75
-    },
-    {
-      name: '90 phút', value: 90
-    },
-    {
-      name: '105 phút', value: 105
-    },
-    {
-      name: '120 phút', value: 120
-    },
-  ]
+  customerReceipt: CustomerReceiptDisplay;
 
 
   defaultVal: any;
@@ -89,7 +65,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private dashboardReportService : DashboardReportService,
+    private dashboardReportService: DashboardReportService,
     private partnerService: PartnerService,
     private authService: AuthService,
     private intlService: IntlService,
@@ -102,7 +78,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     private employeeService: EmployeeService,
     private notificationService: NotificationService,
     private customerReceiptService: CustomerReceiptService
-   ) { }
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -111,8 +87,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       partnerPhone: null,
       dateObj: [null, Validators.required],
       note: null,
-      companyId: null,
-      doctor: null,
+      doctor:  [null, Validators.required],
       timeExpected: '30',
       state: 'waiting',
       reason: null,
@@ -204,36 +179,41 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
-    
+
     this.submitted = true;
 
     if (!this.formGroup.valid) {
       return false;
     }
-    
     var receipt = this.formGroup.value;
     receipt.partnerId = receipt.partner ? receipt.partner.id : null;
     receipt.doctorId = receipt.doctor ? receipt.doctor.id : null;
     receipt.dateWaiting = this.intlService.formatDate(receipt.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss')  : null;
-    receipt.dateDone =  this.stateControl == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss')  : null;
-    receipt.timeExpected = Number.parseInt(receipt.timeExpected); 
+    receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : null;
+    receipt.dateDone = this.stateControl == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : null;
+    receipt.timeExpected = Number.parseInt(receipt.timeExpected);
+    receipt.products = receipt.products == null ? [] : receipt.products;
     receipt.companyId = this.authService.userInfo.companyId;
-    if (this.id) {   
+    if (this.id) {
       this.customerReceiptService.update(this.id, receipt).subscribe(
         () => {
-          this.activeModal.close();
+          var basic = this.getBasic(receipt);
+          this.activeModal.close(basic);
         },
         er => {
           this.errorService.show(er);
           this.submitted = false;
         },
-      )  
-    } else {    
-      this.customerReceiptService.create(receipt).subscribe(
-        res => {
-          this.activeModal.close();
-        },
+      )
+    } else {
+      this.customerReceiptService.create(receipt).pipe(
+        mergeMap((rs: any) => {
+          return this.customerReceiptService.get(rs.id);
+        })
+      ).subscribe((res: CustomerReceiptDisplay) => {
+        var basic = this.getBasic(res);
+        this.activeModal.close(basic);
+      },
         er => {
           this.errorService.show(er);
           this.submitted = false;
@@ -242,23 +222,38 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     }
   }
 
+  getBasic(res: CustomerReceiptDisplay) {
+    var basic = new CustomerReceiptBasic();
+    basic.id = this.id ? this.id : res.id;
+    basic.doctorId = res.doctor ? res.doctorId : null;
+    basic.doctorName = res.doctor ? res.doctor.name : '';
+    basic.partnerId = res.partnerId;
+    basic.partnerName = res.partner.name;
+    basic.partnerPhone = res.partner.phone;
+    basic.dateWaiting = res.dateWaiting ? res.dateWaiting : null;
+    basic.dateExamination = res.dateExamination ? res.dateExamination : null;
+    basic.dateDone = res.dateDone ? res.dateDone : null;
+    basic.state = res.state;
+    return basic;
+  }
 
 
 
 
-  eventCheck(value){
-    if (value == true && this.f.isRepeatCustomer.value == false){
+
+  eventCheck(value) {
+    if (value == true && this.f.isRepeatCustomer.value == false) {
       this.f.reason.setValidators(Validators.required);
       this.f.reason.updateValueAndValidity();
     }
-    else{
+    else {
       this.f.reason.clearValidators();
       this.f.reason.updateValueAndValidity();
-    }  
+    }
   }
 
-  checkedRepeatCustomer(value){
-    if (value == true && this.isNoTreatment){
+  checkedRepeatCustomer(value) {
+    if (value == true && this.isNoTreatment) {
       this.formGroup.get('isNoTreatment').setValue(false);
       this.formGroup.get('reason').setValue(null);
       this.f.reason.clearValidators();
@@ -359,8 +354,9 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     return this.btnDeleteSubject.asObservable();
   }
 
-  loadDefault(){
-    if(this.appointId){
+  loadDefault() {
+    if (this.appointId) {
+      this.customerReceipt = this.defaultData;
       this.formGroup.patchValue(this.defaultData);
 
       if (this.defaultData.partner) {
@@ -372,7 +368,11 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
         this.filteredEmployees = _.unionBy(this.filteredEmployees, [this.defaultData.doctor], 'id');
       }
 
-    }
+      if(this.appointId ) {
+        this.f.partner.disable();      
+      }
+
+    }   
 
     let date = new Date();
     this.formGroup.get('dateObj').patchValue(date);
@@ -381,11 +381,12 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   loadDataFromApi() {
     if (this.id) {
       this.customerReceiptService.get(this.id).subscribe(
-        (rs: any) => {        
-          this.formGroup.patchValue(rs);  
-          let date = new Date(rs.dateWaiting);           
+        (rs: any) => {
+          this.customerReceipt = rs;
+          this.formGroup.patchValue(rs);
+          let date = new Date(rs.dateWaiting);
           this.formGroup.get('dateObj').patchValue(date);
-          
+
           if (rs.partner) {
             this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
             this.onChangePartner();
@@ -394,6 +395,26 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
           if (rs.doctor) {
             this.filteredEmployees = _.unionBy(this.filteredEmployees, [rs.doctor], 'id');
           }
+
+          if(this.id && this.customerReceipt.state != 'done') {
+            this.f.partner.disable();
+            this.f.doctor.disable();
+            this.f.dateObj.disable();
+          }
+
+          if(this.id && this.customerReceipt.state == 'done') {
+            this.f.partner.disable();
+            this.f.doctor.disable();
+            this.f.dateObj.disable();
+            this.f.note.disable();
+            this.f.timeExpected.disable();
+            this.f.state.disable();
+            this.f.reason.disable();
+            this.f.products.disable();
+            this.f.isRepeatCustomer.disable();
+            this.f.isNoTreatment.disable();
+          }
+
         },
         er => {
           console.log(er);
@@ -403,8 +424,8 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
 
   }
 
-  onChangeState(state){
-    if(state != 'done'){
+  onChangeState(state) {
+    if (state != 'done') {
       this.formGroup.get('isNoTreatment').setValue(false);
       this.formGroup.get('reason').setValue(null);
       this.f.reason.clearValidators();
@@ -447,30 +468,29 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     });
   }
 
-  onSaveToAppoint(){
+  onSaveToAppoint() {
     this.submitted = true;
 
     if (!this.formGroup.valid) {
       return false;
     }
-    debugger
     var receipt = this.formGroup.value;
     var res = new CustomerReceiptRequest();
     res.partnerId = receipt.partner ? receipt.partner.id : null;
     res.doctorId = receipt.doctor ? receipt.doctor.id : null;
     res.dateWaiting = this.intlService.formatDate(receipt.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    res.timeExpected = Number.parseInt(receipt.timeExpected); 
+    res.timeExpected = Number.parseInt(receipt.timeExpected);
     res.companyId = this.authService.userInfo.companyId;
     res.products = receipt.products;
     res.isRepeatCustomer = this.isRepeatCustomer;
     res.note = receipt.note;
     res.appointmentId = this.appointId;
     this.dashboardReportService.createCustomerReceiptToAppointment(res).subscribe(
-      () => {
-        this.activeModal.close();
+      rs => {
+        this.activeModal.close(rs);
       },
       er => {
-        this.notify('error',er);
+        this.notify('error', er);
         this.submitted = false;
       },
     )
@@ -495,7 +515,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   }
 
   onChangePartner() {
-    if (this.partner) {   
+    if (this.partner) {
       this.partnerService.getCustomerInfo(this.partner.id).subscribe((rs: any) => {
         this.formGroup.get('partnerAge').patchValue(rs.age);
         this.formGroup.get('partnerPhone').patchValue(rs.phone);
@@ -503,7 +523,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     }
   }
 
-  
+
 
 
 }

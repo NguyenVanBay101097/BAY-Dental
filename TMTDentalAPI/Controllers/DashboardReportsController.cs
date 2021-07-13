@@ -17,7 +17,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IDashboardReportService _dashboardService;
 
-        public DashboardReportsController(IMapper mapper , IDashboardReportService dashboardService)
+        public DashboardReportsController(IMapper mapper, IDashboardReportService dashboardService)
         {
             _mapper = mapper;
             _dashboardService = dashboardService;
@@ -37,11 +37,11 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("[action]")]      
+        [HttpPost("[action]")]
         public async Task<IActionResult> CreateCustomerReceiptToAppointment(CustomerReceiptRequest val)
         {
-           await _dashboardService.CreateCustomerReceiptToAppointment(val);
-            return NoContent();
+            var res = await _dashboardService.CreateCustomerReceiptToAppointment(val);
+            return Ok(res);
         }
 
         [HttpPost("[action]")]

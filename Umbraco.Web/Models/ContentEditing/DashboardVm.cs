@@ -54,6 +54,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? AppointmentId { get; set; }
     }
 
+    public class CustomerReceiptReqonse
+    {
+        public CustomerReceiptBasic CustomerReceipt { get; set; }
+        public AppointmentBasic Appointment { get; set; }
+    }
 
     public class ReportTodayRequest
     {

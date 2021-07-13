@@ -299,10 +299,11 @@ export class AppointmentKanbanComponent implements OnInit {
       var item = paged.items[i];
       var d = new Date();
       d.setHours(0, 0, 0, 0);
+      let date = new Date(item.date);
       this.events = this.events.concat([
         <EventInput>{
-          title: item.time + '\n' + item.partnerName,
-          date: this.formatDate(item.date),
+          title: item.partnerName,
+          date: this.intlService.formatDate(date, 'yyyy-MM-ddTHH:mm:ss'),
           backgroundColor: new Date(item.date) >= d ? (this.states.find(x => x.value == item.state) ? this.states.find(x => x.value == item.state).bgColor : '') : '#FFC107',
           id: item.id,
           textColor: 'white'

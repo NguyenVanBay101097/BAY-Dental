@@ -1,78 +1,3 @@
-<!-- <div class="t_wrapper">
-    <div class="t_wrapper_top">
-        <div class="t_fast_access">
-            <h4 class="header-title">TRUY CẬP NHANH</h4>
-            <div class="t_kanban">
-                <a *ngIf="canAppointmentLink" [routerLink]="['/appointments/kanban']" class="card bg-primary t_card">
-                    <div class="card-body">
-                        <div class="d-flex">
-                            <img class="image-custom" src="./assets/images/icons-tdental/calendar.png" alt="Lịch hẹn">
-                            <span class="title-custom">LỊCH HẸN</span>
-                        </div>
-                    </div>
-                </a>
-                <a *ngIf="canCustomerLink" [routerLink]="['/partners/customers']" class="card bg-primary t_card">
-                    <div class="card-body">
-                        <div class="d-flex">
-                            <img class="image-custom" src="./assets/images/icons-tdental/KH.png" alt="Lịch hẹn">
-                            <span class="title-custom"> KHÁCH HÀNG</span>
-                        </div>
-                    </div>
-                </a>
-                <div class="t_card t_card_ghost"></div>
-                <div class="t_card t_card_ghost"></div>
-            </div>
-        </div>
-        <div class="t_report_today">
-            <h4 class="header-title">BÁO CÁO HÔM NAY</h4>
-            <div class="t_report_today_detail">
-                <div class="t_kanban_left">
-                    <app-dashboard-sale-report *ngIf="canSaleReport" class="card t_card_right border-secondary">
-                    </app-dashboard-sale-report>
-                    <app-dashboard-cash-bank-report *ngIf="canCashBankReport"
-                        class="card t_card_right border-secondary"></app-dashboard-cash-bank-report>
-                    <app-dashboard-partner-customer-report *ngIf="canPartnerCustomerReport"
-                        class="card t_card_right border-secondary"></app-dashboard-partner-customer-report>
-                    <app-dashboard-labo-order-report *ngIf="canLaboOrderReport"
-                        class="card t_card_right border-secondary"></app-dashboard-labo-order-report>
-                    <div class="t_card_right t_card_ghost"></div>
-                    <div class="t_card_right t_card_ghost"></div>
-                </div>
-                <div class="t_kanban_right">
-                    <div *ngIf="canCashBankReport" class="card border-secondary"> 
-                        <div class="card-body p3">
-                            <app-cash-bank-today-report ></app-cash-bank-today-report>   
-                        </div>  
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div>
-        <app-appointment-list-today *ngIf="canAppointment"></app-appointment-list-today>
-    </div>
-    <div>
-        <app-dashboard-service-today-report *ngIf="canSaleReport"></app-dashboard-service-today-report>
-    </div>
-</div> -->
-<!-- <div class="section_wrap">
-    <div class="section-left">
-        <div class="report">
-            <div class="revenue">
-                <div class="title">
-                    <h6>Quỹ tiền mặt</h6>
-                </div>
-                <h4 class="text-primary">
-                 0
-                </h4>
-            </div>         
-        </div>
-    </div>
-
-    <div class="section-right">
-
-    </div>
-</div> -->
 <div class="app-container">
     <div class="app-content">
         <div class="app-content-left">
@@ -113,7 +38,7 @@
                 </div>
             </div>
             <div class="customer-receipt-section">
-                <app-dashboard-customer-receipt-list-today></app-dashboard-customer-receipt-list-today>
+                <app-dashboard-customer-receipt-list-today [initialListEmployees]="initialListEmployees" [customerReceipts]="customerReceiptList" (onCreateCREvent)="onCreateCR($event)" (onUpdateCREvent)="onUpdateCR($event)" ></app-dashboard-customer-receipt-list-today>
             </div>
             <div class="sale-order-line-section">
                 <app-dashboard-service-today-report></app-dashboard-service-today-report>
@@ -121,10 +46,10 @@
         </div>
         <div class="app-content-right">
             <div class="appointments-today-section">
-              <app-appointment-list-today></app-appointment-list-today>
+              <app-appointment-list-today [appointments]="appointmenttList" (onUpdateAPEvent)="onUpdateAP($event)" (onCreateAPEvent)="onCreateAP($event)" (onCreateCREvent)="onCreateCR($event)" (onDeleteAPEvent)="onDeleteAP($event)"></app-appointment-list-today>
             </div>
             <div class="revenue-report-section mt-3">
-                <app-dashboard-revenue-today-report></app-dashboard-revenue-today-report>
+                <app-dashboard-revenue-today-report [revenueToday]="revenueReportToDay"></app-dashboard-revenue-today-report>
             </div>
         </div>
     </div>

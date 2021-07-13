@@ -6,7 +6,7 @@
 <div class="modal-body o_act_window">
     <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
-            <div class="o_form_sheet">            
+            <div class="o_form_sheet">
                 <table class="o_group o_inner_group o_group_col_12">
                     <tbody class="w-100">
                         <tr>
@@ -67,26 +67,32 @@
                                 <label class="o_form_label">Ngày hẹn</label>
                             </td>
                             <td colspan="1">
-                                <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="apptDate">
+                                <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj">
                                 </kendo-datepicker>
-                                <div *ngIf="f.apptDate.errors && (f.apptDate.touched || f.apptDate.dirty || submitted)"
+                                <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
                                     class="text-danger">
-                                    <div *ngIf="f.apptDate.errors.required">Chọn ngày hẹn</div>
+                                    <div *ngIf="f.dateObj.errors.required">Chọn ngày hẹn</div>
                                 </div>
                             </td>
                         </tr>
-                        <tr [class.d-none]="type =='receive'">                      
+                        <tr [class.d-none]="type =='receive'">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Giờ hẹn</label>
                             </td>
                             <td colspan="1">
                                 <div class="d-flex justify-content-between">
-                                    <div class="mr-2 d-flex">
-                                        <select class="form-control btn-sm" style="width: 150px;"
+                                    <div class="mr-2">
+                                        <!-- <select class="form-control btn-sm" style="width: 150px;"
                                             formControlName="appTime">
                                             <option [value]="i" *ngFor="let i of timeList">
                                                 {{i}}</option>
-                                        </select>
+                                        </select> -->
+                                        <kendo-timepicker formControlName="timeObj" format="HH:mm"
+                                            [class.border-invalid]="f.timeObj.errors"></kendo-timepicker>
+                                        <div *ngIf="f.timeObj.errors && (f.timeObj.touched || f.timeObj.dirty || submitted)"
+                                            class="text-danger">
+                                            <div *ngIf="f.timeObj.errors.required">Chọn giờ </div>
+                                        </div>
                                     </div>
                                     <div class="d-flex">
                                         <span class="mr-1 text-time p-1">Dự kiến</span>
@@ -156,7 +162,7 @@
                                 <label class="o_form_label">Lý do</label>
                             </td>
                             <td colspan="1">
-                                <input type="text" class="form-control" formControlName="reason">
+                                <textarea class="form-control" rows="3" formControlName="reason"></textarea>
                                 <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"
                                     class="text-danger">
                                     <div *ngIf="f.reason.errors.required">Nhập lý do</div>

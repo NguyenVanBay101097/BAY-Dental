@@ -9,7 +9,7 @@ namespace Infrastructure.Services
     public interface IDashboardReportService
     {
         Task<CustomerReceiptDisplay> GetDefaultCustomerReceipt(GetDefaultRequest val);
-        Task CreateCustomerReceiptToAppointment(CustomerReceiptRequest val);
+        Task<CustomerReceiptReqonse> CreateCustomerReceiptToAppointment(CustomerReceiptRequest val);
 
         Task<GetCountMedicalXamination> GetCountMedicalXaminationToday(ReportTodayRequest val);
 

@@ -9,17 +9,11 @@
 .section-header {
     align-items: center;
     display: flex;
+    justify-content: space-between;
     flex-flow: row wrap;
     padding-bottom: 15px;
 }
 
-.section-header-left {
-    flex: 1;
-}
-
-.section-header-right {
-    flex: 2;
-}
 
 .header-buttons-view button {
     padding: 3px 6px;
@@ -30,7 +24,7 @@
 }
 
 .has-search {
-    flex: 1 1 300px;
+    width: 300px;
 }
 
 .has-search .form-control {
@@ -264,8 +258,7 @@
         width: 33.3%;
     }
 
-    .button_create{
-        padding: 6px 6px;
+    .button_create{      
         font-size: 12px;
     }
 
@@ -273,12 +266,7 @@
         padding-right: 2px;
     }
 
-    .has-search {
-        -webkit-box-flex: 1;
-        flex: 1 1 250px;
-    }
-
     .title-header{
-        font-size: 16px;
+        font-size: 20px;
     }
   }

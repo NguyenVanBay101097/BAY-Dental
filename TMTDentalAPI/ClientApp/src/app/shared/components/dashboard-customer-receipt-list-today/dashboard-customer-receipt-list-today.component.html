@@ -4,41 +4,46 @@
             <h5 class="text-primary title-header">TIẾP NHẬN KHÁCH HÀNG</h5>
         </div>
         <div class="section-header-right">
-            <div class="d-flex header-buttons-view">
-                <div class="mr-1 button_create">
-                    <button class="btn btn-primary" (click)="createItem()"><i class="fas fa-plus-circle mr-1">
-                    </i>Thêm tiếp nhận</button>
+            <div class="header-buttons-view">
+                <div class="d-flex ">
+                    <div class="mr-1 button_create">
+                        <button class="btn btn-primary" (click)="createItem()"><i class="fas fa-plus-circle mr-1">
+                            </i>Thêm tiếp nhận</button>
+                    </div>
+                    <div>
+                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event.target.value)"
+                            (selectionChange)="onChangeDoctor($event)" [data]="filteredEmployeesDoctor" [textField]="'name'"
+                            #employeeCbx [valueField]="'id'" placeholder="Lọc theo bác sĩ" class="header-combobox mr-1">
+                        </kendo-combobox>
+                    </div>
+                    <div class="has-search">
+                        <span class="fa fa-search form-control-feedback"></span>
+                        <input accesskey="C" class="form-control header-search size-text-12"
+                            placeholder="Tìm kiếm theo họ tên, sđt .. " type="text" [(ngModel)]="search"
+                            (keyup)="onChangeSearch($event.target.value);">
+    
+                    </div>
                 </div>
-                <kendo-combobox #employeeCbx (selectionChange)="onChangeDoctor($event)" placeholder="Lọc theo bác sĩ"
-                    class="header-combobox mr-1" [data]="listEmployees" [textField]="'name'" [valueField]="'value'">
-                </kendo-combobox>
-                <div class="has-search">
-                    <span class="fa fa-search form-control-feedback"></span>
-                    <input #searchInput accesskey="C" class="form-control header-search size-text-12"
-                        placeholder="Tìm kiếm theo họ tên, sđt .. " type="text" [(ngModel)]="search"
-                        (ngModelChange)="this.searchUpdate.next($event)">
-
-                </div>
+                
             </div>
         </div>
     </div>
     <div class="state-filter-wrapper">
         <button type="button" *ngFor="let state of states" class="btn active" (click)="setStateFilter(state.value)"
             [class.btn-primary]="stateFilter == state.value" [class.btn-light]="stateFilter != state.value">
-            {{state.text}} <span class="ml-1" [class.text-white]="stateFilter == state.value">{{stateCount[state.value]
-                || 0}}</span>
+            {{state.text}} <span class="ml-1" [class.text-white]="stateFilter == state.value">{{stateCount[state.value]|| 0}}</span>
         </button>
     </div>
     <div class="appointment-boxes gridView">
-        <ng-container *ngFor="let item of gridData?.data ;let i = index">
-            <div class="project-box-wrapper"  (mouseenter)="hoveredIndex = i" (mouseleave)="hoveredIndex = null">
+        <ng-container *ngFor="let item of listCustomerReceipt ;let i = index">
+            <div class="project-box-wrapper" (mouseenter)="hoveredIndex = i" (mouseleave)="hoveredIndex = null">
                 <div class="project-box">
                     <div class="project-box-header">
                         <span class="box-header-badge"
                             [ngClass]="getColorState(item?.state)">{{getState(item?.state)}}</span>
                         <div class="more-wrapper" *ngIf="hoveredIndex === i">
                             <i class="fas fa-pen text-primary mr-1 project-btn-more " (click)="editItem(item)"></i>
-                           <app-customer-receipt-state-popover [item]="item"></app-customer-receipt-state-popover>                     
+                            <app-customer-receipt-state-popover [item]="item" (stateFormGroup)="onChangeState(item,$event)"></app-customer-receipt-state-popover>
                         </div>
                     </div>
                     <div class="box-info-wrapper">

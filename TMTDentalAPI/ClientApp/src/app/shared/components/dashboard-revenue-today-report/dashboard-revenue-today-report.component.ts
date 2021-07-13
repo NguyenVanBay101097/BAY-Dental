@@ -1,6 +1,6 @@
 import { AuthService } from 'src/app/auth/auth.service';
 import { DashboardReportService, ReportTodayRequest, RevenueTodayReponse } from './../../../core/services/dashboard-report.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { LegendLabelsContentArgs } from '@progress/kendo-angular-charts';
 import { IntlService } from '@progress/kendo-angular-intl';
 
@@ -10,9 +10,10 @@ import { IntlService } from '@progress/kendo-angular-intl';
   styleUrls: ['./dashboard-revenue-today-report.component.css']
 })
 export class DashboardRevenueTodayReportComponent implements OnInit {
+  @Input() revenueToday: RevenueTodayReponse;
   public today: Date = new Date(new Date().toDateString());
   loading = false;
-  revenue = new RevenueTodayReponse;
+  revenue: RevenueTodayReponse;
 
   // Pie
   public pieData: any[] = [];
@@ -24,33 +25,31 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loadDataFromApi();
+    this.loadData();
   }
 
-  loadDataFromApi() {
-    this.loading = true;
-    var val = new ReportTodayRequest();
-    val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-    val.companyId = this.authService.userInfo.companyId;
-    this.dashboardService.getSumary(val).subscribe(result => {
-      this.revenue = result;
-      this.loadPieData();
-      this.loading = false;
-    }, () => {
-      this.loading = false;
-    });
+  ngOnChanges(changes: SimpleChanges): void {
+    this.loadData();
+  }
+
+  loadData() {
+    this.revenue = this.revenueToday;
+    this.loadPieData();
   }
 
   loadPieData() {
-    var cash = new Object({ category: "cash", value: this.revenue.totalCash, color: "#0066cc" });
-    var bank = new Object({ category: "bank", value: this.revenue.totalBank, color: "#99ccff" });
-    var other = new Object({ category: "other", value: this.totalOther, color: "#b3b3b3" });
-    this.pieData.push(cash, bank, other);
+    if (this.revenue) {
+      var cash = new Object({ category: "cash", value: this.revenue.totalCash, color: "#0066cc" });
+      var bank = new Object({ category: "bank", value: this.revenue.totalBank, color: "#99ccff" });
+      var other = new Object({ category: "other", value: this.totalOther, color: "#b3b3b3" });
+      this.pieData.push(cash, bank, other);
+    }
+
   }
 
   get isIncrease() {
     if (this.revenue.totalAmount >= this.revenue.totalAmountYesterday) {
+      debugger
       return true;
     }
     return false;
@@ -58,6 +57,10 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
 
   get percentRevenue() {
     if (this.revenue) {
+      if (this.revenue.totalAmountYesterday == 0) {
+        return 0;
+      }
+
       return (this.revenue.totalAmount - this.revenue.totalAmountYesterday / this.revenue.totalAmountYesterday) * 100;
     }
 

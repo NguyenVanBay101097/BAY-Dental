@@ -58,7 +58,7 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
             var res = await _customerReceiptService.CreateCustomerReceipt(val);
             var basic = _mapper.Map<CustomerReceiptBasic>(res);
-            return Ok(res);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]

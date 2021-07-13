@@ -57,6 +57,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid PartnerId { get; set; }
         public string PartnerName { get; set; }
+        public string PartnerPhone { get; set; }
 
         public string State { get; set; }
 

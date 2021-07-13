@@ -1,7 +1,8 @@
+import { AppointmentBasic } from './../../appointment/appointment';
 import { DashboardReportService, GetDefaultRequest } from './../../core/services/dashboard-report.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { state } from '@angular/animations';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -21,10 +22,13 @@ import { CustomerReceipCreateUpdateComponent } from '../customer-receip-create-u
   styleUrls: ['./appointment-list-today.component.css']
 })
 export class AppointmentListTodayComponent implements OnInit {
-  gridData: GridDataResult;
-  dateFrom: Date;
-  dateTo: Date;
-  state: string;
+  @Input() appointments: AppointmentBasic[] = [];
+
+  @Output() onUpdateAPEvent = new EventEmitter<any>();
+  @Output() onCreateAPEvent = new EventEmitter<any>();
+  @Output() onDeleteAPEvent = new EventEmitter<any>();
+  @Output() onCreateCREvent = new EventEmitter<any>();
+  listAppointment: AppointmentBasic[];
   userId: string;
   limit = 1000;
   skip = 0;
@@ -35,18 +39,8 @@ export class AppointmentListTodayComponent implements OnInit {
   searchUpdate = new Subject<string>();
   public today: Date = new Date(new Date().toDateString());
   stateFilter: string = '';
-
   stateFilterOptions: any[] = [];
   stateCount: any = {};
-  // states: any[] = [
-  //   { value: '', text: 'Tổng hẹn' },
-  //   { value: 'confirmed', text: 'Đang hẹn' },
-  //   { value: 'waiting', text: 'Chờ khám' },
-  //   { value: 'examination', text: 'Đang khám' },
-  //   { value: 'done', text: 'Hoàn thành' },
-  //   { value: 'cancel', text: 'Hủy hẹn' }
-  // ]
-
   states: any[] = [
     { value: '', text: 'Tất cả' },
     { value: 'confirmed', text: 'Đang hẹn' },
@@ -62,55 +56,43 @@ export class AppointmentListTodayComponent implements OnInit {
 
 
   ngOnInit() {
-
-    this.loadDataFromApi();
+    this.loadData();
     this.loadStateCount();
-    this.searchUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(() => {
-        this.loadDataFromApi();
-      });
+
   }
 
-  loadDataFromApi() {
-    this.loading = true;
-    var val = new AppointmentPaged();
-    val.limit = this.limit;
-    val.offset = this.skip;
-    val.search = this.search || "";
-    val.dateTimeFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-    val.dateTimeTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-    // val.state = this.stateFilter.join(',');
-    val.state = this.stateFilter == '' ? '' : this.stateFilter;
+  ngOnChanges(changes: SimpleChanges): void {
+    this.loadData();
+    this.loadStateCount();
+  }
 
-    this.appointmentService.loadAppointmentList(val).pipe(
-      map((response) => <GridDataResult>{
-        data: response.items,
-        total: response.totalItems,
-      }
-      )
-    ).subscribe(
-      (res) => {
-        this.gridData = res;
-        this.total = res.total;
-        this.loading = false;
-      },
-      (err) => {
-        console.log(err);
-        this.loading = false;
-      }
-    );
+  loadData() {
+    let res = this.appointments.sort();
+    if (this.stateFilter) {
+      res = res.filter(x => x.state.includes(this.stateFilter));
+    }
+
+    if (this.search) {
+      res = res.filter(x => this.RemoveVietnamese(x.partnerName).includes(this.search) || x.partnerPhone.includes(this.search));
+    }
+
+    this.listAppointment = res;
   }
 
   onChangeOverState(value) {
     this.stateFilter = value;
-    this.loadDataFromApi();
+    this.loadData();
   }
 
   setStateFilter(state: any) {
     this.stateFilter = state;
-    this.loadDataFromApi();
+    this.loadData();
+  }
+
+  onChangeSearch(value) {
+    this.search = value ? value : '';
+    this.loadData();
+    this.loadStateCount();
   }
 
   loadStateCount() {
@@ -132,9 +114,9 @@ export class AppointmentListTodayComponent implements OnInit {
   createItem() {
     let modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: "lg", windowClass: "o_technical_modal modal-appointment", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Đặt lịch hẹn";
-    modalRef.result.then(() => {
+    modalRef.result.then(res => {
       this.notifyService.notify('success','Lưu thành công');
-      this.loadDataFromApi();
+      this.onCreateAPEvent.emit(res);
       this.loadStateCount();
     }, () => { }
     );
@@ -144,9 +126,14 @@ export class AppointmentListTodayComponent implements OnInit {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Cập nhật lịch hẹn";
     modalRef.componentInstance.appointId = item.id;
-    modalRef.result.then(() => {
-      this.notifyService.notify('success','Lưu thành công');
-      this.loadDataFromApi();
+    modalRef.result.then(res => {
+      if(res.isDetele){
+        this.notifyService.notify('success','Xóa thành công');
+        this.onDeleteAPEvent.emit(res);
+      }else{
+        this.notifyService.notify('success','Lưu thành công');
+        this.onUpdateAPEvent.emit(res);
+      }     
       this.loadStateCount();
     }, () => {
     });
@@ -158,22 +145,22 @@ export class AppointmentListTodayComponent implements OnInit {
       modalRef.componentInstance.title = "Tiếp nhận";
       modalRef.componentInstance.appointId = item.id;
       modalRef.componentInstance.defaultData = res;
-      modalRef.result.then(() => {
+      modalRef.result.then(rs => {
         this.notifyService.notify('success','Lưu thành công');
-        this.loadDataFromApi();
+        if(rs.appointment){
+          this.onUpdateAPEvent.emit(rs.appointment);
+        }
+
+        if(rs.customerReceipt){
+          this.onCreateCREvent.emit(rs.customerReceipt);
+        }
         this.loadStateCount();
       }, () => { }
       );
     });
   }
 
-  
 
-  pageChange(event: PageChangeEvent): void {
-    this.skip = event.skip;
-    this.loadDataFromApi();
-    this.loadStateCount();
-  }
 
   stateGet(state) {
     switch (state) {
@@ -227,6 +214,21 @@ export class AppointmentListTodayComponent implements OnInit {
       this.loadStateCount();
     });
 
+  }
+
+  RemoveVietnamese(text) {
+    text = text.toLowerCase().trim();
+    text = text.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+    text = text.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+    text = text.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+    text = text.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+    text = text.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+    text = text.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+    text = text.replace(/đ/g, "d");
+    // Some system encode vietnamese combining accent as individual utf-8 characters
+    text = text.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ""); // Huyền sắc hỏi ngã nặng 
+    text = text.replace(/\u02C6|\u0306|\u031B/g, ""); // Â, Ê, Ă, Ơ, Ư
+    return text;
   }
 
 

@@ -15,9 +15,11 @@ namespace Infrastructure.Services
     public class DashboardReportService : IDashboardReportService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public DashboardReportService(IHttpContextAccessor httpContextAccessor)
+        private readonly IMapper _mapper;
+        public DashboardReportService(IHttpContextAccessor httpContextAccessor , IMapper mapper)
         {
             _httpContextAccessor = httpContextAccessor;
+            _mapper = mapper;
         }
 
         public async Task<CustomerReceiptDisplay> GetDefaultCustomerReceipt(GetDefaultRequest val)
@@ -34,7 +36,7 @@ namespace Infrastructure.Services
                 throw new Exception("hông tìm thấy lịch hẹn");
 
             if (appointment.State == "cancel")
-                throw new Exception("hông thể tiếp nhận lịch hẹn ở trạng thái hủy hẹn");
+                throw new Exception("Không thể tiếp nhận lịch hẹn ở trạng thái hủy hẹn");
 
             var res = new CustomerReceiptDisplay
             {
@@ -62,11 +64,11 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task CreateCustomerReceiptToAppointment(CustomerReceiptRequest val)
+        public async Task<CustomerReceiptReqonse> CreateCustomerReceiptToAppointment(CustomerReceiptRequest val)
         {
             var customerReceiptObj = GetService<ICustomerReceiptService>();
             var appointmentObj = GetService<IAppointmentService>();
-
+            var res = new CustomerReceiptReqonse();
             var customerReceipt = new CustomerReceipt();
             customerReceipt.CompanyId = val.CompanyId;
             customerReceipt.PartnerId = val.PartnerId;
@@ -87,17 +89,26 @@ namespace Infrastructure.Services
             }
 
             await customerReceiptObj.CreateAsync(customerReceipt);
+            customerReceipt = await customerReceiptObj.SearchQuery(x => x.Id == customerReceipt.Id).Include(x => x.Partner).Include(x => x.Doctor).FirstOrDefaultAsync();
+            res.CustomerReceipt = _mapper.Map<CustomerReceiptBasic>(customerReceipt);
 
             if (val.AppointmentId.HasValue)
             {
                 var appointment = await appointmentObj.SearchQuery(x => x.Id == val.AppointmentId)
+                    .Include(x => x.Partner)
+                    .Include(x => x.Doctor)
                 .FirstOrDefaultAsync();
 
                 if (appointment.State == "confirmed")
                     appointment.State = "arrived";
 
                 await appointmentObj.UpdateAsync(appointment);
+
+                res.Appointment = _mapper.Map<AppointmentBasic>(appointment);
+
             }
+
+            return res;
 
         }
 
@@ -109,16 +120,16 @@ namespace Infrastructure.Services
             var query = appointmentObj.SearchQuery();
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date > val.DateFrom.Value.AbsoluteBeginOfDate());
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
-            if (val.DateFrom.HasValue)             
+            if (val.DateFrom.HasValue)
                 query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
 
 
-            var appointmentNewToday = await query.Where(x=> !x.IsRepeatCustomer).CountAsync();
+            var appointmentNewToday = await query.Where(x => !x.IsRepeatCustomer).CountAsync();
             var appointmentOldToday = await query.Where(x => x.IsRepeatCustomer).CountAsync();
 
             var query2 = customerReceiptObj.SearchQuery();
@@ -134,7 +145,7 @@ namespace Infrastructure.Services
 
 
             var customerReceiptNewToday = await query2.Where(x => !x.IsRepeatCustomer).CountAsync();
-            var customerReceiptOldToday = await query2.Where(x => x.IsRepeatCustomer).CountAsync();    
+            var customerReceiptOldToday = await query2.Where(x => x.IsRepeatCustomer).CountAsync();
 
             var res = new GetCountMedicalXamination
             {

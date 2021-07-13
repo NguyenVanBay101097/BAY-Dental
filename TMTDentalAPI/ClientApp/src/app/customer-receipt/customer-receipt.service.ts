@@ -32,6 +32,7 @@ export class CustomerReceiptBasic {
   doctorName: string;
   partnerId: string;
   partnerName: string;
+  partnerPhone: string;
   state: string;
 }
 

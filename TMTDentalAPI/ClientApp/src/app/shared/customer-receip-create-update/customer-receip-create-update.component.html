@@ -27,7 +27,7 @@
                                             [valueField]="'id'" [textField]="'name'">
                                         </kendo-combobox>
                                     </div>
-                                    <div>
+                                    <div *ngIf="!id || defaultData">
                                         <a type="button" title="Thêm khách hàng" class=" btn btn-primary pl-2 py-1"
                                             (click)="quickCreateCustomerModal()">
                                             <i class="fas fa-plus text-white"></i>
@@ -68,7 +68,7 @@
                             </td>
                             <td colspan="1">
                                 <div class="d-flex justify-content-between">
-                                    <div class="mr-2 d-flex ">
+                                    <div class="mr-2 ">
                                         <kendo-timepicker formControlName="dateObj" format="HH:mm"
                                             [class.border-invalid]="f.dateObj.errors"></kendo-timepicker>
                                         <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
@@ -124,7 +124,7 @@
                                 <label class="o_form_label">Nội dung</label>
                             </td>
                             <td colspan="1">
-                                <textarea class="form-control" rows="5" formControlName="note"
+                                <textarea class="form-control" rows="3" formControlName="note"
                                     [placeholder]="'Nhập nội dung'"></textarea>
                             </td>
                         </tr>
@@ -133,7 +133,7 @@
                                 <label class="o_form_label">Trạng thái</label>
                             </td>
                             <td colspan="1">
-                                <select class="form-control btn-sm mr-1" formControlName="state">
+                                <select  class="form-control btn-sm mr-1" formControlName="state">
                                     <option value="waiting">Đang hẹn</option>
                                     <option value="examination">Đang khám</option>
                                     <option value="done">Hoàn thành</option>
@@ -144,7 +144,7 @@
                             <td colspan="1"></td>
                             <td colspan="1">
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="Check2"
+                                    <input  type="checkbox" class="form-check-input" id="Check2"
                                         (change)="eventCheck($event.target.checked)" formControlName="isNoTreatment">
                                     <label class="form-check-label" for="Check2">Khách không điều trị</label>
                                 </div>
@@ -155,7 +155,7 @@
                                 <label class="o_form_label">Lý do</label>
                             </td>
                             <td colspan="1">
-                                <input type="text" class="form-control" formControlName="reason">
+                                <textarea  class="form-control" rows="3" formControlName="reason"></textarea>
                                 <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"
                                     class="text-danger">
                                     <div *ngIf="f.reason.errors.required">Nhập lý do</div>
@@ -169,9 +169,9 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" *ngIf="!appointId" class="btn btn-primary btn-sm mr-2" accesskey="s" (click)="onSave()">
+    <button type="button" *ngIf="!appointId && customerReceipt?.state != 'done'" class="btn btn-primary btn-sm mr-2" accesskey="s" (click)="onSave()">
         Lưu</button>
-    <button type="button" *ngIf="appointId" class="btn btn-primary btn-sm mr-2" accesskey="s" (click)="onSaveToAppoint()">
+    <button type="button" *ngIf="appointId && customerReceipt?.state != 'done'" class="btn btn-primary btn-sm mr-2" accesskey="s" (click)="onSaveToAppoint()">
         Lưu</button>
     <button type="button" class="btn btn-secondary btn-sm mr-2" accesskey="q" (click)="activeModal.dismiss()">
         Đóng</button>

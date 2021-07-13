@@ -7,17 +7,25 @@
     <div class="revenue-report-chart">
         <div class="revenue-report-chart-header">
             <div class="text-center justify-content-center">
-                <p class="box-content-header">Tổng doanh thu</p>
-                <p class="box-content-subheader">{{revenue.totalAmount | number}}</p>
+                <p class="box-content-header">Tổng doanh thu <span *ngIf="revenue?.totalAmount > 0" [ngClass]="'isIncrease == true ? text-success : text-danger'">{{percentRevenue}} % </span></p>
+                <p class="box-content-subheader">{{revenue?.totalAmount | number}}</p>
             </div>
         </div>
-        <kendo-chart class="size-chart">
-            <kendo-chart-series >
-                <kendo-chart-series-item type="pie" [data]="pieData" field="value" categoryField="category" colorField="color" >
-                </kendo-chart-series-item>
-            </kendo-chart-series>
-            <kendo-chart-legend [visible]="false"></kendo-chart-legend>
-        </kendo-chart>
+        <ng-container *ngIf="revenue?.totalAmount > 0; else elseTemplate">
+            <kendo-chart class="size-chart">
+                <kendo-chart-series >
+                    <kendo-chart-series-item type="pie" [data]="pieData" field="value" categoryField="category" colorField="color" >
+                    </kendo-chart-series-item>
+                </kendo-chart-series>
+                <kendo-chart-legend [visible]="false"></kendo-chart-legend>
+            </kendo-chart>
+        </ng-container>
+        <ng-template #elseTemplate>
+            <div class=" size-chart text-center justify-content-center">
+                <p class="box-content-header">Chưa có dữ liệu </p>             
+            </div>
+        </ng-template>
+       
         <div>
             <div style="width:100%">
                 <div *ngFor="let item of pieData" class=" d-flex justify-content-between">
