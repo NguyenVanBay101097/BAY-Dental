@@ -99,7 +99,8 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
               { value: moment(line.invoiceDate).format('DD/MM/YYYY') },
               { value: line.invoiceOrigin },
               { value: line.partnerName },
-              { value: line.employeeName || line.assistantName },
+              { value: line.employeeName },
+              { value: line.assistantName },
               { value: line.productName },
               { value: line.priceSubTotal.toLocaleString('vi'), textAlign: 'right' }
             ]
@@ -114,7 +115,8 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
             Object.assign({}, headerOptions, { value: 'Ngày thanh toán', background: '#aabbcc', width: 20 }),
             Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
             Object.assign({}, headerOptions, { value: 'Khách hàng', background: '#aabbcc', width: 200 }),
-            Object.assign({}, headerOptions, { value: employeeFilter != 'none'? 'Bác sĩ/Phụ tá' : 'Bác sĩ', background: '#aabbcc', width: 200 }),
+            Object.assign({}, headerOptions, { value: 'Bác sĩ', background: '#aabbcc', width: 200 }),
+            Object.assign({}, headerOptions, { value: 'Phụ tá', background: '#aabbcc', width: 200 }),
             Object.assign({}, headerOptions, { value: 'Dịch vụ', background: '#aabbcc', width: 200 }),
             Object.assign({}, headerOptions, { value: 'Thanh toán', background: '#aabbcc', width: 200 })
           ]

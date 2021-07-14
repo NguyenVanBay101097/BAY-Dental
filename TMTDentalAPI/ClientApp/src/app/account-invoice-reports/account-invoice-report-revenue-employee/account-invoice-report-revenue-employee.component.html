@@ -6,7 +6,7 @@
           <option value="employee">Bác sĩ</option>
           <option value="assistant">Phụ tá</option>
       </select>
-        <kendo-combobox class="mr-1 kendo-combobox-sm" [placeholder]="'Tìm nhân viên'" [valueField]="'id'" [textField]="'name'" [filterable]="true" #emp [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
+        <kendo-combobox class="mr-1 kendo-combobox-sm" [placeholder]="'Nhân viên'" [valueField]="'id'" [textField]="'name'" [filterable]="true" #emp [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
         </kendo-combobox>
         <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
