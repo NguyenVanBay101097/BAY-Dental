@@ -7,6 +7,8 @@
     <div class="o_form_view">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
+                <h5>{{productRequest?.name}}</h5>
+
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="productRequest && productRequest.state == 'done'"
                         class="btn o_arrow_button disabled"
@@ -23,7 +25,7 @@
                 </div>
             </div>
             <div class="o_form_sheet">
-                <h3>{{productRequest?.name}}</h3>
+                <!-- <h3>{{productRequest?.name}}</h3> -->
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
@@ -62,21 +64,21 @@
                         </tbody>
                     </table>
                 </div>
-                <table class="table table-sm table-striped">
-                    <thead>
+                <table class="table table-sm ">
+                    <thead class="thead-light">
                         <tr>
                             <th>STT</th>
-                            <th>Mã sản phẩm</th>
-                            <th>Sản phẩm</th>
+                            <!-- <th>Mã sản phẩm</th> -->
+                            <th>Vật tư</th>
                             <th>Dịch vụ</th>
-                            <th>ĐVT</th>
+                            <th>Đơn vị tính</th>
                             <th class="text-right">Số lượng</th>
                         </tr>
                     </thead>
                     <tbody *ngIf="productRequest && productRequest.lines">
                         <tr *ngFor="let item of productRequest.lines; let i = index">
                             <td>{{i+1}}</td>
-                            <td>{{item && item.product ? item.product.defaultCode : ''}}</td>
+                            <!-- <td>{{item && item.product ? item.product.defaultCode : ''}}</td> -->
                             <td>{{item && item.product ? item.product.name : ''}}</td>
                             <td>{{item && item.saleOrderLine ? item.saleOrderLine.name : ''}}</td>
                             <td>{{item && item.producUOM ? item.producUOM.name : ''}}</td>
