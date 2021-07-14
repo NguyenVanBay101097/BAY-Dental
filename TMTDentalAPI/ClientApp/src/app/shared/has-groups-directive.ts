@@ -30,8 +30,9 @@ export class HasGroupsDirective implements OnInit {
             return false;
         }
 
-        var userInfo = this.authService.userInfo;
-        if (userInfo && userInfo.isUserRoot) {
+        const pm = localStorage.getItem("user_permission");
+        const user_permission = JSON.parse(pm);
+        if (user_permission && user_permission.isUserRoot) {
             this.renderer.setStyle(
                 this.elementRef.nativeElement,
                 'display',
