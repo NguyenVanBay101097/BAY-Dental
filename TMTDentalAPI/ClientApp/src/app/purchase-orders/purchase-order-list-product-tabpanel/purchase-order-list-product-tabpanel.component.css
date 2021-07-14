@@ -112,6 +112,7 @@ tbody>.cursor:hover {
 .size-text-14 {
     font-size: 13.5px;
     border-radius: 0;
+    width: 220px;
 }
 
 .sticky-table {
@@ -131,4 +132,8 @@ tbody>.cursor:hover {
 
 .product-type-filter .btn {
     margin: .25rem .125rem;
+}
+
+.button-group{
+    white-space: nowrap;
 }
