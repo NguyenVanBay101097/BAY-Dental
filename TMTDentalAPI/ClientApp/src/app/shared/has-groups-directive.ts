@@ -2,6 +2,7 @@ import { NgControl } from '@angular/forms';
 import { Directive, Input, ElementRef, Renderer2, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { PermissionService } from './permission.service';
+import { AuthService } from '../auth/auth.service';
 
 @Directive({
     selector: '[hasGroups]'
@@ -11,7 +12,8 @@ export class HasGroupsDirective implements OnInit {
     @Input() item: any;
     @Input() child: any;
     constructor(private elementRef: ElementRef, private renderer: Renderer2,
-        private permissionService: PermissionService) {
+        private permissionService: PermissionService,
+        private authService: AuthService) {
 
     }
 
@@ -27,6 +29,17 @@ export class HasGroupsDirective implements OnInit {
         if (!this.groups) {
             return false;
         }
+
+        var userInfo = this.authService.userInfo;
+        if (userInfo && userInfo.isUserRoot) {
+            this.renderer.setStyle(
+                this.elementRef.nativeElement,
+                'display',
+                ''
+            )
+            return false;
+        }
+
         var permissions = this.groups.split(',');
         let hasDefined = this.permissionService.hasOneDefined(permissions);
 
