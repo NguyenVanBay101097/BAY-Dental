@@ -32,6 +32,11 @@ namespace ApplicationCore.Entities
         public AccountAccount Account { get; set; }
 
         /// <summary>
+        /// hạch toán
+        /// </summary>
+        public bool IsAccounting { get; set; }
+
+        /// <summary>
         /// Chi nhánh
         /// </summary>
         public Guid? CompanyId { get; set; }

@@ -58,6 +58,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Thu chi ngoài, customer_debt, commission
         /// </summary>
         public Guid? PartnerId { get; set; }
+
+
     }
 
     public class CustomerDebtSave
