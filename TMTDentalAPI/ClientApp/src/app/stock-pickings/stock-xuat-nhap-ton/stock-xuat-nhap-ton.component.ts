@@ -1,7 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ExcelExportData } from '@progress/kendo-angular-excel-export';
-import { process } from '@progress/kendo-data-query';
+import { ExcelExportData, Workbook } from '@progress/kendo-angular-excel-export';
+import { saveAs } from '@progress/kendo-file-saver';
+import { aggregateBy, process } from '@progress/kendo-data-query';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
@@ -24,7 +25,7 @@ export class StockXuatNhapTonComponent implements OnInit {
   loading = false;
   items: StockReportXuatNhapTonItem[];
   gridData: GridDataResult;
-  limit = 20;
+  limit = 10;
   skip = 0;
   dateFrom: Date;
   dateTo: Date;
@@ -54,7 +55,9 @@ export class StockXuatNhapTonComponent implements OnInit {
     private reportService: StockReportService,
     private intlService: IntlService,
     private modalService: NgbModal,
-  ) { }
+  ) {
+    this.excelData = this.excelData.bind(this);
+  }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -88,6 +91,7 @@ export class StockXuatNhapTonComponent implements OnInit {
     val.minInventoryFilter = this.minInventoryFilter ? this.minInventoryFilter : null;
     this.reportService.getXuatNhapTonSummary(val).subscribe(res => {
       this.items = res;
+      this.computeAggregate();
       this.loadItems();
       this.loading = false;
     }, err => {
@@ -107,43 +111,63 @@ export class StockXuatNhapTonComponent implements OnInit {
       data: this.items.slice(this.skip, this.skip + this.limit),
       total: this.items.length
     };
-
-    this.sumBegin = this.gridData.data.map(val => val.begin).reduce((accumulator, currentValue) => {
-      return accumulator + currentValue;
-    }, 0);
-
-    this.sumEnd = this.gridData.data.map(val => val.end).reduce((accumulator, currentValue) => {
-      return accumulator + currentValue;
-    }, 0);
-
-    this.sumImport = this.gridData.data.map(val => val.import).reduce((accumulator, currentValue) => {
-      return accumulator + currentValue;
-    }, 0);
-
-    this.sumExport = this.gridData.data.map(val => val.export).reduce((accumulator, currentValue) => {
-      return accumulator + currentValue;
-    }, 0);
   }
 
   cellClick(item: any) {
+    const product = this.gridData.data[item.path[1].rowIndex];
     const modalRef = this.modalService.open(StockXuatNhapTonDetailDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Lịch sử nhập - xuất';
-    modalRef.componentInstance.productId = item.productId;
-    modalRef.componentInstance.dateFrom = item.dateFrom;
-    modalRef.componentInstance.dateTo = item.dateTo;
-    modalRef.componentInstance.productName = item.productName;
+    modalRef.componentInstance.productId = product.productId;
+    modalRef.componentInstance.dateFrom = product.dateFrom;
+    modalRef.componentInstance.dateTo = product.dateTo;
+    modalRef.componentInstance.productName = product.productName;
     modalRef.result.then((res) => {
 
     })
   }
 
-  public exportExcelFile(grid: GridComponent) {
-    grid.saveAsExcel();
+ 
+  computeAggregate() {
+    const result = aggregateBy(this.items, [
+      { aggregate: "sum", field: "begin" },
+      { aggregate: "sum", field: "import" },
+      { aggregate: "sum", field: "export" },
+      { aggregate: "sum", field: "end" },
+    ]);
+    this.sumBegin = result.begin.sum;
+    this.sumImport = result.import.sum;
+    this.sumExport = result.export.sum;
+    this.sumEnd = result.end.sum;    
   }
 
   inventoryChange(event) {
     this.minInventoryFilter = event ? event.value : null;
     this.skip = 0;
     this.loadDataFromApi();
+  }
+
+  public exportExcelFile(grid: GridComponent) {
+    grid.saveAsExcel();
+  }
+
+  public excelData(): ExcelExportData {
+    const result: ExcelExportData = {
+      data: process(this.items, {
+        sort: [{ field: 'productCode', dir: 'asc' }]
+      }).data
+    };
+    return result;
+  }
+
+  onExcelExport(args) {
+    args.preventDefault();
+    this.loading = true;
+    const workbook = args.workbook;
+    const index = workbook.sheets[0].rows.findIndex(x => x.type == 'footer');
+    workbook.sheets[0].rows.splice(index, 1);    
+    new Workbook(workbook).toDataURL().then((dataUrl: string) => {
+      saveAs(dataUrl, "NhapXuatTon.xlsx");
+      this.loading = false;
+    });
   }
 }
