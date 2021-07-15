@@ -47,6 +47,7 @@
 
 .has-search {
     position: relative;
+    width: 65%;
 }
 
 .has-search .form-control {
@@ -71,9 +72,11 @@
 
 .has-search input {
     border-radius: 5px;
+    
 }
 
 .flex-0-0-auto {
+    
     flex: 0 0 auto;
 }
 
@@ -112,7 +115,7 @@ tbody>.cursor:hover {
 .size-text-14 {
     font-size: 13.5px;
     border-radius: 0;
-    width: 220px;
+    width: 100% !important;
 }
 
 .sticky-table {

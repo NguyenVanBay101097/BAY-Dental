@@ -178,7 +178,7 @@
                         <p class="t_tilte flex-0-0-auto p-2">Danh sách hàng hóa</p>
 
                         <div class="group_product flex-1-1-100 overflow-hidden">
-                            <app-purchase-order-list-product-tabpanel [listProducts]="productList" (onSelectService)="selectProduct($event)">
+                            <app-purchase-order-list-product-tabpanel [listProducts]="productList" [isStock]="false" (onSelectService)="selectProduct($event)">
                             </app-purchase-order-list-product-tabpanel>
                         </div>
 
@@ -190,7 +190,7 @@
                             <span>
                                 Danh sách {{this.purchaseOrder?.type == 'order' ? 'mua hàng' : 'trả hàng'}} 
                             </span>
-                            <button class="btn btn-sm btn-primary" (click)="purchaseOrderAlmostOut()">Hàng sắp hết</button>
+                            <button *ngIf="purchaseOrder?.state == 'draft'" class="btn btn-sm btn-primary" (click)="purchaseOrderAlmostOut()">Hàng sắp hết</button>
                         </p>
                         <div class="table-scroll overflow-auto">
                             <table class="table table-sm mb-0" id="table_details">
@@ -286,7 +286,7 @@
                                          </label>
                                         </td>
                                         <td colspan="1">
-                                            <span class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">
+                                            <span class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget text-danger">
                                             {{purchaseOrder?.amountResidual | number}}
                                         </span>
                                         </td>

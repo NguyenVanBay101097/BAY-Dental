@@ -1,6 +1,6 @@
 <div class="d-flex flex-column h-100">
     <div class="product-type-filter d-flex justify-content-start">
-        <div class="flex-0-0-auto has-search mb-1 mr-1">
+        <div class="flex-0-0-auto has-search mb-1 mr-1 w-65">
             <span class="fa fa-search form-control-feedback"></span>
             <input #search accesskey="Q" class="form-control size-text-14" placeholder="Tìm kiếm theo tên [Alt + Q]"
                 type="text" id="search" (keyup)="onChangeSearch($event.target.value);">
@@ -23,6 +23,10 @@
     <div class="flex--1-1-100 overflow-auto _wrapper">
         <table class="table table-sm table-list-product">
             <tbody>
+                <tr>
+                    <td>{{type2 == 'product' ? 'Tên vật tư':'Tên thuốc'}}</td>
+                    <td class="text-center">{{isStock == true ? '':'Giá'}}</td>
+                </tr>
                 <tr class="cursor" (click)="onSelectValue(item)" *ngFor="let item of listProductFilter;let i = index">
                     <td class="sticky-td">{{item.name}}</td>
                     <td *ngIf="!isStock" class="sticky-td text-right">{{item.purchasePrice | number}}</td>

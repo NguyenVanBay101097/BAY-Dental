@@ -13,7 +13,7 @@ export class PurchaseOrderAlmostOutDialogComponent implements OnInit {
   @Input() title: string;
   listProductFilter: any[] = []
   selectedIds: any[] = [];
-  productType: string = 'medicine';
+  productType: string = 'product';
   listProduct: any[] = [];
 
   constructor(
