@@ -15,7 +15,7 @@
             </li>
         </ol>
         <div class="o_cp_left">
-            <div class="o_cp_buttons">
+            <!-- <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
                     <button type="button" class="btn btn-primary btn-sm" *ngIf="['done'].indexOf(stateControl) === -1"
                         (click)="onSave()" accesskey="s">
@@ -25,7 +25,7 @@
                         Thêm mới</button>
 
                 </div>
-            </div>
+            </div> -->
         </div>
         <div class="o_cp_right">
             <!-- <div class="dropdown">
@@ -46,20 +46,27 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
+                    <button type="button" class="btn btn-primary btn-sm" *ngIf="['done'].indexOf(stateControl) === -1"
+                        (click)="onSave()" accesskey="s">
+                        Lưu</button>
                     <button type="button" *ngIf="id && stateControl == 'draft'" class="btn btn-primary btn-sm"
                         (click)="prepareInventory()" accesskey="1">
                         Bắt đầu kiểm kho
                     </button>
-                    <button type="button" *ngIf="id && stateControl == 'confirmed' && canActionDone" class="btn btn-primary btn-sm"
-                        (click)="actionDone()" accesskey="1">
+                    <button type="button" *ngIf="id && stateControl == 'confirmed' && canActionDone"
+                        class="btn btn-primary btn-sm" (click)="actionDone()" accesskey="1">
                         Xác nhận kiểm kho
                     </button>
-                    <button type="button" *ngIf="id && stateControl == 'confirmed' && canCancel" class="btn btn-danger btn-sm"
-                        (click)="actionCancel()" accesskey="1">
+                    <button type="button" *ngIf="id && stateControl != 'draft' && canPrint"
+                        class="btn btn-primary btn-sm" (click)="onPrintStockInventory()">
+                        In phiếu</button>
+                    <button type="button" *ngIf="id && stateControl == 'confirmed' && canCancel"
+                        class="btn btn-danger btn-sm" (click)="actionCancel()" accesskey="1">
                         Hủy phiếu
                     </button>
-                    <button type="button" *ngIf="id && stateControl != 'draft' && canPrint" class="btn btn-primary btn-sm" (click)="onPrintStockInventory()">
-                        In phiếu</button>
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
+                        *ngIf="id">
+                        Thêm mới</button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="stateControl !== 'done'" class="btn o_arrow_button disabled"
@@ -82,6 +89,9 @@
             </div>
 
             <div class="o_form_sheet">
+                <div>
+                    <h5>Phiếu kiểm kho</h5>
+                </div>
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
@@ -178,7 +188,8 @@
                                     <kendo-datepicker [format]="'dd/MM/yyyy'" *ngIf="stateControl == 'draft'"
                                         formControlName="dateObj">
                                     </kendo-datepicker>
-                                    <div *ngIf="stateControl == 'draft' && f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="stateControl == 'draft' && f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                        class="text-danger">
                                         <div *ngIf="f.dateObj.errors.required">Chọn ngày kiểm</div>
                                     </div>
                                     <span *ngIf="stateControl != 'draft'">{{stockInventory.date |
@@ -227,9 +238,9 @@
                                 </div>
                                 <div class="t_scroll">
                                     <app-stock-inventory-product-list [searchText]="valueSearch" [inventoryId]="id"
-                                    (newEventEmiter)="addLine($event)"></app-stock-inventory-product-list>
+                                        (newEventEmiter)="addLine($event)"></app-stock-inventory-product-list>
                                 </div>
-                               
+
                             </div>
 
                             <div class="o_form_section_right">
@@ -240,7 +251,7 @@
                                             <th scope="col" style="width: 120px;">Mã sản phẩm</th>
                                             <th scope="col" style="width: 200px;">Sản phẩm</th>
                                             <th scope="col" style="width: 120px;" hasGroups
-                                                [groups]="'product.group_uom'">ĐVT</th>
+                                                [groups]="'product.group_uom'">Đơn vị tính</th>
                                             <th scope="col" style="width: 10%;">Tồn kho</th>
                                             <th scope="col" style="width: 10%;">Thực tế</th>
                                             <th *ngIf="stateControl != 'done'" scope="col" style="width: 10%;">Thao tác
