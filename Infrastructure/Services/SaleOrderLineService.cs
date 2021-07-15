@@ -1057,6 +1057,7 @@ namespace Infrastructure.Services
             if (entity == null)
                 throw new Exception("Không tìm thấy dịch vụ!");
             _mapper.Map(val, entity);
+            entity.SaleOrderLineToothRels.Clear();
             if (val.ToothType == "manual")
             {
                 foreach (var toothId in val.ToothIds)
