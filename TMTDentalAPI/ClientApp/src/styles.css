@@ -983,3 +983,28 @@ html .o_web_client {
     background-color: #0d6efd;
     border-color: #0d6efd;
 }
+
+.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.o_arrow_button_bg_primary.btn-primary.disabled {
+    color: white;
+    font-size: 11px;
+    background-color: #007bff;
+    cursor: default;
+}
+
+.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.o_arrow_button_bg_primary:not(:first-child):before {
+    right: -11px;
+    border-left-color: white !important;
+}
+
+.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.o_arrow_button_bg_primary.btn-primary.disabled:after {
+    border-left-color: #007bff;
+}
+
+.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.o_arrow_button_bg_primary.disabled{
+    background-color: #e9ecef;
+}
+
+.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.o_arrow_button_bg_primary:not(:first-child):before, 
+.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.o_arrow_button_bg_primary:not(:first-child):after{
+    border-left: 10px solid #e9ecef;
+}

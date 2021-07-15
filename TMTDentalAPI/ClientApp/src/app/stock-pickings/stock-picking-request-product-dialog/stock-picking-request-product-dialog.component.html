@@ -11,13 +11,13 @@
 
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="productRequest && productRequest.state == 'done'"
-                        class="btn o_arrow_button disabled"
+                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
                         [class.btn-primary]="productRequest && productRequest.state == 'done'"
                         [class.btn-secondary]="productRequest && productRequest.state == 'done'" type="button">
                         Đã xuất
                     </button>
                     <button [disabled]="productRequest && productRequest.state == 'confirmed'"
-                        class="btn o_arrow_button disabled"
+                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
                         [class.btn-primary]="productRequest && productRequest.state == 'confirmed'"
                         [class.btn-secondary]="productRequest && productRequest.state == 'confirmed'" type="button">
                         Đang yêu cầu
@@ -65,7 +65,7 @@
                     </table>
                 </div>
                 <table class="table table-sm ">
-                    <thead class="thead-light">
+                    <thead class="th-light">
                         <tr>
                             <th>STT</th>
                             <!-- <th>Mã sản phẩm</th> -->

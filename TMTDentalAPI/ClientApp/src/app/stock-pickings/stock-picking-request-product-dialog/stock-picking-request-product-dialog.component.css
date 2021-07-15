@@ -1,33 +1,14 @@
-.table .thead-light th{
+.table .th-light th{
     font-weight: normal;
+}
+
+.table .th-light{
+    background-color: #F8F9FA;
+    border-color: #F8F9FA;
 }
 
 .o_form_view .o_form_statusbar{
     align-items: center;
-}
-
-.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.btn-primary.disabled {
-    color: white;
-    font-size: 11px;
-    background-color: #007bff;
-    cursor: default;
-}
-
-.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button:not(:first-child):before {
-    border-left-color: #007bff;
-}
-
-.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.btn-primary.disabled:after {
-    border-left-color: #007bff;
-}
-
-.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.disabled{
-    background-color: #e9ecef;
-}
-
-.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button:not(:first-child):before, 
-.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button:not(:first-child):after{
-    border-left: 10px solid #e9ecef;
 }
 
 .o_form_view .o_form_sheet_bg .o_form_sheet{

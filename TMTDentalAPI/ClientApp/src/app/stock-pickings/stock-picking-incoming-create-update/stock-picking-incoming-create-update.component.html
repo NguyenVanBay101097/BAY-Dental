@@ -41,12 +41,12 @@
                     </a>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="picking?.state !== 'done'" class="btn o_arrow_button disabled"
+                    <button [disabled]="picking?.state !== 'done'" class="btn o_arrow_button o_arrow_button_bg_primary disabled"
                         [ngClass]="{'btn-primary': picking?.state === 'done', 'btn-secondary': picking?.state !== 'done'}"
                         type="button">
                         Hoàn thành
                     </button>
-                    <button [disabled]="picking?.state !== 'draft'" class="btn o_arrow_button disabled"
+                    <button [disabled]="picking?.state !== 'draft'" class="btn o_arrow_button o_arrow_button_bg_primary disabled"
                         [ngClass]="{'btn-primary': picking?.state === 'draft', 'btn-secondary': picking?.state !== 'draft'}"
                         type="button">
                         Nháp

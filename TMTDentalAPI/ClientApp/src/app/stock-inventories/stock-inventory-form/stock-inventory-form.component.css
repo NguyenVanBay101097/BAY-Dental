@@ -1,9 +1,13 @@
+.o_form_sheet_bg{
+  border: none;
+}
+
 .o_form_view .o_form_sheet_bg .o_form_sheet {
   min-width: 650px;
   max-width: 80%;
   min-height: 330px;
   background: #fff;
-  padding: 16px;
+  padding: 0;
   margin: 10px auto;
 }
 
@@ -51,4 +55,61 @@
 
 .flex-1-1-100 {
   flex: 1 1 100%;
+}
+
+.btn-secondary.disabled, .btn-secondary:disabled {
+  color: #212529;
+  background-color: #F0F1F3;
+  border-color: #F0F1F3;
+}
+.t_title{
+  border-bottom: 1px solid #E2E7ED;
+  padding: 16px 16px 8px 16px;
+}
+
+.o_form_view .o_form_sheet_bg .o_form_sheet{
+  border: 1px solid #E2E7ED;
+  border-radius: 6px;
+}
+
+.o_group{
+  margin: 0 !important;
+  padding: 16px !important;
+}
+
+.border-content{
+  border: 1px solid #E2E7ED;
+  border-radius: 6px;
+}
+
+.table .th-light{
+  background-color: #F8F9FA;
+  border-color: #F8F9FA;
+}
+
+.table thead tr th{
+  font-weight: 500 !important;
+}
+
+.nav-tabs{
+  border-bottom: none;
+}
+
+.nav-tabs .nav-link{
+  border-bottom: 3px solid transparent !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-left: none !important;
+  color: #222 !important;
+}
+
+.nav-tabs .nav-link:hover{
+  color: #212529 !important;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+  color: #495057;
+  background-color: #fff;
+  border-bottom-color: #007bff !important;
+  font-weight: 500 !important;
 }
