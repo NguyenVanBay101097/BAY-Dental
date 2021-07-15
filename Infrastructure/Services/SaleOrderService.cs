@@ -1902,7 +1902,8 @@ namespace Infrastructure.Services
                 DiscountFixed = x.DiscountFixed,
                 PriceUnit = x.PriceUnit,
                 PriceSubTotal = x.PriceSubTotal,
-                Sequence = x.Sequence
+                Sequence = x.Sequence,
+                AmountDiscountTotal = x.AmountDiscountTotal
             }).ToListAsync();
             //order.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);        
             order.DotKhams = await _GetListDotkhamInfo(order.Id);
