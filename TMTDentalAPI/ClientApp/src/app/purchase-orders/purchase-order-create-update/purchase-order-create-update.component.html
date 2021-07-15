@@ -145,7 +145,8 @@
                                 <tr *ngIf="purchaseOrder?.state != 'draft'">
                                     <td colspan="1" class="o_td_label">
                                         <label class="o_form_label o_form_label_help">
-                                            Tham chiếu {{purchaseOrder?.type == 'order' ? 'nhập kho' : 'xuất kho'}}
+                                            <!-- Tham chiếu {{purchaseOrder?.type == 'order' ? 'nhập kho' : 'xuất kho'}} -->
+                                            Tham chiếu
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
@@ -190,7 +191,7 @@
                             <span>
                                 Danh sách {{this.purchaseOrder?.type == 'order' ? 'mua hàng' : 'trả hàng'}} 
                             </span>
-                            <button *ngIf="purchaseOrder?.state == 'draft'" class="btn btn-sm btn-primary" (click)="purchaseOrderAlmostOut()">Hàng sắp hết</button>
+                            <button *ngIf="purchaseOrder?.state == 'draft' && type == 'order'" class="btn btn-sm btn-primary" (click)="purchaseOrderAlmostOut()">Hàng sắp hết</button>
                         </p>
                         <div class="table-scroll overflow-auto">
                             <table class="table table-sm mb-0" id="table_details">

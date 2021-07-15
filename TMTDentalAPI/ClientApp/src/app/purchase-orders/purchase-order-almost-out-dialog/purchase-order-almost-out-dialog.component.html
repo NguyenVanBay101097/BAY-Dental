@@ -29,7 +29,7 @@
 
     <div class="o_content">
         <kendo-grid [data]="listProductFilter" [selectable]="true" [resizable]="true" [kendoGridSelectBy]="'id'"
-            [selectedKeys]="selectedIds">
+            [selectedKeys]="selectedIds" [height]="400">
             <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
             <kendo-grid-column field="name" [title]="productType=='medicine'?'Tên thuốc':'Tên vật tư'"></kendo-grid-column>
             <kendo-grid-column field="purchasePrice" title="Giá mua"></kendo-grid-column>
