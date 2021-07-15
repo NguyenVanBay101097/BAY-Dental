@@ -83,6 +83,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   filteredPricelists: ProductPriceListBasic[];
   discountDefault: DiscountDefault;
   linesDirty = false;
+  isCollapsed = false;
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -93,6 +94,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('toathuocComp', { static: false }) toathuocComp: PartnerCustomerToathuocListComponent;
   @ViewChild('paymentComp', { static: false }) paymentComp: SaleOrderPaymentListComponent;
 
+  partner: any;
   saleOrder: any;
   saleOrderPrint: any;
   laboOrders: LaboOrderBasic[] = [];
@@ -114,6 +116,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   childEmiter = new BehaviorSubject<any>(null);
   @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
   lineSelected = null;
+  toothTypeDict = [
+    { name: "Hàm trên", value: "upper_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
+    { name: "Hàm dưới", value: "lower_jaw" },
+    { name: "Chọn răng", value: "manual" },
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -151,12 +159,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.formGroup = this.fb.group({
       dateOrderObj: [null, Validators.required],
     });
-
     if (this.partnerId) {
-      this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' }).subscribe((res: any) => {
-        this.saleOrder = res;
-        console.log(this.saleOrder);
-        this.saleOrder.partner.categories.forEach(item => {
+      this.partnerService.getCustomerInfo(this.partnerId).subscribe((result) => {
+        this.partner = result;
+        this.partner.categories.forEach(item => {
           var category = {
             Id: item.id,
             Name: item.name,
@@ -165,23 +171,19 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           };
           this.tags.push(category);
         });
-        this.updateFormGroup(res);
-      });
-    } else if (this.saleOrderId) {
-      this.saleOrderService.get(this.saleOrderId).subscribe((res: any) => {
-        this.saleOrder = res;
-        this.saleOrder.partner.categories.forEach(item => {
-          var category = {
-            Id: item.id,
-            Name: item.name,
-            CompleteName: item.completeName,
-            Color: item.color
-          };
-          this.tags.push(category);
-        });
-        this.updateFormGroup(res);
       });
     }
+    if (this.saleOrderId) {
+      this.saleOrderService.get(this.saleOrderId).subscribe((res: any) => {
+        this.saleOrder = res;
+        this.updateFormGroup(res);
+      });
+    } else {
+      this.saleOrderService.defaultGet().subscribe((res: any) => {
+        this.saleOrder = res;
+        this.updateFormGroup(res);
+      });
+    } 
     // this.routeActive();
     //this.loadToothCateDefault();
     this.loadTeethList();
@@ -296,11 +298,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
 
     return undefined;
-  }
-
-  get partner() {
-    var control = this.formGroup.get('partner');
-    return control ? control.value : null;
   }
 
   loadToothCateDefault() {
@@ -422,7 +419,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   getFormDataSave() {
     var val = {
       dateOrder: this.saleOrder.dateOrder,
-      partnerId: this.saleOrder.partner.id,
+      partnerId: this.partner.id,
       companyId: this.saleOrder.companyId,
       orderLines: this.saleOrder.orderLines.map(x => {
         return {
@@ -721,7 +718,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
         modalRef.componentInstance.advanceAmount = this.amountAdvanceBalance;
-        modalRef.componentInstance.partner = this.saleOrder.partner;
+        modalRef.componentInstance.partner = this.partner;
 
         modalRef.result.then(result => {
           this.notificationService.show({
@@ -781,7 +778,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   dialogAppointment() {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.defaultVal = { partnerId: (this.saleOrder.partner && this.saleOrder.partner.id), saleOrderId: this.saleOrderId };
+    modalRef.componentInstance.defaultVal = { partnerId: (this.partner && this.partner.id), saleOrderId: this.saleOrderId };
     modalRef.result.then(() => {
       this.notify('success', 'Tạo lịch hẹn thành công');
     }, () => {

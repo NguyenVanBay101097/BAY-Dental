@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
-import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { ToothDisplay } from 'src/app/teeth/tooth.service';
+import { ToothCategoryBasic } from 'src/app/tooth-categories/tooth-category.service';
 
 @Component({
   selector: 'app-tooth-selection-dialog',
@@ -12,18 +12,14 @@ import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categori
 export class ToothSelectionDialogComponent implements OnInit {
 
   myForm: FormGroup;
-  toothTypeDict = [
-    { name: "Hàm trên", value: "upper_jaw" },
-    { name: "Nguyên hàm", value: "whole_jaw" },
-    { name: "Hàm dưới", value: "lower_jaw" },
-    { name: "Chọn răng", value: "manual" },
-  ];
+  toothTypeDict: any[] = [];
   hamList: { [key: string]: {} };
   teethSelected: ToothDisplay[] = [];
   filteredToothCategories: any[] = [];
+  listTeeths: any[] = [];
   cateId: string;
   submitted: boolean = false;
-  @Input() toothDataInfo: any;
+  toothDataInfo: any;
   toothRemove: any[] = [];
   get f() { return this.myForm.controls; }
 
@@ -33,9 +29,7 @@ export class ToothSelectionDialogComponent implements OnInit {
 
   constructor(
     public activeModal: NgbActiveModal,
-    private fb: FormBuilder,
-    private toothService: ToothService,
-    private toothCategoryService: ToothCategoryService,
+    private fb: FormBuilder
   ) { }
 
   ngOnInit() {
@@ -51,30 +45,17 @@ export class ToothSelectionDialogComponent implements OnInit {
       this.loadTeethMap(this.toothDataInfo.toothCategory);
     }
     else {
-      this.loadDefaultToothCategory().subscribe(result => {
-        this.cateId = result.id;
-        this.f.toothCategory.setValue(result);
-        this.loadTeethMap(result);
-      })
+      if (this.filteredToothCategories.length > 0) {
+        this.cateId = this.filteredToothCategories[0].id;
+        this.f.toothCategory.setValue(this.filteredToothCategories[0]);
+        this.loadTeethMap(this.filteredToothCategories[0]);
+      }
     }
-
-    setTimeout(() => {
-      this.loadToothCategories();
-    });
-  }
-
-  loadDefaultToothCategory() {
-    return this.toothCategoryService.getDefaultCategory();
-  }
-
-  loadToothCategories() {
-    return this.toothCategoryService.getAll().subscribe(result => this.filteredToothCategories = result);
   }
 
   loadTeethMap(categ: ToothCategoryBasic) {
-    var val = new ToothFilter();
-    val.categoryId = categ.id;
-    return this.toothService.getAllBasic(val).subscribe(result => this.processTeeth(result));
+    var teeth = this.listTeeths.filter(el => el.categoryId == categ.id);
+    this.processTeeth(teeth);
   }
 
   processTeeth(teeth: ToothDisplay[]) {
