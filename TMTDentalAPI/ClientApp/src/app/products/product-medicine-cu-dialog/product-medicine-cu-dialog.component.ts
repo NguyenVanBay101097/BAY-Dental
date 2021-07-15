@@ -16,6 +16,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UoMPaged, UoMBasic, UomService } from 'src/app/uoms/uom.service';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
 import { StockInventoryCriteriaPaged, StockInventoryCriteriaService } from 'src/app/stock-inventories/stock-inventory-criteria.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-product-medicine-cu-dialog',
@@ -34,6 +35,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
   categoryIdSave: string;
   opened = false;
   submitted = false;
+  showStandardPrice = false; // ẩn hiện giá vốn theo phân quyền
 
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('uoMCbx', { static: true }) uoMCbx: ComboBoxComponent;
@@ -47,7 +49,8 @@ export class ProductMedicineCuDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
     private uoMService: UomService,
-    private productCriteriaService: StockInventoryCriteriaService
+    private productCriteriaService: StockInventoryCriteriaService, 
+    private checkPermissionService: CheckPermissionService
   ) {
   }
 
@@ -96,6 +99,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
         this.criteriaMultiSelect.loading = false;
       });
 
+      this.checkPermission();
       this.loadProductCriteriaList();
       this.categCbxFilterChange();
       this.uoMCbxFilterChange();
@@ -332,6 +336,10 @@ export class ProductMedicineCuDialogComponent implements OnInit {
         this.listProductCriteria = res.items;
       }
     );
+  }
+
+  checkPermission(){
+    this.showStandardPrice = this.checkPermissionService.check(['Catalog.Products.StandardPrice']);
   }
 }
 
