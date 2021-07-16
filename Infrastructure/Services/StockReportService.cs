@@ -44,7 +44,7 @@ namespace Infrastructure.Services
 
             var companyId = CompanyId;
             var dict = new Dictionary<Guid, StockReportXuatNhapTonItem>();
-            var query = _context.StockHistories.Where(x => x.date < date_from && x.company_id == companyId);
+            var query = _context.StockHistories.Where(x => x.date >= date_from && x.date <= date_to && x.company_id == companyId);
             if (val.ProductCategId.HasValue)
                 query = query.Where(x => x.product_categ_id == val.ProductCategId);
             if (val.ProductId.HasValue)

@@ -126,7 +126,6 @@ export class StockXuatNhapTonComponent implements OnInit {
     })
   }
 
- 
   computeAggregate() {
     const result = aggregateBy(this.items, [
       { aggregate: "sum", field: "begin" },
@@ -134,10 +133,10 @@ export class StockXuatNhapTonComponent implements OnInit {
       { aggregate: "sum", field: "export" },
       { aggregate: "sum", field: "end" },
     ]);
-    this.sumBegin = result.begin.sum;
-    this.sumImport = result.import.sum;
-    this.sumExport = result.export.sum;
-    this.sumEnd = result.end.sum;    
+    this.sumBegin = result.begin ? result.begin.sum : 0;
+    this.sumImport = result.import ? result.import.sum : 0;
+    this.sumExport = result.export ? result.export.sum : 0;
+    this.sumEnd = result.end ? result.end.sum : 0;
   }
 
   inventoryChange(event) {
@@ -164,7 +163,7 @@ export class StockXuatNhapTonComponent implements OnInit {
     this.loading = true;
     const workbook = args.workbook;
     const index = workbook.sheets[0].rows.findIndex(x => x.type == 'footer');
-    workbook.sheets[0].rows.splice(index, 1);    
+    workbook.sheets[0].rows.splice(index, 1);
     new Workbook(workbook).toDataURL().then((dataUrl: string) => {
       saveAs(dataUrl, "NhapXuatTon.xlsx");
       this.loading = false;
