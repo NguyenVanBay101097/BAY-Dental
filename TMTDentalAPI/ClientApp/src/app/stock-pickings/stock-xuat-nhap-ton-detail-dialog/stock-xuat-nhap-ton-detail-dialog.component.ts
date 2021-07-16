@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { map } from 'rxjs/operators';
 import { GetStockHistoryReq, StockReportService } from 'src/app/stock-reports/stock-report.service';
