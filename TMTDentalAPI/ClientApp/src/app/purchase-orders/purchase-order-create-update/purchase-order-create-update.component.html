@@ -49,16 +49,16 @@
 
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="purchaseOrder?.state !== 'done'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': purchaseOrder?.state === 'done', 'btn-secondary': purchaseOrder?.state !== 'done'}" type="button">
+                    <button [disabled]="purchaseOrder?.state !== 'done'" class="btn o_arrow_button o_arrow_button_bg_primary disabled" [ngClass]="{'btn-primary': purchaseOrder?.state === 'done', 'btn-secondary': purchaseOrder?.state !== 'done'}" type="button">
                         Hoàn thành
                     </button>
-                    <button *ngIf="purchaseOrder?.state === 'cancel'" [disabled]="purchaseOrder?.state !== 'cancel'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': purchaseOrder?.state === 'cancel', 'btn-secondary': purchaseOrder?.state !== 'cancel'}" type="button">
+                    <button *ngIf="purchaseOrder?.state === 'cancel'" [disabled]="purchaseOrder?.state !== 'cancel'" class="btn o_arrow_button o_arrow_button_bg_primary disabled" [ngClass]="{'btn-primary': purchaseOrder?.state === 'cancel', 'btn-secondary': purchaseOrder?.state !== 'cancel'}" type="button">
                         Đã hủy
                     </button>
-                    <button [disabled]="purchaseOrder?.state !== 'purchase'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': purchaseOrder?.state === 'purchase', 'btn-secondary': purchaseOrder?.state !== 'purchase'}" type="button">
+                    <button [disabled]="purchaseOrder?.state !== 'purchase'" class="btn o_arrow_button o_arrow_button_bg_primary disabled" [ngClass]="{'btn-primary': purchaseOrder?.state === 'purchase', 'btn-secondary': purchaseOrder?.state !== 'purchase'}" type="button">
                         Đơn hàng
                     </button>
-                    <button [disabled]="purchaseOrder?.state !== 'draft'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': purchaseOrder?.state === 'draft', 'btn-secondary': purchaseOrder?.state !== 'draft'}" type="button">
+                    <button [disabled]="purchaseOrder?.state !== 'draft'" class="btn o_arrow_button o_arrow_button_bg_primary disabled" [ngClass]="{'btn-primary': purchaseOrder?.state === 'draft', 'btn-secondary': purchaseOrder?.state !== 'draft'}" type="button">
                         Nháp
                     </button>
 
@@ -81,7 +81,7 @@
                                         <kendo-combobox [data]="filteredPartners" [textField]="'name'" [class.d-none]="purchaseOrder?.state != 'draft'" [filterable]="true" #partnerCbx formControlName="partner" [valueField]="'id'">
                                         </kendo-combobox>
                                         <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
-                                            <div *ngIf="f.partner.errors.required">Chọn cung cấp</div>
+                                            <div *ngIf="f.partner.errors.required">Chọn nhà cung cấp</div>
                                         </div>
                                         <span [class.d-none]="purchaseOrder?.state == 'draft'">
                                             {{purchaseOrder?.partner ? purchaseOrder?.partner?.name: ''}}
@@ -99,7 +99,7 @@
                                         <kendo-datepicker [format]="'dd/MM/yyyy'" *ngIf="purchaseOrder?.state == 'draft'" formControlName="dateOrderObj">
                                         </kendo-datepicker>
                                         <div *ngIf="purchaseOrder?.state == 'draft' && f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
-                                            <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày {{purchaseOrder?.type == 'order' ? 'mua' : 'trả'}}</div>
+                                            <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày {{purchaseOrder?.type == 'order' ? 'mua' : 'trả'}} hàng</div>
                                         </div>
                                         <span *ngIf="purchaseOrder?.state != 'draft'">
                                             {{purchaseOrder?.dateOrder | date: 'shortDate'}}
@@ -130,6 +130,9 @@
                                     <td colspan="1" style="width: 100%;">
                                         <kendo-numerictextbox [min]="0" (valueChange)="onChangeAmountPayment($event)" [format]="'n0'" [autoCorrect]="true" formControlName="amountPayment">
                                         </kendo-numerictextbox>
+                                        <div *ngIf="f.amountPayment.errors && (f.amountPayment.touched || f.amountPayment.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.amountPayment.errors.required">Nhập số tiền</div>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr *ngIf="purchaseOrder?.state != 'draft'">
