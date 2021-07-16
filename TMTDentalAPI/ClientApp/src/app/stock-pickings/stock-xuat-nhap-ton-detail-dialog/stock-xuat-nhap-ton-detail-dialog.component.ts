@@ -14,7 +14,7 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
   title: string;
   gridData: GridDataResult;
   loading: boolean = false;
-  limit: number = 20;
+  limit: number = 5;
   skip: number = 0;
   dateFrom: string;
   dateTo: string;
@@ -53,7 +53,10 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
     })
   }
 
-  pageChange(event) { }
+  pageChange(event) { 
+    this.skip = event.skip;
+    this.loadDataFromApi();
+  }
 
   exportExcelFile() {
     var val = new GetStockHistoryReq();
