@@ -38,7 +38,7 @@ namespace Infrastructure.Services
 
             var sessionId = StringUtils.RandomString(32);
 
-            var access_token = await GetApiToken(_clientId, _clientSecret, sessionId);
+            var access_token = await GetAccessToken(_clientId, _clientSecret, sessionId);
 
             if (string.IsNullOrEmpty(access_token))
                 return null;
@@ -66,7 +66,7 @@ namespace Infrastructure.Services
             return null;
         }
 
-        public async Task<string> GetApiToken(string clientId, string clientsecret, string sessionId)
+        public async Task<string> GetAccessToken(string clientId, string clientsecret, string sessionId)
         {
             var accessToken = GetFromCache(clientId);
 
@@ -79,14 +79,14 @@ namespace Infrastructure.Services
             }
 
             // add
-            var newAccessToken = await getApiToken(clientId, clientsecret, sessionId);
+            var newAccessToken = await GetApiToken(clientId, clientsecret, sessionId);
             AddToCache(clientId, newAccessToken);
 
             return newAccessToken.AccessToken;
         }
 
 
-        private async Task<AccessTokenItem> getApiToken(string clientId, string clientsecret, string sessionId)
+        private async Task<AccessTokenItem> GetApiToken(string clientId, string clientsecret, string sessionId)
         {
             try
             {
