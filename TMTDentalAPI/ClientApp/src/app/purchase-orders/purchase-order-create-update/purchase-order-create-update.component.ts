@@ -128,6 +128,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       control.clear();
       result.orderLines.forEach(line => {
         var g = this.fb.group(line);
+        g.get('priceUnit').setValidators([Validators.required]);
+        g.get('discount').setValidators([Validators.required]);
+        g.get('productQty').setValidators([Validators.required]);
         control.push(g);
       });
     });
@@ -465,6 +468,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       });
     } else {
       this.purchaseOrderService.create(data).subscribe((result: any) => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.router.navigate(['/purchase/orders/edit/' + result.id]);
       });
     }
