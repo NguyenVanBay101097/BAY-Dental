@@ -413,6 +413,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Partner)
                 .Include(x => x.CreatedBy)
                 .Include(x => x.Journal)
+                .Include(x => x.Agent)
                 ).FirstOrDefaultAsync();
 
             var result = _mapper.Map<PrintVM>(res);

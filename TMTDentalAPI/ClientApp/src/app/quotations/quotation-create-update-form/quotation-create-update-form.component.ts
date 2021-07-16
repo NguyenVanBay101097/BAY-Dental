@@ -245,10 +245,17 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   getAmountPayment(payment: PaymentQuotationDisplay) {
     if (payment.discountPercentType == 'cash') {
-      return payment.payment;
-    } else {
+      return payment.payment || 0;
+    } else {    
       var totalAmount = this.getAmountSubTotal() - this.getTotalDiscount();
       return (payment.payment / 100) * totalAmount;
+    }
+  }
+
+  changeDiscountType(value, index){
+    var payment = this.quotation.payments[index];
+    if(payment && payment.discountPercentType == value){
+      payment.payment = null;
     }
   }
 
@@ -598,7 +605,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   getTotalDiscount() {
-    return this.quotation.totalAmountDiscount;
+    return this.quotation.totalAmountDiscount == undefined ? 0 : this.quotation.totalAmountDiscount;
     // var res = this.quotation.lines.reduce((total, cur) => {
     //   return total + (cur.amountDiscountTotal || 0) * cur.qty;
     // }, 0);

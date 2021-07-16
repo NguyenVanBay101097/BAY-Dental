@@ -999,7 +999,7 @@ namespace Infrastructure.Services
                         foreach (var child in promotion.Lines)
                         {
                             child.Amount = promotion.Amount;
-                            child.PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0);
+                            child.PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount) : 0);
                         }
                     }
                 }

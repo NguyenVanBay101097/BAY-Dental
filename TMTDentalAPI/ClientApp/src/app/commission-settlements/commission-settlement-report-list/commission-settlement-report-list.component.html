@@ -2,9 +2,11 @@
     <div class="o_form_view o_form_nosheet o_form_editable">
         <div class="my-3 d-flex justify-content-between">
             <div class="d-flex justify-content-between">
-                <app-tai-date-range-filter-dropdown title="Thời gian" class="mr-1" [dateFrom]="dateFrom"
+                <app-date-range-picker-filter title="Thời gian" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onDateSearchChange($event)">
+                </app-date-range-picker-filter>              
+                <!-- <app-tai-date-range-filter-dropdown title="Thời gian" class="mr-1" [dateFrom]="dateFrom"
                     [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
-                </app-tai-date-range-filter-dropdown>
+                </app-tai-date-range-filter-dropdown> -->
                 <kendo-combobox [placeholder]="'Tất cả nhân viên'" (valueChange)="valueEmployeeChange($event)"
                     class="kendo-combobox-sm mr-1" [filterable]="true" [data]="filteredEmployees" #employeeCbx
                     [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
@@ -14,7 +16,7 @@
                     [textField]="'name'">
                 </kendo-combobox>
                 <button type="button" class="btn btn-secondary btn-sm mr-1" (click)="exportCommissionExcelFile()"><i
-                        class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
+                        class="fas fa-download"></i>&nbsp;Xuất excel</button>
             </div>
         </div>
         <kendo-grid [data]="reportResults" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"

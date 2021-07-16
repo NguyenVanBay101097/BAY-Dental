@@ -133,7 +133,7 @@ namespace Infrastructure.Services
         {
             //Mapper
             var saleOrderPayment = _mapper.Map<SaleOrderPayment>(val);
-            SaveLines(val, saleOrderPayment);
+            SaveLines(val, saleOrderPayment);        
             await CreateAsync(saleOrderPayment);
 
             return saleOrderPayment;

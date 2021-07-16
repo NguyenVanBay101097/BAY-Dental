@@ -2,9 +2,8 @@
     <div class="o_form_view o_form_nosheet o_form_editable">
         <div class="my-3 d-flex justify-content-between">
             <div class="o_cp_t_left flex-wrap">
-                <app-tai-date-range-filter-dropdown title="Thời gian" class="mr-1 mb-2" [dateFrom]="dateFrom"
-                    [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
-                </app-tai-date-range-filter-dropdown>
+                <app-date-range-picker-filter title="Thời gian" class="mr-1 mb-2" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onDateSearchChange($event)">
+                </app-date-range-picker-filter>
                 <kendo-combobox [placeholder]="'Tất cả nhân viên'" (valueChange)="valueEmployeeChange($event)"
                     class="kendo-combobox-sm mr-1 mb-2" [filterable]="true" [data]="filteredEmployees" #employeeCbx
                     [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
@@ -13,8 +12,8 @@
                     class="kendo-combobox-sm mr-1 mb-2" [data]="filteredCommissionType" [valueField]="'value'"
                     [textField]="'name'">
                 </kendo-combobox>
-                <button type="button" class="btn btn-secondary btn-sm mr-1 mb-2" (click)="exportCommissionExcelFile()"><i
-                        class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
+                <button type="button" class="btn btn-secondary btn-sm mr-1 mb-2"
+                    (click)="exportCommissionExcelFile()"><i class="fas fa-download"></i>&nbsp;Xuất excel</button>
             </div>
 
             <div class="o_cp_t_right">
@@ -60,7 +59,7 @@
                     {{dataItem.percentage | number}} %
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="amount" title="Hoa hồng" class="text-right" width="120">
+            <kendo-grid-column field="amount" title="Tiền hoa hồng" class="text-right" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.amount | number}}
                 </ng-template>

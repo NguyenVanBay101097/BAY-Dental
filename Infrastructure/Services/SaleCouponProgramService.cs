@@ -729,6 +729,8 @@ namespace Infrastructure.Services
             var countApplied = await _GetCountAppliedAsync(self);
             if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng.";
+            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountApplyOn == "on_order")
+                message.Error = "Mã khuyến mãi này không dùng chung với khuyến mãi khác";
             else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > line.Order.DateOrder))
                 message.Error = $"Mã khuyến mãi không được áp dụng trong hôm nay";
             else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < line.Order.DateOrder))

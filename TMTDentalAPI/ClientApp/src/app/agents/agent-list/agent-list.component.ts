@@ -17,7 +17,7 @@ import { AgentCreateUpdateDialogComponent } from 'src/app/shared/agent-create-up
 })
 export class AgentListComponent implements OnInit {
   gridData: GridDataResult;
-  limit = 20;
+  limit = 10;
   skip = 0;
   loading = false;
 
