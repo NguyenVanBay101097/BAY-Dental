@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window p-2">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" [height]="500"
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="movePickingName" title="Số phiếu" width="120">
         </kendo-grid-column>
