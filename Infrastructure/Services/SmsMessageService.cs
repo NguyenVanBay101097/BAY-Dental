@@ -8,6 +8,7 @@ using Infrastructure.Data;
 using Infrastructure.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
@@ -35,6 +36,8 @@ namespace Infrastructure.Services
         private readonly IAsyncRepository<SaleOrder> _saleOrderRepository;
         private readonly IAsyncRepository<SmsCampaign> _smsCampaignRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpClientFactory _clientFactory;
+        private readonly IDistributedCache _cache;
 
         private readonly string SpecialCharactors = "@,_,{,},[,],|,~,\\,\\,$";
         private readonly string BacklistString = "khuyen mai,uu dai,tang,chiet khau,co hoi nhan ngay,co hoi boc tham,rut tham,trung thuong,giam***%,sale***upto,mua* tang*,giamgia,giam d," +
@@ -43,13 +46,16 @@ namespace Infrastructure.Services
         public SmsMessageService(CatalogDbContext context,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
+            IHttpClientFactory clientFactory,
+            IDistributedCache cache,
             IAsyncRepository<SaleOrderLine> saleLineRepository,
             IAsyncRepository<SaleOrder> saleOrderRepository,
             IAsyncRepository<SmsMessage> repository,
             IAsyncRepository<Partner> partnerRepository,
             IAsyncRepository<SmsMessageDetail> messageDetailRepository,
             IAsyncRepository<Appointment> appointmentRepository,
-            IAsyncRepository<SmsCampaign> smsCampaignRepository)
+            IAsyncRepository<SmsCampaign> smsCampaignRepository         
+            )
         {
             _mapper = mapper;
             _context = context;
@@ -61,6 +67,8 @@ namespace Infrastructure.Services
             _messageDetailRepository = messageDetailRepository;
             _appointmentRepository = appointmentRepository;
             _smsCampaignRepository = smsCampaignRepository;
+            _clientFactory = clientFactory;
+            _cache = cache;
         }
 
         private IQueryable<SmsMessage> GetQueryable(SmsMessagePaged val)
@@ -297,13 +305,9 @@ namespace Infrastructure.Services
 
             var backlists = BacklistString.Split(",");
             var specialChars = SpecialCharactors.Split(",");
-            // lấy random
-            var sessionId = StringUtils.RandomString(20);
-            var acesstoken = await GetAccessToken(account.ClientId, account.ClientSecret, sessionId);
-            if (acesstoken == null)
-                return;
 
-            var senderService = new FptSenderService(account.BrandName, acesstoken.access_token , sessionId);
+            //var senderService = new FptSenderService();
+            var senderService = new FptSenderService(_clientFactory , _cache, account.ClientId , account.ClientSecret);
             foreach (var detail in sefts)
             {
                 //neu truong hop detail ma co noi dung trong blacklist thi chuyen sang state canceled
@@ -314,7 +318,7 @@ namespace Infrastructure.Services
                 }
                 else
                 {
-                    var sendResult = await senderService.SendSMS(detail.Number, detail.Body);
+                    var sendResult = await senderService.SendSMS(account.BrandName,detail.Number, detail.Body);
                     if (sendResult != null)
                     {
                         if (!sendResult.Error.HasValue)
@@ -335,42 +339,7 @@ namespace Infrastructure.Services
             }
 
             await _messageDetailRepository.UpdateAsync(sefts);
-        }
-
-        public async Task<FPTAccessTokenResponseModel> GetAccessToken( string clientId, string clientsecret, string sessionId)
-        {
-            ////url dev test IP : 14.169.99.3
-            ///var url = "http://sandbox.sms.fpt.net/oauth2/token";
-
-            //url production IP: 14.169.99.3
-           var url = "https://app.sms.fpt.net/oauth2/token";
-
-            var data = new FPTAccessTokenRequestModel
-            {
-                client_id = clientId,
-                client_secret = clientsecret,
-                scope = "send_brandname_otp send_brandname",
-                session_id = sessionId,
-                grant_type = "client_credentials"              
-            };
-
-
-            var client = new HttpClient();
-
-            var jsonObject = JsonConvert.SerializeObject(data);
-            var stringContent = new StringContent(jsonObject, Encoding.UTF8, "application/json");
-            var result = await client.PostAsync(url, stringContent);
-
-            if (result.IsSuccessStatusCode)
-            {
-                var response = await result.Content.ReadAsStringAsync();
-                var tokenResponse = JsonConvert.DeserializeObject<FPTAccessTokenResponseModel>(response);
-
-                return tokenResponse;
-            }
-
-            return null;
-        }
+        }    
 
         private Partner GetPartnerFromObject(object item)
         {

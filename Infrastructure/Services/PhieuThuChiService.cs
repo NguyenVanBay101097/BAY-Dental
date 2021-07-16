@@ -409,7 +409,7 @@ namespace Infrastructure.Services
 
         public async Task<PrintVM> GetPrint(Guid id)
         {
-            var res = await (SearchQuery(x => x.Id == id).Include(x => x.Company.Partner)
+            var res = await (SearchQuery(x => x.Id == id).Include(x => x.Company)
                 .Include(x => x.Partner)
                 .Include(x => x.CreatedBy)
                 .Include(x => x.Journal)

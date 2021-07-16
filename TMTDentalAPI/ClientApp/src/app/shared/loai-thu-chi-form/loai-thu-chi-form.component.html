@@ -10,17 +10,7 @@
             <div class="o_form_sheet">
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Mã
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="code"  placeholder="Nhập mã..." />
-                                </td>
-                            </tr>
+                        <tbody>                        
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label for="o_field_input_46" class="o_form_label">
@@ -32,7 +22,30 @@
                                         placeholder="Nhập tên..." />
                                 </td>
                             </tr>
-                            
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                      
+                                        <div class="form-check mr-2">
+                                            <input class="form-check-input" type="checkbox" formControlName="isAccounting" id="isAccounting">
+                                            <label class="form-check-label" for="isAccounting">
+                                                Hạch toán kết quả kinh doanh
+                                            </label>
+                                        </div>
+                                        <div class="icon-hover">
+                                            <i class="fas fa-info-circle text-primary" triggers="mouseenter:mouseleave" placement="top" [autoClose]="true"  [ngbPopover]="popContent"></i>
+                                        </div>
+                                        <ng-template #popContent>
+                                            Hạch toán vào chỉ tiêu {{type == 'thu' ? 'thu nhập' : 'chi phí'}} khác trong báo cáo kết quả kinh doanh
+                                        </ng-template>
+                                    </div>
+                                   
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -47,20 +60,7 @@
                                     <textarea type="text" class="form-control" formControlName="note"></textarea>
                                 </td>
                             </tr>
-                            <!-- <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" formControlName="isInclude" id="isInclude">
-                                        <label class="form-check-label" for="isInclude">
-                                            Hiển thị trên báo cáo kết quả kinh doanh
-                                        </label>
-                                    </div>
-                                </td>
-                            </tr> -->
+                          
                         </tbody>
                     </table>
                 </div>

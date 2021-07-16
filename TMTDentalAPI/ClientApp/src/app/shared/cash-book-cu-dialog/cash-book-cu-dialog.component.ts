@@ -64,7 +64,7 @@ export class CashBookCuDialogComponent implements OnInit {
     private intlService: IntlService,
     private printService: PrintService,
     private phieuThuChiService: PhieuThuChiService,
-    private partnerService: PartnerService, 
+    private partnerService: PartnerService,
     private checkPermissionService: CheckPermissionService
   ) { }
 
@@ -76,7 +76,8 @@ export class CashBookCuDialogComponent implements OnInit {
       loaiThuChi: [null, Validators.required],
       reason: null,
       partnerType: null,
-      partner: null
+      partner: null,
+      isAccounting: false
     });
 
     setTimeout(() => {
@@ -180,6 +181,13 @@ export class CashBookCuDialogComponent implements OnInit {
         this.loadFilteredPartners();
       }
     });
+  }
+
+  onChangeLoai(val) {
+    debugger
+    if (val) {
+      this.formGroup.get('isAccounting').setValue(val.isAccounting);
+    }
   }
 
   loadLoaiThuChiList() {

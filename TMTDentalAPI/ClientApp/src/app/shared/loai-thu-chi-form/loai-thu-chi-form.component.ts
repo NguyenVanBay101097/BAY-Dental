@@ -20,10 +20,10 @@ export class LoaiThuChiFormComponent implements OnInit {
   ngOnInit() { 
     this.accountForm = this.fb.group({
       name: [null, Validators.required],
-      code: [null, Validators.required],
+      code: null,
       note: null,
       type: null,
-      isInclude: null,
+      isAccounting: null,
       companyId: null,
     });
 

@@ -80,6 +80,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PartnerType { get; set; }
 
         public PartnerSimple Partner { get; set; }
+
+        public bool IsAccounting { get; set; }
     }
 
     public class PhieuThuChiDefaultGet
