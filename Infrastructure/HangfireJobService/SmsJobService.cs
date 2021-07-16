@@ -58,7 +58,7 @@ namespace Infrastructure.HangfireJobService
                         .ToListAsync();
                 if (listAppointments.Any())
                 {
-                    var smsMessageService = new SmsMessageService(context, null, null,
+                    var smsMessageService = new SmsMessageService(context, null, null, null, null,
                         new EfRepository<SaleOrderLine>(context),
                         new EfRepository<SaleOrder>(context),
                         new EfRepository<SmsMessage>(context),
@@ -121,7 +121,7 @@ namespace Infrastructure.HangfireJobService
                 ).ToListAsync();
                 if (partners.Any())
                 {
-                    var smsMessageService = new SmsMessageService(context, null, null,
+                    var smsMessageService = new SmsMessageService(context, null, null,null, null,
                             new EfRepository<SaleOrderLine>(context),
                             new EfRepository<SaleOrder>(context),
                             new EfRepository<SmsMessage>(context),
@@ -193,7 +193,7 @@ namespace Infrastructure.HangfireJobService
 
                 if (lines.Any())
                 {
-                    var smsMessageService = new SmsMessageService(context, null, null,
+                    var smsMessageService = new SmsMessageService(context, null, null,null, null,
                          new EfRepository<SaleOrderLine>(context),
                          new EfRepository<SaleOrder>(context),
                          new EfRepository<SmsMessage>(context),
@@ -259,7 +259,7 @@ namespace Infrastructure.HangfireJobService
                 ).ToListAsync();
                 if (orders.Any())
                 {
-                    var smsMessageService = new SmsMessageService(context, null, null,
+                    var smsMessageService = new SmsMessageService(context, null, null,null, null,
                             new EfRepository<SaleOrderLine>(context),
                             new EfRepository<SaleOrder>(context),
                             new EfRepository<SmsMessage>(context),

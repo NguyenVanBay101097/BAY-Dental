@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -38,8 +39,9 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 Name = x.Name,
-                Code = x.Code,
-                Note = x.Note
+                Code = x.Code.RemoveSignVietnameseV2(),
+                Note = x.Note,
+                IsAccounting = x.IsAccounting
             }).Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var totalItems = await query.CountAsync();
@@ -55,7 +57,7 @@ namespace Infrastructure.Services
             var res = new LoaiThuChiDisplay();
             res.Type = val.Type;
             res.CompanyId = CompanyId;
-            res.IsInclude = true;
+            res.IsAccounting = false;
             return res;
         }
 
@@ -94,10 +96,10 @@ namespace Infrastructure.Services
             var account = new AccountAccount
             {
                 Name = self.Name,
-                Code = self.Code,
+                Code = self.Name.RemoveSignVietnameseV2(),
                 Note = self.Note,
                 CompanyId = self.CompanyId ?? CompanyId,
-                IsExcludedProfitAndLossReport = !self.IsInclude,
+                IsExcludedProfitAndLossReport = self.IsInclude,
                 InternalType = usertype.Type,
                 UserTypeId = usertype.Id,
             };
@@ -120,9 +122,9 @@ namespace Infrastructure.Services
             {
                 var accountObj = GetService<IAccountAccountService>();
                 account.Name = val.Name;
-                account.Code = val.Code;
+                account.Code = val.Name.RemoveSignVietnameseV2();
                 account.Note = val.Note;
-                account.IsExcludedProfitAndLossReport = !val.IsInclude;
+                account.IsExcludedProfitAndLossReport = val.IsAccounting;
                 await accountObj.UpdateAsync(account);
             }
 
