@@ -1,32 +1,41 @@
-<div class="d-flex flex-column h-100">
-    <div class="product-type-filter d-flex justify-content-start">
-        <div class="flex-0-0-auto has-search mb-1 mr-1 w-65">
-            <span class="fa fa-search form-control-feedback"></span>
-            <input #search accesskey="Q" class="form-control size-text-14" placeholder="Tìm kiếm theo tên [Alt + Q]"
-                type="text" id="search" (keyup)="onChangeSearch($event.target.value);">
+<div>
+    <div class="product-filter">
+        <div class="product-filter-search">
+            <div class="o_searchview">
+                <i class="o_searchview_icon fa fa-search"></i>
+                <div class="o_searchview_input_container">
+                    <input #search accesskey="Q" class="o_searchview_input" placeholder="Tìm kiếm theo tên [Alt + Q]"
+                        type="text" id="search" (keyup)="onChangeSearch($event.target.value);">
+                </div>
+            </div>
         </div>
-        <div class="button-group">
-            <input class="btn-check" type="radio" [(ngModel)]="type2" name="radioButton" id="product" value="product"
-                (change)="onChangeType($event.target.value)">
-            <label class="btn btn-sm btn-outline-primary" for="product">
-                Vật tư
-            </label>
-            <input class="btn-check" type="radio" [(ngModel)]="type2" name="radioButton" id="medicine" value="medicine"
-                (change)="onChangeType($event.target.value)">
-            <label class="btn btn-sm btn-outline-primary" for="medicine" hasGroups [groups]="'medicineOrder.group_medicine'">
-                Thuốc
-            </label>
+        <div class="product-filter-type">
+            <div class="btn-group">
+                <input class="btn-check" type="radio" [(ngModel)]="type2" name="radioButton" id="product"
+                    value="product" (change)="onChangeType($event.target.value)">
+                <label class="btn btn-sm btn-outline-primary" for="product">
+                    Vật tư
+                </label>
+                <input class="btn-check" type="radio" [(ngModel)]="type2" name="radioButton" id="medicine"
+                    value="medicine" (change)="onChangeType($event.target.value)">
+                <label class="btn btn-sm btn-outline-primary" for="medicine" hasGroups
+                    [groups]="'medicineOrder.group_medicine'">
+                    Thuốc
+                </label>
+            </div>
         </div>
     </div>
 
     <!-- Component Form Service List -->
-    <div class="flex--1-1-100 overflow-auto _wrapper">
-        <table class="table table-sm table-list-product">
-            <tbody>
+    <div class="product-list-container">
+        <table class="table table-sm table-borderless table-hover">
+            <thead>
                 <tr>
-                    <td>{{type2 == 'product' ? 'Tên vật tư':'Tên thuốc'}}</td>
-                    <td class="text-center">{{isStock == true ? '':'Giá'}}</td>
+                    <th>{{type2 == 'product' ? 'Tên vật tư':'Tên thuốc'}}</th>
+                    <th class="text-right">{{isStock == true ? '':'Giá'}}</th>
                 </tr>
+            </thead>
+            <tbody>
                 <tr class="cursor" (click)="onSelectValue(item)" *ngFor="let item of listProductFilter;let i = index">
                     <td class="sticky-td">{{item.name}}</td>
                     <td *ngIf="!isStock" class="sticky-td text-right">{{item.purchasePrice | number}}</td>

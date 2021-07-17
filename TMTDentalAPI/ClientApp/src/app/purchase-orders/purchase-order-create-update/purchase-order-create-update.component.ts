@@ -94,15 +94,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
     this.loadRecord();
 
-    this.partnerCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.partnerCbx.loading = true)),
-      switchMap(value => this.searchPartners(value))
-    ).subscribe(result => {
-      this.filteredPartners = result;
-      this.partnerCbx.loading = false;
-    });
-
     this.loadPartners();
     this.loadFilteredJournals();
     this.loadProductList();
@@ -132,6 +123,19 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         g.get('discount').setValidators([Validators.required]);
         g.get('productQty').setValidators([Validators.required]);
         control.push(g);
+
+        setTimeout(() => {
+          if (this.partnerCbx) {
+            this.partnerCbx.filterChange.asObservable().pipe(
+              debounceTime(300),
+              tap(() => (this.partnerCbx.loading = true)),
+              switchMap(value => this.searchPartners(value))
+            ).subscribe(result => {
+              this.filteredPartners = result;
+              this.partnerCbx.loading = false;
+            });
+          }
+        }, 0);
       });
     });
   }

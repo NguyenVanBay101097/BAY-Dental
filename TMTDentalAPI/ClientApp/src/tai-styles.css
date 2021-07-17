@@ -146,7 +146,7 @@ html .o_web_client .o_content .o_view_controller {
 }
 
 @media (min-width: 768px) {
-    html .o_web_client>.o_action_manager .o_action .o_content {
+    html .o_web_client .o_action_manager .o_action .o_content {
         overflow: auto;
         -webkit-overflow-scrolling: touch;
     }
@@ -269,15 +269,13 @@ td.oe_form_group_cell_label label {
     display: flex;
 }
 
-.o_form_section .o_form_section_left {
-    flex: 1 1 auto;
-    width: 230px;
-    padding-right: 15px;
+.o_form_view .o_form_section .o_form_section_left {
+    flex: 0 0 319px;
+    margin-right: 15px;
 }
 
-.o_form_section .o_form_section_right {
+.o_form_view .o_form_section .o_form_section_right {
     flex: 1 1 auto;
-    width: 700px;
 }
 
 .o_list_view {

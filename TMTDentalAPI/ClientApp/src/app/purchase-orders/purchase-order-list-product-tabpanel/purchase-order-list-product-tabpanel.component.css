@@ -137,6 +137,22 @@ tbody>.cursor:hover {
     margin: .25rem .125rem;
 }
 
-.button-group{
-    white-space: nowrap;
+.product-filter {
+    display: flex;
+    margin-bottom: 0.25rem;
+}
+
+.product-filter .product-filter-search {
+    flex: 1 1 100%;
+    margin-right: 5px;
+}
+
+.product-filter .product-filter-type {
+    flex: 0 0 auto;
+}
+
+.product-list-container {
+    min-height: 300px;
+    max-height: 500px;
+    overflow: auto;
 }
