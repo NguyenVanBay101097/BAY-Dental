@@ -23,7 +23,7 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     private stockReportService: StockReportService,
-    private intl: IntlService,
+    private intlService: IntlService,
 
   ) { }
 
@@ -33,8 +33,8 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
 
   loadDataFromApi() {
     var val = new GetStockHistoryReq();
-    val.dateFrom = '';
-    val.dateTo =  '';
+    val.dateFrom = this.dateFrom ? this.dateFrom : '';
+    val.dateTo = this.dateTo ? this.dateTo : '';
     val.productId = this.productId ? this.productId : '';
     val.limit = this.limit;
     val.offset = this.skip;
@@ -53,7 +53,7 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
     })
   }
 
-  pageChange(event) { 
+  pageChange(event) {
     this.skip = event.skip;
     this.loadDataFromApi();
   }
