@@ -34,6 +34,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid ProductId { get; set; }
         public string ProductName { get; set; }
 
+        public string ProductNameNoSign { get; set; }
+
         public string ProductCode { get; set; }
 
         public decimal Begin { get; set; }

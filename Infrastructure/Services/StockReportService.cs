@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 using ApplicationCore.Utilities;
 using ApplicationCore.Models;
+using ApplicationCore.Interfaces;
+using ApplicationCore.Entities;
+using System.Dynamic;
 
 namespace Infrastructure.Services
 {
@@ -16,11 +19,14 @@ namespace Infrastructure.Services
     {
         private readonly CatalogDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IAsyncRepository<Product> _productRepository;
         public StockReportService(CatalogDbContext context,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IAsyncRepository<Product> productRepository)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _productRepository = productRepository;
         }
 
         protected Guid CompanyId
@@ -37,62 +43,48 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<StockReportXuatNhapTonItem>> XuatNhapTonSummary(StockReportXuatNhapTonSearch val)
         {
             var today = DateTime.Today;
-            var monthStart = new DateTime(today.Year, today.Month, 1);
-            var monthEnd = new DateTime(today.Year, today.Month, DateTime.DaysInMonth(today.Year, today.Month), 23, 59, 59);
-            var date_from = val.DateFrom.HasValue ? val.DateFrom.Value.AbsoluteBeginOfDate() : monthStart;
-            var date_to = val.DateTo.HasValue ? val.DateTo.Value.AbsoluteEndOfDate() : monthEnd;
+            var date_from = val.DateFrom.HasValue ? val.DateFrom.Value.AbsoluteBeginOfDate() : (DateTime?)null;
+            var date_to = val.DateTo.HasValue ? val.DateTo.Value.AbsoluteEndOfDate() : (DateTime?)null;
 
             var companyId = CompanyId;
-            var dict = new Dictionary<Guid, StockReportXuatNhapTonItem>();
-            var query = _context.StockHistories.Where(x => x.date >= date_from && x.date <= date_to && x.company_id == companyId);
-            if (val.ProductCategId.HasValue)
-                query = query.Where(x => x.product_categ_id == val.ProductCategId);
-            if (val.ProductId.HasValue)
-                query = query.Where(x => x.product_id == val.ProductId);
-            if (!string.IsNullOrWhiteSpace(val.Search))
+            var dict = new Dictionary<Guid, dynamic>();
+            if (date_from.HasValue)
             {
-                query = query.Where(x => x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search) ||
-                x.Product.DefaultCode.Contains(val.Search));
-            }
-
-            var list = await query
-               .GroupBy(x => new
-               {
-                   ProductId = x.Product.Id,
-                   ProductName = x.Product.Name,
-                   ProductCode = x.Product.DefaultCode,
-                   ProductUomName = x.Product.UOM.Name,
-                   MinInventory = x.Product.MinInventory
-               })
-               .Select(x => new
-               {
-                   ProductId = x.Key.ProductId,
-                   ProductName = x.Key.ProductName,
-                   ProductUomName = x.Key.ProductUomName,
-                   ProductCode = x.Key.ProductCode,
-                   MinInventory = x.Key.MinInventory,
-                   Begin = x.Sum(s => s.quantity),
-               }).ToListAsync();
-
-            foreach (var item in list)
-            {
-                if (!dict.ContainsKey(item.ProductId))
+                var query = _context.StockHistories.Where(x => x.date < date_from && x.company_id == companyId);
+                if (val.ProductCategId.HasValue)
+                    query = query.Where(x => x.product_categ_id == val.ProductCategId);
+                if (val.ProductId.HasValue)
+                    query = query.Where(x => x.product_id == val.ProductId);
+                if (!string.IsNullOrWhiteSpace(val.Search))
                 {
-                    dict.Add(item.ProductId, new StockReportXuatNhapTonItem()
+                    query = query.Where(x => x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search) ||
+                    x.Product.DefaultCode.Contains(val.Search));
+                }
+
+                var list = await query
+                   .GroupBy(x => x.product_id)
+                   .Select(x => new
+                   {
+                       ProductId = x.Key,
+                       Begin = x.Sum(s => s.quantity),
+                   }).ToListAsync();
+
+                foreach (var item in list)
+                {
+                    if (item.ProductId.HasValue && !dict.ContainsKey(item.ProductId.Value))
                     {
-                        ProductId = item.ProductId,
-                        ProductName = item.ProductName,
-                        ProductCode = item.ProductCode,
-                        ProductUomName = item.ProductUomName,
-                        DateFrom = date_from,
-                        DateTo = date_to,
-                        Begin = item.Begin,
-                        MinInventory = item.MinInventory
-                    });
+                        dynamic exo = new ExpandoObject();
+                        exo.Begin = item.Begin;
+                        exo.Import = 0;
+                        exo.Export = 0;
+
+                        dict.Add(item.ProductId.Value, exo);
+                    }
                 }
             }
+           
 
-            var query2 = _context.StockHistories.Where(x => x.date >= date_from && x.date <= date_to && x.company_id == companyId);
+            var query2 = _context.StockHistories.Where(x => (!date_from.HasValue || x.date >= date_from) && (!date_to.HasValue || x.date <= date_to) && x.company_id == companyId);
             if (val.ProductCategId.HasValue)
                 query2 = query2.Where(x => x.product_categ_id == val.ProductCategId);
             if (val.ProductId.HasValue)
@@ -103,73 +95,63 @@ namespace Infrastructure.Services
                 x.Product.DefaultCode.Contains(val.Search));
             }
 
-            var list2 = await query2.Select(x => new
-            {
-                ProductId = x.Product.Id,
-                ProductName = x.Product.Name,
-                ProductCode = x.Product.DefaultCode,
-                ProductUomName = x.Product.UOM.Name,
-                MinInventory = x.Product.MinInventory,
-                Import = x.quantity > 0 ? x.quantity : 0,
-                Export = x.quantity < 0 ? -x.quantity : 0
-            })
-                      .GroupBy(x => new
-                      {
-                          ProductId = x.ProductId,
-                          ProductName = x.ProductName,
-                          ProductCode = x.ProductCode,
-                          ProductUomName = x.ProductUomName,
-                          MinInventory = x.MinInventory
-                      })
+            var list2 = await query2.GroupBy(x => x.product_id)
                     .Select(x => new
                     {
-                        ProductId = x.Key.ProductId,
-                        ProductName = x.Key.ProductName,
-                        ProductCode = x.Key.ProductCode,
-                        productUomName = x.Key.ProductUomName,
-                        MinInventory = x.Key.MinInventory,
-                        Import = x.Sum(s => s.Import),
-                        Export = x.Sum(s => s.Export),
+                        ProductId = x.Key,
+                        Import = x.Sum(s => s.quantity > 0 ? s.quantity : 0),
+                        Export = x.Sum(s => s.quantity < 0 ? -s.quantity : 0),
                     }).ToListAsync();
 
             foreach (var item in list2)
             {
-                if (!dict.ContainsKey(item.ProductId))
+                if (item.ProductId.HasValue && !dict.ContainsKey(item.ProductId.Value))
                 {
-                    dict.Add(item.ProductId, new StockReportXuatNhapTonItem()
-                    {
-                        ProductId = item.ProductId,
-                        ProductName = item.ProductName,
-                        ProductCode = item.ProductCode,
-                        ProductUomName = item.productUomName,
-                        DateFrom = date_from,
-                        DateTo = date_to,
-                        MinInventory = item.MinInventory,
-                        Import = item.Import,
-                        Export = item.Export
-                    });
+                    dynamic exo = new ExpandoObject();
+                    exo.Begin = 0;
+                    exo.Import = item.Import;
+                    exo.Export = item.Export;
+
+                    dict.Add(item.ProductId.Value, exo);
                 }
                 else
                 {
-                    dict[item.ProductId].Import = item.Import;
-                    dict[item.ProductId].Export = item.Export;
+                    var exo = dict[item.ProductId.Value];
+                    exo.Import = item.Import;
+                    exo.Export = item.Export;
                 }
-
-                var value = dict[item.ProductId];
-                if (value.Begin == 0 && value.Import == 0 && value.Export == 0 && value.End == 0)
-                    dict.Remove(item.ProductId);
             }
 
-            foreach (var item in dict.ToArray())
+            var productIds = dict.Keys.ToArray();
+            var products = await _productRepository.SearchQuery(x => productIds.Contains(x.Id))
+                .Include(x => x.UOM).ToListAsync();
+            var productDict = products.ToDictionary(x => x.Id, x => x);
+
+            var result = new List<StockReportXuatNhapTonItem>();
+            foreach (var item in dict)
             {
-                dict[item.Key].End = dict[item.Key].Begin + dict[item.Key].Import - dict[item.Key].Export;
+                var data = item.Value;
+                if (data.Begin == 0 && data.Import == 0 && data.Export == 0)
+                    continue;
+                var product = productDict[item.Key];
+                result.Add(new StockReportXuatNhapTonItem
+                {
+                    Begin = data.Begin,
+                    DateFrom = val.DateFrom,
+                    DateTo = val.DateTo,
+                    End = data.Begin + data.Import - data.Export,
+                    Export = data.Export,
+                    Import = data.Import,
+                    ProductCode = product.DefaultCode,
+                    MinInventory = product.MinInventory ?? 0,
+                    ProductId = product.Id,
+                    ProductName = product.Name,
+                    ProductUomName = product.UOM.Name,
+                    ProductNameNoSign = product.NameNoSign
+                });
             }
-            if (!string.IsNullOrEmpty(val.MinInventoryFilter) && val.MinInventoryFilter == "above_minInventory")
-              return dict.Values.Where(x => x.MinInventory <= x.End);
-            if (!string.IsNullOrEmpty(val.MinInventoryFilter) && val.MinInventoryFilter == "below_minInventory")
-              return dict.Values.Where(x => x.MinInventory > x.End);
-
-            return dict.Values;
+           
+            return result;
         }
 
         public async Task<IEnumerable<StockReportXuatNhapTonItemDetail>> XuatNhapTonDetail(StockReportXuatNhapTonItem val)

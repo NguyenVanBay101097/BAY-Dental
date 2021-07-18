@@ -67,9 +67,11 @@ export class StockXuatNhapTonComponent implements OnInit {
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
-      .subscribe(() => {
+      .subscribe((val) => {
         this.skip = 0;
-        this.loadDataFromApi();
+        var items = this.items.filter(x => x.productCode.toLowerCase().indexOf(val.toLowerCase()) !== -1 ||
+         x.productName.toLowerCase().indexOf(val.toLowerCase()) !== -1);
+        this.loadItems2(items);
       });
   }
 
@@ -113,6 +115,25 @@ export class StockXuatNhapTonComponent implements OnInit {
     };
   }
 
+  loadItems2(items): void {
+    this.gridData = {
+      data: items.slice(this.skip, this.skip + this.limit),
+      total: items.length
+    };
+
+    const result = aggregateBy(items, [
+      { aggregate: "sum", field: "begin" },
+      { aggregate: "sum", field: "import" },
+      { aggregate: "sum", field: "export" },
+      { aggregate: "sum", field: "end" },
+    ]);
+
+    this.sumBegin = result.begin ? result.begin.sum : 0;
+    this.sumImport = result.import ? result.import.sum : 0;
+    this.sumExport = result.export ? result.export.sum : 0;
+    this.sumEnd = result.end ? result.end.sum : 0;
+  }
+
   cellClick(item: any) {
     const product = this.gridData.data[item.path[1].rowIndex];
     const modalRef = this.modalService.open(StockXuatNhapTonDetailDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
@@ -139,10 +160,18 @@ export class StockXuatNhapTonComponent implements OnInit {
     this.sumEnd = result.end ? result.end.sum : 0;
   }
 
-  inventoryChange(event) {
-    this.minInventoryFilter = event ? event.value : null;
+  inventoryChange(value) {
     this.skip = 0;
-    this.loadDataFromApi();
+    if (value == 'above_minInventory') {
+      var items = this.items.filter(x => x.end >= x.minInventory);
+      this.loadItems2(items);
+    } else if (value == 'below_minInventory') {
+      var items = this.items.filter(x => x.end < x.minInventory);
+      this.loadItems2(items);
+    } else {
+      var items = this.items.slice();
+      this.loadItems2(items);
+    }
   }
 
   public exportExcelFile(grid: GridComponent) {
