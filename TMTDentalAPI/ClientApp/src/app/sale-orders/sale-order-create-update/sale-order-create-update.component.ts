@@ -832,10 +832,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   onDeleteLine(index) {
     var line = this.saleOrder.orderLines[index];
     if (line.id) {
-      this.saleOrderLineService.remove(line.id).subscribe(res => {
-        this.notify('success', 'Lưu thành công');
-        this.loadSaleOrder();
-      })
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+      modalRef.componentInstance.title = 'Xóa dịch vụ';
+      modalRef.componentInstance.body = 'Bạn có muốn xóa dịch vụ không ?';
+      modalRef.result.then(() => {
+        this.saleOrderLineService.remove(line.id).subscribe(res => {
+          this.notify('success', 'Lưu thành công');
+          this.loadSaleOrder();
+        })
+      });
     } else {
       if (line == this.lineSelected) {
         this.lineSelected = null;
