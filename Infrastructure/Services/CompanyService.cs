@@ -193,7 +193,7 @@ namespace Infrastructure.Services
                 Model = "res.partner",
                 Name = "member_level",
                 TType = "many2one",
-                Relation = "memberlevel"
+                Relation = "member.level"
             });
 
             await fieldObj.CreateAsync(toAdd);
