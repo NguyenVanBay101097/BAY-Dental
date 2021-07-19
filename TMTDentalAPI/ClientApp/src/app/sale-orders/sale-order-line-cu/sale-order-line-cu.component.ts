@@ -37,7 +37,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Output() onEditEvent = new EventEmitter<any>();
   @Output() onCancelEvent = new EventEmitter<any>();
   @Output() onActiveEvent = new EventEmitter<any>();
-  @Output() onUpdateLocalEvent = new EventEmitter<any>();
+  onUpdateSignSubject = new Subject<boolean>();//emit true: đã update xong, false: fail update
 
   isEditting: boolean = false;
   isItSeff = false;
@@ -313,7 +313,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   //   });
   // }
 
-  updateLineInfo(sendServer = true) {
+  updateLineInfo() {
     this.isUpdated = true;
     if (this.formGroupInfo.invalid) {
       this.formGroupInfo.markAllAsTouched();
@@ -341,11 +341,7 @@ export class SaleOrderLineCuComponent implements OnInit {
 
     // this.isItSeff = this.isItSeff;
     // this.notify('success', 'Cập nhật thành công');
-    if(sendServer) {
       this.onUpdateEvent.emit(val);
-    } else {
-      this.onUpdateLocalEvent.emit(val);
-    }
     return true;
   }
 

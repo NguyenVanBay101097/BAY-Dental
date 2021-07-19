@@ -90,33 +90,33 @@ namespace Infrastructure.Services
             await CreateAsync(order);
 
             var lines = new List<SaleOrderLine>();
-            var sequence = 0;
-            foreach (var item in val.OrderLines)
-            {
-                var saleLine = _mapper.Map<SaleOrderLine>(item);
-                saleLine.Order = order;
-                saleLine.Sequence = sequence++;
-                saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
+            //var sequence = 0;
+            //foreach (var item in val.OrderLines)
+            //{
+            //    var saleLine = _mapper.Map<SaleOrderLine>(item);
+            //    saleLine.Order = order;
+            //    saleLine.Sequence = sequence++;
+            //    saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
 
-                if (item.ToothType == "manual")
-                {
-                    foreach (var toothId in item.ToothIds)
-                    {
-                        saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
-                        {
-                            ToothId = toothId
-                        });
-                    }
-                }
+            //    if (item.ToothType == "manual")
+            //    {
+            //        foreach (var toothId in item.ToothIds)
+            //        {
+            //            saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+            //            {
+            //                ToothId = toothId
+            //            });
+            //        }
+            //    }
 
-                lines.Add(saleLine);
-            }
+            //    lines.Add(saleLine);
+            //}
 
             var saleLineService = GetService<ISaleOrderLineService>();
             await saleLineService.CreateAsync(lines);
 
-            _AmountAll(order);
-            await UpdateAsync(order);
+            //_AmountAll(order);
+            //await UpdateAsync(order);
             return order;
         }
 
@@ -1291,17 +1291,17 @@ namespace Infrastructure.Services
             var order = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
-                .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
-                .Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
+                //.Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
+                //.Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
                 .FirstOrDefaultAsync();
 
             order = _mapper.Map(val, order);
 
-            await SaveOrderLines(val, order);
+            //await SaveOrderLines(val, order);
             await UpdateAsync(order); //update trước để generate id cho những sale order line
 
-            await ComputeToUpdateSaleOrder(order);
-            await UpdateAsync(order);
+            //await ComputeToUpdateSaleOrder(order);
+            //await UpdateAsync(order);
         }
 
         public async Task ComputeToUpdateSaleOrder(SaleOrder order)

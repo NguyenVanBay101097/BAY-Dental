@@ -198,12 +198,8 @@
                                             <p>Chưa có dịch vụ nào</p>
                                         </div>
                                         <ng-container *ngFor="let line of saleOrder.orderLines; let i=index">
-                                            <app-sale-order-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion(i)"
-                                                [initialListEmployees]="initialListEmployees" [initialFilteredToothCategories]="filteredToothCategories"
-                                                [initialListTeeths]="listTeeths" [line]="line" [initialToothTypeDict]="toothTypeDict"
-                                                (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)"
-                                                (onUpdateEvent)="updateLineInfo($event, i)" (onUpdateLocalEvent)="updateLineInfoLocal($event, i)"
-                                                (onActiveEvent)="onActiveLine($event, line)">
+                                            <app-sale-order-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion(i)" [initialListEmployees]="initialListEmployees" [initialFilteredToothCategories]="filteredToothCategories" [initialListTeeths]="listTeeths" [line]="line" [initialToothTypeDict]="toothTypeDict"
+                                                (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)" (onActiveEvent)="onActiveLine($event, line)">
                                             </app-sale-order-line-cu>
                                         </ng-container>
                                     </div>
