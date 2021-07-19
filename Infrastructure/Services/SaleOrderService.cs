@@ -2046,9 +2046,7 @@ namespace Infrastructure.Services
             {
                 ProductName = x.Product.Name,
                 ProductUOMQty = x.ProductUOMQty,
-                DiscountType = x.DiscountType,
-                Discount = x.Discount,
-                DiscountFixed = x.DiscountFixed,
+                AmountDiscountTotal = x.AmountDiscountTotal,
                 PriceUnit = x.PriceUnit,
                 PriceSubTotal = x.PriceSubTotal,
                 Sequence = x.Sequence
