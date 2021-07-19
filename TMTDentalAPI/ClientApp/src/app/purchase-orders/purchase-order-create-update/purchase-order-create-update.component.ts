@@ -194,11 +194,10 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     val.limit = 20;
     val.offset = 0;
     val.purchaseOK = true;
-    val.type = 'product';
-    val.type2 = this.listType;
     this.productService
       .autocomplete2(val).subscribe(
         (res) => {
+          console.log(res);
           this.productList = res;
         },
         (err) => {

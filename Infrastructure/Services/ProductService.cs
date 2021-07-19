@@ -424,7 +424,10 @@ namespace Infrastructure.Services
             }
 
             if (!string.IsNullOrEmpty(val.Type2))
-                query = query.Where(x => x.Type2 == val.Type2);
+            {
+                var types = val.Type2.Split(",");
+                query = query.Where(x => types.Contains(x.Type2));
+            }
 
             if (val.PurchaseOK.HasValue)
                 query = query.Where(x => x.PurchaseOK == val.PurchaseOK);
@@ -462,7 +465,11 @@ namespace Infrastructure.Services
             if (val.SaleOK.HasValue)
                 query = query.Where(x => x.SaleOK == val.SaleOK);
             if (!string.IsNullOrEmpty(val.Type))
-                query = query.Where(x => x.Type == val.Type);
+            {
+                var types = val.Type.Split(",");
+                query = query.Where(x => types.Contains(x.Type));
+            }
+              
             if (!string.IsNullOrEmpty(val.Type2))
             {
                 var types = val.Type2.Split(",");
