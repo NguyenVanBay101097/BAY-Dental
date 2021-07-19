@@ -109,7 +109,6 @@ export class StockReportXuatNhapTonComponent implements OnInit {
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     val.productId = this.searchProduct ? this.searchProduct.id : null;
     val.productCategId = this.searchCateg ? this.searchCateg.id : null;
-    val.search = this.search ? this.search : null;
 
     this.reportService.getXuatNhapTonSummary(val).subscribe(res => {
       this.items = res;

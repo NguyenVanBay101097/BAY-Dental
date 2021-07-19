@@ -47,6 +47,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
 
         public decimal ListPrice { get; set; }
+        public decimal? MinInventory { get; set; }
 
         public IEnumerable<ProductStepDisplay> StepList { get; set; } = new List<ProductStepDisplay>();
         

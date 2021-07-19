@@ -139,9 +139,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     var val = new ProductPaged();
     val.limit = 20;
     val.offset = 0;
-    val.purchaseOK = true;
-    val.type = 'product';
-    val.type2 = this.listType;
+    val.type = 'product,consu';
     this.productService
       .autocomplete2(val).subscribe(
         (res) => {

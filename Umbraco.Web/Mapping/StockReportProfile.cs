@@ -10,7 +10,7 @@ namespace Umbraco.Web.Mapping
     {
         public StockReportProfile()
         {
-            CreateMap<GetStockHistoryRes, GetStockHistoryResExcel>();
+            CreateMap<StockHistoryDto, GetStockHistoryResExcel>();
         }
     }
 }

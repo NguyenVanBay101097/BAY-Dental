@@ -4,6 +4,7 @@ using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MyERP.Utilities;
@@ -21,16 +22,19 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly IUoMService _uoMService;
+        private readonly CatalogDbContext _context;
         public ProductService(
             IAsyncRepository<Product> repository,
             IHttpContextAccessor httpContextAccessor,
             IMapper mapper,
-            IUoMService uoMService
+            IUoMService uoMService,
+            CatalogDbContext context
             )
            : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _uoMService = uoMService;
+            _context = context;
         }
 
         public override async Task<IEnumerable<Product>> CreateAsync(IEnumerable<Product> entities)
@@ -250,6 +254,36 @@ namespace Infrastructure.Services
 
         }
 
+        public async Task<IEnumerable<ProductComingEnd>> GetProductsComingEnd(ProductGetProductsComingEndRequest val)
+        {
+            var quantObj = GetService<IStockQuantService>();
+            var productQuery = SearchQuery(x => x.Active && x.Type == "product");
+            var quantQuery = quantObj.SearchQuery(x => x.Location.Usage == "internal" && (!val.CompanyId.HasValue || x.CompanyId == val.CompanyId))
+                .GroupBy(x => x.ProductId)
+                .Select(x => new
+                {
+                    ProductId = x.Key,
+                    QtyAvailable = x.Sum(x => x.Qty)
+                });
+
+            var result = from p in productQuery
+                           from q in quantQuery.Where(x => x.ProductId == p.Id).DefaultIfEmpty()
+                           where q.QtyAvailable < p.MinInventory
+                           select new ProductComingEnd
+                           {
+                                Id = p.Id,
+                                Inventory = q.QtyAvailable,
+                                MinInventory = p.MinInventory,
+                                Name = p.Name,
+                                PurchasePrice = p.PurchasePrice,
+                                Type2 = p.Type2,
+                                NameNoSign = p.NameNoSign
+                           };
+
+            return await result.ToListAsync();
+
+        }
+        
         private void _CalcQtyAvailable(IEnumerable<ProductBasic> items)
         {
             var compute_items = items.Where(x => x.Type == "product");
@@ -390,7 +424,10 @@ namespace Infrastructure.Services
             }
 
             if (!string.IsNullOrEmpty(val.Type2))
-                query = query.Where(x => x.Type2 == val.Type2);
+            {
+                var types = val.Type2.Split(",");
+                query = query.Where(x => types.Contains(x.Type2));
+            }
 
             if (val.PurchaseOK.HasValue)
                 query = query.Where(x => x.PurchaseOK == val.PurchaseOK);
@@ -428,7 +465,11 @@ namespace Infrastructure.Services
             if (val.SaleOK.HasValue)
                 query = query.Where(x => x.SaleOK == val.SaleOK);
             if (!string.IsNullOrEmpty(val.Type))
-                query = query.Where(x => x.Type == val.Type);
+            {
+                var types = val.Type.Split(",");
+                query = query.Where(x => types.Contains(x.Type));
+            }
+              
             if (!string.IsNullOrEmpty(val.Type2))
             {
                 var types = val.Type2.Split(",");
