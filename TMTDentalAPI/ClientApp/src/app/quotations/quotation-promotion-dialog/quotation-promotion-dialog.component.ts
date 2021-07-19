@@ -87,7 +87,13 @@ export class QuotationPromotionDialogComponent implements OnInit {
   }
 
   onDeletePromotion(item) {
-    this.btnDeletePromoSubject.next(item);
+    let modalRef = this.modelService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa khuyến mãi';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa khuyến mãi?';
+    modalRef.result.then(() => {
+      this.btnDeletePromoSubject.next(item);
+
+    });
   }
 
   applyPromotion(item) {
