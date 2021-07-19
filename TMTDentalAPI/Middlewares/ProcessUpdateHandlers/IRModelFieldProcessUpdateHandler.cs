@@ -63,7 +63,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 }
 
                 //add member_level
-                var member_level = context.IRModelFields.Where(x => x.Model == "res.partner" && x.TType == "many2one" && x.Name == "member_level" && x.Relation == "memberlevel").FirstOrDefault();
+                var member_level = context.IRModelFields.Where(x => x.Model == "res.partner" && x.TType == "many2one" && x.Name == "member_level" && x.Relation == "member.level").FirstOrDefault();
                 if (member_level == null)
                 {
                     var model = context.IRModels.Where(x => x.Model == "Partner").FirstOrDefault();
@@ -80,7 +80,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         Model = "res.partner",
                         Name = "member_level",
                         TType = "many2one",
-                        Relation = "memberlevel"
+                        Relation = "member.level"
                     });
 
                     context.SaveChanges();

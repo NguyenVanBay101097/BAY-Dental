@@ -58,6 +58,8 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
+            query = query.OrderByDescending(x => x.DateCreated);
+
             var items = await query.Include(x => x.Partner).ToListAsync();
 
             return new PagedResult2<PurchaseOrderBasic>(totalItems, val.Offset, val.Limit)

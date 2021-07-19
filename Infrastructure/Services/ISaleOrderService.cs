@@ -88,5 +88,7 @@ namespace Infrastructure.Services
         Task<GetRevenueSumTotalRes> GetRevenueSumTotal(GetRevenueSumTotalReq val);
 
         Task<IEnumerable<SaleOrderManagementExcel>> GetExcel(SaleOrderPaged val);
+
+        Task ComputeToUpdateSaleOrder(SaleOrder order);
     }
 }

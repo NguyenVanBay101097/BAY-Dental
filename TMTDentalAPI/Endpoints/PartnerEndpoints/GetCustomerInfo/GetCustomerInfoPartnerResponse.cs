@@ -12,6 +12,8 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints.GetCustomerInfo
 
         public string Name { get; set; }
 
+        public string DisplayName { get; set; }
+
         public string Phone { get; set; }
 
         public DateTime? Date { get; set; }

@@ -132,4 +132,12 @@ export class SaleOrderLineService {
     getHistories(val: any) {
         return this.http.get(this.baseApi + this.apiUrl + '/GetHistory', { params: new HttpParams({ fromObject: val }) });
     }
+
+    update(id,val) {
+        return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
+    }
+
+    remove(id) {
+        return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+    }
 }

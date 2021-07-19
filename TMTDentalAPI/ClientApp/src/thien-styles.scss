@@ -545,9 +545,11 @@ a.disabled {
         }
         &-content {
             max-height: 0;
-            padding: 0 1rem;
             transition: all 0.35s;
             border-top: 0px solid rgba(0, 0, 0, 0.125);
+            > div {
+                padding: 0.5rem 1rem;
+            }
         }
         &-close {
             display: flex;
@@ -566,7 +568,6 @@ a.disabled {
               }
               ~ .tab-content {
                 max-height: 100vh;
-                padding: 0.5rem 1rem;
                 border-top: 1px solid rgba(0, 0, 0, 0.125);
               }
             }

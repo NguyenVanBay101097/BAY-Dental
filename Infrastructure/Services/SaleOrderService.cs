@@ -90,33 +90,33 @@ namespace Infrastructure.Services
             await CreateAsync(order);
 
             var lines = new List<SaleOrderLine>();
-            var sequence = 0;
-            foreach (var item in val.OrderLines)
-            {
-                var saleLine = _mapper.Map<SaleOrderLine>(item);
-                saleLine.Order = order;
-                saleLine.Sequence = sequence++;
-                saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
+            //var sequence = 0;
+            //foreach (var item in val.OrderLines)
+            //{
+            //    var saleLine = _mapper.Map<SaleOrderLine>(item);
+            //    saleLine.Order = order;
+            //    saleLine.Sequence = sequence++;
+            //    saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
 
-                if (item.ToothType == "manual")
-                {
-                    foreach (var toothId in item.ToothIds)
-                    {
-                        saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
-                        {
-                            ToothId = toothId
-                        });
-                    }
-                }
+            //    if (item.ToothType == "manual")
+            //    {
+            //        foreach (var toothId in item.ToothIds)
+            //        {
+            //            saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+            //            {
+            //                ToothId = toothId
+            //            });
+            //        }
+            //    }
 
-                lines.Add(saleLine);
-            }
+            //    lines.Add(saleLine);
+            //}
 
             var saleLineService = GetService<ISaleOrderLineService>();
             await saleLineService.CreateAsync(lines);
 
-            _AmountAll(order);
-            await UpdateAsync(order);
+            //_AmountAll(order);
+            //await UpdateAsync(order);
             return order;
         }
 
@@ -1256,47 +1256,6 @@ namespace Infrastructure.Services
             var saleOrder = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             var display = _mapper.Map<SaleOrderDisplay>(saleOrder);
 
-            var partnerObj = GetService<IPartnerService>();
-            var partner = await partnerObj.SearchQuery(x => x.Id == display.PartnerId).Select(x => new PartnerDisplay
-            {
-                Id = x.Id,
-                DisplayName = x.DisplayName,
-                Avatar = x.Avatar,
-                Gender = x.Gender,
-                BirthDay = x.BirthDay,
-                BirthMonth = x.BirthMonth,
-                BirthYear = x.BirthYear,
-                JobTitle = x.JobTitle,
-                MedicalHistory = x.MedicalHistory,
-                Histories = x.PartnerHistoryRels.Select(x => new HistorySimple()
-                {
-                    Id = x.HistoryId,
-                    Name = x.History.Name
-                }),
-                Categories = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryBasic
-                {
-                    Id = s.CategoryId,
-                    Name = s.Category.Name,
-                    Color = s.Category.Color
-                }),
-            }).FirstOrDefaultAsync();
-            display.Partner = _mapper.Map<PartnerDisplay>(partner);
-
-            var propertyObj = GetService<IIRPropertyService>();
-            var partnerPointsProp = propertyObj.get("loyalty_points", "res.partner", res_id: $"res.partner,{display.PartnerId}", force_company: CompanyId);
-            var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
-            display.Partner.Point = partnerPoints;
-
-            var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{display.PartnerId}", force_company: CompanyId);
-            var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-            var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
-            if (partnerLevelId.HasValue)
-            {
-                var memberLevelObj = GetService<IMemberLevelService>();
-                var level = await memberLevelObj.GetByIdAsync(partnerLevelId);
-                display.Partner.MemberLevel = _mapper.Map<MemberLevelBasic>(level);
-            }
-
             var lineObj = GetService<ISaleOrderLineService>();
             var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))
                 .Include(x => x.Advisory)
@@ -1366,15 +1325,21 @@ namespace Infrastructure.Services
             var order = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
-                .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
-                .Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
+                //.Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
+                //.Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
                 .FirstOrDefaultAsync();
 
             order = _mapper.Map(val, order);
 
-            await SaveOrderLines(val, order);
+            //await SaveOrderLines(val, order);
             await UpdateAsync(order); //update trước để generate id cho những sale order line
 
+            //await ComputeToUpdateSaleOrder(order);
+            //await UpdateAsync(order);
+        }
+
+        public async Task ComputeToUpdateSaleOrder(SaleOrder order)
+        {
             var saleLineObj = GetService<ISaleOrderLineService>();
             saleLineObj.UpdateOrderInfo(order.OrderLines, order);
             saleLineObj.ComputeAmount(order.OrderLines);
@@ -1395,8 +1360,6 @@ namespace Infrastructure.Services
 
             _AmountAll(order);
             _GetInvoiced(new List<SaleOrder>() { order });
-
-            await UpdateAsync(order);
 
         }
 
@@ -1556,6 +1519,7 @@ namespace Infrastructure.Services
                         saleLine.PriceUnit = line.PriceUnit;
                         saleLine.Sequence = sequence++;
                         saleLine.Order = order;
+                        saleLine.OrderId = order.Id;
                         saleLine.SaleOrderLineToothRels.Clear();
                         if (line.ToothType == "manual")
                         {
@@ -1674,51 +1638,6 @@ namespace Infrastructure.Services
             var res = new SaleOrderDisplay();
             res.CompanyId = CompanyId;
             res.IsQuotation = val.IsQuotation;
-
-            if (val.PartnerId.HasValue)
-            {
-                var partnerObj = GetService<IPartnerService>();
-                var partner = await partnerObj.SearchQuery(x => x.Id == val.PartnerId).Select(x => new PartnerDisplay
-                {
-                    Id = x.Id,
-                    DisplayName = x.DisplayName,
-                    Avatar = x.Avatar,
-                    Gender = x.Gender,
-                    BirthDay = x.BirthDay,
-                    BirthMonth = x.BirthMonth,
-                    BirthYear = x.BirthYear,
-                    JobTitle = x.JobTitle,
-                    MedicalHistory = x.MedicalHistory,
-                    Histories = x.PartnerHistoryRels.Select(x => new HistorySimple()
-                    {
-                        Id = x.HistoryId,
-                        Name = x.History.Name
-                    }),
-                    Categories = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryBasic
-                    {
-                        Id = s.CategoryId,
-                        Name = s.Category.Name,
-                        Color = s.Category.Color
-                    }),
-                }).FirstOrDefaultAsync();
-                res.PartnerId = partner.Id;
-                res.Partner = _mapper.Map<PartnerDisplay>(partner);
-
-                var propertyObj = GetService<IIRPropertyService>();
-                var partnerPointsProp = propertyObj.get("loyalty_points", "res.partner", res_id: $"res.partner,{val.PartnerId}", force_company: CompanyId);
-                var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
-                res.Partner.Point = partnerPoints;
-
-                var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{val.PartnerId}", force_company: CompanyId);
-                var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-                var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
-                if (partnerLevelId.HasValue)
-                {
-                    var memberLevelObj = GetService<IMemberLevelService>();
-                    var level = await memberLevelObj.GetByIdAsync(partnerLevelId);
-                    res.Partner.MemberLevel = _mapper.Map<MemberLevelBasic>(level);
-                }
-            }
 
             if (val.IsFast)
             {
@@ -2046,9 +1965,7 @@ namespace Infrastructure.Services
             {
                 ProductName = x.Product.Name,
                 ProductUOMQty = x.ProductUOMQty,
-                DiscountType = x.DiscountType,
-                Discount = x.Discount,
-                DiscountFixed = x.DiscountFixed,
+                AmountDiscountTotal = x.AmountDiscountTotal,
                 PriceUnit = x.PriceUnit,
                 PriceSubTotal = x.PriceSubTotal,
                 Sequence = x.Sequence

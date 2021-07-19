@@ -9,9 +9,11 @@ import { AccountCommonCustomerReportListComponent } from './account-common-custo
 import { SharedModule } from '../shared/shared.module';
 import { AccountCommonPartnerReportListComponent } from './account-common-partner-report-list/account-common-partner-report-list.component';
 import { AccountCommonPartnerReportDetailComponent } from './account-common-partner-report-detail/account-common-partner-report-detail.component';
+import { PartnerDebitListReportComponent } from './partner-debit-list-report/partner-debit-list-report.component';
+import { PartnerDebitDetailListReportComponent } from './partner-debit-detail-list-report/partner-debit-detail-list-report.component';
 
 @NgModule({
-  declarations: [AccountCommonCustomerReportListComponent, AccountCommonPartnerReportDetailComponent, AccountCommonPartnerReportListComponent],
+  declarations: [AccountCommonCustomerReportListComponent, AccountCommonPartnerReportDetailComponent, AccountCommonPartnerReportListComponent, PartnerDebitListReportComponent, PartnerDebitDetailListReportComponent],
   imports: [
     CommonModule,
     AccountCommonPartnerReportsRoutingModule,
