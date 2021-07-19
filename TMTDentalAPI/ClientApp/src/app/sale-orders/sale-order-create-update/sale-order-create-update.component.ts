@@ -1122,7 +1122,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     } else {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
       modalRef.componentInstance.title = 'Ngừng dịch vụ';
-      modalRef.componentInstance.body = 'Bạn có chắc chắn ngừng dịch vụ?';
+      modalRef.componentInstance.body = 'Bạn có muốn ngừng dịch vụ không?';
+      modalRef.componentInstance.body2 = '(Lưu ý: Sau khi ngừng không thể chỉnh sửa dịch vụ)';
       modalRef.result.then(() => {
         this.saleOrderLineService.patchIsActive(line.id, active).subscribe(() => {
           line.isActive = active;

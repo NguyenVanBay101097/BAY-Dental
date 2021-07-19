@@ -166,7 +166,7 @@
                                             </ng-container>
                                             <ng-template #elseTemplateQty>
                                                 <kendo-numerictextbox required style="width:100%;" [format]="'n0'" [min]="0"
-                                                    [spinners]="false" formControlName="productUOMQty">
+                                                    formControlName="productUOMQty">
                                                 </kendo-numerictextbox>
                                             </ng-template>
                                         </td>
@@ -257,7 +257,7 @@
                 <i class="fas fa-trash pr-1"></i>
                 <span>Xóa</span>
             </button>
-            <ng-container *ngIf="line.id">
+            <ng-container *ngIf="line.state == 'sale'">
                 <ng-container *ngIf="line.isActive == true; else elseTemplateActive">
                     <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-secondary ml-2"
                         title="Ngừng dịch vụ">
