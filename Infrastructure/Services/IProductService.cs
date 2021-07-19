@@ -38,6 +38,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<ProductProductExportExcel>> GetMedicineExportExcel(ProductPaged val);
         void SetStandardPrice(Product self, double value, Guid? force_company = null);
         Task<ProductDisplay> GetDefaultProductMedicine();
-        Task<IEnumerable<ProductComingEnd>> GetProductsComingEnd(string filter);
+        Task<IEnumerable<ProductComingEnd>> GetProductsComingEnd(ProductGetProductsComingEndRequest val);
     }
 }

@@ -270,7 +270,7 @@ td.oe_form_group_cell_label label {
 }
 
 .o_form_view .o_form_section .o_form_section_left {
-    flex: 0 0 319px;
+    flex: 0 0 30%;
     margin-right: 15px;
 }
 

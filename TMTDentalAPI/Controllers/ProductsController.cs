@@ -105,10 +105,12 @@ namespace TMTDentalAPI.Controllers
             var result = await _productService.GetLaboPagedResultAsync(val);
             return Ok(result);
         }
+
+        //Lấy danh sách những product mà tồn kho hiện tại nhỏ hơn tồn kho tối thiểu được thiết lập
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetProductsComingEnd(string filter = "")
+        public async Task<IActionResult> GetProductsComingEnd([FromQuery] ProductGetProductsComingEndRequest val)
         {
-            var results = await _productService.GetProductsComingEnd(filter);
+            var results = await _productService.GetProductsComingEnd(val);
             return Ok(results);
         }
 

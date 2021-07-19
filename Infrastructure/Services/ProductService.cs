@@ -254,41 +254,33 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<IEnumerable<ProductComingEnd>> GetProductsComingEnd(string filter)
+        public async Task<IEnumerable<ProductComingEnd>> GetProductsComingEnd(ProductGetProductsComingEndRequest val)
         {
-            var date = DateTime.Now;
-            var companyId = CompanyId;
-            var query = _context.StockHistories.Where(x => x.date < date && x.company_id == companyId && x.Product.PurchaseOK == true)
-                .GroupBy(x => new
-                {
-                    ProductId = x.Product.Id,
-                    ProductName = x.Product.Name,
-                    PurchaseOk = x.Product.PurchaseOK,
-                    MinInventory = x.Product.MinInventory,
-                    Type2 = x.Product.Type2
-                })
+            var quantObj = GetService<IStockQuantService>();
+            var productQuery = SearchQuery(x => x.Active && x.Type == "product");
+            var quantQuery = quantObj.SearchQuery(x => x.Location.Usage == "internal" && (!val.CompanyId.HasValue || x.CompanyId == val.CompanyId))
+                .GroupBy(x => x.ProductId)
                 .Select(x => new
                 {
-                    ProductId = x.Key.ProductId,
-                    ProductName = x.Key.ProductName,
-                    MinInventory = x.Key.MinInventory,
-                    PurchaseOk = x.Key.PurchaseOk,
-                    Inventory = x.Sum(s => s.quantity),
-                    Type2 = x.Key.Type2
+                    ProductId = x.Key,
+                    QtyAvailable = x.Sum(x => x.Qty)
                 });
-            if (!string.IsNullOrEmpty(filter))
-                query = query.Where(x => x.ProductName == filter);
-            var results = await query.Where(x => x.Inventory < x.MinInventory)
-                .Select(x => new ProductComingEnd()
-                {
-                    Id = x.ProductId,
-                    Name = x.ProductName,
-                    Inventory = x.Inventory,
-                    MinInventory = x.MinInventory,
-                    Type2 = x.Type2
-                }).ToListAsync();
 
-            return results;
+            var result = from p in productQuery
+                           from q in quantQuery.Where(x => x.ProductId == p.Id).DefaultIfEmpty()
+                           where q.QtyAvailable < p.MinInventory
+                           select new ProductComingEnd
+                           {
+                                Id = p.Id,
+                                Inventory = q.QtyAvailable,
+                                MinInventory = p.MinInventory,
+                                Name = p.Name,
+                                PurchasePrice = p.PurchasePrice,
+                                Type2 = p.Type2,
+                                NameNoSign = p.NameNoSign
+                           };
+
+            return await result.ToListAsync();
 
         }
         

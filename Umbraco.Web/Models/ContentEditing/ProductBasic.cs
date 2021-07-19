@@ -212,9 +212,15 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public decimal PurchasePrice { get; set; }
+        public decimal? PurchasePrice { get; set; }
         public decimal Inventory { get; set; }
         public decimal? MinInventory { get; set; }
         public string Type2 { get; set; }
+        public string NameNoSign { get; set; }
+    }
+
+    public class ProductGetProductsComingEndRequest
+    {
+        public Guid? CompanyId { get; set; }
     }
 }

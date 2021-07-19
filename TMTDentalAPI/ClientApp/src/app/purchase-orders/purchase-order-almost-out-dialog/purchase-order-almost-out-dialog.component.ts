@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ProductService } from 'src/app/products/product.service';
 
 @Component({
@@ -15,10 +16,12 @@ export class PurchaseOrderAlmostOutDialogComponent implements OnInit {
   selectedIds: any[] = [];
   productType: string = 'product';
   listProduct: any[] = [];
+  search: string;
 
   constructor(
     public activeModal: NgbActiveModal,
-    private productService: ProductService
+    private productService: ProductService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -26,8 +29,7 @@ export class PurchaseOrderAlmostOutDialogComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    var search = "";
-    this.productService.getProductsComingEnd(search).subscribe((res: any) => {
+    this.productService.getProductsComingEnd({companyId: this.authService.userInfo.companyId}).subscribe((res: any) => {
       this.listProduct = res;
       this.loadListProduct();
     }, (err) => {
@@ -36,7 +38,9 @@ export class PurchaseOrderAlmostOutDialogComponent implements OnInit {
   }
 
   loadListProduct() {
-    this.listProductFilter = this.listProduct.filter(x => x.type2.includes(this.productType))
+    this.listProductFilter = this.listProduct.filter(x => x.type2.includes(this.productType) && 
+    (!this.search || x.name.toLowerCase().indexOf(this.search.toLowerCase()) != -1 || 
+    x.nameNoSign.toLowerCase().indexOf(this.search.toLowerCase()) != -1));
   }
 
   onSave() {
@@ -51,18 +55,13 @@ export class PurchaseOrderAlmostOutDialogComponent implements OnInit {
     this.activeModal.close(products);
   }
 
-  onChangeType(value) {
+  onChangeType2(value) {
     this.productType = value;
     this.loadListProduct();
   }
 
   onChangeSearch(value) {
-    if (value == '' || !value) {
-      this.loadListProduct();
-    } else {
-      this.listProductFilter = this.listProductFilter.filter(x => this.RemoveVietnamese(x.name).includes(value));
-    }
-    return this.listProductFilter;
+    this.loadListProduct();
   }
 
   RemoveVietnamese(text) {

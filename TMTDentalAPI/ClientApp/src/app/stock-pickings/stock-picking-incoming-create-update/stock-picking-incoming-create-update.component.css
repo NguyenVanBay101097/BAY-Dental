@@ -16,14 +16,6 @@
     padding: 0;
 }
 
-.table thead th{
-    border-bottom: none;
-    vertical-align: middle;
-}
-.table td, .table th{
-    border-top: none;
-}
-
 .section_right table tbody tr{
     border-bottom: 1px solid #dee2e6;
 }
@@ -41,11 +33,6 @@
     border-bottom-right-radius:0 !important;
 }
 
-.o_form_view .o_group{
-    margin: 0px;
-    padding: 16px;
-}
-
 .text_bold{
     font-weight: 500;
     color: #007BFF;
@@ -55,32 +42,6 @@
 .t_head{
     padding-left: 20px;
     background-color: #F2F2F2;
-}
-
-.o_form_view .o_form_sheet_bg{
-    background-color: #ebedef;
-}
-
-.o_form_section{
-    margin: 16px;
-    background-color: white;
-    border-radius: 6px;
-}
-
-.section_left {
-    /* width: fit-content; */
-    flex: 1 1 380px;
-    border-radius: 6px;
-    margin-left: 15px;
-    background-color: white;
-}
-
-.section_right {
-    -webkit-box-flex: 1;
-    flex: 1 1 auto;
-    border-radius: 6px;
-    margin: 0 15px;
-    background-color: white;
 }
 
 .t_tilte{

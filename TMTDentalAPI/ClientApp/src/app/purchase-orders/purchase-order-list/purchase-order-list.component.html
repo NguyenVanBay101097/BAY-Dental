@@ -7,10 +7,11 @@
             </li>
         </ol>
         <div class="o_cp_searchview">
-            <div class="o_cp_searchview_group">
-                <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu"
-                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            <div class="o_searchview">
+                <i class="o_searchview_icon fa fa-search"></i>
+                <div class="o_searchview_input_container">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu" type="text"
+                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
@@ -47,10 +48,9 @@
                 <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
                     (selectChange)="onStateSelectChange($event)">
                 </app-tmt-option-select-dropdown>
-                <kendo-combobox [data]="supplierData" [textField]="'displayName'" [valueField]="'id'" [filterable]="true" 
-                (selectionChange)="handleFilter($event)" [placeholder]="'Nhà cung cấp'"
-                    #supplierCbx
-                    class="kendo-combobox-sm">
+                <kendo-combobox [data]="supplierData" [textField]="'displayName'" [valueField]="'id'"
+                    [filterable]="true" (selectionChange)="handleFilter($event)" [placeholder]="'Nhà cung cấp'"
+                    #supplierCbx class="kendo-combobox-sm">
                 </kendo-combobox>
             </div>
         </div>

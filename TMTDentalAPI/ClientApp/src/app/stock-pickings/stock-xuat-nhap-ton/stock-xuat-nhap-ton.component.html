@@ -20,7 +20,7 @@
         <div class="o_searchview">
             <i class="o_searchview_icon fa fa-search"></i>
             <div class="o_searchview_input_container">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm..." type="text"
+                <input class="o_searchview_input" placeholder="Tìm kiếm mã, tên sản phẩm" type="text"
                     [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
@@ -39,7 +39,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="productName" title="Tên sản phẩm" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <span [class.text-danger]="dataItem.end<dataItem.minInventory">
+                <span [class.text-danger]="dataItem.end < dataItem.minInventory">
                     {{dataItem.productName}}
                 </span>
             </ng-template>

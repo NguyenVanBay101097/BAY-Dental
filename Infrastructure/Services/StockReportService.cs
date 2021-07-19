@@ -215,8 +215,9 @@ namespace Infrastructure.Services
 
             var count = await query.CountAsync();
 
+            query = query.OrderByDescending(x => x.date);
             if (val.Limit > 0)
-                query = query.OrderByDescending(x => x.date).Skip(val.Offset).Take(val.Limit);
+                query = query.Skip(val.Offset).Take(val.Limit);
 
             var res = await query.Select(x => new StockHistoryDto()
             {

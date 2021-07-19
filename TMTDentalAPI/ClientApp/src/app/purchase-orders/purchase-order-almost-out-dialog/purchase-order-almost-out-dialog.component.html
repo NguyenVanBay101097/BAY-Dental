@@ -5,31 +5,36 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <div class="o_cp_controller">
-        <div class="o_control_panel">
-            <div class="o_cp_t_left">
-                <input class="form-check-input" [hidden]="true" [(ngModel)]="productType" type="radio" name="radioButtonCheck"
-                    id="productCheck" value="product" (change)="onChangeType($event.target.value)">
-                <label class="form-check-label btn btn-sm btn-outline-primary" for="productCheck">
+    <div class="d-flex p-2">
+        <div class="flex-fill">
+            <div class="btn-group">
+                <input class="btn-check" type="radio" [(ngModel)]="productType" name="radioButton2" id="product2"
+                    value="product" (change)="onChangeType2($event.target.value)">
+                <label class="btn btn-sm btn-outline-primary" for="product2">
                     Vật tư
                 </label>
-                <input class="form-check-input" [hidden]="true" [(ngModel)]="productType" type="radio" name="radioButtonCheck"
-                    id="medicineCheck" value="medicine" (change)="onChangeType($event.target.value)">
-                <label class="form-check-label btn btn-sm btn-outline-primary" for="medicineCheck" hasGroups [groups]="'medicineOrder.group_medicine'">
+                <input class="btn-check" type="radio" [(ngModel)]="productType" name="radioButton2" id="medicine2"
+                    value="medicine" (change)="onChangeType2($event.target.value)">
+                <label class="btn btn-sm btn-outline-primary" for="medicine2" hasGroups
+                    [groups]="'medicineOrder.group_medicine'">
                     Thuốc
                 </label>
-                
             </div>
-            <div class="o_cp_t_right">
-                <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo tên" type="text" id="search"
-                    (keyup)="onChangeSearch($event.target.value);">
+        </div>
+        <div class="flex-fill">
+            <div class="o_searchview">
+                <i class="o_searchview_icon fa fa-search"></i>
+                <div class="o_searchview_input_container">
+                    <input class="o_searchview_input o_searchview" [(ngModel)]="search" placeholder="Tìm kiếm theo tên" type="text" id="search"
+                        (input)="onChangeSearch($event.target.value);">
+                </div>
             </div>
         </div>
     </div>
 
     <div class="o_content">
         <kendo-grid [data]="listProductFilter" [selectable]="true" [resizable]="true" [kendoGridSelectBy]="'id'"
-            [selectedKeys]="selectedIds" [height]="400">
+            [selectedKeys]="selectedIds">
             <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
             <kendo-grid-column field="name" [title]="productType=='medicine'?'Tên thuốc':'Tên vật tư'"></kendo-grid-column>
             <kendo-grid-column field="purchasePrice" title="Giá mua"></kendo-grid-column>
