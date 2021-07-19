@@ -96,7 +96,7 @@ export class PartnerDebitListReportComponent implements OnInit {
   
   searchChangeDate(value: any) {
     this.dateFrom = value.dateFrom;
-    this.dateTo = value.dateTo;
+    this.dateTo = value.dateTo;    
     this.loadDataFromApi();
   }
 
