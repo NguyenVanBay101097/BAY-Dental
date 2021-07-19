@@ -11,6 +11,6 @@ namespace Infrastructure.Services
     {
         Task<IEnumerable<StockReportXuatNhapTonItem>> XuatNhapTonSummary(StockReportXuatNhapTonSearch val);
         Task<IEnumerable<StockReportXuatNhapTonItemDetail>> XuatNhapTonDetail(StockReportXuatNhapTonItem val);
-        Task<PagedResult2<GetStockHistoryRes>> GetStockHistoryPaged(GetStockHistoryReq val);
+        Task<PagedResult2<StockHistoryDto>> GetStockHistoryPaged(GetStockHistoryReq val);
     }
 }

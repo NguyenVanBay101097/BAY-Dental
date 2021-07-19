@@ -31,8 +31,7 @@ export class StockReportXuatNhapTonSearch {
     dateTo: string;
     productId: string;
     productCategId: string;
-    search: string;
-    minInventoryFilter: string;
+    companyId: string;
 }
 export class GetStockHistoryReq {
     limit: number;
@@ -40,6 +39,7 @@ export class GetStockHistoryReq {
     dateFrom: string;
     dateTo: string;
     productId: string;
+    companyId: string;
 }
 
 @Injectable()

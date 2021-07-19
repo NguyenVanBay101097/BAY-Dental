@@ -12,6 +12,7 @@ import { ProductCategoryBasic } from 'src/app/product-categories/product-categor
 import { ProductSimple } from 'src/app/products/product-simple';
 import { StockReportService, StockReportXuatNhapTonItem, StockReportXuatNhapTonSearch } from 'src/app/stock-reports/stock-report.service';
 import { StockXuatNhapTonDetailDialogComponent } from '../stock-xuat-nhap-ton-detail-dialog/stock-xuat-nhap-ton-detail-dialog.component';
+import { AuthService } from 'src/app/auth/auth.service';
 @Component({
   selector: 'app-stock-xuat-nhap-ton',
   templateUrl: './stock-xuat-nhap-ton.component.html',
@@ -51,10 +52,14 @@ export class StockXuatNhapTonComponent implements OnInit {
     { text: 'Dưới mức tối thiểu', value: 'below_minInventory' }
   ];
   minInventoryFilter: string;
+
+  clickedRowItem: any;
+
   constructor(
     private reportService: StockReportService,
     private intlService: IntlService,
     private modalService: NgbModal,
+    private authService: AuthService
   ) {
     this.excelData = this.excelData.bind(this);
   }
@@ -87,10 +92,7 @@ export class StockXuatNhapTonComponent implements OnInit {
     var val = new StockReportXuatNhapTonSearch();
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
-    val.productId = this.searchProduct ? this.searchProduct.id : null;
-    val.productCategId = this.searchCateg ? this.searchCateg.id : null;
-    val.search = this.search ? this.search : null;
-    val.minInventoryFilter = this.minInventoryFilter ? this.minInventoryFilter : null;
+    val.companyId = this.authService.userInfo.companyId;
     this.reportService.getXuatNhapTonSummary(val).subscribe(res => {
       this.items = res;
       this.computeAggregate();
@@ -134,17 +136,15 @@ export class StockXuatNhapTonComponent implements OnInit {
     this.sumEnd = result.end ? result.end.sum : 0;
   }
 
-  cellClick(item: any) {
-    const product = this.gridData.data[item.path[1].rowIndex];
+  onCellClick(e) {
+    this.clickedRowItem = e.dataItem;
+  }
+
+  onDblClick() {
+    const product = this.clickedRowItem;
     const modalRef = this.modalService.open(StockXuatNhapTonDetailDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Lịch sử nhập - xuất';
-    modalRef.componentInstance.productId = product.productId;
-    modalRef.componentInstance.dateFrom = product.dateFrom;
-    modalRef.componentInstance.dateTo = product.dateTo;
-    modalRef.componentInstance.productName = product.productName;
-    modalRef.result.then((res) => {
-
-    })
+    modalRef.componentInstance.item = product;
   }
 
   computeAggregate() {

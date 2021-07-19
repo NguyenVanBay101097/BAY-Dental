@@ -29,7 +29,7 @@
 
 <div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        #grid="kendoGrid" (pageChange)="pageChange($event)" (dblclick)="cellClick($event)">
+        #grid="kendoGrid" (pageChange)="pageChange($event)" (dblclick)="onDblClick()" (cellClick)="onCellClick($event)">
         <kendo-grid-column field="productCode" title="Mã sản phẩm" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <span [class.text-danger]="dataItem.end<dataItem.minInventory">

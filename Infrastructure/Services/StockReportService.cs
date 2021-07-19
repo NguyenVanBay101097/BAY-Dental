@@ -46,20 +46,17 @@ namespace Infrastructure.Services
             var date_from = val.DateFrom.HasValue ? val.DateFrom.Value.AbsoluteBeginOfDate() : (DateTime?)null;
             var date_to = val.DateTo.HasValue ? val.DateTo.Value.AbsoluteEndOfDate() : (DateTime?)null;
 
-            var companyId = CompanyId;
+            var companyId = val.CompanyId;
             var dict = new Dictionary<Guid, dynamic>();
             if (date_from.HasValue)
             {
-                var query = _context.StockHistories.Where(x => x.date < date_from && x.company_id == companyId);
+                var query = _context.StockHistories.Where(x => x.date < date_from);
+                if (val.CompanyId.HasValue)
+                    query = query.Where(x => x.company_id == val.CompanyId);
                 if (val.ProductCategId.HasValue)
                     query = query.Where(x => x.product_categ_id == val.ProductCategId);
                 if (val.ProductId.HasValue)
                     query = query.Where(x => x.product_id == val.ProductId);
-                if (!string.IsNullOrWhiteSpace(val.Search))
-                {
-                    query = query.Where(x => x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search) ||
-                    x.Product.DefaultCode.Contains(val.Search));
-                }
 
                 var list = await query
                    .GroupBy(x => x.product_id)
@@ -82,18 +79,14 @@ namespace Infrastructure.Services
                     }
                 }
             }
-           
 
             var query2 = _context.StockHistories.Where(x => (!date_from.HasValue || x.date >= date_from) && (!date_to.HasValue || x.date <= date_to) && x.company_id == companyId);
+            if (val.CompanyId.HasValue)
+                query2 = query2.Where(x => x.company_id == val.CompanyId);
             if (val.ProductCategId.HasValue)
                 query2 = query2.Where(x => x.product_categ_id == val.ProductCategId);
             if (val.ProductId.HasValue)
                 query2 = query2.Where(x => x.product_id == val.ProductId);
-            if (!string.IsNullOrWhiteSpace(val.Search))
-            {
-                query2 = query2.Where(x => x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search) ||
-                x.Product.DefaultCode.Contains(val.Search));
-            }
 
             var list2 = await query2.GroupBy(x => x.product_id)
                     .Select(x => new
@@ -147,7 +140,8 @@ namespace Infrastructure.Services
                     ProductId = product.Id,
                     ProductName = product.Name,
                     ProductUomName = product.UOM.Name,
-                    ProductNameNoSign = product.NameNoSign
+                    ProductNameNoSign = product.NameNoSign,
+                    CompanyId = val.CompanyId
                 });
             }
            
@@ -204,34 +198,38 @@ namespace Infrastructure.Services
             return list2;
         }
 
-        public async Task<PagedResult2<GetStockHistoryRes>> GetStockHistoryPaged(GetStockHistoryReq val)
+        public async Task<PagedResult2<StockHistoryDto>> GetStockHistoryPaged(GetStockHistoryReq val)
         {
             var query = _context.StockHistories.AsQueryable();
             if (val.DateFrom.HasValue)
-            {
                 query = query.Where(x => x.date >= val.DateFrom.Value.AbsoluteBeginOfDate());
-            }
+
             if (val.DateTo.HasValue)
-            {
                 query = query.Where(x => x.date <= val.DateTo.Value.AbsoluteEndOfDate());
-            }
+
             if (val.ProductId.HasValue)
-            {
                 query = query.Where(x => x.product_id == val.ProductId);
-            }
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.company_id == val.CompanyId);
 
             var count = await query.CountAsync();
-            if (val.Limit > 0)
-                query = query.Skip(val.Offset).Take(val.Limit);
 
-            var res = await query.Select(x => new GetStockHistoryRes()
+            if (val.Limit > 0)
+                query = query.OrderByDescending(x => x.date).Skip(val.Offset).Take(val.Limit);
+
+            var res = await query.Select(x => new StockHistoryDto()
             {
                 Date = x.date,
                 MovePickingName = x.Move.Picking.Name,
-                Quantity = x.quantity
+                Quantity = x.quantity,
+                CompanyName = x.Company.Name,
+                MoveName = x.Move.Name,
+                PriceUnitOnQuant = x.price_unit_on_quant,
+                ProductName = x.Product.Name
             }).ToListAsync();
 
-            return new PagedResult2<GetStockHistoryRes>(count, val.Offset, val.Limit)
+            return new PagedResult2<StockHistoryDto>(count, val.Offset, val.Limit)
             {
                 Items = res
             };
