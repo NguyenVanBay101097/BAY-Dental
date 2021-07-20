@@ -55,8 +55,11 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
+            query = query.OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
+
+            query = query.OrderByDescending(x => x.DateCreated);
 
             var items = await query.Include(x => x.Partner).ToListAsync();
 

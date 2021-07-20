@@ -111,6 +111,15 @@ namespace Infrastructure.Services
                 }).ToListAsync();
             var statistics_dict = statistics.ToDictionary(x => x.CampaignId, x => x);
 
+            var statistics2 = await smsMessageObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && ids.Contains(x.SmsCampaignId.Value))
+                .GroupBy(x => x.SmsCampaignId.Value)
+                .Select(x => new
+                {
+                    CampaignId = x.Key,
+                    TotalInQueue = x.Sum(s => s.State == "in_queue" ? 1 : 0),
+                }).ToListAsync();
+            var statistics_dict_2 = statistics2.ToDictionary(x => x.CampaignId, x => x);
+
             foreach (var item in items)
             {
                 if (!statistics_dict.ContainsKey(item.Id))
@@ -119,6 +128,14 @@ namespace Infrastructure.Services
                 item.TotalMessage = statistic.Total;
                 item.TotalSuccessfulMessages = statistic.TotalSent;
                 item.TotalErrorMessages = statistic.TotalError;
+            }
+
+            foreach (var item in items)
+            {
+                if (!statistics_dict_2.ContainsKey(item.Id))
+                    continue;
+                var statistic2 = statistics_dict_2[item.Id];
+                item.TotalWaitedMessages = statistic2.TotalInQueue;
             }
 
             return new PagedResult2<SmsCampaignBasic>(totalItems, val.Offset, val.Limit)

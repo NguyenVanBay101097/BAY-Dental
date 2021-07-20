@@ -1,31 +1,24 @@
-<div class="o_cp_controller">
-    <div class="o_control_panel">
-        <div class="breadcrumb">
-            <div class="d-flex">
-                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Ngày" [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
-                </app-tai-date-range-filter-dropdown>
-                <button type="button" class="btn btn-primary btn-sm mx-1" accesskey="c" (click)="createItem()" *ngIf="canCreate">Tạo phiếu xuất</button>
-            </div>
+<div class="p-2 d-flex bg-white">
+    <div class="d-flex flex-fill">
+        <div class="mr-1">
+            <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Ngày" [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
+            </app-tai-date-range-filter-dropdown>
         </div>
-        <div class="o_cp_searchview">
-            <div class="o_searchview">
+        <div class="mr-1">
+            <button type="button" class="btn btn-primary btn-sm mx-1" accesskey="c" (click)="createItem()" *ngIf="canCreate">Tạo phiếu xuất</button>
+        </div>
+    </div>
+    <div class="flex-fill">
+        <div class="o_searchview">
+            <i class="o_searchview_icon fa fa-search"></i>
+            <div class="o_searchview_input_container">
                 <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, tên đối tác..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
-        </div>
-        <div class="o_cp_left">
-            <div class="o_cp_buttons">
-                <div class="o_form_buttons_view">
-                </div>
-            </div>
-            <div class="o_cp_sidebar">
-            </div>
-        </div>
-        <div class="o_cp_right">
         </div>
     </div>
 </div>
 
-<div class="o_content">
+<div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="name" title="Số phiếu" width="120">
         </kendo-grid-column>

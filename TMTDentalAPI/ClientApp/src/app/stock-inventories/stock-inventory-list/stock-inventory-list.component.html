@@ -1,47 +1,51 @@
-<div class="o_cp_controller">
-    <div class="o_control_panel">
-        <div class="o_cp_t_left">
-            <div class="o_cp_buttons">
-                <div class="o_form_buttons_view">
-                    <div class="d-flex">
-                        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
-                        </app-tai-date-range-filter-dropdown>
-                        <kendo-combobox (selectionChange)="onStateChange($event)" placeholder="Trạng thái" class="kendo-combobox-sm" style="width: auto;" [data]="filterInventoryState" [textField]="'name'" [valueField]="'value'">
-                        </kendo-combobox>
-                    </div>
-                  
-                </div>
-            </div>
-            <div class="o_cp_sidebar">
-                <div class="d-flex">
-                    <button class="btn btn-primary btn-sm mr-2 ml-3" title="Tạo phiếu kiểm kho" (click)="createItem()" *ngIf="canCreate">Tạo phiếu kiểm kho</button>
-                    <!-- <button class="btn btn-primary btn-sm mr-2" title="Xuất file">Xuất file</button> -->
-                </div>
-            </div>
+<div class="p-2 d-flex bg-white">
+    <div class="d-flex flex-fill">
+        <div class="mr-1">
+            <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
+                (searchChange)="onSearchDateChange($event)">
+            </app-tai-date-range-filter-dropdown>
         </div>
-        <div class="o_cp_t_right">
-            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo số phiếu..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        <div class="mr-1">
+            <kendo-combobox (selectionChange)="onStateChange($event)" placeholder="Trạng thái"
+                class="kendo-combobox-sm mr-1" style="width: auto;" [data]="filterInventoryState" [textField]="'name'"
+                [valueField]="'value'">
+            </kendo-combobox>
+        </div>
+        <div>
+            <button class="btn btn-primary btn-sm" title="Tạo phiếu kiểm kho" (click)="createItem()"
+                *ngIf="canCreate">Tạo phiếu kiểm kho</button>
+        </div>
+    </div>
+    <div class="flex-fill">
+        <div class="o_searchview">
+            <i class="o_searchview_icon fa fa-search"></i>
+            <div class="o_searchview_input_container">
+                <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo số phiếu" type="text"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            </div>
         </div>
     </div>
 </div>
-<div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Số phiếu" width="100">
+
+<div>
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column field="name" title="Số phiếu" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.name}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="date" title="Ngày kiểm kho" width="100">
+        <kendo-grid-column field="date" title="Ngày kiểm kho" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.date | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="state" title="Trạng thái" width="100">
+        <kendo-grid-column field="state" title="Trạng thái" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{getState(dataItem.state)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column class="text-center" field="id" width="100">
+        <kendo-grid-column field="id" width="80">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>

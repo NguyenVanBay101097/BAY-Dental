@@ -11,9 +11,10 @@ import { PurchaseOrderLineService } from './purchase-order-line.service';
 import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order-list.component';
 import { PurchaseOrderListProductTabpanelComponent } from './purchase-order-list-product-tabpanel/purchase-order-list-product-tabpanel.component';
 import { NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { PurchaseOrderAlmostOutDialogComponent } from './purchase-order-almost-out-dialog/purchase-order-almost-out-dialog.component';
 
 @NgModule({
-  declarations: [PurchaseOrderCreateUpdateComponent, PurchaseOrderListComponent, PurchaseOrderListProductTabpanelComponent],
+  declarations: [PurchaseOrderCreateUpdateComponent, PurchaseOrderListComponent, PurchaseOrderListProductTabpanelComponent, PurchaseOrderAlmostOutDialogComponent],
   imports: [
     CommonModule,
     PurchaseOrdersRoutingModule,
@@ -30,6 +31,9 @@ import { NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
   ],
   exports: [
     PurchaseOrderListProductTabpanelComponent
+  ],
+  entryComponents: [
+    PurchaseOrderAlmostOutDialogComponent
   ]
 })
 export class PurchaseOrdersModule { }

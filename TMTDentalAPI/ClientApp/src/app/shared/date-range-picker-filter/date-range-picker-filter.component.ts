@@ -39,8 +39,8 @@ export class DateRangePickerFilterComponent implements OnInit {
     this.selected = this.selected || (
       (!this.startDate && !this.endDate) ? null :
         {
-          startDate: moment(undefined),
-          endDate: moment(undefined)
+          startDate: moment(this.startDate),
+          endDate: moment(this.endDate)
         })
   }
   ngAfterViewInit() {

@@ -16,34 +16,21 @@
     padding: 0;
 }
 
-.table thead th{
-    border-bottom: none;
-}
-.table td, .table th{
-    border-top: none;
-}
-
-.o_form_section_right table tbody tr{
+.section_right table tbody tr{
     border-bottom: 1px solid #dee2e6;
 }
 
-.o_form_section_right table tbody tr:last-child{
+.section_right table tbody tr:last-child{
     border-bottom: none;
 }
 
 .group_product{
-    border: 1px solid #dee2e6;
     padding: 4px;
 }
 
 .btn.btn_none_radius{
     border-bottom-left-radius:0 !important;
     border-bottom-right-radius:0 !important;
-}
-
-.o_form_view .o_group{
-    margin: 0px;
-    padding: 16px;
 }
 
 .text_bold{
@@ -57,22 +44,19 @@
     background-color: #F2F2F2;
 }
 
-.o_form_section .o_form_section_left {
-    -webkit-box-flex: 1;
-    flex: 0 0 300px;
-    padding-right: 0;
-  }
-
-  .o_form_section .o_form_section_right {
-    -webkit-box-flex: 1;
-    flex: 1 1 auto;
-    padding-right: 0;
-  }
 .t_tilte{
-    padding-left: 5px;
-    background-color: #F2F2F2;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 10px;
     margin: 0;
-    border: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table .th-light{
+    background-color: #F8F9FA;
+    border-color: #F8F9FA;
+}
+
+.table .th-light th{
+    font-weight: normal;
 }

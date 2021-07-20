@@ -19,7 +19,6 @@ export class PurchaseOrderListProductTabpanelComponent implements OnInit, OnChan
   search: string;
   listProductFilter: any[];
   searchUpdate = new Subject<string>();
-
   @Output() onSelectService = new EventEmitter<any>();
 
   constructor(
@@ -42,7 +41,7 @@ export class PurchaseOrderListProductTabpanelComponent implements OnInit, OnChan
     if (value == '' || !value) {
       this.loadData();
     } else {
-      this.listProductFilter = this.listProductFilter.filter(x => this.RemoveVietnamese(x.name).includes(value));
+      this.listProductFilter = this.listProductFilter.filter(x => this.RemoveVietnamese(x.name).includes(this.RemoveVietnamese(value)));
     }
     return this.listProductFilter;
   }

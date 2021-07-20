@@ -57,6 +57,11 @@ export class SmsCampaignCrUpComponent implements OnInit {
     )
   }
 
+  limitChange(value) {
+    if (value < 0)
+      this.f.limitMessage.setValue(0);
+  }
+
   notify(title, isSuccess = true) {
     this.notificationService.show({
       content: title,

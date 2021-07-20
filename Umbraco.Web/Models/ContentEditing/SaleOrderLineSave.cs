@@ -52,5 +52,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CounselorId { get; set; }
 
         public bool IsActive { get; set; }
+        public Guid OrderId { get; set; }
     }
 }

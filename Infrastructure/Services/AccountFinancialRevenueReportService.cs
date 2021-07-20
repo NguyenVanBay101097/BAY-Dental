@@ -108,7 +108,13 @@ namespace Infrastructure.Services
                             DisplayDetail = "detail_with_hierarchy",
                             Sequence = 3,
                             Sign = -1,
-                            //FinancialRevenueReportAccountAccountRels = chờ column cộng
+                            FinancialRevenueReportAccountRels = new List<AccountFinancialRevenueReportAccountAccountRel>(){
+                                                    new AccountFinancialRevenueReportAccountAccountRel()
+                                                {
+                                                    AccountCode = "CNKH",
+                                                    Column = 1,
+                                                     JournalTypes = "cash,bank"
+                                                } }
                         },
                           new AccountFinancialRevenueReport()
                         {
@@ -181,7 +187,13 @@ namespace Infrastructure.Services
                             DisplayDetail = "detail_with_hierarchy",
                             Sequence = 2,
                             Sign = -1,
-                            //FinancialRevenueReportAccountAccountRels = chờ column trừ
+                             FinancialRevenueReportAccountRels = new List<AccountFinancialRevenueReportAccountAccountRel>(){
+                                                    new AccountFinancialRevenueReportAccountAccountRel()
+                                                {
+                                                    AccountCode = "CNKH",
+                                                    Column = 2,
+                                                     JournalTypes = "debt"
+                                                } }
                         }
                             }
                         }

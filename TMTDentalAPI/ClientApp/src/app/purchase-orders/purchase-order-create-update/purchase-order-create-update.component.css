@@ -90,18 +90,6 @@ input[type="radio"] {
     color: #464f5770;
 }
 
-.o_form_section .o_form_section_left {
-    -webkit-box-flex: 1;
-    flex: 0 0 300px;
-    padding-right: 0;
-}
-
-.o_form_section .o_form_section_right {
-    -webkit-box-flex: 1;
-    flex: 1 1 auto;
-    padding-right: 0;
-}
-
 .t_search_wrapper {
     margin-bottom: 5px;
     flex: 0 0 auto;
@@ -184,6 +172,7 @@ input[type="radio"] {
     font-size: 20px;
     font-weight: 600;
     margin: 0;
+    height: 39px;
 }
 
 .group_product {
@@ -191,21 +180,8 @@ input[type="radio"] {
     padding: 4px;
 }
 
-.line-amount-residual {
-    border-top: 1px solid;
-}
-
-.o_form_view .o_group.o_inner_group.oe_subtotal_footer {
-    border-top: none;
-}
-
 .btnAction {
     width: 100px;
-}
-
-.o_form_sheet {
-    height: 650px;
-    overflow-y: scroll;
 }
 
 .sticky-header {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { map } from 'rxjs/operators';
 import { GetStockHistoryReq, StockReportService } from 'src/app/stock-reports/stock-report.service';
@@ -14,18 +14,19 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
   title: string;
   gridData: GridDataResult;
   loading: boolean = false;
-  limit: number = 20;
+  limit: number = 5;
   skip: number = 0;
-  dateFrom: string;
-  dateTo: string;
-  productId: string;
-  productName: string;
+  item: any;
+  allGridData: GridDataResult;
+
   constructor(
     public activeModal: NgbActiveModal,
     private stockReportService: StockReportService,
-    private intl: IntlService,
+    private intlService: IntlService,
 
-  ) { }
+  ) {
+    this.allData = this.allData.bind(this);
+  }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -33,15 +34,21 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
 
   loadDataFromApi() {
     var val = new GetStockHistoryReq();
-    val.dateFrom = '';
-    val.dateTo =  '';
-    val.productId = this.productId ? this.productId : '';
+    val.dateFrom = this.item.dateFrom || '';
+    val.dateTo = this.item.dateTo || '';
+    val.productId = this.item.productId || '';
+    val.companyId = this.item.companyId || '';
     val.limit = this.limit;
     val.offset = this.skip;
 
     this.stockReportService.getStockHistory(val).pipe(
       map((response: any) => (<GridDataResult>{
-        data: response.items,
+        data: response.items.map(x => {
+          return {
+            ...x,
+            date: new Date(x.date)
+          }
+        }),
         total: response.totalItems
       }))
     ).subscribe(res => {
@@ -53,32 +60,37 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
     })
   }
 
-  pageChange(event) { }
+  pageChange(event) {
+    this.skip = event.skip;
+    this.loadDataFromApi();
+  }
 
-  exportExcelFile() {
+  public allData = (): any => {
     var val = new GetStockHistoryReq();
+    val.dateFrom = this.item.dateFrom || '';
+    val.dateTo = this.item.dateTo || '';
+    val.productId = this.item.productId || '';
+    val.companyId = this.item.companyId || '';
+    val.limit = 0;
+    val.offset = 0;
 
-    val.dateFrom = this.dateFrom ? this.dateFrom : '';
-    val.dateTo = this.dateTo ? this.dateTo : '';
-    val.productId = this.productId ? this.productId : '';
-    val.limit = this.limit;
-    val.offset = this.skip;
+    var observable = this.stockReportService.getStockHistory(val).pipe(
+      map((response: any) => (<GridDataResult>{
+        data: response.items.map(x => {
+          return {
+            ...x,
+            date: new Date(x.date)
+          }
+        }),
+        total: response.totalItems
+      }))
+    );
 
-    this.stockReportService.excelStockHistoryExport(val).subscribe((res: any) => {
-      let filename = `Lịch sử nhập xuất ${this.productName}`;
-      let newBlob = new Blob([res], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      let data = window.URL.createObjectURL(newBlob);
-      let link = document.createElement("a");
-      link.href = data;
-      link.download = filename;
-      link.click();
-      setTimeout(() => {
-        window.URL.revokeObjectURL(data);
-      }, 100);
-    })
+    return observable;
+  }
+
+  exportExcelFile(grid: GridComponent) {
+    grid.saveAsExcel();
   }
 
   onCancel() {
