@@ -59,7 +59,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid? PartnerId { get; set; }
 
-        public bool IsAccounting { get; set; }
+        public bool? IsAccounting { get; set; }
 
 
     }

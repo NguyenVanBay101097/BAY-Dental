@@ -129,9 +129,9 @@ export class PurchaseOrderListComponent implements OnInit {
   getTitle() {
     switch (this.type) {
       case 'refund':
-        return 'Trả hàng';
+        return 'trả hàng';
       default:
-        return 'Mua hàng';
+        return 'mua hàng';
     }
   }
 
@@ -140,9 +140,9 @@ export class PurchaseOrderListComponent implements OnInit {
       return false;
     }
 
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa phiếu' + this.getTitle();
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu' + this.getTitle();
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa phiếu ' + this.getTitle();
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu '+this.getTitle() + '?';
     modalRef.result.then(() => {
       this.purchaseOrderService.unlink(this.selectedIds).subscribe(() => {
         this.selectedIds = [];

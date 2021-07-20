@@ -113,6 +113,6 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// hạch toán
         /// </summary>
-        public bool IsAccounting { get; set; }
+        public bool? IsAccounting { get; set; }
     }
 }

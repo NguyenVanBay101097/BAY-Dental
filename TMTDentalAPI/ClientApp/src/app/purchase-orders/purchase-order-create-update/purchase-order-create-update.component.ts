@@ -23,6 +23,7 @@ import { AccountPaymentService } from 'src/app/account-payments/account-payment.
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
+import { PurchaseOrderAlmostOutDialogComponent } from '../purchase-order-almost-out-dialog/purchase-order-almost-out-dialog.component';
 declare var $: any;
 
 @Component({
@@ -93,15 +94,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
     this.loadRecord();
 
-    this.partnerCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.partnerCbx.loading = true)),
-      switchMap(value => this.searchPartners(value))
-    ).subscribe(result => {
-      this.filteredPartners = result;
-      this.partnerCbx.loading = false;
-    });
-
     this.loadPartners();
     this.loadFilteredJournals();
     this.loadProductList();
@@ -127,7 +119,23 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       control.clear();
       result.orderLines.forEach(line => {
         var g = this.fb.group(line);
+        g.get('priceUnit').setValidators([Validators.required]);
+        g.get('discount').setValidators([Validators.required]);
+        g.get('productQty').setValidators([Validators.required]);
         control.push(g);
+
+        setTimeout(() => {
+          if (this.partnerCbx) {
+            this.partnerCbx.filterChange.asObservable().pipe(
+              debounceTime(300),
+              tap(() => (this.partnerCbx.loading = true)),
+              switchMap(value => this.searchPartners(value))
+            ).subscribe(result => {
+              this.filteredPartners = result;
+              this.partnerCbx.loading = false;
+            });
+          }
+        }, 0);
       });
     });
   }
@@ -184,15 +192,13 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   loadProductList() {
     var val = new ProductPaged();
-    val.limit = 20;
+    val.limit = 0;
     val.offset = 0;
     val.purchaseOK = true;
-    val.type = 'product';
-    val.type2 = this.listType;
     this.productService
       .autocomplete2(val).subscribe(
         (res) => {
-          console.log(res)         
+          console.log(res);
           this.productList = res;
         },
         (err) => {
@@ -266,7 +272,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
-    val.journalId = val.journal ? val.jounral.id : null;
+    val.journalId = val.journal ? val.journal.id : null;
 
     var data = Object.assign(this.purchaseOrder, val);
     if (this.id) {
@@ -369,7 +375,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   selectProduct(item) {
     var product = item;
-
+    const qty = item.qty ? item.qty : 1;
     // var index = _.findIndex(this.orderLines.controls, o => {
     //   return o.get('product').value.id == product.id;
     // });
@@ -389,7 +395,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         product: productSimple,
         productId: product.id,
         priceSubtotal: null,
-        productQty: [1, Validators.required],
+        productQty: [qty, Validators.required],
         discount: [0, Validators.required],
       });
 
@@ -483,6 +489,17 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   getPrint(id) {
     this.purchaseOrderService.getPrint(id).subscribe((data: any) => {
       this.printService.printHtml(data);
+    });
+  }
+
+  purchaseOrderAlmostOut() {
+    let modalRef = this.modalService.open(PurchaseOrderAlmostOutDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Hàng sắp hết';
+    modalRef.result.then((result) => {
+      for (const item of result) {
+        this.selectProduct(item)
+      }
+    }, () => {
     });
   }
 

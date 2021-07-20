@@ -19,7 +19,6 @@ export class PurchaseOrderListProductTabpanelComponent implements OnInit, OnChan
   search: string;
   listProductFilter: any[];
   searchUpdate = new Subject<string>();
-
   @Output() onSelectService = new EventEmitter<any>();
 
   constructor(
