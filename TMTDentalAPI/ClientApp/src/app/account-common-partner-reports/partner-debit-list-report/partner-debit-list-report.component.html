@@ -13,7 +13,7 @@
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <button (click)="exportExcel(grid)" class="btn btn-sm btn-primary"><i
+                <button (click)="exportExcel(grid)" class="btn btn-primary"><i
                         class="fas fa-download mr-1"></i>Xuất Excel</button>
             </div>
             <div class="o_cp_sidebar">
@@ -25,7 +25,7 @@
             </app-tai-date-range-filter-dropdown> -->
             <app-date-range-picker-filter class="mr-1" (searchChange)="searchChangeDate($event)" [startDate]="dateFrom" [endDate]="dateTo">
             </app-date-range-picker-filter>
-            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'"
+            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox" [valueField]="'id'"
                 [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)"
                 #companyCbx>
             </kendo-combobox>
@@ -34,19 +34,19 @@
 </div>
 
 <div class="p-3 d-flex flex-row summary">
-    <div class="p-3 mr-3 summary-col text-center d-flex flex-column mw-200" style="width: 150px">
+    <div class="p-3 mr-3 summary-col text-center d-flex flex-column mw-200">
         <label class="font-weight-600"> Nợ đầu kỳ </label>
         <h5 style="color: #2395FF;">{{sum('begin') | number }}</h5>
     </div>
-    <div class="p-3 mr-3 summary-col text-center d-flex flex-column mw-200" style="width: 150px">
+    <div class="p-3 mr-3 summary-col text-center d-flex flex-column mw-200">
         <label class="font-weight-600"> Tiền phát sinh </label>
         <h5 style="color: #1A6DE3;">{{sum('debit') | number }}</h5>
     </div>
-    <div class="p-3 mr-3 summary-col text-center d-flex flex-column mw-200" style="width: 150px">
+    <div class="p-3 mr-3 summary-col text-center d-flex flex-column mw-200">
         <label class="font-weight-600"> Tiền thanh toán </label>
         <h5 style="color: #28A745;">{{sum('credit') | number }}</h5>
     </div>
-    <div class="p-3 mr-3 summary-col text-center d-flex flex-column mw-200" style="width: 150px">
+    <div class="p-3 mr-3 summary-col text-center d-flex flex-column mw-200">
         <label class="font-weight-600"> Nợ cuối kỳ </label>
         <h5 style="color: #EB3B5B;">{{sum('end') | number }}</h5>
     </div>
