@@ -272,7 +272,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = val.partner.id;
-    val.journalId = val.journal ? val.jounral.id : null;
+    val.journalId = val.journal ? val.journal.id : null;
 
     var data = Object.assign(this.purchaseOrder, val);
     if (this.id) {
