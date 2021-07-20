@@ -38,7 +38,7 @@
         (pageChange)="pageChange($event)" (cellClick)="cellClick($event.dataItem)">
         <kendo-grid-column field="name" title="Tên chiến dịch" width="200">
         </kendo-grid-column>
-        <kendo-grid-column title="Thời gian" width="200">
+        <!-- <kendo-grid-column title="Thời gian" width="200">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <span *ngIf="dataItem.typeDate == 'period'">
                     {{dataItem.dateStart | date:'dd/MM/yyyy'}} - {{dataItem.dateEnd | date:'dd/MM/yyyy'}}
@@ -47,7 +47,7 @@
                     Vô thời hạn
                 </span>
             </ng-template>
-        </kendo-grid-column>
+        </kendo-grid-column> -->
         <kendo-grid-column field="limitMessage" title="Hạn mức tin nhắn" width="200">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <span *ngIf="dataItem.limitMessage==0">Không giới hạn</span>
@@ -55,6 +55,8 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="totalMessage" title="Tổng tin nhắn" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="totalWaitedMessages" title="Chờ gửi" width="150">
         </kendo-grid-column>
         <kendo-grid-column field="totalSuccessfulMessages" title="Thành công" width="120">
         </kendo-grid-column>

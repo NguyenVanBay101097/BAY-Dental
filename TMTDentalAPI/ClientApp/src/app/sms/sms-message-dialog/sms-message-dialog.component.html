@@ -67,7 +67,7 @@
                                         <div>
                                             <input type="radio" class="btn-check" id="manual" value="manual"
                                                 formControlName="typeSend" (change)="changeTypeSend($event)">
-                                            <label for="manual" class="btn btn-sm rounded-right-0"
+                                            <label for="manual" class="btn btn-sm rounded-right-0 mr-2"
                                                 [ngClass]="getValueFormControl('typeSend') == 'manual' ? 'btn-primary' : 'btn-outline-primary'">
                                                 Gửi ngay
                                             </label>
@@ -95,14 +95,19 @@
                     <div class="pl-5 mb-2">
                         <table class="o_group o_inner_group o_group_col_12">
                             <tbody>
-                                <tr
-                                    *ngIf="getValueFormControl('smsCampaign') && getValueFormControl('smsCampaign').limitMessage != 0">
+                                <tr *ngIf="getValueFormControl('smsCampaign')">
                                     <td class="o_td_label">
                                         <label class="o_form_label">Hạn mức còn lại</label>
                                     </td>
                                     <td>
-                                        {{(getValueFormControl('smsCampaign').limitMessage -
-                                        getValueFormControl('smsCampaign').totalMessage) | number}}
+                                        <span
+                                            *ngIf="getValueFormControl('smsCampaign').limitMessage==0; else elseBlock">
+                                            Không giới hạn
+                                        </span>
+                                        <ng-template #elseBlock>
+                                            {{(getValueFormControl('smsCampaign').limitMessage -
+                                            getValueFormControl('smsCampaign').totalMessage) | number}}
+                                        </ng-template>
                                     </td>
                                 </tr>
                                 <tr>
@@ -197,7 +202,7 @@
     <button type="button" *ngIf="getValueFormControl('typeSend') == 'automatic' " class="btn btn-primary"
         (click)="actionReminder()" accesskey="s">Xác nhận</button>
     <button type="button" *ngIf="getValueFormControl('typeSend') == 'manual' " class="btn btn-primary"
-        (click)="actionSendNow()" accesskey="s">Gửi ngay</button>
+        (click)="actionSendNow()" accesskey="s">Xác nhận</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>
