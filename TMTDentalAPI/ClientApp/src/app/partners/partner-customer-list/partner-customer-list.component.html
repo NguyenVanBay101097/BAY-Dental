@@ -59,17 +59,17 @@
 <div class="o_content">
     <div class="d-flex py-2 px-3 order-state">
         <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="" type="radio" class="btn-check hidden hide" name="orderStates" id="all" autocomplete="off" [checked]="true">
-        <label class="btn btn-outline-primary btn-sm mr-2" for="all">Tất cả</label>
+        <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="all">Tất cả</label>
         <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="sale" type="radio" class="btn-check hidden hide" name="orderStates" id="sale" autocomplete="off" [checked]="true">
-        <label class="btn btn-outline-primary btn-sm mr-2" for="sale">Đang điều trị</label>
+        <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="sale">Đang điều trị</label>
         <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="done" type="radio" class="btn-check hidden hide" name="orderStates" id="done" autocomplete="off" [checked]="true">
-        <label class="btn btn-outline-primary btn-sm mr-2" for="done">Hoàn thành</label>
+        <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="done">Hoàn thành</label>
         <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="draft" type="radio" class="btn-check hidden hide" name="orderStates" id="draft" autocomplete="off" [checked]="true">
-        <label class="btn btn-outline-primary btn-sm mr-2" for="draft">Chưa phát sinh</label>
+        <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="draft">Chưa phát sinh</label>
 
     </div>
-    <kendo-grid [data]="gridData" [pageable]="true" (pageChange)="onPageChange($event)" [resizable]="true" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid>
-        <kendo-grid-column class="" field="name" title="Họ tên" width="250" [locked]="true">
+    <kendo-grid [data]="gridData" [pageable]="true" (pageChange)="onPageChange($event)" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid>
+        <kendo-grid-column class="" field="name" title="Họ tên" width="250">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div [ngClass]="'pl-1 d-flex o_tag_bordercolor_' + dataItem.memberLevel?.color" [ngStyle]="{'border-left': '4px solid white'}" class="">
                     <div class="customer-avatar">
@@ -86,21 +86,21 @@
                 </div>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="phone" title="Điện thoại" width="130" [locked]="true"></kendo-grid-column>
-        <kendo-grid-column field="dateOfBirth" title="Ngày sinh" width="130" [locked]="true"></kendo-grid-column>
+        <kendo-grid-column field="phone" title="Điện thoại" width="130"></kendo-grid-column>
+        <kendo-grid-column field="dateOfBirth" title="Ngày sinh" width="130"></kendo-grid-column>
         <!-- <kendo-grid-column field="Ref" title="Mã KH" width="120"></kendo-grid-column> -->
         <kendo-grid-column field="age" title="Tuổi" width="60"></kendo-grid-column>
-        <kendo-grid-column *ngIf="!filter.orderState" field="orderState" title="Trình trạng điều trị" width="160">
+        <kendo-grid-column field="orderState" title="Trình trạng điều trị" width="160">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{orderStateDisplay[dataItem.orderState] || 'Chưa phát sinh'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="orderResidual" class="text-right" title="Dự kiến thu" width="110">
+        <kendo-grid-column field="orderResidual" class="text-right" title="Dự kiến thu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{(dataItem.orderResidual || 0) | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="totalDebit" class="text-right" title="Công nợ" width="110">
+        <kendo-grid-column field="totalDebit" class="text-right" title="Công nợ" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{(dataItem.totalDebit || 0) | number}}
             </ng-template>
@@ -119,7 +119,7 @@
             </ng-template>
         </kendo-grid-column>
 
-        <kendo-grid-column field="Id" title="Thao tác" [lockable]="true" [sticky]="true" [headerStyle]="{'max-width':'100px'}" [style]="{'max-width':'100px'}" width="100">
+        <kendo-grid-column field="Id" title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-dataItem>
                 <!-- <button class="btn btn-info btn-sm mr-2" title="In Hồ sơ khách hàng" (click)="printItem(dataItem)">
                     <span class="fas fa-print"></span></button> -->

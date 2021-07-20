@@ -267,23 +267,23 @@ namespace Infrastructure.Services
                 });
 
             var result = from p in productQuery
-                           from q in quantQuery.Where(x => x.ProductId == p.Id).DefaultIfEmpty()
-                           where q.QtyAvailable < p.MinInventory
-                           select new ProductComingEnd
-                           {
-                                Id = p.Id,
-                                Inventory = q.QtyAvailable,
-                                MinInventory = p.MinInventory,
-                                Name = p.Name,
-                                PurchasePrice = p.PurchasePrice,
-                                Type2 = p.Type2,
-                                NameNoSign = p.NameNoSign
-                           };
+                         from q in quantQuery.Where(x => x.ProductId == p.Id).DefaultIfEmpty()
+                         where q.QtyAvailable < p.MinInventory
+                         select new ProductComingEnd
+                         {
+                             Id = p.Id,
+                             Inventory = q.QtyAvailable,
+                             MinInventory = p.MinInventory,
+                             Name = p.Name,
+                             PurchasePrice = p.PurchasePrice,
+                             Type2 = p.Type2,
+                             NameNoSign = p.NameNoSign
+                         };
 
             return await result.ToListAsync();
 
         }
-        
+
         private void _CalcQtyAvailable(IEnumerable<ProductBasic> items)
         {
             var compute_items = items.Where(x => x.Type == "product");
@@ -469,7 +469,7 @@ namespace Infrastructure.Services
                 var types = val.Type.Split(",");
                 query = query.Where(x => types.Contains(x.Type));
             }
-              
+
             if (!string.IsNullOrEmpty(val.Type2))
             {
                 var types = val.Type2.Split(",");
@@ -479,8 +479,14 @@ namespace Infrastructure.Services
             query = query.OrderBy(x => x.Name);
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
-            var res = await query.Include(x => x.UOM).ToListAsync();
-            return _mapper.Map<IEnumerable<ProductSimple>>(res);
+            var items = await query.Include(x => x.UOM).ToListAsync();
+
+            var res = _mapper.Map<IEnumerable<ProductSimple>>(items);
+
+            foreach (var item in res.Where(x=> x.Type2 == "medicine"))
+                item.StandardPrice = _GetStandardPrice(item.Id);
+
+            return res;
         }
 
         public async Task<Product> CreateProduct(ProductDisplay val)
@@ -731,7 +737,7 @@ namespace Infrastructure.Services
 
             res.Boms = _mapper.Map<IEnumerable<ProductBomBasic>>(boms);
 
-            res.StandardPrice = _GetStandardPrice(product);
+            res.StandardPrice = _GetStandardPrice(product.Id);
             res.ListPrice = await _GetListPrice(product);
 
             return res;
@@ -744,7 +750,7 @@ namespace Infrastructure.Services
                 .Include(x => x.UOM)
                 .Include(x => x.UOMPO).Include(x => x.Steps).FirstOrDefaultAsync();
             var res = _mapper.Map<ProductDisplay>(product);
-            res.StandardPrice = _GetStandardPrice(product);
+            res.StandardPrice = _GetStandardPrice(product.Id);
             res.ListPrice = await _GetListPrice(product);
             return res;
         }
@@ -773,10 +779,10 @@ namespace Infrastructure.Services
             return Convert.ToDecimal(val);
         }
 
-        public double _GetStandardPrice(Product self)
+        public double _GetStandardPrice(Guid id)
         {
             var propertyObj = GetService<IIRPropertyService>();
-            var val = propertyObj.get("standard_price", "product.product", res_id: $"product.product,{self.Id.ToString()}");
+            var val = propertyObj.get("standard_price", "product.product", res_id: $"product.product,{id.ToString()}");
             return Convert.ToDouble(val);
         }
 
