@@ -476,7 +476,10 @@ namespace Infrastructure.Services
                 query = query.Where(x => types.Contains(x.Type2));
             }
 
-            var res = await query.Include(x => x.UOM).OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).ToListAsync();
+            query = query.OrderBy(x => x.Name);
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+            var res = await query.Include(x => x.UOM).ToListAsync();
             return _mapper.Map<IEnumerable<ProductSimple>>(res);
         }
 

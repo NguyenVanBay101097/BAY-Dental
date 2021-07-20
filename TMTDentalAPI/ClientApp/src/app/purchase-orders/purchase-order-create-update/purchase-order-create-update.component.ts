@@ -192,7 +192,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   loadProductList() {
     var val = new ProductPaged();
-    val.limit = 20;
+    val.limit = 0;
     val.offset = 0;
     val.purchaseOK = true;
     this.productService

@@ -166,7 +166,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     // }, err => {
     // });
     var val = new ProductPaged();
-    val.limit = 20;
+    val.limit = 0;
     val.offset = 0;
     val.type = 'product,consu';
     this.productService
