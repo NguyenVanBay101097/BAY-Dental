@@ -14,10 +14,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? ProductId { get; set; }
 
-        /// <summary>
-        /// Search ma hoac ten san pham
-        /// </summary>
-        public string Search { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class StockReportXuatNhapTonItem
@@ -32,6 +29,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid ProductId { get; set; }
         public string ProductName { get; set; }
+
+        public string ProductNameNoSign { get; set; }
 
         public string ProductCode { get; set; }
 
@@ -49,6 +48,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string ProductUomName { get; set; }
 
+        public decimal? MinInventory { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 
     public class StockReportXuatNhapTonItemDetail
@@ -82,13 +84,24 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductId { get; set; }
         public int Limit { get; set; }
         public int Offset { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
-    public class GetStockHistoryRes
+    public class StockHistoryDto
     {
         public string MovePickingName { get; set; }
+
         public DateTime? Date { get; set; }
-        public decimal? Quantity { get; set; }
+
+        public decimal Quantity { get; set; }
+
+        public string MoveName { get; set; }
+
+        public string CompanyName { get; set; }
+
+        public string ProductName { get; set; }
+
+        public double? PriceUnitOnQuant { get; set; }
     }
     public class GetStockHistoryResExcel
     {

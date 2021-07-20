@@ -73,6 +73,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
       keToaOK: true,
       isLabo: false,
       purchasePrice: 0,
+      minInventory: 0
     });
 
     setTimeout(() => {

@@ -72,6 +72,17 @@
                                                 </kendo-multiselect>
                                             </td>
                                         </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Mức tồn tối thiểu
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="minInventory">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
                                         <!-- <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">

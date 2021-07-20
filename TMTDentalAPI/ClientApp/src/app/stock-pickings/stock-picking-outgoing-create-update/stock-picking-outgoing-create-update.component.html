@@ -18,8 +18,8 @@
     </div>
 </div>
 
-<div class="o_content h-100 overflow-hidden">
-    <div class="o_form_view t_custom_form h-100 overflow-auto" [formGroup]="pickingForm">
+<div class="o_content">
+    <div class="o_form_view" [formGroup]="pickingForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
@@ -39,12 +39,14 @@
                     </a>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="picking.state !== 'done'" class="btn o_arrow_button disabled"
+                    <button [disabled]="picking.state !== 'done'"
+                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
                         [ngClass]="{'btn-primary': picking.state === 'done', 'btn-secondary': picking.state !== 'done'}"
                         type="button">
                         Hoàn thành
                     </button>
-                    <button [disabled]="picking.state !== 'draft'" class="btn o_arrow_button disabled"
+                    <button [disabled]="picking.state !== 'draft'"
+                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
                         [ngClass]="{'btn-primary': picking.state === 'draft', 'btn-secondary': picking.state !== 'draft'}"
                         type="button">
                         Nháp
@@ -52,157 +54,146 @@
                 </div>
             </div>
             <div class="o_form_sheet">
-                <div class="t_upper">
-                    <div class="o_group">
-                        <table class="o_group o_inner_group o_group_col_6">
-                            <tbody>
-                                <tr *ngIf="id">
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">
-                                            Người tạo
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <span>{{createdByName}}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">
-                                            Đối tác
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <kendo-combobox [hidden]="pickingState == 'done'" [data]="filteredPartners"
-                                            [textField]="'name'" [filterable]="true" #partnerCbx
-                                            formControlName="partner" [valueField]="'id'">
-                                        </kendo-combobox>
-                                        <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
-                                            class="text-danger">
-                                            <div *ngIf="f.partner.errors.required">Chọn đối tác</div>
-                                        </div>
-                                        <label *ngIf="pickingState == 'done'">{{partner?.name}}</label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">
-                                            Ngày xuất
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <ng-container *ngIf="pickingState != 'done'; else dateLable">
-                                            <kendo-datepicker formControlName="dateObj" format="dd/MM/yyyy HH:mm">
-                                            </kendo-datepicker>
-                                        </ng-container>
-                                        <ng-template #dateLable>
-                                            <label for="">{{picking.date | date: 'shortDate'}}</label>
-                                        </ng-template>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table class="o_group o_inner_group o_group_col_6">
-                            <tbody>
-                                <tr *ngIf="id">
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">
-                                            Số phiếu
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <strong class="hidden-xs text-primary text-weight-bold"
-                                            *ngIf="pickingName != '/'"><span>{{pickingName}}</span>
-                                        </strong>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">
-                                            Ghi chú
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <ng-container *ngIf="pickingState != 'done'; else noteLabel">
-                                            <textarea class="form-control" formControlName="note"></textarea>
-                                        </ng-container>
-                                        <ng-template #noteLabel>
-                                            <label for="">{{note}}</label>
-                                        </ng-template>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Đối tác
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [hidden]="pickingState == 'done'" [data]="filteredPartners"
+                                        [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.partner.errors.required">Chọn đối tác</div>
+                                    </div>
+                                    <label *ngIf="pickingState == 'done'">{{partner?.name}}</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày xuất
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <ng-container *ngIf="pickingState != 'done'; else dateLable">
+                                        <kendo-datepicker formControlName="dateObj" format="dd/MM/yyyy HH:mm">
+                                        </kendo-datepicker>
+                                    </ng-container>
+                                    <ng-template #dateLable>
+                                        <label for="">{{picking.date | date: 'shortDate'}}</label>
+                                    </ng-template>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ghi chú
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <ng-container *ngIf="pickingState != 'done'; else noteLabel">
+                                        <textarea class="form-control" formControlName="note"></textarea>
+                                    </ng-container>
+                                    <ng-template #noteLabel>
+                                        <label for="">{{note}}</label>
+                                    </ng-template>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <div class="o_form_section">
                     <div class="o_form_section_left" *ngIf="picking?.state == 'draft'">
-                        <p class="t_tilte">Danh sách hàng hóa</p>
-                        <div class="group_product h-90">
-                            <app-purchase-order-list-product-tabpanel [listProducts]="listProducts"
-                                (onSelectService)="selectProduct($event)" [isStock]="true">
-                            </app-purchase-order-list-product-tabpanel>
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <h5 class="card-title">Danh sách hàng hóa</h5>
+                                <div>
+                                    <app-purchase-order-list-product-tabpanel [listProducts]="listProducts"
+                                        (onSelectService)="selectProduct($event)" [isStock]="true">
+                                    </app-purchase-order-list-product-tabpanel>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="o_form_section_right">
-                        <p class="t_tilte">Danh sách xuất kho</p>
-                        <div style="padding: 0 30px;">
-                            <table class="table table-sm table_none_border" id="table_details">
-                                <thead>
-                                    <tr>
-                                        <th width="150">Mã sản phẩm</th>
-                                        <th width="180">Tên sản phẩm</th>
-                                        <th width="150">Loại sản phẩm</th>
-                                        <th width="100">Số lượng</th>
-                                        <th width="80" hasGroups [groups]="'product.group_uom'">Đơn vị
-                                        </th>
-                                        <th width="90" *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1">
-                                            Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody formArrayName="moveLines">
-                                    <ng-container *ngFor="let line of moveLines.controls; let i=index">
-                                        <tr [formGroupName]="i">
-                                            <td class="align-middle ">{{
-                                                line.get('product').value.defaultCode}}
-                                            </td>
-                                            <td class="align-middle ">{{
-                                                line.get('product').value.name}}
-                                            </td>
-                                            <td class="align-middle ">
-                                                <span *ngIf="line.get('product').value.type2 == 'medicine'">Thuốc</span>
-                                                <span *ngIf="line.get('product').value.type2 == 'product'">Vật
-                                                    tư</span>
-                                            </td>
-                                            <td class="align-middle ">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                    *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1"
-                                                    formControlName="productUOMQty" style="width: 80px;"
-                                                    [spinners]="false">
-                                                </kendo-numerictextbox>
-                                                <span *ngIf="['done', 'cancel'].indexOf(picking?.state) !== -1">{{
-                                                    line.get('productUOMQty').value | number}}</span>
-                                            </td>
-                                            <td class="align-middle " hasGroups [groups]="'product.group_uom'">
-                                                <a class="text-primary"
-                                                    *ngIf="['done', 'cancel'].indexOf(picking.state) === -1 && hasDefined"
-                                                    (click)="changeUoM(line)">{{line.get('productUOM').value.name}}</a>
-                                                <span
-                                                    *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1 || (['done', 'cancel'].indexOf(picking.state) === -1 && !hasDefined)">{{line.get('productUOM').value.name}}</span>
-                                            </td>
-                                            <td class="align-middle "
-                                                *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1">
-                                                <button type="button" class="btn btn-danger btn-sm" tabindex="-1"
-                                                    (click)="deleteLine(i)">
-                                                    <i class="far fa-trash-alt"></i></button>
-                                            </td>
-                                        </tr>
-                                    </ng-container>
-                                </tbody>
-                            </table>
+                        <div class="card border-0">
+                            <div class="card-body p-2">
+                                <h5 class="card-title">Danh sách xuất kho</h5>
+                                <div>
+                                    <table class="table table-sm" id="table_details">
+                                        <thead>
+                                            <tr>
+                                                <th width="150">Mã sản phẩm</th>
+                                                <th width="180">Tên sản phẩm</th>
+                                                <th width="150">Loại sản phẩm</th>
+                                                <th width="100">Số lượng</th>
+                                                <th width="80" hasGroups [groups]="'product.group_uom'">Đơn vị
+                                                </th>
+                                                <th width="90" *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1">
+                                                    Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody formArrayName="moveLines">
+                                            <ng-container *ngFor="let line of moveLines.controls; let i=index">
+                                                <tr [formGroupName]="i">
+                                                    <td class="align-middle ">{{
+                                                        line.get('product').value.defaultCode}}
+                                                    </td>
+                                                    <td class="align-middle ">{{
+                                                        line.get('product').value.name}}
+                                                    </td>
+                                                    <td class="align-middle ">
+                                                        <span *ngIf="line.get('product').value.type2 == 'medicine'">Thuốc</span>
+                                                        <span *ngIf="line.get('product').value.type2 == 'product'">Vật
+                                                            tư</span>
+                                                    </td>
+                                                    <td class="align-middle ">
+                                                        <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                            *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1"
+                                                            formControlName="productUOMQty" style="width: 80px;"
+                                                            [spinners]="false">
+                                                        </kendo-numerictextbox>
+                                                        <div *ngIf="line.get('productUOMQty').errors && (line.get('productUOMQty').touched || line.get('productUOMQty').dirty || submitted)"
+                                                            class="text-danger">
+                                                            <div *ngIf="line.get('productUOMQty').errors.required">
+                                                                Nhập số lượng
+                                                            </div>
+                                                        </div>
+                                                        <span *ngIf="['done', 'cancel'].indexOf(picking?.state) !== -1">{{
+                                                            line.get('productUOMQty').value | number}}</span>
+                                                    </td>
+                                                    <td class="align-middle " hasGroups [groups]="'product.group_uom'">
+                                                        <a class="text-primary"
+                                                            *ngIf="['done', 'cancel'].indexOf(picking.state) === -1 && hasDefined"
+                                                            (click)="changeUoM(line)">{{line.get('productUOM').value.name}}</a>
+                                                        <span
+                                                            *ngIf="['done', 'cancel'].indexOf(picking.state) !== -1 || (['done', 'cancel'].indexOf(picking.state) === -1 && !hasDefined)">{{line.get('productUOM').value.name}}</span>
+                                                    </td>
+                                                    <td class="align-middle "
+                                                        *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1">
+                                                        <button type="button" class="btn btn-danger btn-sm" tabindex="-1"
+                                                            (click)="deleteLine(i)">
+                                                            <i class="far fa-trash-alt"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
