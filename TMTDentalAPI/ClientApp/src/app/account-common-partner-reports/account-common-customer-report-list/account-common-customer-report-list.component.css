@@ -6,3 +6,14 @@
 h5 {
     margin: 0 !important;
 }
+
+.o_searchview {
+    padding: 0;
+    align-items: center;
+    border: none;
+}
+.o_searchview .form-control-icon {
+    border: 1px solid transparent;
+    line-height: 1.5;
+    color: #929DAA;
+}
