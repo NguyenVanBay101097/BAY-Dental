@@ -38,7 +38,7 @@
             <tbody>
                 <tr class="cursor" (click)="onSelectValue(item)" *ngFor="let item of listProductFilter;let i = index">
                     <td class="sticky-td">{{item.name}}</td>
-                    <td *ngIf="!isStock" class="sticky-td text-right">{{(item.purchasePrice || 0) | number}}</td>
+                    <td *ngIf="!isStock" class="sticky-td text-right">{{(item.type2 == 'medicine'? (item.standardPrice || 0 ) : (item.purchasePrice || 0) ) | number}}</td>
                 </tr>
             </tbody>
         </table>

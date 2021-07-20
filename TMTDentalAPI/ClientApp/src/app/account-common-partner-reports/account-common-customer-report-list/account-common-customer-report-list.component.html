@@ -8,6 +8,7 @@
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
+                <span class="fas fa-search form-control-icon form-control-sm"></span>
                 <input class="o_searchview_input" [placeholder]="(resultSelection == 'customer' ? ' Tìm kiếm theo tên khách hàng' : ' Tìm kiếm theo tên NCC')
                 + ' , số điện thoại'" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
