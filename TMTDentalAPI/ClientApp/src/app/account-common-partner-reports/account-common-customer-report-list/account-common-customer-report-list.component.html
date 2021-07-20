@@ -14,7 +14,7 @@
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <button (click)="onExport()" class="btn btn-sm btn-primary"><i class="fas fa-download mr-1"></i>Xuất file</button>
+                <button (click)="onExport()" class="btn btn-sm btn-primary"><i class="fas fa-download mr-1"></i>Xuất Excel</button>
             </div>
             <div class="o_cp_sidebar">
             </div>
@@ -22,33 +22,35 @@
         <div class="o_cp_right">
             <!-- <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown> -->
-            <app-date-range-picker-filter class="mr-1" (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
-            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+            <app-date-range-picker-filter class="mr-1" [startDate]="monthStart" [endDate]="monthEnd"
+                (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
+            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'"
+                [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
             </kendo-combobox>
         </div>
     </div>
 </div>
 
 <div class="p-3 d-flex flex-row summary">
-    <div class="p-3 mr-3 border text-center d-flex flex-column mw-200">
-        <label> Nợ đầu kỳ </label>
-        <h5 style="color: hsl(198deg 98% 47%);">{{sum('begin') | number }}</h5>
+    <div class="p-3 mr-3 border rounded bg-white text-center d-flex flex-column mw-200">
+        <label style="font-weight: 600;"> Nợ đầu kỳ </label>
+        <h5 style="color: #2395FF;">{{sum('begin') | number }}</h5>
     </div>
-    <div class="p-3 mr-3 border text-center d-flex flex-column mw-200">
-        <label> Tiền phát sinh </label>
-        <h5 style="color: hsl(241deg 98% 47%);">{{sum('debit') | number }}</h5>
+    <div class="p-3 mr-3 border rounded bg-white text-center d-flex flex-column mw-200">
+        <label style="font-weight: 600;"> Tiền phát sinh </label>
+        <h5 style="color: #1A6DE3;">{{sum('debit') | number }}</h5>
     </div>
-    <div class="p-3 mr-3 border text-center d-flex flex-column mw-200">
-        <label> Tiền thanh toán </label>
-        <h5 style="color: hsl(83deg 97% 36%);">{{sum('credit') | number }}</h5>
+    <div class="p-3 mr-3 border rounded bg-white text-center d-flex flex-column mw-200">
+        <label style="font-weight: 600;"> Tiền thanh toán </label>
+        <h5 style="color: #28A745;">{{sum('credit') | number }}</h5>
     </div>
-    <div class="p-3 mr-3 border text-center d-flex flex-column mw-200">
-        <label> Nợ cuối kỳ </label>
-        <h5 style="color: hsl(353deg 100% 43%);">{{sum('end') | number }}</h5>
+    <div class="p-3 mr-3 border rounded bg-white text-center d-flex flex-column mw-200">
+        <label style="font-weight: 600;"> Nợ cuối kỳ </label>
+        <h5 style="color: #EB3B5B;">{{sum('end') | number }}</h5>
     </div>
 </div>
 
-<div class="o_content">
+<div class="o_content px-3">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="partnerName" [title]="resultSelection === 'supplier'?'Nhà cung cấp':'Khách hàng'">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
