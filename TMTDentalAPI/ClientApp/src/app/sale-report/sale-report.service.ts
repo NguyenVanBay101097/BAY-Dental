@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { SaleOrderLineDisplay } from '../sale-orders/sale-order-line-display';
 import { CheckPermissionService } from '../shared/check-permission.service';
+import { PagedResult2 } from '../employee-categories/emp-category';
 
 export class SaleReportItem {
     date: string;
@@ -103,6 +104,48 @@ export class GetSummarySaleReportRequest {
     companyId: string;
 }
 
+export class ServiceReportReq {
+	dateFrom: any;
+	dateTo: any;
+	employeeId: string;
+	companyId: string;
+	state: string;
+	search: string; 
+}
+
+export class ServiceReportRes {
+	date: string;
+	name?: any;
+	quantity: number;
+	totalAmount: number;
+    productId: string;
+}
+
+export class ServiceReportDetailReq {
+	dateFrom: any;
+	dateTo: any;
+	employeeId: string;
+	companyId: string;
+	state: string;
+	search: string; 
+    productId: string;
+    offset: number;
+    limit: number;
+}
+
+export class ServiceReportDetailRes {
+	orderDateOrder: string;
+	orderPartnerName: string;
+	name: string;
+	employeeName?: any;
+	teeth: any[];
+	productUOMQty: number;
+	priceSubTotal: number;
+	state: string;
+	orderName: string;
+}
+
+
 @Injectable({ providedIn: 'root' })
 export class SaleReportService {
     apiUrl = 'api/SaleReports';
@@ -146,5 +189,18 @@ export class SaleReportService {
 
     getSummary(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/GetSummary', val);
+    }
+
+    getServiceReportByTime(val: ServiceReportReq){
+        return this.http.post<ServiceReportRes[]>(this.baseApi + this.apiUrl + '/GetServiceReportByTime', val);
+    }
+
+    getServiceReportByService(val: ServiceReportReq){
+        return this.http.post<ServiceReportRes[]>(this.baseApi + this.apiUrl + '/GetServiceReportByService', val);
+    }
+
+    getServiceReportDetailPaged(val: any){
+        return this.http.get<PagedResult2<ServiceReportDetailRes>>(this.baseApi + this.apiUrl + '/GetServiceReportDetailPaged', {params: new HttpParams({fromObject: val})});
+
     }
 }

@@ -14,9 +14,13 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SaleReportOldNewPartnerComponent } from './sale-report-old-new-partner/sale-report-old-new-partner.component';
 import { SaleReportPartnerDetailComponent } from './sale-report-partner-detail/sale-report-partner-detail.component';
 import { PartnerOldNewReportService } from './partner-old-new-report.service';
+import { ServiceReportManagementComponent } from './service-report-management/service-report-management.component';
+import { ServiceReportTimeComponent } from './service-report-time/service-report-time.component';
+import { ServiceReportServiceComponent } from './service-report-service/service-report-service.component';
+import { ServiceReportDetailComponent } from './service-report-detail/service-report-detail.component';
 
 @NgModule({
-  declarations: [SaleReportOverviewComponent, SaleReportItemDetailComponent, SaleReportPartnerComponent, SaleReportPartnerDaysFilterComponent, SaleReportOldNewPartnerComponent, SaleReportPartnerDetailComponent],
+  declarations: [SaleReportOverviewComponent, SaleReportItemDetailComponent, SaleReportPartnerComponent, SaleReportPartnerDaysFilterComponent, SaleReportOldNewPartnerComponent, SaleReportPartnerDetailComponent, ServiceReportManagementComponent, ServiceReportTimeComponent, ServiceReportServiceComponent, ServiceReportDetailComponent],
   imports: [
     CommonModule,
     SaleReportRoutingModule,

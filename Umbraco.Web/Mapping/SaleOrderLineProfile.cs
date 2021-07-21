@@ -69,6 +69,9 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrderLine, SaleOrderLineHistoryRes>()
                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)));
+
+            CreateMap<SaleOrderLine, ServiceReportDetailRes>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)));
         }
     }
 }

@@ -176,5 +176,29 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(res.Count > 0 ? res[0] : new GetSummarySaleReportResponse());
         }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> GetServiceReportByTime(ServiceReportReq val)
+        {
+            var res = await _saleReportService.GetServiceReportByTime(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> GetServiceReportByService(ServiceReportReq val)
+        {
+            var res = await _saleReportService.GetServiceReportByService(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> GetServiceReportDetailPaged([FromQuery] ServiceReportDetailReq val)
+        {
+            var res = await _saleReportService.GetServiceReportDetailPaged(val);
+            return Ok(res);
+        }
     }
 }

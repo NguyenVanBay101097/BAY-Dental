@@ -42,7 +42,6 @@ namespace Infrastructure.Services
                 return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
             }
         }
-
         protected T GetService<T>()
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
@@ -716,6 +715,76 @@ namespace Infrastructure.Services
                       CompanyId = CompanyId
                   }).ToListAsync();
             return result;
+        }
+
+        private IQueryable<SaleOrderLine> GetServiceReportQuery(ServiceReportReq val)
+        {
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var query = orderLineObj.SearchQuery(x=> x.State == "sale" || x.State == "done");
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Order.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());
+            
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Order.DateOrder <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
+            if(val.EmployeeId.HasValue)
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
+
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State == val.State);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.OrderPartner.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
+                                         || x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search));
+
+            return query;
+        }
+        public async Task<IEnumerable<ServiceReportRes>> GetServiceReportByTime(ServiceReportReq val)
+        {
+            var res = await GetServiceReportQuery(val).GroupBy(x => x.Order.DateOrder.Date).Select(x=> new ServiceReportRes() { 
+            Date = x.Key, 
+            Quantity = x.Count(),
+            TotalAmount = x.Sum(z=> z.PriceSubTotal)
+            }).ToListAsync();
+
+            return res;
+        }
+
+        public async Task<IEnumerable<ServiceReportRes>> GetServiceReportByService(ServiceReportReq val)
+        {
+            var res = await GetServiceReportQuery(val).GroupBy(x => new { x.ProductId, x.Name }).Select(x => new ServiceReportRes()
+            {   
+                Name = x.Key.Name,
+                Quantity = x.Count(),
+                TotalAmount = x.Sum(z => z.PriceSubTotal),
+                ProductId = x.Key.ProductId
+            }).ToListAsync();
+
+            return res;
+        }
+
+        public async Task<PagedResult2<ServiceReportDetailRes>> GetServiceReportDetailPaged(ServiceReportDetailReq val)
+        {
+            var query = GetServiceReportQuery(new ServiceReportReq(){
+            CompanyId = val.CompanyId,
+            DateFrom = val.DateFrom,
+            DateTo = val.DateTo,
+            EmployeeId = val.EmployeeId,
+            Search = val.Search,
+            State = val.State
+            });
+
+            if (val.ProductId.HasValue)
+                query = query.Where(x => x.ProductId == val.ProductId);
+            var count = await query.CountAsync();
+            query = query.Skip(val.Offset).Take(val.Limit);
+            var res = await _mapper.ProjectTo<ServiceReportDetailRes>(query).ToListAsync();
+            return new PagedResult2<ServiceReportDetailRes>(count, val.Offset, val.Limit) { 
+            Items = res
+            };
         }
     }
 }

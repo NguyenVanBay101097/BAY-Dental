@@ -1,0 +1,35 @@
+<div class="flex-1-1-100 right border p-2 ml-2 d-flex flex-column">
+    <h5 class="flex-0-0-auto">Dịch vụ theo thời gian</h5>
+    <div class="filter d-flex flex-0-0-auto">
+        <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)" opens="right"></app-date-range-picker-filter>
+        <kendo-combobox [placeholder]="'Tất cả bác sĩ'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="employees" (selectionChange)="onSelectEmployee($event)" #empCbx>
+        </kendo-combobox>
+        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+        </kendo-combobox>
+        <button class="btn btn-primary btn-sm mr-1" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất Excel</button>
+        <button class="btn btn-primary btn-sm mr-1" (click)="onPrint()">In báo cáo</button>
+        <input class="form-control form-control-sm w-auto flex-fill" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)">
+    </div>
+    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="date" title="Ngày tạo">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.date | date: 'dd/MM/yyyy'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column class="text-center" field="quantity" title="Số lượng" width="90">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.quantity |number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column class="text-right" field="totalAmount" title="Tổng tiền">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.totalAmount |number}}
+            </ng-template>
+        </kendo-grid-column>
+        <!-- excel -->
+        <kendo-grid-excel fileName="baocaodoanhthu.xlsx" [fetchData]="allData"></kendo-grid-excel>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <app-service-report-detail [parentFilter]="filter" [parent]="dataItem"></app-service-report-detail>
+        </div>
+    </kendo-grid>
+</div>
