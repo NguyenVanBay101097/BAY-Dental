@@ -6,8 +6,7 @@
   
   .report-prescription-payment {
     display: flex;
-    padding: 10px;
-    background-color: #f0eeee;
+    margin-bottom: 10px;
   }
   
   .revenue {
@@ -15,7 +14,6 @@
     text-align: center;
     padding: 10px;
     margin-right: 10px;
-    margin-left: 5px;
     border: 1px solid #bdc1c5;
     border-radius: 4px;
     background-color: white;

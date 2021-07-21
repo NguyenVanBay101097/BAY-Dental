@@ -47,6 +47,7 @@
 
 .has-search {
     position: relative;
+    width: 65%;
 }
 
 .has-search .form-control {
@@ -71,9 +72,11 @@
 
 .has-search input {
     border-radius: 5px;
+    
 }
 
 .flex-0-0-auto {
+    
     flex: 0 0 auto;
 }
 
@@ -112,6 +115,7 @@ tbody>.cursor:hover {
 .size-text-14 {
     font-size: 13.5px;
     border-radius: 0;
+    width: 100% !important;
 }
 
 .sticky-table {
@@ -131,4 +135,25 @@ tbody>.cursor:hover {
 
 .product-type-filter .btn {
     margin: .25rem .125rem;
+}
+
+.product-filter {
+    display: flex;
+    margin-bottom: 0.25rem;
+    flex-flow: column;
+}
+
+.product-filter .product-filter-search {
+    flex: 1 1 100%;
+    margin-bottom: 5px;
+}
+
+.product-filter .product-filter-type {
+    flex: 0 0 auto;
+}
+
+.product-list-container {
+    min-height: 300px;
+    max-height: 500px;
+    overflow: auto;
 }

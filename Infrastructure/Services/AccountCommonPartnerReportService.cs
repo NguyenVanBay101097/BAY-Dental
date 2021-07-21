@@ -456,13 +456,10 @@ namespace Infrastructure.Services
         {
             var amlObj = GetService<IAccountMoveLineService>();
             var accObj = GetService<IAccountAccountService>();
-            var account = await accObj.SearchQuery(x => x.Code == "CNKH").FirstOrDefaultAsync();
-            if (account == null)
-                throw new Exception("Không tìm thấy tài khoản công nợ!");
 
             IQueryable<AccountMoveLine> getQueryable(IQueryable<AccountMoveLine> query, ReportPartnerDebitReq val)
             {
-                query = query.Where(x => x.AccountId == account.Id);
+                query = query.Where(x => x.Account.Code == "CNKH");
                 if (val.PartnerId.HasValue)
                     query = query.Where(x => x.PartnerId == val.PartnerId);
 
@@ -557,22 +554,19 @@ namespace Infrastructure.Services
 
             var amlObj = GetService<IAccountMoveLineService>();
             var accObj = GetService<IAccountAccountService>();
-            var account = await accObj.SearchQuery(x => x.Code == "CNKH").FirstOrDefaultAsync();
-            if (account == null)
-                throw new Exception("Không tìm thấy tài khoản công nợ!");
 
             decimal begin = 0;
             if (date_from.HasValue)
             {
                 var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, companyId: val.CompanyId);
-                query = query.Where(x => x.AccountId == account.Id);
+                query = query.Where(x => x.Account.Code == "CNKH");
                 if (val.PartnerId.HasValue)
                     query = query.Where(x => x.PartnerId == val.PartnerId);
                 begin = await query.SumAsync(x => x.Debit - x.Credit);
             }
 
             var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, companyId: val.CompanyId);
-            query2 = query2.Where(x => x.AccountId == account.Id);
+            query2 = query2.Where(x => x.Account.Code == "CNKH");
             if (val.PartnerId.HasValue)
                 query2 = query2.Where(x => x.PartnerId == val.PartnerId);
 

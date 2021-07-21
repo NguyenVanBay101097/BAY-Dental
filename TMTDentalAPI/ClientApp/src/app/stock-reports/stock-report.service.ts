@@ -12,6 +12,7 @@ export class StockReportXuatNhapTonItem {
     end: number;
     dateFrom: string;
     dateTo: string;
+    minInventory: number;
 }
 
 export class StockReportXuatNhapTonItemDetail {
@@ -30,7 +31,7 @@ export class StockReportXuatNhapTonSearch {
     dateTo: string;
     productId: string;
     productCategId: string;
-    search: string;
+    companyId: string;
 }
 export class GetStockHistoryReq {
     limit: number;
@@ -38,6 +39,7 @@ export class GetStockHistoryReq {
     dateFrom: string;
     dateTo: string;
     productId: string;
+    companyId: string;
 }
 
 @Injectable()
@@ -52,9 +54,9 @@ export class StockReportService {
     getXuatNhapTonDetail(val: StockReportXuatNhapTonItem): Observable<StockReportXuatNhapTonItemDetail[]> {
         return this.http.post<StockReportXuatNhapTonItemDetail[]>(this.baseApi + this.apiUrl + "/XuatNhapTonDetail", val);
     }
-    
+
     exportExcel(paged) {
-        return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFile", paged,{ responseType: "blob" });
+        return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFile", paged, { responseType: "blob" });
     }
 
     getStockHistory(val) {

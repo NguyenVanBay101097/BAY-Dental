@@ -69,7 +69,7 @@
                                 <td class="w-100">
                                     <div class="d-flex align-items-center">
                                         <kendo-numerictextbox class="w-fit-content" [min]="0" [format]="'n0'"
-                                            formControlName="limitMessage">
+                                            formControlName="limitMessage" (valueChange)="limitChange($event)">
                                         </kendo-numerictextbox>
                                         <div class="mx-2">SMS</div>
 

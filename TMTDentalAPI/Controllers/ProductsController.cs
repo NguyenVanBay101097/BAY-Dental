@@ -106,6 +106,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        //Lấy danh sách những product mà tồn kho hiện tại nhỏ hơn tồn kho tối thiểu được thiết lập
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetProductsComingEnd([FromQuery] ProductGetProductsComingEndRequest val)
+        {
+            var results = await _productService.GetProductsComingEnd(val);
+            return Ok(results);
+        }
+
         [HttpDelete("{id}")]
         [CheckAccess(Actions = "Catalog.Products.Delete")]
         public async Task<IActionResult> Remove(Guid id)
