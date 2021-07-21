@@ -96,7 +96,7 @@ namespace Infrastructure.Services
             var account = new AccountAccount
             {
                 Name = self.Name,
-                Code = self.Name.RemoveSignVietnameseV2(),
+                Code = self.Code,
                 Note = self.Note,
                 CompanyId = self.CompanyId ?? CompanyId,
                 IsExcludedProfitAndLossReport = self.IsInclude,
@@ -122,7 +122,7 @@ namespace Infrastructure.Services
             {
                 var accountObj = GetService<IAccountAccountService>();
                 account.Name = val.Name;
-                account.Code = val.Name.RemoveSignVietnameseV2();
+                account.Code = val.Code;
                 account.Note = val.Note;
                 account.IsExcludedProfitAndLossReport = val.IsAccounting;
                 await accountObj.UpdateAsync(account);
