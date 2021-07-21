@@ -39,7 +39,7 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 Name = x.Name,
-                Code = x.Code.RemoveSignVietnameseV2(),
+                Code = x.Code,
                 Note = x.Note,
                 IsAccounting = x.IsAccounting
             }).Skip(val.Offset).Take(val.Limit).ToListAsync();
