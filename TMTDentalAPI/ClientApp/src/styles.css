@@ -1079,3 +1079,65 @@ html .o_web_client {
 .card-title {
     margin-bottom: .5rem;
 }
+
+.edit_remove_action button {
+    background: none;
+    border: none;
+    margin-right: 5px;
+    border-style: none;
+    padding: 0;
+    outline: none;
+}
+
+/* dashboard_view.scss */
+.o_dashboard_view {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-flow: row wrap;
+	flex-flow: row wrap;
+	align-items: flex-start;
+	width: 100%;
+	height: auto;
+	padding: 15px 0;
+}
+
+.o_dashboard_view>.o_group,
+.o_dashboard_view .o_subview {
+	flex: 1 1 100%;
+	max-width: 100%;
+	margin: 0 16px 0rem;
+}
+
+.o_dashboard_view .o_group>.o_aggregate_col,
+.o_dashboard_view .o_group .o_formula {
+	display: inline-block;
+	width: 230px;
+	margin-bottom: 1rem;
+}
+
+.o_dashboard_view .o_group .o_group.o_group_col_12 {
+	width: 100%;
+}
+
+.o_dashboard_view .o_group .o_aggregate,
+.o_dashboard_view .o_group .o_formula {
+	padding: 15px;
+	border: 1px solid #dee2e6;
+    border-radius: 4px;
+    margin-right: 15px;
+    text-align: center;
+    background: white;
+}
+
+.o_dashboard_view .o_group .o_aggregate > label, .o_dashboard_view .o_group .o_formula > label {
+    color: #212529;
+    margin-bottom: 0;
+}
+
+.o_dashboard_view .o_group .o_aggregate .o_value, .o_dashboard_view .o_group .o_formula .o_value {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* end dashboard_view.scss*/

@@ -15,7 +15,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 })
 export class ImageFileUploadComponent implements OnInit, OnChanges {
 
-  placeholder = '/assets/icons/none_person.svg';
+  placeholder = '/assets/images/placeholder.png';
   @Input() imageId: string;
   uploading = false;
   @Output() uploaded = new EventEmitter<any>();
