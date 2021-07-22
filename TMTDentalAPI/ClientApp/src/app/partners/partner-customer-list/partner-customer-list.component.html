@@ -86,7 +86,7 @@
                 </div>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="phone" title="Điện thoại" width="130"></kendo-grid-column>
+        <kendo-grid-column *ngIf="showInfo" field="phone" title="Điện thoại" width="130"></kendo-grid-column>
         <kendo-grid-column field="dateOfBirth" title="Ngày sinh" width="130"></kendo-grid-column>
         <!-- <kendo-grid-column field="Ref" title="Mã KH" width="120"></kendo-grid-column> -->
         <kendo-grid-column field="age" title="Tuổi" width="60"></kendo-grid-column>

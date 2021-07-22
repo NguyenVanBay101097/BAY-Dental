@@ -574,14 +574,13 @@ namespace Infrastructure.Services
                     type = await mbObj.SearchQuery(x => x.Point <= partnerPoints, orderBy: x => x.OrderByDescending(s => s.Point))
                           .FirstOrDefaultAsync();
 
-                if (type != null)
-                {
-                    var levelValuesDict = new Dictionary<string, object>()
+                var typeId = type != null ? type.Id : Guid.Empty;
+
+                var levelValuesDict = new Dictionary<string, object>()
                     {
-                        { $"res.partner,{saleOrderPayment.Order.PartnerId}", type.Id }
+                        { $"res.partner,{saleOrderPayment.Order.PartnerId}", typeId }
                     };
-                    propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: saleOrderPayment.CompanyId);
-                }
+                propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: saleOrderPayment.CompanyId);
 
                 saleOrderPayment.State = "cancel";
             }
