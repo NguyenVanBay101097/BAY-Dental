@@ -238,10 +238,10 @@ namespace Infrastructure.Services
                 var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
                 MemberLevel type = null;
                 if (partnerLevel != null)
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Point >= partnerLevel.Point && x.Id != partnerLevel.Id, orderBy: x => x.OrderByDescending(s => s.Point))
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Point >= partnerLevel.Point && x.Id != partnerLevel.Id && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
                         .FirstOrDefaultAsync();
                 else
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints, orderBy: x => x.OrderByDescending(s => s.Point))
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
                           .FirstOrDefaultAsync();
 
                 if (type != null)
@@ -568,10 +568,10 @@ namespace Infrastructure.Services
                 var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
                 MemberLevel type = null;
                 if (partnerLevel != null)
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Id != partnerLevel.Id, orderBy: x => x.OrderByDescending(s => s.Point))
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Id != partnerLevel.Id && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
                         .FirstOrDefaultAsync();
                 else
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints, orderBy: x => x.OrderByDescending(s => s.Point))
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
                           .FirstOrDefaultAsync();
 
                 var typeId = type != null ? type.Id : Guid.Empty;
