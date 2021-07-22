@@ -5,35 +5,40 @@ import * as moment from 'moment';
 import { Subject } from 'rxjs/internal/Subject';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
+import { ToothBasic } from 'src/app/teeth/tooth.service';
 import { SaleReportService, ServiceReportReq } from '../sale-report.service';
 
+
 @Component({
-  selector: 'app-service-report-service',
-  templateUrl: './service-report-service.component.html',
-  styleUrls: ['./service-report-service.component.css']
+  selector: 'app-service-sale-report',
+  templateUrl: './service-sale-report.component.html',
+  styleUrls: ['./service-sale-report.component.css']
 })
-export class ServiceReportServiceComponent implements OnInit {
-  filter = new ServiceReportReq();
+export class ServiceSaleReportComponent implements OnInit {
+  filter = new SaleOrderLinePaged();
   companies: CompanySimple[] = [];
   employees: EmployeeSimple[] = [];
-  allData: any;
   gridData: GridDataResult;
   loading = false;
-  skip = 0;
-  limit = 20;
   searchUpdate = new Subject<string>();
-  filterState = "";
+  filterMonth: any = "";
+  stateDisplay= {
+    sale:"Đang điều trị",
+    done: "Hoàn thành"
+  }
   
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("empCbx", { static: true }) empVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
 
   constructor(
-    private saleReportService: SaleReportService,
+    private saleOrderLineService: SaleOrderLineService,
     private companyService: CompanyService,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
   ) { }
 
   ngOnInit() {
@@ -46,15 +51,18 @@ export class ServiceReportServiceComponent implements OnInit {
 
   
   loadAllData() {
-    var val = Object.assign({}, this.filter) as ServiceReportReq;
-    
-    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
-    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    var val = Object.assign({}, this.filter) as SaleOrderLinePaged;
+    val.companyId = val.companyId || '';
+    val.employeeId = val.employeeId || '';
+    val.dateOrderFrom = val.dateOrderFrom ? moment(val.dateOrderFrom).format('YYYY/MM/DD') : '';
+    val.dateOrderTo = val.dateOrderTo ? moment(val.dateOrderTo).format('YYYY/MM/DD') : '';
     this.loading = true;
-    this.saleReportService.getServiceReportByService(val).subscribe(res => {
-      this.allData = res;
+    this.saleOrderLineService.getPaged(val).subscribe(res => {
+      this.gridData = <GridDataResult>{
+        data: res.items,
+        total: res.totalItems
+      }
       this.loading = false;
-      this.loadReport();
     },
       err => {
         this.loading = false;
@@ -94,14 +102,16 @@ export class ServiceReportServiceComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe(r=> {
-      this.skip = 0;
+      this.filter.offset = 0;
       this.loadAllData();
     })
 
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-    this.filter.dateFrom = this.filter.dateFrom || new Date(y, m, 1);
-    this.filter.dateTo = this.filter.dateTo || new Date(y, m + 1, 0);
-    this.skip = 0;
+    this.filter.dateOrderFrom = this.filter.dateOrderFrom || new Date(y, m, 1);
+    this.filter.dateOrderTo = this.filter.dateOrderTo || new Date(y, m + 1, 0);
+    this.filter.limit = 20;
+    this.filter.offset = 0;
+    this.filter.state = 'sale';
   }
 
   searchCompany$(search?) {
@@ -130,51 +140,44 @@ export class ServiceReportServiceComponent implements OnInit {
     });
   }
 
-  loadReport() {
-    this.gridData = <GridDataResult>{
-      total: this.allData.length,
-      data: this.allData.slice(this.skip, this.skip + this.limit)
-    };
-  }
-
   onSearchDateChange(e) {
-    this.filter.dateFrom = e.dateFrom;
-    this.filter.dateTo = e.dateTo;
-    this.skip = 0;
+    this.filter.dateOrderFrom = e.dateFrom;
+    this.filter.dateOrderTo = e.dateTo;
+    this.filter.offset = 0;
     this.loadAllData();
   }
 
   onSelectCompany(e) {
     this.filter.companyId = e ? e.id : null;
-    this.skip = 0;
+    this.filter.offset = 0;
     this.loadAllData();
   }
 
   onSelectEmployee(e) {
     this.filter.employeeId = e ? e.id : null;
-    this.skip = 0;
+    this.filter.offset = 0;
     this.loadAllData();
   }
   
   pageChange(e) {
-    this.skip = e.skip;
-    this.loadReport();
+    this.filter.offset = e.skip;
+    this.loadAllData();
   }
 
-  onChangeFilterState() {
-    this.filter.active = null;
-    this.filter.state = '';
-    this.skip = 0;
+  onChangeFilterMonth() {
+    (this.filter.monthFrom as any) = '';
+    (this.filter.monthTo as any) = '';
+    this.filter.offset = 0;
 
-    if(this.filterState) {
-      if(this.filterState == "notActive" ){
-        this.filter.active = false;
-      }else {
-        this.filter.state = this.filterState;
-      }
+    if(this.filterMonth) {
+     this.filter.monthFrom = this.filterMonth.from || '';
+     this.filter.monthTo = this.filterMonth.to || '';
     }
     this.loadAllData();
   }
 
+  getTeethDisplay(teeth: ToothBasic[]){
+    return teeth.map(x=> x.name).join(' ')
+  }
 
 }

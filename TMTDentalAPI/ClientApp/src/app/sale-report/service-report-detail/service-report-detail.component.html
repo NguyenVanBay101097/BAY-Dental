@@ -24,7 +24,7 @@
     </kendo-grid-column>
     <kendo-grid-column field="state" title="Trạng thái" width="120">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{stateDisplay[dataItem.state]}}
+            {{!dataItem.isActive?'Ngừng điều trị' : stateDisplay[dataItem.state]}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="orderName" title="phiếu điều trị" width="120">

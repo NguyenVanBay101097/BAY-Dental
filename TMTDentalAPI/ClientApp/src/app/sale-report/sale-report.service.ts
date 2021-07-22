@@ -111,6 +111,7 @@ export class ServiceReportReq {
 	companyId: string;
 	state: string;
 	search: string; 
+    active?: boolean;
 }
 
 export class ServiceReportRes {
@@ -131,6 +132,7 @@ export class ServiceReportDetailReq {
     productId: string;
     offset: number;
     limit: number;
+    active?: boolean;
 }
 
 export class ServiceReportDetailRes {

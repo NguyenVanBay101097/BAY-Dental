@@ -364,12 +364,13 @@ namespace Infrastructure.Services
             foreach (var line in self)
                 line.AmountDiscountTotal = line.PromotionLines.Sum(x => x.PriceUnit);
         }
-
+        // Check date is between range
         public async Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val)
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search));
+                query = query.Where(x => x.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
+                                        || x.Product.NameNoSign.Contains(val.Search) || x.OrderPartner.NameNoSign.Contains(val.Search));
             if (val.OrderPartnerId.HasValue)
                 query = query.Where(x => x.OrderPartnerId == val.OrderPartnerId);
             if (val.ProductId.HasValue)
@@ -379,11 +380,21 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State.Contains(val.State));
             if (val.DateOrderFrom.HasValue)
-                query = query.Where(x => x.DateCreated <= val.DateOrderFrom);
+                query = query.Where(x => x.DateCreated >= val.DateOrderFrom.Value.AbsoluteBeginOfDate());
             if (val.DateOrderTo.HasValue)
-                query = query.Where(x => x.DateCreated >= val.DateOrderTo);
+                query = query.Where(x => x.DateCreated <= val.DateOrderTo.Value.AbsoluteEndOfDate());
             if (val.IsLabo == true)
                 query = query.Where(x => x.Product.IsLabo);
+
+            if (val.EmployeeId.HasValue)
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+            if (val.MonthFrom.HasValue)
+                query = query.Where(x => (DateTime.Now - DateTime.Now).Days >= val.MonthFrom * 30);
+       
+            if (val.MonthTo.HasValue)
+                query = query.Where(x => (DateTime.Now - DateTime.Now).Days <=  30);
 
             if (val.IsQuotation.HasValue)
             {
@@ -400,7 +411,7 @@ namespace Infrastructure.Services
             query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0)
             {
-                query = query.Take(val.Limit).Skip(val.Offset);
+                query = query.Skip(val.Offset).Take(val.Limit);
             }
 
             var items = await _mapper.ProjectTo<SaleOrderLineBasic>(query).ToListAsync();

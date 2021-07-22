@@ -12,6 +12,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
         public string State { get; set; }
         public string Search { get; set; }
+        public bool? Active { get; set; }
 
     }
     public class ServiceReportRes
@@ -39,6 +40,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductId { get; set; }
         public int Limit { get; set; }
         public int Offset { get; set; }
+        public bool? Active { get; set; }
 
     }
 
@@ -53,6 +55,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal PriceSubTotal { get; set; }
         public string State { get; set; }
         public string OrderName { get; set; }
+        public bool IsActive { get; set; }
 
     }
 }

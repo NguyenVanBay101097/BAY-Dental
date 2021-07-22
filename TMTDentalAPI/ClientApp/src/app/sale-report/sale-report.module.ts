@@ -18,9 +18,10 @@ import { ServiceReportManagementComponent } from './service-report-management/se
 import { ServiceReportTimeComponent } from './service-report-time/service-report-time.component';
 import { ServiceReportServiceComponent } from './service-report-service/service-report-service.component';
 import { ServiceReportDetailComponent } from './service-report-detail/service-report-detail.component';
+import { ServiceSaleReportComponent } from './service-sale-report/service-sale-report.component';
 
 @NgModule({
-  declarations: [SaleReportOverviewComponent, SaleReportItemDetailComponent, SaleReportPartnerComponent, SaleReportPartnerDaysFilterComponent, SaleReportOldNewPartnerComponent, SaleReportPartnerDetailComponent, ServiceReportManagementComponent, ServiceReportTimeComponent, ServiceReportServiceComponent, ServiceReportDetailComponent],
+  declarations: [SaleReportOverviewComponent, SaleReportItemDetailComponent, SaleReportPartnerComponent, SaleReportPartnerDaysFilterComponent, SaleReportOldNewPartnerComponent, SaleReportPartnerDetailComponent, ServiceReportManagementComponent, ServiceReportTimeComponent, ServiceReportServiceComponent, ServiceReportDetailComponent, ServiceSaleReportComponent],
   imports: [
     CommonModule,
     SaleReportRoutingModule,

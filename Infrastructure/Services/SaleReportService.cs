@@ -736,6 +736,9 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State == val.State);
 
+            if(val.Active.HasValue)
+                query = query.Where(x => x.IsActive == val.Active);
+
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.OrderPartner.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
                                          || x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search));

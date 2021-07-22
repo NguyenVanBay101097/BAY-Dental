@@ -24,6 +24,7 @@ export class ServiceReportTimeComponent implements OnInit {
   skip = 0;
   limit = 20;
   searchUpdate = new Subject<string>();
+  filterState = "";
   
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("empCbx", { static: true }) empVC: ComboBoxComponent;
@@ -159,6 +160,21 @@ export class ServiceReportTimeComponent implements OnInit {
   pageChange(e) {
     this.skip = e.skip;
     this.loadReport();
+  }
+
+  onChangeFilterState() {
+    this.filter.active = null;
+    this.filter.state = '';
+    this.skip = 0;
+
+    if(this.filterState) {
+      if(this.filterState == "notActive" ){
+        this.filter.active = false;
+      }else {
+        this.filter.state = this.filterState;
+      }
+    }
+    this.loadAllData();
   }
 
 }

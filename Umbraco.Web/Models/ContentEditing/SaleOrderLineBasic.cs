@@ -50,6 +50,8 @@ namespace Umbraco.Web.Models.ContentEditing
                 return PriceTotal - AmountPaid;
             }
         }
+
+        public bool IsActive { get; set; }
     }
 
     public class SaleOrderLineSmsSimple

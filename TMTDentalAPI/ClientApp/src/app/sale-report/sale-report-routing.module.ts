@@ -6,6 +6,7 @@ import { SaleReportPartnerComponent } from './sale-report-partner/sale-report-pa
 import { ServiceReportManagementComponent } from './service-report-management/service-report-management.component';
 import { ServiceReportServiceComponent } from './service-report-service/service-report-service.component';
 import { ServiceReportTimeComponent } from './service-report-time/service-report-time.component';
+import { ServiceSaleReportComponent } from './service-sale-report/service-sale-report.component';
 
 const routes: Routes = [
   {
@@ -35,6 +36,10 @@ const routes: Routes = [
       {
         path: 'service',
         component: ServiceReportServiceComponent
+      },
+      {
+        path: 'sale',
+        component: ServiceSaleReportComponent
       }
     ]
   }
