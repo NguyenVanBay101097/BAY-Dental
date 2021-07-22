@@ -308,6 +308,8 @@ namespace Infrastructure.Data
         /// </summary>
         public DbSet<CustomerReceipt> CustomerReceipts { get; set; }
         public DbSet<CustomerReceiptProductRel> CustomerReceiptProductRels { get; set; }
+        public DbSet<CustomerReceiptReport> CustomerReceiptReports { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -555,6 +557,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new AgentConfiguration());
             builder.ApplyConfiguration(new CustomerReceiptConfiguration());
             builder.ApplyConfiguration(new CustomerReceiptProductRelConfiguration());
+            builder.ApplyConfiguration(new CustomerReceiptReportConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

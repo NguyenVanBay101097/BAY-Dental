@@ -361,6 +361,7 @@ namespace TMTDentalAPI
             services.AddScoped<ISmsCampaignService, SmsCampaignService>();
             services.AddScoped<ICustomerReceiptService, CustomerReceiptService>();
             services.AddScoped<IDashboardReportService, DashboardReportService>();
+            services.AddScoped<ICustomerReceiptReportService, CustomerReceiptReportService>();
 
             services.AddMemoryCache();
 

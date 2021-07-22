@@ -34,7 +34,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Danh sách dịch vụ
         /// </summary>
-        public ICollection<Product> Products { get; set; } = new List<Product>();
+        public string Products { get; set; }
 
         /// <summary>
         /// Ghi chú, nội dung
