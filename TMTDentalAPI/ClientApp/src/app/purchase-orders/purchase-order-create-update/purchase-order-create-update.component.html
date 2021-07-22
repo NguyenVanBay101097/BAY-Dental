@@ -238,7 +238,7 @@
                                                     <th scope="col" class="text-right" width="120">Thành tiền</th>
                                                     <th scope="col" width="50" class="text-center"
                                                         *ngIf="purchaseOrder?.state == 'draft'">
-                                                        <i class="far fa-trash-alt"></i>
+                                                       <i class="far fa-trash-alt"  (click)="removeAllLine()"></i>
                                                     </th>
                                                 </tr>
                                             </thead>

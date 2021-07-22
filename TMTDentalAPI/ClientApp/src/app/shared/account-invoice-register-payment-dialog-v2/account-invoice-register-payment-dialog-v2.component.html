@@ -51,7 +51,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker formControlName="paymentDateObj"></kendo-datepicker>
                                     <div *ngIf="f.paymentDateObj.errors && (f.paymentDateObj.touched || f.paymentDateObj.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.paymentDateObj.errors.required">Chọn ngày {{purchaseType && purchaseType == 'refund' ? 'hoàn tiền' : 'thanh toán'}}thanh toán</div>
+                                        <div *ngIf="f.paymentDateObj.errors.required">Chọn ngày {{purchaseType && purchaseType == 'refund' ? 'hoàn tiền' : 'thanh toán'}}</div>
                                     </div>
                                 </td>
                             </tr>
