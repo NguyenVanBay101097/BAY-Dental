@@ -50,6 +50,8 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
 
   ngOnInit() {
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -114,6 +116,7 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     val.search = this.search ? this.search : '';
     val.resultSelection = this.resultSelection;
     val.companyId = this.companyId || '';
+    val.display = "";
 
     this.reportService.getSummary(val).subscribe(res => {
       this.items = res;
@@ -127,7 +130,7 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadItems();
+    this.loadItems(); 
   }
 
   loadItems(): void {
@@ -145,6 +148,7 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     val.search = this.search ? this.search : '';
     val.resultSelection = this.resultSelection;
     val.companyId = this.companyId || '';
+    val.display = "";
 
     this.reportService.exportExcelFile(val).subscribe((res: any) => {
       const filename = this.resultSelection == 'customer'? `BaoCaoCongNoKhachHang` : 'BaoCaoCongNoNCC';
