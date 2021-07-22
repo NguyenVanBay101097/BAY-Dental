@@ -100,13 +100,13 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 2].Value = item.PartnerRef;
                     worksheet.Cells[row, 3].Value = item.PartnerPhone;
                     worksheet.Cells[row, 4].Value = item.Begin;
-                    worksheet.Cells[row, 4].Style.Numberformat.Format = item.Begin > 0 ? "#,###" : "";
+                    worksheet.Cells[row, 4].Style.Numberformat.Format = "#,###0";
                     worksheet.Cells[row, 5].Value = item.Debit;
-                    worksheet.Cells[row, 5].Style.Numberformat.Format = item.Debit > 0 ? "#,###" : "";
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#,###0";
                     worksheet.Cells[row, 6].Value = item.Credit;
-                    worksheet.Cells[row, 6].Style.Numberformat.Format = item.Credit > 0 ? "#,###" : "";
+                    worksheet.Cells[row, 6].Style.Numberformat.Format ="#,###0";
                     worksheet.Cells[row, 7].Value = item.End;
-                    worksheet.Cells[row, 7].Style.Numberformat.Format = item.End > 0 ? "#,###" : "";
+                    worksheet.Cells[row, 7].Style.Numberformat.Format ="#,###0";
                     row++;
                 }
 

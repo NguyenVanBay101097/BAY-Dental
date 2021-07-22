@@ -2267,9 +2267,7 @@ namespace Infrastructure.Services
                            PartnerId = pcr.PartnerId
                        };
 
-                ResponseQr = from r in ResponseQr
-                             join pf in filterPartnerQr on r.Id equals pf.PartnerId
-                             select r;
+                ResponseQr = ResponseQr.Where(x => filterPartnerQr.Any(i => i.PartnerId == x.Id));
             }
 
             if (val.HasOrderResidual.HasValue && val.HasOrderResidual.Value == 1)
@@ -2294,7 +2292,7 @@ namespace Infrastructure.Services
 
             if (val.MemberLevelId.HasValue)
             {
-                ResponseQr = ResponseQr.Where(x => x.MemberLevelId == val.MemberLevelId.Value.ToString());
+                ResponseQr = ResponseQr.Where(x => x.MemberLevelId.Contains(val.MemberLevelId.Value.ToString()));
             }
 
             if (!string.IsNullOrEmpty(val.OrderState))
