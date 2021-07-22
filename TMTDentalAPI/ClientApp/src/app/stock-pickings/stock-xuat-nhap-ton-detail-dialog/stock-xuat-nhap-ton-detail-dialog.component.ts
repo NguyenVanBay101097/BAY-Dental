@@ -18,7 +18,7 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
   skip: number = 0;
   item: any;
   allGridData: GridDataResult;
-
+  fileExcelName: string;
   constructor(
     public activeModal: NgbActiveModal,
     private stockReportService: StockReportService,
@@ -30,6 +30,7 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
 
   ngOnInit() {
     this.loadDataFromApi();
+    this.fileExcelName = 'Lich Su Nhap Xuat ' + this.item.productName;
   }
 
   loadDataFromApi() {
