@@ -63,7 +63,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public PartnerPrintVM Partner { get; set; }
 
-        public string AgentName { get; set; }
+        public AgentPrintVM Agent { get; set; }
 
         /// <summary>
         /// Ngày lập phiếu

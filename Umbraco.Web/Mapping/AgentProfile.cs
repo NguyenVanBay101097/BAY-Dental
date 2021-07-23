@@ -22,6 +22,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<AgentDisplay, Agent>()
                 .ForMember(x => x.Id, x => x.Ignore());
+
+            CreateMap<Agent, AgentPrintVM>();
         }
     }
 }

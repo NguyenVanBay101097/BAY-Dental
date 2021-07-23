@@ -130,6 +130,9 @@ export class ProductProductCuDialogComponent implements OnInit {
       this.productService.get(this.id).subscribe((result: any) => {
         this.productForm.patchValue(result);
 
+        const inventory = result.minInventory ? result.minInventory : 0;
+        this.productForm.get('minInventory').setValue(inventory);
+
         this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ], 'id');
 
         this.filterdUoMs = _.unionBy(this.filterdUoMs, [result.uom], 'id');
@@ -170,6 +173,7 @@ export class ProductProductCuDialogComponent implements OnInit {
         this.productForm.get('saleOK').setValue(false);
         this.productForm.get('purchaseOK').setValue(true);
         this.productForm.get('purchasePrice').setValue(0);
+        this.productForm.get('minInventory').setValue(0);
       });
     }
   }
