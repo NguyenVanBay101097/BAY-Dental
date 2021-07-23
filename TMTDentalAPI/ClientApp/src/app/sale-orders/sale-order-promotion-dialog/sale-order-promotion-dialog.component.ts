@@ -83,9 +83,11 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
   }
 
   loadDefaultPromotion() {
-    this.promotionService.getPromotionBySaleOrder(this.saleOrder.partner.id).subscribe((res: any) => {
-      this.autoPromotions = res;
-    });
+    if (this.saleOrder.partner){
+      this.promotionService.getPromotionBySaleOrder(this.saleOrder.partner.id).subscribe((res: any) => {
+        this.autoPromotions = res;
+      });
+    }
   }
 
 
