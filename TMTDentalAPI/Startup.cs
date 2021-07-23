@@ -547,6 +547,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SmsMessageProfile());
                 mc.AddProfile(new AgentProfile());
                 mc.AddProfile(new CustomerReceiptProfile());
+                mc.AddProfile(new CustomerReceiptReportProfile());
             };
 
             #endregion

@@ -10,6 +10,6 @@ namespace Infrastructure.Services
 {
     public interface ICustomerReceiptReportService 
     {
-        Task<PagedResult2<CustomerReceiptReport>> GetPagedResultAsync(CustomerReceiptReportFilter val);
+        Task<PagedResult2<CustomerReceiptReportBasic>> GetPagedResultAsync(CustomerReceiptReportFilter val);
     }
 }

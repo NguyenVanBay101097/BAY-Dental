@@ -27,7 +27,7 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task<PagedResult2<CustomerReceiptReport>> GetPagedResultAsync(CustomerReceiptReportFilter val)
+        public async Task<PagedResult2<CustomerReceiptReportBasic>> GetPagedResultAsync(CustomerReceiptReportFilter val)
         {
             var query = GetQueryable(val);          
 
@@ -40,9 +40,9 @@ namespace Infrastructure.Services
 
             var items = await query.ToListAsync();
 
-            var paged = new PagedResult2<CustomerReceiptReport>(totalItems, val.Offset, val.Limit)
+            var paged = new PagedResult2<CustomerReceiptReportBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = _mapper.Map<IEnumerable<CustomerReceiptReport>>(items)
+                Items = _mapper.Map<IEnumerable<CustomerReceiptReportBasic>>(items)
             };
 
             return paged;
