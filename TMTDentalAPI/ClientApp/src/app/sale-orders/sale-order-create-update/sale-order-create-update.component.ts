@@ -182,6 +182,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (this.partnerId) {
       this.partnerService.getCustomerInfo(this.partnerId).subscribe((result) => {
         this.partner = result;
+        this.tags = [];
         this.partner.categories.forEach(item => {
           var category = {
             Id: item.id,

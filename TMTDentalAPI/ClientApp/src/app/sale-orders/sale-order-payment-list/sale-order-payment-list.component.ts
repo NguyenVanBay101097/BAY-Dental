@@ -73,7 +73,7 @@ export class SaleOrderPaymentListComponent implements OnInit {
             type: { style: 'success', icon: true }
           });
 
-          this.hasDeletePayment.emit('');
+          this.hasDeletePayment.emit(true);
           this.loadPayments();
         }, err => {
           console.log(err);
