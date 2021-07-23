@@ -221,7 +221,7 @@ namespace Infrastructure.Services
             if (partnerIds.Any())
                 query = query.Where(x => partnerIds.Contains(x.PartnerId.Value));
 
-            var totalItems = await query.CountAsync();
+           
 
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
@@ -247,6 +247,7 @@ namespace Infrastructure.Services
                 AmountCommissionTotal = commAgent_dict.ContainsKey(x.Key) ? commAgent_dict[x.Key] : 0
             }).ToList();
 
+            var totalItems = res.Count();
 
             var paged = new PagedResult2<CommissionAgentDetailResult>(totalItems, val.Offset, val.Limit)
             {
