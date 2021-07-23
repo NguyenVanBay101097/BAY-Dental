@@ -1364,7 +1364,7 @@ namespace Infrastructure.Services
         public override async Task<IEnumerable<Company>> CreateAsync(IEnumerable<Company> entities)
         {
             await base.CreateAsync(entities);
-            //await CheckNbrCompanyActives();
+            await CheckNbrCompanyActives();
             return entities;
         }
 
