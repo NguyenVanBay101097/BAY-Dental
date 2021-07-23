@@ -101,6 +101,19 @@ export class CommissionSettlementReportListComponent implements OnInit {
     return this.employeeService.getEmployeeSimpleList(val);
   }
 
+  get amountTotal() {
+    var total = 0;
+    if(this.reportResults) {
+      this.reportResults.data.forEach(item => {
+        total += item.amount;
+      });
+
+      return total;
+    }
+
+    return 0;
+  }
+
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
