@@ -8,13 +8,12 @@
         <div class="o_cp_searchview">
             <div class="o_searchview">
                 <span class="o_searchview_icon fa fa-search"></span>
-                <input class="o_searchview_input" [placeholder]="' Tìm kiếm theo tên khách hàng, số điện thoại'"
-                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                <input class="o_searchview_input" [placeholder]="' Tìm kiếm theo tên khách hàng, số điện thoại'" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <button (click)="exportExcel(grid)" class="btn btn-primary"><i
+                <button (click)="exportExcel(grid)" class="btn btn-primary btn-sm"><i
                         class="fas fa-download mr-1"></i>Xuất Excel</button>
             </div>
             <div class="o_cp_sidebar">
@@ -23,9 +22,7 @@
         <div class="o_cp_right">
             <app-date-range-picker-filter class="mr-1" (searchChange)="searchChangeDate($event)" [startDate]="dateFrom" [endDate]="dateTo">
             </app-date-range-picker-filter>
-            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox" [valueField]="'id'"
-                [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)"
-                #companyCbx>
+            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
             </kendo-combobox>
         </div>
     </div>
@@ -62,8 +59,7 @@
             </div>
         </div>
         <div>
-            <kendo-grid #grid (excelExport)="onExcelExport($event)" [data]="gridData" [pageSize]="limit" [skip]="skip"
-                [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+            <kendo-grid #grid (excelExport)="onExcelExport($event)" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
                 <kendo-grid-column field="partnerName" [title]="resultSelection === 'supplier'?'Nhà cung cấp':'Khách hàng'">
                 </kendo-grid-column>
                 <kendo-grid-column field="partnerRef" [title]="resultSelection === 'supplier'? 'Mã NCC':'Mã KH'">
@@ -85,8 +81,7 @@
                         {{dataItem.credit | number}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="end" class="text-right" title="Nợ cuối kỳ"
-                    footerClass="text-right font-weight-bold">
+                <kendo-grid-column field="end" class="text-right" title="Nợ cuối kỳ" footerClass="text-right font-weight-bold">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.end | number}}
                     </ng-template>

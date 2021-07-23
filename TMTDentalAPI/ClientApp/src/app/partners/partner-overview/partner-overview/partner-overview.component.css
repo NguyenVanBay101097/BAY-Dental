@@ -1,10 +1,52 @@
 .o_history_treatment_report_container {
-    flex: 1 1 auto;
-    width: 1046px;
     display: flex;
+    height: 100%;
+    overflow: auto;
     border-left: 1px solid #ccc;
+    min-width: 480px;
 }
 
 .o_report_appointment_container {
+    flex: 1;
+}
+
+.o_history_treatment_container {
+    flex: 1;
+}
+
+.o_report_appointment_container_scroll {
+    height: 100%;
+    overflow: auto;
+    padding: 15px;
     border-left: 1px solid #ccc;
 }
+
+.o_partner_info_left {
+    flex: 0 0 auto;
+    width: 545px;
+}
+
+.o_partner_info_right {
+    flex: 1 1 auto;
+}
+
+@media (max-width: 1200px) {
+    .o_history_treatment_report_container {
+        flex-direction: column;
+    }
+
+    .o_partner_info_left {
+        width: 483px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1533.98px) {
+	.o_history_treatment_report_container {
+        flex-direction: column;
+    }
+
+    .o_report_appointment_container_scroll {
+        border-left: 0;
+    }
+}
+

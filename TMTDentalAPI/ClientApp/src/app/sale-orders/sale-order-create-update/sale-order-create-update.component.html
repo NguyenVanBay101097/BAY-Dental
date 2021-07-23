@@ -341,15 +341,13 @@
                             </div>
                         </div>
 
-                        <div class="tab-pane h-100" *ngIf="saleOrder.state != 'draft'" id="profile" role="tabpanel"
-                            aria-labelledby="profile-tab">
-                            <app-treatment-process-service-list></app-treatment-process-service-list>
-                        </div>
-                        <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="payment" role="tabpanel"
-                            aria-labelledby="payment-tab">
-                            <app-sale-order-payment-list *ngIf="saleOrderId" #paymentComp [saleOrderId]="saleOrderId">
-                            </app-sale-order-payment-list>
-                        </div>
+                    <div class="tab-pane h-100" *ngIf="saleOrder.state != 'draft'" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <app-treatment-process-service-list></app-treatment-process-service-list>
+                    </div>
+                    <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="payment" role="tabpanel" aria-labelledby="payment-tab">
+                        <app-sale-order-payment-list *ngIf="saleOrderId" #paymentComp [saleOrderId]="saleOrderId" (hasDeletePayment)="loadCustomerInfo()">
+                        </app-sale-order-payment-list>
+                    </div>
 
                         <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="toathuoc" role="tabpanel"
                             aria-labelledby="payment-tab">
