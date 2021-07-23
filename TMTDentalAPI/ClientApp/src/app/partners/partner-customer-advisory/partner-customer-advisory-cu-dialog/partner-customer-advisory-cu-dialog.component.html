@@ -117,7 +117,7 @@
                         <h5>Dịch vụ</h5>
                         <div>
                             <kendo-multiselect [filterable]="true" class="mr-3" [data]="productSource" [filterable]="true"
-                                [(filterChange)="this.searchUpdateProduct.next($event)" [textField]="'name'" [valueField]="'id'"
+                                (filterChange)="this.searchUpdateProduct.next($event)" [textField]="'name'" [valueField]="'id'"
                                 formControlName="product">
                             </kendo-multiselect>
                             <div *ngIf="f.product.value.length == 0 && submitted" class="text-danger">

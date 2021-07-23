@@ -117,12 +117,10 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged())
       .subscribe(value => {
-        this.searchProduct(value);
+        this.getPageProduct(value);
       });
 
     this.f.toothDiagnosis.valueChanges.subscribe(data => {
-      console.log(this.f.toothDiagnosis);
-
       var ids = data.map(x => x.id);
       this.toothDiagnosisService.getProducts(ids).subscribe(result => {
         var products = this.f.product.value;
@@ -230,17 +228,15 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       this.toothDianosisSource = result.items;
     }, error => {
       console.log(error);
-    });;
-  }
-
-  searchProduct(q?: string){
-
+    });
   }
 
   loadEmployees() {
     this.searchEmployees().subscribe(result => {
       this.filterData = result.items;
-    })
+    }, error => {
+      console.log(error);
+    });
   }
 
   onChangeToothCategory(value: any) {
@@ -370,6 +366,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       this.toothDianosisSource = result.items;
     })
   }
+
   getPageProduct(q?:string){
     var val = new ProductPaged();
     val.limit = 0;
