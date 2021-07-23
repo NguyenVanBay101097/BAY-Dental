@@ -152,7 +152,6 @@ export class PurchaseOrderListComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    debugger
     this.loading = true;
     var val = new PurchaseOrderPaged();
     val.limit = this.limit;
