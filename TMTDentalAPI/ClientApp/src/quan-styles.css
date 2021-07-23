@@ -14,14 +14,6 @@
     padding: 0 5px 0 12px;
 }
 
-.o_form_view .oe_avatar>img {
-    max-height: 100%;
-    max-width: 100%;
-    margin-bottom: 10px;
-    border: 1px solid #a8a8a8;
-    border-radius: 50%;
-}
-
 .o_form_view .o_field_image .o_form_image_controls {
     position: absolute;
     top: 0;
@@ -53,16 +45,6 @@
     position: relative;
 }
 
-
-/* .o_form_view .oe_avatar+.oe_title {
-    padding-left: 95px;
-    margin-left: 5px;
-} */
-
-.o_form_view .oe_avatar {
-    float: left;
-    margin-right: 15px;
-}
 
 .o_form_view>.oe_chatter {
     max-width: 1140px;
@@ -385,8 +367,6 @@ small {
 .o_form_view .o_grid_group .o_grid_col_left .o_apply_tr .o_apply_td .o_discount_input{   
     width: 60%;
 } */
-
-.o_table_detail_items {}
 
 .o_form_view .o_grid_group .o_grid_col_right thead .o_th_detail_items {
     width: 150px;

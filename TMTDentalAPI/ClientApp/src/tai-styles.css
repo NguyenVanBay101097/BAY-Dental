@@ -62,12 +62,6 @@ a {
     }
 }
 
-.o_form_view .o_group.o_inner_group>tbody>tr>td.o_td_label {
-    width: 0%;
-    padding: 0px 15px 0px 0px;
-    min-width: 140px;
-}
-
 html,
 body {
     position: relative;

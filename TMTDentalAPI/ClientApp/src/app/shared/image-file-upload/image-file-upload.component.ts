@@ -11,7 +11,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 @Component({
   selector: 'app-image-file-upload',
   templateUrl: './image-file-upload.component.html',
-  styleUrls: ['./image-file-upload.component.css']
+  styleUrls: ['./image-file-upload.component.css'],
 })
 export class ImageFileUploadComponent implements OnInit, OnChanges {
 
