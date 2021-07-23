@@ -159,20 +159,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.formGroup = this.fb.group({
       dateOrderObj: [null, Validators.required],
     });
-    if (this.partnerId) {
-      this.partnerService.getCustomerInfo(this.partnerId).subscribe((result) => {
-        this.partner = result;
-        this.partner.categories.forEach(item => {
-          var category = {
-            Id: item.id,
-            Name: item.name,
-            CompleteName: item.completeName,
-            Color: item.color
-          };
-          this.tags.push(category);
-        });
-      });
-    }
+    this.loadCustomerInfo();
     if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((res: any) => {
         this.saleOrder = res;
@@ -189,6 +176,23 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadTeethList();
     this.loadToothCategories();
     this.loadEmployees();
+  }
+
+  loadCustomerInfo() {
+    if (this.partnerId) {
+      this.partnerService.getCustomerInfo(this.partnerId).subscribe((result) => {
+        this.partner = result;
+        this.partner.categories.forEach(item => {
+          var category = {
+            Id: item.id,
+            Name: item.name,
+            CompleteName: item.completeName,
+            Color: item.color
+          };
+          this.tags.push(category);
+        });
+      });
+    }
   }
 
   loadEmployees() {
@@ -757,7 +761,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
-
+          this.loadCustomerInfo();
           this.loadSaleOrder();
           this.paymentComp.loadPayments();
           if (result.print) {
@@ -1220,6 +1224,5 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       });
     }
   }
-
 }
 
