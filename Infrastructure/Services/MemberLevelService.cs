@@ -28,7 +28,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<MemberLevelSimple>> AutoComplete(MemberLevelAutoCompleteReq val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrWhiteSpace(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
             var count = await query.CountAsync();
@@ -49,7 +49,7 @@ namespace Infrastructure.Services
 
         public async Task UpdateMember(IEnumerable<MemberLevelSave> vals)
         {
-            var listDb = await SearchQuery().ToListAsync();
+            var listDb = await SearchQuery(x => x.CompanyId == CompanyId).ToListAsync();
             var memberAdd = new List<MemberLevel>();
             var memberUpdate = new List<MemberLevel>();
             var memberDelete = new List<MemberLevel>();

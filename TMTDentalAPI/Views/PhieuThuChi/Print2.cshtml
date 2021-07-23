@@ -99,38 +99,77 @@
                 </table>
                 <table class="o_group o_inner_group col-6">
                     <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <div class="o_form_label o_form_label_help">
-                                    Khách hàng
-                                </div>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <div class="o_field_widget">@Model.Partner.DisplayName</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <div class="o_form_label o_form_label_help">
-                                    Địa chỉ
-                                </div>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <div class="o_field_widget">@Model.Partner.Address</div>
-                            </td>
-                        </tr>
+                        @if (Model.AccountType == "customer_debt")
+                        {
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="o_form_label o_form_label_help">
+                                        Khách hàng
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_widget">@Model.Partner.DisplayName</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="o_form_label o_form_label_help">
+                                        Địa chỉ
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_widget">@Model.Partner.Address</div>
+                                </td>
+                            </tr>
 
 
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <div class="o_form_label o_form_label_help">
-                                    Điện thoại
-                                </div>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <div class="o_field_widget">@(Model.Partner.Phone)</div>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="o_form_label o_form_label_help">
+                                        Điện thoại
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_widget">@(Model.Partner.Phone)</div>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="o_form_label o_form_label_help">
+                                       Người giới thiệu
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_widget">@Model.Agent.Name</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="o_form_label o_form_label_help">
+                                        Địa chỉ
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_widget">@Model.Agent.Address</div>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="o_form_label o_form_label_help">
+                                        Điện thoại
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_widget">@(Model.Agent.Phone)</div>
+                                </td>
+                            </tr>
+                        }
+
 
                     </tbody>
                 </table>
@@ -158,7 +197,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-semibold">@(Model.AccountType == "customer_debt" ? Model.Partner.Name.ToUpper() : Model.AgentName.ToUpper())</span>
+                <span class="font-semibold">@(Model.AccountType == "customer_debt" ? Model.Partner.Name.ToUpper() : Model.Agent.Name.ToUpper())</span>
             </div>
         </div>
     </div>

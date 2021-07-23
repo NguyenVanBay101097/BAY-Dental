@@ -289,6 +289,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
       backdrop: "static",
     });
     modalRef.componentInstance.body = "Bạn có chắc chắn xóa tiểu sử răng?";
+    modalRef.componentInstance.title = "Xóa tiểu sử răng";
     modalRef.result.then(() => {
       this.advisoryService.remove(data.id).subscribe(() => {
         this.notificationService.show({

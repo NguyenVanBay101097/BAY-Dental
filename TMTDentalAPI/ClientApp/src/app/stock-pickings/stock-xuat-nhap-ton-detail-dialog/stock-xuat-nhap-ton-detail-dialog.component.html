@@ -15,7 +15,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="quantity" title="Tổng số lượng" width="120" class="text-right">
         </kendo-grid-column>
-        <kendo-grid-excel fileName="LichSuNhapXuat.xlsx" [fetchData]="allData">
+        <kendo-grid-excel [fileName]="fileExcelName" [fetchData]="allData">
             <kendo-excelexport-column field="moveName" title="Diễn giải">
             </kendo-excelexport-column>
             <kendo-excelexport-column field="movePickingName" title="Số phiếu">

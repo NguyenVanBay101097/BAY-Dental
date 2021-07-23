@@ -238,10 +238,10 @@ namespace Infrastructure.Services
                 var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
                 MemberLevel type = null;
                 if (partnerLevel != null)
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Point >= partnerLevel.Point && x.Id != partnerLevel.Id, orderBy: x => x.OrderByDescending(s => s.Point))
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Point >= partnerLevel.Point && x.Id != partnerLevel.Id && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
                         .FirstOrDefaultAsync();
                 else
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints, orderBy: x => x.OrderByDescending(s => s.Point))
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
                           .FirstOrDefaultAsync();
 
                 if (type != null)
@@ -568,20 +568,19 @@ namespace Infrastructure.Services
                 var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
                 MemberLevel type = null;
                 if (partnerLevel != null)
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Id != partnerLevel.Id, orderBy: x => x.OrderByDescending(s => s.Point))
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Id != partnerLevel.Id && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
                         .FirstOrDefaultAsync();
                 else
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints, orderBy: x => x.OrderByDescending(s => s.Point))
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
                           .FirstOrDefaultAsync();
 
-                if (type != null)
-                {
-                    var levelValuesDict = new Dictionary<string, object>()
+                var typeId = type != null ? type.Id : Guid.Empty;
+
+                var levelValuesDict = new Dictionary<string, object>()
                     {
-                        { $"res.partner,{saleOrderPayment.Order.PartnerId}", type.Id }
+                        { $"res.partner,{saleOrderPayment.Order.PartnerId}", typeId }
                     };
-                    propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: saleOrderPayment.CompanyId);
-                }
+                propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: saleOrderPayment.CompanyId);
 
                 saleOrderPayment.State = "cancel";
             }

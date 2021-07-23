@@ -7,13 +7,15 @@
 }
 
 .pms-left {
-    flex: 1;
+    /* flex: 1; */
+    width: 75%;
     margin-right: 15px;
     background-color: white;
 }
 
 .pms-right {
-    flex: 0 0 400px;
+    /* flex: 0 0 400px; */
+    width: 25%;
 }
 
 .btn-check {
