@@ -16,6 +16,12 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
   listTime: any[] = [];
   listTreatments: any;
   today: any;
+  toothType = [
+    { name: "Hàm trên", value: "upper_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
+    { name: "Hàm dưới", value: "lower_jaw" },
+    { name: "Chọn răng", value: "manual" },
+  ];
   constructor(
     private authService: AuthService,
     private saleOrderLineService: SaleOrderLineService,
@@ -41,8 +47,15 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
     this.router.navigate(['sale-orders/form'], { queryParams: { partner_id: this.partnerId } });
   }
 
-  viewTeeth(teeth: any) {
-    return teeth.map(x => x.name).join(', ');
+  viewTeeth(treatment: any) {
+    let teethList = '';
+    if(treatment.toothType && treatment.toothType != 'manual'){
+      teethList = this.toothType.find(x => x.value == treatment.toothType).name;
+    }
+    else{
+      teethList = treatment.teeth.map(x => x.name).join(', ');
+    }
+    return teethList;
   }
 
   formatDate(date) {
