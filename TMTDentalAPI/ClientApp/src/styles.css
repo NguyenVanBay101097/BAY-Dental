@@ -28,9 +28,10 @@ select {
 }
 
 .o_form_view .o_form_sheet_bg .o_form_sheet {
-    min-width: 600px;
+    /* min-width: 600px;
     max-width: 1000px;
-    min-height: 330px;
+    min-height: 330px; */
+    width: 100%;
     background: #fff;
     padding: 16px;
     margin: 0 auto;
@@ -154,11 +155,11 @@ select {
 }
 
 .o_form_view .o_group.o_inner_group>tbody>tr>td {
-    padding: 0 45px 7px 0;
+    padding: 0 45px 5px 0;
 }
 
 .o_form_view .o_group.o_inner_group.o_group_col_4>tbody>tr>td {
-    padding: 0 20px 7px 0;
+    padding: 0 20px 5px 0;
 }
 
 .o_form_view .o_group.o_inner_group>tbody>tr>td.o_td_label {
