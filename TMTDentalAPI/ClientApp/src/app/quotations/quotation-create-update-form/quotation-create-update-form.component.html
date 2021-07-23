@@ -1,332 +1,332 @@
 <div class="o_cp_controller">
-    <div class="o_control_panel o_breadcrumb_full">
-        <ol class="breadcrumb">
-            <li>
-                <a [routerLink]="['/partners/customer/' + quotation.partner?.id + '/quotations']">Báo giá</a>
-            </li>
-            <li class="active">
-                <span *ngIf="quotationId">{{quotation?.name}}</span>
-                <span *ngIf="!quotationId">Mới</span>
-            </li>
-        </ol>
-
-    </div>
-</div>
-<div class="o_content h-100 overflow-auto">
-    <form class="o_form_view h-100" #form="ngForm" (ngSubmit)="onSave(form)">
-        <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100 overflow-hidden">
-            <div class="flex-0-0-auto overflow-auto">
-                <div class="d-flex">
-                    <div class="btns">
-                        <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="form.onSubmit()">
-                            Lưu
-                        </button>
-                        <button *ngIf="quotationId" type="button" accesskey="1" class="btn btn-primary btn-sm"
-                            (click)="onCreateSaleOrder()">
-                            Tạo phiếu điều trị
-                        </button>
-                        <button *ngIf="quotationId" type="button" class="btn btn-primary btn-sm"
-                            (click)="printQuotation()">
-                            In phiếu
-                        </button>
-                        <button *ngIf="quotationId" type="button" class="btn btn-secondary btn-sm"
-                            (click)="onCreateNewQuotation()">
-                            Thêm mới
-                        </button>
-                    </div>
-                </div>
-                <div class="o_group" style="width: 80%;">
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Khách hàng
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="quotation.partner"
-                                        [routerLink]="['/partners/customer/' + quotation.partner.id]">{{quotation.partner.displayName}}</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Người báo giá
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [(ngModel)]="quotation.employee" name="employee" required
-                                        #employeeControl="ngModel" [filterable]="true"
-                                        (filterChange)="onFilterEmployee($event)" #empCbx class="mr-1"
-                                        [data]="filterEmployees" [textField]="'name'" [valueField]="'id'">
-                                    </kendo-combobox>
-                                    <div *ngIf="(employeeControl.touched || employeeControl.dirty || form.submitted) && employeeControl?.errors?.required"
-                                        class="text-danger">
-                                        Chọn người báo giá
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr *ngIf="quotation.orders && quotation.orders.length > 0">
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Phiếu điều trị
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <a *ngFor="let order of quotation.orders; let i = index"
-                                        [routerLink]="['/sale-orders/form']"
-                                        [queryParams]="{id: order.id}">{{order.name}}<span
-                                            *ngIf="i < quotation.orders.length -1">, </span></a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ghi chú
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" name="note"
-                                        [(ngModel)]="quotation.note"></textarea>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ngày báo giá
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker [(ngModel)]="quotation.dateQuotation" required
-                                        #dateQuotationControl="ngModel" name="dateQuotation"
-                                        (valueChange)="onDateChange()">
-                                    </kendo-datepicker>
-                                    <div *ngIf="dateQuotationControl?.errors?.required" class="text-danger">
-                                        Chọn ngày báo giá
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Số ngày áp dụng
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="1" [autoCorrect]="true" required
-                                        #dateAppliesControl="ngModel" name="dateApplies" [format]="'n0'"
-                                        [spinners]="false" [(ngModel)]="quotation.dateApplies"
-                                        (valueChange)="onDateChange()">
-                                    </kendo-numerictextbox>
-                                    <div *ngIf="dateAppliesControl?.errors?.required" class="text-danger">
-                                        Nhập số ngày áp dụng
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ngày hết hạn
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker [(ngModel)]="quotation.dateEndQuotation" name="dateEndQuotation"
-                                        [attr.disabled]="true">
-                                    </kendo-datepicker>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
-            <div class="flex-1-1-100 overflow-auto">
-                <div class="w-100 h-100 d-flex flex-column">
-                    <div class="w-100 mb-2">
-                        <app-service-list-search-dropdown (onSelectService)="addLine($event)">
-                        </app-service-list-search-dropdown>
-                    </div>
-                    <div class="d-flex overflow-auto w-100">
-                        <div class="w-75 d-flex flex-column">
-                            <!-- <div class="div-table w-100 flex-0-0-auto overflow-auto">
-                                <div class=" bg-primary text-white">
-                                    <div style="width: 425px" class="div-cell py-1 pl-2">Dịch vụ</div>
-                                    <div style="width: 250px;" class="div-cell py-1 text-right">Đơn giá</div>
-                                    <div style="width: 200px;" class="div-cell py-1 text-right">Số lượng</div>
-                                    <div style="width: 250px;" class="div-cell py-1 text-right">Thành tiền</div>
-                                    <div style="width: 150px;" class="div-cell py-1 text-center">Thao tác</div>
-                                </div>
-                            </div> -->
-                            <div class="div-table w-100 flex-0-0-auto">
-                                <div class="div-row bg-primary text-white">
-                                    <div class="py-1 pl-2">Danh sách dịch vụ</div>
-                                </div>
-                            </div>
-                            <div class="">
-                                <div *ngIf="quotation.lines.length == 0" class="py-5 text-center">
-                                    <img class="" src="assets/images/box.svg" alt="">
-                                    <p>Chưa có dịch vụ nào</p>
-                                </div>
-                                <ng-container *ngFor="let line of quotation.lines; let i=index">
-                                    <app-quotation-line-cu #lineTemplate [initialListEmployees]="sourceEmployees"
-                                        [filteredToothCategories]="filteredToothCategories"
-                                        [initialListTeeths]="listTeeths"
-                                        (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)"
-                                        [line]="line" (onCancelEvent)="onCancelEditLine($event)"
-                                        (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)"
-                                        (onDeleteEvent)="onDeleteLine(i)">
-                                    </app-quotation-line-cu>
-                                </ng-container>
-                            </div>
-                            <div class="w-100 mt-2">
-                                <!-- <h5>TIẾN ĐỘ THANH TOÁN</h5> -->
-                                <div class="div-table w-100 flex-0-0-auto">
-                                    <div class="div-row bg-primary text-white">
-                                        <div class="py-1 pl-2">Tiến độ thanh toán</div>
-                                    </div>
-                                </div>
-                                <table
-                                    class="table table-sm mt-2 table-bordered table-striped  table-tbody-ver-align-middle border-bottom">
-                                    <thead>
-                                        <tr>
-                                            <th>Tiến độ</th>
-                                            <th>Thanh toán</th>
-                                            <th>Ngày thanh toán</th>
-                                            <th>Số tiền thanh toán</th>
-                                            <th class="text-center">Thao tác</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <ng-container *ngFor="let payment_item of quotation.payments; let i = index;">
-                                            <tr>
-                                                <td class="text-right">
-                                                    {{i + 1}}
-                                                </td>
-                                                <td class="d-flex">
-                                                    <kendo-numerictextbox
-                                                        *ngIf="payment_item.discountPercentType == 'cash'" required
-                                                        class="form-control" [min]="0" [format]="'n0'"
-                                                        [spinners]="false" [(ngModel)]="payment_item.payment"
-                                                        [name]="'payments[' + i + '].payment'" #progress="ngModel">
-                                                    </kendo-numerictextbox>
-                                                    <kendo-numerictextbox
-                                                        *ngIf="payment_item.discountPercentType == 'percent'" required
-                                                        class="form-control" [min]="0" [max]="100" [autoCorrect]="true"
-                                                        [format]="'n0'" [spinners]="false"
-                                                        [(ngModel)]="payment_item.payment"
-                                                        [name]="'payments[' + i + '].payment'" #progress="ngModel">
-                                                    </kendo-numerictextbox>
-                                                    <div class="mt-1 ml-2 d-flex">
-                                                        <div class="form-check form-check-inline">
-                                                            <input class="form-check-input" [hidden]="true" type="radio"
-                                                                [(ngModel)]="payment_item.discountPercentType" (ngModelChange)="changeDiscountType($event,i)"
-                                                                [name]="'payments[' + i + '].discountPercentType'" [id]="'cash-' + i"
-                                                                value="cash">
-                                                            <label class="form-check-label btn btn-outline-primary"
-                                                                [for]="'cash-' + i">VNĐ</label>
-                                                        </div>
-                                                        <div class="form-check form-check-inline">
-                                                            <input class="form-check-input" [hidden]="true" type="radio"
-                                                                [(ngModel)]="payment_item.discountPercentType" (ngModelChange)="changeDiscountType($event,i)"
-                                                                [name]="'payments[' + i + '].discountPercentType'" [id]="'percent-' + i"
-                                                                value="percent">
-                                                            <label class="form-check-label btn btn-outline-primary"
-                                                                [for]="'percent-' + i">%</label>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <kendo-datepicker class="form-control"
-                                                        [(ngModel)]="payment_item.date"
-                                                        [name]="'payments[' + i + '].date'">
-                                                    </kendo-datepicker>
-                                                </td>
-                                                <td>
-                                                    <span class="float-right">{{getAmountPayment(payment_item) |
-                                                        number}}</span>
-                                                </td>
-                                                <td class="text-center">
-                                                    <!-- <i class="fas fa-trash" (click)="deletePayment(i)"></i> -->
-                                                    <button class="btn btn-danger btn-sm" title="Xóa"
-                                                        (click)="deletePayment(i)">
-                                                        <i class="fas fa-trash"></i></button>
-                                                </td>
-                                            </tr>
-                                        </ng-container>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="7">
-                                                <button type="button" title="Thêm tiến độ thanh toán"
-                                                    class="btn btn-primary btn-sm" (click)="onAddPayment()">
-                                                    <i class="fas fa-plus"></i> Thêm tiến độ thanh toán
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="w-25 pl-3">
-                            <!-- ưu đãi -->
-                            <div class="card mb-3">
-                                <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">Ưu
-                                    đãi phiếu điều trị
-                                    <!-- <img class="ml-1 pointer" (click)="onOpenQuotationPromotion()"
-                                        src="../../../assets/icons/promotion.svg" alt=""> -->
-                                    <span class="ml-auto">{{sumPromotionQuotation() | number}}</span>
-                                </div>
-                                <div class="card-body px-3 py-2">
-                                    <div *ngIf="this.quotation.promotions?.length"
-                                        class="d-flex justify-content-between mb-1">
-                                        <span class="font-weight-600">Ưu đãi</span>
-                                        <span class="font-weight-600">Số tiền giảm</span>
-                                    </div>
-                                    <div *ngFor="let item of quotation.promotions"
-                                        class="d-flex justify-content-between mb-1">
-                                        <span>{{item.name}}</span>
-                                        <span class="font-weight-600">{{item.amount | number}}</span>
-                                    </div>
-                                    <div class="w-100 text-right">
-                                        <button type="button" class="btn btn-primary btn-sm ml-auto"
-                                            (click)="onOpenQuotationPromotion()">
-                                            <img src="assets/icons/promotion-white.svg" alt="">
-                                            Thêm ưu đãi
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card mb-3">
-                                <div class="card-header bg-primary text-white px-3 py-1">Thanh toán</div>
-                                <div class="card-body px-3 py-2">
-                                    <p class="d-flex justify-content-between mb-0">
-                                        <label class="">Thành tiền</label>
-                                        <label class="font-weight-600">{{getAmountSubTotal() | number}}</label>
-                                    </p>
-                                    <p class="d-flex justify-content-between mb-0">
-                                        <label class="">Tổng giảm giá</label>
-                                        <label class="font-weight-600">{{getTotalDiscount() | number : '1.0-0'}}</label>
-                                    </p>
-                                    <p class="d-flex justify-content-between mb-0">
-                                        <label class="">Tổng tiền</label>
-                                        <label class="font-weight-600">{{getAmountSubTotal() - getTotalDiscount() |
-                                            number}}</label>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+  <div class="o_control_panel o_breadcrumb_full">
+    <ol class="breadcrumb">
+      <li>
+        <a [routerLink]="[
+            '/partners/customer/' + quotation.partner?.id + '/quotations'
+          ]">Báo giá</a>
+      </li>
+      <li class="active">
+        <span *ngIf="quotationId">{{ quotation?.name }}</span>
+        <span *ngIf="!quotationId">Mới</span>
+      </li>
+    </ol>
+    <div class="o_cp_left">
+      <div class="o_cp_buttons">
+        <div class="o_form_buttons_view">
+          <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="form.onSubmit()">
+            Lưu
+          </button>
+          <button *ngIf="quotationId" type="button" accesskey="1" class="btn btn-primary btn-sm"
+            (click)="onCreateSaleOrder()">
+            Tạo phiếu điều trị
+          </button>
+          <button *ngIf="quotationId" type="button" class="btn btn-primary btn-sm" (click)="printQuotation()">
+            In phiếu
+          </button>
+          <button *ngIf="quotationId" type="button" class="btn btn-secondary btn-sm" (click)="onCreateNewQuotation()">
+            Thêm mới
+          </button>
         </div>
-    </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="o_content">
+  <form class="o_form_view" #form="ngForm" (ngSubmit)="onSave(form)">
+    <div class="o_form_sheet_bg">
+      <div class="o_form_sheet">
+        <div class="o_group">
+          <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label o_form_label_help">
+                    Khách hàng
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%">
+                  <a *ngIf="quotation.partner" [routerLink]="[
+                      '/partners/customer/' + quotation.partner.id
+                    ]">{{ quotation.partner.displayName }}</a>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label o_form_label_help">
+                    Người báo giá
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%">
+                  <kendo-combobox [(ngModel)]="quotation.employee" name="employee" required #employeeControl="ngModel"
+                    [filterable]="true" (filterChange)="onFilterEmployee($event)" #empCbx class="mr-1"
+                    [data]="filterEmployees" [textField]="'name'" [valueField]="'id'">
+                  </kendo-combobox>
+                  <div *ngIf="
+                      (employeeControl.touched ||
+                        employeeControl.dirty ||
+                        form.submitted) &&
+                      employeeControl?.errors?.required
+                    " class="text-danger">
+                    Chọn người báo giá
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="quotation.orders && quotation.orders.length > 0">
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label o_form_label_help">
+                    Phiếu điều trị
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%">
+                  <a *ngFor="let order of quotation.orders; let i = index" [routerLink]="['/sale-orders/form']"
+                    [queryParams]="{ id: order.id }">{{ order.name
+                    }}<span *ngIf="i < quotation.orders.length - 1">, </span></a>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label o_form_label_help">
+                    Ghi chú
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%">
+                  <textarea type="text" class="form-control" name="note" [(ngModel)]="quotation.note"></textarea>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label o_form_label_help">
+                    Ngày báo giá
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%">
+                  <kendo-datepicker [(ngModel)]="quotation.dateQuotation" required #dateQuotationControl="ngModel"
+                    name="dateQuotation" (valueChange)="onDateChange()">
+                  </kendo-datepicker>
+                  <div *ngIf="dateQuotationControl?.errors?.required" class="text-danger">
+                    Chọn ngày báo giá
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label o_form_label_help">
+                    Số ngày áp dụng
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%">
+                  <kendo-numerictextbox [min]="1" [autoCorrect]="true" required #dateAppliesControl="ngModel"
+                    name="dateApplies" [format]="'n0'" [spinners]="false" [(ngModel)]="quotation.dateApplies"
+                    (valueChange)="onDateChange()">
+                  </kendo-numerictextbox>
+                  <div *ngIf="dateAppliesControl?.errors?.required" class="text-danger">
+                    Nhập số ngày áp dụng
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label o_form_label_help">
+                    Ngày hết hạn
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%">
+                  <kendo-datepicker [(ngModel)]="quotation.dateEndQuotation" name="dateEndQuotation"
+                    [attr.disabled]="true">
+                  </kendo-datepicker>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="o_form_section">
+          <div class="w-100 h-100 d-flex flex-column">
+            <div class="w-100 mb-2">
+              <app-service-list-search-dropdown (onSelectService)="addLine($event)">
+              </app-service-list-search-dropdown>
+            </div>
+            <div class="d-flex w-100">
+              <div class="w-75 d-flex flex-column">
+                <div class="div-table w-100">
+                  <div class="div-row bg-primary text-white py-1 pl-2">
+                    <div class="py-1 pl-2">Danh sách dịch vụ</div>
+                  </div>
+                </div>
+                <div class="">
+                  <div *ngIf="quotation.lines.length == 0" class="py-5 text-center">
+                    <img class="" src="assets/images/box.svg" alt="" />
+                    <p>Chưa có dịch vụ nào</p>
+                  </div>
+                  <ng-container *ngFor="let line of quotation.lines; let i = index">
+                    <app-quotation-line-cu #lineTemplate [initialListEmployees]="sourceEmployees"
+                      [filteredToothCategories]="filteredToothCategories" [initialListTeeths]="listTeeths"
+                      (onUpdateOpenPromotionEvent)="
+                        onUpdateOpenLinePromotion($event, line, i)
+                      " [line]="line" (onCancelEvent)="onCancelEditLine($event)" (onEditEvent)="onEditLine($event)"
+                      (onUpdateEvent)="updateLineInfo($event, i)" (onDeleteEvent)="onDeleteLine(i)">
+                    </app-quotation-line-cu>
+                  </ng-container>
+                </div>
+                <div class="w-100 mt-2">
+                  <div class="div-table w-100">
+                    <div class="div-row bg-primary text-white">
+                      <div class="py-1 pl-2">Tiến độ thanh toán</div>
+                    </div>
+                  </div>
+                  <table
+                    class="table table-sm mt-2 table-bordered table-striped table-tbody-ver-align-middle border-bottom">
+                    <thead>
+                      <tr>
+                        <th>Tiến độ</th>
+                        <th>Thanh toán</th>
+                        <th>Ngày thanh toán</th>
+                        <th>Số tiền thanh toán</th>
+                        <th class="text-center">Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngFor="
+                          let payment_item of quotation.payments;
+                          let i = index
+                        ">
+                        <tr>
+                          <td class="text-right">
+                            {{ i + 1 }}
+                          </td>
+                          <td class="d-flex">
+                            <kendo-numerictextbox *ngIf="payment_item.discountPercentType == 'cash'" required
+                              class="form-control" [min]="0" [format]="'n0'" [spinners]="false"
+                              [(ngModel)]="payment_item.payment" [name]="'payments[' + i + '].payment'"
+                              #progress="ngModel">
+                            </kendo-numerictextbox>
+                            <kendo-numerictextbox *ngIf="
+                                payment_item.discountPercentType == 'percent'
+                              " required class="form-control" [min]="0" [max]="100" [autoCorrect]="true"
+                              [format]="'n0'" [spinners]="false" [(ngModel)]="payment_item.payment"
+                              [name]="'payments[' + i + '].payment'" #progress="ngModel">
+                            </kendo-numerictextbox>
+                            <div class="mt-1 ml-2 d-flex">
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" [hidden]="true" type="radio"
+                                  [(ngModel)]="payment_item.discountPercentType" (ngModelChange)="
+                                    changeDiscountType($event, i)
+                                  " [name]="
+                                    'payments[' + i + '].discountPercentType'
+                                  " [id]="'cash-' + i" value="cash" />
+                                <label class="
+                                    form-check-label
+                                    btn btn-outline-primary
+                                  " [for]="'cash-' + i">VNĐ</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" [hidden]="true" type="radio"
+                                  [(ngModel)]="payment_item.discountPercentType" (ngModelChange)="
+                                    changeDiscountType($event, i)
+                                  " [name]="
+                                    'payments[' + i + '].discountPercentType'
+                                  " [id]="'percent-' + i" value="percent" />
+                                <label class="
+                                    form-check-label
+                                    btn btn-outline-primary
+                                  " [for]="'percent-' + i">%</label>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <kendo-datepicker class="form-control" [(ngModel)]="payment_item.date"
+                              [name]="'payments[' + i + '].date'">
+                            </kendo-datepicker>
+                          </td>
+                          <td>
+                            <span class="float-right">{{
+                              getAmountPayment(payment_item) | number
+                              }}</span>
+                          </td>
+                          <td class="text-center">
+                            <button class="btn btn-danger btn-sm" title="Xóa" (click)="deletePayment(i)">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </ng-container>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="7">
+                          <button type="button" title="Thêm tiến độ thanh toán" class="btn btn-primary btn-sm"
+                            (click)="onAddPayment()">
+                            <i class="fas fa-plus"></i> Thêm tiến độ thanh toán
+                          </button>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+
+              <div class="w-25 pl-3">
+                <div class="card mb-3">
+                  <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">
+                    Ưu đãi phiếu điều trị
+                    <span class="ml-auto">{{
+                      sumPromotionQuotation() | number
+                      }}</span>
+                  </div>
+                  <div class="card-body px-3 py-2">
+                    <div *ngIf="this.quotation.promotions?.length" class="d-flex justify-content-between mb-1">
+                      <span class="font-weight-600">Ưu đãi</span>
+                      <span class="font-weight-600">Số tiền giảm</span>
+                    </div>
+                    <div *ngFor="let item of quotation.promotions" class="d-flex justify-content-between mb-1">
+                      <span>{{ item.name }}</span>
+                      <span class="font-weight-600">{{
+                        item.amount | number
+                        }}</span>
+                    </div>
+                    <div class="w-100 text-right">
+                      <button type="button" class="btn btn-primary btn-sm ml-auto" (click)="onOpenQuotationPromotion()">
+                        <img src="assets/icons/promotion-white.svg" alt="" />
+                        Thêm ưu đãi
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card mb-3">
+                  <div class="card-header bg-primary text-white px-3 py-1">
+                    Thanh toán
+                  </div>
+                  <div class="card-body px-3 py-2">
+                    <p class="d-flex justify-content-between mb-0">
+                      <label class="">Thành tiền</label>
+                      <label class="font-weight-600">{{
+                        getAmountSubTotal() | number
+                        }}</label>
+                    </p>
+                    <p class="d-flex justify-content-between mb-0">
+                      <label class="">Tổng giảm giá</label>
+                      <label class="font-weight-600">{{
+                        getTotalDiscount() | number: "1.0-0"
+                        }}</label>
+                    </p>
+                    <p class="d-flex justify-content-between mb-0">
+                      <label class="">Tổng tiền</label>
+                      <label class="font-weight-600">{{
+                        getAmountSubTotal() - getTotalDiscount() | number
+                        }}</label>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
