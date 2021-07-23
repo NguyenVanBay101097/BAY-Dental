@@ -257,7 +257,7 @@ export class SmsMessageDialogComponent implements OnInit {
     modalRef.componentInstance.campaign = val.smsCampaign;
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.brandName = val.smsAccount.brandName;
-    modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.scheduleDateObj, "dd-MM-yyyy HH:mm");;
+    modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.scheduleDateObj, "HH:mm dd-MM-yyyy");;
     modalRef.componentInstance.body = val.body;
     modalRef.componentInstance.numberSms = this.partnerIds ? this.partnerIds.length : 0;
     modalRef.result.then(() => {
@@ -265,7 +265,7 @@ export class SmsMessageDialogComponent implements OnInit {
         (res: any) => {
           this.smsMessageService.actionSendSms(res.id).subscribe(
             () => {
-              this.notify("Gửi tin nhắn thành công", true);
+              this.notify("Gửi tin thành công", true);
               this.activeModal.close();
             }
           )

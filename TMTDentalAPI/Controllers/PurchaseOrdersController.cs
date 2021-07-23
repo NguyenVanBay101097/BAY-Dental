@@ -160,12 +160,12 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 2].Value = item.Name;
                     worksheet.Cells[row, 3].Value = item.PartnerName;
                     worksheet.Cells[row, 4].Value = item.DateOrder;
-                    worksheet.Cells[row, 4].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 4].Style.Numberformat.Format = "dd/MM/yyyy";
                     worksheet.Cells[row, 5].Value = item.AmountTotal;
                     worksheet.Cells[row, 5].Style.Numberformat.Format = "#,###";
-                    worksheet.Cells[row, 6].Value = (item.AmountTotal ?? 0) - (item.AmountResidual ?? 0);
+                    worksheet.Cells[row, 6].Value = item.State != "draft" ? ((item.AmountTotal ?? 0) - (item.AmountResidual ?? 0)) : 0000;
                     worksheet.Cells[row, 6].Style.Numberformat.Format = "#,###";
-                    worksheet.Cells[row, 7].Value = (item.AmountResidual ?? 0);
+                    worksheet.Cells[row, 7].Value = (item.AmountResidual ?? 0000);
                     worksheet.Cells[row, 7].Style.Numberformat.Format = "#,###";
                     worksheet.Cells[row, 8].Value = item.State == "draft" ? "Nháp" : (item.State == "purchase" ? "Đơn hàng" : "Hoàn thành");
 
