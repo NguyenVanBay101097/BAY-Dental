@@ -1280,9 +1280,18 @@ td.oe_form_group_cell_label label {
     width: auto !important;
 }
 
-.o_form_view .o_field_widget {
-    margin-bottom: 5px;
+/* .o_field_widget, .o_field_widget input.o_input {
+    display: inline-block;
+    text-align: inherit;
+} */
+
+.o_field_widget::after {
+    content: "\a0";
 }
+
+/* .o_form_view .o_field_widget {
+    margin-bottom: 0px;
+} */
 
 .o_form_view .o_field_boolean {
     margin-right: 5px;
