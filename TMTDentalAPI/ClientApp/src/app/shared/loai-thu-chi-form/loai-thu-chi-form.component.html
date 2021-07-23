@@ -50,27 +50,30 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" formControlName="note"></textarea>
+                                    <textarea class="form-control" formControlName="note"></textarea>
                                 </td>
                             </tr>
-                            <td colspan="1" style="width: 100%;">
-                                <div class="d-flex">
-                                  
-                                    <div class="form-check mr-2">
-                                        <input class="form-check-input" type="checkbox" formControlName="isAccounting" id="isAccounting">
-                                        <label class="form-check-label" for="isAccounting">
-                                            Hạch toán kết quả kinh doanh
-                                        </label>
+                            <tr>
+                                <td colspan="1" class="o_td_label"></td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">                                
+                                        <div class="form-check mr-2">
+                                            <input class="form-check-input" type="checkbox" formControlName="isAccounting" id="isAccounting">
+                                            <label class="form-check-label" for="isAccounting">
+                                                Hạch toán kết quả kinh doanh
+                                            </label>
+                                        </div>
+                                        <div class="icon-hover">
+                                            <i class="fas fa-info-circle text-primary" triggers="mouseenter:mouseleave" placement="top" [autoClose]="true"  [ngbPopover]="popContent"></i>
+                                        </div>
+                                        <ng-template #popContent>
+                                            Hạch toán vào chỉ tiêu {{type == 'thu' ? 'thu nhập' : 'chi phí'}} khác trong báo cáo kết quả kinh doanh
+                                        </ng-template>
                                     </div>
-                                    <div class="icon-hover">
-                                        <i class="fas fa-info-circle text-primary" triggers="mouseenter:mouseleave" placement="top" [autoClose]="true"  [ngbPopover]="popContent"></i>
-                                    </div>
-                                    <ng-template #popContent>
-                                        Hạch toán vào chỉ tiêu {{type == 'thu' ? 'thu nhập' : 'chi phí'}} khác trong báo cáo kết quả kinh doanh
-                                    </ng-template>
-                                </div>
-                               
-                            </td>
+                                   
+                                </td>
+                            </tr>
+                          
                         </tbody>
                     </table>
                 </div>

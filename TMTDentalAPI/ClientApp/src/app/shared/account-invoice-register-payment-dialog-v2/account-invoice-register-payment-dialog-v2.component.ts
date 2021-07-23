@@ -95,10 +95,9 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     this.create().subscribe((result: any) => {
       this.paymentService.post([result.id]).subscribe(() => {
         this.activeModal.close(true);
-      }, (err) => {
-        this.notifyService.notify('error',err);
       });
     }, (err) => {
+      debugger
       this.notifyService.notify('error',err);
     });
   }
@@ -116,8 +115,6 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
           print: true,
           paymentId: result.id
         });
-      }, (err) => {
-        this.notifyService.notify('error',err);
       });
     }, (err) => {
       this.notifyService.notify('error',err);
