@@ -46,7 +46,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   ];
   productSource: any;
   toothDianosisSource: any;
-  searchUpdatePopOver = new Subject<string>();
+  searchUpdateToothDianosis = new Subject<string>();
+  searchUpdateProduct = new Subject<string>();
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -106,39 +107,34 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
         this.filterData = result.items;
         this.empCbx.loading = false;
       });
-      this.searchUpdatePopOver.pipe(
-        debounceTime(400),
-        distinctUntilChanged())
-        .subscribe(value => {
-          this.searchToothDiagnosis(value).subscribe(result => {
-            this.toothDianosisSource = result;
-          })
-          
-        });
-      // this.multiSelect.filterChange.asObservable().pipe(
-      //   debounceTime(300),
-      //   tap(() => (this.multiSelect.loading = true)),
-      //   switchMap(value => this.searchToothDiagnosis(value))
-      // ).subscribe(result => {
-      //   this.toothDianosisSource = result;
-      //   this.multiSelect.loading = false;
-      // });
+    this.searchUpdateToothDianosis.pipe(
+      debounceTime(300),
+      distinctUntilChanged())
+      .subscribe(value => {
+        this.searchToothDiagnosis(value);
+      });
+    this.searchUpdateProduct.pipe(
+      debounceTime(300),
+      distinctUntilChanged())
+      .subscribe(value => {
+        this.searchProduct(value);
+      });
 
-      this.f.toothDiagnosis.valueChanges.subscribe(data => {
-        console.log(this.f.toothDiagnosis);
-        
-        var ids = data.map(x => x.id);
-        this.toothDiagnosisService.getProducts(ids).subscribe(result => {
-          var products = this.f.product.value;
-          products = products.filter(elem => this.productSelectedFromApi.findIndex(x => x.id == elem.id) == -1);
-          products = products.concat(result);
-          var unique = products.filter(function(elem, index, self){
-            return index === self.findIndex(x => x.id == elem.id);
-          })
-          this.f.product.setValue(unique);
-          this.productSelectedFromApi = result;
+    this.f.toothDiagnosis.valueChanges.subscribe(data => {
+      console.log(this.f.toothDiagnosis);
+
+      var ids = data.map(x => x.id);
+      this.toothDiagnosisService.getProducts(ids).subscribe(result => {
+        var products = this.f.product.value;
+        products = products.filter(elem => this.productSelectedFromApi.findIndex(x => x.id == elem.id) == -1);
+        products = products.concat(result);
+        var unique = products.filter(function (elem, index, self) {
+          return index === self.findIndex(x => x.id == elem.id);
         })
+        this.f.product.setValue(unique);
+        this.productSelectedFromApi = result;
       })
+    })
   }
 
   get f() { return this.myForm.controls; }
@@ -229,7 +225,16 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     val.limit = 10;
     val.offset = 0;
     val.search = q || '';
-    return this.toothDiagnosisService.getPaged(val);
+    this.toothDiagnosisService.getPaged(val).subscribe(
+    result => {
+      this.toothDianosisSource = result.items;
+    }, error => {
+      console.log(error);
+    });;
+  }
+
+  searchProduct(q?: string){
+
   }
 
   loadEmployees() {
@@ -323,6 +328,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
 
   updateDiagnosis(data) {
     this.f.toothDiagnosis.setValue(data);
+    
     var ids = data.map(x => x.id);
     this.toothDiagnosisService.getProducts(ids).subscribe(result => {
       var products = this.f.product.value;
