@@ -49,7 +49,7 @@ namespace Infrastructure.Services
 
         public async Task UpdateMember(IEnumerable<MemberLevelSave> vals)
         {
-            var listDb = await SearchQuery().ToListAsync();
+            var listDb = await SearchQuery(x => x.CompanyId == CompanyId).ToListAsync();
             var memberAdd = new List<MemberLevel>();
             var memberUpdate = new List<MemberLevel>();
             var memberDelete = new List<MemberLevel>();

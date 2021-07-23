@@ -768,7 +768,9 @@ namespace Infrastructure.Services
             var saleObj = GetService<ISaleOrderService>();
             //var applicable_programs = await saleObj._GetApplicablePrograms(order);
             var countApplied = await _GetCountAppliedQuotationAsync(self);
-            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
+            if (self.DiscountApplyOn == "on_order")
+                message.Error = "Mã khuyến mãi không áp dụng cho dịch vụ";
+            else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 // message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng.";
                 message.Error = "Mã khuyến mãi vượt quá hạn mức áp dụng";
             else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < line.Quotation.DateQuotation))
