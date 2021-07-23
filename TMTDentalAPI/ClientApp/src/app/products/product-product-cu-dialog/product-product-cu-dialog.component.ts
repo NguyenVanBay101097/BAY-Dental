@@ -332,11 +332,6 @@ export class ProductProductCuDialogComponent implements OnInit {
       }
     );
   }
-
-  reFillMinInventory(){
-    let res = this.f.minInventory.value;
-    this.productForm.get('minInventory').setValue(res ? res : 0);
-  }
 }
 
 
