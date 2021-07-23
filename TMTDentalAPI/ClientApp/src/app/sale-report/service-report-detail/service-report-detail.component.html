@@ -15,9 +15,9 @@
             {{getTeethDisplay(dataItem.teeth)}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column c field="productUOMQty" title="Số lượng" width="90">
+    <kendo-grid-column c field="productUOMQty" class="text-right" [headerClass]="'text-right'" title="Số lượng" width="90">
     </kendo-grid-column>
-    <kendo-grid-column class="text-right" field="priceSubTotal" title="Thành tiền" width="110">
+    <kendo-grid-column class="text-right" [headerClass]="'text-right'" field="priceSubTotal" title="Thành tiền" width="110">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{dataItem.priceSubTotal | number}}
         </ng-template>

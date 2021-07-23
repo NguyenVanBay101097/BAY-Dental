@@ -13,11 +13,11 @@
     <div class="d-flex py-2 px-3 order-state">
         <input [(ngModel)]="filterMonth" (ngModelChange)="onChangeFilterMonth()" value="" type="radio" class="btn-check hidden hide" name="orderStates" id="all" autocomplete="off" [checked]="true">
         <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="all">Tất cả</label>
-        <input [(ngModel)]="filterMonth" (ngModelChange)="onChangeFilterMonth()" [value]="{to: 3}" type="radio" class="btn-check hidden hide" name="orderStates" id="sale" autocomplete="off" [checked]="true">
+        <input [(ngModel)]="filterMonth" (ngModelChange)="onChangeFilterMonth()" [value]="{from:3, to: 0}" type="radio" class="btn-check hidden hide" name="orderStates" id="sale" autocomplete="off" [checked]="true">
         <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="sale">1-3 tháng</label>
-        <input [(ngModel)]="filterMonth" (ngModelChange)="onChangeFilterMonth()" [value]="{from:3, to: 6}" type="radio" class="btn-check hidden hide" name="orderStates" id="done" autocomplete="off" [checked]="true">
+        <input [(ngModel)]="filterMonth" (ngModelChange)="onChangeFilterMonth()" [value]="{from:6, to: -3}" type="radio" class="btn-check hidden hide" name="orderStates" id="done" autocomplete="off" [checked]="true">
         <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="done">3-6 tháng</label>
-        <input [(ngModel)]="filterMonth" (ngModelChange)="onChangeFilterMonth()" [value]="{from:6}" type="radio" class="btn-check hidden hide" name="orderStates" id="notActive" autocomplete="off" [checked]="true">
+        <input [(ngModel)]="filterMonth" (ngModelChange)="onChangeFilterMonth()" [value]="{from: null, to: -6}" type="radio" class="btn-check hidden hide" name="orderStates" id="notActive" autocomplete="off" [checked]="true">
         <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="notActive">Quá 6 tháng</label>
 
     </div>
@@ -44,9 +44,9 @@
                 {{getTeethDisplay(dataItem.teeth)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column c field="productUOMQty" title="Số lượng" width="90">
+        <kendo-grid-column c field="productUOMQty" class="text-right" [headerClass]="'text-right'" title="Số lượng" width="90">
         </kendo-grid-column>
-        <kendo-grid-column class="text-right" field="priceSubTotal" title="Thành tiền" width="110">
+        <kendo-grid-column class="text-right" [headerClass]="'text-right'" field="priceSubTotal" title="Thành tiền" width="110">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{dataItem.priceSubTotal | number}}
             </ng-template>

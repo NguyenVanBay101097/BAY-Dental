@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
+import { isNaN } from 'lodash';
 import * as moment from 'moment';
 import { Subject } from 'rxjs/internal/Subject';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
@@ -105,10 +106,9 @@ export class ServiceSaleReportComponent implements OnInit {
       this.filter.offset = 0;
       this.loadAllData();
     })
-
-    var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-    this.filter.dateOrderFrom = this.filter.dateOrderFrom || new Date(y, m, 1);
-    this.filter.dateOrderTo = this.filter.dateOrderTo || new Date(y, m + 1, 0);
+    
+    this.filter.dateOrderFrom = moment().startOf('week').toDate();
+    this.filter.dateOrderTo  = moment().endOf('week').toDate();
     this.filter.limit = 20;
     this.filter.offset = 0;
     this.filter.state = 'sale';
@@ -165,13 +165,16 @@ export class ServiceSaleReportComponent implements OnInit {
   }
 
   onChangeFilterMonth() {
-    (this.filter.monthFrom as any) = '';
-    (this.filter.monthTo as any) = '';
+    var date = new Date(), month = date.getMonth();
+    this.filter.dateOrderFrom = moment().startOf('week').toDate();
+    this.filter.dateOrderTo  = moment().endOf('week').toDate();
     this.filter.offset = 0;
 
     if(this.filterMonth) {
-     this.filter.monthFrom = this.filterMonth.from || '';
-     this.filter.monthTo = this.filterMonth.to || '';
+     this.filter.dateOrderFrom = !isNaN(this.filterMonth.from)? 
+     new Date(date.setMonth(month - this.filterMonth.from)): null;
+     this.filter.dateOrderTo = !isNaN(this.filterMonth.to)? 
+     new Date(date.setMonth(month + this.filterMonth.to)) : null;
     }
     this.loadAllData();
   }

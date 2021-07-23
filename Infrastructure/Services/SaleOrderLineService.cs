@@ -390,11 +390,6 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
-            if (val.MonthFrom.HasValue)
-                query = query.Where(x => (DateTime.Now - DateTime.Now).Days >= val.MonthFrom * 30);
-       
-            if (val.MonthTo.HasValue)
-                query = query.Where(x => (DateTime.Now - DateTime.Now).Days <=  30);
 
             if (val.IsQuotation.HasValue)
             {

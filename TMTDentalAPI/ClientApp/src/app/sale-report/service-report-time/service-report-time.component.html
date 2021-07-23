@@ -27,7 +27,7 @@
                 {{dataItem.date | date: 'dd/MM/yyyy'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="quantity" title="Số lượng" width="90">
+        <kendo-grid-column field="quantity" class="text-right" [headerClass]="'text-right'" title="Số lượng" width="90">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{dataItem.quantity |number}}
             </ng-template>
@@ -38,7 +38,7 @@
             </ng-template>
         </kendo-grid-column>
         <!-- excel -->
-        <kendo-grid-excel fileName="baocaodoanhthu.xlsx" [fetchData]="allData"></kendo-grid-excel>
+        <kendo-grid-excel fileName="baocaodichvu.xlsx" [fetchData]="allData"></kendo-grid-excel>
         <div *kendoGridDetailTemplate="let dataItem">
             <app-service-report-detail [parentFilter]="filter" [parent]="dataItem"></app-service-report-detail>
         </div>

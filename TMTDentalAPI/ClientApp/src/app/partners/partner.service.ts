@@ -52,8 +52,6 @@ export class SaleOrderLinePaged {
     dateOrderTo: any;
     employeeId: string;
     companyId: string;
-    monthFrom?: number;
-    monthTo?: number;
 }
 
 export class PartnerReportLocationCitySearch {

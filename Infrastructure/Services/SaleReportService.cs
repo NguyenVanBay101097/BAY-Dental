@@ -783,7 +783,9 @@ namespace Infrastructure.Services
             if (val.ProductId.HasValue)
                 query = query.Where(x => x.ProductId == val.ProductId);
             var count = await query.CountAsync();
+            if(val.Limit > 0)
             query = query.Skip(val.Offset).Take(val.Limit);
+
             var res = await _mapper.ProjectTo<ServiceReportDetailRes>(query).ToListAsync();
             return new PagedResult2<ServiceReportDetailRes>(count, val.Offset, val.Limit) { 
             Items = res

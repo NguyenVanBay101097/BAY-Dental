@@ -40,9 +40,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string LaboStatus { get; set; }
         public Guid? EmployeeId { get; set; }
         public Guid? CompanyId { get; set; }
-        // filter ngày tạo - today: <3 tháng, 3-6 tháng, > 6 tháng
-        public int? MonthFrom { get; set; }
-        public int? MonthTo{ get; set; }
     }
 
     public class SaleOrderLinesLaboPaged

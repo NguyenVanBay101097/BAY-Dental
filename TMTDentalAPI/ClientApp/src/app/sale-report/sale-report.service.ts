@@ -145,6 +145,7 @@ export class ServiceReportDetailRes {
 	priceSubTotal: number;
 	state: string;
 	orderName: string;
+    isActive: boolean;
 }
 
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import * as moment from 'moment';
 import { DaterangepickerDirective } from './config/daterangepicker.directive';
 
@@ -45,6 +45,24 @@ export class DateRangePickerFilterComponent implements OnInit {
   }
   ngAfterViewInit() {
 
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
+    //Add '${implements OnChanges}' to the class.
+    for (const change in changes) {
+      if (changes.hasOwnProperty(change)) {
+          if (['startDate','endDate'].indexOf(change) === -1) {
+            this.selected = 
+                {
+                  startDate: moment(this.startDate),
+                  endDate: moment(this.endDate)
+                };   
+                console.log(this.selected);
+                
+          }
+      }
+  }
+    
   }
 
   clear() {
