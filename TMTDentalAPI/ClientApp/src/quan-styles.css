@@ -1,14 +1,4 @@
-.o_form_view .o_group .o_group_col_12 {
-    display: inline-block;
-    width: 100%;
-    vertical-align: top;
-}
 
-.o_form_view .o_group .o_group_col_12 .o_td_label .o_form_label {
-    font-weight: 600;
-    margin-right: 0px;
-    width: 150px;
-}
 
 .mainRight .grid-icon {
     padding: 0 5px 0 12px;

@@ -1,47 +1,58 @@
 <div class="o_form_sheet o_partner_info_custom_form_sheet" *ngIf="partner">
-    <app-image-file-upload [supportWebcam]="true" class="oe_avatar o_field_image" (uploaded)="onAvatarUploaded($event)"
-        [imageId]="partner.avatar" [width]="100" [height]="100">
-    </app-image-file-upload>
-    <div class="oe_title">
-        <h2>
-            <span>{{partner ? partner.name: ''}}</span>
-        </h2>
-        <div class="o_group mt-0 mb-0">
-            <table class="o_group mt-0 mb-0 o_inner_group o_group_col_12">
-                <tbody>
-                    <tr>
-                        <td class="o_td_label">
-                            <label class="o_form_label">Mã khách hàng</label>
-                        </td>
-                        <td style="width: 100%">
-                            <span class="o_field_widget">{{partner.ref}}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="o_td_label">
-                            <label class="o_form_label">Ngày tạo</label>
-                        </td>
-                        <td style="width: 100%">
-                            <span class="o_field_widget">{{ partner.date | date: 'shortDate' }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="o_td_label">
-                            <label class="o_form_label">&nbsp;</label>
-                        </td>
-                        <td style="width: 100%">
-                            <button type="button" class="btn btn-success btn-sm" (click)="editCustomer()">
-                                <span class="fas fa-edit"></span>
-                                Sửa
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div>
+        <table class="o_group mt-0 o_inner_group o_group_col_12">
+            <tbody>
+                <tr>
+                    <td class="o_td_label">
+                        <app-image-file-upload [supportWebcam]="true" class="oe_avatar o_field_image float-left"
+                            (uploaded)="onAvatarUploaded($event)" [imageId]="partner.avatar" [width]="100"
+                            [height]="100">
+                        </app-image-file-upload>
+                    </td>
+                    <td style="width: 100%" class="pr-0">
+                        <div>
+                            <div class="float-right">
+                                <button type="button" class="btn btn-success btn-sm" (click)="editCustomer()">
+                                    <span class="fas fa-edit"></span>
+                                    Sửa
+                                </button>
+                            </div>
+                            <div style="padding-right: 70px;">
+                                <h3 class="mb-0">
+                                    <span>{{partner ? partner.name: ''}}</span>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div>
+                            <table class="o_group mb-0 o_inner_group o_group_col_12">
+                                <tbody>
+                                    <tr>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label">Mã khách hàng</label>
+                                        </td>
+                                        <td style="width: 100%">
+                                            <span class="o_field_widget">{{partner.ref}}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label">Ngày tạo</label>
+                                        </td>
+                                        <td style="width: 100%">
+                                            <span class="o_field_widget">{{ partner.date | date: 'shortDate' }}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    <div class="o_group">
-        <table class="o_group o_inner_group o_group_col_12">
+    <div>
+        <table class="o_group mt-0 o_inner_group o_group_col_12">
             <tbody>
                 <tr>
                     <td class="o_td_label">

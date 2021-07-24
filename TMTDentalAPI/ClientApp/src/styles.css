@@ -146,6 +146,12 @@ select {
     vertical-align: top;
 }
 
+.o_form_view .o_group .o_group_col_12 {
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
+}
+
 .o_form_view .o_group.o_inner_group {
     display: inline-table;
 }
