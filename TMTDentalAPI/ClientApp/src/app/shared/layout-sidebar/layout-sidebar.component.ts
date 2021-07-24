@@ -145,21 +145,21 @@ export class LayoutSidebarComponent implements OnInit {
       ],
       permissions: ['LoyaltyCard.CardCard.Read', 'LoyaltyCard.CardType.Read']
     },
-    {
-      name: 'Chăm sóc tự động',
-      icon: 'fab fa-facebook-f',
-      children: [
-        { name: 'Kết nối facebook page', link: '/socials/facebook-connect' },
-        { name: 'Kết nối Zalo', link: '/zalo-config' },
-        { name: 'Danh sách kênh', link: '/socials/channels', permissions: ['TCare.Channel.Read'] },
-        { name: 'Kịch bản', link: '/tcare/scenarios', permissions: ['TCare.Scenario.Read'] },
-        { name: 'Thống kê gửi tin', link: '/tcare/messagings', permissions: ['TCare.Messaging.Read'] },
-        { name: 'Mẫu tin nhắn', link: '/tcare/message-templates', permissions: ['TCare.MessTemplate.Read'] },
-        { name: 'Thiết lập tự động', link: '/tcare/config', permissions: ['TCare.Config.Create'] },
-      ],
-      groups: 'tcare.group_tcare',
-      permissions: ['TCare.Channel.Read', 'TCare.Scenario.Read', 'TCare.Messaging.Read', 'TCare.MessTemplate.Read', 'TCare.Config.Create']
-    },
+    // {
+    //   name: 'Chăm sóc tự động',
+    //   icon: 'fab fa-facebook-f',
+    //   children: [
+    //     { name: 'Kết nối facebook page', link: '/socials/facebook-connect' },
+    //     { name: 'Kết nối Zalo', link: '/zalo-config' },
+    //     { name: 'Danh sách kênh', link: '/socials/channels', permissions: ['TCare.Channel.Read'] },
+    //     { name: 'Kịch bản', link: '/tcare/scenarios', permissions: ['TCare.Scenario.Read'] },
+    //     { name: 'Thống kê gửi tin', link: '/tcare/messagings', permissions: ['TCare.Messaging.Read'] },
+    //     { name: 'Mẫu tin nhắn', link: '/tcare/message-templates', permissions: ['TCare.MessTemplate.Read'] },
+    //     { name: 'Thiết lập tự động', link: '/tcare/config', permissions: ['TCare.Config.Create'] },
+    //   ],
+    //   groups: 'tcare.group_tcare',
+    //   permissions: ['TCare.Channel.Read', 'TCare.Scenario.Read', 'TCare.Messaging.Read', 'TCare.MessTemplate.Read', 'TCare.Config.Create']
+    // },
     {
       name: 'Danh mục',
       icon: 'fas fa-list',
