@@ -218,6 +218,7 @@ export class SaleOrderManagementComponent implements OnInit {
         });
       }
 
+      debugger;
       // create a Workbook and save the generated data URL
       // https://www.telerik.com/kendo-angular-ui/components/excelexport/api/Workbook/
       new Workbook(workbook).toDataURL().then((dataUrl: string) => {

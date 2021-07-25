@@ -8,7 +8,8 @@
         <div class="o_cp_searchview">
             <div class="o_searchview">
                 <span class="o_searchview_icon fa fa-search"></span>
-                <input class="o_searchview_input" [placeholder]="' Tìm kiếm theo tên khách hàng, số điện thoại'" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                <input class="o_searchview_input" [placeholder]="' Tìm kiếm theo tên khách hàng, số điện thoại'"
+                    type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
         <div class="o_cp_left">
@@ -20,9 +21,12 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <app-date-range-picker-filter class="mr-1" (searchChange)="searchChangeDate($event)" [startDate]="dateFrom" [endDate]="dateTo">
+            <app-date-range-picker-filter class="mr-1" (searchChange)="searchChangeDate($event)" [startDate]="dateFrom"
+                [endDate]="dateTo">
             </app-date-range-picker-filter>
-            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox kendo-combobox-sm"
+                [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies"
+                (selectionChange)="onSelectCompany($event)" #companyCbx>
             </kendo-combobox>
         </div>
     </div>
@@ -59,35 +63,44 @@
             </div>
         </div>
         <div>
-            <kendo-grid #grid (excelExport)="onExcelExport($event)" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
-                <kendo-grid-column field="partnerName" [title]="resultSelection === 'supplier'?'Nhà cung cấp':'Khách hàng'">
+            <kendo-grid #grid (excelExport)="onExcelExport($event)" [data]="gridData" [pageSize]="limit" [skip]="skip"
+                [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+                <kendo-grid-column field="partnerName" title="Khách hàng" width="200">
                 </kendo-grid-column>
-                <kendo-grid-column field="partnerRef" [title]="resultSelection === 'supplier'? 'Mã NCC':'Mã KH'">
+                <kendo-grid-column field="partnerRef" title="Mã KH" width="120">
                 </kendo-grid-column>
-                <kendo-grid-column field="partnerPhone" title="Số điện thoại">
+                <kendo-grid-column field="partnerPhone" title="Số điện thoại" width="120">
                 </kendo-grid-column>
-                <kendo-grid-column field="begin" class="text-right" title="Nợ đầu kỳ">
-                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.begin | number}}
-                    </ng-template>
+                <kendo-grid-column field="begin" format="{0:n0}" class="text-right" title="Nợ đầu kỳ" width="150">
                 </kendo-grid-column>
-                <kendo-grid-column field="debit" class="text-right" title="Phát sinh">
-                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.debit | number}}
-                    </ng-template>
+                <kendo-grid-column field="debit" format="{0:n0}" class="text-right" title="Phát sinh" width="150">
                 </kendo-grid-column>
-                <kendo-grid-column field="credit" class="text-right" title="Thanh toán">
-                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.credit | number}}
-                    </ng-template>
+                <kendo-grid-column field="credit" format="{0:n0}" class="text-right" title="Thanh toán" width="150">
                 </kendo-grid-column>
-                <kendo-grid-column field="end" class="text-right" title="Nợ cuối kỳ" footerClass="text-right font-weight-bold">
-                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.end | number}}
-                    </ng-template>
+                <kendo-grid-column field="end" format="{0:n0}" class="text-right" title="Nợ cuối kỳ"
+                    footerClass="text-right font-weight-bold" width="150">
                 </kendo-grid-column>
                 <!-- excel -->
-                <kendo-grid-excel fileName="BaoCaoCongNoKH.xlsx" [fetchData]="allData"></kendo-grid-excel>
+                <kendo-grid-excel fileName="BaoCaoCongNoKH.xlsx">
+                    <kendo-excelexport-column field="partnerName" title="Khách hàng" width="200">
+                    </kendo-excelexport-column>
+                    <kendo-excelexport-column field="partnerRef" title="Mã KH" width="120">
+                    </kendo-excelexport-column>
+                    <kendo-excelexport-column field="partnerPhone" title="Số điện thoại" width="120">
+                    </kendo-excelexport-column>
+                    <kendo-excelexport-column field="begin" title="Nợ đầu kỳ" [cellOptions]="{format: '#,##0'}"
+                        width="150">
+                    </kendo-excelexport-column>
+                    <kendo-excelexport-column field="debit" title="Phát sinh" [cellOptions]="{format: '#,##0'}"
+                        width="150">
+                    </kendo-excelexport-column>
+                    <kendo-excelexport-column field="credit" title="Thanh toán" [cellOptions]="{format: '#,##0'}"
+                        width="150">
+                    </kendo-excelexport-column>
+                    <kendo-excelexport-column field="end" title="Nợ cuối kỳ" [cellOptions]="{format: '#,##0'}"
+                        width="150">
+                    </kendo-excelexport-column>
+                </kendo-grid-excel>
                 <div *kendoGridDetailTemplate="let dataItem">
                     <app-partner-debit-detail-list-report [parent]="dataItem"></app-partner-debit-detail-list-report>
                 </div>

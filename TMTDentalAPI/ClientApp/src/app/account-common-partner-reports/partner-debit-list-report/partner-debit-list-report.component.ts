@@ -134,67 +134,35 @@ export class PartnerDebitListReportComponent implements OnInit {
     grid.saveAsExcel();
   }
 
-  public allData = (): any => {
-
-    var newData = [];
-    this.items.forEach(acc => {
-      var s = Object.assign({}, acc);
-      newData.push(s);
-    });
-    newData.forEach((acc: ReportPartnerDebitRes) => {
-      acc.begin = acc.begin.toLocaleString('vi') as any;
-      acc.end = acc.end.toLocaleString('vi') as any;
-      acc.debit = acc.debit.toLocaleString('vi') as any;
-      acc.credit = acc.credit.toLocaleString('vi') as any;
-      return acc;
-    });
-    const observable = of(newData).pipe(
-      map(res => {
-        return {
-          data: res,
-          total: res.length
-        }
-      })
-    );;
-
-    observable.pipe(
-    ).subscribe((result) => {
-    });
-
-    return observable;
-
-  }
-
   public onExcelExport(args: any) {
     args.preventDefault();
     var data = this.items;
 
     const observables = [];
     const workbook = args.workbook;
+    var sheet = args.workbook.sheets[0];
+    sheet.mergedCells = ["A1:G1", "A2:G2"];
+    sheet.frozenRows = 3;
+    sheet.name = 'BaoCaoCongNo_KH'
+
+    sheet.rows.splice(0, 0, { cells: [{
+      value:"BÁO CÁO CÔNG NỢ KHÁCH HÀNG",
+      textAlign: "center"
+    }], type: 'header' });
+
+    sheet.rows.splice(1, 0, { cells: [{
+      value: `Từ ngày ${this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'dd/MM/yyyy') : '...'} đến ngày ${this.dateTo ? this.intlService.formatDate(this.dateTo, 'dd/MM/yyyy') : '...'}`,
+      textAlign: "center"
+    }], type: 'header' });
+
 
     const rows = workbook.sheets[0].rows;
 
     // Get the default header styles.
     // Aternatively set custom styles for the details
     // https://www.telerik.com/kendo-angular-ui/components/excelexport/api/WorkbookSheetRowCell/
-    const headerOptions = rows[0].cells[0];
-    rows.forEach((row, index) => {
-      if (row.type === "data") {
-        row.cells[3].textAlign = 'right';
-        row.cells[4].textAlign = 'right';
-        row.cells[5].textAlign = 'right';
-        row.cells[6].textAlign = 'right';
-      }
-    });
+    const headerOptions = rows[2].cells[0];
 
-    if (data.length == 0) {
-      new Workbook(workbook).toDataURL().then((dataUrl: string) => {
-        // https://www.telerik.com/kendo-angular-ui/components/filesaver/
-        saveAs(dataUrl, 'BaoCaoCongNoKhachHang.xlsx');
-      });
-    }
-
-    
     // Fetch the data for all details
     for (let idx = 0; idx < data.length; idx++) {
       var val = new ReportPartnerDebitDetailReq();
@@ -209,59 +177,40 @@ export class PartnerDebitListReportComponent implements OnInit {
     zip.apply(Observable, observables).subscribe((result: any[][]) => {
       // add the detail data to the generated master sheet rows
       // loop backwards in order to avoid changing the rows index
-      var listDetailHeaderIndex = [];
       for (let idx = result.length - 1; idx >= 0; idx--) {
         const lines = (<any>result[idx]);
 
         // add the detail data
         for (let productIdx = lines.length - 1; productIdx >= 0; productIdx--) {
           const line = lines[productIdx] as ReportPartnerDebitDetailRes;
-          rows.splice(idx + 2, 0, {
+          rows.splice(idx + 4, 0, {
             cells: [
               {},
-              { value: moment(line.date).format('DD/MM/YYYY') },
+              { value: new Date(line.date), format: "dd/MM/yyyy" },
               { value: line.invoiceOrigin },
-              { value:  line.begin.toLocaleString('vi'), textAlign: 'right'},
-              { value:  line.debit.toLocaleString('vi'), textAlign: 'right'},
-              { value: line.credit.toLocaleString('vi'), textAlign: 'right'},
-              { value: line.end.toLocaleString('vi'), textAlign: 'right' }
+              { value: line.begin, format: "#,##0"},
+              { value: line.debit, format: "#,##0"},
+              { value: line.credit, format: "#,##0"},
+              { value: line.end, format: "#,##0" }
             ]
           });
         }
 
         // add the detail header
-        listDetailHeaderIndex.push(idx + 2);
-        rows.splice(idx + 2, 0, {
+        rows.splice(idx + 4, 0, {
           cells: [
             {},
-            Object.assign({}, headerOptions, { value: 'Ngày', background: '#aabbcc', width: 20 }),
-            Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
-            Object.assign({}, headerOptions, { value: 'Nợ đầu kì', background: '#aabbcc', width: 200 }),
-            Object.assign({}, headerOptions, { value: 'Phát sinh', background: '#aabbcc', width: 200 }),
-            Object.assign({}, headerOptions, { value: 'Thanh toán', background: '#aabbcc', width: 200 }),
-            Object.assign({}, headerOptions, { value: 'Nợ cuối kì', background: '#aabbcc', width: 200 })
+            Object.assign({}, headerOptions, { value: 'Ngày' }),
+            Object.assign({}, headerOptions, { value: 'Số phiếu' }),
+            Object.assign({}, headerOptions, { value: 'Nợ đầu kì' }),
+            Object.assign({}, headerOptions, { value: 'Phát sinh' }),
+            Object.assign({}, headerOptions, { value: 'Thanh toán' }),
+            Object.assign({}, headerOptions, { value: 'Nợ cuối kì'})
           ]
         });
       }
-      var a = workbook;
-      delete a.sheets[0].columns[1].width;
-      a.sheets[0].columns[1].autoWidth = true;
-      a.sheets[0].columns[2] = {
-        width: 120
-      };
-      a.sheets[0].columns[3] = {
-        width: 200
-      };
-      a.sheets[0].columns[4] = {
-        width: 200
-      };
-      a.sheets[0].columns[5] = {
-        width: 200
-      };
-      a.sheets[0].columns[6] = {
-        width: 150
-      };
     
+      debugger;
       new Workbook(workbook).toDataURL().then((dataUrl: string) => {
         // https://www.telerik.com/kendo-angular-ui/components/filesaver/
         saveAs(dataUrl, `BaoCaoCongNoKhachHang.xlsx`);
