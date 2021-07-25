@@ -117,7 +117,7 @@ namespace Infrastructure.Services
                     //    || prop.PropertyType == typeof(float) || prop.PropertyType == typeof(float?))
                     if (isNum)
                     {
-                        range.Style.Numberformat.Format = "#,###";
+                        range.Style.Numberformat.Format = "#,###0";
                     }
                 }
 

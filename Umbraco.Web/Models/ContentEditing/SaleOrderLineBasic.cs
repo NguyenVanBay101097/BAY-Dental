@@ -61,4 +61,46 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid ProductId { get; set; }
         public ProductSimple Product { get; set; }
     }
+
+    public class ServiceSaleReportExcel// mẫu xuất excel báo cáo dịch vụ đang điều trị dựa vào saleorderlinebasic
+    {
+        [EpplusDisplay("Ngày tạo")]
+        public DateTime DateCreated { get; set; }
+        [EpplusDisplay("Khách hàng")]
+        public string OrderPartnerName { get; set; }
+        [EpplusDisplay("Dịch vụ")]
+        public string Name { get; set; }
+        [EpplusDisplay("Bác sĩ")]
+        public string EmployeeName { get; set; }
+        [EpplusDisplay("Răng")]
+        public string Teeth { get; set; }
+        [EpplusDisplay("Số lượng")]
+        public decimal ProductUOMQty { get; set; }
+        [EpplusDisplay("Thành tiền")]
+        public decimal PriceSubTotal { get; set; }
+        [EpplusIgnore]
+        public string State { get; set; }
+        [EpplusIgnore]
+
+        public bool IsActive { get; set; }
+        [EpplusDisplay("Trạng thái")]
+        public string StateDisplay
+        {
+            get
+            {
+                if (!this.IsActive)
+                {
+                    return "Ngừng điều trị";
+                }
+                else
+                {
+                    return this.State == "sale" ? "Đang điều trị" : "Hoàn thành";
+                }
+            }
+            set { }
+        }
+        [EpplusDisplay("Phiếu điều trị")]
+        public string OrderName { get; set; }
+
+    }
 }

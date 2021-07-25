@@ -189,7 +189,6 @@ export class ServiceReportTimeComponent implements OnInit {
     newData.forEach(acc => {
       acc.date2 = acc.date;
       acc.date = acc.date ? moment(acc.date).format('DD/MM/YYYY') : '';
-      // acc.totalAmount = acc.totalAmount.toLocaleString('vi') as any;
       return acc;
     });
     const observable = of(newData).pipe(
@@ -220,7 +219,8 @@ export class ServiceReportTimeComponent implements OnInit {
        data : data,
        args : args,
        filter : this.filter,
-       title: 'BaoCaoDichVu_TheoTG'
+       title: 'BaoCaoDichVu_TheoTG',
+       header:'BÁO CÁO DỊCH VỤ THEO THỜI GIAN'
     })
   }
 

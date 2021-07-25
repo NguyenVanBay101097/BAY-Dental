@@ -46,24 +46,22 @@ export class DateRangePickerFilterComponent implements OnInit {
   ngAfterViewInit() {
 
   }
-  ngOnChanges(changes: SimpleChanges): void {
-    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
-    //Add '${implements OnChanges}' to the class.
-    for (const change in changes) {
-      if (changes.hasOwnProperty(change)) {
-          if (['startDate','endDate'].indexOf(change) === -1) {
-            this.selected = 
-                {
-                  startDate: moment(this.startDate),
-                  endDate: moment(this.endDate)
-                };   
-                console.log(this.selected);
-                
-          }
-      }
-  }
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
+  //   //Add '${implements OnChanges}' to the class.
+  //   for (const change in changes) {
+  //     if (changes.hasOwnProperty(change)) {
+  //         if (['startDate','endDate'].indexOf(change) !== -1) {
+  //           this.selected = 
+  //               {
+  //                 startDate: moment(this.startDate),
+  //                 endDate: moment(this.endDate)
+  //               };   
+  //         }
+  //     }
+  // }
     
-  }
+  // }
 
   clear() {
     this.selected = null;

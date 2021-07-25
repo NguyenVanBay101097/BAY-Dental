@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CellOptions, Workbook, WorkbookSheetColumn, WorkbookSheetRowCell } from '@progress/kendo-angular-excel-export';
+import { CellOptions, Workbook, WorkbookSheetColumn, WorkbookSheetRow, WorkbookSheetRowCell } from '@progress/kendo-angular-excel-export';
 import { SaleReportService, ServiceReportDetailReq, ServiceReportDetailRes } from '../sale-report.service';
 import { ServiceReportManageService } from './service-report-manage';
 import { saveAs } from '@progress/kendo-file-saver';
@@ -37,7 +37,7 @@ export class ServiceReportManagementComponent implements OnInit {
     var args = e.args;
     var parentFilter = e.filter;
     var employeeFilter = e.employeeFilter || 'none';
-    var title = e.title || 'báo cáo dịch vụ';
+    var title = e.title || 'báo cáo dịch vụ', header = e.header || "BÁO CÁO DỊCH VỤ";
     // Prevent automatically saving the file. We will save it manually after we fetch and add the details
     args.preventDefault();
 
@@ -46,6 +46,25 @@ export class ServiceReportManagementComponent implements OnInit {
 
     const rows = workbook.sheets[0].rows;
     const columns = workbook.sheets[0].columns;
+    var headerRow = Object.assign({},rows[0]);
+
+    rows.forEach((row, index) => {
+      // colspan
+      row.cells[1].colSpan = 6;
+      row.cells[1].textAlign = 'right';
+      row.cells[2].colSpan = 3;
+      row.cells[2].textAlign = 'right';
+      if (row.type === 'data') {
+        row.cells[2].format = '#,###0';
+      } 
+      //làm màu
+      if (row.type === "header") {
+        row.cells.forEach((cell: WorkbookSheetRowCell) => {
+          cell.background = "#d0ece9";
+          cell.color = "white";
+        });
+      }
+    });
 
     // Get the default header styles.
     // Aternatively set custom styles for the details
@@ -65,6 +84,40 @@ export class ServiceReportManagementComponent implements OnInit {
     // });
 
     if (data.length == 0) {
+      var filter = new ServiceReportDetailReq();
+      filter = Object.assign({}, parentFilter);
+      //add title
+      (rows as WorkbookSheetRow[]).unshift(<WorkbookSheetRow>{
+        cells:[
+          {
+            colSpan: 9,
+            rowSpan:1,
+            value: header,
+            color:'#4087b9',
+            bold: true
+          }
+         
+        ]
+      },
+      {
+        cells:[
+          {
+            colSpan: 9,
+            rowSpan:1,
+            value: `Từ ngày ${ moment(filter.dateFrom).format('DD/MM/YYYY')} đến ngày ${ moment(filter.dateTo).format('DD/MM/YYYY')}`,
+          }
+        ]
+      },
+      {
+        cells:[
+          {
+            colSpan: 1,
+            rowSpan:1,
+            value: ``
+          }
+        ]
+      }
+      );
       new Workbook(workbook).toDataURL().then((dataUrl: string) => {
         // https://www.telerik.com/kendo-angular-ui/components/filesaver/
         saveAs(dataUrl, 'baocaodoanhthu.xlsx');
@@ -106,7 +159,7 @@ export class ServiceReportManagementComponent implements OnInit {
               { value: line.orderPartnerName },
               { value: line.name },
               { value: line.employeeName },
-              { value: line.teeth.map(x=> x.name).join(" ") },
+              { value: line.teeth.map(x=> x.name).join(", ") },
               { value: line.productUOMQty },
               { value: line.priceSubTotal, textAlign: 'right',format : '#,###0' },
               { value: !line.isActive?'Ngừng điều trị' : stateDisplay[line.state] },
@@ -117,43 +170,82 @@ export class ServiceReportManagementComponent implements OnInit {
 
         // add the detail header
         listDetailHeaderIndex.push(idx + 2);
-        rows.splice(idx + 2, 0, {
+        rows.splice(idx + 2, 0,{
+          type: 'headerchild',
           cells: [
             {},
-            Object.assign({}, headerOptions, { value: 'Ngày tạo', color:'white', background: '#d0ece9', width: 500 }),
-            Object.assign({}, headerOptions, { value: 'Khách hàng', color:'white', background: '#d0ece9', width: 200 }),
-            Object.assign({}, headerOptions, { value: 'Dịch vụ', color:'white', background: '#d0ece9', width: 100 }),
-            Object.assign({}, headerOptions, { value: 'Bác sĩ', color:'white', background: '#d0ece9', width: 400 }),
-            Object.assign({}, headerOptions, { value: 'Răng', color:'white', background: '#d0ece9', width: 200 }),
-            Object.assign({}, headerOptions, { value: 'Số lượng', color:'white', background: '#d0ece9', width: 200, textAlign: 'right' }),
-            Object.assign({}, headerOptions, { value: 'Thành tiền', color:'white', background: '#d0ece9', width: 500, textAlign: 'right' }),
-            Object.assign({}, headerOptions, { value: 'Trạng thái', color:'white', background: '#d0ece9', width: 400 }),
-            Object.assign({}, headerOptions, { value: 'Phiếu điều trị', color:'white', background: '#d0ece9', width: 300 })
+            Object.assign({}, headerOptions, { value: 'Ngày tạo', color:'white', width: 500 }),
+            Object.assign({}, headerOptions, { value: 'Khách hàng', color:'white', width: 200 }),
+            Object.assign({}, headerOptions, { value: 'Dịch vụ', color:'white', width: 100 }),
+            Object.assign({}, headerOptions, { value: 'Bác sĩ', color:'white', width: 400 }),
+            Object.assign({}, headerOptions, { value: 'Răng', color:'white', width: 200 }),
+            Object.assign({}, headerOptions, { value: 'Số lượng', color:'white', width: 200, textAlign: 'right' }),
+            Object.assign({}, headerOptions, { value: 'Thành tiền', color:'white', width: 500, textAlign: 'right' }),
+            Object.assign({}, headerOptions, { value: 'Trạng thái', color:'white', width: 400 }),
+            Object.assign({}, headerOptions, { value: 'Phiếu điều trị', color:'white', width: 300 })
           ]
         });
+
+        if(idx != 0)// add header for each parent
+        rows.splice(idx + 1, 0,headerRow);
+
       }
-  
-      rows.forEach((row, index) => {
-        // colspan
-        if (row.type === 'header' || row.type == "footer") {
-          row.cells[1].colSpan = 6;
-          row.cells[1].textAlign = 'right';
-          row.cells[2].colSpan = 3;
-          row.cells[2].textAlign = 'right';
 
-            rows[index + 1].cells[1].colSpan = 6;
-            rows[index + 1].cells[2].colSpan = 3;
-            rows[index + 1].cells[2].format = '#,###0';
-        }
-        //làm màu
-        if (row.type === "header") {
-          row.cells.forEach((cell: WorkbookSheetRowCell) => {
-            cell.background = "#d0ece9";
-            cell.color = "white";
-          });
-        }
-      });
+      //add title
+      (rows as WorkbookSheetRow[]).unshift(<WorkbookSheetRow>{
+        cells:[
+          {
+            colSpan: 9,
+            rowSpan:1,
+            value: header,
+            color:'#4087b9',
+            bold: true
+          }
+         
+        ]
+      },
+      {
+        cells:[
+          {
+            colSpan: 9,
+            rowSpan:1,
+            value: `Từ ngày ${ moment(filter.dateFrom).format('DD/MM/YYYY')} đến ngày ${ moment(filter.dateTo).format('DD/MM/YYYY')}`,
+          }
+        ]
+      },
+      {
+        cells:[
+          {
+            colSpan: 1,
+            rowSpan:1,
+            value: ``
+          }
+        ]
+      }
+      );
+      
 
+      rows.forEach(r => {
+         
+        r.cells.forEach((cell: WorkbookSheetRowCell) => {
+          if (r.type === "header") {
+            cell.bold = true;
+            cell.color = '#4087b9';
+          }
+
+          if (r.type === "headerchild") {
+            console.log(cell);
+            
+            cell.bold = true;
+            cell.color = 'black';
+            delete cell.background
+          }
+        });
+      
+     
+    });
+
+      //format excel nè
       for (let index = 0; index < 8; index++) {
         columns.push(<WorkbookSheetColumn>{
           autoWidth: true

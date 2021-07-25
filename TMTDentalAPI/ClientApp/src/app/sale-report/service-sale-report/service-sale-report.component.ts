@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { DateRangeComponent } from '@progress/kendo-angular-dateinputs';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import { isNaN } from 'lodash';
@@ -10,6 +11,7 @@ import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.serv
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
+import { DateRangePickerFilterComponent } from 'src/app/shared/date-range-picker-filter/date-range-picker-filter.component';
 import { ToothBasic } from 'src/app/teeth/tooth.service';
 import { SaleReportService, ServiceReportReq } from '../sale-report.service';
 
@@ -35,6 +37,7 @@ export class ServiceSaleReportComponent implements OnInit {
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("empCbx", { static: true }) empVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
+  @ViewChild(DateRangePickerFilterComponent, {static: true}) dateRangeComp: DateRangePickerFilterComponent;
 
   constructor(
     private saleOrderLineService: SaleOrderLineService,
@@ -171,16 +174,49 @@ export class ServiceSaleReportComponent implements OnInit {
     this.filter.offset = 0;
 
     if(this.filterMonth) {
-     this.filter.dateOrderFrom = !isNaN(this.filterMonth.from)? 
+     this.filter.dateOrderFrom = this.filterMonth.from != null? 
      new Date(date.setMonth(month - this.filterMonth.from)): null;
-     this.filter.dateOrderTo = !isNaN(this.filterMonth.to)? 
+     this.filter.dateOrderTo = this.filterMonth.to != null? 
      new Date(date.setMonth(month + this.filterMonth.to)) : null;
     }
+
+    this.dateRangeComp.selected ={
+      startDate: moment(this.filter.dateOrderFrom || undefined),
+      endDate: moment(this.filter.dateOrderTo || undefined)
+    };
     this.loadAllData();
   }
 
   getTeethDisplay(teeth: ToothBasic[]){
     return teeth.map(x=> x.name).join(' ')
+  }
+
+  onExport() {
+    var val = Object.assign({}, this.filter) as SaleOrderLinePaged;
+    val.companyId = val.companyId || '';
+    val.employeeId = val.employeeId || '';
+    val.dateOrderFrom = val.dateOrderFrom ? moment(val.dateOrderFrom).format('YYYY/MM/DD') : '';
+    val.dateOrderTo = val.dateOrderTo ? moment(val.dateOrderTo).format('YYYY/MM/DD') : '';
+    this.loading = true;
+    this.saleOrderLineService.getSaleReportExportExcel(val).subscribe(res => {
+      this.loading = false;
+      let filename ="BaoCaoDichVu_DangDieuTri";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
 }

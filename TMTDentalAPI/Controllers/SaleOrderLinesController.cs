@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
@@ -10,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -22,13 +25,14 @@ namespace TMTDentalAPI.Controllers
         private readonly ISaleOrderLineService _saleLineService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
-
-        public SaleOrderLinesController(ISaleOrderLineService saleLineService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork)
+        private readonly IExportExcelService _exportExcelService;
+        public SaleOrderLinesController(ISaleOrderLineService saleLineService, IMapper mapper,IExportExcelService exportExcelService,
+        IUnitOfWorkAsync unitOfWork)
         {
             _saleLineService = saleLineService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _exportExcelService = exportExcelService;
         }
 
         [HttpPost]
@@ -232,6 +236,53 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _saleLineService.GetHistory(val);
             return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSaleReportExportExcel([FromQuery] SaleOrderLinesPaged val)
+        {
+            val.Limit = int.MaxValue;
+            var res = await _saleLineService.GetPagedResultAsync(val);
+            var data = _mapper.Map<IEnumerable<ServiceSaleReportExcel>>(res.Items);
+            byte[] fileContent;
+            var packageByte = await _exportExcelService.createExcel(data, "báo cáo dịch vụ");
+            using (MemoryStream memStream = new MemoryStream(packageByte as byte[]))
+            {
+                //ExcelPackage packageResult = new ExcelPackage(memStream);
+                //packageResult.Load(memStream);
+                ////await _exportExcelService.AddToHeader(packageResult.GetAsByteArray());
+                //packageResult.Save();
+
+                //fileContent = memStream.ToArray();
+                //string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+                //return new FileContentResult(fileContent, mimeType);
+                ExcelPackage package = new ExcelPackage(memStream);
+                package.Load(memStream);
+
+                var worksheet = package.Workbook.Worksheets[0];
+                worksheet.Cells[1, 1, 1, 9].Style.Font.Bold = true;
+
+                //insert title
+                worksheet.InsertRow(1,3);
+                worksheet.Cells[1,1,1,worksheet.Dimension.Columns].Merge = true;
+                worksheet.Cells[1, 1].Value = "BÁO CÁO DỊCH VỤ ĐANG ĐIỀU TRỊ";
+                worksheet.Cells[1, 1].Style.Font.Bold = true;
+                worksheet.Cells[1, 1].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells[2,1,2,worksheet.Dimension.Columns].Merge = true;
+                worksheet.Cells[2, 1].Value = (val.DateOrderFrom.HasValue ? "Từ ngày " + val.DateOrderFrom.Value.ToString("dd/MM/yyyy") : "") +
+                                               (val.DateOrderTo.HasValue ? " đến ngày " + val.DateOrderTo.Value.ToString("dd/MM/yyyy") : "");
+
+
+                worksheet.Cells.AutoFitColumns();
+                
+
+
+                await _exportExcelService.AddToHeader(package.GetAsByteArray());
+            }
+
+            return Ok();
+          
         }
     }
 }

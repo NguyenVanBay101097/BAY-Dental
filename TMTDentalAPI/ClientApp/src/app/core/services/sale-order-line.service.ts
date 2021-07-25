@@ -140,4 +140,8 @@ export class SaleOrderLineService {
     remove(id) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
+
+    getSaleReportExportExcel(val) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetSaleReportExportExcel', { params: new HttpParams({ fromObject: val }),  responseType: 'blob'  });
+    }
 }

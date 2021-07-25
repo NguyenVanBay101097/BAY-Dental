@@ -2,12 +2,14 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import * as moment from 'moment';
+import { of } from 'rxjs/internal/observable/of';
 import { Subject } from 'rxjs/internal/Subject';
-import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { SaleReportService, ServiceReportReq } from '../sale-report.service';
+import { ServiceReportManageService } from '../service-report-management/service-report-manage';
 
 @Component({
   selector: 'app-service-report-service',
@@ -18,7 +20,8 @@ export class ServiceReportServiceComponent implements OnInit {
   filter = new ServiceReportReq();
   companies: CompanySimple[] = [];
   employees: EmployeeSimple[] = [];
-  allData: any;
+  allDataGrid: any;
+  allDataExport: any;
   gridData: GridDataResult;
   loading = false;
   skip = 0;
@@ -33,7 +36,8 @@ export class ServiceReportServiceComponent implements OnInit {
   constructor(
     private saleReportService: SaleReportService,
     private companyService: CompanyService,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
+    private serviceReportManageService: ServiceReportManageService
   ) { }
 
   ngOnInit() {
@@ -52,7 +56,7 @@ export class ServiceReportServiceComponent implements OnInit {
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
     this.saleReportService.getServiceReportByService(val).subscribe(res => {
-      this.allData = res;
+      this.allDataGrid = res;
       this.loading = false;
       this.loadReport();
     },
@@ -132,8 +136,8 @@ export class ServiceReportServiceComponent implements OnInit {
 
   loadReport() {
     this.gridData = <GridDataResult>{
-      total: this.allData.length,
-      data: this.allData.slice(this.skip, this.skip + this.limit)
+      total: this.allDataGrid.length,
+      data: this.allDataGrid.slice(this.skip, this.skip + this.limit)
     };
   }
 
@@ -176,5 +180,27 @@ export class ServiceReportServiceComponent implements OnInit {
     this.loadAllData();
   }
 
+  
+  public allData = (): any => {
+    return {
+      data: this.allDataGrid,
+      total: this.allDataGrid
+    };
+  }
 
+  exportExcel(grid: GridComponent) {
+    grid.saveAsExcel();
+  }
+
+  public onExcelExport(args: any): void {
+    args.preventDefault();
+    const data = this.allDataGrid;
+    this.serviceReportManageService.emitChange({
+       data : data,
+       args : args,
+       filter : this.filter,
+       title: 'BaoCaoTheoDichVu',
+       header:'BÁO CÁO THEO DỊCH VỤ'
+    })
+  }
 }
