@@ -32,7 +32,7 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints.GetCustomerInfo
                 {
                     case "female": return "Nữ";
                     case "male": return "Nam";
-                    default: return "khác";
+                    default: return "Khác";
                 }
             }
             set { }
