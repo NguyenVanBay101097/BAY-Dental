@@ -14,6 +14,7 @@ import { ProductFilter, ProductService } from 'src/app/products/product.service'
 import { saveAs } from '@progress/kendo-file-saver';
 import { AccountInvoiceReportService, RevenueEmployeeReportDisplay, RevenueEmployeeReportPar } from '../account-invoice-report.service';
 import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
+import { PrintService } from 'src/app/print.service';
 
 
 @Component({
@@ -42,6 +43,7 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     private accInvService: AccountInvoiceReportService,
     private revenueManageService: RevenueManageService,
     private employeeService: EmployeeService,
+    private printService: PrintService
 
   ) { }
 
@@ -222,6 +224,17 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     this.filter.groupBy = this.empFilter ;
     this.skip = 0;
     this.loadAllData();
+  }
+
+  printReport(){
+    var val = Object.assign({}, this.filter) as RevenueEmployeeReportPar;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.groupById = val.groupById || '';
+    this.accInvService.getPrintRevenueEmployeeReport(val).subscribe(result => {
+      this.printService.print(result);
+    })
   }
 
 }

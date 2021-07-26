@@ -102,17 +102,18 @@ export class ProductProductCuDialogComponent implements OnInit {
         this.listProductCriteria = result.items;
         this.criteriaMultiSelect.loading = false;
       });
-
+      this.authService.getGroups().subscribe((result: any) => {
+        this.permissionService.define(result);
+        this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+        console.log(this.hasDefined);
+        
+      });
       this.loadProductCriteriaList();
       this.categCbxFilterChange();
       this.uoMCbxFilterChange();
       this.uoMPOCbxFilterChange();
 
-      this.authService.getGroups().subscribe((result: any) => {
-        this.permissionService.define(result);
-        this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
-        
-      });
+      
     });
   }
 
