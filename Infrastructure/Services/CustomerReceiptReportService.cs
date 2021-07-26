@@ -29,7 +29,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<CustomerReceiptReportBasic>> GetPagedResultAsync(CustomerReceiptReportFilter val)
         {
-            var query = GetQueryable(val);          
+            var query = GetQueryable(val);
 
             var totalItems = await query.CountAsync();
 
@@ -38,7 +38,7 @@ namespace Infrastructure.Services
 
             query = query.OrderByDescending(x => x.DateWaiting);
 
-            var items = await query.ToListAsync();
+            var items = await query.Include(x => x.Company).Include(x => x.Doctor).Include(x => x.Partner).ToListAsync();
 
             var paged = new PagedResult2<CustomerReceiptReportBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -65,6 +65,8 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateWaiting >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
+            if(!string.IsNullOrEmpty(val.state))
+                query = query.Where(x => x.State == val.state);
 
             if (val.DateFrom.HasValue)
             {
@@ -77,7 +79,7 @@ namespace Infrastructure.Services
 
 
             if (val.TimeTo.HasValue)
-            {               
+            {
                 query = query.Where(x => x.MinuteTotal.HasValue && x.MinuteTotal <= val.TimeTo.Value);
             }
 

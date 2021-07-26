@@ -21,7 +21,7 @@ namespace TMTDentalAPI.Controllers
             _customerReceiptReportService = customerReceiptReportService;
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<IActionResult> GetReportPaged([FromQuery] CustomerReceiptReportFilter val)
         {
             var res = await _customerReceiptReportService.GetPagedResultAsync(val);

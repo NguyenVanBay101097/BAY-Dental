@@ -53,7 +53,7 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     this.loadEmployees();
   }
 
-  loadAllData(){
+  loadAllData() {
     var val = Object.assign({}, this.filter) as RevenueEmployeeReportPar;
     val.companyId = val.companyId || '';
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
@@ -69,8 +69,8 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
         this.loading = false;
       });
   }
-  
-  
+
+
   FilterCombobox() {
     this.companyVC.filterChange
       .asObservable()
@@ -85,7 +85,7 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
         this.companyVC.loading = false;
       });
 
-      this.empVC.filterChange
+    this.empVC.filterChange
       .asObservable()
       .pipe(
         debounceTime(300),
@@ -125,8 +125,8 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     var val = new CompanyPaged();
     val.active = true;
     val.search = search || '';
-   return  this.companyService.getPaged(val);
-  } 
+    return this.companyService.getPaged(val);
+  }
 
   loadCompanies() {
     this.searchCompany$().subscribe(res => {
@@ -156,8 +156,8 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     }, 0);
   }
 
-  onSelectCompany(e){
-    this.filter.companyId = e? e.id : null;
+  onSelectCompany(e) {
+    this.filter.companyId = e ? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
@@ -203,23 +203,23 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     args.preventDefault();
     const data = this.allDataInvoiceExport.data;
     this.revenueManageService.emitChange({
-       data : data,
-       args : args,
-       filter : this.filter,
-       employeeFilter: this.empFilter,
-       title: 'Doanh thu theo nhân viên'
+      data: data,
+      args: args,
+      filter: this.filter,
+      employeeFilter: this.empFilter,
+      title: 'Doanh thu theo nhân viên'
     })
   }
 
-  
+
   onSelectEmployee(e) {
-    this.filter.groupById = e? e.id : null;
+    this.filter.groupById = e ? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
 
   onChangeEmployeeFilter() {
-    this.filter.groupBy = this.empFilter ;
+    this.filter.groupBy = this.empFilter;
     this.skip = 0;
     this.loadAllData();
   }

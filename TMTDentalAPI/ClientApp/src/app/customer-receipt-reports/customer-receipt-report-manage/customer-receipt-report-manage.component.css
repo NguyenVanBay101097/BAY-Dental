@@ -1,0 +1,29 @@
+.type a:hover,
+.type .active {
+    color: white;
+    border-radius: 6px;
+    background: #007bff;
+    text-decoration: none;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -ms-border-radius: 6px;
+    -o-border-radius: 6px;
+}
+
+.type a {
+    padding: 0.5rem;
+    color: black;
+    cursor: pointer;
+}
+
+.bg-gray {
+    background-color: hsl(0deg 0% 95%);
+}
+
+.o_web_client {
+    background-color: white !important;
+}
+
+.k-grid-footer-wrap table tfoot tr td {
+    border: none;
+}

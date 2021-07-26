@@ -1,46 +1,82 @@
 <div class="flex-1-1-100 right border p-2 ml-2 d-flex flex-column w-100">
-    <h5 class="flex-0-0-auto">Dự kiến doanh thu</h5>
-    <div class="total d-flex">
-        <div class="border mr-2 px-5 py-2 text-center">
-            <label class="mb-0">Tổng điều trị</label>
-            <h5 class="text-info">{{sumRevenue.amountTotal | number}}</h5>
-        </div>
-        <div class="border mr-2 px-5 py-2 text-center">
-            <label class="mb-0">Tổng thanh toán</label>
-            <h5 class="text-success">{{sumRevenue.amountPaid | number}}</h5>
-        </div>
-        <div class="border mr-2 px-5 py-2 text-center">
-            <label class="mb-0">Dự kiến thu</label>
-            <h5 class="text-danger">{{sumRevenue.residual | number}}</h5>
-        </div>
-
-    </div>
+    <h5 class="flex-0-0-auto">Báo cáo tổng quan tiếp nhận</h5>
     <div class="filter d-flex flex-0-0-auto mt-2">
-        <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+        <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+        <kendo-combobox width="auto" class="kendo-combobox-sm" [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="listCompany" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
-        <button class="btn btn-primary btn-sm" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
-            file</button>
-        <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo số phiếu, khách hàng" class="ml-auto form-control w-50 form-control-sm">
+        <button class="btn btn-secondary btn-sm mr-1" (click)="toggleShow()"><i class="fas fa-filter"></i> Lọc nâng cao </button>
+        <button class="btn btn-primary btn-sm" ><i class="fas fa-download"></i> Xuất file</button>
+        <input type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo số phiếu, khách hàng" class="ml-auto form-control w-50 form-control-sm">
     </div>
-    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Số phiếu" width="120">
-        </kendo-grid-column>
-        <kendo-grid-column field="partnerName" title="Khách hàng" width="120">
+    <div class="filter d-flex flex-0-0-auto mt-2" [ngClass]="{'toggled': isAdvanced == false}">
+        <kendo-combobox class="mr-1 kendo-combobox-sm" [placeholder]="'Bác sĩ'" [valueField]="'id'" [textField]="'name'" [filterable]="true" #employeeCbx [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
+        </kendo-combobox>       
+        <kendo-combobox (selectionChange)="onChangeExamination($event)" placeholder="Loại khám" class="kendo-combobox-sm mr-1" [data]="filterExamination" [textField]="'text'" [valueField]="'value'">
+        </kendo-combobox>
+        <kendo-combobox (selectionChange)="onChangeNotTreatment($event)" placeholder="Kết quả khám mới" class="kendo-combobox-sm mr-1" style="width: auto;" [data]="filterNoTreatment" [textField]="'text'" [valueField]="'value'">
+        </kendo-combobox>
+        <kendo-combobox (selectionChange)="onChangeState($event)" placeholder="Trạng thái" class="kendo-combobox-sm" style="width: auto;" [data]="filterState" [textField]="'text'" [valueField]="'value'">
+        </kendo-combobox>
+    </div>
+    <div class="total d-flex mt-2">
+        <div class="border mr-2 px-5 py-2 text-center">
+            <label class="mb-0">Tiếp nhận</label>
+            <h5 class="text-primary">{{total}}</h5>
+        </div>
+        <div class="border mr-2 px-5 py-2 text-center">
+            <label class="mb-0">Loại khám</label>
+            <h5 class="text-success">0</h5>
+        </div>
+        <div class="border mr-2 px-5 py-2 text-center">
+            <label class="mb-0">Kết quả khám mới</label>
+            <h5 class="text-danger">0</h5>
+        </div>
 
-        </kendo-grid-column>
-        <kendo-grid-column field="amountTotal" class="text-right" title="Tiền điều trị" width="120">
+    </div>
+    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true" (pageChange)="pageChange($event)">
+        <kendo-grid-column title="Ngày tiếp nhận" width="100">
             <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.amountTotal || 0 | number}}
+                {{dataItem.dateWaiting | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="totalPaid" class="text-right" title="Thanh toán" width="120">
+        <kendo-grid-column title="Khách hàng" width="120">
             <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.totalPaid || 0 | number}}
+                {{dataItem.partner?.name}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="residual" class="text-right" title="Còn lại" width="120">
+        <kendo-grid-column title="Dịch vụ" width="120">
             <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.residual || 0 | number}}
+                {{dataItem.products}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Bác sĩ" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.doctorName}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Giờ tiếp nhận" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.dateWaiting | date: 'HH:mm'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Thời gian phục vụ" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.minuteTotal}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Loại khám" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{getExamination(dataItem.isRepeatCustomer)}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Kết quả khám mới" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.state != 'done' ? '' : getTreatment(dataItem.isNoTreatment)}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Trạng thái" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{getState(dataItem.state)}}
             </ng-template>
         </kendo-grid-column>
 

@@ -122,7 +122,13 @@ namespace Infrastructure.Services
             await UpdateAsync(customerReceipt);
         }
 
-     
+        public override Task UpdateAsync(CustomerReceipt entity)
+        {
+            if (entity.State == "done" && !entity.DateExamination.HasValue)
+                entity.DateExamination = entity.DateDone;
+
+            return base.UpdateAsync(entity);
+        }
 
         public async Task<long> GetCountToday(CustomerReceiptGetCountVM val)
         {

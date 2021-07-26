@@ -13,8 +13,8 @@ export class CustomerReceiptReportFilter {
   timeTo: string;
   doctorId: string;
   companyId:string;
-  isRepeatCustomer : boolean;
-  isNoTreatment : boolean;
+  isRepeatCustomer : string;
+  isNoTreatment : string;
   state: string;
 }
 
@@ -45,7 +45,7 @@ export class CustomerReceiptReportBasic {
   providedIn: 'root'
 })
 export class CustomerReceiptReportService {
-  apiUrl = 'api/CustomerReceipts';
+  apiUrl = 'api/CustomerReceiptReports';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
   getPaged(val: any): Observable<PagedResult2<CustomerReceiptReportBasic>> {

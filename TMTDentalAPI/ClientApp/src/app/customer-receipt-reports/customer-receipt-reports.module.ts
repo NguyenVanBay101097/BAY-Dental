@@ -5,10 +5,22 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';
 import { CustomerReceiptReportRoutingModule } from './CustomerReceiptRoutingReport.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CustomerReceiptReportManageComponent } from './customer-receipt-report-manage/customer-receipt-report-manage.component';
+import { CustomerReceiptReportOverviewComponent } from './customer-receipt-report-overview/customer-receipt-report-overview.component';
+import { CustomerReceiptReportForTimeComponent } from './customer-receipt-report-for-time/customer-receipt-report-for-time.component';
+import { CustomerReceiptReportNoTreatmentComponent } from './customer-receipt-report-no-treatment/customer-receipt-report-no-treatment.component';
+import { CustomerReceiptReportTimeserviceComponent } from './customer-receipt-report-timeservice/customer-receipt-report-timeservice.component';
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    CustomerReceiptReportManageComponent,
+    CustomerReceiptReportOverviewComponent,
+    CustomerReceiptReportForTimeComponent,
+    CustomerReceiptReportNoTreatmentComponent,
+    CustomerReceiptReportTimeserviceComponent
+  ],
   imports: [
     CommonModule,
     CustomerReceiptReportRoutingModule,
@@ -16,6 +28,7 @@ import { CustomerReceiptReportRoutingModule } from './CustomerReceiptRoutingRepo
     ReactiveFormsModule,
     FormsModule,
     SharedModule,
+    NgbModule,
     MyCustomNgbModule,
   ]
 })
