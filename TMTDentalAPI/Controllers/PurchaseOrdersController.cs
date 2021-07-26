@@ -163,9 +163,9 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 4].Style.Numberformat.Format = "dd/mm/yyyy";
                     worksheet.Cells[row, 5].Value = item.AmountTotal;
                     worksheet.Cells[row, 5].Style.Numberformat.Format = "#,###";
-                    worksheet.Cells[row, 6].Value = item.State != "draft" ? ((item.AmountTotal ?? 0) - (item.AmountResidual ?? 0)) : 0000;
-                    worksheet.Cells[row, 6].Style.Numberformat.Format = ((item.AmountTotal ?? 0) - (item.AmountResidual ?? 0)) > 0 ? "#,###" : "0";
-                    worksheet.Cells[row, 7].Value = item.AmountResidual ;
+                    worksheet.Cells[row, 6].Value = item.State != "draft" ? ((item.AmountTotal ?? 0) - (item.AmountResidual ?? 0)) : 0;
+                    worksheet.Cells[row, 6].Style.Numberformat.Format = ((item.AmountTotal ?? 0) - (item.AmountResidual ?? 0)) > 0 && item.State != "draft" ? "#,###" : "0";
+                    worksheet.Cells[row, 7].Value = item.AmountResidual ?? 0 ;
                     worksheet.Cells[row, 7].Style.Numberformat.Format = item.AmountResidual > 0 ? "#,###" : "0";
                     worksheet.Cells[row, 8].Value = item.State == "draft" ? "Nháp" : (item.State == "purchase" ? "Đơn hàng" : "Hoàn thành");
 
