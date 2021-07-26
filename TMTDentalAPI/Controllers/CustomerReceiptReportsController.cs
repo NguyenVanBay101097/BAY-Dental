@@ -27,5 +27,20 @@ namespace TMTDentalAPI.Controllers
             var res = await _customerReceiptReportService.GetPagedResultAsync(val);
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCountCustomerReceipt(CustomerReceiptReportFilter val)
+        {
+            var res = await _customerReceiptReportService.GetCountCustomerReceipt(val);
+            return Ok(res);
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCountCustomerReceiptNoTreatment(CustomerReceiptReportFilter val)
+        {
+            var res = await _customerReceiptReportService.GetCountCustomerReceiptNotreatment(val);
+            return Ok(res);
+        }
     }
 }

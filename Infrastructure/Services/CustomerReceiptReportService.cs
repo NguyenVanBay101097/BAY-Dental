@@ -48,7 +48,43 @@ namespace Infrastructure.Services
             return paged;
         }
 
+        public async Task<IEnumerable<CustomerReceiptGetCountItem>> GetCountCustomerReceipt(CustomerReceiptReportFilter val)
+        {
+            var query = GetQueryable(val);
 
+            var totalItems = await query.CountAsync();
+
+            var items = await query.ToListAsync();
+
+            var res = items.GroupBy(x => x.IsRepeatCustomer).Select(x => new CustomerReceiptGetCountItem
+            {
+                Name = x.Key == true ? "Tái khám" : "Khám mới",
+                TotalCustomerReceipt = totalItems,
+                CountCustomerReceipt = x.Count()
+            }).ToList();
+
+            return res;
+        }
+
+        public async Task<IEnumerable<CustomerReceiptGetCountItem>> GetCountCustomerReceiptNotreatment(CustomerReceiptReportFilter val)
+        {
+            var query = GetQueryable(val);
+
+          
+
+            var items = await query.Where(x=>x.IsNoTreatment && x.State == "done").ToListAsync();
+
+            var totalItems = items.Count();
+
+            var res = items.GroupBy(x => x.IsNoTreatment).Select(x => new CustomerReceiptGetCountItem
+            {
+                Name = x.Key == true ? "Có điều trị" : "Không điều trị",
+                TotalCustomerReceipt = totalItems,
+                CountCustomerReceipt = x.Count()
+            }).ToList();
+
+            return res;
+        }
 
 
         private IQueryable<CustomerReceiptReport> GetQueryable(CustomerReceiptReportFilter val)
@@ -65,7 +101,7 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateWaiting >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
-            if(!string.IsNullOrEmpty(val.state))
+            if (!string.IsNullOrEmpty(val.state))
                 query = query.Where(x => x.State == val.state);
 
             if (val.DateFrom.HasValue)

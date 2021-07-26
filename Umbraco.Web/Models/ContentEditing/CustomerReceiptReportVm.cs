@@ -111,4 +111,11 @@ namespace Umbraco.Web.Models.ContentEditing
     }
 
 
+    public class CustomerReceiptGetCountItem
+    {
+        public string Name { get; set; }
+        public int CountCustomerReceipt { get; set; }
+        public int TotalCustomerReceipt { get; set; }
+    }
+
 }

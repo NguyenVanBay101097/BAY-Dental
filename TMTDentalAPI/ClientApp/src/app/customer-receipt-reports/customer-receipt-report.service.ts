@@ -12,9 +12,9 @@ export class CustomerReceiptReportFilter {
   timeFrom: string;
   timeTo: string;
   doctorId: string;
-  companyId:string;
-  isRepeatCustomer : string;
-  isNoTreatment : string;
+  companyId: string;
+  isRepeatCustomer: string;
+  isNoTreatment: string;
   state: string;
 }
 
@@ -33,12 +33,24 @@ export class CustomerReceiptReportBasic {
   doctorName: string;
   partner: PartnerSimple;
   products: string;
-  isRepeatCustomer : boolean;
-  isNoTreatment : boolean;
-  minuteWaiting : number;
-  minuteExamination : number;
-  minuteTotal : number;
+  isRepeatCustomer: boolean;
+  isNoTreatment: boolean;
+  minuteWaiting: number;
+  minuteExamination: number;
+  minuteTotal: number;
   state: string;
+}
+
+export class CustomerReceiptGetCountExamination {
+  isExamination: boolean;
+  countCustomerReceipt: number;
+  totalCustomerReceipt: number;
+}
+
+export class CustomerReceiptGetCountNotreatment {
+  isNotreatment: boolean;
+  countCustomerReceipt: number;
+  totalCustomerReceipt: number;
 }
 
 @Injectable({
@@ -51,4 +63,13 @@ export class CustomerReceiptReportService {
   getPaged(val: any): Observable<PagedResult2<CustomerReceiptReportBasic>> {
     return this.http.get<PagedResult2<CustomerReceiptReportBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
+
+  getCountCustomerReceipt(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/GetCountCustomerReceipt', val);
+  }
+
+  getCountCustomerReceiptNoTreatment(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/GetCountCustomerReceiptNoTreatment', val);
+  }
+
 }

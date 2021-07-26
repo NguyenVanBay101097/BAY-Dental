@@ -8,9 +8,13 @@
         <div class="revenue-report-chart-header">
             <div class="text-center justify-content-center">
                 <p class="box-content-header">Tổng doanh thu <span *ngIf="revenue?.totalAmount > 0 && revenue?.totalAmountYesterday > 0" [ngClass]="'isIncrease == true ? text-success : text-danger'">{{percentRevenue}}% 
-                    <div>
-                        
-                    </div>
+                   <ng-container *ngIf="isIncrease; else elseTemplate">
+                    <img src="../../../../assets/icons/chart-up.svg"> 
+                   </ng-container>
+                   <ng-template #elseTemplate>
+                    <img src="../../../../assets/icons/chart-up red.svg"> 
+                   </ng-template>
+                   
                 </span></p>
                 <p class="box-content-subheader">{{revenue?.totalAmount | number}}</p>
             </div>
@@ -26,7 +30,7 @@
         </ng-container>
         <ng-template #elseTemplate>
             <div class=" size-chart text-center justify-content-center">
-                <p class="box-content-header">Chưa có dữ liệu </p>             
+               <img src="../../../../assets/icons/NoData.svg" class="img-nodata" >          
             </div>
         </ng-template>
        

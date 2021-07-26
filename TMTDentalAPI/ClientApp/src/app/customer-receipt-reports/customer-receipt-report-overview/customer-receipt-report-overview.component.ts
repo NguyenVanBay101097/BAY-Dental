@@ -34,6 +34,10 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
   employeeId: string;
   isAdvanced: boolean;
 
+  // Pie
+  public pieDataExamination: any[] = [];
+  public pieDataNoTreatment: any[] = [];
+
   @ViewChild("companyCbx", { static: true }) companyCbx: ComboBoxComponent;
   @ViewChild("employeeCbx", { static: true }) employeeCbx: ComboBoxComponent;
 
@@ -71,6 +75,9 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
         this.loadDataApi();
       });
 
+    this.loadCompanies();
+    this.loadEmployees();
+
     this.companyCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.companyCbx.loading = true)),
@@ -94,9 +101,10 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
       });
 
 
+    this.loadDataExamination();
+    this.loadDataNotreatment();
     this.loadDataApi();
-    this.loadCompanies();
-    this.loadEmployees();
+
   }
 
   loadDataApi() {
@@ -129,6 +137,70 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  loadDataExamination() {
+    this.loading = true;
+    var val = new CustomerReceiptReportFilter();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.isRepeatCustomer = this.isExamination || '';
+    val.isNoTreatment = this.isNotTreatment || '';
+    val.companyId = this.companyId || '';
+    val.doctorId = this.employeeId || '';
+    val.state = this.state || '';
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+    this.customerReceiptReportService.getCountCustomerReceipt(val).subscribe(
+      (res: any[]) => {
+        this.pieDataExamination = [];
+        this.loadExaminationItems(res);
+        this.loading = false;
+      },
+      (err) => {
+        console.log(err);
+        this.loading = false;
+      }
+    );
+  }
+
+  loadDataNotreatment() {
+    this.loading = true;
+    var val = new CustomerReceiptReportFilter();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.isRepeatCustomer = this.isExamination || '';
+    val.isNoTreatment = this.isNotTreatment || '';
+    val.companyId = this.companyId || '';
+    val.doctorId = this.employeeId || '';
+    val.state = this.state || '';
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+    this.customerReceiptReportService.getCountCustomerReceiptNoTreatment(val).subscribe(
+      (res: any[]) => {
+        this.pieDataNoTreatment = [];
+        this.loadNoTreatmentItems(res);
+        this.loading = false;
+      },
+      (err) => {
+        console.log(err);
+        this.loading = false;
+      }
+    );
+  }
+
+  loadExaminationItems(items: any[]): void {
+    for (let i = 0; i < items.length; i++) {
+      this.pieDataExamination.push({ category: items[i].name, value: items[i].countCustomerReceipt, percentage: (items[i].countCustomerReceipt / items[i].totalCustomerReceipt * 100).toFixed(2) })
+    };
+  }
+
+  loadNoTreatmentItems(items: any[]): void {
+    for (let i = 0; i < items.length; i++) {
+      this.pieDataNoTreatment.push({ category: items[i].name, value: items[i].countCustomerReceipt, percentage: (items[i].countCustomerReceipt / items[i].totalCustomerReceipt * 100).toFixed(2) })
+    };
   }
 
   pageChange(event: PageChangeEvent): void {
