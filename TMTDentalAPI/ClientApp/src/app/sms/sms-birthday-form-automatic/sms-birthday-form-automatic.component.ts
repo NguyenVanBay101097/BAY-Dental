@@ -62,13 +62,13 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: null,
+      template: [null, Validators.required],
       smsAccount: [null, Validators.required],
       active: false,
       scheduleTimeObj: new Date(),
       dayBeforeSend: 0,
       templateName: '',
-      body: ['', Validators.required]
+      body: ''
     })
     var user_change_company_vm = localStorage.getItem('user_change_company_vm');
     if (user_change_company_vm) {

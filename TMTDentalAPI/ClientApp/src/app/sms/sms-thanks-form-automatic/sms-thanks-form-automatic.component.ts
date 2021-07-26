@@ -57,7 +57,7 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: null,
+      template: [null, Validators.required],
       smsAccount: [null, Validators.required],
       active: false,
       typeTimeBeforSend: 'day',

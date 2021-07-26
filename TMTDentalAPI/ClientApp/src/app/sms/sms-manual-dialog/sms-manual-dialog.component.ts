@@ -58,7 +58,7 @@ export class SmsManualDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: null,
+      template: [null, Validators.required],
       smsAccount: [null, Validators.required],
       name: ['', Validators.required],
       templateName: '',

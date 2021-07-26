@@ -3048,7 +3048,7 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 PartnerId = x.PartnerId,
                 PartnerPhone = x.Partner.Phone,
-                PartnerName = x.Partner.DisplayName,
+                PartnerName = x.Partner.Name,
                 AmountTotal = x.AmountTotal,
                 DateDone = x.DateDone,
                 Name = x.Name,
