@@ -159,7 +159,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.formGroup = this.fb.group({
       dateOrderObj: [null, Validators.required],
     });
-    this.loadCustomerInfo();
+
+    this.route.data.subscribe(data => {
+      this.partner = data.partner;
+    });
+
     if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((res: any) => {
         this.saleOrder = res;
@@ -167,6 +171,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       });
     } else {
       this.saleOrderService.defaultGet().subscribe((res: any) => {
+        console.log(res);
         this.saleOrder = res;
         this.updateFormGroup(res);
       });
