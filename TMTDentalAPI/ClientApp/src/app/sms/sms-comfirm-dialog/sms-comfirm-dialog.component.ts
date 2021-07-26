@@ -8,7 +8,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class SmsComfirmDialogComponent implements OnInit {
   title: string;
-  campaign: string;
+  campaign: any;
   brandName: string;
   body: string;
   timeSendSms: string;
@@ -17,7 +17,7 @@ export class SmsComfirmDialogComponent implements OnInit {
   bodyNote: string;
   constructor(public activeModal: NgbActiveModal) { }
 
-  ngOnInit() {
+  ngOnInit() {    
   }
 
   onConfirm() {

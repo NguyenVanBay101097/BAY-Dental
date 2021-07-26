@@ -181,11 +181,8 @@ namespace Infrastructure.Services
 
             if (partnerId.HasValue)
             {
-                //lấy hạng thành viên hiện tại của partner
-                var propertyObj = GetService<IIRPropertyService>();
-                var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{partnerId}", force_company: CompanyId);
-                var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-                var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
+                //lấy hạng thành viên hiện tại của partner            
+                var partnerLevelId = GetMemberLevel(partnerId.Value);
 
                 query = query.Where(x => string.IsNullOrEmpty(x.ApplyPartnerOn)
                 || x.ApplyPartnerOn == "all"
@@ -215,10 +212,7 @@ namespace Infrastructure.Services
             if (partnerId.HasValue)
             {
                 //lấy hạng thành viên hiện tại của partner
-                var propertyObj = GetService<IIRPropertyService>();
-                var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{partnerId}", force_company: CompanyId);
-                var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-                var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
+                var partnerLevelId = GetMemberLevel(partnerId.Value);
 
                 query = query.Where(x => string.IsNullOrEmpty(x.ApplyPartnerOn)
                     || x.ApplyPartnerOn == "all"
@@ -230,6 +224,16 @@ namespace Infrastructure.Services
 
             var basics = _mapper.Map<IEnumerable<SaleCouponProgramBasic>>(promotions);
             return basics;
+        }
+
+        private Guid? GetMemberLevel(Guid partnerId)
+        {
+            var propertyObj = GetService<IIRPropertyService>();
+            var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{partnerId}", force_company: CompanyId);
+            var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
+            var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
+
+            return partnerLevelId;
         }
 
         public async Task<IEnumerable<SaleCouponProgramDisplay>> GetPromotionByFastSaleOrder()
@@ -611,8 +615,11 @@ namespace Infrastructure.Services
             var today = DateTime.Today;
             var saleObj = GetService<ISaleOrderService>();
             var countApplied = await _GetCountAppliedAsync(self);
+            var memberLevelId = GetMemberLevel(order.PartnerId);
             if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng";
+            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!memberLevelId.HasValue || self.DiscountMemberLevels.Any(x=> x.MemberLevelId != memberLevelId)))
+                message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < order.DateOrder))
                 message.Error = $"CTKM đã hết hạn.";
             else if (self.IsApplyDayOfWeek && !string.IsNullOrEmpty(self.Days) && !self.Days.Contains(((int)today.DayOfWeek).ToString()))
@@ -632,7 +639,7 @@ namespace Infrastructure.Services
             else if (order.Promotions.Any(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
                 message.Error = "Đang áp dụng khuyến mãi không dùng chung. Vui lòng xóa các CTKM đó";
             else if (self.NotIncremental == true && order.Promotions.Any(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgram != null))
-                message.Error = "Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ";
+                message.Error = "Khuyến mãi này không dùng chung với CTKM khác";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !saleObj._IsRewardInOrderLines(order, self))
                 message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
 
@@ -647,8 +654,11 @@ namespace Infrastructure.Services
             var today = DateTime.Today;
             var saleObj = GetService<ISaleOrderService>();
             var countApplied = await _GetCountAppliedQuotationAsync(self);
+            var memberLevelId = GetMemberLevel(quotation.PartnerId);
             if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = "Mã khuyến mãi vượt quá hạn mức áp dụng";
+            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!memberLevelId.HasValue || self.DiscountMemberLevels.Any(x => x.MemberLevelId != memberLevelId)))
+                message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if (self.DiscountApplyOn == "on_order" && self.IsApplyMinimumDiscount && self.RuleMinimumAmount > quotation.TotalAmount)
                 message.Error = $"Phiếu điều trị tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
             else if (self.IsApplyDayOfWeek && !string.IsNullOrEmpty(self.Days) && !self.Days.Contains(((int)today.DayOfWeek).ToString()))
@@ -683,7 +693,7 @@ namespace Infrastructure.Services
             else if (quotation.Promotions.Any(x => !x.QuotationLineId.HasValue && x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
                 message.Error = "Đang áp dụng khuyến mãi không dùng chung. Vui lòng xóa các CTKM đó.";
             else if (self.NotIncremental == true && quotation.Promotions.Any(x => !x.QuotationLineId.HasValue && x.SaleCouponProgram != null))
-                message.Error = "Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM đó.";
+                message.Error = "Khuyến mãi này không dùng chung với CTKM khác";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !quotation.Lines.Where(x => x.ProductId == self.RewardProductId &&
             x.Qty >= self.RewardProductQuantity).Any())
                 message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
@@ -715,7 +725,7 @@ namespace Infrastructure.Services
             else if (order.Promotions.Any(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
                 message.Error = "Đang áp dụng khuyến mãi không cộng dồn. Vui lòng xóa các CTKM đó.";
             else if (self.NotIncremental == true && order.Promotions.Any(x => !x.SaleOrderLineId.HasValue && x.SaleCouponProgram != null))
-                message.Error = "Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ.";
+                message.Error = "Khuyến mãi này không dùng chung với CTKM khác";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !saleObj._IsRewardInOrderLines(order, self))
                 message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";
 
@@ -727,10 +737,11 @@ namespace Infrastructure.Services
             var message = new CheckPromoCodeMessage();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var countApplied = await _GetCountAppliedAsync(self);
+            var memberLevelId = GetMemberLevel(line.OrderPartnerId.Value);
             if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng.";
-            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountApplyOn == "on_order")
-                message.Error = "Mã khuyến mãi này không dùng chung với khuyến mãi khác";
+            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!memberLevelId.HasValue || self.DiscountMemberLevels.Any(x => x.MemberLevelId != memberLevelId)))
+                message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > line.Order.DateOrder))
                 message.Error = $"Mã khuyến mãi không được áp dụng trong hôm nay";
             else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < line.Order.DateOrder))
@@ -752,7 +763,7 @@ namespace Infrastructure.Services
             else if (line.Promotions.Any(x => x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
                 message.Error = "Đang áp dụng khuyến mãi không dùng chung. Vui lòng xóa các CTKM đó";
             else if (self.NotIncremental == true && line.Promotions.Any(x => x.SaleCouponProgram != null))
-                message.Error = "Khuyến mãi này không dùng chung với CTKM khác, Vui lòng xóa các CTKM cũ";
+                message.Error = "Khuyến mãi này không dùng chung với CTKM khác";
             //else
             //{
             //    if (!applicable_programs.Contains(self) && self.PromoApplicability == "on_current_order")
@@ -768,9 +779,14 @@ namespace Infrastructure.Services
             var saleObj = GetService<ISaleOrderService>();
             //var applicable_programs = await saleObj._GetApplicablePrograms(order);
             var countApplied = await _GetCountAppliedQuotationAsync(self);
-            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
-                // message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng.";
-                message.Error = "Mã khuyến mãi vượt quá hạn mức áp dụng";
+            var memberLevelId = GetMemberLevel(line.Advisory.CustomerId.Value);
+            if (self.DiscountApplyOn == "on_order")
+                message.Error = "Mã khuyến mãi không áp dụng cho dịch vụ";
+            else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
+            // message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng.";
+            message.Error = "Mã khuyến mãi vượt quá hạn mức áp dụng";
+            else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!memberLevelId.HasValue || self.DiscountMemberLevels.Any(x => x.MemberLevelId != memberLevelId)))
+                message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < line.Quotation.DateQuotation))
                 // message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
                 message.Error = "CTKM đã hết hạn";
@@ -803,7 +819,7 @@ namespace Infrastructure.Services
             else if (line.Promotions.Any(x => x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
                 message.Error = "Đang áp dụng khuyến mãi không dùng chung. Vui lòng xóa các CTKM đó.";
             else if (self.NotIncremental == true && line.Promotions.Any(x => x.SaleCouponProgram != null))
-                message.Error = "Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ.";
+                message.Error = "Khuyến mãi này không dùng chung với CTKM khác";
 
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !line.Quotation.Lines.Where(x => x.ProductId == self.RewardProductId &&
            x.Qty >= self.RewardProductQuantity).Any())
@@ -839,7 +855,7 @@ namespace Infrastructure.Services
             else if (quotation.Promotions.Any(x => !x.QuotationLineId.HasValue && x.SaleCouponProgram != null && x.SaleCouponProgram.NotIncremental == true))
                 message.Error = "Đang áp dụng khuyến mãi không cộng dồn. Vui lòng xóa các CTKM đó.";
             else if (self.NotIncremental == true && quotation.Promotions.Any(x => !x.QuotationLineId.HasValue && x.SaleCouponProgram != null))
-                message.Error = "Khuyến mãi này không dùng chung với CTKM khác. Vui lòng xóa các CTKM cũ.";
+                message.Error = "Khuyến mãi này không dùng chung với CTKM khác";
             else if (self.PromoApplicability == "on_current_order" && self.RewardType == "product" && !quotation.Lines.Where(x => x.ProductId == self.RewardProductId &&
             x.Qty >= self.RewardProductQuantity).Any())
                 message.Error = "Sản phẩm thưởng nên có trong chi tiết đơn hàng.";

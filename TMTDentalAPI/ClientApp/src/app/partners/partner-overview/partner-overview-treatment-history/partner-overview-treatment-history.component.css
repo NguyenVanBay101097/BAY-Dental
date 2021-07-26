@@ -28,7 +28,7 @@ p {
 }
 
 .sessions_treatment {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   border-radius: 12px;
   position: relative;
 }
@@ -102,4 +102,27 @@ ul li div:last-child .card_border:last-child {
 
 .opacity-8{
   opacity: 0.8;
+}
+
+:host {
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-flow: column;
+}
+
+.s_container {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+.s_header {
+  padding: 0.5rem 1rem;
+}
+
+.s_body {
+  flex: 1 1 100%;
+  overflow: auto;
+  padding: 0 1rem;
 }

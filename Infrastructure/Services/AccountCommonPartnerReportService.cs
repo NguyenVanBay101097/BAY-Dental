@@ -157,7 +157,7 @@ namespace Infrastructure.Services
                 var debit = dict[item.Key].Debit;
                 var credit = dict[item.Key].Credit;
                 var end = begin + debit - credit;
-                if (val.Display == "not_zero" && end <= 0.00001M)
+                if ((val.Display == "not_zero" && end == 0) || (begin == 0 && debit == 0 && credit == 0))
                     continue;
                 var value = item.Value;
                 res.Add(new AccountCommonPartnerReportItem
@@ -168,7 +168,7 @@ namespace Infrastructure.Services
                     ResultSelection = val.ResultSelection,
                     PartnerRef = value.PartnerRef,
                     Begin = begin,
-                    Debit = debit,
+                    Debit = debit,  
                     Credit = credit,
                     End = end,
                     PartnerName = value.PartnerName,

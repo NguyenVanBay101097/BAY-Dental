@@ -64,18 +64,20 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
       });
     }
 
-    var val = new RevenueReportDetailPaged();
-    val.dateFrom = filter.dateFrom ? moment(filter.dateFrom).format('YYYY/MM/DD') : '';
-    val.dateTo = filter.dateTo ? moment(filter.dateTo).format('YYYY/MM/DD') : '';
-    val.companyId = filter.companyId || '';
-    val.limit = 0;
+   
 
 
     // Fetch the data for all details
     for (let idx = 0; idx < data.length; idx++) {
+      var val = new RevenueReportDetailPaged();
+      val.dateFrom = filter.dateFrom ? moment(filter.dateFrom).format('YYYY/MM/DD') : '';
+      val.dateTo = filter.dateTo ? moment(filter.dateTo).format('YYYY/MM/DD') : '';
+      val.companyId = filter.companyId || '';
+      val.limit = 0;
+
       var dataIndex = data[idx];
-      val.dateFrom = dataIndex.date ?  moment(dataIndex.date).format('YYYY/MM/DD'): val.dateFrom ;
-      val.dateTo = dataIndex.date ?  moment(dataIndex.date).format('YYYY/MM/DD'): val.dateTo ;
+      val.dateFrom = dataIndex.invoiceDate ?  moment(dataIndex.invoiceDate).format('YYYY/MM/DD'): val.dateFrom ;
+      val.dateTo = dataIndex.invoiceDate ?  moment(dataIndex.invoiceDate).format('YYYY/MM/DD'): val.dateTo ;
       val.productId = dataIndex.productId || '';
       val.assistantId = dataIndex.employeeId || '';
       val.employeeId = dataIndex.groupBy && dataIndex.groupBy == 'employee'? dataIndex.toDetailEmployeeId : '';

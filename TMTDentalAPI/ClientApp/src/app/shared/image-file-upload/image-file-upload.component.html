@@ -1,13 +1,12 @@
-<div class="oe_avatar o_field_image o_field_widget">
-    <img *ngIf="!imageId" class="img img-fluid" [src]="placeholder" />
-    <img *ngIf="imageId" (click)="onViewImage()" class="view-img img img-fluid" [src]="imageFileUrl" />
-    <div class="o_form_image_controls">
-        <span class="fa fa-pencil-alt o_select_file_button float-left" (click)="inputfile.click()" title="Sửa"></span>
-        <span *ngIf="supportWebcam" class="fas fa-camera pointer" (click)="onWebcam()" title="Chụp webcam"></span>
-        <span class="fa fa-trash-alt o_clear_file_button float-right" (click)="onClear()" title="Hủy"></span>
-        <span class="o_form_binary_progress" *ngIf="uploading">Uploading...</span>
-        <div class="o_hidden_input_file hidden">
-            <input #inputfile class="o_input_file" accept="image/*" name="ufile" type="file" (change)="onFileChange($event)">
-        </div>
+<img *ngIf="!imageId" class="img img-fluid" [src]="placeholder" />
+<img *ngIf="imageId" (click)="onViewImage()" class="view-img img img-fluid" [src]="imageFileUrl" />
+<div class="o_form_image_controls">
+    <span class="fa fa-pencil-alt o_select_file_button float-left" (click)="inputfile.click()" title="Sửa"></span>
+    <span *ngIf="supportWebcam" class="fas fa-camera pointer" (click)="onWebcam()" title="Chụp webcam"></span>
+    <span class="fa fa-trash-alt o_clear_file_button float-right" (click)="onClear()" title="Hủy"></span>
+    <span class="o_form_binary_progress" *ngIf="uploading">Uploading...</span>
+    <div class="o_hidden_input_file hidden">
+        <input #inputfile class="o_input_file" accept="image/*" name="ufile" type="file"
+            (change)="onFileChange($event)">
     </div>
 </div>

@@ -30,7 +30,7 @@ export class SaleOrderManagementComponent implements OnInit {
     { text: '> 6 tháng', intervalNbr: 6, interval: 'month' },
     { text: '> 12 tháng', intervalNbr: 12, interval: 'month' },
   ];
-  dateOrderTo = this.ranges[0];
+  dateOrderTo: any = this.ranges[0];
   companies: CompanyBasic[] = [];
   saleOrdersData: GridDataResult;
   loading = false;
@@ -218,6 +218,7 @@ export class SaleOrderManagementComponent implements OnInit {
         });
       }
 
+      debugger;
       // create a Workbook and save the generated data URL
       // https://www.telerik.com/kendo-angular-ui/components/excelexport/api/Workbook/
       new Workbook(workbook).toDataURL().then((dataUrl: string) => {

@@ -28,9 +28,10 @@ select {
 }
 
 .o_form_view .o_form_sheet_bg .o_form_sheet {
-    min-width: 600px;
+    /* min-width: 600px;
     max-width: 1000px;
-    min-height: 330px;
+    min-height: 330px; */
+    width: 100%;
     background: #fff;
     padding: 16px;
     margin: 0 auto;
@@ -38,20 +39,20 @@ select {
 }
 
 @media (min-width: 768px) {
-    .o_form_view .o_form_sheet_bg>.o_form_sheet {
+    .o_form_view .o_form_sheet_bg .o_form_sheet {
         margin: 12px auto;
     }
 }
 
 @media (min-width: 1200px) {
-    .o_form_view>.o_form_sheet_bg>.o_form_sheet {
+    .o_form_view>.o_form_sheet_bg .o_form_sheet {
         width: 100%;
         max-width: 1140px;
     }
 }
 
 @media (min-width: 1400px) {
-    .o_form_view>.o_form_sheet_bg>.o_form_sheet {
+    .o_form_view>.o_form_sheet_bg .o_form_sheet {
         width: 100%;
         max-width: 1320px;
     }
@@ -62,9 +63,53 @@ select {
     margin: 0;
 }
 
-.o_form_view .oe_title>h1>input {
-    font-size: 20px;
+.o_form_view.o_form_editable .oe_title, .o_form_view .oe_title {
     max-width: 688px;
+}
+
+.o_form_view .oe_avatar + .oe_title {
+    padding-right: 100px;
+}
+
+.o_form_view .oe_title > h1, .o_form_view .oe_title > h2, .o_form_view .oe_title > h3 {
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: inherit;
+}
+
+.o_form_view .oe_title > h1 input.form-control {
+    font-size: 1.5rem;
+}
+
+.o_form_view.o_xxl_form_view {
+    -webkit-flex-flow: row nowrap;
+    flex-flow: row nowrap;
+    height: 100%;
+}
+
+.o_form_view.o_xxl_form_view > .o_form_sheet_bg {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+    width: 1022px;
+    padding: 0 16px;
+    overflow: auto;
+    border-bottom: none;
+}
+
+.o_form_view.o_xxl_form_view > .o_form_sheet_bg.o_form_sheet_bg_sm {
+    width: 545px;
+}
+
+.o_form_view.o_xxl_form_view>.o_form_sheet_bg>.o_form_sheet {
+	width: 100%;
+	max-width: 1140px;
+}
+
+.o_form_view .o_notebook {
+    clear: both;
+    margin-top: 10px;
 }
 
 .o_form_view .o_group {
@@ -101,6 +146,12 @@ select {
     vertical-align: top;
 }
 
+.o_form_view .o_group .o_group_col_12 {
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
+}
+
 .o_form_view .o_group.o_inner_group {
     display: inline-table;
 }
@@ -110,11 +161,11 @@ select {
 }
 
 .o_form_view .o_group.o_inner_group>tbody>tr>td {
-    padding: 0 45px 7px 0;
+    padding: 0 45px 5px 0;
 }
 
 .o_form_view .o_group.o_inner_group.o_group_col_4>tbody>tr>td {
-    padding: 0 20px 7px 0;
+    padding: 0 20px 5px 0;
 }
 
 .o_form_view .o_group.o_inner_group>tbody>tr>td.o_td_label {
@@ -1141,3 +1192,15 @@ html .o_web_client {
 }
 
 /* end dashboard_view.scss*/
+
+.o_form_view .oe_avatar {
+    float: right;
+    margin-bottom: 10px;
+}
+
+.o_form_view .oe_avatar > img {
+    max-width: 90px;
+    max-height: 90px;
+    vertical-align: top;
+    border: 1px solid #a8a8a8;
+}

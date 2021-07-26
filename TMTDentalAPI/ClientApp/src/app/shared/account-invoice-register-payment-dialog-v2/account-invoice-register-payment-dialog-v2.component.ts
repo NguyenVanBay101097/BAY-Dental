@@ -1,3 +1,4 @@
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AccountRegisterPaymentService, AccountRegisterPaymentDefaultGet, AccountRegisterPaymentCreatePayment, AccountRegisterPaymentDisplay } from 'src/app/account-payments/account-register-payment.service';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
@@ -30,7 +31,9 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
 
   constructor(private paymentService: AccountPaymentService, private fb: FormBuilder, private intlService: IntlService,
     public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
-    private errorService: AppSharedShowErrorService, private authService: AuthService) { }
+    private errorService: AppSharedShowErrorService, private authService: AuthService,
+    private notifyService: NotifyService
+    ) { }
 
   ngOnInit() {
     this.paymentForm = this.fb.group({
@@ -92,11 +95,10 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
     this.create().subscribe((result: any) => {
       this.paymentService.post([result.id]).subscribe(() => {
         this.activeModal.close(true);
-      }, (err) => {
-        this.errorService.show(err);
       });
     }, (err) => {
-      this.errorService.show(err);
+      debugger
+      this.notifyService.notify('error',err);
     });
   }
 
@@ -113,11 +115,9 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
           print: true,
           paymentId: result.id
         });
-      }, (err) => {
-        this.errorService.show(err);
       });
     }, (err) => {
-      this.errorService.show(err);
+      this.notifyService.notify('error',err);
     });
   }
 

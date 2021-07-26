@@ -1,25 +1,7 @@
-.o_form_view .o_group .o_group_col_12 {
-    display: inline-block;
-    width: 100%;
-    vertical-align: top;
-}
 
-.o_form_view .o_group .o_group_col_12 .o_td_label .o_form_label {
-    font-weight: 600;
-    margin-right: 0px;
-    width: 150px;
-}
 
 .mainRight .grid-icon {
     padding: 0 5px 0 12px;
-}
-
-.o_form_view .oe_avatar>img {
-    max-height: 100%;
-    max-width: 100%;
-    margin-bottom: 10px;
-    border: 1px solid #a8a8a8;
-    border-radius: 50%;
 }
 
 .o_form_view .o_field_image .o_form_image_controls {
@@ -53,16 +35,6 @@
     position: relative;
 }
 
-
-/* .o_form_view .oe_avatar+.oe_title {
-    padding-left: 95px;
-    margin-left: 5px;
-} */
-
-.o_form_view .oe_avatar {
-    float: left;
-    margin-right: 15px;
-}
 
 .o_form_view>.oe_chatter {
     max-width: 1140px;
@@ -385,8 +357,6 @@ small {
 .o_form_view .o_grid_group .o_grid_col_left .o_apply_tr .o_apply_td .o_discount_input{   
     width: 60%;
 } */
-
-.o_table_detail_items {}
 
 .o_form_view .o_grid_group .o_grid_col_right thead .o_th_detail_items {
     width: 150px;
