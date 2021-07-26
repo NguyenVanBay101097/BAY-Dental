@@ -86,6 +86,12 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task<long> GetCountTime(CustomerReceiptReportFilter val)
+        {
+            var query = GetQueryable(val);          
+            return await query.LongCountAsync();
+        }
+
 
         private IQueryable<CustomerReceiptReport> GetQueryable(CustomerReceiptReportFilter val)
         {

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { Subject } from 'rxjs';
+import { forkJoin, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
@@ -27,6 +27,8 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
   search: string;
   dateFrom: Date;
   dateTo: Date;
+  timeStart: string;
+  timeEnd: string;
   state: string;
   public today: Date = new Date(new Date().toDateString());
   isExamination: string;
@@ -34,13 +36,16 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
   companyId: string;
   employeeId: string;
   isAdvanced: boolean;
+  timeCount: any = {};
 
   @ViewChild("companyCbx", { static: true }) companyCbx: ComboBoxComponent;
   @ViewChild("employeeCbx", { static: true }) employeeCbx: ComboBoxComponent;
 
-  filterTime: any[] = [
-    { value: 'true', text: 'Tái khám' },
-    { value: 'false', text: 'Khám mới' },
+  filterTimes: any[] = [
+    { timeStart: null, timeEnd: null, text: 'Tất cả' },
+    { timeStart: 0, timeEnd: 45, text: '0 - 45 phút' },
+    { timeStart: 46, timeEnd: 90, text: '46 - 90 phút' },
+    { timeStart: 90, timeEnd: null, text: 'Trên 90 phút' },
   ];
 
 
@@ -88,6 +93,7 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
       });
 
     this.loadDataApi();
+    this.loadTimeCount();
 
   }
 
@@ -97,13 +103,12 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.isRepeatCustomer = this.isExamination || '';
-    val.isNoTreatment = this.isNotTreatment || '';
     val.companyId = this.companyId || '';
     val.doctorId = this.employeeId || '';
-    val.state = this.state || '';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+    // val.timeFrom = this.timeStart ;
+    // val.timeTo = this.timeEnd ;
     this.customerReceiptReportService.getPaged(val).pipe(
       map((response) => <GridDataResult>{
         data: response.items,
@@ -123,6 +128,33 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
     );
   }
 
+  loadTimeCount() {
+    forkJoin(this.filterTimes.map(x => {
+      var val = new CustomerReceiptReportFilter();
+      val.search = this.search || '';
+      val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+      val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+      val.companyId = this.companyId || '';
+      val.doctorId = this.employeeId || '';
+      val.timeFrom = this.timeStart || '';
+      val.timeTo = this.timeEnd || '';
+      return this.customerReceiptReportService.getCount(val).pipe(
+        switchMap(count => of({ state: x.text, count: count }))
+      );
+    })).subscribe((result) => {
+      result.forEach(item => {
+        this.timeCount[item.state] = item.count;
+      });
+    });
+  }
+
+  setStateFilter(time: any) {
+    this.timeStart = time.timeStart;
+    this.timeEnd = time.timeEnd;
+    this.loadDataApi();
+    this.loadTimeCount();
+  }
+
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataApi();
@@ -133,18 +165,21 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
     this.dateTo = data.dateTo;
     this.skip = 0;
     this.loadDataApi();
+    this.loadTimeCount();
   }
 
   onSelectCompany(e) {
     this.companyId = e ? e.id : null;
     this.skip = 0;
     this.loadDataApi();
+    this.loadTimeCount();
   }
 
   onSelectEmployee(e) {
     this.employeeId = e ? e.id : null;
     this.skip = 0;
     this.loadDataApi();
+    this.loadTimeCount();
   }
 
   loadEmployees() {

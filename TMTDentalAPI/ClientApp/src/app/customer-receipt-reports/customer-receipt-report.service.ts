@@ -72,4 +72,8 @@ export class CustomerReceiptReportService {
     return this.http.post(this.baseApi + this.apiUrl + '/GetCountCustomerReceiptNoTreatment', val);
   }
 
+  getCount(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/GetCount', val);
+  }
+
 }

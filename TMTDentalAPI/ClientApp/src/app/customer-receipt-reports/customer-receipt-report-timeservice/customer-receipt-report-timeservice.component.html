@@ -10,10 +10,17 @@
             class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true"
             [data]="listCompany" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
-        <button class="btn btn-primary btn-sm"><i class="fas fa-download"></i> Xuất file</button>
+        <button class="btn btn-primary btn-sm"><i class="fas fa-download"></i> Xuất Excel</button>
         <input type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"
-            placeholder="Tìm kiếm theo số phiếu, khách hàng" class="ml-auto form-control w-50 form-control-sm">
-    </div>  
+            placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
+            class="ml-auto form-control w-50 form-control-sm">
+    </div>
+    <div class="filter d-flex flex-0-0-auto mt-2">
+        <button type="button" *ngFor="let time of filterTimes" class="btn active mr-1" (click)="setStateFilter(time)"
+            [class.btn-primary]="timeStart == time.timeStart" [class.btn-light]="timeStart != time.timeStart">
+            {{time.text}} <span class="badge badge-light bg-white">{{timeCount[time.text] || 0}}</span>
+        </button>
+    </div>
     <div class="o_content mt-2">
         <div class="o_dashboard_view">
             <div>
@@ -26,7 +33,10 @@
                     </kendo-grid-column>
                     <kendo-grid-column title="Khách hàng" width="120">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.partner?.name}}
+                            <a class="text-primary" title="Xem hồ sơ khách hàng"
+                                [routerLink]="['/partners/customer/' + dataItem.partner.id]">
+                                {{dataItem.partner?.name}}
+                            </a>
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Dịch vụ" width="120">
@@ -39,29 +49,24 @@
                             {{dataItem.doctorName}}
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column title="Giờ tiếp nhận" width="100">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.dateWaiting | date: 'HH:mm'}}
-                        </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-column title="Thời gian phục vụ" width="100">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.minuteTotal}}
-                        </ng-template>
-                    </kendo-grid-column>
                     <kendo-grid-column title="Loại khám" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             {{getExamination(dataItem.isRepeatCustomer)}}
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column title="Kết quả khám mới" width="100">
+                    <kendo-grid-column title="Thời gian phục vụ" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.state != 'done' ? '' : getTreatment(dataItem.isNoTreatment)}}
+                            {{dataItem.minuteTotal ? dataItem.minuteTotal + 'phút' : '' }}
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column title="Trạng thái" width="120">
+                    <kendo-grid-column title="Thời gian chờ khám" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{getState(dataItem.state)}}
+                            {{dataItem.minuteWaiting ? dataItem.minuteWaiting + 'phút' : '' }}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Thời gian khám" width="100">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.minuteExamination ? dataItem.minuteWaiting + 'phút' : ''}}
                         </ng-template>
                     </kendo-grid-column>
                     <!-- excel -->
