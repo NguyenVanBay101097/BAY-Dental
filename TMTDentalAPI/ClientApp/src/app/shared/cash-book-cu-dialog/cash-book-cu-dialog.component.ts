@@ -366,10 +366,12 @@ export class CashBookCuDialogComponent implements OnInit {
                 type: { style: "success", icon: true },
               });
 
-              this.activeModal.close({
-                id: result.id,
-                print: print
-              });
+              this.id = result.id;
+              this.reload = true;
+              if (print) {
+                this.printPhieu(this.id);
+              }
+              this.activeModal.close();
             },
             (error) => {
               console.log(error);
@@ -394,10 +396,12 @@ export class CashBookCuDialogComponent implements OnInit {
                 animation: { type: "fade", duration: 400 },
                 type: { style: "success", icon: true },
               });
+              
+              if (print) {
+                this.printPhieu(this.id);
+              }
 
-              this.activeModal.close({
-                print: print
-              });
+              this.activeModal.close();
             },
             (error) => {
               console.log(error);
