@@ -185,6 +185,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
+    debugger
     var receipt = this.formGroup.value;
     receipt.partnerId = receipt.partner ? receipt.partner.id : null;
     receipt.doctorId = receipt.doctor ? receipt.doctor.id : null;
@@ -396,24 +397,24 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
             this.filteredEmployees = _.unionBy(this.filteredEmployees, [rs.doctor], 'id');
           }
 
-          if(this.id && this.customerReceipt.state != 'done') {
-            this.f.partner.disable();
-            this.f.doctor.disable();
-            this.f.dateObj.disable();
-          }
+          // if(this.id && this.customerReceipt.state != 'done') {
+          //   this.f.partner.disable();
+          //   this.f.doctor.disable();
+          //   this.f.dateObj.disable();
+          // }
 
-          if(this.id && this.customerReceipt.state == 'done') {
-            this.f.partner.disable();
-            this.f.doctor.disable();
-            this.f.dateObj.disable();
-            this.f.note.disable();
-            this.f.timeExpected.disable();
-            this.f.state.disable();
-            this.f.reason.disable();
-            this.f.products.disable();
-            this.f.isRepeatCustomer.disable();
-            this.f.isNoTreatment.disable();
-          }
+          // if(this.id && this.customerReceipt.state == 'done') {
+          //   this.f.partner.disable();
+          //   this.f.doctor.disable();
+          //   this.f.dateObj.disable();
+          //   this.f.note.disable();
+          //   this.f.timeExpected.disable();
+          //   this.f.state.disable();
+          //   this.f.reason.disable();
+          //   this.f.products.disable();
+          //   this.f.isRepeatCustomer.disable();
+          //   this.f.isNoTreatment.disable();
+          // }
 
         },
         er => {

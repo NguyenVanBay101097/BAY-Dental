@@ -81,8 +81,8 @@ namespace ApplicationCore.Entities
         /// </summary>
         public bool IsNoTreatment { get; set; }
 
-        public double? MinuteWaiting { get; set; }
-        public double? MinuteExamination { get; set; }
-        public double? MinuteTotal { get; set; }
+        public int? MinuteWaiting { get; set; }
+        public int? MinuteExamination { get; set; }
+        public int? MinuteTotal { get; set; }
     }
 }

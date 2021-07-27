@@ -1,1 +1,104 @@
-<p>customer-receipt-report-no-treatment works!</p>
+<div class="flex-1-1-100 right border p-2 ml-2 d-flex flex-column w-100">
+    <h5 class="flex-0-0-auto">Báo cáo tiếp nhận không điều trị</h5>
+    <div class="filter d-flex flex-0-0-auto mt-2">
+        <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
+            (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+        <kendo-combobox class="mr-1 kendo-combobox-sm" [placeholder]="'Bác sĩ'" [valueField]="'id'" [textField]="'name'"
+            [filterable]="true" #employeeCbx [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
+        </kendo-combobox>
+        <kendo-combobox width="auto" class="kendo-combobox-sm" [placeholder]="'Tất cả chi nhánh'"
+            class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true"
+            [data]="listCompany" (selectionChange)="onSelectCompany($event)" #companyCbx>
+        </kendo-combobox>
+        <button class="btn btn-primary btn-sm" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất Excel</button>
+        <input type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"
+            placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
+            class="ml-auto form-control w-50 form-control-sm">
+    </div>
+    <div class="o_content mt-2">
+        <div class="o_dashboard_view">
+            <div>
+                <kendo-grid #grid (excelExport)="onExcelExport($event)" [data]="gridData" [pageSize]="limit"
+                    [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+                    <kendo-grid-column title="Ngày tiếp nhận" width="100">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.dateWaiting | date:'shortDate'}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Khách hàng" width="120">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <a class="text-primary" title="Xem hồ sơ khách hàng"
+                                [routerLink]="['/partners/customer/' + dataItem.partner.id]">
+                                {{dataItem.partner?.name}}
+                            </a>
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Dịch vụ" width="120">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.products}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Bác sĩ" width="100">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.doctorName}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Giờ tiếp nhận" width="100">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.dateWaiting | date: 'HH:mm'}}
+                        </ng-template>
+                    </kendo-grid-column>               
+                    <kendo-grid-column title="Thời gian phục vụ" width="100">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.minuteTotal ? getMinute(dataItem.minuteTotal) : '' }}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Lý do không điều trị" width="100">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.reason}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <!-- excel -->
+                    <kendo-grid-excel   fileName="BaoCaoCongNoKH.xlsx">
+                        <kendo-excelexport-column title="Ngày tiếp nhận" width="100">
+                            <ng-template let-dataItem>
+                                {{dataItem.dateWaiting | date:'shortDate'}}
+                            </ng-template>
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column title="Khách hàng" width="150">
+                            <ng-template let-dataItem>
+                                {{dataItem.partner?.name}}
+                            </ng-template>
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column title="Dịch vụ" width="150">
+                            <ng-template let-dataItem>
+                                {{dataItem.products}}
+                            </ng-template>
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column  title="Bác sĩ" width="120">
+                            <ng-template let-dataItem>
+                                {{dataItem.doctorName}}
+                            </ng-template>                         
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column title="Giờ tiếp nhận" width="100">
+                            <ng-template let-dataItem>
+                                {{dataItem.dateWaiting | date: 'HH:mm'}}
+                            </ng-template>  
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column title="Thời gian phục vụ" width="100">
+                            <ng-template let-dataItem>
+                                {{dataItem.minuteTotal ? getMinute(dataItem.minuteTotal) : '' }} 
+                            </ng-template>
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column title="Lý do không điều trị" width="150">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.reason}}
+                            </ng-template>
+                        </kendo-excelexport-column>
+                    </kendo-grid-excel>
+                </kendo-grid>
+            </div>
+        </div>
+    </div>
+
+</div>

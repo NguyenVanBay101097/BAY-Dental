@@ -39,6 +39,7 @@ export class CustomerReceiptReportBasic {
   minuteExamination: number;
   minuteTotal: number;
   state: string;
+  reason: string;
 }
 
 export class CustomerReceiptGetCountExamination {
