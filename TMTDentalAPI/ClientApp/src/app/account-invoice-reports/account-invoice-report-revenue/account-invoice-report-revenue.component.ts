@@ -14,7 +14,7 @@ import { ProductFilter, ProductService } from 'src/app/products/product.service'
 import { saveAs } from '@progress/kendo-file-saver';
 import { AccountInvoiceReportService, RevenueTimeReportPar } from '../account-invoice-report.service';
 import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
-import { PrintService } from 'src/app/print.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-account-invoice-report-revenue',
@@ -104,6 +104,8 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
       total: this.allDataInvoice.length,
       data: this.allDataInvoice.slice(this.skip, this.skip + this.limit)
     };
+    console.log(this.gridData);
+    
   }
 
   onSearchDateChange(e) {
@@ -165,6 +167,17 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
   }
 
   public onExcelExport(args: any): void {
+    const rows = args.workbook.sheets[0].rows;
+    rows.splice(0,1,{cells:[{value:"BÁO CÁO DOANH THU THEO THỜI GIAN"}]});
+    rows.splice(9,0,{cells:[{value:"BÁO CÁO DOANH THU THEO THỜI GIAN"}]});
+    console.log(rows);
+    
+    rows.forEach(row => {
+      if (row.type === "data"){
+        row.cells[0].value = "Ngày "+row.cells[0].value;
+        row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
+      }
+    });
     args.preventDefault();
     const data = this.allDataInvoice;
     this.revenueManageService.emitChange({
@@ -181,7 +194,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.accInvService.getPrintRevenueTimeReport(val).subscribe(result =>{
-      this.printService.print(result);
+      this.printService.printHtml(result);
     });
     
   }

@@ -121,7 +121,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
       result => {
         this.router.navigate(['/sale-orders/form'], {
           queryParams: {
-            id: result.id
+            partner_id: this.customerId
           },
         });
       }
@@ -324,7 +324,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
       return;
     }
     this.advisoryService.getPrint(this.mySelection).subscribe((res: any) => {
-      this.printService.printHtml(res.html);
+      this.printService.printHtml(res);
     });
   }
 

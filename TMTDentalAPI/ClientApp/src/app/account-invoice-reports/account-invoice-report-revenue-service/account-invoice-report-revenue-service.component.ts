@@ -14,7 +14,7 @@ import { ProductFilter, ProductService } from 'src/app/products/product.service'
 import { saveAs } from '@progress/kendo-file-saver';
 import { AccountInvoiceReportService, RevenueServiceReportPar } from '../account-invoice-report.service';
 import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
-import { PrintService } from 'src/app/print.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-account-invoice-report-revenue-service',
@@ -218,7 +218,7 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
     val.companyId = val.companyId || '';
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
-    this.accInvService.getPrintRevenueServiceReport(val).subscribe(result=>this.printService.print(result));
+    this.accInvService.getPrintRevenueServiceReport(val).subscribe(result=>this.printService.printHtml(result));
   }
 
 
