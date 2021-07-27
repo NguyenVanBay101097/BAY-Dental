@@ -56,12 +56,12 @@
             <table class="table table-bordered table-sm">
                 <thead>
                     <tr class="bg-info font-semibold">
-                        <th scope="col" class="text-center">Số phiếu</th>
-                        <th scope="col" class="text-center">Khách hàng</th>
-                        <th scope="col" class="text-center">Bác sĩ</th>
-                        <th scope="col" class="text-center">Phụ tá</th>
-                        <th scope="col" class="text-center">Dịch vụ</th>
-                        <th scope="col" class="text-center">Thanh toán</th>
+                        <th scope="col" class="text-center" style="width:100px">Số phiếu</th>
+                        <th scope="col" class="text-center" style="width:100px">Khách hàng</th>
+                        <th scope="col" class="text-center" style="width:100px">Bác sĩ</th>
+                        <th scope="col" class="text-center" style="width:100px">Phụ tá</th>
+                        <th scope="col" class="text-center" style="width:100px">Dịch vụ</th>
+                        <th scope="col" class="text-center" style="width:100px">Thanh toán</th>
 
                     </tr>
                 </thead>
@@ -69,12 +69,12 @@
                     @foreach (var row in report.RevenueReportDetailPrints)
                     {
                         <tr>
-                            <td class="text-center">@(row.InvoiceOrigin)</td>
-                            <td class="text-left">@(row.PartnerName)</td>
-                            <td class="text-right">@(row.EmployeeName)</td>
-                            <td class="text-center">@(row.AssistantName)</td>
-                            <td class="text-left">@(row.ProductName)</td>
-                            <td class="text-right">@(string.Format(info, "{0:0,0}", row.PriceSubTotal))</td>
+                            <td class="text-center" style="width:100px">@(row.InvoiceOrigin)</td>
+                            <td class="text-left" style="width:100px">@(row.PartnerName)</td>
+                            <td class="text-right" style="width:100px">@(row.EmployeeName)</td>
+                            <td class="text-center" style="width:100px">@(row.AssistantName)</td>
+                            <td class="text-left" style="width:100px">@(row.ProductName)</td>
+                            <td class="text-right" style="width:100px">@(string.Format(info, "{0:0,0}", row.PriceSubTotal))</td>
                         </tr>
                     }
 

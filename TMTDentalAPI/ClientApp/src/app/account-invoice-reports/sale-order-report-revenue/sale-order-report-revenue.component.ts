@@ -8,7 +8,7 @@ import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/c
 import { GetRevenueSumTotalReq, SaleOrderReportRevenuePaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { saveAs } from '@progress/kendo-file-saver';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { PrintService } from 'src/app/print.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-sale-order-report-revenue',
@@ -197,7 +197,7 @@ export class SaleOrderReportRevenueComponent implements OnInit {
     val.companyId = val.companyId || val.companyId;
     val.search = '';
     this.saleOrderService.getPrintRevenueReport(val).subscribe(result => {
-      this.printService.print(result);
+      this.printService.printHtml(result);
     })
     
   }
