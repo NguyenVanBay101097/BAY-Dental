@@ -312,7 +312,7 @@ export class PartnerListComponent implements OnInit {
   }
 
   importFromExcel(isCreateNew: boolean) {
-    const modalRef = this.modalService.open(PartnerImportComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(PartnerImportComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.isCreateNew = isCreateNew;
     modalRef.result.then(
       rs => {
@@ -349,7 +349,7 @@ export class PartnerListComponent implements OnInit {
 
   registerPayment(id: string) {
     this.partnerService.getDefaultRegisterPayment(id).subscribe(result => {
-      let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Thanh toán';
       modalRef.componentInstance.defaultVal = result;
       modalRef.result.then(() => {

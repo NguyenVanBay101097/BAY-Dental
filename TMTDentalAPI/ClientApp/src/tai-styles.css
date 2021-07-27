@@ -9,21 +9,17 @@ a {
     }
 }
 
-@media (min-width: 992px) {
-    .modal-lg,
-    .modal-xl {
-        max-width: 980px;
-    }
+@media(min-width:992px) {
+	.modal-lg,
+	.modal-xl {
+		max-width: 800px
+	}
 }
 
-@media (min-width: 1200px) {
-    .modal-lg,
-    .modal-xl {
-        max-width: 1120px;
-    }
-    .modal-appointment .modal-lg {
-        max-width: 880px;
-    }
+@media(min-width:1200px) {
+	.modal-xl {
+		max-width: 1140px
+	}
 }
 
 .modal .modal-dialog .o_form_view .o_form_sheet_bg {

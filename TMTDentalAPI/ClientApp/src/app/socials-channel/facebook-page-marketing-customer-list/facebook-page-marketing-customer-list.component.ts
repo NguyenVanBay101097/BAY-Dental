@@ -118,7 +118,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
   }
 
   syncNumberPhoneUsers() {
-    // const modalRef = this.modalService.open(TcareQuickreplyDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    // const modalRef = this.modalService.open(TcareQuickreplyDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     // modalRef.componentInstance.title = 'Tạo nội dung gửi';
     // modalRef.result.then((val) => {
     //   if (this.pageId) {
@@ -219,7 +219,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
   }
 
   editItem(item: any) {
-    let modalRef = this.modalService.open(FacebookPageMarketingCustomerDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(FacebookPageMarketingCustomerDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.customerId = item.Id;
 
     modalRef.result.then((result) => {

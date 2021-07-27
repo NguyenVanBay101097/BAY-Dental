@@ -140,7 +140,7 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
 
   viewCoupons() {
     if (this.id) {
-      let modalRef = this.modalService.open(SaleCouponListDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(SaleCouponListDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.programId = this.id;
       modalRef.result.then(() => {
       }, () => {
@@ -166,7 +166,7 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
 
   generateCoupons() {
     if (this.id) {
-      let modalRef = this.modalService.open(SaleCouponProgramGenerateCouponsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(SaleCouponProgramGenerateCouponsDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.programId = this.id;
       modalRef.result.then(() => {
         this.loadRecord();
@@ -180,7 +180,7 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
       var value = this.formGroup.value;
       this.programService.create(value).subscribe(result => {
         this.router.navigate(['programs/coupon-programs/form'], { queryParams: { id: result.id } });
-        let modalRef = this.modalService.open(SaleCouponProgramGenerateCouponsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleCouponProgramGenerateCouponsDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.programId = result.id;
         modalRef.result.then(() => {
           this.loadRecord();

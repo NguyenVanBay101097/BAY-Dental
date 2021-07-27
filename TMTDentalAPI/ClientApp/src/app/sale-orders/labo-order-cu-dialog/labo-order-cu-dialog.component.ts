@@ -251,7 +251,7 @@ export class  LaboOrderCuDialogComponent implements OnInit {
   }
 
   updateSupplierModal() {
-    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: Nhà cung cấp';
     modalRef.componentInstance.id = this.partner.id;
 
@@ -261,7 +261,7 @@ export class  LaboOrderCuDialogComponent implements OnInit {
   }
 
   quickCreateSupplier() {
-    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: Nhà cung cấp';
 
     modalRef.result.then(result => {
@@ -382,7 +382,7 @@ export class  LaboOrderCuDialogComponent implements OnInit {
   }
 
   showAddLineModal() {
-    let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm chi tiết';
     modalRef.componentInstance.saleOrderLineId = this.saleOrderLineId;
 
@@ -396,7 +396,7 @@ export class  LaboOrderCuDialogComponent implements OnInit {
   }
 
   editLine(line: FormGroup) {
-    let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa chi tiết';
     modalRef.componentInstance.line = line.value;
     modalRef.componentInstance.saleOrderLineId = this.saleOrderLineId;

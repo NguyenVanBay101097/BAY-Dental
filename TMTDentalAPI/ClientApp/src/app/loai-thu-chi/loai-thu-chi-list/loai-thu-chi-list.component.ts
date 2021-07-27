@@ -83,7 +83,7 @@ export class LoaiThuChiListComponent implements OnInit {
   }
 
   createItem() {
-    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm ' + this.converttype();
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(() => {
@@ -95,7 +95,7 @@ export class LoaiThuChiListComponent implements OnInit {
   }
 
   editItem(item: loaiThuChi) {
-    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa ' + this.converttype();
     modalRef.componentInstance.itemId = item.id;
     modalRef.componentInstance.type = this.type;

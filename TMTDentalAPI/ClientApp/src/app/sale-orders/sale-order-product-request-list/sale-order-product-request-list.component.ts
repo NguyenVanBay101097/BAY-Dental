@@ -56,7 +56,7 @@ export class SaleOrderProductRequestListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(SaleOrderProductRequestDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(SaleOrderProductRequestDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Yêu cầu vật tư';
     modalRef.componentInstance.saleOrderId = this.saleOrderId;
     modalRef.result.then((result) => {
@@ -66,7 +66,7 @@ export class SaleOrderProductRequestListComponent implements OnInit {
   }
 
   editItem(item) {
-    let modalRef = this.modalService.open(SaleOrderProductRequestDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(SaleOrderProductRequestDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Yêu cầu vật tư';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.saleOrderId = this.saleOrderId;

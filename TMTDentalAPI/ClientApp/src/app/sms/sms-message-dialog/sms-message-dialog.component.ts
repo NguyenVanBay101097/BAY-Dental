@@ -203,7 +203,7 @@ export class SmsMessageDialogComponent implements OnInit {
   }
 
   onSelectPartners() {
-    const modalRef = this.modalService.open(SmsPartnerListDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(SmsPartnerListDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Danh sách khách hàng';
     modalRef.result.then((res) => {
       this.partnerIds = res;

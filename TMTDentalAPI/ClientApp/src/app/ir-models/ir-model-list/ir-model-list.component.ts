@@ -71,7 +71,7 @@ export class IrModelListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(IrModelCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(IrModelCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Thêm ' + this.title;
 
     modalRef.result.then(() => {
@@ -81,7 +81,7 @@ export class IrModelListComponent implements OnInit {
   }
 
   editItem(item: IRModelBasic) {
-    let modalRef = this.modalService.open(IrModelCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(IrModelCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Sửa ' + this.title;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
@@ -91,7 +91,7 @@ export class IrModelListComponent implements OnInit {
   }
 
   deleteItem(item: IRModelBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa ' + this.title + ": " + item.name;
     modalRef.result.then(() => {
       this.modelService.delete(item.id).subscribe(() => {

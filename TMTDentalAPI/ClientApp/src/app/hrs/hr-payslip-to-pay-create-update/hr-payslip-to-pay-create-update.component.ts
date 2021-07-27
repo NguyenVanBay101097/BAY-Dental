@@ -285,7 +285,7 @@ export class HrPayslipToPayCreateUpdateComponent implements OnInit {
   }
 
   editEmployee() {
-    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa nhân viên';
     modalRef.componentInstance.empId = this.employee.value.id;
     modalRef.result.then((res) => {

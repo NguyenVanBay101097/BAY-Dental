@@ -270,7 +270,7 @@ export class AppointmentKanbanComponent implements OnInit {
     this.dotkhamService.getPaged(paged).subscribe((rs: any) => {
       if (rs.items.length) {
         console.log(rs.items);
-        let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Tạo đợt khám';
         modalRef.componentInstance.saleOrderId = rs.items[0].saleOrderId;
 

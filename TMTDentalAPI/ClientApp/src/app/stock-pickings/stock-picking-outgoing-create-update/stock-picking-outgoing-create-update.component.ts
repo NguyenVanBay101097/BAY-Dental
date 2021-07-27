@@ -233,7 +233,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
   changeUoM(line: AbstractControl) {
     var product = line.get('product').value;
-    let modalRef = this.modalService.open(SelectUomProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+    let modalRef = this.modalService.open(SelectUomProductDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
     modalRef.componentInstance.title = 'Chọn đơn vị';
     modalRef.componentInstance.productId = product.id;
     modalRef.result.then((res: any) => {

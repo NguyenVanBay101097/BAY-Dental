@@ -162,7 +162,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   actionRegisterPayment() {
     if (this.id) {
       this.paymentService.purchaseDefaultGet([this.id]).subscribe(rs2 => {
-        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = this.purchaseOrder.type == 'refund' ? 'Hoàn tiền' : 'Thanh toán';
         modalRef.componentInstance.purchaseType = this.purchaseOrder.type;
         modalRef.componentInstance.defaultVal = rs2;
@@ -407,7 +407,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   changeUoM(line: AbstractControl) {
     var product = line.get('product').value;
-    let modalRef = this.modalService.open(SelectUomProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
+    let modalRef = this.modalService.open(SelectUomProductDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', scrollable: true, backdrop: 'static', keyboard: false });
     modalRef.componentInstance.title = 'Chọn đơn vị';
     modalRef.componentInstance.productId = product.id;
     modalRef.result.then((res: any) => {
@@ -493,7 +493,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   }
 
   purchaseOrderAlmostOut() {
-    let modalRef = this.modalService.open(PurchaseOrderAlmostOutDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(PurchaseOrderAlmostOutDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Hàng sắp hết';
     modalRef.result.then((result) => {
       for (const item of result) {

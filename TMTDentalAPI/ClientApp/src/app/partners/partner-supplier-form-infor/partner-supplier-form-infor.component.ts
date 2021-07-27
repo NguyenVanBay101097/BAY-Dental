@@ -40,7 +40,7 @@ export class PartnerSupplierFormInforComponent implements OnInit {
   }
 
   editSupplier() {
-    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: ' + this.supplier.name;
     modalRef.componentInstance.id = this.id;
 

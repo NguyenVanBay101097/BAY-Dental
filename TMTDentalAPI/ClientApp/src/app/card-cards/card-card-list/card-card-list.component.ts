@@ -55,7 +55,7 @@ export class CardCardListComponent implements OnInit {
   }
 
   addNewCard() {
-    let modalRef = this.modalService.open(CardCardCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(CardCardCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
 
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -88,7 +88,7 @@ export class CardCardListComponent implements OnInit {
   }
 
   onEditClick(item) {
-    let modalRef = this.modalService.open(CardCardCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(CardCardCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.id = item.id;
 
     modalRef.result.then(() => {
@@ -98,7 +98,7 @@ export class CardCardListComponent implements OnInit {
   }
 
   onDeleteClick(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa thẻ thành viên';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {

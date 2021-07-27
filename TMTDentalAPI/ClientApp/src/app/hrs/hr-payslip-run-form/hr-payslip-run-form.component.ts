@@ -345,7 +345,7 @@ export class HrPayslipRunFormComponent implements OnInit {
 
       if(res.data.length > 0) {
 
-        const modalRef = this.modalService.open(HrSalaryPaymentComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        const modalRef = this.modalService.open(HrSalaryPaymentComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth() + 1}/${this.dateFC.value.getFullYear()}`;
         modalRef.componentInstance.payslipIds = slipIds;
         modalRef.componentInstance.payments = res.data;

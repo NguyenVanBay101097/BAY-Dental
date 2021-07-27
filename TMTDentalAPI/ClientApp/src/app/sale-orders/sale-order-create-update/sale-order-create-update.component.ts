@@ -95,6 +95,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('paymentComp', { static: false }) paymentComp: SaleOrderPaymentListComponent;
 
   partner: any;
+  partnerDisplay: any;
   saleOrder: any;
   saleOrderPrint: any;
   laboOrders: LaboOrderBasic[] = [];
@@ -171,8 +172,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       });
     } else {
       this.saleOrderService.defaultGet().subscribe((res: any) => {
-        console.log(res);
         this.saleOrder = res;
+        if (this.partner) {
+          this.saleOrder.partner = this.partner;
+        }
+        
         this.updateFormGroup(res);
       });
     }
@@ -181,6 +185,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadTeethList();
     this.loadToothCategories();
     this.loadEmployees();
+  }
+
+  togglePartnerInfo() {
+    if (!this.partnerDisplay) {
+      this.partnerService.getCustomerInfo(this.saleOrder.partner.id).subscribe((result) => {
+        this.partnerDisplay = result;
+      });
+    }
   }
 
   loadCustomerInfo() {
@@ -753,7 +765,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionSaleOrderPayment() {
     if (this.saleOrderId) {
       this.saleOrderService.getSaleOrderPaymentBySaleOrderId(this.saleOrderId).subscribe(rs2 => {
-        let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
         modalRef.componentInstance.advanceAmount = this.amountAdvanceBalance;
@@ -801,7 +813,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
   createProductToaThuoc() {
     if (this.saleOrder) {
-      let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Thêm: Đơn Thuốc';
       modalRef.componentInstance.defaultVal = { partnerId: this.saleOrder.partnerId, saleOrderId: this.saleOrder.id };
       modalRef.result.then((result: any) => {

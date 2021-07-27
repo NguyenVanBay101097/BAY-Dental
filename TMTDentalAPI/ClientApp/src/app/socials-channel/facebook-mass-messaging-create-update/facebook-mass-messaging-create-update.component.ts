@@ -78,7 +78,7 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit, OnCha
 
   actionSchedule() {
     if (this.id) {
-      let modalRef = this.modalService.open(FacebookMassMessagingScheduleDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(FacebookMassMessagingScheduleDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.massMessagingId = this.id;
 
       modalRef.result.then(() => {
@@ -95,7 +95,7 @@ export class FacebookMassMessagingCreateUpdateComponent implements OnInit, OnCha
       this.massMessagingService.create(val).subscribe((result: any) => {
         this.router.navigate(['/facebook-management/mass-messagings/form'], { queryParams: { id: result.id } });
 
-        let modalRef = this.modalService.open(FacebookMassMessagingScheduleDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(FacebookMassMessagingScheduleDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.massMessagingId = result.id;
 
         modalRef.result.then(() => {

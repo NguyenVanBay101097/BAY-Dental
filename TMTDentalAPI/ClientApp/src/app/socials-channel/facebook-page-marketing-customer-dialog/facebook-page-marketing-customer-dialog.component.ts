@@ -79,7 +79,7 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
   }
 
   quickCreateCus() {
-    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm khách hàng';
     modalRef.result.then(result => {
       this.filteredPartners.push(result as PartnerSimpleContact);

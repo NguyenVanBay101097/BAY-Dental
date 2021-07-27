@@ -1253,7 +1253,10 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderDisplay> GetSaleOrderForDisplayAsync(Guid id)
         {
-            var saleOrder = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var saleOrder = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .FirstOrDefaultAsync();
+
             var display = _mapper.Map<SaleOrderDisplay>(saleOrder);
 
             var lineObj = GetService<ISaleOrderLineService>();

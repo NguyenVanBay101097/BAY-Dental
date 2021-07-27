@@ -450,7 +450,7 @@ export class SaleOrderLineCuComponent implements OnInit {
       toothCategory: val.toothCategory,
       toothType: val.toothType
     }
-    let modalRef = this.modalService.open(ToothSelectionDialogComponent, { size: 'md', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ToothSelectionDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.toothDataInfo = this.toothData;
     modalRef.componentInstance.filteredToothCategories = this.initialFilteredToothCategories;
     modalRef.componentInstance.toothTypeDict = this.initialToothTypeDict;

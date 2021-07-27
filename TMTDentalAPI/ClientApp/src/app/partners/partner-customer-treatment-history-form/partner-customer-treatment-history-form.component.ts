@@ -318,7 +318,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
           },
         });
 
-        let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+        let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
         modalRef.componentInstance.orderId = result.id;
         modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
         modalRef.result.then(() => {
@@ -341,7 +341,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
     if (this.saleOrderId) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
-          let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+          let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
           modalRef.componentInstance.orderId = this.saleOrderId;
           modalRef.result.then(() => {
             this.loadRecord();
@@ -349,7 +349,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
           });
         })
       } else {
-        let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.orderId = this.saleOrderId;
         modalRef.result.then(() => {
           this.loadRecord();
@@ -368,7 +368,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
           },
         });
 
-        let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.orderId = result.id;
         modalRef.result.then(() => {
           this.loadRecord();
@@ -670,7 +670,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
   }
 
   showConfirmApplyPromotion(id) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Quên cập nhật khuyến mãi?';
     modalRef.componentInstance.body = 'Hệ thống phát hiện có chương trình khuyến mãi có thể áp dụng cho đơn hàng này, bạn có muốn áp dụng trước khi xác nhận không?';
     modalRef.result.then(() => {
@@ -835,7 +835,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
   actionSaleOrderPayment() {
     if (this.saleOrderId) {
       this.paymentService.saleDefaultGet([this.saleOrderId]).subscribe(rs2 => {
-        let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
         modalRef.result.then(() => {

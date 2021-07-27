@@ -165,7 +165,7 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
       return false;
     }
     this.paymentService.saleDefaultGet(this.selectedIds).subscribe(rs2 => {
-      let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Thanh toán';
       modalRef.componentInstance.defaultVal = rs2;
       modalRef.result.then(() => {

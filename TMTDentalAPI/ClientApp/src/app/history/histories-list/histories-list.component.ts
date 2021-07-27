@@ -86,7 +86,7 @@ export class HistoriesListComponent implements OnInit {
   }
 
   importFromExcel() {
-    let modalRef = this.modalService.open(HistoryImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static',scrollable:true });
+    let modalRef = this.modalService.open(HistoryImportExcelDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static',scrollable:true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.result.then(() => {
       this.getList();

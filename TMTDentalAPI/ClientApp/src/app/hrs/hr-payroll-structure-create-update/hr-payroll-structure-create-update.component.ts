@@ -136,7 +136,7 @@ export class HrPayrollStructureCreateUpdateComponent implements OnInit {
   }
 
   ShowStructTypeCreateModal() {
-    let modalRef = this.modalService.open(HrPayrollStructureTypeCreateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(HrPayrollStructureTypeCreateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: Loại mẫu lương';
     modalRef.result.then((entity) => {
       this.payrollForm.get('type').setValue(entity);
@@ -163,7 +163,7 @@ export class HrPayrollStructureCreateUpdateComponent implements OnInit {
 
   ShowAddSalaryRulePopup() {
     const modalRef = this.modalService.open(HrSalaryRuleCrudDialogComponent,
-      { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm quy tắc lương';
     modalRef.result.then((val) => {
       this.AllDataAdd(val);
@@ -172,7 +172,7 @@ export class HrPayrollStructureCreateUpdateComponent implements OnInit {
 
   editItem(item) {
     const modalRef = this.modalService.open(HrSalaryRuleCrudDialogComponent,
-      { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa quy tắc lương';
     modalRef.componentInstance.rule = item;
     modalRef.result.then((val) => {

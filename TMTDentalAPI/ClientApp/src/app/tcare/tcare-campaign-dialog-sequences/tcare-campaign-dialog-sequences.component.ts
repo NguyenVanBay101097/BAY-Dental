@@ -270,7 +270,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   }
 
   quickCreateMessageTemplateModal() {
-    const modalRef = this.modalService.open(TcareMessageTemplateCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(TcareMessageTemplateCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo mẫu tin';
     modalRef.result.then((val) => {
       debugger;
@@ -280,7 +280,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   }
 
   quickUpdateMessageTemplateModal() {
-    const modalRef = this.modalService.open(TcareMessageTemplateCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(TcareMessageTemplateCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Sửa mẫu tin';
     modalRef.componentInstance.id = this.mau.id;
     modalRef.result.then((val) => {

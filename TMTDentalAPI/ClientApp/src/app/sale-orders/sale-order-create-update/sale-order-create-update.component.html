@@ -62,29 +62,29 @@
     <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <div class="accordion" *ngIf="partner">
+                <div class="accordion" *ngIf="saleOrder.partner">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                            <button class="accordion-button collapsed px-3 py-2" type="button" data-toggle="collapse"
+                            <button class="accordion-button collapsed px-3 py-2" (click)="togglePartnerInfo()" type="button" data-toggle="collapse"
                                 href="#panelsStayOpen-collapseOne" aria-expanded="false"
                                 aria-controls="panelsStayOpen-collapseOne">
                                 <div style="flex: 1">
                                     Khách hàng:
-                                    <a class="font-weight-600" [routerLink]="['/partners/customer/' + partner.id]">
-                                        {{partner?.displayName}}
+                                    <a class="font-weight-600" [routerLink]="['/partners/customer/' + saleOrder.partner.id]">
+                                        {{saleOrder.partner.displayName}}
                                     </a>
                                 </div>
                                 <div style="flex: 1">Ngày sinh: <span
-                                        class="font-weight-600">{{partner.dateOfBirth}}</span></div>
-                                <div style="flex: 1">Tuổi: <span class="font-weight-600">{{partner.age}}</span></div>
+                                        class="font-weight-600">{{saleOrder.partner.dateOfBirth}}</span></div>
+                                <div style="flex: 1">Tuổi: <span class="font-weight-600">{{saleOrder.partner.age}}</span></div>
                             </button>
                         </h2>
                         <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse"
                             aria-labelledby="panelsStayOpen-headingOne">
                             <div class="accordion-body p-3">
-                                <div style="display: flex;">
+                                <div style="display: flex;" *ngIf="partnerDisplay">
                                     <div style="flex: 0 0 90px;margin-right: 1rem;">
-                                        <img class="img-fluid" [src]="partner?.avatar || 'assets/images/no-avatar.png'"
+                                        <img class="img-fluid" [src]="partnerDisplay?.avatar || 'assets/images/no-avatar.png'"
                                             alt="" onerror="this.src='assets/images/no-avatar.png';" />
                                     </div>
                                     <div style="flex: 1 1 100%;">
@@ -108,7 +108,7 @@
                                                             </label>
                                                         </td>
                                                         <td colspan="1" style="width: 100%;">
-                                                            <span>{{partner?.genderConvertcom}}</span>
+                                                            <span>{{partnerDisplay?.genderConvertcom}}</span>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -118,7 +118,7 @@
                                                             </label>
                                                         </td>
                                                         <td colspan="1" style="width: 100%;">
-                                                            <span *ngFor="let tag of partner.categories"
+                                                            <span *ngFor="let tag of partnerDisplay.categories"
                                                                 class="badge badge-secondary mr-1"
                                                                 [ngClass]="'o_tag_color_' + tag.color">
                                                                 {{tag.name}}
@@ -136,7 +136,7 @@
                                                             </label>
                                                         </td>
                                                         <td colspan="1" style="width: 100%;">
-                                                            <span>{{partner?.jobTitle}}</span>
+                                                            <span>{{partnerDisplay?.jobTitle}}</span>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -146,7 +146,7 @@
                                                             </label>
                                                         </td>
                                                         <td colspan="1" style="width: 100%;">
-                                                            <span>{{partner?.historiesString}}</span>
+                                                            <span>{{partnerDisplay?.historiesString}}</span>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -170,7 +170,7 @@
                                                             </label>
                                                         </td>
                                                         <td colspan="1" style="width: 100%;">
-                                                            <span>{{partner.memberLevel?.name}}</span>
+                                                            <span>{{partnerDisplay.memberLevel?.name}}</span>
                                                         </td>
                                                     </tr>
                                                 </tbody>

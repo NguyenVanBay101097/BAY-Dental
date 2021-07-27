@@ -87,7 +87,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   clickItem(item) {
     if (item && item.dataItem) {
       var id = item.dataItem.id
-      const modalRef = this.modalService.open(MedicineOrderCreateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      const modalRef = this.modalService.open(MedicineOrderCreateDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Thanh toán hóa đơn thuốc';
       modalRef.componentInstance.id = id;
       modalRef.result.then(res => {
