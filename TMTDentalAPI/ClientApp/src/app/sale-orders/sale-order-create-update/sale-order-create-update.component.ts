@@ -1252,7 +1252,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.notify('success', 'Lưu thành công');
       line.state = state;
       if(this.saleOrder.orderLines.every(x=> x.state == 'done' || x.state == 'cancel'))
-      this.saleOrder.state == 'done';
+      this.saleOrder.state = 'done';
     });
     })
   }
