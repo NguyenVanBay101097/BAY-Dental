@@ -101,4 +101,16 @@ export class AccountInvoiceReportService {
     getSumRevenueReport(val:any ) {
         return this.http.get(this.baseApi + this.apiUrl + "/SumRevenueReport", {params: new HttpParams({fromObject: val})});
     }
+    getPrintRevenueTimeReport(val:any ) {
+        return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueTimeReport",val,{ responseType: "text" });
+        
+    }
+    getPrintRevenueServiceReport(val:any ) {
+        return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueServiceReport",val,{ responseType: "text" });
+        
+    }
+    getPrintRevenueEmployeeReport(val:any ) {
+        return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueEmployeeReport",val,{ responseType: "text" });
+        
+    }
 }

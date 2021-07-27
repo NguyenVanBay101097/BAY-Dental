@@ -8,6 +8,7 @@ import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/c
 import { GetRevenueSumTotalReq, SaleOrderReportRevenuePaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { saveAs } from '@progress/kendo-file-saver';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { PrintService } from 'src/app/print.service';
 
 @Component({
   selector: 'app-sale-order-report-revenue',
@@ -32,7 +33,8 @@ export class SaleOrderReportRevenueComponent implements OnInit {
 
   constructor(
     private companyService: CompanyService,
-    private saleOrderService: SaleOrderService
+    private saleOrderService: SaleOrderService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -188,6 +190,16 @@ export class SaleOrderReportRevenueComponent implements OnInit {
       this.loading = false;
     });
 
+  }
+
+  printReport(){
+    var val = Object.assign({}, this.filter);
+    val.companyId = val.companyId || val.companyId;
+    val.search = '';
+    this.saleOrderService.getPrintRevenueReport(val).subscribe(result => {
+      this.printService.print(result);
+    })
+    
   }
 
 }

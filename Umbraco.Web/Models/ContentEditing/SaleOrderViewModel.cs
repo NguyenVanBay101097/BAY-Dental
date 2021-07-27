@@ -82,4 +82,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
     }
 
+    public class SaleOrderRevenueReportPrint
+    {
+        public Guid? CompanyId { get; set; }
+        public string Search { get; set; }
+    }
+
 }
