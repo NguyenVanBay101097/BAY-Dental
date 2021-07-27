@@ -121,7 +121,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
       result => {
         this.router.navigate(['/sale-orders/form'], {
           queryParams: {
-            id: result.id
+            partner_id: this.customerId
           },
         });
       }
