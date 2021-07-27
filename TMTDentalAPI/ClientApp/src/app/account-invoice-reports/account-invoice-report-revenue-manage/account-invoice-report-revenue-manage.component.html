@@ -1,21 +1,34 @@
 <div class="o_cp_controller">
-    <div class="o_control_panel o_breadcrumb_full mt-2">
+    <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li class="active">Báo cáo doanh thu</li>
         </ol>
     </div>
-</div><div class="h-100 w-100 bg-white">
-    <div class="content d-flex px-2 bg-white">
-        <div class="left flex-0-0-auto">
-            <div class=" d-flex flex-column border type p-1">
-                <a [routerLink]="[ 'revenue-time' ]" routerLinkActive="active"><i class="far fa-clock"></i> Thời gian</a>
-                <a [routerLink]="[ 'revenue-service' ]" routerLinkActive="active"><i class="fas fa-bars"></i> Doanh thu dịch vụ</a>
-                <a [routerLink]="[ 'revenue-employee' ]" routerLinkActive="active"><i class="fas fa-user-alt"></i> Doanh thu nhân viên</a>
-                <a [routerLink]="[ 'revenue-expecting' ]" routerLinkActive="active"><i class="fas fa-money-bill-alt"></i> Dự kiến doanh thu</a>
+</div>
+<div class="content">
+    <div class="d-flex p-3">
+        <div style="flex: 0 0 auto;margin-right: 1rem;">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-pills nav-fill flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" routerLinkActive="active" [routerLink]="[ 'revenue-time' ]">Thời gian</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" routerLinkActive="active" [routerLink]="[ 'revenue-service' ]">Doanh thu dịch vụ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" routerLinkActive="active" [routerLink]="[ 'revenue-employee' ]">Doanh thu nhân viên</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" routerLinkActive="active" [routerLink]="[ 'revenue-expecting' ]">Dự kiến doanh thu</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-
         </div>
-        <!-- right -->
-        <router-outlet></router-outlet>
+        <div>
+            <router-outlet></router-outlet>
+        </div>
     </div>
 </div>
