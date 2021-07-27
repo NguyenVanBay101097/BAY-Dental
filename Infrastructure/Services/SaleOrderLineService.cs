@@ -150,7 +150,7 @@ namespace Infrastructure.Services
                 line.OrderPartnerId = order.PartnerId;
                 line.CompanyId = order.CompanyId;
                 line.Order = order;
-                line.State = order.State;
+                //line.State = order.State;
 
 
             }
@@ -1113,6 +1113,8 @@ namespace Infrastructure.Services
             var entity = await SearchQuery(x=> x.Id == id).Include(x => x.SaleOrderLineToothRels).FirstOrDefaultAsync();
             if (entity == null)
                 throw new Exception("Không tìm thấy dịch vụ!");
+            if (val.State == "done" && entity.State != "done")
+                entity.DateDone = DateTime.Now;
             _mapper.Map(val, entity);
             entity.SaleOrderLineToothRels.Clear();
             if (val.ToothType == "manual")
@@ -1138,11 +1140,17 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             await orderObj.ComputeToUpdateSaleOrder(order);
             await orderObj.UpdateAsync(order);
+            //action done order
+            var isOrderDone = await SearchQuery(x => x.OrderId == entity.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel");
+            if (isOrderDone)
+                await orderObj.ActionDone(new List<Guid>() { entity.OrderId });
         }
 
         public async Task<SaleOrderLine> CreateOrderLine(SaleOrderLineSave val)
         {
             var saleLine = _mapper.Map<SaleOrderLine>(val);
+            saleLine.Date = saleLine.Date ?? DateTime.Now;
+            if (val.State == "done") saleLine.DateDone = DateTime.Now;
             saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
 
             if (val.ToothType == "manual")
@@ -1208,6 +1216,20 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             await orderObj.ComputeToUpdateSaleOrder(order);
             await orderObj.UpdateAsync(order);
+        }
+
+        public async Task UpdateState(Guid id, string state)
+        {
+            var line = await GetByIdAsync(id);
+            line.State = state;
+            if (line.State == "done")
+                line.DateDone = DateTime.Now;
+            await UpdateAsync(line);
+            //action done saleorder
+            var isOrderDone = await SearchQuery(x => x.OrderId == line.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel");
+            var orderObj = GetService<ISaleOrderService>();
+            if (isOrderDone)
+               await orderObj.ActionDone(new List<Guid>() { line.OrderId });
         }
     }
 }

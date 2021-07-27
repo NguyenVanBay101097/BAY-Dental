@@ -53,5 +53,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool IsActive { get; set; }
         public Guid OrderId { get; set; }
+        public DateTime? Date { get; set; }
+        public string State { get; set; }
     }
 }

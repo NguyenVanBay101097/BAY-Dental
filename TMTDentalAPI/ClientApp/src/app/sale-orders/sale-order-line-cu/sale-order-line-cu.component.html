@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="px-2 w-100 pb-2">
-            <div class="row">
+            <div class="row detail">
                 <div class="col-xl-4 col-md-6 col-xs-12">
                     <table class="o_group o_inner_group o_group_col_4">
                         <tbody>
@@ -20,8 +20,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span>{{teethList}}</span>
-                                    <img *ngIf="isEditting" class="ml-2" style="cursor: pointer;" [src]="'' || 'assets/icons/teeth.svg'" alt=""
-                                        (click)="toothSelection()" onerror="this.src='assets/teeth/box.svg';">
+                                    <img *ngIf="isEditting" class="ml-2" style="cursor: pointer;" [src]="'' || 'assets/icons/teeth.svg'" alt="" (click)="toothSelection()" onerror="this.src='assets/teeth/box.svg';">
                                 </td>
                             </tr>
                             <tr>
@@ -44,8 +43,7 @@
                                     <label class="o_form_label_help">
                                         Danh sách Labo
                                     </label>
-                                    <img class="ml-2" style="cursor: pointer;" [src]="'' || 'assets/icons/labo.svg'" alt=""
-                                        onerror="this.src='assets/labo/box.svg';" (click)="showLaboList(line.id)">
+                                    <img class="ml-2" style="cursor: pointer;" [src]="'' || 'assets/icons/labo.svg'" alt="" onerror="this.src='assets/labo/box.svg';" (click)="showLaboList(line.id)">
                                 </td>
                             </tr>
                         </tbody>
@@ -53,9 +51,37 @@
                 </div>
                 <div class="col-xl-8 col-md-6 col-xs-12">
                     <div class="row">
-                        <div class="col-xl-6 col-md-12 col-xs-12">
+                        <div class="col-xl-6 col-md-12 col-xs-12 mid">
                             <table class="o_group o_inner_group o_group_col_4">
                                 <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label_help">
+                                                Ngày tạo
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <span class="" *ngIf="!isEditting">{{line.date | date:'dd/MM/yyyy HH:mm'}}</span>
+                                            <kendo-datepicker format="dd/MMM/yyyy HH:mm" *ngIf="isEditting" formControlName="date">
+                                            </kendo-datepicker>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="line.state != 'draft'">
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label_help">
+                                                Trạng thái
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <ng-container *ngIf="!isEditting">
+                                                <span class="mr-1" [ngClass]="{'text-success':line.state == 'done', 'text-danger': line.state == 'cancel'}">{{getStateDisplay(line.state)}}</span>
+                                                <app-sale-order-line-switch-state-popover *ngIf="stateEdit.indexOf(line.state) != -1" (onSaveEvent)="onSWitchState($event)" [lineInput]="line"></app-sale-order-line-switch-state-popover>
+                                            </ng-container>
+                                            <select *ngIf="isEditting" class="form-control" formControlName="state">
+                                                <option *ngFor="let item of listState" [value]="item.value">{{item.text}}</option>
+                                            </select>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label_help">
@@ -64,10 +90,7 @@
                                         </td>
                                         <td colspan="1" style="width: 100%;">
                                             <span class="" *ngIf="!isEditting">{{line.employee?.name}}</span>
-                                            <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)"
-                                                *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesDoctor"
-                                                [textField]="'name'" #employeeCbx formControlName="employee"
-                                                [valueField]="'id'">
+                                            <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesDoctor" [textField]="'name'" #employeeCbx formControlName="employee" [valueField]="'id'">
                                             </kendo-combobox>
                                         </td>
                                     </tr>
@@ -78,12 +101,8 @@
                                             </label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <span class="form-control-plaintext"
-                                                *ngIf="!isEditting">{{line.assistant?.name}}</span>
-                                            <kendo-combobox [filterable]="true" (filterChange)="onEmployeeAssistant($event)"
-                                                *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesAssistant"
-                                                [textField]="'name'" #assistantCbx formControlName="assistant"
-                                                [valueField]="'id'">
+                                            <span class="form-control-plaintext" *ngIf="!isEditting">{{line.assistant?.name}}</span>
+                                            <kendo-combobox [filterable]="true" (filterChange)="onEmployeeAssistant($event)" *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesAssistant" [textField]="'name'" #assistantCbx formControlName="assistant" [valueField]="'id'">
                                             </kendo-combobox>
                                         </td>
                                     </tr>
@@ -94,12 +113,8 @@
                                             </label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <span class="form-control-plaintext"
-                                                *ngIf="!isEditting">{{line.counselor?.name}}</span>
-                                            <kendo-combobox [filterable]="true" (filterChange)="onEmployeeCounselor($event)"
-                                                *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesCounselor"
-                                                [textField]="'name'" #counselorCbx formControlName="counselor"
-                                                [valueField]="'id'">
+                                            <span class="form-control-plaintext" *ngIf="!isEditting">{{line.counselor?.name}}</span>
+                                            <kendo-combobox [filterable]="true" (filterChange)="onEmployeeCounselor($event)" *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesCounselor" [textField]="'name'" #counselorCbx formControlName="counselor" [valueField]="'id'">
                                             </kendo-combobox>
                                         </td>
                                     </tr>
@@ -121,8 +136,7 @@
                                                     {{getPriceUnitLinePromotion(line) | number}}
                                                 </ng-container>
                                                 <ng-template #elseTemplatePriceUnitPro>
-                                                    {{(formInfoControl('priceUnit').value - (line.amountDiscountTotal || 0))
-                                                    | number}}
+                                                    {{(formInfoControl('priceUnit').value - (line.amountDiscountTotal || 0)) | number}}
                                                 </ng-template>
                                             </div>
                                             <div>
@@ -137,15 +151,12 @@
                                                         Giá gốc: <span class="mr-1 font-weight-600"
                                                             [class.text-danger]="formInfoControl('priceUnit').errors">{{formInfoControl('priceUnit').value
                                                             | number}}</span>
-                                                        <i _ngcontent-sgd-c6="" class="far fa-edit text-success pointer"
-                                                            [ngbPopover]="popContent" [popoverTitle]="popTitle"
-                                                            [autoClose]="'outside'"></i>
+                                                    <i _ngcontent-sgd-c6="" class="far fa-edit text-success pointer" [ngbPopover]="popContent" [popoverTitle]="popTitle" [autoClose]="'outside'"></i>
                                                     </span>
                                                 </ng-template>
-    
+
                                                 <ng-template #popContent let-greeting="greeting">
-                                                    <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'"
-                                                        [spinners]="false" formControlName="priceUnit">
+                                                    <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'" [spinners]="false" formControlName="priceUnit">
                                                     </kendo-numerictextbox>
                                                 </ng-template>
                                                 <ng-template #popTitle let-language="language">Giá gốc</ng-template>
@@ -165,8 +176,7 @@
                                                 </span>
                                             </ng-container>
                                             <ng-template #elseTemplateQty>
-                                                <kendo-numerictextbox required style="width:100%;" [format]="'n0'" [min]="0"
-                                                    formControlName="productUOMQty">
+                                                <kendo-numerictextbox required style="width:100%;" [format]="'n0'" [min]="0" formControlName="productUOMQty">
                                                 </kendo-numerictextbox>
                                             </ng-template>
                                         </td>
@@ -213,9 +223,7 @@
                                         </td>
                                         <td colspan="1" style="width: 100%; text-align: end;">
                                             <div *ngIf="!isFast" class="font-weight-600">
-                                                {{((isEditting? getPriceSubTotalFormGroup(): line.priceSubTotal)-
-                                                line.amountInvoiced) |
-                                                number}}
+                                                {{((isEditting? getPriceSubTotalFormGroup(): line.priceSubTotal)- line.amountInvoiced) | number}}
                                             </div>
                                         </td>
                                     </tr>
@@ -237,42 +245,38 @@
                 </div>
                 <div class="d-flex">
                     <span>Ưu đãi dịch vụ</span>
-                    <img *ngIf="line.state != 'done'" (click)="onOpenPromotion()" class="ml-2 pointer"
-                        src="../../../assets/icons/promotion-bg-primary.svg" alt="">
+                    <img *ngIf="line.state != 'done'" (click)="onOpenPromotion()" class="ml-2 pointer" src="../../../assets/icons/promotion-bg-primary.svg" alt="">
                     <span class="ml-auto">{{line.amountPromotionToOrderLine | number}}</span>
                 </div>
             </div>
         </div>
         <div class="popover-footer d-flex" style="padding-top: 2.5rem">
-            <button *ngIf="!isEditting" type="button" (click)="editLine()" title="Sửa dịch vụ"
-                class="btn btn-sm btn-primary">
+            <button *ngIf="!isEditting && stateEdit.indexOf(line.state) != -1" type="button" (click)="editLine()" title="Sửa dịch vụ" class="btn btn-sm btn-primary">
                 <i class="far fa-edit pr-1"></i>
                 <span>Chỉnh sửa</span>
             </button>
             <button *ngIf="isEditting" (click)="updateLineInfo(true)" class="btn btn-sm btn-primary">
                 <i class="far fa-edit pr-1"></i>
-                <span>Cập nhật</span>
+                <span>Lưu</span>
             </button>
             <button (click)="deleteLine()" class="btn btn-danger btn-sm ml-2" title="Xóa dịch vụ">
                 <i class="fas fa-trash pr-1"></i>
                 <span>Xóa</span>
             </button>
-            <ng-container *ngIf="line.state == 'sale'">
+            <!-- <ng-container *ngIf="line.state == 'sale'">
                 <ng-container *ngIf="line.isActive == true; else elseTemplateActive">
-                    <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-secondary ml-2"
-                        title="Ngừng dịch vụ">
+                    <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-secondary ml-2" title="Ngừng dịch vụ">
                         <i class="fas fa-minus-circle text-white pr-1"></i>
                         <span>Ngừng dịch vụ</span>
                     </button>
                 </ng-container>
                 <ng-template #elseTemplateActive>
-                    <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-danger ml-2"
-                        title="Làm dịch vụ">
+                    <button type="button" (click)="onActive(!line.isActive)" class="btn btn-sm btn-danger ml-2" title="Làm dịch vụ">
                         <i class="fas fa-minus-circle text-white pr-1"></i>
                         <span>Đã ngừng dịch vụ</span>
                     </button>
                 </ng-template>
-            </ng-container>
+            </ng-container> -->
             <button *ngIf="isEditting" (click)="onCancel()" class="btn btn-sm btn-danger ml-2">Hủy</button>
         </div>
     </div>

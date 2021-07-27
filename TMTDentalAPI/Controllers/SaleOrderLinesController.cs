@@ -284,5 +284,12 @@ namespace TMTDentalAPI.Controllers
             return Ok();
           
         }
+
+        [HttpPut("{id}/[action]")]
+        public async Task<IActionResult> UpdateState(Guid id, string state)
+        {
+            await _saleLineService.UpdateState(id,state);
+            return Ok();
+        }
     }
 }

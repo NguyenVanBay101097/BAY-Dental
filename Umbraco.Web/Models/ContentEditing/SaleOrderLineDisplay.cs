@@ -123,6 +123,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// tiền ưu đãi line
         /// </summary>
         public decimal AmountPromotionToOrderLine { get; set; }
+
+        public DateTime? Date { get; set; }
     }
     public class RegisterSaleOrderLinePayment
     {

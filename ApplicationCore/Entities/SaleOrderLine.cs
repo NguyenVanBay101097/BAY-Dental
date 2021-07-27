@@ -59,6 +59,9 @@ namespace ApplicationCore.Entities
         public decimal ProductUOMQty { get; set; }
 
         public string Name { get; set; }
+        /// <summary>
+        /// done, draft, sale, cancel
+        /// </summary>
 
         public string State { get; set; }
 
@@ -223,6 +226,14 @@ namespace ApplicationCore.Entities
         public bool IsActive { get; set; }
 
         public ICollection<CommissionSettlement> CommissionSettlements { get; set; } = new List<CommissionSettlement>();
+        /// <summary>
+        /// ngày của chi tiết điều tr
+        /// </summary>
+        public DateTime? Date { get; set; }
+        /// <summary>
+        /// ngày hoàn thành chi tiết
+        /// </summary>
+        public DateTime? DateDone { get; set; }
 
     }
 }
