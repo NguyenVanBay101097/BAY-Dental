@@ -13,6 +13,7 @@ export class LoaiThuChiFormComponent implements OnInit {
   type: string;
   itemId: string;
   accountForm: FormGroup;
+  submitted = false;
 
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, 
     private loaiThuChiService: LoaiThuChiService) { }
@@ -20,7 +21,7 @@ export class LoaiThuChiFormComponent implements OnInit {
   ngOnInit() { 
     this.accountForm = this.fb.group({
       name: [null, Validators.required],
-      code: null,
+      code: [null, Validators.required],
       note: null,
       type: null,
       isAccounting: null,
@@ -55,9 +56,12 @@ export class LoaiThuChiFormComponent implements OnInit {
     })
   }
 
+  get f() { return this.accountForm.controls; }
+
   save() {
+    this.submitted = true;
     if (!this.accountForm.valid) {
-      return false;
+      return;
     }
 
     var value = this.accountForm.value;
@@ -67,12 +71,14 @@ export class LoaiThuChiFormComponent implements OnInit {
         this.activeModal.close(result);
       }, err => {
         console.log(err);
+        this.submitted = false;
       })
     } else {
       this.loaiThuChiService.update(this.itemId, value).subscribe(result => {
         this.activeModal.close(result);
       }, err => {
         console.log(err);
+        this.submitted = false;
       })
     }
   }

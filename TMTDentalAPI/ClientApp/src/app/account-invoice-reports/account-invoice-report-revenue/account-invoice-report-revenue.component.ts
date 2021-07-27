@@ -14,6 +14,7 @@ import { ProductFilter, ProductService } from 'src/app/products/product.service'
 import { saveAs } from '@progress/kendo-file-saver';
 import { AccountInvoiceReportService, RevenueTimeReportPar } from '../account-invoice-report.service';
 import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
+import { PrintService } from 'src/app/print.service';
 
 @Component({
   selector: 'app-account-invoice-report-revenue',
@@ -36,8 +37,8 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
   constructor(
     private companyService: CompanyService,
     private accInvService: AccountInvoiceReportService,
-    private revenueManageService: RevenueManageService
-
+    private revenueManageService: RevenueManageService,
+    private printService: PrintService,
   ) { }
 
   ngOnInit() {
@@ -172,6 +173,17 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
       filter: this.filter,
       title:'Doanh thu theo thời gian'
     })
+  }
+
+  printReport(){
+    var val = Object.assign({}, this.filter) as RevenueTimeReportPar;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.accInvService.getPrintRevenueTimeReport(val).subscribe(result =>{
+      this.printService.print(result);
+    });
+    
   }
 
 }

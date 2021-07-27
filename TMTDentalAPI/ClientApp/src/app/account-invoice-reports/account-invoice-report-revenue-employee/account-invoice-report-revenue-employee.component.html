@@ -1,39 +1,42 @@
-<div class="flex-1-1-100 right border p-2 ml-2 d-flex flex-column">
-    <h5 class="flex-0-0-auto">Doanh thu theo nhân viên</h5>
-    <div class="filter d-flex flex-0-0-auto">
-        <app-date-range-picker-filter class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-        <select [(ngModel)]="empFilter" (change)="onChangeEmployeeFilter()" class="form-control w-auto mr-1" aria-label="Default select example">
-          <option value="employee">Bác sĩ</option>
-          <option value="assistant">Phụ tá</option>
-      </select>
-        <kendo-combobox class="mr-1 kendo-combobox-sm" [placeholder]="'Nhân viên'" [valueField]="'id'" [textField]="'name'" [filterable]="true" #emp [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
-        </kendo-combobox>
-        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
-        </kendo-combobox>
-        <button class="btn btn-primary btn-sm" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
-          file</button>
-    </div>
-    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true" (pageChange)="pageChange($event)">
-        <kendo-grid-column field="employeeName" title="Nhân viên">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.employeeName|| 'Không xác định'}}
-            </ng-template>
-            <ng-template kendoGridFooterTemplate let-column let-columnIndex="columnIndex">
-                <span class="font-weight-bold">Tổng</span>
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column class="text-right" field="priceSubTotal" title="Doanh thu">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.priceSubTotal |number}}
-            </ng-template>
-            <ng-template kendoGridFooterTemplate let-column let-columnIndex="columnIndex">
-                <div class="text-right">{{sumPriceSubTotal() | number}}</div>
-            </ng-template>
-        </kendo-grid-column>
-        <!-- excel -->
-        <kendo-grid-excel fileName="baocaodoanhthu.xlsx" [fetchData]="allData"></kendo-grid-excel>
-        <div *kendoGridDetailTemplate="let dataItem">
-            <app-account-invoice-report-revenue-detail [parent]="dataItem"></app-account-invoice-report-revenue-detail>
+<div class="card">
+    <div class="card-body">
+        <h5 class="flex-0-0-auto">Doanh thu theo nhân viên</h5>
+        <div class="filter d-flex flex-0-0-auto">
+            <app-date-range-picker-filter class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+            <select [(ngModel)]="empFilter" (change)="onChangeEmployeeFilter()" class="form-control w-auto mr-1" aria-label="Default select example">
+              <option value="employee">Bác sĩ</option>
+              <option value="assistant">Phụ tá</option>
+          </select>
+            <kendo-combobox class="mr-1" [placeholder]="'Nhân viên'" [valueField]="'id'" [textField]="'name'" [filterable]="true" #emp [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
+            </kendo-combobox>
+            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+            </kendo-combobox>
+            <button class="btn btn-primary mr-1" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
+              file</button>
+              <button class="btn btn-primary" (click)="printReport()">In báo cáo</button>
         </div>
-    </kendo-grid>
+        <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true" (pageChange)="pageChange($event)">
+            <kendo-grid-column field="employeeName" title="Nhân viên">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.employeeName|| 'Không xác định'}}
+                </ng-template>
+                <ng-template kendoGridFooterTemplate let-column let-columnIndex="columnIndex">
+                    <span class="font-weight-bold">Tổng</span>
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column class="text-right" field="priceSubTotal" title="Doanh thu">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.priceSubTotal |number}}
+                </ng-template>
+                <ng-template kendoGridFooterTemplate let-column let-columnIndex="columnIndex">
+                    <div class="text-right">{{sumPriceSubTotal() | number}}</div>
+                </ng-template>
+            </kendo-grid-column>
+            <!-- excel -->
+            <kendo-grid-excel fileName="baocaodoanhthu.xlsx" [fetchData]="allData"></kendo-grid-excel>
+            <div *kendoGridDetailTemplate="let dataItem">
+                <app-account-invoice-report-revenue-detail [parent]="dataItem"></app-account-invoice-report-revenue-detail>
+            </div>
+        </kendo-grid>
+    </div>
 </div>

@@ -10,7 +10,7 @@
             <div class="o_form_sheet">
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
-                        <tbody> 
+                        <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -18,9 +18,14 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="code"  placeholder="Nhập mã..." />
+                                    <input class="form-control" formControlName="code" placeholder="Nhập mã..." />
+                                    <div *ngIf="f.code.errors && (f.code.touched || f.code.dirty || submitted)"
+                                    class="text-danger">
+                                    <div *ngIf="f.code.errors.required">Nhập mã loại thu chi</div>
+                                </div>
                                 </td>
-                            </tr>                       
+                               
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label for="o_field_input_46" class="o_form_label">
@@ -28,16 +33,20 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="name"
-                                        placeholder="Nhập tên..." />
+                                    <input class="form-control" formControlName="name" placeholder="Nhập tên..." />
+                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.name.errors.required">Nhập tên loại thu chi</div>
+                                    </div>
                                 </td>
+
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                     </label>
                                 </td>
-                              
+
                             </tr>
                         </tbody>
                     </table>
@@ -56,24 +65,27 @@
                             <tr>
                                 <td colspan="1" class="o_td_label"></td>
                                 <td colspan="1" style="width: 100%;">
-                                    <div class="d-flex">                                
+                                    <div class="d-flex">
                                         <div class="form-check mr-2">
-                                            <input class="form-check-input" type="checkbox" formControlName="isAccounting" id="isAccounting">
+                                            <input class="form-check-input" type="checkbox"
+                                                formControlName="isAccounting" id="isAccounting">
                                             <label class="form-check-label" for="isAccounting">
                                                 Hạch toán kết quả kinh doanh
                                             </label>
                                         </div>
                                         <div class="icon-hover">
-                                            <i class="fas fa-info-circle text-primary" triggers="mouseenter:mouseleave" placement="top" [autoClose]="true"  [ngbPopover]="popContent"></i>
+                                            <i class="fas fa-info-circle text-primary" triggers="mouseenter:mouseleave"
+                                                placement="top" [autoClose]="true" [ngbPopover]="popContent"></i>
                                         </div>
                                         <ng-template #popContent>
-                                            Hạch toán vào chỉ tiêu {{type == 'thu' ? 'thu nhập' : 'chi phí'}} khác trong báo cáo kết quả kinh doanh
+                                            Hạch toán vào chỉ tiêu {{type == 'thu' ? 'thu nhập' : 'chi phí'}} khác trong
+                                            báo cáo kết quả kinh doanh
                                         </ng-template>
                                     </div>
-                                   
+
                                 </td>
                             </tr>
-                          
+
                         </tbody>
                     </table>
                 </div>
@@ -83,12 +95,10 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" 
-        (click)="save()"  accesskey="s">
+    <button type="button" class="btn btn-primary" (click)="save()" accesskey="s">
         Lưu
     </button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" 
-        (click)="cancel()" accesskey="q">
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()" accesskey="q">
         Đóng
     </button>
 </footer>

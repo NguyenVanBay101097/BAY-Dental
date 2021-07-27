@@ -338,13 +338,13 @@ namespace Infrastructure.Services
             var saleOrderDefaultGet = new SaleOrderDefaultGet();
             saleOrderDefaultGet.PartnerId = val.CustomerId;
 
-            var saleOrderDisplay = await saleOrderObj.DefaultGet(saleOrderDefaultGet);
+            //var saleOrderDisplay = await saleOrderObj.DefaultGet(saleOrderDefaultGet);
 
             var saleOrder = new SaleOrder();
             saleOrder.DateOrder = DateTime.Now;
-            saleOrder.PartnerId = saleOrderDisplay.PartnerId;
-            saleOrder.State = saleOrderDisplay.State;
-            saleOrder.CompanyId = saleOrderDisplay.CompanyId;
+            saleOrder.PartnerId = val.CustomerId;
+            saleOrder.State = "draft";
+            saleOrder.CompanyId = CompanyId;
 
             saleOrder = await saleOrderObj.CreateAsync(saleOrder);
 

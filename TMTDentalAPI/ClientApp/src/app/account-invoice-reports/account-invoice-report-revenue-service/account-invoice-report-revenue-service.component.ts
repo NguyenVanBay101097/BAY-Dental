@@ -14,6 +14,7 @@ import { ProductFilter, ProductService } from 'src/app/products/product.service'
 import { saveAs } from '@progress/kendo-file-saver';
 import { AccountInvoiceReportService, RevenueServiceReportPar } from '../account-invoice-report.service';
 import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
+import { PrintService } from 'src/app/print.service';
 
 @Component({
   selector: 'app-account-invoice-report-revenue-service',
@@ -40,6 +41,7 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
     private accInvService: AccountInvoiceReportService,
     private revenueManageService: RevenueManageService,
     private productService: ProductService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -209,6 +211,14 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
     this.filter.productId = e? e.id : null;
     this.skip = 0;
     this.loadAllData();
+  }
+
+  printReport(){
+    var val = Object.assign({}, this.filter) as RevenueServiceReportPar;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.accInvService.getPrintRevenueServiceReport(val).subscribe(result=>this.printService.print(result));
   }
 
 

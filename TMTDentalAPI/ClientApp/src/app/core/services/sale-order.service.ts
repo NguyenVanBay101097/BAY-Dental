@@ -265,4 +265,9 @@ export class SaleOrderService {
             params: val,
         });
     }
+
+    getPrintRevenueReport(val:any ) {
+        return this.http.post(this.baseApi + "SaleOrder/PrintRevenueReport",val,{ responseType: "text" });
+        
+    }
 }
