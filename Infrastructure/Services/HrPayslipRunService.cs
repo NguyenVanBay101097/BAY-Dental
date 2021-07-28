@@ -431,7 +431,7 @@ namespace Infrastructure.Services
 
             payslip.TotalSalary = payslip.TotalBasicSalary + payslip.OverTimeHourSalary + payslip.OverTimeDaySalary + payslip.Allowance
                + payslip.OtherAllowance.GetValueOrDefault() + payslip.RewardSalary.GetValueOrDefault() + payslip.HolidayAllowance.GetValueOrDefault()
-               + payslip.CommissionSalary - payslip.AmercementMoney.Value;
+               + payslip.CommissionSalary - payslip.AmercementMoney.Value - payslip.TaxNSocialInsurance;
             payslip.AdvancePayment = advances.Sum(x => x.Amount);
             payslip.NetSalary = payslip.TotalSalary - payslip.AdvancePayment;
 

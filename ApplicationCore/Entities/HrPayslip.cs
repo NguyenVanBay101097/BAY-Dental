@@ -132,6 +132,10 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? CommissionSalary { get; set; }
         /// <summary>
+        /// Thuế và BHXH
+        /// </summary>
+        public decimal? TaxNSocialInsurance { get; set; }
+        /// <summary>
         /// tạm ứng lương
         /// </summary>
         public decimal? AdvancePayment { get; set; }
