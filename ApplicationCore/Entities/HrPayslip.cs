@@ -13,6 +13,12 @@ namespace ApplicationCore.Entities
         {
             State = "draft";
             TotalAmount = 0;
+            OtherAllowance = 0;
+            RewardSalary = 0;
+            HolidayAllowance = 0;
+            CommissionSalary = 0;
+            AmercementMoney = 0;
+            TaxNSocialInsurance = 0;
         }
 
         /// <summary>

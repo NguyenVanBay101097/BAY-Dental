@@ -71,22 +71,22 @@
                                             </th>
                                             <th class="b-sticky-left2" style="min-width: 160px;">Nhân viên</th>
                                             <th [hidden]="isCompact" class="text-right" style="min-width: 120px;">Lương ngày</th>
-                                            <th [hidden]="isCompact" style="min-width: 90px;">Số ngày</th>
+                                            <th [hidden]="isCompact" class="text-right" style="min-width: 90px;">Số ngày</th>
                                             <th class="text-right" style="min-width: 120px;">Lương</th>
-                                            <th [hidden]="isCompact" style="min-width: 90px;">Tăng ca</th>
+                                            <th [hidden]="isCompact" class="text-right" style="min-width: 90px;">Tăng ca</th>
                                             <th class="text-right" style="min-width: 135px;">Lương tăng ca</th>
-                                            <th [hidden]="isCompact" style="min-width: 145px;">Ngày làm thêm</th>
+                                            <th [hidden]="isCompact" class="text-right" style="min-width: 145px;">Ngày làm thêm</th>
                                             <th class="text-right" style="min-width: 150px;">Lương làm thêm</th>
                                             <th class="text-right" style="min-width: 160px;">Phụ cấp xác định</th>
-                                            <th style="min-width: 150px;">Phụ cấp khác</th>
-                                            <th style="min-width: 160px;">Thưởng</th>
-                                            <th style="min-width: 160px;">Phụ cấp lễ tết</th>
-                                            <th class="text-right" style="min-width: 150px;">Hoa hồng</th>
-                                            <th style="min-width: 150px;">Phạt</th>
-                                            <th class="text-right" style="min-width: 150px;">Thuế & BHXH</th>
-                                            <th class="text-right" [hidden]="isCompact" style="min-width: 120px;">Tổng lương</th>
-                                            <th class="text-right" style="min-width: 100px;">Tạm ứng</th>
-                                            <th class="text-right" class="b-sticky-right2" style="min-width: 100px;">Thực lĩnh</th>
+                                            <th style="min-width: 160px;" class="text-right">Phụ cấp khác</th>
+                                            <th style="min-width: 160px;" class="text-right">Thưởng</th>
+                                            <th style="min-width: 160px;" class="text-right">Phụ cấp lễ tết</th>
+                                            <th class="text-right" style="min-width: 160px;">Hoa hồng</th>
+                                            <th style="min-width: 160px;" class="text-right">Phạt</th>
+                                            <th class="text-right" style="min-width: 160px;">Thuế & BHXH</th>
+                                            <th class="text-right" [hidden]="isCompact" style="min-width: 160px;">Tổng lương</th>
+                                            <th class="text-right" style="min-width: 160px;">Tạm ứng</th>
+                                            <th class="text-right" class="b-sticky-right2" style="min-width: 160px;">Thực lĩnh</th>
                                             <th class="b-sticky-right">Phiếu chi</th>
                                         </tr>
                                     </thead>
@@ -100,22 +100,22 @@
                                                 <td [hidden]="isCompact" class="text-right">{{item.get('daySalary').value | number }}</td>
                                                 <td [hidden]="isCompact" class="text-right">{{item.get('workedDay').value | number }}</td>
                                                 <td class="text-right">{{item.get('totalBasicSalary').value | number }}</td>
-                                                <td [hidden]="isCompact">{{item.get('overTimeHour').value | number }}
+                                                <td [hidden]="isCompact" class="text-right">{{item.get('overTimeHour').value | number }}
                                                 </td>
                                                 <td class="text-right">{{item.get('overTimeHourSalary').value| number }}</td>
-                                                <td [hidden]="isCompact">{{item.get('overTimeDay').value | number }}
+                                                <td [hidden]="isCompact" class="text-right">{{item.get('overTimeDay').value | number }}
                                                 </td>
                                                 <td class="text-right">{{item.get('overTimeDaySalary').value | number }}</td>
                                                 <td class="text-right">{{item.get('allowance').value | number }}</td>
-                                                <td>
+                                                <td class="text-right">
                                                     <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="otherAllowance" [format]="'n0'" [min]="0">
                                                     </kendo-numerictextbox>
                                                 </td>
-                                                <td>
+                                                <td class="text-right">
                                                     <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="rewardSalary" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>
                                                 </td>
-                                                <td>
+                                                <td class="text-right">
                                                     <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="holidayAllowance" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>
                                                 </td>
@@ -123,7 +123,7 @@
                                                     <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="commissionSalary" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>
                                                 </td>
-                                                <td>
+                                                <td class="text-right">
                                                     <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="amercementMoney" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>
                                                 </td>
