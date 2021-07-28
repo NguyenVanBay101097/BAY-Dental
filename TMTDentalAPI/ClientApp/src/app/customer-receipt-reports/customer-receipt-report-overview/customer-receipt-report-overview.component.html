@@ -9,9 +9,11 @@
         </kendo-combobox>
         <button class="btn btn-secondary btn-sm mr-1" (click)="toggleShow()"><i class="fas fa-filter"></i> Lọc nâng cao
         </button>
-        <button class="btn btn-primary btn-sm"><i class="fas fa-download"></i> Xuất file</button>
+        <button class="btn btn-primary btn-sm" (click)="onExcelExport()"><i class="fas fa-download"></i> Xuất
+            file</button>
         <input type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"
-            placeholder="Tìm kiếm theo số phiếu, khách hàng" class="ml-auto form-control w-50 form-control-sm">
+            placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
+            class="ml-auto form-control w-50 form-control-sm">
     </div>
     <div class="filter d-flex flex-0-0-auto mt-2" [ngClass]="{'toggled': isAdvanced == false}">
         <kendo-combobox class="mr-1 kendo-combobox-sm" [placeholder]="'Bác sĩ'" [valueField]="'id'" [textField]="'name'"
@@ -31,45 +33,46 @@
     <div class="total d-flex mt-2">
         <div class="border mr-2 px-3 py-2 text-center">
             <h5 class="mb-0">Tiếp nhận</h5>
-            <div class="text-primary">
-                <h4>{{total}}</h4>
+            <div class="text-primary px-3 py-2">
+                <span class="total-qty">{{total || 0 | number}}</span>
             </div>
         </div>
         <div class="border mr-2 px-3 py-2 text-center">
             <h5 class="mb-0">Loại khám</h5>
-            <div class="d-flex">
+            <div>
                 <div>
                     <ng-container *ngIf="pieDataExamination.length; else elseTemplate">
-                        <kendo-chart class="size-chart">                    
+                        <kendo-chart class="size-chart" [transitions]="true">
+                            <kendo-chart-legend [visible]="false"></kendo-chart-legend>
                             <kendo-chart-series>
-                                <kendo-chart-series-item type="pie" [data]="pieDataExamination" field="value"
-                                    [name]="'category'" categoryField="category">
+                                <kendo-chart-series-item type="pie" [data]="pieDataExamination"
+                                    field="countCustomerReceipt" [name]="'name'" categoryField="name">
                                 </kendo-chart-series-item>
                             </kendo-chart-series>
-                            <kendo-chart-legend [visible]="false"></kendo-chart-legend>
+                            <!-- <kendo-chart-legend [visible]="false" pói></kendo-chart-legend> -->
                         </kendo-chart>
                     </ng-container>
                     <ng-template #elseTemplate>
-                        <img src="./../../../assets/icons/NoData.svg" class="img-nodata"> 
+                        <img src="./../../../assets/icons/NoData.svg" class="img-nodata">
                     </ng-template>
-                </div>                     
+                </div>
             </div>
         </div>
         <div class="border mr-2 px-3 py-2 text-center">
             <h5 class="mb-0">Kết quả khám mới</h5>
             <div>
                 <ng-container *ngIf="pieDataNoTreatment.length; else elseTemplate">
-                    <kendo-chart>                       
+                    <kendo-chart class="size-chart">
                         <kendo-chart-series>
                             <kendo-chart-series-item type="pie" [data]="pieDataNoTreatment" field="value"
-                                categoryField="category" [labels]="{ visible: true}">
+                                categoryField="category">
                             </kendo-chart-series-item>
                         </kendo-chart-series>
                         <kendo-chart-legend [visible]="false"></kendo-chart-legend>
                     </kendo-chart>
                 </ng-container>
                 <ng-template #elseTemplate>
-                    <img src="./../../../assets/icons/NoData.svg" class="img-nodata" >                  
+                    <img src="./../../../assets/icons/NoData.svg" class="img-nodata">
                 </ng-template>
             </div>
         </div>
@@ -79,8 +82,8 @@
         <div class="o_dashboard_view">
 
             <div>
-                <kendo-grid #grid (excelExport)="onExcelExport($event)" [data]="gridData" [pageSize]="limit"
-                    [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+                <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true"
+                    [loading]="loading" (pageChange)="pageChange($event)">
                     <kendo-grid-column title="Ngày tiếp nhận" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             {{dataItem.dateWaiting | date:'shortDate'}}
@@ -88,7 +91,10 @@
                     </kendo-grid-column>
                     <kendo-grid-column title="Khách hàng" width="120">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.partner?.name}}
+                            <a class="text-primary" title="Xem hồ sơ khách hàng"
+                                [routerLink]="['/partners/customer/' + dataItem.partner.id]">
+                                {{dataItem.partner?.name}}
+                            </a>
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Dịch vụ" width="120">
@@ -126,27 +132,6 @@
                             {{getState(dataItem.state)}}
                         </ng-template>
                     </kendo-grid-column>
-                    <!-- excel -->
-                    <kendo-grid-excel fileName="BaoCaoCongNoKH.xlsx">
-                        <kendo-excelexport-column field="partnerName" title="Khách hàng" width="200">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="partnerRef" title="Mã KH" width="120">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="partnerPhone" title="Số điện thoại" width="120">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="begin" title="Nợ đầu kỳ" [cellOptions]="{format: '#,##0'}"
-                            width="150">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="debit" title="Phát sinh" [cellOptions]="{format: '#,##0'}"
-                            width="150">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="credit" title="Thanh toán" [cellOptions]="{format: '#,##0'}"
-                            width="150">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="end" title="Nợ cuối kỳ" [cellOptions]="{format: '#,##0'}"
-                            width="150">
-                        </kendo-excelexport-column>
-                    </kendo-grid-excel>
                 </kendo-grid>
             </div>
         </div>

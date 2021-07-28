@@ -18,11 +18,27 @@ export class CustomerReceiptReportFilter {
   state: string;
 }
 
+export class CustomerReceiptTimeDetailFilter {
+  limit: number;
+  offset: number;
+  dateFrom: string;
+  dateTo: string;
+  time: number;
+  companyId: string;
+}
+
 export class CustomerReceiptReportPaging {
   offset: number;
   limit: number;
   totalItems: number;
   items: CustomerReceiptReportBasic[];
+}
+
+export class CustomerReceiptTimePaging {
+  offset: number;
+  limit: number;
+  totalItems: number;
+  items: CustomerReceiptTime[];
 }
 
 export class CustomerReceiptReportBasic {
@@ -40,6 +56,12 @@ export class CustomerReceiptReportBasic {
   minuteTotal: number;
   state: string;
   reason: string;
+}
+
+export class CustomerReceiptTime {
+  timeRange: string;
+  time: number;
+  timeRangeCount: number;
 }
 
 export class CustomerReceiptGetCountExamination {
@@ -65,6 +87,14 @@ export class CustomerReceiptReportService {
     return this.http.get<PagedResult2<CustomerReceiptReportBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
 
+  getCustomerReceiptTimePaged(val: any): Observable<PagedResult2<CustomerReceiptTime>> {
+    return this.http.get<PagedResult2<CustomerReceiptTime>>(this.baseApi + this.apiUrl + '/GetCustomerReceiptForTime', { params: new HttpParams({ fromObject: val }) });
+  }
+
+  getCustomerReceiptForTimeDetailPaged(val: any): Observable<PagedResult2<CustomerReceiptReportBasic>> {
+    return this.http.get<PagedResult2<CustomerReceiptReportBasic>>(this.baseApi + this.apiUrl + '/GetCustomerReceiptForTimeDetail', { params: new HttpParams({ fromObject: val }) });
+  }
+
   getCountCustomerReceipt(val: any) {
     return this.http.post(this.baseApi + this.apiUrl + '/GetCountCustomerReceipt', val);
   }
@@ -75,6 +105,22 @@ export class CustomerReceiptReportService {
 
   getCount(val: any) {
     return this.http.post(this.baseApi + this.apiUrl + '/GetCount', val);
+  }
+
+  exportExcelReportOverview(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ExportExcelReportOverview', val, { responseType: "blob" });
+  }
+
+  exportExcelReportForTime(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ExportExcelReportForTime', val, { responseType: "blob" });
+  }
+
+  exportExcelReportTimeService(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ExportExcelReportTimeService', val, { responseType: "blob" });
+  }
+
+  exportExcelReportNoTreatment(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ExportExcelReportNoTreatment', val, { responseType: "blob" });
   }
 
 }

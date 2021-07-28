@@ -11,6 +11,11 @@ namespace Infrastructure.Services
     public interface ICustomerReceiptReportService 
     {
         Task<PagedResult2<CustomerReceiptReportBasic>> GetPagedResultAsync(CustomerReceiptReportFilter val);
+
+        Task<PagedResult2<CustomerReceiptReportTime>> GetCustomerReceiptForTime(CustomerReceiptReportFilter val);
+
+        Task<PagedResult2<CustomerReceiptReportBasic>> GetCustomerReceiptForTimeDetail(CustomerReceiptTimeDetailFilter val);
+
         Task<IEnumerable<CustomerReceiptGetCountItem>> GetCountCustomerReceipt(CustomerReceiptReportFilter val);
 
         Task<IEnumerable<CustomerReceiptGetCountItem>> GetCountCustomerReceiptNotreatment(CustomerReceiptReportFilter val);

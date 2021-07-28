@@ -154,8 +154,7 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
     val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
     this.customerReceiptReportService.getCountCustomerReceipt(val).subscribe(
       (res: any[]) => {
-        this.pieDataExamination = [];
-        this.loadExaminationItems(res);
+        this.pieDataExamination = res;
         this.loading = false;
       },
       (err) => {
@@ -201,6 +200,10 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
     for (let i = 0; i < items.length; i++) {
       this.pieDataNoTreatment.push({ category: items[i].name, value: items[i].countCustomerReceipt, percentage: (items[i].countCustomerReceipt / items[i].totalCustomerReceipt * 100).toFixed(2) })
     };
+  }
+
+  public labelContent(e: any): string {
+    return e.percentage;
   }
 
   pageChange(event: PageChangeEvent): void {
@@ -288,6 +291,35 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
 
   toggleShow() {
     this.isAdvanced = this.isAdvanced == false ? true : false;
+  }
+
+  onExcelExport() {
+    var val = new CustomerReceiptReportFilter();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.isRepeatCustomer = this.isExamination || '';
+    val.isNoTreatment = this.isNotTreatment || '';
+    val.companyId = this.companyId || '';
+    val.doctorId = this.employeeId || '';
+    val.state = this.state || '';
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+    this.customerReceiptReportService.exportExcelReportOverview(val).subscribe((res: any) => {
+      let filename = "BaoCaoTiepNhan";
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    })
   }
 
   getExamination(value) {

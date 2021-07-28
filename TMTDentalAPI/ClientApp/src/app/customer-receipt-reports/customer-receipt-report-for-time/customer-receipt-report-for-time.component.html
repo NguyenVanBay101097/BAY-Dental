@@ -1,1 +1,55 @@
-<p>customer-receipt-report-for-time works!</p>
+<div class="flex-1-1-100 right border p-2 ml-2 d-flex flex-column w-100">
+    <h5 class="flex-0-0-auto">Báo cáo theo giờ tiếp nhận</h5>
+    <div class="filter d-flex flex-0-0-auto mt-2">
+        <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
+            (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>     
+        <kendo-combobox width="auto" class="kendo-combobox-sm" [placeholder]="'Tất cả chi nhánh'"
+            class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true"
+            [data]="listCompany" (selectionChange)="onSelectCompany($event)" #companyCbx>
+        </kendo-combobox>
+        <button class="btn btn-primary btn-sm" (click)="onExcelExport()"><i class="fas fa-download"></i> Xuất Excel</button>     
+    </div>
+    <div class="o_content mt-2">
+        <div>
+            <kendo-chart class="mh-chart-year p-2">
+                <kendo-chart-title  color="blue" font="20px" text="Báo cáo theo giờ tiếp nhận">
+                </kendo-chart-title>
+                <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
+                <kendo-chart-series>
+                    <ng-container
+                        *ngIf="customerReceiptTimes.length > 0">
+                        <kendo-chart-series-item type="column" [data]="customerReceiptTimes"
+                            field="timeRangeCount" categoryField="timeRange" [style]="'smooth'">
+                            <kendo-chart-series-item-tooltip>
+                                <ng-template let-dataItem="dataItem">
+                                     <b>{{dataItem.timeRange}}</b>:
+                                    <b> Số lượng: {{dataItem.timeRangeCount || 0 | number }} </b>
+                                </ng-template>
+                            </kendo-chart-series-item-tooltip>
+                        </kendo-chart-series-item>
+                    </ng-container>
+                </kendo-chart-series>
+            </kendo-chart>
+        </div>
+        <div class="o_dashboard_view">
+            <div>
+                <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+                    <kendo-grid-column title="Giờ tiếp nhận" width="150">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.timeRange}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Số lượng" width="150">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.timeRangeCount | number}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <div *kendoGridDetailTemplate="let dataItem" width="50">
+                        <app-customer-receipt-report-for-time-detail [itemTime]="dataItem" [dateFrom]="dateFrom" [dateTo]="dateTo" [companyId]="companyId"></app-customer-receipt-report-for-time-detail>
+                    </div>
+                </kendo-grid>
+            </div>
+        </div>
+    </div>
+
+</div>

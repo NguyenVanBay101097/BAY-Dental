@@ -11,6 +11,7 @@ import { CustomerReceiptReportOverviewComponent } from './customer-receipt-repor
 import { CustomerReceiptReportForTimeComponent } from './customer-receipt-report-for-time/customer-receipt-report-for-time.component';
 import { CustomerReceiptReportNoTreatmentComponent } from './customer-receipt-report-no-treatment/customer-receipt-report-no-treatment.component';
 import { CustomerReceiptReportTimeserviceComponent } from './customer-receipt-report-timeservice/customer-receipt-report-timeservice.component';
+import { CustomerReceiptReportForTimeDetailComponent } from './customer-receipt-report-for-time-detail/customer-receipt-report-for-time-detail.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { CustomerReceiptReportTimeserviceComponent } from './customer-receipt-re
     CustomerReceiptReportOverviewComponent,
     CustomerReceiptReportForTimeComponent,
     CustomerReceiptReportNoTreatmentComponent,
-    CustomerReceiptReportTimeserviceComponent
+    CustomerReceiptReportTimeserviceComponent,
+    CustomerReceiptReportForTimeDetailComponent
   ],
   imports: [
     CommonModule,

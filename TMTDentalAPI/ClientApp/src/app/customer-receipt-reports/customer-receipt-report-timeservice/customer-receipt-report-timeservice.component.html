@@ -10,21 +10,21 @@
             class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true"
             [data]="listCompany" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
-        <button class="btn btn-primary btn-sm"><i class="fas fa-download"></i> Xuất Excel</button>
+        <button class="btn btn-primary btn-sm" (click)="onExcelExport()"><i class="fas fa-download"></i> Xuất Excel</button>
         <input type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"
             placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
             class="ml-auto form-control w-50 form-control-sm">
     </div>
-    <div class="filter d-flex flex-0-0-auto mt-2">
+    <div class="filter d-flex flex-0-0-auto mt-2 time-filter-wrapper">
         <button type="button" *ngFor="let time of filterTimes" class="btn active mr-1" (click)="setStateFilter(time)"
             [class.btn-primary]="timeStart == time.timeStart" [class.btn-light]="timeStart != time.timeStart">
-            {{time.text}} <span class="badge badge-light bg-white">{{timeCount[time.text] || 0}}</span>
+            {{time.text}} <span class="badge badge-light bg-white">{{timeCount[time.timeStart] || 0}}</span>
         </button>
     </div>
     <div class="o_content mt-2">
         <div class="o_dashboard_view">
             <div>
-                <kendo-grid #grid (excelExport)="onExcelExport($event)" [data]="gridData" [pageSize]="limit"
+                <kendo-grid #grid [data]="gridData" [pageSize]="limit"
                     [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
                     <kendo-grid-column title="Ngày tiếp nhận" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
@@ -56,40 +56,19 @@
                     </kendo-grid-column>
                     <kendo-grid-column title="Thời gian phục vụ" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.minuteTotal ? dataItem.minuteTotal + 'phút' : '' }}
+                            {{dataItem.minuteTotal ? getMinute(dataItem.minuteTotal) : '' }}
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Thời gian chờ khám" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.minuteWaiting ? dataItem.minuteWaiting + 'phút' : '' }}
+                            {{dataItem.minuteWaiting ? getMinute(dataItem.minuteWaiting) : '' }}
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Thời gian khám" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.minuteExamination ? dataItem.minuteWaiting + 'phút' : ''}}
+                            {{dataItem.minuteExamination ? getMinute(dataItem.minuteExamination) : ''}}
                         </ng-template>
                     </kendo-grid-column>
-                    <!-- excel -->
-                    <kendo-grid-excel fileName="BaoCaoCongNoKH.xlsx">
-                        <kendo-excelexport-column field="partnerName" title="Khách hàng" width="200">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="partnerRef" title="Mã KH" width="120">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="partnerPhone" title="Số điện thoại" width="120">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="begin" title="Nợ đầu kỳ" [cellOptions]="{format: '#,##0'}"
-                            width="150">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="debit" title="Phát sinh" [cellOptions]="{format: '#,##0'}"
-                            width="150">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="credit" title="Thanh toán" [cellOptions]="{format: '#,##0'}"
-                            width="150">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="end" title="Nợ cuối kỳ" [cellOptions]="{format: '#,##0'}"
-                            width="150">
-                        </kendo-excelexport-column>
-                    </kendo-grid-excel>
                 </kendo-grid>
             </div>
         </div>

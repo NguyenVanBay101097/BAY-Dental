@@ -185,12 +185,13 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
+
     debugger
     var receipt = this.formGroup.value;
     receipt.partnerId = receipt.partner ? receipt.partner.id : null;
     receipt.doctorId = receipt.doctor ? receipt.doctor.id : null;
     receipt.dateWaiting = this.intlService.formatDate(receipt.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : null;
+    receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : (this.customerReceipt.dateExamination ? this.customerReceipt.dateExamination : null);
     receipt.dateDone = this.stateControl == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : null;
     receipt.timeExpected = Number.parseInt(receipt.timeExpected);
     receipt.products = receipt.products == null ? [] : receipt.products;
@@ -403,18 +404,12 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
           //   this.f.dateObj.disable();
           // }
 
-          // if(this.id && this.customerReceipt.state == 'done') {
-          //   this.f.partner.disable();
-          //   this.f.doctor.disable();
-          //   this.f.dateObj.disable();
-          //   this.f.note.disable();
-          //   this.f.timeExpected.disable();
-          //   this.f.state.disable();
-          //   this.f.reason.disable();
-          //   this.f.products.disable();
-          //   this.f.isRepeatCustomer.disable();
-          //   this.f.isNoTreatment.disable();
-          // }
+          if(this.id && this.customerReceipt.state == 'done') {
+            this.formGroup.controls['note'].disable();
+            this.formGroup.controls['reason'].disable();
+            this.formGroup.controls['state'].disable();
+            this.formGroup.controls['timeExpected'].disable();
+          }
 
         },
         er => {

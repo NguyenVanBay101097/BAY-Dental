@@ -18,8 +18,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
 
-        public double? TimeFrom { get; set; }
-        public double? TimeTo { get; set; }
+        public int? TimeFrom { get; set; }
+        public int? TimeTo { get; set; }
 
         public string Search { get; set; }
         public Guid? CompanyId { get; set; }
@@ -40,6 +40,23 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
+    public class CustomerReceiptTimeDetailFilter
+    {
+        public CustomerReceiptTimeDetailFilter()
+        {
+            Limit = 10;
+        }
+
+        public int Offset { get; set; }
+
+        public int Limit { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+
+        public int Time { get; set; }
+        public Guid? CompanyId { get; set; }
+    }
 
     public class CustomerReceiptReportBasic
     {
@@ -110,6 +127,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? MinuteTotal { get; set; }
     }
 
+    public class CustomerReceiptReportTime
+    {
+        public string TimeRange { get; set; }
+        public int Time { get; set; }
+        public int TimeRangeCount { get; set; }
+    }
 
     public class CustomerReceiptGetCountItem
     {

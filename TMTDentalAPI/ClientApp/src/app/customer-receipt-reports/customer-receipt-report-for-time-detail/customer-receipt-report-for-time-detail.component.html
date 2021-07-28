@@ -1,0 +1,48 @@
+<kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    (pageChange)="pageChange($event)">
+    <kendo-grid-column title="Ngày tiếp nhận" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.dateWaiting | date:'shortDate'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Khách hàng" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.partner?.name}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Dịch vụ" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.products}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Bác sĩ" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.doctorName}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Giờ tiếp nhận" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.dateWaiting | date: 'HH:mm'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Thời gian phục vụ" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{getMinute(dataItem.minuteTotal)}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Loại khám" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{getExamination(dataItem.isRepeatCustomer)}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Kết quả khám mới" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.state != 'done' ? '' : getTreatment(dataItem.isNoTreatment)}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Trạng thái" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{getState(dataItem.state)}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

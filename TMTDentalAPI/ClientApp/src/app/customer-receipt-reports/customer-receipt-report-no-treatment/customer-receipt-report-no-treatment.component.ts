@@ -208,77 +208,32 @@ export class CustomerReceiptReportNoTreatmentComponent implements OnInit {
   }
 
 
-
-  exportExcel(grid: GridComponent) {
-    grid.saveAsExcel();
-  }
-
-  public onExcelExport(args: any) {
-    args.preventDefault();
-    var data = this.customerReceipts;
-    const workbook = args.workbook;
-    var sheet = args.workbook.sheets[0];
-    sheet.mergedCells = ["A1:G1", "A2:G2"];
-    sheet.frozenRows = 3;
-    sheet.name = 'BaoCaoTiepNhan_KhongDieuTri'
-
-    sheet.rows.splice(0, 0, {
-      cells: [{
-        value: "BÁO CÁO TIẾP NHẬN KHÔNG ĐIỀU TRỊ",
-        textAlign: "left",
-        fgColor: { argb: 'FFFFAA00' },
-      }], type: 'header'
-    });
-
-    sheet.rows.splice(1, 0, {
-      cells: [{
-        value: `Từ ngày ${this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'dd/MM/yyyy') : '...'} đến ngày ${this.dateTo ? this.intlService.formatDate(this.dateTo, 'dd/MM/yyyy') : '...'}`,
-        textAlign: "left"
-
-      }], type: 'header'
-    });
-
-    const rows = workbook.sheets[0].rows;
-
-    // Get the default header styles.
-    // Aternatively set custom styles for the details
-    // https://www.telerik.com/kendo-angular-ui/components/excelexport/api/WorkbookSheetRowCell/
-    const headerOptions = rows[2].cells[0];
-
-    // add the detail header
-    rows.splice(4, 0, {
-      cells: [
-        Object.assign({}, headerOptions, { value: 'Ngày tiếp nhận'}),
-        Object.assign({}, headerOptions, { value: 'Khách hàng' }),
-        Object.assign({}, headerOptions, { value: 'Dịch vụ' }),
-        Object.assign({}, headerOptions, { value: 'Bác sĩ' }),
-        Object.assign({}, headerOptions, { value: 'Giờ tiếp nhận' }),
-        Object.assign({}, headerOptions, { value: 'Thời gian phục vụ' }),
-        Object.assign({}, headerOptions, { value: 'Lý do không phục vụ' })
-      ]
-    });
-
-    for (let idx = data.length - 1; idx >= 0; idx--) {
-      var dataIndex = Object.assign({}, data[idx]);
-      rows.splice(idx + 4, 0, {
-        cells: [
-          { value: new Date(dataIndex.dateWaiting), format: "dd/MM/yyyy" },
-          { value: dataIndex.partner.name },
-          { value: dataIndex.products },
-          { value: dataIndex.doctorName },
-          { value: new Date(dataIndex.dateWaiting), format: "HH:mm" },
-          { value: dataIndex.minuteTotal },
-          { value: dataIndex.reason }
-        ]
+  onExcelExport() {
+    var val = new CustomerReceiptReportFilter();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.isNoTreatment = 'true';
+    val.companyId = this.companyId || '';
+    val.doctorId = this.employeeId || '';
+    val.state = 'done';
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+    this.customerReceiptReportService.exportExcelReportNoTreatment(val).subscribe((res: any) => {
+      let filename = "BaoCaoTiepNhan_KhongDieuTri";
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-    }
-
-    debugger;
-    new Workbook(workbook).toDataURL().then((dataUrl: string) => {
-      // https://www.telerik.com/kendo-angular-ui/components/filesaver/
-      saveAs(dataUrl, `BaoCaoTiepNhan_KhongDieuTri.xlsx`);
-    });
-
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    })
   }
 
 }

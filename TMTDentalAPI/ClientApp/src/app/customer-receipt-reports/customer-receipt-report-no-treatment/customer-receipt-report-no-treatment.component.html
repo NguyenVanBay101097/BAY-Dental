@@ -10,7 +10,7 @@
             class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true"
             [data]="listCompany" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
-        <button class="btn btn-primary btn-sm" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất Excel</button>
+        <button class="btn btn-primary btn-sm" (click)="onExcelExport()"><i class="fas fa-download"></i> Xuất Excel</button>
         <input type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"
             placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
             class="ml-auto form-control w-50 form-control-sm">
@@ -18,7 +18,7 @@
     <div class="o_content mt-2">
         <div class="o_dashboard_view">
             <div>
-                <kendo-grid #grid (excelExport)="onExcelExport($event)" [data]="gridData" [pageSize]="limit"
+                <kendo-grid #grid [data]="gridData" [pageSize]="limit"
                     [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
                     <kendo-grid-column title="Ngày tiếp nhận" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
@@ -58,44 +58,6 @@
                             {{dataItem.reason}}
                         </ng-template>
                     </kendo-grid-column>
-                    <!-- excel -->
-                    <kendo-grid-excel   fileName="BaoCaoCongNoKH.xlsx">
-                        <kendo-excelexport-column title="Ngày tiếp nhận" width="100">
-                            <ng-template let-dataItem>
-                                {{dataItem.dateWaiting | date:'shortDate'}}
-                            </ng-template>
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column title="Khách hàng" width="150">
-                            <ng-template let-dataItem>
-                                {{dataItem.partner?.name}}
-                            </ng-template>
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column title="Dịch vụ" width="150">
-                            <ng-template let-dataItem>
-                                {{dataItem.products}}
-                            </ng-template>
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column  title="Bác sĩ" width="120">
-                            <ng-template let-dataItem>
-                                {{dataItem.doctorName}}
-                            </ng-template>                         
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column title="Giờ tiếp nhận" width="100">
-                            <ng-template let-dataItem>
-                                {{dataItem.dateWaiting | date: 'HH:mm'}}
-                            </ng-template>  
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column title="Thời gian phục vụ" width="100">
-                            <ng-template let-dataItem>
-                                {{dataItem.minuteTotal ? getMinute(dataItem.minuteTotal) : '' }} 
-                            </ng-template>
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column title="Lý do không điều trị" width="150">
-                            <ng-template kendoGridCellTemplate let-dataItem>
-                                {{dataItem.reason}}
-                            </ng-template>
-                        </kendo-excelexport-column>
-                    </kendo-grid-excel>
                 </kendo-grid>
             </div>
         </div>

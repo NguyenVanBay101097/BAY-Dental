@@ -48,6 +48,81 @@ namespace Infrastructure.Services
             return paged;
         }
 
+        public async Task<PagedResult2<CustomerReceiptReportTime>> GetCustomerReceiptForTime(CustomerReceiptReportFilter val)
+        {
+            var query = GetQueryable(val);
+            query = query.OrderByDescending(x => x.DateWaiting);
+
+            var items = await query.Include(x => x.Company).Include(x => x.Doctor).Include(x => x.Partner).ToListAsync();
+            var res = new List<CustomerReceiptReportTime>();
+            var timeEnd = 21;
+            for (var i = 7; i <= timeEnd; i++)
+            {
+                var timeFrom = DateTime.Now.Date.Add(new TimeSpan(i, 00, 00));
+                var timeTo = DateTime.Now.Date.Add(new TimeSpan(i, 59, 59));
+                res.Add(new CustomerReceiptReportTime
+                {
+                    Time = i,
+                    TimeRange = $"{i}:00 - {i}:59",
+                    TimeRangeCount = items.Where(x => x.DateWaiting.HasValue && timeFrom.TimeOfDay <= x.DateWaiting.Value.TimeOfDay && x.DateWaiting.Value.TimeOfDay <= timeTo.TimeOfDay).Count()
+                });
+
+            }
+
+            var totalItems = res.Count();
+
+
+            var paged = new PagedResult2<CustomerReceiptReportTime>(totalItems, val.Offset, val.Limit)
+            {
+                Items = res
+            };
+
+            return paged;
+        }
+
+        public async Task<PagedResult2<CustomerReceiptReportBasic>> GetCustomerReceiptForTimeDetail(CustomerReceiptTimeDetailFilter val)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            var timeFrom = DateTime.Now.Date.Add(new TimeSpan(val.Time, 00, 00));
+            var timeTo = DateTime.Now.Date.Add(new TimeSpan(val.Time, 59, 59));
+
+            var query = _context.CustomerReceiptReports.Where(x => companyIds.Contains(x.CompanyId)).AsQueryable();
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateWaiting >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateFrom.HasValue)
+            {
+                var datetimeTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateWaiting <= datetimeTo);
+            }
+
+
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            }
+
+            query = query.Where(x => x.DateWaiting.HasValue && timeFrom.TimeOfDay <= x.DateWaiting.Value.TimeOfDay && x.DateWaiting.Value.TimeOfDay <= timeTo.TimeOfDay);
+
+            var totalItems = await query.CountAsync();
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            query = query.OrderByDescending(x => x.DateWaiting);
+
+            var items = await query.Include(x => x.Company).Include(x => x.Doctor).Include(x => x.Partner).ToListAsync();
+
+            var paged = new PagedResult2<CustomerReceiptReportBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = _mapper.Map<IEnumerable<CustomerReceiptReportBasic>>(items)
+            };
+
+            return paged;
+        }
+
         public async Task<IEnumerable<CustomerReceiptGetCountItem>> GetCountCustomerReceipt(CustomerReceiptReportFilter val)
         {
             var query = GetQueryable(val);
@@ -70,9 +145,9 @@ namespace Infrastructure.Services
         {
             var query = GetQueryable(val);
 
-          
 
-            var items = await query.Where(x=>x.IsNoTreatment && x.State == "done").ToListAsync();
+
+            var items = await query.Where(x => x.IsNoTreatment && x.State == "done").ToListAsync();
 
             var totalItems = items.Count();
 
@@ -88,7 +163,7 @@ namespace Infrastructure.Services
 
         public async Task<long> GetCountTime(CustomerReceiptReportFilter val)
         {
-            var query = GetQueryable(val);          
+            var query = GetQueryable(val);
             return await query.LongCountAsync();
         }
 
@@ -98,8 +173,7 @@ namespace Infrastructure.Services
             var userObj = GetService<IUserService>();
             var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
 
-            var query = _context.CustomerReceiptReports.Where(x => companyIds.Contains(x.CompanyId)
-            ).AsQueryable();
+            var query = _context.CustomerReceiptReports.Where(x => companyIds.Contains(x.CompanyId)).AsQueryable();
 
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.Ref.Contains(val.Search) || x.Partner.Phone.Contains(val.Search));

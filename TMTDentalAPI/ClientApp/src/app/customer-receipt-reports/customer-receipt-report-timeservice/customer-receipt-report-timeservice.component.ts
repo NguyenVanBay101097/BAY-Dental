@@ -107,8 +107,8 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
     val.doctorId = this.employeeId || '';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
-    // val.timeFrom = this.timeStart ;
-    // val.timeTo = this.timeEnd ;
+    val.timeFrom = this.timeStart || '' ;
+    val.timeTo = this.timeEnd || '' ;
     this.customerReceiptReportService.getPaged(val).pipe(
       map((response) => <GridDataResult>{
         data: response.items,
@@ -132,18 +132,18 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
     forkJoin(this.filterTimes.map(x => {
       var val = new CustomerReceiptReportFilter();
       val.search = this.search || '';
-      val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-      val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
+      val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
       val.companyId = this.companyId || '';
       val.doctorId = this.employeeId || '';
-      val.timeFrom = this.timeStart || '';
-      val.timeTo = this.timeEnd || '';
+      val.timeFrom = x.timeStart || '' ;
+      val.timeTo = x.timeEnd || '' ;
       return this.customerReceiptReportService.getCount(val).pipe(
-        switchMap(count => of({ state: x.text, count: count }))
+        switchMap(count => of({ time: x.timeStart, count: count }))
       );
     })).subscribe((result) => {
       result.forEach(item => {
-        this.timeCount[item.state] = item.count;
+        this.timeCount[item.time] = item.count;
       });
     });
   }
@@ -152,7 +152,6 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
     this.timeStart = time.timeStart;
     this.timeEnd = time.timeEnd;
     this.loadDataApi();
-    this.loadTimeCount();
   }
 
   pageChange(event: PageChangeEvent): void {
@@ -221,6 +220,10 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
     }
   }
 
+  getMinute(value) {
+    return `${value} phút`;
+  }
+
   getState(value) {
     switch (value) {
       case 'examination':
@@ -239,6 +242,34 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
       case 'false':
         return 'Có điều trị';
     }
+  }
+
+  onExcelExport() {
+    var val = new CustomerReceiptReportFilter();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.companyId = this.companyId || '';
+    val.doctorId = this.employeeId || '';
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+    val.timeFrom = this.timeStart || '' ;
+    val.timeTo = this.timeEnd || '' ;
+    this.customerReceiptReportService.exportExcelReportTimeService(val).subscribe((res: any) => {
+      let filename = "BaoCaoTiepNhan_PhucVu";
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    })
   }
 
 }

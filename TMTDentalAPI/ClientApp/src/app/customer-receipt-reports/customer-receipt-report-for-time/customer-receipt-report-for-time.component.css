@@ -1,0 +1,8 @@
+.mh-chart-year {
+    max-height: 300px !important;
+}
+
+.title-chart text{
+    color: rgb(53, 53, 235);
+    font-weight: 600;
+}
