@@ -261,7 +261,7 @@ export class CashBookCuDialogComponent implements OnInit {
   quickCreateLoaiThuChi() {
     const modalRef = this.modalService.open(LoaiThuChiFormComponent, {
       scrollable: true,
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",

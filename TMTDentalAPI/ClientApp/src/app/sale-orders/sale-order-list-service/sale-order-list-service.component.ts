@@ -155,7 +155,7 @@ export class SaleOrderListServiceComponent implements OnInit {
 
   createProductService() {
     let modalRef = this.modalService.open(ProductServiceCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
