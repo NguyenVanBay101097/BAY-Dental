@@ -169,11 +169,20 @@ export class SaleOrderReportRevenueComponent implements OnInit {
 
   public onExcelExport(args: any): void {
     // Prevent automatically saving the file. We will save it manually after we fetch and add the details
+    const workbook = args.workbook;
+    var sheet = workbook.sheets[0];
+    var rows = sheet.rows;
+    sheet.name = 'BaoCaoDoanhThu_TheoNV';
+    sheet.rows.splice(0, 0, { cells: [{
+      value:"BÁO CÁO DỰ KIẾN THU",
+      textAlign: "center"
+    }], type: 'header' });
+    sheet.mergedCells = ["A1:E1"];
+    sheet.frozenRows = 3;
+    
     args.preventDefault();
     this.loading = true;
-    const workbook = args.workbook;
-
-    const rows = workbook.sheets[0].rows;
+    
 
     rows.forEach((row, index) => {
       //làm màu
@@ -182,7 +191,23 @@ export class SaleOrderReportRevenueComponent implements OnInit {
         row.cells[3].textAlign = 'right';
         row.cells[4].textAlign = 'right';
       }
+      else {
+        if (index != 0){
+          row.cells.forEach((cell,index) => {
+            cell.background = "#aabbcc";
+            cell.color = "#000000";
+          });
+        }
+        if (index == 1){
+          row.cells[2].textAlign = 'right';
+          row.cells[3].textAlign = 'right';
+          row.cells[4].textAlign = 'right';
+        }
+       
+      }
     });
+    console.log(rows);
+    
 
     new Workbook(workbook).toDataURL().then((dataUrl: string) => {
       // https://www.telerik.com/kendo-angular-ui/components/filesaver/

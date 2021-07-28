@@ -15,7 +15,7 @@ import { saveAs } from '@progress/kendo-file-saver';
 import { AccountInvoiceReportService, RevenueTimeReportPar } from '../account-invoice-report.service';
 import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
 import { PrintService } from 'src/app/shared/services/print.service';
-
+import { IntlService } from '@progress/kendo-angular-intl';
 @Component({
   selector: 'app-account-invoice-report-revenue',
   templateUrl: './account-invoice-report-revenue.component.html',
@@ -39,6 +39,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     private accInvService: AccountInvoiceReportService,
     private revenueManageService: RevenueManageService,
     private printService: PrintService,
+    private intlService: IntlService,
   ) { }
 
   ngOnInit() {
@@ -104,7 +105,6 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
       total: this.allDataInvoice.length,
       data: this.allDataInvoice.slice(this.skip, this.skip + this.limit)
     };
-    console.log(this.gridData);
     
   }
 
@@ -167,17 +167,23 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
   }
 
   public onExcelExport(args: any): void {
-    const rows = args.workbook.sheets[0].rows;
-    rows.splice(0,1,{cells:[{value:"BÁO CÁO DOANH THU THEO THỜI GIAN"}]});
-    rows.splice(9,0,{cells:[{value:"BÁO CÁO DOANH THU THEO THỜI GIAN"}]});
-    console.log(rows);
+    const observables = [];
+    const workbook = args.workbook;
+    var sheet = args.workbook.sheets[0];
+    var rows = sheet.rows;
+    sheet.mergedCells = ["A1:H1", "A2:H2"];
+    sheet.frozenRows = 3;
+    sheet.name = 'BaoCaoDoanhThu_TheoTG';
+    sheet.rows.splice(0, 1, { cells: [{
+      value:"BÁO CÁO DOANH THU THEO THỜI GIAN",
+      textAlign: "center"
+    }], type: 'header' });
+
+    sheet.rows.splice(1, 0, { cells: [{
+      value: `Từ ngày ${this.filter.dateFrom ? this.intlService.formatDate(this.filter.dateFrom, 'dd/MM/yyyy') : '...'} đến ngày ${this.filter.dateTo ? this.intlService.formatDate(this.filter.dateTo, 'dd/MM/yyyy') : '...'}`,
+      textAlign: "center"
+    }], type: 'header' });
     
-    rows.forEach(row => {
-      if (row.type === "data"){
-        row.cells[0].value = "Ngày "+row.cells[0].value;
-        row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
-      }
-    });
     args.preventDefault();
     const data = this.allDataInvoice;
     this.revenueManageService.emitChange({
@@ -186,6 +192,14 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
       filter: this.filter,
       title:'Doanh thu theo thời gian'
     })
+
+    rows.forEach(row => {
+      if (row.type === "data"){
+        row.cells[0].value = "Ngày "+row.cells[0].value;
+        row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
+      }
+    });
+    
   }
 
   printReport(){

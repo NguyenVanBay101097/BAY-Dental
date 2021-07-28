@@ -144,6 +144,7 @@ namespace Infrastructure.Services
               .Include(x => x.Quotation).ThenInclude(x => x.Lines)
               .Include(x => x.Quotation).ThenInclude(x => x.Partner)
               .Include(x => x.PromotionLines)
+              .Include(x => x.Advisory)
               .FirstOrDefaultAsync();
 
             var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId)
@@ -179,6 +180,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Quotation).ThenInclude(x => x.Promotions)
                 .Include(x => x.Quotation).ThenInclude(x => x.Lines)
                 .Include(x => x.Quotation).ThenInclude(x => x.Partner)
+                .Include(x => x.Advisory)
                 .FirstOrDefaultAsync();
 
             //Chương trình khuyến mãi sử dụng mã

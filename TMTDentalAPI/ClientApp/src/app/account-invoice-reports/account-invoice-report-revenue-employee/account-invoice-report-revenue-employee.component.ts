@@ -15,6 +15,7 @@ import { saveAs } from '@progress/kendo-file-saver';
 import { AccountInvoiceReportService, RevenueEmployeeReportDisplay, RevenueEmployeeReportPar } from '../account-invoice-report.service';
 import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 
 @Component({
@@ -43,7 +44,8 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     private accInvService: AccountInvoiceReportService,
     private revenueManageService: RevenueManageService,
     private employeeService: EmployeeService,
-    private printService: PrintService
+    private printService: PrintService,
+    private intlService: IntlService
 
   ) { }
 
@@ -202,6 +204,22 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
   }
 
   public onExcelExport(args: any): void {
+    const observables = [];
+    const workbook = args.workbook;
+    var sheet = args.workbook.sheets[0];
+    var rows = sheet.rows;
+    sheet.mergedCells = ["A1:H1", "A2:H2"];
+    sheet.frozenRows = 3;
+    sheet.name = 'BaoCaoDoanhThu_TheoNV';
+    sheet.rows.splice(0, 1, { cells: [{
+      value:"BÁO CÁO DOANH THU THEO NHÂN VIÊN",
+      textAlign: "center"
+    }], type: 'header' });
+
+    sheet.rows.splice(1, 0, { cells: [{
+      value: `Từ ngày ${this.filter.dateFrom ? this.intlService.formatDate(this.filter.dateFrom, 'dd/MM/yyyy') : '...'} đến ngày ${this.filter.dateTo ? this.intlService.formatDate(this.filter.dateTo, 'dd/MM/yyyy') : '...'}`,
+      textAlign: "center"
+    }], type: 'header' });
     args.preventDefault();
     const data = this.allDataInvoiceExport.data;
     this.revenueManageService.emitChange({
@@ -211,6 +229,12 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
        employeeFilter: this.empFilter,
        title: 'Doanh thu theo nhân viên'
     })
+    rows.forEach(row => {
+      if (row.type === "data"){
+        row.cells[0].value = "Nhân viên: "+row.cells[0].value;
+        row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
+      }
+    });
   }
 
   

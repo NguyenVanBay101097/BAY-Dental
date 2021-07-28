@@ -3065,7 +3065,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SaleOrderRevenueReport>> GetRevenueReport(SaleOrderRevenueReportPaged val)
         {
-            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft");
+            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft" && x.Residual > 0);
             if (val.CompanyId.HasValue)
             {
                 query = query.Where(x => x.CompanyId == val.CompanyId);
@@ -3075,13 +3075,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search) || x.Partner.Name.Contains(val.Search)
                                          || x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
             }
-
             var count = await query.CountAsync();
-
             if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
 
-            var res = await _mapper.ProjectTo<SaleOrderRevenueReport>(query.Where(x=> x.Residual > 0).OrderByDescending(x => x.DateCreated)).ToListAsync();
-
+            var res = await _mapper.ProjectTo<SaleOrderRevenueReport>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
+            
             return new PagedResult2<SaleOrderRevenueReport>(count, val.Offset, val.Limit) { Items = res };
         }
 
