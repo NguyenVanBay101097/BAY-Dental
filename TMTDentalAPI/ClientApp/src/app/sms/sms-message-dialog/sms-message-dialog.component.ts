@@ -70,7 +70,7 @@ export class SmsMessageDialogComponent implements OnInit {
       name: ['', Validators.required],
       smsCampaign: [null, Validators.required],
       smsAccount: [null, Validators.required],
-      template: null,
+      template: [null, Validators.required],
       typeSend: "manual", // manual: gửi ngay, automatic: đặt lịch
       scheduleDateObj: new Date(),
       templateName: '',

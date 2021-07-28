@@ -29,6 +29,8 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
   dateTo: Date;
   monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+  public today: Date = new Date();
+  public prev7days: Date = new Date(new Date(new Date().setDate(new Date().getDate() - 7)).toDateString());
   search: string = '';
   selectedIds: string[] = [];
   searchPartnerUpdate = new Subject<string>();
@@ -51,8 +53,8 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd;
+    this.dateFrom = this.prev7days;
+    this.dateTo = this.today;
 
     this.loadProducts();
     this.loadDataFromApi();

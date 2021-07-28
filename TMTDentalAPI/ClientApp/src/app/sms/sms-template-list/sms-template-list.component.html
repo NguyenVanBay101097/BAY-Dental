@@ -30,14 +30,14 @@
                 {{rowIndex + 1}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="name" title="Tiêu đề tin nhắn mẫu" width="180"></kendo-grid-column>
-        <kendo-grid-column field="body" title="Nội dung" width="200"></kendo-grid-column>
-        <kendo-grid-column title="Loại tin nhắn mẫu" width="180">
+        <kendo-grid-column field="name" title="Tiêu đề tin nhắn mẫu" width="250"></kendo-grid-column>
+        <kendo-grid-column field="body" title="Nội dung"></kendo-grid-column>
+        <kendo-grid-column title="Loại tin nhắn mẫu" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{getTemplateType(dataItem.type)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Ngày tạo" width="120">
+        <kendo-grid-column title="Ngày tạo" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.dateCreated | date:'shortDate'}}
             </ng-template>
