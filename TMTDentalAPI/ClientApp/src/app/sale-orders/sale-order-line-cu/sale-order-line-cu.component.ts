@@ -79,6 +79,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.line);
     this.formGroupInfo = this.fb.group({});
     // this.formGroupInfo.setControl('teeth', this.fb.array(this.line.teeth));
     // this.formGroupInfo.setControl('promotions', this.fb.array(this.line.promotions));
@@ -450,6 +451,7 @@ export class SaleOrderLineCuComponent implements OnInit {
       toothCategory: val.toothCategory,
       toothType: val.toothType
     }
+    console.log(this.toothData);
     let modalRef = this.modalService.open(ToothSelectionDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.toothDataInfo = this.toothData;
     modalRef.componentInstance.filteredToothCategories = this.initialFilteredToothCategories;
