@@ -23,9 +23,8 @@
 
                 <div class="o_form_sheet_bg">
                     <div class="o_form_sheet">
-                        <div class="float-right">
-                            <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="avatar" [width]="200" [height]="200"></app-image-file-upload>
-                        </div>
+                        <app-image-file-upload class="o_field_image o_field_widget oe_avatar" (uploaded)="onAvatarUploaded($event)" [imageId]="avatar"
+                        [width]="200" [height]="200"></app-image-file-upload>
                         <div class="oe_title">
                             <label class="o_form_label oe_edit_only">Tên nhân viên</label>
                             <h1>

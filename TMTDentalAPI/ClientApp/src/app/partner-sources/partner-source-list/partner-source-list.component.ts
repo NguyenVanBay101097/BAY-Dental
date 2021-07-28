@@ -68,7 +68,7 @@ export class PartnerSourceListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
+    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: 'xl', windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Thêm nguồn khách hàng";
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -77,7 +77,7 @@ export class PartnerSourceListComponent implements OnInit {
   }
 
   editItem(item: PartnerSourceBasic) {
-    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
+    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: 'xl', windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Sửa nguồn khách hàng";
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {

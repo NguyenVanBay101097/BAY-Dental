@@ -73,7 +73,7 @@ export class SamplePrescriptionListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(SamplePrescriptionCreateUpdateDialogComponent, { size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
+    let modalRef = this.modalService.open(SamplePrescriptionCreateUpdateDialogComponent, { size: 'xl', windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
     modalRef.componentInstance.title = "Thêm: " + this.title;
     modalRef.result.then(
       () => {
@@ -84,7 +84,7 @@ export class SamplePrescriptionListComponent implements OnInit {
   }
 
   editItem(item: SamplePrescriptionsDisplay) {
-    let modalRef = this.modalService.open(SamplePrescriptionCreateUpdateDialogComponent, { size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
+    let modalRef = this.modalService.open(SamplePrescriptionCreateUpdateDialogComponent, { size: 'xl', windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
     modalRef.componentInstance.title = "Sửa: " + this.title;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(

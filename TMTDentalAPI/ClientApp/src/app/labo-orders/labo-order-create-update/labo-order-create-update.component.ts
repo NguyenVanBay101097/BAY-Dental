@@ -271,7 +271,7 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
 
   updateSupplierModal() {
     let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -287,7 +287,7 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
 
   quickCreateSupplier() {
     let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -398,7 +398,7 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
 
   showAddLineModal() {
     // let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, {
-    //   size: "lg",
+    //   size: 'xl',
     //   windowClass: "o_technical_modal",
     //   keyboard: false,
     //   backdrop: "static",
@@ -418,7 +418,7 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
 
   editLine(line: FormGroup) {
     // let modalRef = this.modalService.open(LaboOrderCuLineDialogComponent, {
-    //   size: "lg",
+    //   size: 'xl',
     //   windowClass: "o_technical_modal",
     //   keyboard: false,
     //   backdrop: "static",

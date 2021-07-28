@@ -500,7 +500,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   quickCreatePartnerCategory() {
     let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",

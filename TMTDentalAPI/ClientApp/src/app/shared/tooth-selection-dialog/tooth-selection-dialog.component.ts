@@ -119,7 +119,6 @@ export class ToothSelectionDialogComponent implements OnInit {
   }
 
   onCancel() {
-    this.toothDataInfo.teeth = this.toothSource;
-    this.activeModal.close(this.toothDataInfo);
+    this.activeModal.dismiss();
   }
 }

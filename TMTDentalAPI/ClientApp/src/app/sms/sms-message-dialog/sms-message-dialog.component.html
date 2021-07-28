@@ -146,6 +146,10 @@
                                             [valueField]="'id'" formControlName="template" [filterable]="true"
                                             #smsTemplateCbx (valueChange)="onChangeTemplate($event)">
                                         </kendo-combobox>
+                                        <div *ngIf="f.template.errors && (f.template.touched || f.template.dirty || submitted)"
+                                            class="text-danger">
+                                            <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -153,16 +157,16 @@
                                         <textarea type="text" my-autosize
                                             class="form-control textarea textarea-required"
                                             [class.border-danger]="submitted && f.body.value==''" id="textarea_mass"
-                                            formControlName="body" rows="5" #textarea></textarea>
-                                        <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
+                                            formControlName="body" rows="5" #textarea [attr.disabled]="true"></textarea>
+                                        <!-- <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
                                             class="text-danger">
                                             <div *ngIf="f.body.errors.required">Nhập nội dung tin nhắn</div>
                                             <div *ngIf="f.body.errors.maxlength">Số kí tự đã vượt quá cho phép !
                                             </div>
-                                        </div>
-                                        <app-sms-note-content></app-sms-note-content>
+                                        </div> -->
+                                        <!-- <app-sms-note-content></app-sms-note-content>
                                         <app-sms-personalized-tabs [type]="templateTypeTab"
-                                            (contentEmit)="addToContent($event)"></app-sms-personalized-tabs>
+                                            (contentEmit)="addToContent($event)"></app-sms-personalized-tabs> -->
 
                                     </td>
                                 </tr>

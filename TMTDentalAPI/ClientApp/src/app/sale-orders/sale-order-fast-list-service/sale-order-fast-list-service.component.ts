@@ -121,7 +121,7 @@ export class SaleOrderFastListServiceComponent implements OnInit {
   }
 
   createProductService() {
-    let modalRef = this.modalService.open(ProductServiceCuDialogComponent, {  size: "lg", windowClass: "o_technical_modal",keyboard: false, backdrop: "static",});
+    let modalRef = this.modalService.open(ProductServiceCuDialogComponent, {  size: 'xl', windowClass: "o_technical_modal",keyboard: false, backdrop: "static",});
     modalRef.componentInstance.title = "Thêm: Dịch vụ";
     modalRef.result.then(
       () => {

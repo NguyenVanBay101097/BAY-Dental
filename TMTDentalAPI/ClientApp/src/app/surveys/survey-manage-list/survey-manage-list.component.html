@@ -83,7 +83,7 @@
         </kendo-grid-column>
         <kendo-grid-column title="Điểm khảo sát" class="text-right" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem?.userInputScore}}/{{dataItem?.userInputMaxScore}}
+                <span *ngIf="dataItem.userInputScore && dataItem.userInputMaxScore">{{dataItem.userInputScore}}/{{dataItem.userInputMaxScore}}</span> 
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái" width="80">

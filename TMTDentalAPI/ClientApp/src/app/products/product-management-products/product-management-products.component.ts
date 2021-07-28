@@ -125,7 +125,7 @@ export class ProductManagementProductsComponent implements OnInit {
 
   createProduct() {
     let modalRef = this.modalService.open(ProductProductCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -141,7 +141,7 @@ export class ProductManagementProductsComponent implements OnInit {
 
   editProduct(item: Product) {
     let modalRef = this.modalService.open(ProductProductCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -182,7 +182,7 @@ export class ProductManagementProductsComponent implements OnInit {
 
   importFromExcel() {
     let modalRef = this.modalService.open(ProductImportExcelDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -225,7 +225,7 @@ export class ProductManagementProductsComponent implements OnInit {
 
   updateServiceFromExcel(){
     let modalRef = this.modalService.open(ProductImportExcelDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",

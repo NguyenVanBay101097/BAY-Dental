@@ -70,7 +70,7 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
   }
 
   openEmployees(){
-    let modalRef = this.modalService.open(SelectEmployeeDialogComponent, { size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
+    let modalRef = this.modalService.open(SelectEmployeeDialogComponent, { size: 'xl', windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
     modalRef.componentInstance.title = "Chọn nhân viên";
     modalRef.result.then(
       rs => {             
