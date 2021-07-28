@@ -60,10 +60,10 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: null,
+      template: [null, Validators.required],
       smsAccount: [null, Validators.required],
       active: false,
-      TypeTimeBeforSend: 'hour',
+      TypeTimeBeforSend: 'day',
       timeBeforSend: [1, Validators.required],
       templateName: '',
       body: ['', Validators.required]
@@ -146,7 +146,10 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     this.searchAccount().subscribe(
       (result: any) => {
         if (result && result.items) {
-          this.filteredSmsAccount = result.items
+          this.filteredSmsAccount = result.items;
+          if (result.items[0]) {
+            this.formGroup.get('smsAccount').patchValue(result.items[0]);
+          }
         }
       }
     )
@@ -162,8 +165,12 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
 
   loadSmsTemplate() {
     this.searchSmsTemplate().subscribe(
-      (res: any) => {
-        this.filteredTemplate = res;
+      (result: any) => {
+        this.filteredTemplate = result;
+        if (result) {
+          this.formGroup.get('template').patchValue(result[0]);
+          this.onChangeTemplate(result[0])
+        }
       }
     )
   }

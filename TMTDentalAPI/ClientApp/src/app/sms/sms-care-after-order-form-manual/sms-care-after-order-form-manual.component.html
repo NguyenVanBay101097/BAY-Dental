@@ -40,17 +40,17 @@
                 [selectable]="true" [kendoGridSelectBy]="'saleOrderLineId'" [selectedKeys]="selectedIds"
                 (pageChange)="pageChange($event)">
                 <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
-                <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
+                <kendo-grid-column field="partnerName" title="Khách hàng" width="200">
                 </kendo-grid-column>
                 <kendo-grid-column field="partnerPhone" title="Số điện thoại" width="120">
                 </kendo-grid-column>
-                <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="100">
+                <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="120">
                 </kendo-grid-column>
-                <kendo-grid-column field="doctorName" title="Bác sĩ" width="150">
+                <kendo-grid-column field="doctorName" title="Bác sĩ" width="180">
                 </kendo-grid-column>
-                <kendo-grid-column field="productName" title="Dịch vụ" width="150">
+                <kendo-grid-column field="productName" title="Dịch vụ" width="300">
                 </kendo-grid-column>
-                <kendo-grid-column title="Ngày hoàn thành" width="120">
+                <kendo-grid-column title="Ngày hoàn thành điều trị" width="220">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.dateDone | date : 'short'}}
                     </ng-template>

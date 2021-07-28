@@ -58,7 +58,7 @@ export class SmsManualDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: null,
+      template: [null, Validators.required],
       smsAccount: [null, Validators.required],
       name: ['', Validators.required],
       templateName: '',
@@ -117,8 +117,12 @@ export class SmsManualDialogComponent implements OnInit {
 
   loadSmsTemplate() {
     this.searchSmsTemplate().subscribe(
-      (res: any) => {
-        this.filteredTemplate = res;
+      (result: any) => {
+        this.filteredTemplate = result;
+        if (result) {
+          this.formGroup.get('template').patchValue(result[0]);
+          this.onChangeTemplate(result[0])
+        }
       }
     )
   }
