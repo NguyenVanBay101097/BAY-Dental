@@ -1272,7 +1272,7 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderPartner).ToListAsync();
 
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
-            display.AmountDiscountTotal = Math.Round(lines.Sum(z => (decimal)z.AmountDiscountTotal * z.ProductUOMQty));
+            display.AmountDiscountTotal = Math.Round(lines.Sum(z => (decimal)(z.AmountDiscountTotal??0) * z.ProductUOMQty));
 
             var promotionObj = GetService<ISaleOrderPromotionService>();
             display.Promotions = await promotionObj.SearchQuery(x => x.SaleOrderId.HasValue && x.SaleOrderId == display.Id && !x.SaleOrderLineId.HasValue).Select(x => new SaleOrderPromotionBasic
@@ -3076,9 +3076,10 @@ namespace Infrastructure.Services
                                          || x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
             }
             var count = await query.CountAsync();
+            query = query.OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
 
-            var res = await _mapper.ProjectTo<SaleOrderRevenueReport>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
+            var res = await _mapper.ProjectTo<SaleOrderRevenueReport>(query).ToListAsync();
             
             return new PagedResult2<SaleOrderRevenueReport>(count, val.Offset, val.Limit) { Items = res };
         }

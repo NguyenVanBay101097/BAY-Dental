@@ -5,11 +5,3 @@
 .k-grid-footer-wrap table tfoot tr td {
     border: none;
 }
-
-.date-picker{
-    white-space: nowrap;
-}
-
-.btn-sm {
-    white-space: nowrap !important;
-}
