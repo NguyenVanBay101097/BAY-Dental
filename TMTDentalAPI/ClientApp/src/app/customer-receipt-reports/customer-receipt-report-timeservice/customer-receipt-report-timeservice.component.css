@@ -1,5 +1,37 @@
+
+.time-filter-wrapper button {
+  padding: 5px 5px;
+  margin-right: 5px;
+  border-radius: 5px;
+  border: none;
+  background: #fff !important;
+  color: #1a6de3 !important;
+  border: 1px solid #1a6de3;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+
+.time-filter-wrapper button span {
+  color: #fff ;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 14px;
+  background-color: #007bff !important;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
 .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
   color: #fff !important;
   background-color: #007bff !important;
   border-color: #007bff !important;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active span, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+  color: #007bff !important;
+  background-color: #fff !important;
 }

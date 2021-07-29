@@ -34,8 +34,10 @@
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Dịch vụ" width="120">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.products}}
+                        <ng-template kendoGridCellTemplate let-dataItem>                      
+                            <span isEllipsisActive class="d-inline-block text-truncate">
+                                {{dataItem.products}}
+                            </span>                         
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Bác sĩ" width="100">

@@ -134,6 +134,7 @@ namespace Infrastructure.Services
             var res = items.GroupBy(x => x.IsRepeatCustomer).Select(x => new CustomerReceiptGetCountItem
             {
                 Name = x.Key == true ? "Tái khám" : "Khám mới",
+                Color = x.Key == true ? "#1A6DE3" : "#95C8FF",
                 TotalCustomerReceipt = totalItems,
                 CountCustomerReceipt = x.Count()
             }).ToList();
@@ -154,6 +155,7 @@ namespace Infrastructure.Services
             var res = items.GroupBy(x => x.IsNoTreatment).Select(x => new CustomerReceiptGetCountItem
             {
                 Name = x.Key == true ? "Có điều trị" : "Không điều trị",
+                Color = x.Key == true ? "#1A6DE3" : "#95C8FF",
                 TotalCustomerReceipt = totalItems,
                 CountCustomerReceipt = x.Count()
             }).ToList();

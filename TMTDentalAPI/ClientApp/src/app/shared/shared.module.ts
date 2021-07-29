@@ -99,6 +99,7 @@ import { DashboardRevenueTodayReportComponent } from './components/dashboard-rev
 import { DashboardCustomerReceiptListTodayComponent } from './components/dashboard-customer-receipt-list-today/dashboard-customer-receipt-list-today.component';
 import { CustomerReceipCreateUpdateComponent } from './customer-receip-create-update/customer-receip-create-update.component';
 import { CustomerReceiptStatePopoverComponent } from './customer-receipt-state-popover/customer-receipt-state-popover.component';
+import { IsEllipsisActiveDirective } from './is-ellipsis-active.directive';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -132,6 +133,7 @@ const config: LocaleConfig = {};
         ConfirmDialogV2Component,
         AnchorHostDirective,
         MyAutosizeDirective,
+        IsEllipsisActiveDirective,
         CharCountDirective,
         SelectUomProductDialogComponent,
         ImageFileUploadComponent,
@@ -219,6 +221,7 @@ const config: LocaleConfig = {};
         AnchorHostDirective,
         MyAutosizeDirective,
         CharCountDirective,
+        IsEllipsisActiveDirective,
         SelectUomProductDialogComponent,
         RedirectComponentDirective,
         ImageFileUploadComponent,

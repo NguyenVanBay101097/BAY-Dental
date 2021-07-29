@@ -1,5 +1,6 @@
 .size-chart {
     height: 200px;
+    width: 200px;
 }
 
 .img-nodata {
@@ -33,3 +34,11 @@
     bottom: 0;
     right: 0;
 }
+
+.text-truncate {
+    display: inline-block;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+ }

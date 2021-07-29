@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { LegendItemVisualArgs } from '@progress/kendo-angular-charts';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -33,6 +34,8 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
   companyId: string;
   employeeId: string;
   isAdvanced: boolean;
+  public isCollapsed = false;
+  public animateChart = true;
 
   // Pie
   public pieDataExamination: any[] = [];
@@ -179,8 +182,7 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
     val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
     this.customerReceiptReportService.getCountCustomerReceiptNoTreatment(val).subscribe(
       (res: any[]) => {
-        this.pieDataNoTreatment = [];
-        this.loadNoTreatmentItems(res);
+        this.pieDataNoTreatment = res;
         this.loading = false;
       },
       (err) => {
@@ -216,6 +218,8 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
     this.dateTo = data.dateTo;
     this.skip = 0;
     this.loadDataApi();
+    this.loadDataExamination();
+    this.loadDataNotreatment();
   }
 
   onChangeExamination(e) {
@@ -249,18 +253,24 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
     }
     this.skip = 0;
     this.loadDataApi();
+    this.loadDataExamination();
+    this.loadDataNotreatment();
   }
 
   onSelectCompany(e) {
     this.companyId = e ? e.id : null;
     this.skip = 0;
     this.loadDataApi();
+    this.loadDataExamination();
+    this.loadDataNotreatment();
   }
 
   onSelectEmployee(e) {
     this.employeeId = e ? e.id : null;
     this.skip = 0;
     this.loadDataApi();
+    this.loadDataExamination();
+    this.loadDataNotreatment();
   }
 
   loadEmployees() {
@@ -289,9 +299,6 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
     });
   }
 
-  toggleShow() {
-    this.isAdvanced = this.isAdvanced == false ? true : false;
-  }
 
   onExcelExport() {
     var val = new CustomerReceiptReportFilter();
@@ -321,6 +328,12 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
       }, 100);
     })
   }
+
+  getInfo(item){
+    return `${item.name}: ${item.countCustomerReceipt} (${(item.countCustomerReceipt / item.totalCustomerReceipt * 100).toFixed(2)}%)`;
+  }
+
+
 
   getExamination(value) {
     switch (value) {

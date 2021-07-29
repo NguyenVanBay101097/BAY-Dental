@@ -1204,3 +1204,12 @@ html .o_web_client {
     vertical-align: top;
     border: 1px solid #a8a8a8;
 }
+
+/* truncate content  use isEllipsisActive directive*/
+.text-truncate {
+    display: inline-block;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+ }

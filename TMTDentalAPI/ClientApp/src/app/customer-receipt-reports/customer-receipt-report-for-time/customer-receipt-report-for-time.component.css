@@ -3,6 +3,10 @@
 }
 
 .title-chart text{
-    color: rgb(53, 53, 235);
+    color: rgb(255, 255, 255);
     font-weight: 600;
+}
+
+.testcolor{
+    color: lightskyblue;
 }

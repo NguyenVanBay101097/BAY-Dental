@@ -17,8 +17,8 @@
     </div>
     <div class="filter d-flex flex-0-0-auto mt-2 time-filter-wrapper">
         <button type="button" *ngFor="let time of filterTimes" class="btn active mr-1" (click)="setStateFilter(time)"
-            [class.btn-primary]="timeStart == time.timeStart" [class.btn-light]="timeStart != time.timeStart">
-            {{time.text}} <span class="badge badge-light bg-white">{{timeCount[time.timeStart] || 0}}</span>
+            [class.btn-primary]="timeStart == time.timeStart" >
+            {{time.text}} <span class="badge badge-light bg-white" [class.bac-white]="timeStart == time.timeStart">{{timeCount[time.timeStart] || 0}}</span>
         </button>
     </div>
     <div class="o_content mt-2">
@@ -40,8 +40,10 @@
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Dịch vụ" width="120">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.products}}
+                        <ng-template kendoGridCellTemplate let-dataItem>                      
+                            <span isEllipsisActive class="d-inline-block text-truncate">
+                                {{dataItem.products}}
+                            </span>                         
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Bác sĩ" width="100">

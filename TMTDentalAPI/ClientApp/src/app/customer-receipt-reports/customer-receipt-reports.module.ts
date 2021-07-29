@@ -13,7 +13,6 @@ import { CustomerReceiptReportNoTreatmentComponent } from './customer-receipt-re
 import { CustomerReceiptReportTimeserviceComponent } from './customer-receipt-report-timeservice/customer-receipt-report-timeservice.component';
 import { CustomerReceiptReportForTimeDetailComponent } from './customer-receipt-report-for-time-detail/customer-receipt-report-for-time-detail.component';
 
-
 @NgModule({
   declarations: [
     CustomerReceiptReportManageComponent,
