@@ -331,6 +331,10 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
     }
   }
 
+  getMinute(value) {
+    return `${value} phút`;
+  }
+
   getState(value) {
     switch (value) {
       case 'examination':

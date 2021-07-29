@@ -30,14 +30,16 @@
             style="width: auto;" [data]="filterState" [textField]="'text'" [valueField]="'value'">
         </kendo-combobox>
     </div>
-    <div class="total d-flex mt-2">
-        <div class="border mr-2 px-3 py-2 text-center">
-            <h5 class="mb-0">Tiếp nhận</h5>
-            <div class="text-primary px-3 py-2">
-                <span class="total-qty">{{total || 0 | number}}</span>
+    <div class="total d-flex mt-1">
+        <div class="border box-overview mr-2 px-2 py-1 text-center">
+            <div>
+                <h5 class="mb-0">Tiếp nhận</h5>
+            </div>       
+            <div class="text-primary content-box">
+                <h1 class="total-qty">{{total || 0 | number}}</h1>
             </div>
         </div>
-        <div class="border mr-2 px-3 py-2 text-center">
+        <div class="border box-overview mr-2 px-2 py-1 text-center">
             <h5 class="mb-0">Loại khám</h5>
             <div>
                 <div>
@@ -58,7 +60,7 @@
                 </div>
             </div>
         </div>
-        <div class="border mr-2 px-3 py-2 text-center">
+        <div class="box-overview border mr-2 px-2 py-1 text-center">
             <h5 class="mb-0">Kết quả khám mới</h5>
             <div>
                 <ng-container *ngIf="pieDataNoTreatment.length; else elseTemplate">
@@ -114,7 +116,7 @@
                     </kendo-grid-column>
                     <kendo-grid-column title="Thời gian phục vụ" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.minuteTotal}}
+                            {{ getMinute(dataItem.minuteTotal)}}
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Loại khám" width="100">

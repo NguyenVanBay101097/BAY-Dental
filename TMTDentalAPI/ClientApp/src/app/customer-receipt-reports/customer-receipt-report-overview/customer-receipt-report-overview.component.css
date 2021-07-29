@@ -1,5 +1,5 @@
 .size-chart {
-    height: 130px;
+    height: 200px;
 }
 
 .img-nodata {
@@ -7,12 +7,29 @@
     width: 150px;
 }
 
-.border {
+.box-overview {
+    position: relative;
     min-width: 300px;
 }
 
+.content-box {
+    height: 30%;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
 .total-qty {
-    font-size: 30px;
     font-weight: 600;
     color: rgb(37, 37, 218);
+    text-align: center;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
 }
