@@ -54,6 +54,8 @@ using MediatR;
 using Infrastructure.HangfireJobService;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 
 namespace TMTDentalAPI
 {
@@ -368,6 +370,10 @@ namespace TMTDentalAPI
 
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
+            var context = new CustomAssemblyLoadContext();
+            context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "LibDirectoryLoad/DinkToPdf/libwkhtmltox.dll"));
+            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+
             #endregion
 
             services.AddScoped<IToothDiagnosisService, ToothDiagnosisService>();

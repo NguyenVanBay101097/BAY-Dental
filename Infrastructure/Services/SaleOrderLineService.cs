@@ -6,6 +6,7 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyERP.Utilities;
 using System;
@@ -21,13 +22,16 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly CatalogDbContext _dbContext;
+        private UserManager<ApplicationUser> _userManager;
 
         public SaleOrderLineService(IAsyncRepository<SaleOrderLine> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper,
+             UserManager<ApplicationUser> userManager,
             CatalogDbContext dbContext)
            : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         public override async Task<IEnumerable<SaleOrderLine>> CreateAsync(IEnumerable<SaleOrderLine> entities)
@@ -380,9 +384,9 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State.Contains(val.State));
             if (val.DateOrderFrom.HasValue)
-                query = query.Where(x => x.DateCreated >= val.DateOrderFrom.Value.AbsoluteBeginOfDate());
+                query = query.Where(x => x.Date >= val.DateOrderFrom.Value.AbsoluteBeginOfDate());
             if (val.DateOrderTo.HasValue)
-                query = query.Where(x => x.DateCreated <= val.DateOrderTo.Value.AbsoluteEndOfDate());
+                query = query.Where(x => x.Date <= val.DateOrderTo.Value.AbsoluteEndOfDate());
             if (val.IsLabo == true)
                 query = query.Where(x => x.Product.IsLabo);
 
@@ -1230,6 +1234,26 @@ namespace Infrastructure.Services
             var orderObj = GetService<ISaleOrderService>();
             if (isOrderDone)
                await orderObj.ActionDone(new List<Guid>() { line.OrderId });
+        }
+
+        public async Task<ServiceSaleReporPrint> SaleReportPrint(SaleOrderLinesPaged val)
+        {
+            val.Limit = 0;
+            var resPage = await GetPagedResultAsync(val);
+            var companyObj = GetService<ICompanyService>();
+            var res = new ServiceSaleReporPrint()
+            {
+                data = resPage.Items,
+                DateFrom = val.DateOrderFrom,
+                DateTo = val.DateOrderTo,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+        };
+            if (val.CompanyId.HasValue)
+            {
+               var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            return res;
         }
     }
 }

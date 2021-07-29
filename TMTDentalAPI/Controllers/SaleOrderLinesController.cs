@@ -5,7 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
@@ -26,13 +29,20 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IExportExcelService _exportExcelService;
+        private readonly IViewRenderService _viewRenderService;
+        private readonly ISaleOrderService _saleOrderService;
+
+        private IConverter _converter;
         public SaleOrderLinesController(ISaleOrderLineService saleLineService, IMapper mapper,IExportExcelService exportExcelService,
-        IUnitOfWorkAsync unitOfWork)
+        IUnitOfWorkAsync unitOfWork, IViewRenderService viewRenderService, IConverter converter, ISaleOrderService saleOrderService)
         {
             _saleLineService = saleLineService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _exportExcelService = exportExcelService;
+            _viewRenderService = viewRenderService;
+            _converter = converter;
+            _saleOrderService = saleOrderService;
         }
 
         [HttpPost]
@@ -290,6 +300,38 @@ namespace TMTDentalAPI.Controllers
         {
             await _saleLineService.UpdateState(id,state);
             return Ok();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSaleReportExportPdf([FromQuery] SaleOrderLinesPaged val)
+        {
+            val.Limit = int.MaxValue;
+            var res = await _saleLineService.SaleReportPrint(val);
+            var html = _viewRenderService.Render("SaleOrderLine/SaleReportPdf", res);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Portrait,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                HeaderSettings = { FontName = "Arial", FontSize = 9, Line = true },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo dịch vụ", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "SaleReport.pdf");
         }
     }
 }

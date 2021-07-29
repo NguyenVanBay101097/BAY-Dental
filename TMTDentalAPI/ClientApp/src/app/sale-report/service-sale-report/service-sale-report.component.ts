@@ -12,6 +12,7 @@ import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
 import { DateRangePickerFilterComponent } from 'src/app/shared/date-range-picker-filter/date-range-picker-filter.component';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { ToothBasic } from 'src/app/teeth/tooth.service';
 import { SaleReportService, ServiceReportReq } from '../sale-report.service';
 
@@ -43,6 +44,7 @@ export class ServiceSaleReportComponent implements OnInit {
     private saleOrderLineService: SaleOrderLineService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
+    private printService:PrintService
   ) { }
 
   ngOnInit() {
@@ -191,7 +193,7 @@ export class ServiceSaleReportComponent implements OnInit {
     return teeth.map(x=> x.name).join(' ')
   }
 
-  onExport() {
+  onExportExcel() {
     var val = Object.assign({}, this.filter) as SaleOrderLinePaged;
     val.companyId = val.companyId || '';
     val.employeeId = val.employeeId || '';
@@ -204,7 +206,7 @@ export class ServiceSaleReportComponent implements OnInit {
 
       let newBlob = new Blob([res], {
         type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
 
       let data = window.URL.createObjectURL(newBlob);
@@ -217,6 +219,48 @@ export class ServiceSaleReportComponent implements OnInit {
         window.URL.revokeObjectURL(data);
       }, 100);
     });
+  }
+
+  onExportPDF() {
+    var val = Object.assign({}, this.filter) as SaleOrderLinePaged;
+    val.companyId = val.companyId || '';
+    val.employeeId = val.employeeId || '';
+    val.dateOrderFrom = val.dateOrderFrom ? moment(val.dateOrderFrom).format('YYYY/MM/DD') : '';
+    val.dateOrderTo = val.dateOrderTo ? moment(val.dateOrderTo).format('YYYY/MM/DD') : '';
+    this.loading = true;
+    this.saleOrderLineService.getSaleReportExportPdf(val).subscribe(res => {
+      this.loading = false;
+      let filename ="BaoCaoDichVu_DangDieuTri";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
+
+  onPrint(){
+    var val = Object.assign({}, this.filter) as SaleOrderLinePaged;
+    val.companyId = val.companyId || '';
+    val.employeeId = val.employeeId || '';
+    val.dateOrderFrom = val.dateOrderFrom ? moment(val.dateOrderFrom).format('YYYY/MM/DD') : '';
+    val.dateOrderTo = val.dateOrderTo ? moment(val.dateOrderTo).format('YYYY/MM/DD') : '';
+    this.loading = true;
+      this.saleOrderLineService.SaleReportPrint(val).subscribe((result: any) => {
+        this.loading = false;
+        this.printService.printHtml(result);
+      });
   }
 
 }

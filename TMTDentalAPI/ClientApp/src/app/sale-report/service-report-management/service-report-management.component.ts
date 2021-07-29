@@ -155,7 +155,7 @@ export class ServiceReportManagementComponent implements OnInit {
           rows.splice(idx + 2, 0, {
             cells: [
               {},
-              { value: moment(line.orderDateOrder).format('DD/MM/YYYY') },
+              { value: moment(line.date).format('DD/MM/YYYY') },
               { value: line.orderPartnerName },
               { value: line.name },
               { value: line.employeeName },

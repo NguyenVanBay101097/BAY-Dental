@@ -224,4 +224,33 @@ export class ServiceReportTimeComponent implements OnInit {
     })
   }
 
+  // onExportPDF() {
+  //   var val = Object.assign({}, this.filter) as SaleOrderLinePaged;
+  //   val.companyId = val.companyId || '';
+  //   val.employeeId = val.employeeId || '';
+  //   val.dateOrderFrom = val.dateOrderFrom ? moment(val.dateOrderFrom).format('YYYY/MM/DD') : '';
+  //   val.dateOrderTo = val.dateOrderTo ? moment(val.dateOrderTo).format('YYYY/MM/DD') : '';
+  //   this.loading = true;
+  //   this.saleOrderLineService.getSaleReportExportPdf(val).subscribe(res => {
+  //     this.loading = false;
+  //     let filename ="BaoCaoDichVu_DangDieuTri";
+
+  //     let newBlob = new Blob([res], {
+  //       type:
+  //         "application/pdf",
+  //     });
+
+  //     let data = window.URL.createObjectURL(newBlob);
+  //     let link = document.createElement("a");
+  //     link.href = data;
+  //     link.download = filename;
+  //     link.click();
+  //     setTimeout(() => {
+  //       // For Firefox it is necessary to delay revoking the ObjectURL
+  //       window.URL.revokeObjectURL(data);
+  //     }, 100);
+  //   });
+  // }
+
+
 }

@@ -52,6 +52,7 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         public bool IsActive { get; set; }
+        public DateTime? Date { get; set; }
     }
 
     public class SaleOrderLineSmsSimple
@@ -102,5 +103,14 @@ namespace Umbraco.Web.Models.ContentEditing
         [EpplusDisplay("Phiếu điều trị")]
         public string OrderName { get; set; }
 
+    }
+
+    public class ServiceSaleReporPrint
+    {
+        public IEnumerable<SaleOrderLineBasic> data { get; set; } = new List<SaleOrderLineBasic>();
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public CompanyPrintVM Company { get; set; }
+        public ApplicationUserSimple User { get; set; }
     }
 }

@@ -46,7 +46,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ServiceReportDetailRes
     {
-        public DateTime? OrderDateOrder { get; set; }
+        public DateTime? Date { get; set; }
         public string OrderPartnerName { get; set; }
         public string Name { get; set; }
         public string EmployeeName { get; set; }

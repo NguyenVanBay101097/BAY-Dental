@@ -136,7 +136,7 @@ export class ServiceReportDetailReq {
 }
 
 export class ServiceReportDetailRes {
-	orderDateOrder: string;
+	date: string;
 	orderPartnerName: string;
 	name: string;
 	employeeName?: any;

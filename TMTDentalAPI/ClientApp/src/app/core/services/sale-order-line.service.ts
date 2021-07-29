@@ -148,4 +148,12 @@ export class SaleOrderLineService {
     updateState(id,state){
         return this.http.put(this.baseApi + this.apiUrl + '/'+id+ '/UpdateState?State=' + state, null);
     }
+
+    SaleReportPrint(val){
+        return this.http.get(this.baseApi + 'SaleOrderLine/SaleReportPrint', { params: new HttpParams({ fromObject: val }), responseType: 'text'});
+    }
+
+    getSaleReportExportPdf(val) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetSaleReportExportPdf', { params: new HttpParams({ fromObject: val }),  responseType: 'blob'  });
+    }
 }

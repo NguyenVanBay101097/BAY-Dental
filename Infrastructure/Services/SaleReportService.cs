@@ -722,10 +722,10 @@ namespace Infrastructure.Services
             var orderLineObj = GetService<ISaleOrderLineService>();
             var query = orderLineObj.SearchQuery(x=> x.State == "sale" || x.State == "done");
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Order.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
             
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.Order.DateOrder <= val.DateTo.Value.AbsoluteEndOfDate());
+                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
@@ -747,7 +747,7 @@ namespace Infrastructure.Services
         }
         public async Task<IEnumerable<ServiceReportRes>> GetServiceReportByTime(ServiceReportReq val)
         {
-            var res = await GetServiceReportQuery(val).GroupBy(x => x.Order.DateOrder.Date).Select(x=> new ServiceReportRes() { 
+            var res = await GetServiceReportQuery(val).GroupBy(x => x.Date).Select(x=> new ServiceReportRes() { 
             Date = x.Key, 
             Quantity = x.Count(),
             TotalAmount = x.Sum(z=> z.PriceSubTotal)

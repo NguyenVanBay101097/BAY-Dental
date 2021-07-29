@@ -6,7 +6,14 @@
         </kendo-combobox>
         <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
-        <button class="btn btn-primary btn-sm mr-1" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất Excel</button>
+        <div class="dropdown mr-1">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-download"></i> Xuất File</button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" (click)="exportExcel(grid)">Xuất Excel</a>
+                <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+            </div>
+        </div>
         <button class="btn btn-primary btn-sm mr-1" (click)="onPrint()">In báo cáo</button>
         <input class="form-control form-control-sm w-auto flex-fill" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
