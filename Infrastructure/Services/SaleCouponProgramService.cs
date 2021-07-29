@@ -779,7 +779,7 @@ namespace Infrastructure.Services
             var saleObj = GetService<ISaleOrderService>();
             //var applicable_programs = await saleObj._GetApplicablePrograms(order);
             var countApplied = await _GetCountAppliedQuotationAsync(self);
-            var memberLevelId = GetMemberLevel(line.Advisory.CustomerId.Value);
+            var memberLevelId = GetMemberLevel(line.Quotation.PartnerId);
             if (self.DiscountApplyOn == "on_order")
                 message.Error = "Mã khuyến mãi không áp dụng cho dịch vụ";
             else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
