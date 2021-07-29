@@ -89,7 +89,7 @@ namespace Infrastructure.Services
             var order = _mapper.Map<SaleOrder>(val);
             await CreateAsync(order);
 
-            var lines = new List<SaleOrderLine>();
+            //var lines = new List<SaleOrderLine>();
             //var sequence = 0;
             //foreach (var item in val.OrderLines)
             //{
@@ -112,8 +112,8 @@ namespace Infrastructure.Services
             //    lines.Add(saleLine);
             //}
 
-            var saleLineService = GetService<ISaleOrderLineService>();
-            await saleLineService.CreateAsync(lines);
+            //var saleLineService = GetService<ISaleOrderLineService>();
+            //await saleLineService.CreateAsync(lines);
 
             //_AmountAll(order);
             //await UpdateAsync(order);

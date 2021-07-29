@@ -449,7 +449,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   getFormDataSave() {
     var val = {
       dateOrder: this.saleOrder.dateOrder,
-      partnerId: this.partner.id,
+      partnerId: this.saleOrder.partner.id,
       companyId: this.saleOrder.companyId,
       // orderLines: this.saleOrder.orderLines.map(x => {
       //   return {
