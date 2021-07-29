@@ -23,6 +23,8 @@ namespace Infrastructure.Services
                 Functions = new List<ApplicationRoleFunction>()
                 {
                     new ApplicationRoleFunction { Func = "Basic.PartnerCategory.Read" },
+                    new ApplicationRoleFunction { Func = "System.Company.Read"},
+                    new ApplicationRoleFunction { Func = "Basic.Partner.Read"}
                 },
                 Hidden = true
             };

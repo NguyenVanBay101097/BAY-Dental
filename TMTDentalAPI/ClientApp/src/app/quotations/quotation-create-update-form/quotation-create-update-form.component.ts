@@ -473,6 +473,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.quotation = res;
           var newLine = this.quotation.lines[i];
           modalRef.componentInstance.quotationLine = newLine;
+          this.notifyService.notify('success','Xóa khuyến mãi thành công');
         }, err => {
           this.notify('error', err.error.error);
         });
@@ -592,6 +593,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         .subscribe(res => {
           this.quotation = res;
           modalRef.componentInstance.quotation = this.quotation;
+          this.notifyService.notify('success','Xóa khuyến mãi thành công');
         }, err => {
           this.notify('error', err.error.error);
         });
