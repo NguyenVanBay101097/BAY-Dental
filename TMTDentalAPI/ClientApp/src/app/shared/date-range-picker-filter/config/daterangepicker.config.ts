@@ -38,7 +38,7 @@ export const DefaultLocaleConfig: LocaleConfig = {
         "T4",
         "T5",
         "T6",
-        "t7"
+        "T7"
     ],
     monthNames: [
         "Tháng 1",
