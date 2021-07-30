@@ -110,15 +110,25 @@ export class HrSalaryPaymentComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn chi lương?';
     modalRef.result.then(() => {
       const val = this.paymentFA.value;
-      this.paymentService.actionMultiSalaryPayment(val).subscribe((res: any) => {
+      var data = val.map(x => {
+        return {
+          date: x.date,
+          employeeId: x.employee.id,
+          journalId: x.journal.id,
+          amount: x.amount,
+          reason: x.reason,
+          payslipId: x.payslipId
+        };
+      });
+      this.paymentService.actionMultiSalaryPayment(data).subscribe((res: any) => {
         this.notify('success', 'Xác nhận thành công');
         this.activeModal.close();
-        if (!res.value) {
+        if (!res) {
           this.notify('error', 'Không có phiếu chi lương để in');
         }
-        this.paymentService.getPrint(res.value).subscribe(
+        this.paymentService.getPrint(res).subscribe(
           result => {
-            this.printService.printHtml(result['html']);
+            this.printService.printHtml(result);
           }
         );
 

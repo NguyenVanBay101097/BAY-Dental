@@ -866,7 +866,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           if (line == this.lineSelected) {
             this.lineSelected = null;
           }
-          this.notify('success', 'Lưu thành công');
+          this.notify('success', 'Xóa dịch vụ thành công');
           this.loadSaleOrder();
         })
       });
