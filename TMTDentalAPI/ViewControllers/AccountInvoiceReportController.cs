@@ -77,6 +77,7 @@ namespace TMTDentalAPI.ViewControllers
         }
 
         [PrinterNameFilterAttribute(Name = AppConstants.RevenueTimeReport)]
+        [CheckAccess(Actions = "Report.Revenue")]
         public async Task<IActionResult> PrintRevenueTimeReport([FromBody] RevenueTimeReportPar val)
         {
             var dict = new Dictionary<DateTime, RevenueTimeReportPrintVM>();
@@ -138,6 +139,7 @@ namespace TMTDentalAPI.ViewControllers
         }
 
         [PrinterNameFilterAttribute(Name = AppConstants.RevenueServiceReport)]
+        [CheckAccess(Actions = "Report.Revenue")]
         public async Task<IActionResult> PrintRevenueServiceReport([FromBody] RevenueServiceReportPar val)
         {
             var dict = new Dictionary<Guid, RevenueServiceReportPrintVM>();
@@ -206,6 +208,7 @@ namespace TMTDentalAPI.ViewControllers
         }
 
         [PrinterNameFilterAttribute(Name = AppConstants.RevenueEmployeeReport)]
+        [CheckAccess(Actions = "Report.Revenue")]
         public async Task<IActionResult> PrintRevenueEmployeeReport([FromBody] RevenueEmployeeReportPar val)
         {
             var dict = new Dictionary<Guid, RevenueEmployeeReportPrintVM>();

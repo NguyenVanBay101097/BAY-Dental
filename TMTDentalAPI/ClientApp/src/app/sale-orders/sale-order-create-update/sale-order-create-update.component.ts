@@ -964,6 +964,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         .subscribe(res => {
           this.resetData(res);
           modalRef.componentInstance.saleOrder = this.saleOrder;
+          this.notify('success', "Xóa khuyến mãi thành công");
         }, err => {
           console.log(err);
           this.notify('error', err.error.error);
@@ -1126,6 +1127,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           this.resetData(res);
           var newLine = this.saleOrder.orderLines[i];
           modalRef.componentInstance.saleOrderLine = newLine;
+          this.notify('success', "Xóa khuyến mãi thành công");
         }, err => {
           console.log(err);
           this.notify('error', err.error.error);
