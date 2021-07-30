@@ -43,6 +43,12 @@ export class LaboOrderCuDialogComponent implements OnInit {
   biteJoints: LaboBiteJointBasic[] = [];
   bridges: LaboBridgeBasic[] = [];
   attachs: ProductSimple[] = [];
+  toothTypeDict = [
+    { name: "Hàm trên", value: "upper_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
+    { name: "Hàm dưới", value: "lower_jaw" },
+    { name: "Chọn răng", value: "manual" },
+  ];
 
   constructor(private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -437,6 +443,11 @@ export class LaboOrderCuDialogComponent implements OnInit {
     modalRef.result.then(() => {
     }, () => {
     });
+  }
+
+  getToothType(key) {
+    var type = this.toothTypeDict.find(x=> x.value == key);
+    return type;
   }
 
 }

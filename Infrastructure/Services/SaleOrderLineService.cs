@@ -442,7 +442,7 @@ namespace Infrastructure.Services
                 throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
 
             if (self.Any(x => x.PaymentHistoryLines.Any(x => x.SaleOrderPayment.State == "posted")))
-                throw new Exception("Không thể xóa dịch vụ đã thanh toán");
+                throw new Exception("Bạn không thể xóa dịch vụ đã thanh toán");
 
             foreach (var line in self.Where(x => x.IsRewardLine))
             {
