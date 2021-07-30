@@ -15,7 +15,7 @@
                     <a [routerLink]="['/partners/customer/' + customerId + '/treatment']" class="btn btn-secondary btn-sm mr-1">
                         Trở lại
                     </a>
-                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder && saleOrder.state != 'done'" (click)="onSave()">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder && saleOrder.state == 'draft'" (click)="onSave()">
                         Lưu
                     </button>
                     <button type="button" accesskey="1" *ngIf="saleOrder && saleOrder.state == 'draft'" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
