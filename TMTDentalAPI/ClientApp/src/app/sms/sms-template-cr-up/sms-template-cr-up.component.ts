@@ -72,8 +72,6 @@ export class SmsTemplateCrUpComponent implements OnInit {
     this.submitted = true;
     if (this.formGroup.invalid) { return false; }
     var formValue = this.formGroup.value;
-    this.template.text = formValue.body;
-    formValue.body = JSON.stringify(this.template);
     if (this.id) {
       this.smsTemplateService.update(this.id, formValue).subscribe(
         (res) => {
@@ -139,7 +137,7 @@ export class SmsTemplateCrUpComponent implements OnInit {
     this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
   }
 
-  onCancel(){
+  onCancel() {
     this.activeModal.dismiss();
   }
 }

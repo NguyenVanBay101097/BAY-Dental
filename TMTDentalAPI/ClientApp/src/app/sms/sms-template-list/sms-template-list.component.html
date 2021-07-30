@@ -25,13 +25,13 @@
 
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
-        <kendo-grid-column title="STT" width="50">
+        <!-- <kendo-grid-column title="STT" width="50">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{rowIndex + 1}}
             </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="name" title="Tiêu đề tin nhắn mẫu" width="250"></kendo-grid-column>
-        <kendo-grid-column field="body" title="Nội dung"></kendo-grid-column>
+        </kendo-grid-column> -->
+        <kendo-grid-column field="name" title="Tiêu đề tin nhắn mẫu" width="200"></kendo-grid-column>
+        <kendo-grid-column field="body" title="Nội dung" width="250"></kendo-grid-column>
         <kendo-grid-column title="Loại tin nhắn mẫu" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{getTemplateType(dataItem.type)}}
