@@ -13,23 +13,19 @@ namespace Infrastructure.Services
 {
     public class FptSenderService
     {
-        private static readonly Object _lock = new Object();
-        private readonly IDistributedCache _cache;
-        private const int cacheExpirationInDays = 1;
         private readonly IHttpClientFactory _clientFactory;
         private string _clientId;
         private string _clientSecret;
 
-        public FptSenderService(IHttpClientFactory clientFactory, IDistributedCache cache, string clientId , string clientSecret)
+        public FptSenderService(IHttpClientFactory clientFactory, string clientId, string clientSecret)
         {
             _clientId = clientId;
-            _cache = cache;
             _clientSecret = clientSecret;
             _clientFactory = clientFactory;
         }
 
 
-        public async Task<FPTSendSMSResponseModel> SendSMS(string brandname, string phone, string content)
+        public async Task<FPTSendSMSResponseModel> SendSMS(string brandname, string access_token, string phone, string content)
         {
 
             var client = _clientFactory.CreateClient();
@@ -37,8 +33,6 @@ namespace Infrastructure.Services
             client.BaseAddress = new Uri("https://app.sms.fpt.net");
 
             var sessionId = StringUtils.RandomString(32);
-
-            var access_token = await GetAccessToken(_clientId, _clientSecret, sessionId);
 
             if (string.IsNullOrEmpty(access_token))
                 return null;
@@ -66,94 +60,37 @@ namespace Infrastructure.Services
             return null;
         }
 
-        public async Task<string> GetAccessToken(string clientId, string clientsecret, string sessionId)
+
+        public async Task<FPTAccessTokenResponseModel> GetApiToken(string clientId, string clientSecret)
         {
-            var accessToken = GetFromCache(clientId);
+            var sessionId = StringUtils.RandomString(32);
 
-            if (accessToken != null)
+            var data = new FPTAccessTokenRequestModel
             {
-                if (accessToken.ExpiresIn > DateTime.Now)
-                {
-                    return accessToken.AccessToken;
-                }            
-            }
+                client_id = clientId,
+                client_secret = clientSecret,
+                scope = "send_brandname_otp send_brandname",
+                session_id = sessionId,
+                grant_type = "client_credentials"
+            };
 
-            // add
-            var newAccessToken = await GetApiToken(clientId, clientsecret, sessionId);
-            AddToCache(clientId, newAccessToken);
+            var client = _clientFactory.CreateClient();
+            client.BaseAddress = new Uri("https://app.sms.fpt.net");
+            var jsonObject = JsonConvert.SerializeObject(data);
+            var stringContent = new StringContent(jsonObject, Encoding.UTF8, "application/json");
+            var result = await client.PostAsync("/oauth2/token", stringContent);
 
-            return newAccessToken.AccessToken;
-        }
-
-
-        private async Task<AccessTokenItem> GetApiToken(string clientId, string clientsecret, string sessionId)
-        {
-            try
+            if (result.IsSuccessStatusCode)
             {
-                var data = new FPTAccessTokenRequestModel
-                {
-                    client_id = clientId,
-                    client_secret = clientsecret,
-                    scope = "send_brandname_otp send_brandname",
-                    session_id = sessionId,
-                    grant_type = "client_credentials"
-                };
-
-                var client = _clientFactory.CreateClient();
-                client.BaseAddress = new Uri("https://app.sms.fpt.net");
-                var jsonObject = JsonConvert.SerializeObject(data);
-                var stringContent = new StringContent(jsonObject, Encoding.UTF8, "application/json");
-                var result = await client.PostAsync("/oauth2/token", stringContent);
-
-                if (result.IsSuccessStatusCode)
-                {
-                    var response = await result.Content.ReadAsStringAsync();
-                    var tokenResponse = JsonConvert.DeserializeObject<FPTAccessTokenResponseModel>(response);
-
-                    return new AccessTokenItem
-                    {
-                        ExpiresIn = DateTime.Now.AddSeconds(tokenResponse.expires_in.Value),
-                        AccessToken = tokenResponse.access_token
-                    };
-                }
-
-                return null;
-
-            }
-            catch (Exception e)
-            {
-                throw new ApplicationException($"Exception {e}");
-            }
-        }
-
-        private void AddToCache(string key, AccessTokenItem accessTokenItem)
-        {
-            var options = new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(cacheExpirationInDays));
-
-            lock (_lock)
-            {
-                _cache.SetString(key, JsonConvert.SerializeObject(accessTokenItem), options);
-            }
-        }
-
-        private AccessTokenItem GetFromCache(string key)
-        {
-            var item = _cache.GetString(key);
-            if (item != null)
-            {
-                return JsonConvert.DeserializeObject<AccessTokenItem>(item);
+                var response = await result.Content.ReadAsStringAsync();
+                var tokenResponse = JsonConvert.DeserializeObject<FPTAccessTokenResponseModel>(response);
+                return tokenResponse;
             }
 
             return null;
+
         }
 
-
-
-        private class AccessTokenItem
-        {
-            public string AccessToken { get; set; } = string.Empty;
-            public DateTime ExpiresIn { get; set; }
-        }
 
     }
 

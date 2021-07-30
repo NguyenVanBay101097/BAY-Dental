@@ -307,7 +307,13 @@ namespace Infrastructure.Services
             var specialChars = SpecialCharactors.Split(",");
 
             //var senderService = new FptSenderService();
-            var senderService = new FptSenderService(_clientFactory , _cache, account.ClientId , account.ClientSecret);
+            //var senderService = new FptSenderService(_clientFactory, account.ClientId , account.ClientSecret);
+            var senderService = new FptSmsService(_clientFactory.CreateClient());
+            senderService.AuthConfig = new FptAuthConfig(account.ClientId, account.ClientSecret, new string[] { "send_brandname", "send_brandname_otp" });
+
+
+            //Get accress token brand name send sms
+            //var access_token = await senderService.GetApiToken(account.ClientId , account.ClientSecret);
             foreach (var detail in sefts)
             {
                 //neu truong hop detail ma co noi dung trong blacklist thi chuyen sang state canceled
@@ -316,25 +322,21 @@ namespace Infrastructure.Services
                     detail.State = "canceled";
                     detail.ErrorCode = "sms_blacklist";
                 }
+                //else if (access_token.error.HasValue || access_token == null)
+                //{
+                //    detail.State = "error";
+                //    detail.ErrorCode = access_token == null ? "sms_server" : access_token.error_description;
+                //}
                 else
                 {
-                    var sendResult = await senderService.SendSMS(account.BrandName,detail.Number, detail.Body);
-                    if (sendResult != null)
-                    {
-                        if (!sendResult.Error.HasValue)
-                            detail.State = "sent";
-                        else
-                        {
-                            detail.State = "error";
-                            detail.ErrorCode = sendResult.Error_description;
-                        }
-                    }
+                    var sendResult = await senderService.SendSms(account.BrandName, detail.Number, detail.Body);
+                    if (sendResult.Error == 0)
+                        detail.State = "sent";
                     else
                     {
                         detail.State = "error";
-                        detail.ErrorCode = "sms_server";
+                        detail.ErrorCode = sendResult.Error + "";
                     }
-
                 }
             }
 

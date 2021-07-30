@@ -31,12 +31,12 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Type))
                 query = query.Where(x => x.Type == val.Type);
             var totalItems = await query.CountAsync();
-            var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SmsTemplateBasic
+            var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).Select(x => new SmsTemplateBasic
             {
                 Id = x.Id,
                 Name = x.Name,
-                Body = JsonConvert.DeserializeObject<SmsTemplateBody>(x.Body).Text,
-                DateCreated = (DateTime)x.DateCreated,
+                Body = x.Body,
+                DateCreated = x.DateCreated,
                 Type = x.Type
             }).ToListAsync();
             return new PagedResult2<SmsTemplateBasic>(totalItems, val.Offset, val.Limit)

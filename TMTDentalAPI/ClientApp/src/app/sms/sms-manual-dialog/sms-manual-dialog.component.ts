@@ -128,15 +128,8 @@ export class SmsManualDialogComponent implements OnInit {
   }
 
   onChangeTemplate(event) {
-    if (event && event.body) {
-      this.template = JSON.parse(event.body);
-    } else {
-      this.template = {
-        text: '',
-        templateType: 'text'
-      }
-    }
-    this.f.body.setValue(this.template.text);
+    var body = event ? event.body : '';
+    this.f.body.setValue(body);
   }
 
   getLimitText() {

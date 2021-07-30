@@ -722,7 +722,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       amountDiscountTotal: 0
     };
 
-    this.saleOrder.orderLines.push(value);
+    this.saleOrder.orderLines.unshift(value);
     // this.orderLines.push(value);
     // this.orderLines.markAsDirty();
     // this.computeAmountTotal();

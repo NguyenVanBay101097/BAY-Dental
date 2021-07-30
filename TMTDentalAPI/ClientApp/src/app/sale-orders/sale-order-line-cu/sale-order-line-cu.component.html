@@ -19,9 +19,9 @@
                                         Chọn răng
                                     </button>
                                     <button *ngIf="line.id  && line.productIsLabo && line.state == 'sale' && !isEditting"
-                                        class="btn btn-link p-0 ml-2" (click)="toothSelection()">
+                                        class="btn btn-link p-0 ml-2" (click)="showLaboList(line.id)">
                                         <img width="20" style="cursor: pointer;" src="assets/icons/crown_1.svg"
-                                            alt="Danh sách Labo" (click)="showLaboList(line.id)">
+                                            alt="Danh sách Labo">
                                         Danh sách Labo
                                     </button>
                                 </div>
@@ -165,7 +165,7 @@
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%; text-align: end;" class="pr-0">
-                                <div class="font-weight-600 h5">
+                                <div class="font-weight-600 h5 mb-0">
                                     <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
                                         {{line.priceSubTotal | number: '1.0-0'}}
                                     </ng-container>

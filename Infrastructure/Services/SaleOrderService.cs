@@ -1260,7 +1260,7 @@ namespace Infrastructure.Services
             var display = _mapper.Map<SaleOrderDisplay>(saleOrder);
 
             var lineObj = GetService<ISaleOrderLineService>();
-            var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))
+            var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderByDescending(s => s.DateCreated))
                 .Include(x => x.Advisory)
                 .Include(x => x.Assistant)
                 .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
