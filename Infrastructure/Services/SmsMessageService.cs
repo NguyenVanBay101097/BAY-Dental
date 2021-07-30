@@ -307,7 +307,10 @@ namespace Infrastructure.Services
             var specialChars = SpecialCharactors.Split(",");
 
             //var senderService = new FptSenderService();
-            var senderService = new FptSenderService(_clientFactory , _cache, account.ClientId , account.ClientSecret);
+            var senderService = new FptSenderService(_clientFactory, account.ClientId , account.ClientSecret);
+
+            //Get accress token brand name send sms
+            var access_token = await senderService.GetApiToken(account.ClientId , account.ClientSecret);
             foreach (var detail in sefts)
             {
                 //neu truong hop detail ma co noi dung trong blacklist thi chuyen sang state canceled
@@ -316,9 +319,14 @@ namespace Infrastructure.Services
                     detail.State = "canceled";
                     detail.ErrorCode = "sms_blacklist";
                 }
+                else if (access_token.error.HasValue)
+                {
+                    detail.State = "error";
+                    detail.ErrorCode = access_token.error_description;
+                }
                 else
                 {
-                    var sendResult = await senderService.SendSMS(account.BrandName,detail.Number, detail.Body);
+                    var sendResult = await senderService.SendSMS(account.BrandName, access_token.access_token,detail.Number, detail.Body);
                     if (sendResult != null)
                     {
                         if (!sendResult.Error.HasValue)
