@@ -50,6 +50,7 @@ namespace TMTDentalAPI.Controllers
             else
             {
                 entity = _mapper.Map<SmsThanksCustomerAutomationConfig>(val);
+                entity.CompanyId = CompanyId;
                 entity = await _smsConfigService.CreateAsync(entity);
             }
             _unitOfWorkAsync.Commit();

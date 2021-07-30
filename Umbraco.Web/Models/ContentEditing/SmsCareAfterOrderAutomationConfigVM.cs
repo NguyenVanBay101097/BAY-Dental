@@ -80,6 +80,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool Active { get; set; }
         public string ProductNames { get; set; }
         public string ProductCategoryNames { get; set; }
-
+        public string ApplyOn { get; set; }
     }
 }

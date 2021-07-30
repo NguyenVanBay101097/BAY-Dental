@@ -12,13 +12,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? SmsAccountId { get; set; }
 
-        public Guid CompanyId { get; set; }
-
         public int TimeBeforSend { get; set; }
 
         public string TypeTimeBeforSend { get; set; }
-
-        public string Body { get; set; }
 
         public Guid? SmsCampaignId { get; set; }
     }

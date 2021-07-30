@@ -89,8 +89,7 @@
                                         </td>
                                         <td colspan="1" style="width: 80%;">
                                             <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
-                                                formControlName="template" [filterable]="true" #smsTemplateCbx
-                                                (valueChange)="onChangeTemplate($event)" [valueField]="'id'"
+                                                formControlName="template" [filterable]="true" #smsTemplateCbx [valueField]="'id'"
                                                 class="mb-2">
                                             </kendo-combobox>
                                             <div *ngIf="f.template.errors && (f.template.touched || f.template.dirty || submitted)"
@@ -99,12 +98,11 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <tr *ngIf="templateValue">
                                         <td colspan="2" style="width: 80%;">
                                             <textarea type="text" my-autosize
-                                                class="form-control textarea textarea-required"
-                                                [class.border-danger]="submitted && f.body.value==''" id="textarea_mass"
-                                                formControlName="body" rows="5" #textarea
+                                                class="form-control textarea textarea-required" id="textarea_mass"
+                                                [value]="templateValue.body" rows="4" #textarea
                                                 [attr.disabled]="true"></textarea>
                                             <!-- <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
                                                 class="text-danger">
@@ -146,10 +144,7 @@
             </div>
             <div>
                 <div class="btns">
-                    <button type="button" class="btn btn-primary" (click)="onSave()">
-                        <span *ngIf="!id; else elseBlock">Lưu</span>
-                        <ng-template #elseBlock>Sửa</ng-template>
-                    </button>
+                    <button type="button" class="btn btn-primary" (click)="onSave()">Lưu</button>
                 </div>
             </div>
         </div>

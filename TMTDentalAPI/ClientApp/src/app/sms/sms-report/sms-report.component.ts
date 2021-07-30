@@ -13,7 +13,10 @@ import { ReportCampaignPaged, ReportSupplierInput, ReportTotalInput, SmsMessageD
 @Component({
   selector: 'app-sms-report',
   templateUrl: './sms-report.component.html',
-  styleUrls: ['./sms-report.component.css']
+  styleUrls: ['./sms-report.component.css'],
+  host: {
+    class: "o_action o_view_controller",
+  },
 })
 export class SmsReportComponent implements OnInit {
 

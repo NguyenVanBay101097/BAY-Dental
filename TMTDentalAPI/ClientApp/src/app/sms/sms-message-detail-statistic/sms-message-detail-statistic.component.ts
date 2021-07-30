@@ -97,8 +97,6 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
 
   stranslateCodeResponse(code) {
     switch (code) {
-      case "" || null:
-        return "Gửi thành công";
       case "sms_server":
         return "Lỗi hệ thống đối tác";
       case "sms_acc":
@@ -110,7 +108,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
       case "sms_template":
         return "Mẫu tin nhắn chưa đúng";
       default:
-        return "Lý do khác";
+        return "";
     }
   }
 

@@ -21,6 +21,8 @@ namespace ApplicationCore.Entities
         public int TimeBeforSend { get; set; }
 
         public string TypeTimeBeforSend { get; set; }
+
+        //Không sử dụng
         public string Body { get; set; }
         public bool Active { get; set; }
         public Guid? TemplateId { get; set; }

@@ -1,16 +1,16 @@
-<form class="container o_form_view h-100" [formGroup]="formGroup">
+<form class="o_form_view o_md_form_view" [formGroup]="formGroup">
     <div class="o_form_sheet_bg">
         <div class="o_form_sheet">
-            <div class="o_group">
+            <div class="o_group mt-0">
                 <table class="o_group o_inner_group o_group_col_12">
                     <tbody>
                         <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help font-weight-bolder">
-                                    Kích hoạt chương trình
+                                    Kích hoạt
                                 </label>
                             </td>
-                            <td colspan="1" class="o_td_label" style="width: 80%;">
+                            <td colspan="1" style="width: 100%;">
                                 <label class="switch">
                                     <input type="checkbox" formControlName="active">
                                     <span class="slider round"></span>
@@ -19,144 +19,98 @@
                         </tr>
                         <tr>
                             <td colspan="2" class="o_td_label">
-                                <label class="o_form_label o_form_label_help font-weight-bolder">
-                                    Điều kiện gửi tin
-                                </label>
-                                <table class="ml-5">
-                                    <tr *ngIf="campaign">
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help mt-2">
-                                                Tên chiến dịch
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 80%;">
-                                            <input type="text" [attr.disabled]="true" [value]="campaign?.name"
-                                                class="mt-2 mb-2 form-control">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help">
-                                                Brandname
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 80%;">
-                                            <kendo-combobox [data]="filteredSmsAccount" [textField]="'brandName'"
-                                                formControlName="smsAccount" [filterable]="true" #smsAccountCbx
-                                                [valueField]="'id'">
-                                                <ng-template kendoComboBoxItemTemplate let-dataItem>
-                                                    <span>{{dataItem ? dataItem.brandName :''}}
-                                                        ({{dataItem ? dataItem.name : ''}})</span>
-                                                </ng-template>
-                                            </kendo-combobox>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help mt-2 mb-2">
-                                                Thời gian gửi tin
-                                            </label>
-                                        </td>
-                                        <td colspan="1" class="d-flex align-items-center tr-send" style="width: 100%;">
-                                            <select formControlName="dayBeforeSend" class="form-control mt-2 mb-2"
-                                                style="width:197px;">
-                                                <option class="form-control" value="0">0 ngày</option>
-                                                <option class="form-control" value="1">1 ngày</option>
-                                                <option class="form-control" value="2">2 ngày</option>
-                                                <option class="form-control" value="3">3 ngày</option>
-                                                <option class="form-control" value="4">4 ngày</option>
-                                                <option class="form-control" value="5">5 ngày</option>
-                                            </select>
-                                            <span>&nbsp;trước khi sinh nhật</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help">
-                                                Thời điểm gửi tin
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <kendo-timepicker formControlName="scheduleTimeObj"></kendo-timepicker>
-                                        </td>
-                                    </tr>
-                                </table>
+                                <div class="font-weight-bolder mb-2">Điều kiện gửi tin</div>
                             </td>
-
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Tên chiến dịch
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="text" [attr.disabled]="true" [value]="campaign?.name" class="form-control">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Brandname
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox [data]="filteredSmsAccount" [textField]="'brandName'"
+                                    formControlName="smsAccount" [filterable]="true" #smsAccountCbx [valueField]="'id'">
+                                    <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                        <span>{{dataItem ? dataItem.brandName :''}}
+                                            ({{dataItem ? dataItem.name : ''}})</span>
+                                    </ng-template>
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Thời gian gửi tin
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <select formControlName="dayBeforeSend" class="form-control" yy>
+                                    <option class="form-control" value="0">0 ngày</option>
+                                    <option class="form-control" value="1">1 ngày</option>
+                                    <option class="form-control" value="2">2 ngày</option>
+                                    <option class="form-control" value="3">3 ngày</option>
+                                    <option class="form-control" value="4">4 ngày</option>
+                                    <option class="form-control" value="5">5 ngày</option>
+                                </select>
+                                <span>&nbsp;trước khi sinh nhật</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Thời điểm gửi tin
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-timepicker formControlName="scheduleTimeObj"></kendo-timepicker>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="2" class="o_td_label">
-                                <label class="o_form_label o_form_label_help font-weight-bolder">
-                                    Nội dung tin nhắn
+                                <div class="font-weight-bolder mb-2">Nội dung tin nhắn</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Tin nhắn mẫu
                                 </label>
-                                <table class="ml-5">
-                                    <tr>
-                                        <td colspan="1" class="o_td_label">
-                                            <label class="o_form_label o_form_label_help mb-2">
-                                                Chọn tin nhắn mẫu
-                                            </label>
-                                        </td>
-                                        <td colspan="1" style="width: 100%;">
-                                            <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
-                                                formControlName="template" [filterable]="true" #smsTemplateCbx
-                                                (valueChange)="onChangeTemplate($event)" [valueField]="'id'"
-                                                class="mb-2">
-                                            </kendo-combobox>
-                                            <div *ngIf="f.template.errors && (f.template.touched || f.template.dirty || submitted)"
-                                                class="text-danger">
-                                                <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" style="width: 80%;">
-                                            <textarea type="text" my-autosize class="form-control textarea"
-                                                id="textarea_mass" formControlName="body" rows="5" #textarea
-                                                [attr.disabled]="true"></textarea>
-                                            <!-- <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
-                                                class="text-danger">
-                                                <div *ngIf="f.body.errors.required">Nhập nội dung tin nhắn</div>
-                                                <div *ngIf="f.body.errors.maxlength">Số kí tự đã vượt quá cho phép !
-                                                </div>
-                                            </div> -->
-                                            <!-- <app-sms-note-content></app-sms-note-content>
-                                            <app-sms-personalized-tabs [type]="'partner'"
-                                                (contentEmit)="addToContent($event)"></app-sms-personalized-tabs> -->
-                                        </td>
-                                    </tr>
-                                    <!-- <tr>
-                                        <td>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value=""
-                                                    id="flexCheckChecked" (change)="checkedTemplateCopy($event)">
-                                                <label class="form-check-label" for="flexCheckChecked">
-                                                    Lưu làm tin mẫu
-                                                </label>
-                                            </div>
-                                        </td>
-                                        <td colspan="1" style="width: 80%;" *ngIf="isTemplateCopy">
-                                            <input type="text" class="form-control mt-2" formControlName="templateName"
-                                                [class.border-danger]="submitted && f.templateName.value==''">
-                                            <div *ngIf="f.templateName.errors && (f.templateName.touched || f.templateName.dirty || submitted)"
-                                                class="text-danger">
-                                                <div *ngIf="f.templateName.errors.required">Nhập tiêu đề tin nhắn
-                                                    mẫu</div>
-                                            </div>
-                                        </td>
-                                    </tr> -->
-                                </table>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
+                                    formControlName="template" [filterable]="true" #smsTemplateCbx
+                                    (valueChange)="onChangeTemplate($event)" [valueField]="'id'">
+                                </kendo-combobox>
+                                <div *ngIf="f.template.errors && (f.template.touched || f.template.dirty || submitted)"
+                                    class="text-danger">
+                                    <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="templateValue">
+                            <td colspan="2">
+                                <textarea type="text" my-autosize class="form-control textarea" id="textarea_mass"
+                                    [value]="templateValue.body" rows="4" #textarea [attr.disabled]="true"></textarea>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div>
-                <div class="btns">
-                    <button type="button" class="btn btn-primary" (click)="onSave()">
-                        <span *ngIf="!id; else elseBlock">Lưu</span>
-                        <ng-template #elseBlock>Sửa</ng-template>
-                    </button>
-                </div>
+                <button type="button" class="btn btn-primary" (click)="onSave()">
+                    Lưu
+                </button>
             </div>
         </div>
     </div>

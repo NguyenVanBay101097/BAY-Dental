@@ -35,7 +35,7 @@
             {{dataItem.smsAccount ? dataItem.smsAccount.brandName :''}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Nguyên nhân" width="250">
+    <kendo-grid-column title="Nguyên nhân lỗi" field="errorCode" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{stranslateCodeResponse(dataItem.errorCode)}}
         </ng-template>

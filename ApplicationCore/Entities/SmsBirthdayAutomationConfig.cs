@@ -25,7 +25,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public int DayBeforeSend { get; set; }
 
+        //Không sử dụng cột này
         public string Body { get; set; }
+
         public bool Active { get; set; }
         public Guid? TemplateId { get; set; }
         public SmsTemplate Template { get; set; }
