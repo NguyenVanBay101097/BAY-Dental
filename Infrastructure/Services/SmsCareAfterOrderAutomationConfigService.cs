@@ -63,7 +63,7 @@ namespace Infrastructure.Services
                 TypeTimeBeforSend = x.TypeTimeBeforSend,
                 ProductNames = x.SmsConfigProductRels != null && x.SmsConfigProductRels.Any() ? string.Join(", ", x.SmsConfigProductRels.Select(x => x.Product.Name)) : null,
                 ProductCategoryNames = x.SmsConfigProductCategoryRels != null && x.SmsConfigProductCategoryRels.Any() ? string.Join(", ", x.SmsConfigProductCategoryRels.Select(x => x.ProductCategory.Name)) : null,
-
+                ApplyOn = x.ApplyOn
             }).ToListAsync();
             return new PagedResult2<SmsCareAfterOrderAutomationConfigGrid>(totalItems, val.Offset, val.Limit) { Items = items };
         }

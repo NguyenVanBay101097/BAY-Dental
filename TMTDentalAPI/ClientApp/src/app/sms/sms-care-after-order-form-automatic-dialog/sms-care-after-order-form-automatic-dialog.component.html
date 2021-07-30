@@ -129,7 +129,7 @@
                                         </div>
                                     </div>
                                     <div class="ml-5">
-                                        <div *ngIf="filter=='product_category'">
+                                        <div *ngIf="applyOnValue=='product_category'">
                                             <kendo-multiselect (filterChange)="loadProductCategory($event)"
                                                 [filterable]="true" style="min-height: 100px;" class="mr-3"
                                                 [data]="filteredProductCategories" [textField]="'name'"
@@ -141,7 +141,7 @@
                                                 <div *ngIf="f.productCategories.errors.required">Chọn nhóm dịch vụ</div>
                                             </div>
                                         </div>
-                                        <div *ngIf="filter=='product'">
+                                        <div *ngIf="applyOnValue=='product'">
                                             <kendo-multiselect (filterChange)="loadProduct($event)" class="mr-3"
                                                 style="min-height: 100px;" [data]="filteredProducts" [filterable]="true"
                                                 [placeholder]="'Chọn dịch vụ'" [textField]="'name'" [valueField]="'id'"
@@ -170,7 +170,7 @@
                                             <td colspan="1" style="width: 80%;">
                                                 <kendo-combobox [data]="filteredTemplate" ngbAutofocus
                                                     [textField]="'name'" formControlName="template" [filterable]="true"
-                                                    #smsTemplateCbx (valueChange)="onChangeTemplate($event)"
+                                                    #smsTemplateCbx
                                                     [valueField]="'id'" class="mb-2">
                                                 </kendo-combobox>
                                                 <div *ngIf="f.template.errors && (f.template.touched || f.template.dirty || submitted)"
@@ -179,11 +179,11 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr *ngIf="templateValue">
                                             <td colspan="2" style="width: 80%;">
                                                 <textarea type="text" my-autosize
                                                     class="form-control textarea"
-                                                    id="textarea_mass" formControlName="body" rows="5" #textarea
+                                                    id="textarea_mass" [value]="templateValue.body" rows="5" #textarea
                                                     [attr.disabled]="true"></textarea>
                                                 <!-- <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
                                                     class="text-danger">

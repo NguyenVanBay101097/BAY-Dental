@@ -15,6 +15,9 @@ namespace ApplicationCore.Entities
         public Guid? SmsCampaignId { get; set; }
         public SmsCampaign SmsCampaign { get; set; }
 
+        /// <summary>
+        /// Không sử dụng
+        /// </summary>
         public string Body { get; set; }
 
         public int TimeBeforSend { get; set; }

@@ -5,6 +5,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
 import { SmsAppointmentAutomationConfigService } from '../sms-appointment-automation-config.service';
 import { SmsCampaignService } from '../sms-campaign.service';
@@ -32,7 +33,6 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
   limit: number = 20;
   type: string;
   filteredTemplate: any[];
-  companyId: string;
   textareaLimit: number = 200;
   template: any = {
     text: '',
@@ -55,7 +55,8 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
     private notificationService: NotificationService,
-    private smsCampaignService: SmsCampaignService
+    private smsCampaignService: SmsCampaignService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -63,16 +64,11 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
       template: [null, Validators.required],
       smsAccount: [null, Validators.required],
       active: false,
-      TypeTimeBeforSend: 'day',
+      TypeTimeBeforSend: 'hour',
       timeBeforSend: [1, Validators.required],
       templateName: '',
-      body: ['', Validators.required]
     })
-    var user_change_company_vm = localStorage.getItem('user_change_company_vm');
-    if (user_change_company_vm) {
-      var companyInfo = JSON.parse(user_change_company_vm);
-      this.companyId = companyInfo.currentCompany.id;
-    }
+   
     this.loadDataFormApi();
     this.loadSmsTemplate();
     this.loadDefaultCampaignAppointmentReminder();
@@ -126,12 +122,6 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
         if (res) {
           this.id = res.id;
           this.formGroup.patchValue(res);
-          if (res.body) {
-            this.template = {
-              text: res.body,
-              templateType: 'text'
-            }
-          }
           if (res.dateSend) {
             this.formGroup.get('dateTimeSend').patchValue(new Date(res.dateSend))
           }
@@ -167,24 +157,8 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     this.searchSmsTemplate().subscribe(
       (result: any) => {
         this.filteredTemplate = result;
-        if (result) {
-          this.formGroup.get('template').patchValue(result[0]);
-          this.onChangeTemplate(result[0])
-        }
       }
     )
-  }
-
-  onChangeTemplate(event) {
-    if (event && event.body) {
-      this.template = JSON.parse(event.body);
-    } else {
-      this.template = {
-        text: '',
-        templateType: 'text'
-      }
-    }
-    this.f.body.setValue(this.template.text);
   }
 
   searchSmsTemplate(q?: string) {
@@ -201,7 +175,6 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
     val.templateId = val.template ? val.template.id : null;
-    val.companyId = this.companyId;
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
     this.smsConfigService.saveConfig(val).subscribe(
       res => {
@@ -209,23 +182,6 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
         this.loadDataFormApi();
       }
     )
-
-    if (this.isTemplateCopy && val.templateName != '') {
-      var template = {
-        text: val.body,
-        templateType: 'text'
-      }
-      var valueTemplate = {
-        name: val.templateName,
-        body: JSON.stringify(template),
-        type: "appointment"
-      }
-      this.smsTemplateService.create(valueTemplate).subscribe(
-        () => {
-          this.loadSmsTemplate();
-        }
-      )
-    }
   }
 
   addTemplate() {
@@ -256,6 +212,10 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
 
     this.textarea.nativeElement.focus();
     this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
+  }
+
+  get templateValue() {
+    return this.formGroup.get('template').value;
   }
 
   notify(title, isSuccess = true) {

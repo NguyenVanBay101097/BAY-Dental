@@ -74,7 +74,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   }
 
   editItem(item) {
-    var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "md", windowClass: "o_technical_modal" });
+    var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "md", windowClass: "o_technical_modal", keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Thiết lập tin nhắn gửi tự động";
     // modalRef.componentInstance.templateTypeTab = "care_after_order";
     modalRef.componentInstance.id = item.id;
@@ -90,7 +90,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
       this.notify("Không thể xóa thiết lập đang kích hoạt", false);
       return;
     }
-    var modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
+    var modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Xóa thiết lập gửi tự động";
     modalRef.componentInstance.body = "Bạn có muốn xóa thiết lập gửi tin tự động không?";
     modalRef.result.then(
@@ -127,7 +127,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   }
 
   setupAutomaic() {
-    var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "md", windowClass: "o_technical_modal" });
+    var modalRef = this.modalService.open(SmsCareAfterOrderFormAutomaticDialogComponent, { size: "md", windowClass: "o_technical_modal", keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Thiết lập tin nhắn gửi tự động";
     modalRef.componentInstance.campaign = this.campaign;
     // modalRef.componentInstance.templateTypeTab = "care_after_order";

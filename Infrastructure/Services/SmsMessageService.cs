@@ -319,14 +319,9 @@ namespace Infrastructure.Services
                 //neu truong hop detail ma co noi dung trong blacklist thi chuyen sang state canceled
                 if (backlists.Any(x => detail.Body.Contains(x)) || specialChars.Any(x => detail.Body.Contains(x)))
                 {
-                    detail.State = "canceled";
+                    detail.State = "error";
                     detail.ErrorCode = "sms_blacklist";
                 }
-                //else if (access_token.error.HasValue || access_token == null)
-                //{
-                //    detail.State = "error";
-                //    detail.ErrorCode = access_token == null ? "sms_server" : access_token.error_description;
-                //}
                 else
                 {
                     var sendResult = await senderService.SendSms(account.BrandName, detail.Number, detail.Body);
@@ -335,7 +330,10 @@ namespace Infrastructure.Services
                     else
                     {
                         detail.State = "error";
-                        detail.ErrorCode = sendResult.Error + "";
+                        var errorCode = "";
+                        if (sendResult.Error == 1008 || sendResult.Error == 1014)
+                            errorCode = "sms_acc";
+                        detail.ErrorCode = errorCode;
                     }
                 }
             }

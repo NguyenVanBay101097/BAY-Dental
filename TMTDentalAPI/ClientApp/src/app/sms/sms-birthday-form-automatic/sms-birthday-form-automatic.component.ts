@@ -158,6 +158,10 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     )
   }
 
+  get templateValue() {
+    return this.formGroup.get('template').value;
+  }
+
   searchAccount(q?: string) {
     var val = new SmsAccountPaged();
     val.limit = 20;

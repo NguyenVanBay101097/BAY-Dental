@@ -41,15 +41,15 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="brandName" title="Brandname" width="150"></kendo-grid-column>
-        <kendo-grid-column field="smsCampaignName" title="Chiến dịch" width="180"></kendo-grid-column>
-        <kendo-grid-column field="smsMessageName" title="Tên tin nhắn" width="180"></kendo-grid-column>
-        <kendo-grid-column field="body" title="Nội dung" width="250"></kendo-grid-column>
-        <kendo-grid-column title="Nguyên nhân lỗi" width="250">
+        <kendo-grid-column field="smsCampaignName" title="Chiến dịch" width="150"></kendo-grid-column>
+        <kendo-grid-column field="smsMessageName" title="Tên tin nhắn" width="150"></kendo-grid-column>
+        <kendo-grid-column field="body" title="Nội dung" width="200"></kendo-grid-column>
+        <kendo-grid-column title="Nguyên nhân lỗi" width="200">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{stranslateCodeResponse(dataItem.errorCode)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Trạng thái" width="100">
+        <kendo-grid-column title="Trạng thái" width="120">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <span *ngIf="dataItem.state=='outgoing'">Đang gửi</span>
                 <span *ngIf="dataItem.state=='canceled'">Hủy</span>

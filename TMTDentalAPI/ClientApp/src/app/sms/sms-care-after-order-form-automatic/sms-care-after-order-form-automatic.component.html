@@ -44,9 +44,9 @@
     <kendo-grid-column title="Nhóm dich vụ/Dịch vụ" width=300>
         <ng-template kendoGridCellTemplate let-dataItem>
             <span class="white-space-pre" [title]="'Dịch vụ: '+dataItem.productNames"
-                *ngIf="dataItem.productNames != ''">{{dataItem.productNames}}</span>
+                *ngIf="dataItem.productNames != '' && dataItem.applyOn == 'product'">{{dataItem.productNames}}</span>
             <span class="white-space-pre" [title]="'Nhóm dịch vụ: '+dataItem.productCategoryNames"
-                *ngIf="dataItem.productCategoryNames != ''">{{dataItem.productCategoryNames}}</span>
+                *ngIf="dataItem.productCategoryNames != '' && dataItem.applyOn == 'product_category'">{{dataItem.productCategoryNames}}</span>
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column title="Trạng thái" width="150">

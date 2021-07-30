@@ -60,16 +60,11 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
       template: [null, Validators.required],
       smsAccount: [null, Validators.required],
       active: false,
-      typeTimeBeforSend: 'day',
+      typeTimeBeforSend: 'hour',
       timeBeforSend: [1, Validators.required],
       templateName: '',
-      body: ['', Validators.required]
     })
-    var user_change_company_vm = localStorage.getItem('user_change_company_vm');
-    if (user_change_company_vm) {
-      var companyInfo = JSON.parse(user_change_company_vm);
-      this.companyId = companyInfo.currentCompany.id;
-    }
+  
     this.loadDataFormApi();
     this.loadSmsTemplate();
     this.loadDefaultCampaignThanksCustomer();
@@ -121,12 +116,6 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
         if (res) {
           this.id = res.id;
           this.formGroup.patchValue(res);
-          if (res.body) {
-            this.template = {
-              text: res.body,
-              templateType: 'text'
-            }
-          }
           if (res.dateSend) {
             this.formGroup.get('dateTimeSend').patchValue(new Date(res.dateSend))
           }
@@ -150,6 +139,10 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     )
   }
 
+  get templateValue() {
+    return this.formGroup.get('template').value;
+  }
+
   searchAccount(q?: string) {
     var val = new SmsAccountPaged();
     val.limit = 20;
@@ -162,24 +155,8 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     this.searchSmsTemplate().subscribe(
       (result: any) => {
         this.filteredTemplate = result;
-        if (result) {
-          this.formGroup.get('template').patchValue(result[0]);
-          this.onChangeTemplate(result[0])
-        }
       }
     )
-  }
-
-  onChangeTemplate(event) {
-    if (event && event.body) {
-      this.template = JSON.parse(event.body);
-    } else {
-      this.template = {
-        text: '',
-        templateType: 'text'
-      }
-    }
-    this.f.body.setValue(this.template.text);
   }
 
   searchSmsTemplate(q?: string) {
@@ -195,7 +172,6 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     var val = this.formGroup.value;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
-    val.companyId = this.companyId;
     val.templateId = val.template ? val.template.id : null;
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
     this.smsConfigService.saveConfig(val).subscribe(
@@ -203,22 +179,6 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
         this.notify("Thiết lập thành công", true);
       }
     )
-    if (this.isTemplateCopy && val.templateName != '') {
-      var template = {
-        text: val.body,
-        templateType: 'text'
-      }
-      var valueTemplate = {
-        name: val.templateName,
-        body: JSON.stringify(template),
-        type: "saleOrder"
-      }
-      this.smsTemplateService.create(valueTemplate).subscribe(
-        () => {
-          this.loadSmsTemplate();
-        }
-      )
-    }
   }
 
   addTemplate() {
