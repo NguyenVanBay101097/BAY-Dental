@@ -7,6 +7,7 @@ using ApplicationCore.Utilities;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -27,6 +28,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
         public async Task<IActionResult> GetRevenueTimeReportPaged([FromQuery] RevenueTimeReportPar val)
         {
             var res = await _invoiceReportService.GetRevenueTimeReport(val);
@@ -34,6 +36,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
         public async Task<IActionResult> GetRevenueServiceReportPaged([FromQuery] RevenueServiceReportPar val)
         {
             var res = await _invoiceReportService.GetRevenueServiceReport(val);
@@ -41,6 +44,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
         public async Task<IActionResult> GetRevenueEmployeeReportPaged([FromQuery] RevenueEmployeeReportPar val)
         {
             var res = await _invoiceReportService.GetRevenueEmployeeReport(val);
@@ -48,22 +52,23 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
         public async Task<IActionResult> GetRevenueReportDetailPaged([FromQuery] RevenueReportDetailPaged val)
         {
             var res = await _invoiceReportService.GetRevenueReportDetailPaged(val);
             return Ok(res);
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetRevenueReportDetailPrint([FromQuery] RevenueReportDetailPaged val)
-        {
-            var res = await _invoiceReportService.GetRevenueReportDetailPaged(val);
+        //[HttpGet("[action]")]
+        //public async Task<IActionResult> GetRevenueReportDetailPrint([FromQuery] RevenueReportDetailPaged val)
+        //{
+        //    var res = await _invoiceReportService.GetRevenueReportDetailPaged(val);
 
-            if (res.Items == null) return NotFound();
-            var html = _viewRenderService.Render("AccountInvoiceReport/PrintRevenueReportDetail", res.Items);
+        //    if (res.Items == null) return NotFound();
+        //    var html = _viewRenderService.Render("AccountInvoiceReport/PrintRevenueReportDetail", res.Items);
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
 
         [HttpGet("[action]")]
         public async Task<IActionResult> SumRevenueReport([FromQuery]SumRevenueReportPar val)
