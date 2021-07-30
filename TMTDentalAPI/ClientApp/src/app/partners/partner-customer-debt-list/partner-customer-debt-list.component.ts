@@ -111,6 +111,10 @@ export class PartnerCustomerDebtListComponent implements OnInit {
 
 
   createItem() {
+    if(this.debtStatistics.balanceTotal <= 0) {
+      return this.notifyService.notify('error', 'Bạn không có công nợ để thanh toán');
+    }
+
     const modalRef = this.modalService.open(PartnerCustomerDebtPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thu công nợ khách hàng';
     modalRef.componentInstance.type = 'thu';
