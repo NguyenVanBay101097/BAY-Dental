@@ -105,7 +105,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
-    public class ServiceSaleReporPrint
+    public class ServiceSaleReportPrint
     {
         public IEnumerable<SaleOrderLineBasic> data { get; set; } = new List<SaleOrderLineBasic>();
         public DateTime? DateFrom { get; set; }

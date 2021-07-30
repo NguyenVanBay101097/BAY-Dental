@@ -74,6 +74,6 @@ namespace Infrastructure.Services
         Task RemoveOrderLine(Guid id);
 
         Task UpdateState(Guid id, string state);
-        Task<ServiceSaleReporPrint> SaleReportPrint(SaleOrderLinesPaged val);
+        Task<ServiceSaleReportPrint> SaleReportPrint(SaleOrderLinesPaged val);
     }
 }

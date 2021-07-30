@@ -1,4 +1,4 @@
-﻿@model Umbraco.Web.Models.ContentEditing.ServiceSaleReporPrint
+﻿@model Umbraco.Web.Models.ContentEditing.ServiceSaleReportPrint
 @using Umbraco.Web.Models.ContentEditing;
 @{
     var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
@@ -10,7 +10,7 @@
     <div class="text-3xl font-semibold">BÁO CÁO DỊCH VỤ ĐANG ĐIỀU TRỊ</div>
     <div>
         @((Model.DateFrom.HasValue? "Từ ngày " + Model.DateFrom.Value.ToString("dd/MM/yyyy") : "") +
-            (Model.DateFrom.HasValue ? "Đến ngày " + Model.DateTo.Value.ToString("dd/MM/yyyy") : ""))
+            (Model.DateFrom.HasValue ? " Đến ngày " + Model.DateTo.Value.ToString("dd/MM/yyyy") : ""))
     </div>
 </div>
 
@@ -53,10 +53,10 @@
 </div>
 
 <div class="d-flex mt-2">
-    <div class="col">
+    <div class="col-6">
 
     </div>
-    <div class="col">
+    <div class="col-6">
         <div class="text-center">
             <div>Ngày @DateTime.Now.Day,tháng @DateTime.Now.Month, năm @DateTime.Now.Year.</div>
             <span class="font-semibold">Người lập báo cáo</span> <br />

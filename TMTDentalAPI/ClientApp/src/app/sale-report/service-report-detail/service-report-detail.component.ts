@@ -49,6 +49,7 @@ export class ServiceReportDetailComponent implements OnInit {
     var val = Object.assign({}, this.filter);
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.employeeId = val.employeeId || '';
     (val.active as any) = (val.active && val.active !== null)? val.active : '';
     this.loading = true;
     this.saleReportService.getServiceReportDetailPaged(val).pipe(

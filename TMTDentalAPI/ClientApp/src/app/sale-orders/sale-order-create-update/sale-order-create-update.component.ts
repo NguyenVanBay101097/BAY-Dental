@@ -1251,7 +1251,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.saleOrderLineService.updateState(line.id,state).subscribe(r=> {
       this.notify('success', 'Lưu thành công');
       line.state = state;
-      if(this.saleOrder.orderLines.every(x=> x.state == 'done' || x.state == 'cancel'))
+      if(this.saleOrder.orderLines.every(x=> x.state == 'done' || x.state == 'cancel') &&
+      this.saleOrder.orderLines.some(x=> x.state == 'done')
+      )
       this.saleOrder.state = 'done';
     });
     })

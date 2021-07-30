@@ -24,7 +24,7 @@
         <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="sale">1-3 tháng</label>
         <input [(ngModel)]="filterMonth" (ngModelChange)="onChangeFilterMonth()" [value]="{from:6, to: -3}" type="radio" class="btn-check hidden hide" name="orderStates" id="done" autocomplete="off" [checked]="true">
         <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="done">3-6 tháng</label>
-        <input [(ngModel)]="filterMonth" (ngModelChange)="onChangeFilterMonth()" [value]="{from: null, to: -6}" type="radio" class="btn-check hidden hide" name="orderStates" id="notActive" autocomplete="off" [checked]="true">
+        <input [(ngModel)]="filterMonth" (ngModelChange)="onChangeFilterMonth()" [value]="{from: 12, to: -6}" type="radio" class="btn-check hidden hide" name="orderStates" id="notActive" autocomplete="off" [checked]="true">
         <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="notActive">Quá 6 tháng</label>
 
     </div>

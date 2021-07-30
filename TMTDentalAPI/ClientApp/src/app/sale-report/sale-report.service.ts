@@ -206,4 +206,19 @@ export class SaleReportService {
         return this.http.get<PagedResult2<ServiceReportDetailRes>>(this.baseApi + this.apiUrl + '/GetServiceReportDetailPaged', {params: new HttpParams({fromObject: val})});
 
     }
+
+    serviceReportByServicePrint(val) {
+        return this.http.get(this.baseApi + 'SaleReport/ServiceReportByServicePrint', {params: new HttpParams({fromObject: val}), responseType:'text'});
+    }
+
+    serviceReportByTimePrint(val) {
+        return this.http.get(this.baseApi + 'SaleReport/ServiceReportByTimePrint', {params: new HttpParams({fromObject: val}), responseType:'text'});
+    }
+
+    getServiceReportByServicePdf(val){
+        return this.http.post(this.baseApi + this.apiUrl+ '/GetServiceReportByServicePdf',val, {responseType:'blob'});
+    }
+    getServiceReportByTimePdf(val){
+        return this.http.post(this.baseApi + this.apiUrl+ '/GetServiceReportByTimePdf',val, {responseType:'blob'});
+    }
 }

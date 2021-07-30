@@ -1236,12 +1236,12 @@ namespace Infrastructure.Services
                await orderObj.ActionDone(new List<Guid>() { line.OrderId });
         }
 
-        public async Task<ServiceSaleReporPrint> SaleReportPrint(SaleOrderLinesPaged val)
+        public async Task<ServiceSaleReportPrint> SaleReportPrint(SaleOrderLinesPaged val)
         {
             val.Limit = 0;
             var resPage = await GetPagedResultAsync(val);
             var companyObj = GetService<ICompanyService>();
-            var res = new ServiceSaleReporPrint()
+            var res = new ServiceSaleReportPrint()
             {
                 data = resPage.Items,
                 DateFrom = val.DateOrderFrom,

@@ -56,6 +56,24 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
         public string OrderName { get; set; }
         public bool IsActive { get; set; }
+        public Guid ProductId { get; set; }
 
+    }
+
+    public class ServiceReportResPrint: ServiceReportRes
+    {
+      public IEnumerable<ServiceReportDetailRes> Lines { get; set; } =  new List<ServiceReportDetailRes>();
+    }
+
+    public class ServiceReportPrint
+    {
+        public IEnumerable<ServiceReportResPrint> data { get; set; } = new List<ServiceReportResPrint>();
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public CompanyPrintVM Company { get; set; }
+        public ApplicationUserSimple User { get; set; }
+        public string Title { get; set; }
+        //time, service
+        public string type { get; set; }
     }
 }

@@ -177,9 +177,9 @@ export class ServiceSaleReportComponent implements OnInit {
 
     if(this.filterMonth) {
      this.filter.dateOrderFrom = this.filterMonth.from != null? 
-     new Date(date.setMonth(month - this.filterMonth.from)): null;
+     new Date(new Date().setMonth(month - this.filterMonth.from)): null;
      this.filter.dateOrderTo = this.filterMonth.to != null? 
-     new Date(date.setMonth(month + this.filterMonth.to)) : null;
+     new Date(new Date().setMonth(month + this.filterMonth.to)) : null;
     }
 
     this.dateRangeComp.selected ={

@@ -312,7 +312,7 @@ namespace TMTDentalAPI.Controllers
             var globalSettings = new GlobalSettings
             {
                 ColorMode = ColorMode.Color,
-                Orientation = Orientation.Portrait,
+                Orientation = Orientation.Landscape,
                 PaperSize = PaperKind.A4,
                 Margins = new MarginSettings { Top = 10 },
                 DocumentTitle = "PDF Report"
@@ -322,7 +322,6 @@ namespace TMTDentalAPI.Controllers
                 PagesCount = true,
                 HtmlContent = html,
                 WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
-                HeaderSettings = { FontName = "Arial", FontSize = 9, Line = true },
                 FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo dịch vụ", Right = "Page [page] of [toPage]" }
             };
             var pdf = new HtmlToPdfDocument()

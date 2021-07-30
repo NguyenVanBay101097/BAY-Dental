@@ -133,6 +133,7 @@ export class ServiceReportManagementComponent implements OnInit {
       filter.companyId = filter.companyId || '';
       var dataIndex = data[idx];
       filter.productId = dataIndex.productId || '';
+      filter.employeeId = dataIndex.employeeId || '';
       filter.dateFrom = dataIndex.date2 ? moment(dataIndex.date2).format('YYYY/MM/DD')
         : (filter.dateFrom ? moment(filter.dateFrom).format('YYYY/MM/DD') : '');
       filter.dateTo = dataIndex.date2 ? moment(dataIndex.date2).format('YYYY/MM/DD')

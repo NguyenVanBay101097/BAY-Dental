@@ -8,6 +8,7 @@ import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/op
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { SaleReportService, ServiceReportReq } from '../sale-report.service';
 import { ServiceReportManageService } from '../service-report-management/service-report-manage';
 
@@ -37,7 +38,8 @@ export class ServiceReportServiceComponent implements OnInit {
     private saleReportService: SaleReportService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
-    private serviceReportManageService: ServiceReportManageService
+    private serviceReportManageService: ServiceReportManageService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -202,5 +204,45 @@ export class ServiceReportServiceComponent implements OnInit {
        title: 'BaoCaoTheoDichVu',
        header:'BÁO CÁO THEO DỊCH VỤ'
     })
+  }
+
+  onExportPDF() {
+    var val = Object.assign({}, this.filter) as ServiceReportReq;
+    
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.loading = true;
+    this.saleReportService.getServiceReportByServicePdf(val).subscribe(res => {
+      this.loading = false;
+      let filename ="BaoCaoTheoDichVu";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
+
+  onPrint(){
+    var val = Object.assign({}, this.filter) as ServiceReportReq;
+    
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.loading = true;
+      this.saleReportService.serviceReportByServicePrint(val).subscribe((result: any) => {
+        this.loading = false;
+        this.printService.printHtml(result);
+      });
   }
 }
