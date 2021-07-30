@@ -319,10 +319,10 @@ namespace Infrastructure.Services
                     detail.State = "canceled";
                     detail.ErrorCode = "sms_blacklist";
                 }
-                else if (access_token.error.HasValue)
+                else if (access_token.error.HasValue || access_token == null)
                 {
                     detail.State = "error";
-                    detail.ErrorCode = access_token.error_description;
+                    detail.ErrorCode = access_token == null ? "sms_server" : access_token.error_description;
                 }
                 else
                 {
