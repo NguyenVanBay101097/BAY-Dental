@@ -341,9 +341,16 @@ namespace Infrastructure.Services
 
             #endregion
 
+            var accCNKH = new AccountAccount
+            {
+                Name = "Công nợ khách hàng",
+                Code = "CNKH",
+                InternalType = currentLiabilities.Type,
+                UserTypeId = currentLiabilities.Id,
+                CompanyId = company.Id,
+            };
 
-
-            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU });
+            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU, accCNKH });
 
             #endregion
 
@@ -414,6 +421,17 @@ namespace Infrastructure.Services
                 Code = "ADVANCE",
                 DefaultDebitAccountId = accKHTU.Id,
                 DefaultCreditAccountId = accKHTU.Id,
+                CompanyId = company.Id,
+            };
+
+            var journalCNKH = new AccountJournal
+            {
+                Name = "Ghi công nợ",
+                Type = "debt",
+                UpdatePosted = true,
+                Code = "DEBT",
+                DefaultDebitAccountId = accCNKH.Id,
+                DefaultCreditAccountId = accCNKH.Id,
                 CompanyId = company.Id,
             };
 
