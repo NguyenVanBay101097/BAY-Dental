@@ -265,7 +265,7 @@ namespace Infrastructure.Services
                 objs = await _saleOrderRepository.SearchQuery(x => saleOrderIds.Contains(x.Id))
                     .Include(x => x.Partner).ThenInclude(x => x.Title)
                     .ToListAsync();
-                dict = XuLyNoiDungPhieuDieuTri(self.Body, (IEnumerable<Partner>)objs);
+                dict = XuLyNoiDungPhieuDieuTri(self.Body, (IEnumerable<SaleOrder>)objs);
             }
             else
                 throw new Exception("not support");
@@ -400,7 +400,7 @@ namespace Infrastructure.Services
                     .Replace("{so_phieu_dieu_tri}", line.Order != null ? line.Order.Name : "")
                     .Replace("{ten_dich_vu}", line.Product != null ? line.Product.Name : "")
                     .Replace("{ten_khach_hang}", line.OrderPartner != null ? line.OrderPartner.Name.Split(' ').Last() : "")
-                    .Replace("{danh_xung}", line.OrderPartner != null && line.OrderPartner.Title != null ? line.OrderPartner.Title.Name : "");
+                    .Replace("{danh_xung_khach_hang}", line.OrderPartner != null && line.OrderPartner.Title != null ? line.OrderPartner.Title.Name : "");
                 dict.Add(line.Id, content);
             }
 
@@ -423,16 +423,16 @@ namespace Infrastructure.Services
             return dict;
         }
 
-        public IDictionary<Guid, string> XuLyNoiDungPhieuDieuTri(string template, IEnumerable<Partner> partners)
+        public IDictionary<Guid, string> XuLyNoiDungPhieuDieuTri(string template, IEnumerable<SaleOrder> orders)
         {
             var dict = new Dictionary<Guid, string>();
-            foreach (var partner in partners)
+            foreach (var order in orders)
             {
                 var content = template
-                .Replace("{ten_khach_hang}", partner.Name.Split(' ').Last())
-                .Replace("{danh_xung_khach_hang}", partner.Title != null ? partner.Title.Name : "");
+                .Replace("{ten_khach_hang}", order.Partner.Name.Split(' ').Last())
+                .Replace("{danh_xung_khach_hang}", order.Partner.Title != null ? order.Partner.Title.Name : "");
 
-                dict.Add(partner.Id, content);
+                dict.Add(order.Id, content);
             }
 
             return dict;
