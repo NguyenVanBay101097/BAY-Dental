@@ -66,10 +66,10 @@
                     </table>
                     <div>
                         <kendo-chart *ngIf="pieData_reportTotal.length" title="">
-                            <kendo-chart-legend [visible]="false"></kendo-chart-legend>
+                            <kendo-chart-legend position="bottom"></kendo-chart-legend>
                             <kendo-chart-series>
                                 <kendo-chart-series-item [autoFit]="autofit" type="pie" [data]="pieData_reportTotal"
-                                    field="total" categoryField="stateDisplay" colorField="color"
+                                    field="total" categoryField="stateDisplay"
                                     [labels]="{ visible: true, content: labelContentReportTotal }">
                                 </kendo-chart-series-item>
                             </kendo-chart-series>
@@ -77,58 +77,42 @@
                         <div class="no-data-report" *ngIf="!pieData_reportTotal.length">
                             Không có dữ liệu
                         </div>
-                        <div class="d-flex justify-content-around bg-white py-2">
-                            <div class="legend-report-total legend-total">
-                                <div class="color"></div>
-                                <span>Tổng tin nhắn</span>
-                                <div class="num">{{total_reportTotal}}</div>
-                            </div>
-                            <div *ngFor="let item of pieData_reportTotal" class="legend-report-total legend-success">
-                                <div class="color" [ngStyle]="{'background-color': item ? item.color : '#007bff'}">
-                                </div>
-                                <span>{{item.stateDisplay}}</span>
-                                <div class="num" [ngStyle]="{'color': item ? item.color : '#007bff'}">{{item.total}}
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-6 py-3">
                 <div class="border">
                     <div class="bg-light border-bottom p-2 font-weight-bold">
-                        Báo cáo theo nhà cung cấp
-                    </div>
-                    <div class="p-2">
-                        <span class="mr-2">Nhà cung cấp</span>
-                        <div class="form-group">
-                            <select class="form-control" (change)="onChangeSupplier($event)"
-                                id="exampleFormControlSelect1">
-                                <option *ngFor="let item of filteredSmsSupplier" [value]="item.provider">{{item.name}}
-                                </option>
-                            </select>
-                        </div>
+                        Báo cáo theo tháng
                     </div>
                     <kendo-chart *ngIf="reportChartLinesAccounts && reportChartLinesAccounts.length > 0">
                         <kendo-chart-legend position="bottom" orientation="horizontal"></kendo-chart-legend>
-                        <kendo-chart-tooltip format="{0}%"></kendo-chart-tooltip>
+                        <kendo-chart-tooltip></kendo-chart-tooltip>
                         <kendo-chart-series>
-                            <ng-container *ngFor="let reportLine of reportChartLinesAccounts;">
-                                <kendo-chart-series-item type="line" [style]="'smooth'" [dashType]="longDash"
-                                    [data]="reportLine" [color]="color" field="count" categoryField="month"
-                                    [name]="stateName">
-                                    <kendo-chart-series-item-tooltip>
-                                        <ng-template let-dataItem="dataItem">
-                                            <span><b>Tổng tin nhắn: {{dataItem.total}}</b></span><br>
-                                            <span><b>{{dataItem.stateName}}: {{dataItem.count}}</b></span>
-                                        </ng-template>
-                                    </kendo-chart-series-item-tooltip>
-                                </kendo-chart-series-item>
-                            </ng-container>
+                            <kendo-chart-series-item name="Gửi thành công" type="line" [data]="reportChartLinesAccounts"
+                                field="totalSent" [color]="'#28a745'" categoryField="category">
+                                <kendo-chart-series-item-tooltip>
+                                    <ng-template let-dataItem="dataItem">
+                                        <span><b>Tổng tin nhắn: {{dataItem.totalSent +
+                                                dataItem.totalError}}</b></span><br>
+                                        <span><b>Gửi thành công: {{dataItem.totalSent}}</b></span>
+                                    </ng-template>
+                                </kendo-chart-series-item-tooltip>
+                            </kendo-chart-series-item>
+                            <kendo-chart-series-item type="line" name="Gửi thất bại" [data]="reportChartLinesAccounts"
+                                field="totalError"  [color]="'#dc3545'" categoryField="category">
+                                <kendo-chart-series-item-tooltip>
+                                    <ng-template let-dataItem="dataItem">
+                                        <span><b>Tổng tin nhắn: {{dataItem.totalSent +
+                                                dataItem.totalError}}</b></span><br>
+                                        <span><b>Gửi thất bại: {{dataItem.totalError}}</b></span>
+                                    </ng-template>
+                                </kendo-chart-series-item-tooltip>
+                            </kendo-chart-series-item>
                         </kendo-chart-series>
                     </kendo-chart>
                     <div class="no-data-report"
-                        *ngIf="!reportChartLinesAccounts || reportChartLinesAccounts.length < 0">
+                        *ngIf="!reportChartLinesAccounts || reportChartLinesAccounts.length == 0">
                         Không có dữ liệu
                     </div>
                 </div>
@@ -141,9 +125,7 @@
                 Báo cáo theo chiến dịch
             </div>
             <div class="d-flex justify-content-between m-2">
-                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFromReportCampaign"
-                    [dateTo]="dateToReportCampaign" (searchChange)="dateChangeReportCampaign($event)">
-                </app-tai-date-range-filter-dropdown>
+                <app-date-range-picker-filter [startDate]="dateFromReportCampaign" [endDate]="dateToReportCampaign" (searchChange)="dateChangeReportCampaign($event)"></app-date-range-picker-filter>
                 <input class="form-control w-50" type="text" placeholder="Tìm kiếm theo tên chiến dịch"
                     [(ngModel)]="searchReportCampaign" (ngModelChange)="this.searchUpdateReportCampaign.next($event)" />
             </div>

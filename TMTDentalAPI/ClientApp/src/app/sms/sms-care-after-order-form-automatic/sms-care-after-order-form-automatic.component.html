@@ -41,7 +41,7 @@
             </span>
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Nhóm dich vụ/Dịch vụ" width=300>
+    <kendo-grid-column title="Nhóm dịch vụ/Dịch vụ" width=300>
         <ng-template kendoGridCellTemplate let-dataItem>
             <span class="white-space-pre" [title]="'Dịch vụ: '+dataItem.productNames"
                 *ngIf="dataItem.productNames != '' && dataItem.applyOn == 'product'">{{dataItem.productNames}}</span>

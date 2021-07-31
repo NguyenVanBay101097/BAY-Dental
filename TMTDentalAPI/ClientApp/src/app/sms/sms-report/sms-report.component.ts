@@ -147,36 +147,21 @@ export class SmsReportComponent implements OnInit {
   }
 
   getReportTotal() {
+    debugger;
     var reportTotalInput = new ReportTotalInput();
-    reportTotalInput.date = this.intlService.formatDate(this.date_reportTotal, 'd', 'en-US');
+    var dateFrom = this.date_reportTotal ? new Date(this.date_reportTotal.getFullYear(), this.date_reportTotal.getMonth(), 1) : null;
+    var dateTo = this.date_reportTotal ? new Date(this.date_reportTotal.getFullYear(), this.date_reportTotal.getMonth(), new Date(this.date_reportTotal.getFullYear(), this.date_reportTotal.getMonth() + 1, 0).getDate()) : null;
+
+    reportTotalInput.dateFrom = this.intlService.formatDate(dateFrom, 'd', 'en-US');
+    reportTotalInput.dateTo = this.intlService.formatDate(dateTo, 'd', 'en-US');
     reportTotalInput.smsAccountId = this.smsBrandname_reportTotal ? this.smsBrandname_reportTotal.id : '';
     reportTotalInput.smsCampaignId = this.smsCampaign_reportTotal ? this.smsCampaign_reportTotal.id : '';
+    reportTotalInput.companyId = this.authService.userInfo.companyId;
     this.smsMessageDetailService.getReportTotal(reportTotalInput).subscribe(
       (result: any) => {
         this.pieData_reportTotal = result;
-        this.pieData_reportTotal = this.pieData_reportTotal.map(x => (
-          {
-            ...x,
-            color: (
-              x.state == "sent" ? "#007bff" : (x.state == "canceled" ? "#ff0000" : (x.state == "error" ? "#ffab00" : "#020202"))
-            )
-          })
-        )
-
-        const success = this.pieData_reportTotal.find(x => x.state == "sent");
-        const error = this.pieData_reportTotal.find(x => x.state == "error");
-        const canceled = this.pieData_reportTotal.find(x => x.state == "canceled");
-        const outgoing = this.pieData_reportTotal.find(x => x.state == "outgoing");
-        this.success_reportTotal = success ? success.total : 0;
-        this.error_reportTotal = error ? error.total : 0;
-        this.cancel_reportTotal = canceled ? canceled.total : 0;
-        this.outgoing_reportTotal = outgoing ? outgoing.total : 0;
-        this.total_reportTotal = this.success_reportTotal + this.error_reportTotal + this.cancel_reportTotal + this.outgoing_reportTotal;
-        console.log(this.pieData_reportTotal);
-
       }, (error) => {
         console.log(error);
-
       }
     )
   }
@@ -225,14 +210,10 @@ export class SmsReportComponent implements OnInit {
   }
 
   getReportSumarySupplier() {
-    var requestSent = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: 'sent' });
-    var requestError = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: 'error' });
-    var requestCancel = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: 'canceled' });
-    var requestOutgoing = this.smsMessageDetailService.getReportSupplierSumaryChart({ provider: this.accountProvider || null, state: 'outgoing' });
-    forkJoin(requestSent, requestError, requestCancel, requestOutgoing).subscribe((results: any[]) => {
+    var request = this.smsMessageDetailService.getReportSupplierSumaryChart({});
+    request.subscribe((results: any[]) => {
       this.reportChartLinesAccounts = results ? results : [];
       console.log(this.reportChartLinesAccounts);
-      
     })
   }
 

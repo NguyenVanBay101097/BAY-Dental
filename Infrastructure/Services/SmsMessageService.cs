@@ -272,6 +272,9 @@ namespace Infrastructure.Services
             foreach (var item in objs)
             {
                 var partner = GetPartnerFromObject(item);
+                if (string.IsNullOrEmpty(partner.Phone))
+                    continue;
+
                 var itemId = Guid.Parse(item.GetType().GetProperty("Id").GetValue(item).ToString());
                 var detail = new SmsMessageDetail
                 {
@@ -320,20 +323,20 @@ namespace Infrastructure.Services
                 if (backlists.Any(x => detail.Body.Contains(x)) || specialChars.Any(x => detail.Body.Contains(x)))
                 {
                     detail.State = "error";
-                    detail.ErrorCode = "sms_blacklist";
+                    detail.ErrorCode = "Nội dung chứa ký tự đặc biệt";
                 }
                 else
                 {
                     var sendResult = await senderService.SendSms(account.BrandName, detail.Number, detail.Body);
                     if (sendResult.Error == 0)
+                    {
                         detail.State = "sent";
+                        detail.ErrorCode = ""; //Trường hợp gửi tin nhắn lại thành công cần reset error code
+                    }
                     else
                     {
                         detail.State = "error";
-                        var errorCode = "";
-                        if (sendResult.Error == 1008 || sendResult.Error == 1014)
-                            errorCode = "sms_acc";
-                        detail.ErrorCode = errorCode;
+                        detail.ErrorCode = sendResult.Error_Description;
                     }
                 }
             }

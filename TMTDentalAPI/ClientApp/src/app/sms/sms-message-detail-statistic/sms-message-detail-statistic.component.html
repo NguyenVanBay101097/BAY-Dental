@@ -37,7 +37,7 @@
     </kendo-grid-column>
     <kendo-grid-column title="Nguyên nhân lỗi" field="errorCode" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{stranslateCodeResponse(dataItem.errorCode)}}
+            {{dataItem.errorCode}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column title="Trạng thái" width="100">

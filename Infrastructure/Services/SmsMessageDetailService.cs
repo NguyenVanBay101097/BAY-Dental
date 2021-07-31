@@ -79,7 +79,7 @@ namespace Infrastructure.Services
         {
             var query = GetQueryable(val);
             var totalItems = await query.CountAsync();
-            var items = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SmsMessageDetailStatistic
+            var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).Select(x => new SmsMessageDetailStatistic
             {
                 Id = x.Id,
                 Body = x.Body,
@@ -209,16 +209,24 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ReportSupplierChart>> GetReportSupplierSumary(ReportSupplierPaged val)
         {
-            var total = await SearchQuery().CountAsync();
-            var query = SearchQuery().Where(x => x.Date.HasValue);
-            if (!string.IsNullOrEmpty(val.Provider))
-                query = query.Where(x => x.SmsAccount.Provider == val.Provider && x.Date.HasValue);
-            if (!string.IsNullOrEmpty(val.State))
+            var query = SearchQuery();
+            if (val.DateFrom.HasValue)
             {
-                query = query.Where(x => x.State == val.State);
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.Date >= dateFrom);
             }
-            if (val.AccountId.HasValue)
-                query = query.Where(x => x.SmsAccountId == val.AccountId.Value);
+
+            if (val.DateFrom.HasValue)
+            {
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.Date >= dateFrom);
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateTo);
+            }
 
             var items = await query
                 .GroupBy(x => new
@@ -227,13 +235,11 @@ namespace Infrastructure.Services
                     Year = x.Date.Value.Year
                 }).Select(x => new ReportSupplierChart
                 {
-                    StateName = val.State == "sent" ? "Thành công" : (val.State == "canceled" ? "Hủy" : (val.State == "error" ? "Thất bại" : "Đang gửi")),
-                    Color = val.State == "sent" ? "#007bff" : (val.State == "canceled" ? "#ff0000" : (val.State == "error" ? "#ffab00" : "#020202")),
+                    TotalSent = x.Sum(s => s.State == "sent" ? 1 : 0),
+                    TotalError = x.Sum(s => s.State == "error" ? 1 : 0),
                     Month = x.Key.Month,
                     Year = x.Key.Year,
-                    Count = x.Count(),
-                    Total = total
-                }).OrderBy(x => x.Month).ToListAsync();
+                }).ToListAsync();
             return items;
         }
 

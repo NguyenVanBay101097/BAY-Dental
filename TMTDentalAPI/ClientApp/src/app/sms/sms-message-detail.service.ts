@@ -14,9 +14,11 @@ export class SmsMessageDetailPaged {
 }
 
 export class ReportTotalInput {
-    date: string;
+    dateFrom: string;
+    dateTo: string;
     smsAccountId: string;
     smsCampaignId: string;
+    companyId: string;
 }
 
 export class ReportCampaignPaged {

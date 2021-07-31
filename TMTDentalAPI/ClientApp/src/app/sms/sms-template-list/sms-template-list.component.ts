@@ -11,7 +11,10 @@ import { SmsTemplatePaged, SmsTemplateService } from '../sms-template.service';
 @Component({
   selector: 'app-sms-template-list',
   templateUrl: './sms-template-list.component.html',
-  styleUrls: ['./sms-template-list.component.css']
+  styleUrls: ['./sms-template-list.component.css'],
+  host: {
+    class: "o_action o_view_controller",
+  },
 })
 export class SmsTemplateListComponent implements OnInit {
   gridData: GridDataResult;

@@ -16,7 +16,10 @@ import { SmsTemplateService } from '../sms-template.service';
 @Component({
   selector: 'app-sms-message-detail-statistic',
   templateUrl: './sms-message-detail-statistic.component.html',
-  styleUrls: ['./sms-message-detail-statistic.component.css']
+  styleUrls: ['./sms-message-detail-statistic.component.css'],
+  host: {
+    class: "o_action o_view_controller",
+  },
 })
 export class SmsMessageDetailStatisticComponent implements OnInit {
   title: string;
@@ -142,7 +145,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
       }
       var modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
       modalRef.componentInstance.title = "Xác nhận gửi lại tin nhắn";
-      modalRef.componentInstance.bodyContent = 'Bạn chắc chắn muốn gửi lại tin nhắn chúc mừng sinh nhật?';
+      modalRef.componentInstance.bodyContent = 'Bạn chắc chắn muốn gửi lại tin nhắn?';
       modalRef.componentInstance.bodyNote = 'Lưu ý: Hệ thống chỉ gửi lại những tin nhắn đã thất bại';
       modalRef.result.then(
         result => {

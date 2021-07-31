@@ -109,12 +109,11 @@ namespace Infrastructure.HangfireJobService
                 if (config == null)
                     return;
 
-                var dayNow = DateTime.Today.AddDays(-config.DayBeforeSend).Day;
-                var MonthNow = DateTime.Today.Month;
+                var birthdate = DateTime.Today.AddDays(config.DayBeforeSend);
                 var partners = await context.Partners.Where(x =>
                 x.CompanyId == config.CompanyId &&
-                x.BirthMonth.HasValue && x.BirthMonth.Value == MonthNow &&
-                x.BirthDay.HasValue && x.BirthDay.Value == dayNow
+                x.BirthMonth.HasValue && x.BirthMonth.Value == birthdate.Month &&
+                x.BirthDay.HasValue && x.BirthDay.Value == birthdate.Day
                 ).ToListAsync();
                 if (partners.Any())
                 {
