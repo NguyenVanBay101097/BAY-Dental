@@ -65,7 +65,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
         public string Search { get; set; }
         public string State { get; set; }
-        public Guid? CompanyId { get; set; }
         public bool? UserCampaign { get; set; }
     }
 

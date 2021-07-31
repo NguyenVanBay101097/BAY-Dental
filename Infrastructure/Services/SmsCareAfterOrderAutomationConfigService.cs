@@ -51,6 +51,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => stateBools.Contains(x.Active));
             }
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
             var totalItems = await query.CountAsync();
             var items = await query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x => x.DateCreated).Select(x => new SmsCareAfterOrderAutomationConfigGrid
             {

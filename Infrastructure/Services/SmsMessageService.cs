@@ -230,7 +230,8 @@ namespace Infrastructure.Services
                 _context.Entry(self).Collection(s => s.SmsMessageAppointmentRels).Load();
                 var appointmentIds = self.SmsMessageAppointmentRels.Select(x => x.AppointmentId).ToList();
                 objs = await _appointmentRepository.SearchQuery(x => appointmentIds.Contains(x.Id))
-                    .Include(x => x.Partner)
+                    .Include(x => x.Doctor)
+                    .Include(x => x.Partner).ThenInclude(x => x.Title)
                     .ToListAsync();
 
                 dict = XuLyNoiDungLichHen(self.Body, (IEnumerable<Appointment>)objs);
@@ -240,6 +241,7 @@ namespace Infrastructure.Services
                 _context.Entry(self).Collection(s => s.SmsMessageSaleOrderLineRels).Load();
                 var saleLinesIds = self.SmsMessageSaleOrderLineRels.Select(x => x.SaleOrderLineId).ToList();
                 objs = await _saleLineRepository.SearchQuery(x => saleLinesIds.Contains(x.Id))
+                    .Include(x => x.Product)
                     .Include(x => x.OrderPartner).ThenInclude(x => x.Title)
                     .Include(x => x.Order)
                     .Include(x => x.Employee)
@@ -261,9 +263,9 @@ namespace Infrastructure.Services
                 _context.Entry(self).Collection(s => s.SmsMessageSaleOrderRels).Load();
                 var saleOrderIds = self.SmsMessageSaleOrderRels.Select(x => x.SaleOrderId).ToList();
                 objs = await _saleOrderRepository.SearchQuery(x => saleOrderIds.Contains(x.Id))
-                    .Include(x => x.Partner).Select(x => x.Partner)
+                    .Include(x => x.Partner).ThenInclude(x => x.Title)
                     .ToListAsync();
-                dict = XuLyNoiDungKhachHang(self.Body, (IEnumerable<Partner>)objs);
+                dict = XuLyNoiDungPhieuDieuTri(self.Body, (IEnumerable<Partner>)objs);
             }
             else
                 throw new Exception("not support");
@@ -376,11 +378,11 @@ namespace Infrastructure.Services
             foreach (var app in appointments)
             {
                 var content = template
-                    .Replace("{gio_hen}", app.Time.Split(' ').Last())
-                    .Replace("{ngay_hen}", app.Date.ToString("dd/MM/yyyy").Split(' ').Last())
-                    .Replace("{bac_si_lich_hen}", app.Doctor != null ? app.Doctor.Name.Split(' ').Last() : "")
+                    .Replace("{gio_hen}", app.Time)
+                    .Replace("{ngay_hen}", app.Date.ToString("dd/MM/yyyy"))
+                    .Replace("{ten_bac_si}", app.Doctor != null ? app.Doctor.Name.Split(' ').Last() : "")
                     .Replace("{ten_khach_hang}", app.Partner != null ? app.Partner.Name.Split(' ').Last() : "")
-                    .Replace("{danh_xung}", app.Partner != null && app.Partner.Title != null ? app.Partner.Title.Name.Split(' ').Last() : "");
+                    .Replace("{danh_xung_khach_hang}", app.Partner != null && app.Partner.Title != null ? app.Partner.Title.Name : "");
 
                 dict.Add(app.Id, content);
             }
@@ -394,11 +396,11 @@ namespace Infrastructure.Services
             foreach (var line in lines)
             {
                 var content = template
-                    .Replace("{bac_si}", line != null && line.Employee != null ? line.Employee.Name : "")
-                    .Replace("{so_phieu_dieu_tri}", line != null && line.Order != null ? line.Order.Name : "")
-                    .Replace("{dich_vu}", line != null ? line.Name : "")
+                    .Replace("{ten_bac_si}", line.Employee != null ? line.Employee.Name.Split(' ').Last() : "")
+                    .Replace("{so_phieu_dieu_tri}", line.Order != null ? line.Order.Name : "")
+                    .Replace("{ten_dich_vu}", line.Product != null ? line.Product.Name : "")
                     .Replace("{ten_khach_hang}", line.OrderPartner != null ? line.OrderPartner.Name.Split(' ').Last() : "")
-                    .Replace("{danh_xung}", line.OrderPartner != null && line.OrderPartner.Title != null ? line.OrderPartner.Title.Name.Split(' ').Last() : "");
+                    .Replace("{danh_xung}", line.OrderPartner != null && line.OrderPartner.Title != null ? line.OrderPartner.Title.Name : "");
                 dict.Add(line.Id, content);
             }
 
@@ -411,9 +413,24 @@ namespace Infrastructure.Services
             foreach (var partner in partners)
             {
                 var content = template
+                .Replace("{ten}", partner.Name.Split(' ').Last())
+                .Replace("{ngay_sinh}", partner.GetDateOfBirth())
+                .Replace("{danh_xung}", partner.Title != null ? partner.Title.Name : "");
+
+                dict.Add(partner.Id, content);
+            }
+
+            return dict;
+        }
+
+        public IDictionary<Guid, string> XuLyNoiDungPhieuDieuTri(string template, IEnumerable<Partner> partners)
+        {
+            var dict = new Dictionary<Guid, string>();
+            foreach (var partner in partners)
+            {
+                var content = template
                 .Replace("{ten_khach_hang}", partner.Name.Split(' ').Last())
-                .Replace("{ngay_sinh}", partner.GetDateOfBirth().Split(' ').Last())
-                .Replace("{danh_xung}", partner.Title != null ? partner.Title.Name.Split(' ').Last() : "");
+                .Replace("{danh_xung_khach_hang}", partner.Title != null ? partner.Title.Name : "");
 
                 dict.Add(partner.Id, content);
             }

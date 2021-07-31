@@ -81,16 +81,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ReportCampaignPaged
     {
-        public ReportCampaignPaged()
-        {
-            Limit = 20;
-            Offset = 0;
-        }
-        public int Limit { get; set; }
-        public int Offset { get; set; }
         public string Search { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class ReportCampaignOutputItem
@@ -113,6 +107,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 
     public class ReportSupplierOutputItem

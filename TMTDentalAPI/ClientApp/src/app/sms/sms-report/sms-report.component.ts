@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
 import { SmsCampaignPaged, SmsCampaignService } from '../sms-campaign.service';
 import { ReportCampaignPaged, ReportSupplierInput, ReportTotalInput, SmsMessageDetailService } from '../sms-message-detail.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-sms-report',
@@ -47,7 +48,7 @@ export class SmsReportComponent implements OnInit {
   dateFromReportCampaign: Date;
   dateToReportCampaign: Date;
   accountProvider: any;
-  gridDataReportCampaign: GridDataResult;
+  gridDataReportCampaign: any[];
 
   constructor(
     private intlService: IntlService,
@@ -147,7 +148,6 @@ export class SmsReportComponent implements OnInit {
   }
 
   getReportTotal() {
-    debugger;
     var reportTotalInput = new ReportTotalInput();
     var dateFrom = this.date_reportTotal ? new Date(this.date_reportTotal.getFullYear(), this.date_reportTotal.getMonth(), 1) : null;
     var dateTo = this.date_reportTotal ? new Date(this.date_reportTotal.getFullYear(), this.date_reportTotal.getMonth(), new Date(this.date_reportTotal.getFullYear(), this.date_reportTotal.getMonth() + 1, 0).getDate()) : null;
@@ -190,27 +190,28 @@ export class SmsReportComponent implements OnInit {
     reportCampaignPaged.search = this.searchReportCampaign || "";
     reportCampaignPaged.dateFrom = this.dateFromReportCampaign ? this.intlService.formatDate(this.dateFromReportCampaign, "yyyy-MM-dd") : "";
     reportCampaignPaged.dateTo = this.dateToReportCampaign ? this.intlService.formatDate(this.dateToReportCampaign, "yyyy-MM-ddT23:59") : "";
-    this.smsMessageDetailService.getReportCampaign(reportCampaignPaged).pipe(
-      map(
-        (response: any) =>
-          <GridDataResult>{
-            data: response.items,
-            total: response.totalItems,
-          }
-      )
-    ).subscribe(
+    reportCampaignPaged.companyId = this.authService.userInfo.companyId;
+    this.smsMessageDetailService.getReportCampaign(reportCampaignPaged).subscribe(
       (result: any) => {
         this.gridDataReportCampaign = result;
         this.loadingReportCampaign = false;
       }, (error) => {
-        console.log(error);
         this.loadingReportCampaign = false;
       }
     )
   }
 
   getReportSumarySupplier() {
-    var request = this.smsMessageDetailService.getReportSupplierSumaryChart({});
+    var monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+    var monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+    var last5Month = moment(monthStart).subtract(5, 'month').toDate();
+    var val = {
+      dateFrom: this.intlService.formatDate(last5Month, 'yyyy-MM-dd'),
+      dateTo: this.intlService.formatDate(monthEnd, 'yyyy-MM-dd'),
+      companyId: this.authService.userInfo.companyId
+    };
+
+    var request = this.smsMessageDetailService.getReportSupplierSumaryChart(val);
     request.subscribe((results: any[]) => {
       this.reportChartLinesAccounts = results ? results : [];
       console.log(this.reportChartLinesAccounts);

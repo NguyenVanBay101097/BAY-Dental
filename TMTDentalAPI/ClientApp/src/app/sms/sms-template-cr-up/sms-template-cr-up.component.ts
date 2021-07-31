@@ -32,7 +32,6 @@ export class SmsTemplateCrUpComponent implements OnInit {
     { name: 'Nhắc lịch hẹn', value: 'appointment' },
     { name: 'Chăm sóc sau điều trị', value: 'saleOrderLine' },
     { name: 'Cảm ơn', value: 'saleOrder' },
-    { name: 'Chiến dịch khác', value: 'partnerCampaign' },
   ]
   constructor(
     public activeModal: NgbActiveModal,
@@ -55,6 +54,11 @@ export class SmsTemplateCrUpComponent implements OnInit {
       }
     });
 
+  }
+
+
+  get typeValue() {
+    return this.formGroup.get('type').value;
   }
 
   get f() { return this.formGroup.controls; }

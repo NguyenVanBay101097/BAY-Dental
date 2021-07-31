@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
@@ -53,6 +54,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private notificationService: NotificationService,
     private intlService: IntlService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -80,6 +82,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
     val.dateTo = this.dateFrom ? this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59") : '';
     val.state = this.state ? this.state : '';
+    val.companyId = this.authService.userInfo.companyId;
     this.smsMessageDetailService.getPaged(val).pipe(
       map((response: any) =>
       (<GridDataResult>{

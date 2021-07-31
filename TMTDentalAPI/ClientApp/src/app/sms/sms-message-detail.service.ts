@@ -27,6 +27,7 @@ export class ReportCampaignPaged {
     search: string;
     dateFrom: string;
     dateTo: string;
+    companyId: string;
 }
 
 export class ReportSupplierInput {

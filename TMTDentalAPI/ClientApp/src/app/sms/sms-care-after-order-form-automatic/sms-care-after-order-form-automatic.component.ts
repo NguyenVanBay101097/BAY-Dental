@@ -4,6 +4,7 @@ import { GridDataResult } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsCareAfterOrderAutomationConfigService } from '../sms-care-after-order-automation-config.service';
@@ -35,7 +36,8 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
     private modalService: NgbModal,
     private smsConfigService: SmsCareAfterOrderAutomationConfigService,
     private smsCampaignService: SmsCampaignService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -109,8 +111,9 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
     var val = {
       limit: this.limit,
       offset: this.offset,
-      search: this.search,
-      states: this.states
+      search: this.search || '',
+      states: this.states,
+      companyId: this.authService.userInfo.companyId
     }
     this.smsConfigService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{

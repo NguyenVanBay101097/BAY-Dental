@@ -174,47 +174,57 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<PagedResult2<ReportCampaignOutputItem>> GetReportCampaign(ReportCampaignPaged val)
+        public async Task<IEnumerable<ReportCampaignOutputItem>> GetReportCampaign(ReportCampaignPaged val)
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.SmsCampaign.Name.Contains(val.Search) || (x.SmsCampaignId.HasValue && x.SmsCampaign.Name.Contains(val.Search)));
+                query = query.Where(x => x.SmsCampaign.Name.Contains(val.Search));
+
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date.HasValue && val.DateFrom.Value <= x.Date.Value);
+            {
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.Date >= dateFrom);
+            }    
+
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.Date.HasValue && val.DateTo.Value >= x.Date.Value);
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateTo);
+            }
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
 
             var items = await query.Include(x => x.SmsCampaign).ToListAsync();
 
-            var itemsOutput = items.GroupBy(x => x.SmsCampaignId)
-            .Select(y => new ReportCampaignOutputItem
+            var group = items.GroupBy(x => x.SmsCampaignId)
+            .Select(y => new 
             {
-                SmsCampaignName = y.First().SmsCampaignId.HasValue ? y.First().SmsCampaign.Name : "",
-                TotalMessages = y.Count(),
-                TotalSuccessfulMessages = y.Count(z => z.State == "sent"),
-                TotalCancelMessages = y.Count(z => z.State == "canceled"),
-                TotalOutgoingdMessages = y.Count(z => z.State == "outgoing"),
-                TotalErrorMessages = y.Count(z => z.State == "error")
+                CampaignId = y.Key,
+                TotalSent = y.Sum(z => z.State == "sent" ? 1 : 0),
+                TotalError = y.Sum(z => z.State == "error" ? 1 : 0),
             }).ToList();
 
-            var totalItems = itemsOutput.Count();
-            var itemsResult = itemsOutput.Skip(val.Offset).Take(val.Limit).ToList();
+            var campaignIds = group.Select(x => x.CampaignId).ToList();
+            var campaignObj = GetService<ISmsCampaignService>();
+            var campaigns = await campaignObj.SearchQuery(x => campaignIds.Contains(x.Id)).ToListAsync();
+            var campaignDict = campaigns.ToDictionary(x => x.Id, x => x);
 
-            return new PagedResult2<ReportCampaignOutputItem>(totalItems: totalItems, limit: val.Limit, offset: val.Offset)
+            var result = group.Select(x => new ReportCampaignOutputItem
             {
-                Items = itemsResult
-            };
+                SmsCampaignName = x.CampaignId.HasValue ? campaignDict[x.CampaignId.Value].Name : "Không xác định",
+                TotalSuccessfulMessages = x.TotalSent,
+                TotalErrorMessages = x.TotalError,
+                TotalMessages = x.TotalSent + x.TotalError
+            });
+
+            return result;
         }
 
 
         public async Task<IEnumerable<ReportSupplierChart>> GetReportSupplierSumary(ReportSupplierPaged val)
         {
             var query = SearchQuery();
-            if (val.DateFrom.HasValue)
-            {
-                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.Date >= dateFrom);
-            }
 
             if (val.DateFrom.HasValue)
             {
@@ -227,6 +237,9 @@ namespace Infrastructure.Services
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
                 query = query.Where(x => x.Date <= dateTo);
             }
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
 
             var items = await query
                 .GroupBy(x => new
@@ -253,16 +266,5 @@ namespace Infrastructure.Services
                 return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
             }
         }
-
-        //public override ISpecification<SmsMessageDetail> RuleDomainGet(IRRule rule)
-        //{
-        //    switch (rule.Code)
-        //    {
-        //        case "sms.sms_message_detail_comp_rule":
-        //            return new InitialSpecification<SmsMessageDetail>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
-        //        default:
-        //            return null;
-        //    }
-        //}
     }
 }
