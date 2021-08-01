@@ -13,7 +13,8 @@
                             </td>
                             <td colspan="1" style="width: 100%;" class="pr-0">
                                 <div class="d-flex align-items-center">
-                                    <span>{{teethList}} </span>
+                                    <span *ngIf="!isEditting">{{showTeethList(line)}} </span>
+                                    <span *ngIf="isEditting">{{showTeethList(formGroupInfo.value)}} </span>
                                     <button *ngIf="isEditting" class="btn btn-link p-0 ml-2" (click)="toothSelection()">
                                         <span class="fas fa-tooth"></span>
                                         Chọn răng
@@ -223,7 +224,7 @@
                 </div>
             </div>
             <div class="popover-footer d-flex">
-                <button (click)="deleteLine()" *ngIf="!isEditting" class="btn btn-danger btn-sm" title="Xóa dịch vụ">
+                <button (click)="deleteLine()" *ngIf="!isEditting && line.state != 'done'" class="btn btn-danger btn-sm" title="Xóa dịch vụ">
                     <i class="fas fa-trash pr-1"></i>
                     <span>Xóa</span>
                 </button>
@@ -243,15 +244,15 @@
                         </button>
                     </ng-template>
                 </ng-container>
-                <button *ngIf="!isEditting" type="button" (click)="editLine()" title="Sửa dịch vụ"
+                <button *ngIf="!isEditting && line.state != 'done'" type="button" (click)="editLine()" title="Sửa dịch vụ"
                     class="btn btn-sm btn-primary ml-2">
                     <i class="far fa-edit pr-1"></i>
                     <span>Chỉnh sửa</span>
                 </button>
-                <button *ngIf="isEditting" (click)="updateLineInfo(true)" class="btn btn-sm btn-primary">
+                <button *ngIf="isEditting && line.state != 'done'" (click)="updateLineInfo(true)" class="btn btn-sm btn-primary">
                     <span>Lưu</span>
                 </button>
-                <button *ngIf="isEditting" (click)="onCancel()" class="btn btn-sm btn-danger ml-2">Hủy</button>
+                <button *ngIf="isEditting && line.state != 'done'" (click)="onCancel()" class="btn btn-sm btn-danger ml-2">Hủy</button>
             </div>
         </div>
     </div>

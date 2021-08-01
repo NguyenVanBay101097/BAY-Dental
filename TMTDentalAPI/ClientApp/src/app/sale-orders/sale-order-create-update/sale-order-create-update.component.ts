@@ -769,7 +769,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
         modalRef.componentInstance.advanceAmount = this.amountAdvanceBalance;
-        modalRef.componentInstance.partner = this.partner;
+        modalRef.componentInstance.partner = this.saleOrder.partner;
 
         modalRef.result.then(result => {
           this.notificationService.show({

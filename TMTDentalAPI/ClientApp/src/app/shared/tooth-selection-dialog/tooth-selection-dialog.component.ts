@@ -13,8 +13,8 @@ export class ToothSelectionDialogComponent implements OnInit {
 
   myForm: FormGroup;
   toothTypeDict = [
-    { name: "Hàm trên", value: "upper_jaw" },
     { name: "Nguyên hàm", value: "whole_jaw" },
+    { name: "Hàm trên", value: "upper_jaw" },
     { name: "Hàm dưới", value: "lower_jaw" },
     { name: "Chọn răng", value: "manual" },
   ];

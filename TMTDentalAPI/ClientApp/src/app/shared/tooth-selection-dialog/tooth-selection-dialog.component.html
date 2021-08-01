@@ -20,7 +20,7 @@
         <div>
             <ng-container *ngFor="let item of toothTypeDict">
                 <input [value]="item.value" class="btn-check" type="radio" formControlName="toothType"
-                    [id]="'toothType_' + item.value" autocomplete="off">
+                    [id]="'toothType_' + item.value" autocomplete="off" (change)="onChangeToothType(item.value)">
                 <label class="btn btn-sm btn-outline-primary mr-1"
                     [for]="'toothType_' + item.value">{{item.name}}</label>
             </ng-container>
