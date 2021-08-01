@@ -122,11 +122,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <ng-container *ngIf="saleOrderLine.toothType == 'manual'; else elseTeethTemplate">
+                                    <ng-container *ngIf="saleOrderLine?.toothType == 'manual'; else elseTeethTemplate">
                                         <button [disabled]="state == 'confirmed'" *ngFor="let tooth of saleOrderLine?.teeth" (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1">{{tooth.name}}</button>
                                     </ng-container>
                                     <ng-template #elseTeethTemplate>
-                                        {{getToothType(saleOrderLine.toothType)?.name}}
+                                        {{getToothType(saleOrderLine?.toothType)?.name}}
                                     </ng-template>
 
                                 </td>

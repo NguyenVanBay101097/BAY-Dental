@@ -139,5 +139,13 @@ namespace TMTDentalAPI.Controllers
             var res = await _reportService.ReportPartnerDebitDetail(val);
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> ReportPartnerDebitSummary(ReportPartnerDebitReq val)// công nợ khách hàng
+        {
+            var res = await _reportService.ReportPartnerDebitSummary(val);
+            return Ok(res);
+        }
     }
 }

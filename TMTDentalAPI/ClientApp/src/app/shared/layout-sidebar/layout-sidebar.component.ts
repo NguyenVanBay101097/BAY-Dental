@@ -266,7 +266,7 @@ export class LayoutSidebarComponent implements OnInit {
         // { name: 'Thống kê hoa hồng', link: '/commission-settlements/report', permissions: ['Report.Commission'] },
         { name: 'Khách hàng lân cận phòng khám', link: '/partner-report-location', permissions: ['Report.PartnerLocation'] },
         { name: 'Thống kê nguồn khách hàng', link: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
-        { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/partner', permissions: ['Report.PartnerOldNew'] },
+        // { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/partner', permissions: ['Report.PartnerOldNew'] },
         { name: 'Quản lý điều trị', link: '/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
         // { name: 'Thống kê khách hàng', link: '/customer-statistics' },
         // { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/old-new-partner' },

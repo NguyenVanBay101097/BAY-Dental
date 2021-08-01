@@ -37,8 +37,6 @@ export class AppComponent {
       if (user) {
         this.loadIrConfigParam();
         this.authService.getGroups().subscribe((result: any) => {
-          console.log(result);
-
           this.permissionService.define(result);
         });
       }
@@ -103,7 +101,6 @@ export class AppComponent {
   loadGroups() {
     if (this.authService.isAuthenticated()) {
       this.authService.getGroups().subscribe((result: any) => {
-        console.log(result);
         this.permissionService.define(result);
       });
       // this.authService.currentUser.subscribe(user => {

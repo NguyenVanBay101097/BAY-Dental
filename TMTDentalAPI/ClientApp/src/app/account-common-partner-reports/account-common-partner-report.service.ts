@@ -150,4 +150,8 @@ export class AccountCommonPartnerReportService {
     ReportPartnerDebitDetail(val: ReportPartnerDebitDetailReq): Observable<ReportPartnerDebitDetailRes[]> {
         return this.http.post<ReportPartnerDebitDetailRes[]>(this.baseApi + this.apiUrl + "/ReportPartnerDebitDetail", val);
     }
+
+    reportPartnerDebitSummary(val: ReportPartnerDebitReq) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ReportPartnerDebitSummary", val);
+    }
 }

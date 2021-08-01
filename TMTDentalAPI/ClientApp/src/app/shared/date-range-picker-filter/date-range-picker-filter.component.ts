@@ -44,9 +44,6 @@ export class DateRangePickerFilterComponent implements OnInit {
         })
   }
   ngAfterViewInit() {
-    console.log(this.startDate);
-    console.log(this.selected);
-
   }
 
   clear() {

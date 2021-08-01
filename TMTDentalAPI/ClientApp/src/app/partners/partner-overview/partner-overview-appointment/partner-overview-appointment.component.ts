@@ -29,7 +29,7 @@ export class PartnerOverviewAppointmentComponent implements OnInit {
   }
 
   addAppointment() {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.defaultVal = {
       partnerId: this.partnerId
     };
@@ -70,7 +70,7 @@ export class PartnerOverviewAppointmentComponent implements OnInit {
   }
 
   editAppointment() {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = this.customerAppointment.id;
     modalRef.result.then(() => {
       this.getNextAppointment();

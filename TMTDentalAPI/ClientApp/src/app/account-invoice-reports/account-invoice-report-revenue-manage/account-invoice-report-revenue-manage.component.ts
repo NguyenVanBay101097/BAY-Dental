@@ -9,6 +9,9 @@ import { RevenueManageService } from './revenue-manage.service';
   selector: 'app-account-invoice-report-revenue',
   templateUrl: './account-invoice-report-revenue-manage.component.html',
   styleUrls: ['./account-invoice-report-revenue-manage.component.css'],
+  host: {
+    class: "o_action o_view_controller",
+  },
   providers:[RevenueManageService]
 })
 export class AccountInvoiceReportRevenueManageComponent implements OnInit {

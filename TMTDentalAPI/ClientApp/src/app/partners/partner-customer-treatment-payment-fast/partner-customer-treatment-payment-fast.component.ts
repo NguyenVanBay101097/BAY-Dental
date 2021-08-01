@@ -367,7 +367,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   ///lịch hẹn
   createAppoinment() {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: lịch hẹn';
     modalRef.componentInstance.defaultVal = { partnerId: this.getPartner ? this.getPartner.id : null };
     modalRef.result.then((result: any) => {

@@ -590,6 +590,33 @@ namespace Infrastructure.Services
             return list2;
 
         }
+
+        public async Task<ReportPartnerDebitSummaryRes> ReportPartnerDebitSummary(ReportPartnerDebitReq val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var accObj = GetService<IAccountAccountService>();
+
+            var date_from = val.FromDate.HasValue ? val.FromDate.Value.AbsoluteBeginOfDate() : (DateTime?)null;
+            var date_to = val.ToDate.HasValue ? val.ToDate.Value.AbsoluteEndOfDate() : (DateTime?)null;
+            var query = amlObj._QueryGet(dateTo: date_to, dateFrom: date_from, state: "posted", companyId: val.CompanyId);
+            query = query.Where(x => x.Account.Code == "CNKH");
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
+            var result = await query.GroupBy(x => 0).Select(x => new ReportPartnerDebitSummaryRes
+            {
+                Debit = x.Sum(s => s.Debit),
+                Credit = x.Sum(s => s.Credit),
+                Balance = x.Sum(s => s.Debit - s.Credit)
+            }).ToListAsync();
+
+            return new ReportPartnerDebitSummaryRes
+            {
+                Debit = result.Count > 0 ? result[0].Debit : 0,
+                Credit = result.Count > 0 ? result[0].Credit : 0,
+                Balance = result.Count > 0 ? result[0].Balance : 0,
+            };
+        }
     }
 
 }
