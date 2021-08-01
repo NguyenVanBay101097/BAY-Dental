@@ -47,7 +47,7 @@
                     </kendo-grid-column>
                     <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="Thanh Toán" width="120">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{ (dataItem.totalPaid || 0 | number) }}
+                            {{ (dataItem.amountTotal - dataItem.residual) | number }}
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="Residual" title="Còn lại" width="120">

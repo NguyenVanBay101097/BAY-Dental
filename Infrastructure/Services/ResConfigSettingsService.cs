@@ -277,6 +277,37 @@ namespace Infrastructure.Services
                                 ResId = careAfterCampaign.Id.ToString()
                             }
                         });
+
+                        //model and rulle
+                        var modelObj = GetService<IIRModelService>();
+                        var ruleObj = GetService<IIRRuleService>();
+                        var smsAccountModel = new IRModel { Name = "Sms Account", Model = "SmsAccount" };
+                        var smsCampaignModel = new IRModel { Name = "Sms Campaign", Model = "SmsCampaign" };
+                        var smsTemplateModel = new IRModel { Name = "Sms Template", Model = "SmsTemplate" };
+                        await modelObj.CreateAsync(new List<IRModel>() { smsAccountModel, smsCampaignModel, smsTemplateModel });
+
+                        var smsAccountRule = new IRRule
+                        {
+                            Code = "sms.sms_account_comp_rule",
+                            Name = "Sms Account company rule",
+                            ModelId = smsAccountModel.Id
+                        };
+
+                        var smsCampaignRule = new IRRule
+                        {
+                            Code = "sms.sms_campaign_comp_rule",
+                            Name = "Sms Campaign company rule",
+                            ModelId = smsCampaignModel.Id
+                        };
+
+                        var smsTemplateRule = new IRRule
+                        {
+                            Code = "sms.sms_template_comp_rule",
+                            Name = "Sms Template company rule",
+                            ModelId = smsTemplateModel.Id
+                        };
+
+                        await ruleObj.CreateAsync(new List<IRRule>() { smsAccountRule, smsCampaignRule, smsTemplateRule });
                     }
                 }
 

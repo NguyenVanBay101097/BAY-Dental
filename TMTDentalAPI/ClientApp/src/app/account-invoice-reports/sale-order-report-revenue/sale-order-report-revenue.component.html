@@ -19,8 +19,8 @@
         <div class="filter d-flex flex-0-0-auto mt-2">
             <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
             </kendo-combobox>
-            <button class="btn btn-primary mr-2 btn-sm" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
-                file</button>
+            <!-- <button class="btn btn-primary mr-2 btn-sm" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
+                file</button> -->
             <button class="btn btn-primary btn-sm" (click)="printReport()">In báo cáo</button>
             <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo số phiếu, khách hàng" class="ml-auto form-control w-50 form-control-sm">
         </div>
@@ -37,7 +37,7 @@
             </kendo-grid-column>
             <kendo-grid-column field="totalPaid" class="text-right" title="Thanh toán" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.totalPaid || 0 | number}}
+                    {{(dataItem.amountTotal - dataItem.residual) | number}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="residual" class="text-right" title="Còn lại" width="120">

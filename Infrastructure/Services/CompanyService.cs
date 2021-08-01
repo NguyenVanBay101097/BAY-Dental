@@ -350,7 +350,16 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU, accCNKH });
+            var accHH = new AccountAccount
+            {
+                Name = "Hoa hồng người giới thiệu",
+                Code = "HHNGT",
+                InternalType = currentLiabilities.Type,
+                UserTypeId = currentLiabilities.Id,
+                CompanyId = company.Id,
+            };
+
+            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU, accCNKH, accHH });
 
             #endregion
 
@@ -435,7 +444,18 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance });
+            var journalHHA = new AccountJournal
+            {
+                Name = "Hoa hồng",
+                Type = "commission",
+                UpdatePosted = true,
+                Code = "COMMISSION",
+                DefaultDebitAccountId = accHH.Id,
+                DefaultCreditAccountId = accHH.Id,
+                CompanyId = company.Id,
+            };
+
+            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance, journalCNKH, journalHHA });
 
             #endregion
         }

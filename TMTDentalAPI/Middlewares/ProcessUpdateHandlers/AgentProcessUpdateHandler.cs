@@ -161,8 +161,8 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                                 Type = "commission",
                                 UpdatePosted = true,
                                 Code = "COMMISSION",
-                                DefaultDebitAccountId = accCNKH.Id,
-                                DefaultCreditAccountId = accCNKH.Id,
+                                DefaultDebitAccountId = accHH.Id,
+                                DefaultCreditAccountId = accHH.Id,
                                 SequenceId = seq.Id,
                                 CompanyId = company.Id,
                             };
