@@ -18,12 +18,25 @@ namespace TMTDentalAdmin.Controllers
     {
         private readonly ITenantService _tenantService;
         private readonly AdminAppSettings _appSettings;
+        private static HttpClient _client = new HttpClient();
 
         public ProcessUpdateController(ITenantService tenantService,
             IOptions<AdminAppSettings> appSettings)
         {
             _tenantService = tenantService;
             _appSettings = appSettings?.Value;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var tenants = await _tenantService.SearchQuery(x => x.Version != "1.0.1.8").ToListAsync();
+            foreach(var tenant in tenants)
+            {
+                var response = await _client.GetAsync($"https://{tenant.Hostname}.tdental.vn/ProcessUpdate");
+            }
+
+            return NoContent();
         }
     }
 }
