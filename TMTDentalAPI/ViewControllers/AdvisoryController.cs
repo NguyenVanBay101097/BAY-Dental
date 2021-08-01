@@ -16,9 +16,8 @@ namespace TMTDentalAPI.ViewControllers
     {
         private readonly IAdvisoryService _advisoryService;
         private readonly IPartnerService _partnerService;
-        private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public AdvisoryController(IAdvisoryService advisoryService, IPartnerService partnerService, IMapper mapper, IUserService userService)
+        public AdvisoryController(IAdvisoryService advisoryService, IPartnerService partnerService, IMapper mapper)
         {
             _partnerService = partnerService;
             _advisoryService = advisoryService;

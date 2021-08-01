@@ -61,6 +61,10 @@
           {
             "Name": "Giảm tiền phiếu điều trị",
             "Permission": "Basic.SaleOrder.DiscountOrder"
+          },
+          {
+            "Name": "Thanh toán",
+            "Permission": "Basic.SaleOrderPayment.Full"
           }
         ]
       },

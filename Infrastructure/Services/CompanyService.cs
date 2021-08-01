@@ -1075,11 +1075,6 @@ namespace Infrastructure.Services
 
             await modelDataObj.CreateAsync(PrepareModelData(paper_size_dict, "print.paper.size"));
 
-            var smsCampaignObj = GetService<ISmsCampaignService>();
-            await smsCampaignObj.CreateAsync(sms_campaign_dict.Values);
-
-            await modelDataObj.CreateAsync(PrepareModelData(sms_campaign_dict, "res.sms.campaign"));
-
         }
 
         private IEnumerable<IRModelData> PrepareModelData<T>(IDictionary<string, T> dict, string model) where T : BaseEntity
