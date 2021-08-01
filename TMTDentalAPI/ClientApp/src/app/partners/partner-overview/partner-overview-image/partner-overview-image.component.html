@@ -7,9 +7,14 @@
                         Hình ảnh
                     </div>
                     <div>
-                        <button class="btn btn-primary btn-sm float-right" (click)="inputFile.click()">
-                            <i class="far fa-image"></i> Thêm hình</button>
-                        <input #inputFile class="o_input_file" multiple="multiple" name="ufile" type="file" accept="image/*" (change)="addPartnerImages($event)">
+                        <button class="btn btn-sm float-right btn-img-customer" (click)="inputFile.click()">
+                            <i class="far fa-image"></i>
+                            <span class="font-weight-600">
+                                Thêm hình
+                            </span>
+                        </button>
+                        <input #inputFile class="o_input_file" multiple="multiple" name="ufile" type="file"
+                            accept="image/*" (change)="addPartnerImages($event)">
                     </div>
                 </div>
                 <div class="w-100 view-img h-75">
@@ -22,9 +27,11 @@
                                         <img width="100%" [src]="img.uploadId + '?width=240&height=240)'" alt="">
                                     </div>
                                     <div class="o_image_overlay o_attachment_view">
-                                        <span class="fa fa-times o_attachment_delete_cross" (click)="deletePartnerImages(i, $event)" title="Delete {{img.name}}"></span>
+                                        <span class="fa fa-times o_attachment_delete_cross"
+                                            (click)="deletePartnerImages(i, $event)" title="Delete {{img.name}}"></span>
                                         <span class="o_attachment_title text-white">{{img.name}}</span>
-                                        <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{img.uploadId}}" target="_blank">
+                                        <a class="o_attachment_download" (click)="stopPropagation($event)"
+                                            href="{{img.uploadId}}" target="_blank">
                                             <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
                                         </a>
                                     </div>

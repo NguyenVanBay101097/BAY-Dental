@@ -87,7 +87,7 @@ namespace Infrastructure.Services
 
             if (field == "value_reference")
             {
-                if (value is long && values.Field != null)
+                if (value is Guid && values.Field != null)
                     value = string.Format("{0},{1}", values.Field.Relation, value);
                 values.ValueReference = (string)value;
             }
@@ -358,12 +358,13 @@ namespace Infrastructure.Services
                 return self.ValueBinary;
             else if (self.Type == "many2one")
             {
-                if (!string.IsNullOrEmpty(self.ValueReference))
-                {
-                    var references = self.ValueReference.Split(',');
-                    var model = references[0];
-                    var resource_id = references[1];
-                }
+                //if (!string.IsNullOrEmpty(self.ValueReference))
+                //{
+                //    var references = self.ValueReference.Split(',');
+                //    var model = references[0];
+                //    var resource_id = references[1];
+                //}
+                return self.ValueReference;
             }
             else if (self.Type == "datetime")
                 return self.ValueDateTime;

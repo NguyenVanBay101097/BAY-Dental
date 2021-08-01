@@ -1,0 +1,33 @@
+.customer-avatar {
+    height: 50px;
+    width: 50px;
+    margin-right: .5rem;
+}
+
+.customer-avatar img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.order-state label:hover,
+.order-state input[type="radio"]:checked+label {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.member-Color {
+    border-left: 4px solid red;
+}
+
+.search-icon {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: hsl(208deg 7% 46%);
+    padding: 7px;
+    color: #929DAA;
+    width: 12.47px;
+    height: 12.47px;
+}

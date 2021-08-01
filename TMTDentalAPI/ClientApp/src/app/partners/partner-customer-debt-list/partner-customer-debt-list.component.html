@@ -1,0 +1,67 @@
+<div>
+    <div class="px-3 py-2">
+        <div class="report-prescription-payment">
+            <div class="revenue">
+                <div class="title">
+                    <h6>Tổng công nợ</h6>
+                </div>
+                <h4 class="text-primary">
+                    {{ (debtStatistics?.debitTotal || 0) | number }}
+                </h4>
+            </div>
+            <div class="revenue">
+                <div class="title">
+                    <h6>Tổng thanh toán</h6>
+                </div>
+                <h4 class="text-primary">
+                    {{ (debtStatistics?.creditTotal || 0) | number }}
+                </h4>
+            </div>
+            <div class="revenue">
+                <div class="title">
+                    <h6>Tổng còn nợ</h6>
+                </div>
+                <h4 class="text-primary">
+                    {{ (debtStatistics?.balanceTotal || 0) | number }}
+                </h4>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="d-flex flex-fill">
+                <app-tai-date-range-filter-dropdown class="mr-2" [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
+                    (searchChange)="onSearchDateChange($event)">
+                </app-tai-date-range-filter-dropdown>
+                <button class="btn btn-primary btn-sm mr-2 " title="Thu nợ" (click)="createItem()">Thu
+                    nợ</button>
+                <button class="btn btn-primary btn-sm mr-2" title="xuất file" (click)="exportExcelFile()">
+                    <i class="fas fa-download mr-2"></i>Xuất file</button>
+            </div>
+            <div class="flex-fill">
+                <div class="o_searchview">
+                    <span class="o_searchview_icon fa fa-search"></span>
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo nguồn" type="text"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <kendo-grid [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
+            [loading]="loading" (pageChange)="pageChange($event)" [navigable]="true">
+            <kendo-grid-column title="Ngày" width="135">
+                <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                    {{dataItem.date | date:'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="invoiceOrigin" title="Nguồn" width="100">
+            </kendo-grid-column>
+            <kendo-grid-column field="name" title="Nội dung" width="120">
+            </kendo-grid-column>
+            <kendo-grid-column title="Số tiền" class="text-right" width="135">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.balance | number}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>

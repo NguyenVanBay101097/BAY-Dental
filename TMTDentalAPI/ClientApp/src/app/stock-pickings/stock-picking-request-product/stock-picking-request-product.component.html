@@ -1,25 +1,25 @@
-<div class="o_cp_controller">
-    <div class="o_control_panel">
-        <div class="breadcrumb">
-            <div class="d-flex">
-                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Thời gian" [dateTo]="dateTo" class="mt-1" (searchChange)="onDateSearchChange($event)">
-                </app-tai-date-range-filter-dropdown>
-                <kendo-combobox (valueChange)="onSateChange($event)" class="btn-sm min-width" [data]="states" [textField]="'name'" placeholder="Tất cả trạng thái" [valueField]="'value'">
-                </kendo-combobox>
-            </div>
+<div class="p-2 d-flex bg-white">
+    <div class="d-flex flex-fill">
+        <div class="mr-1">
+            <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Thời gian" [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
+            </app-tai-date-range-filter-dropdown>
         </div>
-        <div class="o_cp_searchview">
-            <div class="o_searchview mt-1">
+        <div class="mr-1">
+            <kendo-combobox (valueChange)="onSateChange($event)" class="kendo-combobox-sm" [data]="states" [textField]="'name'" placeholder="Tất cả trạng thái" [valueField]="'value'">
+            </kendo-combobox>
+        </div>
+    </div>
+    <div class="flex-fill">
+        <div class="o_searchview">
+            <i class="o_searchview_icon fa fa-search"></i>
+            <div class="o_searchview_input_container">
                 <input class="o_searchview_input" placeholder="Tìm kiếm theo mã yêu cầu..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-                <span>
-                    <i class="fas fa-search"></i>
-                </span>
             </div>
         </div>
     </div>
 </div>
 
-<div class="o_content">
+<div>
     <kendo-grid [data]="gridData" [pageSize]="limit" class="cursor-pointer" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" (cellClick)="onUpdate($event)">
         <kendo-grid-column field="date" title="Ngày yêu cầu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

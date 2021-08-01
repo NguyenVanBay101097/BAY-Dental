@@ -101,7 +101,7 @@ export class LaboBiteJointListComponent implements OnInit {
   }
 
   deleteItem(item: LaboBiteJointBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa kiểu nhịp Labo';
     modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa kiểu nhịp Labo ${item.name}?`;
     modalRef.result.then(() => {
@@ -114,7 +114,7 @@ export class LaboBiteJointListComponent implements OnInit {
   }
 
   onImport() {
-    let modalRef = this.modalService.open(LaboFinnishLineImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static',scrollable:true });
+    let modalRef = this.modalService.open(LaboFinnishLineImportComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static',scrollable:true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.componentInstance.type = 'labo_bitejoint';
     modalRef.result.then(() => {

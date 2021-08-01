@@ -111,7 +111,7 @@ export class StockPickingIncomingListComponent implements OnInit {
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu nhập kho';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn xóa phiếu nhập kho?';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu nhập kho?';
     modalRef.result.then(() => {
       this.stockPickingService.delete(item.id).subscribe(() => {
         this.notificationService.show({

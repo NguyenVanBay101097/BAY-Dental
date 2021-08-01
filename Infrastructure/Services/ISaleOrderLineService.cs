@@ -65,5 +65,12 @@ namespace Infrastructure.Services
         Task ApplyPromotionOnOrderLine(ApplyPromotionRequest val);
 
         decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line);
+
+        Task<PagedResult2<SmsCareAfterOrder>> GetPagedSmsCareAfterOrderAsync(SmsCareAfterOrderPaged val);
+        Task<IEnumerable<ProductSimple>> GetProductSmsCareAfterOrder(DateTime? dateFrom, DateTime? dateTo, Guid? companyId);
+        Task<Dictionary<DateTime, IEnumerable<SaleOrderLineHistoryRes>>> GetHistory(SaleOrderLineHistoryReq val);
+        Task UpdateOrderLine(Guid id, SaleOrderLineSave val);
+        Task<SaleOrderLine> CreateOrderLine(SaleOrderLineSave val);
+        Task RemoveOrderLine(Guid id);
     }
 }

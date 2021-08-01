@@ -1,0 +1,123 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li>
+                <a [routerLink]="['/sms/campaign']">Quản lý chiến dịch </a>
+            </li>
+            <li class="active">
+                <span *ngIf="campaign">{{campaign.name}}</span>
+            </li>
+        </ol>
+        <div class="o_cp_searchview">
+            <!-- <div class="o_searchview">
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên" [(ngModel)]="search"
+                    (ngModelChange)="this.searchUpdate.next($event)" />
+            </div> -->
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+
+<div class="o_content">
+    <div class="pms-wrapper">
+        <div class="pms-left border p-3">
+            <div>
+                <input type="radio" class="btn-check" id="in_queue" [value]="'in_queue'" [(ngModel)]="state"
+                    (change)="changeState()">
+                <label for="in_queue" class="btn btn-sm rounded-right-0"
+                    [ngClass]="state == 'in_queue' ? 'btn-primary' : 'btn-outline-primary'">Chờ gửi</label>
+
+                <input type="radio" class="btn-check" id="done" [value]="'done'" [(ngModel)]="state"
+                    (change)="changeState()">
+                <label for="done" class="btn btn-sm rounded-left-0"
+                    [ngClass]="state == 'done' ? 'btn-primary' : 'btn-outline-primary'">Đã gửi</label>
+            </div>
+            <div class="border">
+                <div class="o_cp_controller">
+                    <div class="o_control_panel">
+                        <div class="o_cp_t_left">
+                            <div class="o_cp_filter">
+                                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom"
+                                    [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                                </app-tai-date-range-filter-dropdown>
+                                <kendo-combobox class="kendo-combobox-sm ml-2" placeholder="Brandname"
+                                    [data]="filteredSmsAccount" [textField]="'brandName'" [valueField]="'id'"
+                                    [filterable]="true" #smsAccountCbx (valueChange)="onChangeAccount($event)">
+                                </kendo-combobox>
+                            </div>
+                            <div class="o_cp_action pr-2">
+                                <button type="button" *ngIf="selectedIds.length"
+                                    class="btn btn-danger btn-sm" (click)="cancelSend()">
+                                    Hủy gửi
+                                </button>
+                            </div>
+                        </div>
+                        <div class="o_cp_t_right">
+                            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo tên tin nhắn"
+                                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                        </div>
+                    </div>
+                </div>
+                <div class="o_content">
+                    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
+                        [loading]="loading" (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'"
+                        [selectedKeys]="selectedIds" (cellClick)="cellClick($event.dataItem)">
+                        <kendo-grid-checkbox-column showSelectAll="true" width="40">
+                        </kendo-grid-checkbox-column>
+                        <kendo-grid-column field="name" title="Tên tin nhắn" width="150">
+                        </kendo-grid-column>
+                        <kendo-grid-column field="brandName" title="Brandname" width="150">
+                        </kendo-grid-column>
+                        <kendo-grid-column *ngIf="state == 'in_queue'" field="resCount" title="Tổng người nhận" width="120">
+                        </kendo-grid-column>
+                        <kendo-grid-column *ngIf="state == 'in_queue'" title="Thời gian tạo" width="150">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.dateCreated | date:'short'}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column *ngIf="state == 'in_queue'" title="Thời gian gửi" width="150">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.scheduleDate | date:'short'}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column *ngIf="state == 'done'" title="Tổng đã gửi" width="120">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.total | number}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column *ngIf="state == 'done'" title="Thành công" width="120">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.totalSent | number}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column *ngIf="state == 'done'" title="Thất bại" width="120">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.totalError | number}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column *ngIf="state == 'done'" title="Thời gian gửi" width="150">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.date | date:'short'}}
+                            </ng-template>
+                        </kendo-grid-column>
+                    </kendo-grid>
+                </div>
+            </div>
+        </div>
+        <div class="pms-right border p-3">
+           <app-sms-campaign-update [campaign]="campaign" (saveEvent)="onSaveCampaign()"></app-sms-campaign-update>
+        </div>
+    </div>
+
+
+</div>

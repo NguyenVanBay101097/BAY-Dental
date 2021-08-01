@@ -1,0 +1,21 @@
+<div class="teeth_container">
+  <div class="ham_tren" style="display: flex;">
+      <div class="teethElement" *ngFor="let tooth of hamList['0_up']['0_right']">
+          <div class="teeth_nameTeeth" [class.selected]="isSelected(tooth)" (click)="clickTooth(tooth)">{{tooth.name}}</div>
+      </div>
+      <div class="chia_doi_doc"></div>
+      <div class="teethElement" *ngFor="let tooth of hamList['0_up']['1_left']">
+          <div class="teeth_nameTeeth" [class.selected]="isSelected(tooth)" (click)="clickTooth(tooth)">{{tooth.name}}</div>
+      </div>
+  </div>
+  <div class="duong_chia_doi"></div>
+  <div class="ham_duoi" style="display: flex;">
+      <div class="teethElement" *ngFor="let tooth of hamList['1_down']['0_right']">
+          <div class="teeth_nameTeeth" [class.selected]="isSelected(tooth)" (click)="clickTooth(tooth)">{{tooth.name}}</div>
+      </div>
+      <div class="chia_doi_doc"></div>
+      <div class="teethElement" *ngFor="let tooth of hamList['1_down']['1_left']">
+          <div class="teeth_nameTeeth" [class.selected]="isSelected(tooth)" (click)="clickTooth(tooth)">{{tooth.name}}</div>
+      </div>
+  </div>
+</div>

@@ -71,7 +71,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
         this.marketingCampaignService.create(val).subscribe((result: any) => {
           this.router.navigate([this.router.url], { queryParams: { id: result.id } });
           this.id = result.id;
-          let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+          let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
           modalRef.componentInstance.title = 'Thêm hoạt động';
           modalRef.componentInstance.campaignId = this.id;
       
@@ -83,7 +83,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
           });
         });
       } else {
-        let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thêm hoạt động';
         modalRef.componentInstance.campaignId = this.id;
     
@@ -114,7 +114,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
       this.clickedAddChildActivity = false;
       return;
     }
-    let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa hoạt động';
     modalRef.componentInstance.campaignId = this.id;
     modalRef.componentInstance.activityId = activity.id;
@@ -151,7 +151,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
     if (!activity || !triggerType) {
       return;
     }
-    let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Thêm hoạt động";
     modalRef.componentInstance.campaignId = this.id;
     modalRef.componentInstance.parentId = activity.id;

@@ -28,6 +28,12 @@ namespace ApplicationCore.Constants
         public const string StockPickingPaperCode = "StockPicking";
         public const string StockInventoryPaperCode = "StockInventory";
         public const string SaleOrderPaymentPaperCode = "SaleOrderPayment";
+        public const string PurchaseOrderPaperCode = "PurchaseOrder";
+        public const string QuotationPaperCode = "Quotation";
+        public const string RevenueTimeReport = "RevenueTimeReport";
+        public const string RevenueServiceReport = "RevenueServiceReport";
+        public const string RevenueEmployeeReport = "RevenueEmployeeReport";
+        public const string RevenueReport = "RevenueReport";
         public const string AdvisoryPaperCode = "Advisory";
     }
 }

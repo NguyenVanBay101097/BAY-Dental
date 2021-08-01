@@ -1,0 +1,33 @@
+<div [formGroup]="formGroup">
+    <div class="position-relative">
+        <textarea type="text" my-autosize class="form-control textarea-required" id="textarea_mass"
+            formControlName="text" [maxlength]="textareaLength" rows="5" #textarea (change)="onTextChange()">
+        </textarea>
+        <div *ngIf="f.text.errors && (f.text.touched || f.text.dirty || submitted)" class="text-danger">
+            <div *ngIf="f.text.errors.required">Nhập nội dung tin nhắn</div>
+            <div *ngIf="f.text.errors.maxlength">Số kí tự đã vượt quá cho phép !</div>
+        </div>
+        <p class="color-custom">
+            (Lưu ý: Không nhập ký tự đặc biệt hoặc các từ khóa quảng cáo)
+            <span class="text-primary t-tooltip t-tooltip-500 ml-1" placement="top" [ngbTooltip]="tipContent">
+                <i class="fas fa-exclamation-circle"></i>
+            </span>
+
+            <ng-template #tipContent>
+                <app-sms-tooltips-content></app-sms-tooltips-content>
+            </ng-template>
+        </p>
+        <div class="d-flex">
+            <div>
+                <a *ngFor="let tab of tabs; let i = index" (click)="addToContent(tab.value)"
+                    style="background-color:#5dd3e6; border-radius: 90px; color: white;"
+                    class="btn-tab btn btn-sm mt-1 mr-1">
+                    {{tab.name}}
+                </a>
+            </div>
+            <!-- <div style="min-width: 50px;" class="ml-auto">
+                <span class="px-1">Kí tự - {{getLimitText()}}</span>
+            </div> -->
+        </div>
+    </div>
+</div>

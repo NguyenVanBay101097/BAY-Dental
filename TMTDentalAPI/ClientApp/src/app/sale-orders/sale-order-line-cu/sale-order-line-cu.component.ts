@@ -17,6 +17,9 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { SaleOrderLineService } from "src/app/core/services/sale-order-line.service";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { SaleOrderLinePromotionDialogComponent } from "../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component";
+import { FilterCellWrapperComponent } from "@progress/kendo-angular-grid";
+import { CheckPermissionService } from "src/app/shared/check-permission.service";
+import { ToothSelectionDialogComponent } from "src/app/shared/tooth-selection-dialog/tooth-selection-dialog.component";
 
 @Component({
   selector: "app-sale-order-line-cu",
@@ -34,6 +37,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Output() onEditEvent = new EventEmitter<any>();
   @Output() onCancelEvent = new EventEmitter<any>();
   @Output() onActiveEvent = new EventEmitter<any>();
+  onUpdateSignSubject = new Subject<boolean>();//emit true: đã update xong, false: fail update
 
   isEditting: boolean = false;
   isItSeff = false;
@@ -43,31 +47,40 @@ export class SaleOrderLineCuComponent implements OnInit {
   filteredEmployeesAssistant: any[] = [];
   filteredEmployeesCounselor: any[] = [];
   @Input() initialListEmployees: any = [];
-  @Input() filteredToothCategories: any[];
-  hamList: { [key: string]: {} };
+  @Input() initialFilteredToothCategories: any[] = [];
+  // hamList: { [key: string]: {} };
   @Input() initialListTeeths: any[] = [];
-  toothTypeDict = [
-    { name: "Hàm trên", value: "upper_jaw" },
-    { name: "Nguyên Hàm", value: "whole_jaw" },
-    { name: "Hàm dưới", value: "lower_jaw" },
-    { name: "Chọn răng", value: "manual" },
-  ];
+  @Input() initialToothTypeDict: any[] = [];
   formGroupInfo: FormGroup;
   submitted = false;
-
+  get f() { return this.formGroupInfo.controls; }
+  teethList: string = '';
+  toothData = {
+    teeth: [],
+    toothCategory: null,
+    toothType: ''
+  };
+  toothDataLine = {
+    teeth: [],
+    toothCategory: null,
+    toothType: ''
+  };
+  isUpdated: boolean = false;
+  lineId: string = '';
   constructor(
     private fb: FormBuilder,
     private employeeService: EmployeeService,
-    private ToothService: ToothService,
     private modalService: NgbModal,
+    private toothService: ToothService,
     private toothCategoryService: ToothCategoryService,
     private notificationService: NotificationService,
-    private saleOrderLineService: SaleOrderLineService
+    private saleOrderLineService: SaleOrderLineService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
+    console.log(this.line);
     this.formGroupInfo = this.fb.group({});
-
     // this.formGroupInfo.setControl('teeth', this.fb.array(this.line.teeth));
     // this.formGroupInfo.setControl('promotions', this.fb.array(this.line.promotions));
 
@@ -76,6 +89,11 @@ export class SaleOrderLineCuComponent implements OnInit {
     // this.loadEmployees();
     // this.loadToothCategories();
     // this.loadTeethList();
+    this.toothData = {
+      teeth: this.line.teeth,
+      toothCategory: this.line.toothCategory,
+      toothType: this.line.toothType
+    }
   }
 
   get TeethFA() {
@@ -93,8 +111,8 @@ export class SaleOrderLineCuComponent implements OnInit {
     return quantity * priceReduce;
   }
 
-  formInfoControl(value: string) {
-    return this.formGroupInfo.get(value);
+  formInfoControl(key: string) {
+    return this.formGroupInfo.get(key);
   }
 
   getInitialSubTotalLine(line) {
@@ -102,6 +120,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   editLine() {
+    // this.viewTeeth(this.toothDataLine);
     this.onEditEvent.emit(this.line);
   }
 
@@ -122,9 +141,14 @@ export class SaleOrderLineCuComponent implements OnInit {
     });
 
     this.formGroupInfo.get('toothType').setValue(this.line.toothType);
+    this.lineId = this.line.id ? this.line.id : ''
 
-    this.loadTeethMap(this.line.toothCategory);
-    console.log(this.initialListEmployees);
+    this.toothDataLine = {
+      teeth: (this.isUpdated || this.lineId) ? this.line.teeth : [],
+      toothCategory: (this.isUpdated || this.lineId) ? this.line.toothCategory : null,
+      toothType: (this.isUpdated || this.lineId) ? this.line.toothType : ''
+    }
+    // this.loadTeethMap(this.line.toothCategory);
     this.filteredEmployeesDoctor = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
     this.filteredEmployeesCounselor = this.initialListEmployees.slice();
     this.filteredEmployeesAssistant = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
@@ -186,27 +210,27 @@ export class SaleOrderLineCuComponent implements OnInit {
     this.onDeleteEvent.emit();
   }
 
-  loadToothCategories() {
-    this.toothCategoryService.getAll().subscribe((result: any[]) => {
-      this.filteredToothCategories = result;
-    });
-  }
+  // loadToothCategories() {
+  //   this.toothCategoryService.getAll().subscribe((result: any[]) => {
+  //     this.filteredToothCategories = result;
+  //   });
+  // }
 
-  getToothCateLine() {
-    var res =
-      this.isEditting
-        ? this.formInfoControl("toothCategory").value
-        : this.line.toothCategory;
-    return res;
-  }
+  // getToothCateLine() {
+  //   var res =
+  //     this.isEditting
+  //       ? this.formInfoControl("toothCategory").value
+  //       : this.line.toothCategory;
+  //   return res;
+  // }
 
-  getToothTypeLine() {
-    var res =
-      this.isEditting
-        ? this.formInfoControl("toothType").value
-        : this.line.toothType;
-    return res;
-  }
+  // getToothTypeLine() {
+  //   var res =
+  //     this.isEditting
+  //       ? this.formInfoControl("toothType").value
+  //       : this.line.toothType;
+  //   return res;
+  // }
 
   onChangeToothTypeLine(type) {
     if (type != "manual") {
@@ -249,61 +273,67 @@ export class SaleOrderLineCuComponent implements OnInit {
     return i;
   }
 
-  onChangeToothCategory(value: any) {
-    if (value.id) {
-      this.TeethFA.clear();
-      this.loadTeethMap(value);
-      this.formGroupInfo.get("toothCategory").setValue(value);
-    }
-  }
+  // onChangeToothCategory(value: any) {
+  //   if (value.id) {
+  //     this.TeethFA.clear();
+  //     this.loadTeethMap(value);
+  //     this.formGroupInfo.get("toothCategory").setValue(value);
+  //   }
+  // }
 
-  loadTeethMap(categ: any) {
-    const result = this.initialListTeeths.filter(
-      (x) => x.categoryId === categ.id
-    );
-    this.processTeeth(result);
-  }
+  // loadTeethMap(categ: any) {
+  //   const result = this.initialListTeeths.filter(
+  //     (x) => x.categoryId === categ.id
+  //   );
+  //   this.processTeeth(result);
+  // }
 
-  processTeeth(teeth: any[]) {
-    this.hamList = {
-      "0_up": { "0_right": [], "1_left": [] },
-      "1_down": { "0_right": [], "1_left": [] },
-    };
+  // processTeeth(teeth: any[]) {
+  //   this.hamList = {
+  //     "0_up": { "0_right": [], "1_left": [] },
+  //     "1_down": { "0_right": [], "1_left": [] },
+  //   };
 
-    for (var i = 0; i < teeth.length; i++) {
-      var tooth = teeth[i];
-      if (tooth.position === "1_left") {
-        this.hamList[tooth.viTriHam][tooth.position].push(tooth);
-      } else {
-        this.hamList[tooth.viTriHam][tooth.position].unshift(tooth);
-      }
-    }
-  }
+  //   for (var i = 0; i < teeth.length; i++) {
+  //     var tooth = teeth[i];
+  //     if (tooth.position === "1_left") {
+  //       this.hamList[tooth.viTriHam][tooth.position].push(tooth);
+  //     } else {
+  //       this.hamList[tooth.viTriHam][tooth.position].unshift(tooth);
+  //     }
+  //   }
+  // }
 
-  loadTeethList() {
-    var val = new ToothFilter();
-    this.ToothService.getAllBasic(val).subscribe((result: any[]) => {
-      this.initialListTeeths = result;
-      // this.onChangeToothCategory(this.line.toothCategory);
-    });
-  }
+  // loadTeethList() {
+  //   var val = new ToothFilter();
+  //   this.toothService.getAllBasic(val).subscribe((result: any[]) => {
+  //     this.initialListTeeths = result;
+  //     // this.onChangeToothCategory(this.line.toothCategory);
+  //   });
+  // }
 
   updateLineInfo() {
+    this.isUpdated = true;
     if (this.formGroupInfo.invalid) {
       this.formGroupInfo.markAllAsTouched();
       return false;
     }
-
     // if(this.formInfoControl('toothType').value == 'manual' && this.formInfoControl('teeth').value.length == 0) {
     //   this.notify('error', 'Chọn răng');
     //   return false;
     // }
+    // this.formGroupInfo.get("toothCategory").setValue(this.line.toothCategory);
+    // this.TeethFA.clear();
+    // this.line.teeth.forEach(value => {
+    //   this.onSelected(value);
+    // })
 
-    this.onUpdateEvent.emit(this.formGroupInfo.value);
+    let val = this.formGroupInfo.value;
     this.isEditting = false;
 
     // this.isItSeff = this.isItSeff;
     // this.notify('success', 'Cập nhật thành công');
+    this.onUpdateEvent.emit(val);
     return true;
   }
 
@@ -379,17 +409,22 @@ export class SaleOrderLineCuComponent implements OnInit {
   // }
 
   onCancel() {
+    this.TeethFA.clear();
     this.isEditting = false;
     this.onCancelEvent.emit(this.line);
   }
 
-  viewTeeth() {
-    var toothType = this.line.toothType || 'manual';
-    if (toothType == "manual") {
-      var teeth = this.line.teeth as any[];
-      return teeth.map(x => x.name).join(',');
-    } else {
-      return this.toothTypeDict.find(x => x.value == toothType).name;
+  showTeethList(line) {
+    //dựa vào this.line
+    switch (line.toothType) {
+      case 'whole_jaw':
+        return 'Nguyên hàm';
+      case 'upper_jaw':
+        return 'Hàm trên';
+      case 'lower_jaw':
+        return 'Hàm dưới';
+      default:
+        return line.teeth.map(x => x.name).join(', ');
     }
   }
 
@@ -397,4 +432,28 @@ export class SaleOrderLineCuComponent implements OnInit {
     this.onActiveEvent.emit(active);
   }
 
+  toothSelection() {
+    var val = this.formGroupInfo.value;
+    this.toothData = {
+      teeth: val.teeth,
+      toothCategory: val.toothCategory,
+      toothType: val.toothType
+    }
+
+    let modalRef = this.modalService.open(ToothSelectionDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.toothDataInfo = this.toothData;
+    modalRef.componentInstance.filteredToothCategories = this.initialFilteredToothCategories;
+    modalRef.componentInstance.listTeeths = this.initialListTeeths;
+    modalRef.result.then(result => {
+      this.formGroupInfo.get("toothCategory").setValue(result.toothCategory);
+      this.formGroupInfo.get("toothType").setValue(result.toothType);
+      this.TeethFA.clear();
+      result.teeth.forEach(value => {
+        this.TeethFA.push(this.fb.group(value));
+      });
+
+      this.onChangeToothTypeLine(this.formInfoControl("toothType").value);
+    }, (reason) => {
+    });
+  }
 }

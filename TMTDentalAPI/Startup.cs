@@ -51,6 +51,9 @@ using TMTDentalAPI.ActionFilters;
 using TMTDentalAPI.OdataControllers;
 using Serilog;
 using MediatR;
+using Infrastructure.HangfireJobService;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace TMTDentalAPI
 {
@@ -132,6 +135,7 @@ namespace TMTDentalAPI
                     };
                 });
 
+            #region -- Add Singlton, Scope of the service
             services.AddDbContext<IDbContext, CatalogDbContext>();
             services.AddScoped<IDbContext>(sp => sp.GetRequiredService<CatalogDbContext>());
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
@@ -341,7 +345,22 @@ namespace TMTDentalAPI
 
             services.AddScoped<IQuotationPromotionService, QuotationPromotionService>();
             services.AddScoped<IQuotationPromotionLineService, QuotationPromotionLineService>();
+            services.AddScoped<IAccountFinancialRevenueReportService, AccountFinancialRevenueReportService>();
+            services.AddScoped<IAgentService, AgentService>();
+            services.AddScoped<IReportCustomerDebtService, ReportCustomerDebtService>();
 
+            services.AddScoped<ISmsAccountService, SmsAccountService>();
+            services.AddScoped<ISmsComposerService, SmsComposerService>();
+            services.AddScoped<ISmsBirthdayAutomationConfigService, SmsBirthdayAutomationConfigService>();
+            services.AddScoped<ISmsAppointmentAutomationConfigService, SmsAppointmentAutomationConfigService>();
+            services.AddScoped<ISmsCareAfterOrderAutomationConfigService, SmsCareAfterOrderAutomationConfigService>();
+            services.AddScoped<ISmsThanksCustomerAutomationConfigService, SmsThanksCustomerAutomationConfigService>();
+            services.AddScoped<ISmsMessageDetailService, SmsMessageDetailService>();
+            services.AddScoped<ISmsTemplateService, SmsTemplateService>();
+            services.AddScoped<ISmsJobService, SmsJobService>();
+            services.AddScoped<ISmsMessageJobService, SmsMessageJobService>();
+            services.AddScoped<ISmsMessageService, SmsMessageService>();
+            services.AddScoped<ISmsCampaignService, SmsCampaignService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -349,10 +368,14 @@ namespace TMTDentalAPI
 
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
+            #endregion
 
             services.AddScoped<IToothDiagnosisService, ToothDiagnosisService>();
             services.AddScoped<IAdvisoryService, AdvisoryService>();
+            services.AddScoped<IMemberLevelService, MemberLevelService>();
+            services.AddScoped<IExportExcelService, ExportExcelService>();
 
+            #region -- Add profile mapper of entity
             Action<IMapperConfigurationExpression> mapperConfigExp = mc =>
             {
                 mc.AddProfile(new ProductCategoryProfile());
@@ -508,7 +531,23 @@ namespace TMTDentalAPI
                 mc.AddProfile(new QuotationPromotionLineProfile());
                 mc.AddProfile(new ConfigPrintProfile());
                 mc.AddProfile(new PrintPaperSizeProfile());
+                mc.AddProfile(new MemberLevelProfile());
+
+                mc.AddProfile(new SmsAccountProfile());
+                mc.AddProfile(new SmsTemplateProfile());
+                mc.AddProfile(new SmsThanksCustomerAutomationConfigProfile());
+                mc.AddProfile(new SmsCareAfterOrderAutomationConfigProfile());
+                mc.AddProfile(new SmsAppointmentAutomationConfigProfile());
+                mc.AddProfile(new SmsBirthdayAutomationConfigProfile());
+                mc.AddProfile(new SmsMessageDetailProfile());
+                mc.AddProfile(new SmsComposerProfile());
+                mc.AddProfile(new SmsCampaignProfile());
+                mc.AddProfile(new SmsMessageProfile());
+                mc.AddProfile(new AgentProfile());
+                mc.AddProfile(new StockReportProfile());
             };
+
+            #endregion
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
             IMapper mapper = mappingConfig.CreateMapper();
@@ -525,7 +564,7 @@ namespace TMTDentalAPI
                 });
             });
             services.AddCors();
-            services.AddMemoryCache();
+            services.AddMemoryCache();          
 
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration
@@ -595,6 +634,7 @@ namespace TMTDentalAPI
 
             });
 
+            services.AddHttpClient();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -670,7 +710,7 @@ namespace TMTDentalAPI
             );
 
             app.UseMiddleware<GetTokenFromQueryStringMiddleware>();
-            app.UseMiddleware<MigrateDbMiddleware>();
+            app.UseMiddleware<CheckTenantMiddleware>();
             app.UseMiddleware(typeof(ProcessUpdateMiddleware));
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 

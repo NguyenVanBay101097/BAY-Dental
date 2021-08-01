@@ -104,7 +104,7 @@ export class EmployeeListComponent implements OnInit {
   }
 
   createDoctor() {
-    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm bác sĩ';
     modalRef.componentInstance.isDoctor = true;
     modalRef.result.then(() => {
@@ -113,7 +113,7 @@ export class EmployeeListComponent implements OnInit {
   }
 
   createAssistant() {
-    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm phụ tá';
     modalRef.componentInstance.isAssistant = true;
     modalRef.result.then(() => {
@@ -122,7 +122,7 @@ export class EmployeeListComponent implements OnInit {
   }
 
   createEmployee() {
-    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm nhân viên';
     modalRef.result.then(() => {
       this.getEmployeesList();
@@ -130,7 +130,7 @@ export class EmployeeListComponent implements OnInit {
   }
 
   editEmployee(item: EmployeeBasic) {
-    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa nhân viên';
     modalRef.componentInstance.empId = item.id;
     modalRef.result.then(() => {
@@ -139,7 +139,7 @@ export class EmployeeListComponent implements OnInit {
   }
 
   openModal(id, isDoctor, isAssistant) {
-    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     if (id) {
       modalRef.componentInstance.empId = id;
     }
@@ -161,7 +161,8 @@ export class EmployeeListComponent implements OnInit {
       this.service.deleteEmployee(id).subscribe(
         () => {
           this.notify('success', 'Xóa thành công');
-          this.getEmployeesList(); }
+          this.getEmployeesList();
+        }
       );
     }, () => {
     });
@@ -191,8 +192,8 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn ' + ((active ? 'hiện nhân viên ' : 'ẩn nhân viên ') + emp.name);
     modalRef.result.then(() => {
       this.service.actionActive(emp.id, active).subscribe(() => {
-        if(active) {
-          this.notify('success','Hiện nhân viên thành công');
+        if (active) {
+          this.notify('success', 'Hiện nhân viên thành công');
         }
         else {
           this.notify('success', 'Ẩn nhân viên thành công');

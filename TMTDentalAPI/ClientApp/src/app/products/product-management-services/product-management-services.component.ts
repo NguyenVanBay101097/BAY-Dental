@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { ProductCategory } from 'src/app/product-categories/product-category';
 import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
 import { Product } from '../product';
@@ -30,12 +31,15 @@ export class ProductManagementServicesComponent implements OnInit {
   selectedCateg: any;
   searchServiceUpdate = new Subject<string>();
   categories: any[] = [];
-
+  canAdd = false; // quyền thêm dịch vụ
+  canEdit = false; // quyền sửa dịch vụ
+  canDelete = false; // quyền xóa dịch vụ
   constructor(private route: ActivatedRoute,
     private router: Router,
     private productCategoryService: ProductCategoryService,
     private productService: ProductService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -47,6 +51,7 @@ export class ProductManagementServicesComponent implements OnInit {
       });
     this.loadServices();
     this.loadCategories();
+    this.checkPermission();
   }
 
   
@@ -118,7 +123,7 @@ export class ProductManagementServicesComponent implements OnInit {
 
   createService() {
     let modalRef = this.modalService.open(ProductServiceCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -134,7 +139,7 @@ export class ProductManagementServicesComponent implements OnInit {
 
   editService(item: Product) {
     let modalRef = this.modalService.open(ProductServiceCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -175,7 +180,7 @@ export class ProductManagementServicesComponent implements OnInit {
 
   importFromExcel() {
     let modalRef = this.modalService.open(ProductImportExcelDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -218,7 +223,7 @@ export class ProductManagementServicesComponent implements OnInit {
 
   updateServiceFromExcel(){
     let modalRef = this.modalService.open(ProductImportExcelDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -232,6 +237,12 @@ export class ProductManagementServicesComponent implements OnInit {
       },
       () => { }
     );
+  }
+
+  checkPermission(){
+    this.canAdd = this.checkPermissionService.check(['Catalog.Products.Create']);
+    this.canEdit = this.checkPermissionService.check(['Catalog.Products.Update']);
+    this.canDelete = this.checkPermissionService.check(['Catalog.Products.Delete']);
   }
 
 }

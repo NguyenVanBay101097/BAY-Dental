@@ -1,3 +1,4 @@
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { Component, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
@@ -24,7 +25,8 @@ export class LoaiThuChiListComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
 
-  constructor(private route: ActivatedRoute, private modalService: NgbModal, 
+  constructor(private route: ActivatedRoute, private modalService: NgbModal,
+    private notifyService: NotifyService,
     private loaiThuChiService: LoaiThuChiService) { }
 
   ngOnInit() {
@@ -42,7 +44,7 @@ export class LoaiThuChiListComponent implements OnInit {
         this.loadDataFromApi();
       });
   }
-  
+
   loadDataFromApi() {
     this.loading = true;
     var val = new loaiThuChiPaged();
@@ -81,23 +83,25 @@ export class LoaiThuChiListComponent implements OnInit {
   }
 
   createItem() {
-    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm ' + this.converttype();
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(() => {
-       this.loadDataFromApi();
+      this.notifyService.notify('success', 'Lưu thành công');
+      this.loadDataFromApi();
     }, () => {
 
     });
   }
 
   editItem(item: loaiThuChi) {
-    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa ' + this.converttype();
     modalRef.componentInstance.itemId = item.id;
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(() => {
-       this.loadDataFromApi();
+      this.notifyService.notify('success', 'Lưu thành công');
+      this.loadDataFromApi();
     }, () => {
 
     });
@@ -109,6 +113,7 @@ export class LoaiThuChiListComponent implements OnInit {
 
     modalRef.result.then(() => {
       this.loaiThuChiService.delete(item.id).subscribe(() => {
+        this.notifyService.notify('success', 'Xóa thành công');
         this.loadDataFromApi();
       }, () => {
       });

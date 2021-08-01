@@ -1,0 +1,66 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Quản lý chiến dịch</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên chiến dịch" [(ngModel)]="search"
+                    (ngModelChange)="this.searchUpdate.next($event)" />
+            </div>
+
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm mr-1" accesskey="c"
+                        (click)="createCampaign()">Thêm</button>
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="a" (click)="createMessage()">Tạo tin
+                        nhắn</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <!-- <kendo-combobox (selectionChange)="onStatusChange($event)" placeholder="Trạng thái"
+                class="kendo-combobox-sm" style="width: auto;" [data]="filterStatus" [textField]="'name'"
+                [valueField]="'value'">
+            </kendo-combobox> -->
+        </div>
+    </div>
+</div>
+
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)" (cellClick)="cellClick($event.dataItem)">
+        <kendo-grid-column field="name" title="Tên chiến dịch" width="200">
+        </kendo-grid-column>
+        <!-- <kendo-grid-column title="Thời gian" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <span *ngIf="dataItem.typeDate == 'period'">
+                    {{dataItem.dateStart | date:'dd/MM/yyyy'}} - {{dataItem.dateEnd | date:'dd/MM/yyyy'}}
+                </span>
+                <span *ngIf="dataItem.typeDate == 'unlimited'">
+                    Vô thời hạn
+                </span>
+            </ng-template>
+        </kendo-grid-column> -->
+        <kendo-grid-column field="limitMessage" title="Hạn mức tin nhắn" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <span *ngIf="dataItem.limitMessage==0">Không giới hạn</span>
+                <span *ngIf="dataItem.limitMessage!=0">{{dataItem.limitMessage}}</span>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="totalMessage" title="Tổng tin nhắn" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="totalWaitedMessages" title="Chờ gửi" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="totalSuccessfulMessages" title="Thành công" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="totalErrorMessages" title="Thất bại" width="120">
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

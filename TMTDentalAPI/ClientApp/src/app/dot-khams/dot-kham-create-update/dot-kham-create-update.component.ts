@@ -397,7 +397,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   }
 
   deleteStep(step: DotKhamStepDisplay, index) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa công đoạn';
     modalRef.result.then(() => {
       this.dotKhamStepService.delete(step.id).subscribe(() => {
@@ -410,7 +410,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   actionCreateLabo() {
     if (this.id) {
       this.router.navigate(['/labo-orders/create'], { queryParams: { dot_kham_id: this.id } });
-      // let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+      // let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
       // modalRef.componentInstance.title = 'Tạo labo';
       // modalRef.componentInstance.dotKhamId = this.id;
 
@@ -452,7 +452,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
 
   editToaThuoc(item: ToaThuocBasic) {
-    let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.title = 'Sửa toa thuốc';
     modalRef.componentInstance.id = item.id;
 
@@ -485,7 +485,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   // }
 
   editLaboLine(item: LaboOrderLineBasic) {
-    let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.title = 'Sửa labo';
     modalRef.componentInstance.id = item.id;
 
@@ -529,7 +529,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   actionCreateToaThuoc() {
     if (this.id) {
-      let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+      let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
       modalRef.componentInstance.title = 'Kê toa thuốc';
       modalRef.componentInstance.dotKhamId = this.id;
 
@@ -913,7 +913,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   actionCreateDotKham() {
     if (this.dotKham && this.dotKham.saleOrderId) {
-      let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Tạo đợt khám';
       modalRef.componentInstance.saleOrderId = this.dotKham.saleOrderId;
 

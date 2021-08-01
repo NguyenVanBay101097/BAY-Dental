@@ -1,0 +1,204 @@
+﻿@model Umbraco.Web.Models.ContentEditing.PrintVM
+@{
+
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+<div class="page-break">
+    <div class="d-flex mb-2">
+        @if (!string.IsNullOrEmpty(Model.Company.Logo))
+        {
+            <img class="img-fluid me-3 w-25" src="@Model.Company.Logo" alt="@Model.Company.Name">
+        }
+        <div>
+            <div class="text-xl font-semibold">@Model.Company.Name</div>
+            @if (!string.IsNullOrEmpty(Model.Company.Address))
+            {
+                <div>Địa chỉ: @Model.Company.Address</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Phone))
+            {
+                <div>ĐT: @Model.Company.Phone</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Email))
+            {
+                <div>Email: @Model.Company.Email</div>
+            }
+        </div>
+    </div>
+    <div class="text-center mb-2">
+        @if (Model.AccountType == "customer_debt")
+        {
+            <div class="text-3xl font-semibold">PHIẾU THU CÔNG NỢ</div>
+        }
+        else
+        {
+            <div class="text-3xl font-semibold">PHIẾU CHI HOA HỒNG</div>
+        }
+        <div>Ngày @Model.Date.Day tháng @Model.Date.Month năm @Model.Date.Year </div>
+        <div class="font-semibold">Số: @Model.Name</div>
+    </div>
+    <div class="o_form_view mb-2">
+        <div class="o_group">
+            <div class="d-flex">
+                <table class="o_group o_inner_group col-6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <div class="o_form_label o_form_label_help">
+                                    Ngày thanh toán
+                                </div>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <div class="o_field_widget">@(string.Format(culture, "{0:dd/MM/yyyy}", Model.Date))</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bold">
+                                    Phương thức
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                @(Model.JournalName)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bold">
+                                    Số tiền
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                @(Model.Amount > 0 ? string.Format(culture, "{0:0,0}", Model.Amount) : "0")
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bold">
+                                    Bằng chữ
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                @(Model.AmountText)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bold">
+                                    Nội dung
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                @Model.Reason
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group col-6">
+                    <tbody>
+                        @if (Model.AccountType == "customer_debt")
+                        {
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="o_form_label o_form_label_help">
+                                        Khách hàng
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_widget">@Model.Partner.DisplayName</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="o_form_label o_form_label_help">
+                                        Địa chỉ
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_widget">@Model.Partner.Address</div>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="o_form_label o_form_label_help">
+                                        Điện thoại
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_widget">@(Model.Partner.Phone)</div>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="o_form_label o_form_label_help">
+                                       Người giới thiệu
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_widget">@Model.Agent.Name</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="o_form_label o_form_label_help">
+                                        Địa chỉ
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_widget">@Model.Agent.Address</div>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="o_form_label o_form_label_help">
+                                        Điện thoại
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="o_field_widget">@(Model.Agent.Phone)</div>
+                                </td>
+                            </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    <div class="d-flex">
+        <div class="col">
+            <div class="text-center">
+                <span></span><br />
+                <span class="font-semibold"> Người lập phiếu</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">@(Model.User == null ? "" : Model.User.Name.ToUpper())</span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="text-center">
+                <span> @(string.Format(culture, "{0:dddd}", DateTime.Now)), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year </span> <br />
+                <span class="font-semibold">@(Model.AccountType == "customer_debt" ? "Người nộp tiền"  : "Người nhận tiền") </span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">@(Model.AccountType == "customer_debt" ? Model.Partner.Name.ToUpper() : Model.Agent.Name.ToUpper())</span>
+            </div>
+        </div>
+    </div>
+</div>

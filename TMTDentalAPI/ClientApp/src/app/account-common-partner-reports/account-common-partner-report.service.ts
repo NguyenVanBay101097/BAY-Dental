@@ -72,6 +72,44 @@ export class AccountMoveBasic {
     invoiceUserName: string;
 }
 
+export class ReportPartnerDebitReq {
+    fromDate: any;
+    toDate: any;
+    partnerId: string;
+    search: string;
+    companyId: string;
+}
+
+export class ReportPartnerDebitRes {
+    partnerId: string;
+    partnerName: string;
+    partnerRef: string;
+    partnerPhone: string;
+    begin: number;
+    debit: number;
+    credit: number;
+    end: number;
+    dateFrom: string;
+    dateTo: string;
+    companyId: string;
+}
+
+export class ReportPartnerDebitDetailReq {
+    fromDate: any;
+    toDate: any;
+    partnerId: string;
+    companyId: string;
+}
+
+export class ReportPartnerDebitDetailRes {
+    date: any;
+    invoiceOrigin: string;
+    begin: number;
+    debit: number;
+    credit: number;
+    end: number;
+}
+
 @Injectable()
 export class AccountCommonPartnerReportService {
     apiUrl = 'api/AccountCommonPartnerReports';
@@ -103,5 +141,17 @@ export class AccountCommonPartnerReportService {
 
     exportExcelFile(val) {
         return this.http.post(this.baseApi + this.apiUrl + '/ExportExcelFile', val, { responseType: 'blob' });
+    }
+
+    ReportPartnerDebit(val: ReportPartnerDebitReq): Observable<ReportPartnerDebitRes[]> {
+        return this.http.post<ReportPartnerDebitRes[]>(this.baseApi + this.apiUrl + "/ReportPartnerDebit", val);
+    }
+
+    ReportPartnerDebitDetail(val: ReportPartnerDebitDetailReq): Observable<ReportPartnerDebitDetailRes[]> {
+        return this.http.post<ReportPartnerDebitDetailRes[]>(this.baseApi + this.apiUrl + "/ReportPartnerDebitDetail", val);
+    }
+
+    reportPartnerDebitSummary(val: ReportPartnerDebitReq) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ReportPartnerDebitSummary", val);
     }
 }

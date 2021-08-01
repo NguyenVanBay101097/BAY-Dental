@@ -1,0 +1,67 @@
+<header class="modal-header">
+    <h5 class="modal-title">Chọn răng<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" tabindex="-1"
+        (click)="onCancel()">×</button>
+</header>
+
+<div class="modal-body">
+    <form [formGroup]="myForm">
+        <!-- nhóm răng-->
+        <div class="mb-2 d-flex">
+            <div class="form-check t-form-check mr-2" *ngFor="let item of filteredToothCategories">
+                <input class="form-check-input" type="radio" [id]="'toothCategoryId_' + item.id" [value]="item.id"
+                    formControlName="toothCategoryId" (change)="onChangeToothCategory(item)">
+                <label class="form-check-label" [for]="'toothCategoryId_' + item.id">
+                    {{item.name}}
+                </label>
+            </div>
+        </div>
+        <!-- loại răng chọn -->
+        <div>
+            <ng-container *ngFor="let item of toothTypeDict">
+                <input [value]="item.value" class="btn-check" type="radio" formControlName="toothType"
+                    [id]="'toothType_' + item.value" autocomplete="off" (change)="onChangeToothType(item.value)">
+                <label class="btn btn-sm btn-outline-primary mr-1"
+                    [for]="'toothType_' + item.value">{{item.name}}</label>
+            </ng-container>
+        </div>
+        <!-- răng -->
+        <div class="text-center" style="overflow: auto;" [class.d-none]="getFormValue('toothType') != 'manual'">
+            <app-teeth-chart [teeth]="filterTeeths" [(selectedKeys)]="toothSelectedIds"></app-teeth-chart>
+        </div>
+        <div *ngIf="(getFormValue('toothType') == 'manual'
+            && toothSelectedIds.length == 0) 
+            && submitted" class="text-danger">
+            Chọn răng
+        </div>
+
+        <!-- <div class="teeth-map" [class.d-none]="getFormValue('toothType') != 'manual'">
+            <table class="table-tooth table table-sm w-100">
+                <tr *ngFor="let ham of hamList | keyvalue">
+                    <td *ngFor="let vitri of ham.value | keyvalue" [ngClass]="{'text-right' : vitri.key === '0_right'}">
+                        <div class="tooth-wrapper">
+                            <div *ngFor="let rang of vitri.value" class="tooth-item"
+                                [class.teethSelected]="isSelected(rang)" (click)="onSelected(rang)">
+                                {{rang.name}}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div *ngIf="getFormValue('toothType') == 'manual'
+                        && (getFormValue('teeth') && getFormValue('teeth').length == 0) 
+                        && submitted" class="text-danger">
+                Chọn răng
+            </div>
+        </div> -->
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
+        <span>Lưu</span>
+    </button>
+    <button type="button" class="btn btn-light border btn-sm" (click)="onCancel()">
+        <span>Đóng</span>
+    </button>
+</footer>

@@ -9,21 +9,17 @@ a {
     }
 }
 
-@media (min-width: 992px) {
-    .modal-lg,
-    .modal-xl {
-        max-width: 980px;
-    }
+@media(min-width:992px) {
+	.modal-lg,
+	.modal-xl {
+		max-width: 800px
+	}
 }
 
-@media (min-width: 1200px) {
-    .modal-lg,
-    .modal-xl {
-        max-width: 1120px;
-    }
-    .modal-appointment .modal-lg {
-        max-width: 880px;
-    }
+@media(min-width:1200px) {
+	.modal-xl {
+		max-width: 1140px
+	}
 }
 
 .modal .modal-dialog .o_form_view .o_form_sheet_bg {
@@ -60,12 +56,6 @@ a {
         -webkit-flex: 0 0 auto;
         flex: 0 0 auto;
     }
-}
-
-.o_form_view .o_group.o_inner_group>tbody>tr>td.o_td_label {
-    width: 0%;
-    padding: 0px 15px 0px 0px;
-    min-width: 150px;
 }
 
 html,
@@ -152,7 +142,7 @@ html .o_web_client .o_content .o_view_controller {
 }
 
 @media (min-width: 768px) {
-    html .o_web_client>.o_action_manager .o_action .o_content {
+    html .o_web_client .o_action_manager .o_action .o_content {
         overflow: auto;
         -webkit-overflow-scrolling: touch;
     }
@@ -275,15 +265,13 @@ td.oe_form_group_cell_label label {
     display: flex;
 }
 
-.o_form_section .o_form_section_left {
-    flex: 1 1 auto;
-    width: 230px;
-    padding-right: 15px;
+.o_form_view .o_form_section .o_form_section_left {
+    flex: 0 0 30%;
+    margin-right: 15px;
 }
 
-.o_form_section .o_form_section_right {
+.o_form_view .o_form_section .o_form_section_right {
     flex: 1 1 auto;
-    width: 700px;
 }
 
 .o_list_view {
@@ -1288,9 +1276,18 @@ td.oe_form_group_cell_label label {
     width: auto !important;
 }
 
-.o_form_view .o_field_widget {
-    margin-bottom: 5px;
+/* .o_field_widget, .o_field_widget input.o_input {
+    display: inline-block;
+    text-align: inherit;
+} */
+
+.o_field_widget::after {
+    content: "\a0";
 }
+
+/* .o_form_view .o_field_widget {
+    margin-bottom: 0px;
+} */
 
 .o_form_view .o_field_boolean {
     margin-right: 5px;
@@ -1477,7 +1474,8 @@ span.char-count {
     width: 400px;
 }
 
-.kendo-combobox-sm.k-combobox {
+.kendo-combobox-sm.k-combobox,
+.kendo-combobox-sm.k-multiselect {
     font-size: 0.875rem;
     line-height: 1.5;
 }
@@ -1486,9 +1484,14 @@ span.char-count {
     top: 0.25rem;
 }
 
-.kendo-combobox-sm.k-combobox .k-input {
+.kendo-combobox-sm.k-combobox .k-input,
+.kendo-combobox-sm.k-multiselect .k-input {
     padding: 0.25rem .5rem!important;
     height: auto;
+}
+
+.kendo-combobox-sm.k-multiselect .k-multiselect-wrap::before {
+    display: none;
 }
 
 .popover-d-contents {
@@ -1608,4 +1611,13 @@ span.char-count {
 .div-colspan>div>div {
     position: relative;
     overflow: hidden;
+}
+
+.b-sticky-right {
+    position: sticky;
+    right: 0;
+    background-color: #f9f9f9;
+    border: 1px solid #314f6e;
+    z-index: 3;
+    overflow-wrap: break-word;
 }

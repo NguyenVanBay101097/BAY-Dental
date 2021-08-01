@@ -42,6 +42,7 @@ namespace Infrastructure.Services
 
             var seqObj = GetService<IIRSequenceService>();
             var moveObj = GetService<IAccountMoveService>();
+            var moveLineObj = GetService<IAccountMoveLineService>();
             var settlementObj = GetService<ICommissionSettlementService>();
 
             foreach (var rec in self)
@@ -114,10 +115,19 @@ namespace Infrastructure.Services
                     {
                         var move_ids = rec.AccountMovePaymentRels.Select(x => x.MoveId);
                         var payment_moves = await moveObj.SearchQuery(x => move_ids.Contains(x.Id))
-                            .Include(x => x.Lines).Include("Lines.Account").ToListAsync();
+                            .Include(x => x.Lines).ThenInclude(x => x.PurchaseLine).Include("Lines.Account").ToListAsync();
 
                         var invoices = moves.Concat(payment_moves);
                         await _AutoReconcile(rec, invoices);
+
+                        ///update purchase order          
+                        var purchase_Ids = await moveLineObj.SearchQuery(x => x.PurchaseLineId.HasValue && move_ids.Contains(x.MoveId))
+                            .Include(x => x.PurchaseLine).Select(s=>s.PurchaseLine.OrderId).Distinct().ToListAsync();
+                        if (purchase_Ids.Any())
+                        {
+                            var purchaseObj = GetService<IPurchaseOrderService>();
+                            await purchaseObj.PreparePurchase(purchase_Ids);
+                        }
                     }
                     else if (rec.SaleOrderPaymentRels.Any())
                     {
@@ -166,10 +176,10 @@ namespace Infrastructure.Services
                 {
                     var settlement = new CommissionSettlement
                     {
-                     
+
                         EmployeeId = agent.EmployeeId,
                         BaseAmount = (rel.AmountPrepaid ?? 0),
-                    
+
                     };
 
                     settlements.Add(settlement);
@@ -202,6 +212,8 @@ namespace Infrastructure.Services
 
             var move_ids = lines.Select(x => x.MoveId).Distinct().ToList();
             await moveObj._ComputeAmount(move_ids);
+
+
 
             //update sale order residual
             var saleLineObj = GetService<ISaleOrderLineService>();
@@ -1041,7 +1053,7 @@ namespace Infrastructure.Services
                 var paymentDateFrom = val.PaymentDateFrom.Value.AbsoluteBeginOfDate();
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate >= paymentDateFrom));
             }
-               
+
             if (val.PaymentDateTo.HasValue)
             {
                 var paymentDateTo = val.PaymentDateTo.Value.AbsoluteEndOfDate();
@@ -1204,6 +1216,8 @@ namespace Infrastructure.Services
 
             return items;
         }
+
+
 
         public override ISpecification<AccountPayment> RuleDomainGet(IRRule rule)
         {

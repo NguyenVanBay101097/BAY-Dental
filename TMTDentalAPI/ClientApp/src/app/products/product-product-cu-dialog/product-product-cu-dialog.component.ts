@@ -16,6 +16,8 @@ import { UoMBasic, UomService, UoMPaged } from 'src/app/uoms/uom.service';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
 import { StockInventoryCriteriaService } from 'src/app/stock-inventories/stock-inventory-criteria.service';
 import { StockInventoryCriteriaPaged } from 'src/app/stock-inventories/stock-inventory-criteria.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { PermissionService } from 'src/app/shared/permission.service';
 
 @Component({
   selector: 'app-product-product-cu-dialog',
@@ -34,7 +36,7 @@ export class ProductProductCuDialogComponent implements OnInit {
   categoryIdSave: string;
   opened = true;
   submitted = false;
-
+  hasDefined = false;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('uoMCbx', { static: true }) uoMCbx: ComboBoxComponent;
   @ViewChild('uoMPOCbx', { static: true }) uoMPOCbx: ComboBoxComponent;
@@ -47,7 +49,9 @@ export class ProductProductCuDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
     private uoMService: UomService,
-    private productCriteriaService : StockInventoryCriteriaService
+    private productCriteriaService : StockInventoryCriteriaService,
+    private authService: AuthService,
+    private permissionService: PermissionService
   ) {
   }
 
@@ -70,6 +74,7 @@ export class ProductProductCuDialogComponent implements OnInit {
       isLabo: false,
       purchasePrice: 0,
       productCriterias: null,
+      minInventory: 0
     });
 
     setTimeout(() => {
@@ -97,11 +102,18 @@ export class ProductProductCuDialogComponent implements OnInit {
         this.listProductCriteria = result.items;
         this.criteriaMultiSelect.loading = false;
       });
-
+      this.authService.getGroups().subscribe((result: any) => {
+        this.permissionService.define(result);
+        this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+        console.log(this.hasDefined);
+        
+      });
       this.loadProductCriteriaList();
       this.categCbxFilterChange();
       this.uoMCbxFilterChange();
       this.uoMPOCbxFilterChange();
+
+      
     });
   }
 
@@ -118,6 +130,9 @@ export class ProductProductCuDialogComponent implements OnInit {
     if (this.id) {
       this.productService.get(this.id).subscribe((result: any) => {
         this.productForm.patchValue(result);
+
+        const inventory = result.minInventory ? result.minInventory : 0;
+        this.productForm.get('minInventory').setValue(inventory);
 
         this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ], 'id');
 
@@ -159,6 +174,7 @@ export class ProductProductCuDialogComponent implements OnInit {
         this.productForm.get('saleOK').setValue(false);
         this.productForm.get('purchaseOK').setValue(true);
         this.productForm.get('purchasePrice').setValue(0);
+        this.productForm.get('minInventory').setValue(0);
       });
     }
   }

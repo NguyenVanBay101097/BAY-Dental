@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
 import { PagedResult2 } from '../paged-result-2';
+import { ProductSimple } from 'src/app/products/product-simple';
 
 export class SaleOrderLineOnChangeProduct {
     productId: string;
@@ -49,6 +50,21 @@ export class SaleOrderLineForProductRequest {
     boms: ProductBomForSaleOrderLine[];
 }
 
+export class SmsCareAfterOrderPaged {
+    offset: number;
+    limit: number;
+    search: string;
+    dateFrom: string;
+    dateTo: string;
+    productId: string;
+    companyId: string;
+}
+
+export class SaleOrderLineHistoryReq{
+    partnerId: string;
+    companyId: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SaleOrderLineService {
     apiUrl = 'api/SaleOrderLines';
@@ -58,7 +74,7 @@ export class SaleOrderLineService {
         return this.http.post<SaleOrderLineOnChangeProductResult>(this.baseApi + this.apiUrl + '/OnChangeProduct', val);
     }
 
-    get(val: any) {
+    getPaged(val: any) {
         return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
@@ -82,23 +98,46 @@ export class SaleOrderLineService {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetTeeth');
     }
 
-    getListLineIsLabo(val: any):Observable<PagedResult2<any>> {
+    getListLineIsLabo(val: any): Observable<PagedResult2<any>> {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetListLineIsLabo', { params: new HttpParams({ fromObject: val }) });
     }
 
-    applyDiscountOnOrderLine(val){
+    applyDiscountOnOrderLine(val) {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyDiscountOnOrderLine', val);
     }
 
-    applyPromotion(val){
+    applyPromotion(val) {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotion', val);
     }
 
-    patchIsActive(id, active){
-        return this.http.patch(this.baseApi + this.apiUrl + '/' + id + '/PatchIsActive',{active: active})
+    patchIsActive(id, active) {
+        return this.http.patch(this.baseApi + this.apiUrl + '/' + id + '/PatchIsActive', { active: active })
     }
 
-    applyPromotionUsageCode(val){
+    applyPromotionUsageCode(val) {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyPromotionUsageCode', val);
+    }
+
+    getSmsCareAfterOrderManual(val: any): Observable<PagedResult2<any>> {
+        return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetSmsCareAfterOrderManual', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getProductSmsCareAfterOrder(val: any): Observable<ProductSimple[]> {
+        return this.http.get<ProductSimple[]>(this.baseApi + this.apiUrl + '/GetProductSmsCareAfterOrder',
+            {
+                params: new HttpParams({ fromObject: val })
+            })
+    }
+
+    getHistories(val: any) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetHistory', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    update(id,val) {
+        return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
+    }
+
+    remove(id) {
+        return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 }

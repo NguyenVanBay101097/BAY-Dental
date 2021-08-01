@@ -146,6 +146,8 @@ namespace TMTDentalAPI.Controllers
             return Ok(amountAdvance);
         }
 
+
+
         [HttpPost]
         [CheckAccess(Actions = "Basic.Partner.Create")]
         public async Task<IActionResult> Create(PartnerDisplay val)
@@ -468,6 +470,20 @@ namespace TMTDentalAPI.Controllers
             return Ok(rec);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCustomerBirthDay(PartnerPaged val)
+        {
+            var rec = await _partnerService.GetCustomerBirthDay(val);
+            return Ok(rec);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCustomerAppointments(PartnerPaged val)
+        {
+            var rec = await _partnerService.GetCustomerAppointments(val);
+            return Ok(rec);
+        }
+
         //xuất excel danh sách hóa đơn còn nợ của 1 partner
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> ExportUnreconcileInvoices(Guid id)
@@ -582,7 +598,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.Partner.Read")]
-        public async Task<IActionResult> ExportExcelFile(PartnerPaged val)
+        public async Task<IActionResult> ExportExcelFile(PartnerInfoPaged val)
         {
             var stream = new MemoryStream();
             var data = await _partnerService.GetExcel(val);
@@ -597,54 +613,95 @@ namespace TMTDentalAPI.Controllers
 
             using (var package = new ExcelPackage(stream))
             {
-                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
-
-                worksheet.Cells[1, 1].Value = "Tên KH";
-                worksheet.Cells[1, 2].Value = "Mã KH";
-                worksheet.Cells[1, 3].Value = "Ngày tạo";
-                worksheet.Cells[1, 4].Value = "Giới tính";
-                worksheet.Cells[1, 5].Value = "Ngày sinh";
-                worksheet.Cells[1, 6].Value = "Tháng sinh";
-                worksheet.Cells[1, 7].Value = "Năm sinh";
-                worksheet.Cells[1, 8].Value = "SĐT";
-                worksheet.Cells[1, 9].Value = "Đường";
-                worksheet.Cells[1, 10].Value = "Phường/Xã";
-                worksheet.Cells[1, 11].Value = "Quận/Huyện";
-                worksheet.Cells[1, 12].Value = "Tỉnh/Thành";
-                worksheet.Cells[1, 13].Value = "Tiểu sử bệnh";
-                worksheet.Cells[1, 14].Value = "Nghề nghiệp";
-                worksheet.Cells[1, 15].Value = "Email";
-                worksheet.Cells[1, 16].Value = "Ghi chú";
-
-                worksheet.Cells["A1:P1"].Style.Font.Bold = true;
-
-                var row = 2;
-                foreach (var item in data)
+                if (val.ShowInfo.HasValue && val.ShowInfo == true)
                 {
-                    worksheet.Cells[row, 1].Value = item.Name;
-                    worksheet.Cells[row, 2].Value = item.Ref;
-                    worksheet.Cells[row, 3].Value = item.Date;
-                    worksheet.Cells[row, 3].Style.Numberformat.Format = "d/m/yyyy";
-                    worksheet.Cells[row, 4].Value = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam";
-                    worksheet.Cells[row, 5].Value = item.BirthDay;
-                    worksheet.Cells[row, 6].Value = item.BirthMonth;
-                    worksheet.Cells[row, 7].Value = item.BirthYear;
-                    worksheet.Cells[row, 8].Value = item.Phone;
-                    worksheet.Cells[row, 9].Value = item.Street;
-                    worksheet.Cells[row, 10].Value = item.WardName;
-                    worksheet.Cells[row, 11].Value = item.DistrictName;
-                    worksheet.Cells[row, 12].Value = item.CityName;
-                    worksheet.Cells[row, 13].Value = string.Join(",", item.MedicalHistories);
-                    worksheet.Cells[row, 14].Value = item.Job;
-                    worksheet.Cells[row, 15].Value = item.Email;
-                    worksheet.Cells[row, 16].Value = item.Note;
+                    var worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
-                    row++;
+                    worksheet.Cells[1, 1].Value = "Tên KH";
+                    worksheet.Cells[1, 2].Value = "Mã KH";
+                    worksheet.Cells[1, 3].Value = "Ngày tạo";
+                    worksheet.Cells[1, 4].Value = "Giới tính";
+                    worksheet.Cells[1, 5].Value = "Ngày sinh";
+                    worksheet.Cells[1, 6].Value = "Tháng sinh";
+                    worksheet.Cells[1, 7].Value = "Năm sinh";
+                    worksheet.Cells[1, 8].Value = "SĐT";
+                    worksheet.Cells[1, 9].Value = "Đường";
+                    worksheet.Cells[1, 10].Value = "Phường/Xã";
+                    worksheet.Cells[1, 11].Value = "Quận/Huyện";
+                    worksheet.Cells[1, 12].Value = "Tỉnh/Thành";
+                    worksheet.Cells[1, 13].Value = "Tiểu sử bệnh";
+                    worksheet.Cells[1, 14].Value = "Nghề nghiệp";
+                    worksheet.Cells[1, 15].Value = "Email";
+                    worksheet.Cells[1, 16].Value = "Ghi chú";
+
+                    worksheet.Cells["A1:P1"].Style.Font.Bold = true;
+
+                    var row = 2;
+                    foreach (var item in data)
+                    {
+                        worksheet.Cells[row, 1].Value = item.Name;
+                        worksheet.Cells[row, 2].Value = item.Ref;
+                        worksheet.Cells[row, 3].Value = item.Date;
+                        worksheet.Cells[row, 3].Style.Numberformat.Format = "d/m/yyyy";
+                        worksheet.Cells[row, 4].Value = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam";
+                        worksheet.Cells[row, 5].Value = item.BirthDay;
+                        worksheet.Cells[row, 6].Value = item.BirthMonth;
+                        worksheet.Cells[row, 7].Value = item.BirthYear;
+                        worksheet.Cells[row, 8].Value = item.Phone;
+                        worksheet.Cells[row, 9].Value = item.Street;
+                        worksheet.Cells[row, 10].Value = item.WardName;
+                        worksheet.Cells[row, 11].Value = item.DistrictName;
+                        worksheet.Cells[row, 12].Value = item.CityName;
+                        worksheet.Cells[row, 13].Value = string.Join(",", item.MedicalHistories);
+                        worksheet.Cells[row, 14].Value = item.Job;
+                        worksheet.Cells[row, 15].Value = item.Email;
+                        worksheet.Cells[row, 16].Value = item.Note;
+
+                        row++;
+                    }
+
+                    worksheet.Column(8).Style.Numberformat.Format = "@";
+                    worksheet.Cells.AutoFitColumns();
                 }
+                else
+                {
 
-                worksheet.Column(8).Style.Numberformat.Format = "@";
-                worksheet.Cells.AutoFitColumns();
+                    {
+                        var worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
+                        worksheet.Cells[1, 1].Value = "Tên KH";
+                        worksheet.Cells[1, 2].Value = "Mã KH";
+                        worksheet.Cells[1, 3].Value = "Ngày tạo";
+                        worksheet.Cells[1, 4].Value = "Giới tính";
+                        worksheet.Cells[1, 5].Value = "Ngày sinh";
+                        worksheet.Cells[1, 6].Value = "Tháng sinh";
+                        worksheet.Cells[1, 7].Value = "Năm sinh";
+                        worksheet.Cells[1, 8].Value = "Tiểu sử bệnh";
+                        worksheet.Cells[1, 9].Value = "Nghề nghiệp";
+                        worksheet.Cells[1, 10].Value = "Ghi chú";
+
+                        worksheet.Cells["A1:P1"].Style.Font.Bold = true;
+
+                        var row = 2;
+                        foreach (var item in data)
+                        {
+                            worksheet.Cells[row, 1].Value = item.Name;
+                            worksheet.Cells[row, 2].Value = item.Ref;
+                            worksheet.Cells[row, 3].Value = item.Date;
+                            worksheet.Cells[row, 3].Style.Numberformat.Format = "d/m/yyyy";
+                            worksheet.Cells[row, 4].Value = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam";
+                            worksheet.Cells[row, 5].Value = item.BirthDay;
+                            worksheet.Cells[row, 6].Value = item.BirthMonth;
+                            worksheet.Cells[row, 7].Value = item.BirthYear;
+                            worksheet.Cells[row, 8].Value = string.Join(",", item.MedicalHistories);
+                            worksheet.Cells[row, 9].Value = item.Job;
+                            worksheet.Cells[row, 10].Value = item.Note;
+
+                            row++;
+                        }
+                        worksheet.Cells.AutoFitColumns();
+                    }
+                }
                 package.Save();
 
                 fileContent = stream.ToArray();
@@ -734,6 +791,38 @@ namespace TMTDentalAPI.Controllers
             await _partnerService.UpdateAsync(entity);
 
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetPartnerForTCare(PartnerForTCarePaged val)
+        {
+            var res =await _partnerService.GetPartnerForTCare(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetPartnerOrderDone(PartnerPaged val)
+        {
+            var res = await _partnerService.GetPartnerOrderDone(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
+        public async Task<IActionResult> GetPartnerInfoPaged([FromQuery] PartnerInfoPaged val) // giao diện list khách hàng
+        {
+            var result = await _partnerService.GetPartnerInfoPaged(val);
+
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
+        public async Task<IActionResult> GetPartnerInfoPaged2([FromQuery] PartnerInfoPaged val) // giao diện list khách hàng
+        {
+            var result = await _partnerService.GetPartnerInfoPaged2(val);
+
+            return Ok(result);
         }
     }
 }

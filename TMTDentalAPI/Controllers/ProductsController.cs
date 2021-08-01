@@ -106,6 +106,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        //Lấy danh sách những product mà tồn kho hiện tại nhỏ hơn tồn kho tối thiểu được thiết lập
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetProductsComingEnd([FromQuery] ProductGetProductsComingEndRequest val)
+        {
+            var results = await _productService.GetProductsComingEnd(val);
+            return Ok(results);
+        }
+
         [HttpDelete("{id}")]
         [CheckAccess(Actions = "Catalog.Products.Delete")]
         public async Task<IActionResult> Remove(Guid id)
@@ -158,6 +166,14 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("Autocomplete2")]
         [CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Autocomplete2(ProductPaged val)
+        {
+            var res = await _productService.GetProductsAutocomplete2(val);
+            return Ok(res);
+        }
+
+        [HttpPost("Autocomplete3")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
+        public async Task<IActionResult> Autocomplete3(ProductPaged val)
         {
             var res = await _productService.GetProductsAutocomplete2(val);
             return Ok(res);

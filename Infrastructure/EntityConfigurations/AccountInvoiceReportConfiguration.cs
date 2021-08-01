@@ -12,44 +12,39 @@ namespace Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<AccountInvoiceReport> builder)
         {
             builder.ToView("account_invoice_report");
-            builder.HasNoKey();
 
             builder.HasOne(x => x.Product)
               .WithMany()
-              .HasForeignKey(x => x.product_id);
-
-            builder.HasOne(x => x.Categ)
-             .WithMany()
-             .HasForeignKey(x => x.categ_id);
+              .HasForeignKey(x => x.ProductId);
 
             builder.HasOne(x => x.Company)
              .WithMany()
-             .HasForeignKey(x => x.company_id);
+             .HasForeignKey(x => x.CompanyId);
 
             builder.HasOne(x => x.Journal)
             .WithMany()
-            .HasForeignKey(x => x.journal_id)
+            .HasForeignKey(x => x.JournalId)
             .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(x => x.Invoice)
-           .WithMany()
-           .HasForeignKey(x => x.invoice_id);
 
             builder.HasOne(x => x.Partner)
            .WithMany()
-           .HasForeignKey(x => x.partner_id);
-
-            builder.HasOne(x => x.User)
-         .WithMany()
-         .HasForeignKey(x => x.user_id);
+           .HasForeignKey(x => x.PartnerId);
 
             builder.HasOne(x => x.Account)
                  .WithMany()
-                 .HasForeignKey(x => x.account_id);
+                 .HasForeignKey(x => x.AccountId);
 
-            builder.HasOne(x => x.AccountLine)
-                .WithMany()
-                .HasForeignKey(x => x.account_line_id);
+            builder.HasOne(x => x.Employee)
+             .WithMany()
+             .HasForeignKey(x => x.EmployeeId);
+
+            builder.HasOne(x => x.Assistant)
+             .WithMany()
+             .HasForeignKey(x => x.AssistantId);
+
+            builder.HasOne(x => x.InvoiceUser)
+            .WithMany()
+            .HasForeignKey(x => x.InvoiceUserId);
         }
     }
 }

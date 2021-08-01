@@ -62,7 +62,7 @@ export class TcareCampaignListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(TcareCampaignCreateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(TcareCampaignCreateDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
     modalRef.result.then(() => {
       this.loadDataFromApi();

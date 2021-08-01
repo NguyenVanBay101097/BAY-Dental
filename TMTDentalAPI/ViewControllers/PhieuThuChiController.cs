@@ -31,10 +31,14 @@ namespace TMTDentalAPI.ViewControllers
         [PrinterNameFilterAttribute(Name = AppConstants.PhieuThuChiPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
-            var phieu = await _mapper.ProjectTo<PhieuThuChiPrintVM>(_phieuThuChiService.SearchQuery(x => x.Id == id)
+            var res = await _phieuThuChiService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Company)
                 .Include(x => x.CreatedBy)
-                .Include(x => x.Partner))
-                .FirstOrDefaultAsync();
+                .Include(x => x.Partner)
+                .Include(x => x.LoaiThuChi).FirstOrDefaultAsync();
+
+            var phieu = _mapper.Map<PhieuThuChiPrintVM>(res);
+
 
             if (phieu == null)
                 return NotFound();
@@ -44,6 +48,19 @@ namespace TMTDentalAPI.ViewControllers
 
             return View(phieu);
 
+        }
+
+        [PrinterNameFilterAttribute(Name = AppConstants.PhieuThuChiPaperCode)]
+        public async Task<IActionResult> Print2(Guid id)
+        {
+            var res = await _phieuThuChiService.GetPrint(id);
+
+            if (res == null)
+                return NotFound();
+
+            res.AmountText = AmountToText.amount_to_text(res.Amount);
+
+            return View(res);
         }
     }
 }

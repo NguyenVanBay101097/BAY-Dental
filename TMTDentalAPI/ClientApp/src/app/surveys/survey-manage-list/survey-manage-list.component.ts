@@ -157,7 +157,7 @@ export class SurveyManageListComponent implements OnInit {
   }
 
   createEmpAssign() {
-    let modalRef = this.modalService.open(SurveyManageAssignEmployeeCreateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(SurveyManageAssignEmployeeCreateDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Tạo phân việc';
     modalRef.result.then(() => {
       this.loadDataFromApi();

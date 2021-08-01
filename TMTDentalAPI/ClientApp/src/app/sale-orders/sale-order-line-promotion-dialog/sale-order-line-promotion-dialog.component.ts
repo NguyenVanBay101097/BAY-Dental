@@ -4,6 +4,8 @@ import { Subject } from 'rxjs';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleCouponProgramPaged, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { SaleOrderDisplay } from '../sale-order-display';
 import { SaleOrderLineDisplay } from '../sale-order-line-display';
@@ -24,6 +26,7 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit , OnDestroy
 
   isChange = false;
   code = '';
+  isDiscountLine = false;
 
   private btnDiscountSubject = new Subject<any>();
   private btnPromoCodeSubject = new Subject<any>();
@@ -37,13 +40,15 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit , OnDestroy
     private saleOrderSevice: SaleOrderService,
     private saleOrderLineService: SaleOrderLineService,
     private notificationService: NotifyService,
-    private modelService: NgbModal
+    private modelService: NgbModal,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
     setTimeout(() => {
       this.loadDefaultPromotion();
     }, 0);
+    this.isDiscountLine = this.checkPermissionService.check(["Basic.SaleOrder.DiscountLine"]);
   }
 
   ngOnDestroy(): void {
@@ -94,7 +99,13 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit , OnDestroy
   }
 
   onDeletePromotion(item) {
-    this.btnDeletePromoSubject.next(item);
+    let modalRef = this.modelService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa khuyến mãi';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa khuyến mãi?';
+    modalRef.result.then(() => {
+      this.btnDeletePromoSubject.next(item);
+
+    });
   }
 
   onClose() {

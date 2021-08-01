@@ -1,0 +1,43 @@
+<div class="s_container">
+  <div class="s_header">
+    <div class="d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">
+        Lịch sử điều trị
+      </h5>
+      <button type="button" (click)="createNewSaleOrder()" class="btn btn-sm btn-primary">
+        <i class="fas fa-plus pr-1"></i>
+        <span>Tạo điều trị</span>
+      </button>
+    </div>
+  </div>
+  <div class="s_body">
+    <div class="container_treatment">
+      <div class="wrapper_treatment">
+        <ul class="sessions_treatment">
+          <li *ngFor="let treatment of listTreatments | keyvalue: reverseKeyTreatment">
+            <div class="time t_sub_title"> {{formatDate(treatment.key)==today ? 'Hôm nay' : formatDate(treatment.key)}}
+            </div>
+            <div *ngFor="let item of treatment.value">
+              <div class="card_border">
+                <div class="card_treatment">
+                  <p class="d-flex justify-content-between">
+                    <span class="font-weight-600">
+                      {{item?.name}}
+                    </span>
+                    <span style="min-width: 60px;">
+                      <a class="text-primary" [routerLink]="['/sale-orders/form']"
+                        [queryParams]="{id: item?.orderId}">Chi tiết</a>
+                    </span>
+                  </p>
+                  <p class="opacity-8">Răng: {{viewTeeth(item)}} </p>
+                  <p class="opacity-8">Bác sĩ: {{item?.employeeName}}</p>
+                  <p class="opacity-8">Chuẩn đoán: {{item?.diagnostic}}</p>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

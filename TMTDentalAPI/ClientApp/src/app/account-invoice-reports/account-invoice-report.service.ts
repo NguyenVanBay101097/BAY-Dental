@@ -1,53 +1,116 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
+import { PagedResult2 } from '../employee-categories/emp-category';
 
-export class AccountInvoiceReportByTimeItem {
-    date: string;
-    amountTotal: number;
-    residual: number;
-    dateStr: string;
-    dateFrom: string;
-    dateTo: string;
+export class RevenueTimeReportPar{
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
 }
 
-export class AccountInvoiceReportByTimeDetail {
-    number: string;
-    invoiceId: string;
-    date: string;
-    amountTotal: number;
-    residual: number;
+export class RevenueServiceReportPar{
+    dateFrom?: any;
+    dateTo?: any;
+    productId: string;
+    companyId?: string;
 }
 
-export class AccountInvoiceReportByTimeSearch {
+export class RevenueEmployeeReportPar{
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
     groupBy: string;
-    dateFrom: string;
-    dateTo: string;
-    monthFrom: string;
-    monthTo: string;
-    yearFrom: string;
-    yearTo: string;
+    groupById: string;
 }
 
-export class AccountInvoiceReportHomeSummaryVM {
-    totalInvoice: number;
-    totalAmount: number;
+export class RevenueTimeReportDisplay {
+	invoiceDate?: any;
+	priceSubTotal: number;
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
 }
 
+export class RevenueServiceReportDisplay {
+	productName: string;
+	productId: string;
+	priceSubTotal: number;
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
+}
+
+export class RevenueEmployeeReportDisplay {
+	employeeName: string;
+	employeeId: string;
+	priceSubTotal: number;
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
+    groupBy: string;
+    toDetailEmployeeId: string;
+}
+
+export class RevenueReportDetailPaged{
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
+    limit: number;
+    offset: number;
+    productId?: string;
+    employeeId?: string;
+    assistantId?: string;
+}
+export class RevenueReportDetailDisplay {
+	invoiceDate: string;
+	invoiceOrigin: string;
+	partnerName: string;
+	employeeName?: any;
+	assistantName?: any;
+	productName: string;
+	priceSubTotal: number;
+}
+
+export class SumRevenueReportPar{
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
+    partnerId?: string;
+}
 @Injectable()
 export class AccountInvoiceReportService {
     apiUrl = 'api/AccountInvoiceReports';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-    getSummaryByTime(val: AccountInvoiceReportByTimeSearch): Observable<AccountInvoiceReportByTimeItem[]> {
-        return this.http.post<AccountInvoiceReportByTimeItem[]>(this.baseApi + this.apiUrl + "/GetSummaryByTime", val);
+    getRevenueTimeReport(val:any ) {
+        return this.http.get<RevenueTimeReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenueTimeReportPaged", {params: new HttpParams({fromObject: val})});
     }
 
-    getDetailByTime(val: AccountInvoiceReportByTimeItem): Observable<AccountInvoiceReportByTimeDetail[]> {
-        return this.http.post<AccountInvoiceReportByTimeDetail[]>(this.baseApi + this.apiUrl + "/GetDetailByTime", val);
+    getRevenueServiceReport(val:any ) {
+        return this.http.get<RevenueServiceReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenueServiceReportPaged", {params: new HttpParams({fromObject: val})});
     }
 
-    getHomeTodaySummary(): Observable<AccountInvoiceReportHomeSummaryVM> {
-        return this.http.post<AccountInvoiceReportHomeSummaryVM>(this.baseApi + this.apiUrl + "/GetHomeTodaySummary", {});
+    getRevenueEmployeeReport(val:any ) {
+        return this.http.get<RevenueEmployeeReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenueEmployeeReportPaged", {params: new HttpParams({fromObject: val})});
+    }
+
+    getRevenueReportDetailPaged(val:any ) {
+        return this.http.get<PagedResult2<RevenueReportDetailDisplay>>(this.baseApi + this.apiUrl + "/GetRevenueReportDetailPaged", {params: new HttpParams({fromObject: val})});
+    }
+
+    getSumRevenueReport(val:any ) {
+        return this.http.get(this.baseApi + this.apiUrl + "/SumRevenueReport", {params: new HttpParams({fromObject: val})});
+    }
+    getPrintRevenueTimeReport(val:any ) {
+        return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueTimeReport",val,{ responseType: "text" });
+        
+    }
+    getPrintRevenueServiceReport(val:any ) {
+        return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueServiceReport",val,{ responseType: "text" });
+        
+    }
+    getPrintRevenueEmployeeReport(val:any ) {
+        return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueEmployeeReport",val,{ responseType: "text" });
+        
     }
 }

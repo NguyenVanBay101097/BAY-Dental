@@ -64,7 +64,7 @@ export class CashBookCuDialogComponent implements OnInit {
     private intlService: IntlService,
     private printService: PrintService,
     private phieuThuChiService: PhieuThuChiService,
-    private partnerService: PartnerService, 
+    private partnerService: PartnerService,
     private checkPermissionService: CheckPermissionService
   ) { }
 
@@ -76,7 +76,8 @@ export class CashBookCuDialogComponent implements OnInit {
       loaiThuChi: [null, Validators.required],
       reason: null,
       partnerType: null,
-      partner: null
+      partner: null,
+      isAccounting: false
     });
 
     setTimeout(() => {
@@ -167,7 +168,6 @@ export class CashBookCuDialogComponent implements OnInit {
 
   loadRecord() {
     this.phieuThuChiService.get(this.id).subscribe((result: any) => {
-      console.log(result);
       this.phieuThuChiDisplay = result;
       this.formGroup.patchValue(result);
       var date = new Date(result.date);
@@ -181,6 +181,13 @@ export class CashBookCuDialogComponent implements OnInit {
         this.loadFilteredPartners();
       }
     });
+  }
+
+  onChangeLoai(val) {
+    debugger
+    if (val) {
+      this.formGroup.get('isAccounting').setValue(val.isAccounting);
+    }
   }
 
   loadLoaiThuChiList() {
@@ -254,7 +261,7 @@ export class CashBookCuDialogComponent implements OnInit {
   quickCreateLoaiThuChi() {
     const modalRef = this.modalService.open(LoaiThuChiFormComponent, {
       scrollable: true,
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -283,6 +290,7 @@ export class CashBookCuDialogComponent implements OnInit {
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
     val.partnerId = val.partner ? val.partner.id : null;
     val.type = this.type;
+    val.accountType = "other";
 
     if (!this.id) {
       this.phieuThuChiService.create(val).subscribe(
@@ -343,6 +351,7 @@ export class CashBookCuDialogComponent implements OnInit {
     val.partnerId = val.partner ? val.partner.id : null;
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
     val.type = this.type;
+    val.accountType = "other";
 
     if (!this.id) {
       this.phieuThuChiService.create(val).subscribe(
@@ -357,10 +366,12 @@ export class CashBookCuDialogComponent implements OnInit {
                 type: { style: "success", icon: true },
               });
 
-              this.activeModal.close({
-                id: result.id,
-                print: print
-              });
+              this.id = result.id;
+              this.reload = true;
+              if (print) {
+                this.printPhieu(this.id);
+              }
+              this.activeModal.close();
             },
             (error) => {
               console.log(error);
@@ -385,10 +396,12 @@ export class CashBookCuDialogComponent implements OnInit {
                 animation: { type: "fade", duration: 400 },
                 type: { style: "success", icon: true },
               });
+              
+              if (print) {
+                this.printPhieu(this.id);
+              }
 
-              this.activeModal.close({
-                print: print
-              });
+              this.activeModal.close();
             },
             (error) => {
               console.log(error);

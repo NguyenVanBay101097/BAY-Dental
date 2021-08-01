@@ -14,6 +14,16 @@ const routes: Routes = [
     component: AppHomeComponent,
     children: [
       {
+        path: 'member-level',
+        loadChildren: () => import('./member-level/member-level.module').then(m => m.MemberLevelModule),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'agents',
+        loadChildren: () => import('./agents/agents.module').then(m => m.AgentsModule),
+        canActivate: [AuthGuard],
+      },
+      {
         path: 'quotations',
         loadChildren: () => import('./quotations/quotations.module').then(m => m.QuotationsModule),
         canActivate: [AuthGuard],
@@ -187,8 +197,8 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
-        path: 'revenue-report',
-        loadChildren: () => import('./revenue-report/revenue-report.module').then(m => m.RevenueReportModule),
+        path: 'account-invoice-reports',
+        loadChildren: () => import('./account-invoice-reports/account-invoice-reports.module').then(m => m.AccountInvoiceReportsModule),
         canActivate: [AuthGuard]
       },
       {
@@ -337,6 +347,11 @@ const routes: Routes = [
         canActivate:[AuthGuard]
       },
       {
+        path: 'sms',
+        loadChildren: () => import('./sms/sms.module').then(m => m.SmsModule),
+        canActivate: [AuthGuard]
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',
@@ -352,7 +367,7 @@ const routes: Routes = [
         path: 'customer-statistics',
         loadChildren: () => import('./customer-statistics/customer-statistics.module').then(m => m.CustomerStatisticsModule),
         canActivate: [AuthGuard]
-      },
+      }
     ]
   },
 

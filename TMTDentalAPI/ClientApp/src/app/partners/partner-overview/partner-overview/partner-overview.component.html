@@ -1,81 +1,93 @@
-<div class="t_wrapper">
-    <div class="t_section_left">
-        <div class="info">
-            <app-partner-overview-info *ngIf="partner" [partner]="partner"></app-partner-overview-info>
-        </div>
-        <div class="image">
-            <app-partner-overview-image [partnerId]="partnerId">
-            </app-partner-overview-image>
+<div style="
+display: flex;
+height: 100%;
+overflow: auto;
+">
+    <div class="o_partner_info_left">
+        <div style="
+        height: 100%;
+        overflow: auto;
+    ">
+            <div class="o_form_view">
+                <div class="o_form_sheet_bg o_form_sheet_bg_sm">
+                    <div>
+                        <app-partner-overview-info *ngIf="partner" (updateEvent)="onPartnerUpdate()" [partner]="partner">
+                        </app-partner-overview-info>
+                        <div class="image" style="padding-right: 15px;">
+                            <app-partner-overview-image [partnerId]="partnerId">
+                            </app-partner-overview-image>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="t_section_right">
-        <div class="t_treatment_wrapper">
-            <div class="d-flex align-items-center justify-content-between">
-                <h3 class="t_treatment_title">Đợt khám gần nhất</h3>
-                <!-- <button type="button" (click)="createNewSaleOrder()" class="btn btn-primary btn-sm"><i
-                        class="fas fa-folder-plus"></i> Thêm</button> -->
+    <div class="o_partner_info_right">
+        <div class="o_history_treatment_report_container">
+            <div class="o_history_treatment_container">
+                <app-partner-overview-treatment-history [partnerId]="partnerId"></app-partner-overview-treatment-history>
             </div>
-            <div class="t_treatment_grid">
-                <!-- <app-partner-overview-treatment [saleOrders]="saleOrders" (deleteItemEvent)="onDeleteSaleOrder()">
-                </app-partner-overview-treatment> -->
-                <app-partner-dotkham-list [dotkhams]="dotkhams"></app-partner-dotkham-list>
-            </div>
-        </div>
-        <div class="row p-3">
-            <div class="col-6">
-                <app-partner-overview-appointment [partnerId]="partnerId" [customerAppointment]="customerAppointment">
-                </app-partner-overview-appointment>
-            </div>
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-body p-3">
-                        <h5 class="card-title t_title">Báo cáo</h5>
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="card text-white bg-info mb-3">
-                                    <div class="card-body p-3">
-                                        <h5 class="card-title text-center mb-2">
-                                            TIỀN ĐIỀU TRỊ
-                                        </h5>
-                                        <h5 class="card-text text-center t_amount">
-                                            {{(saleSummary?.priceTotal || 0) | number}}
-                                        </h5>
+            <div class="o_report_appointment_container">
+                <div class="o_report_appointment_container_scroll">
+                    <div class="card mb-3">
+                        <div class="card-body p-3">
+                            <h5 class="card-title t_title">Báo cáo</h5>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="card text-white bg-success mb-3">
+                                        <div class="card-body p-3">
+                                            <h5 class="card-title text-center mb-2">
+                                                Doanh thu
+                                            </h5>
+                                            <h5 class="card-text text-center t_amount">
+                                                {{sumRevenue | number}}
+                                            </h5>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="card text-white bg-primary mb-3">
-                                    <div class="card-body p-3">
-                                        <h5 class="card-title text-center mb-2">
-                                            THANH TOÁN
-                                        </h5>
-                                        <h5 class="card-text text-center t_amount">
-                                            {{(saleSummary?.paidTotal || 0) | number}}
-                                        </h5>
+                                <div class="col-6">
+                                    <div class="card text-white bg-warning mb-3">
+                                        <div class="card-body p-3">
+                                            <h5 class="card-title text-center mb-2">
+                                                Công nợ
+                                            </h5>
+                                            <h5 class="card-text text-center t_amount">
+                                                {{debtStatistics | number}}
+                                            </h5>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="card text-white bg-secondary">
-                                    <div class="card-body p-3">
-                                        <h5 class="card-title text-center mb-2">DỰ KIẾN THU</h5>
-                                        <h5 class="card-text text-center t_amount">
-                                            {{(saleSummary?.residualTotal || 0) | number}}
-                                        </h5>
+                                <div class="col-6">
+                                    <div class="card text-white bg-info">
+                                        <div class="card-body p-3">
+                                            <h5 class="card-title text-center mb-2">
+                                                Dự kiến thu
+                                            </h5>
+                                            <h5 class="card-text text-center t_amount">
+                                                {{(saleSummary?.residualTotal || 0) | number}}
+                                            </h5>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="card text-white bg-success">
-                                    <div class="card-body p-3">
-                                        <h5 class="card-title text-center mb-2">SL DỊCH VỤ</h5>
-                                        <h5 class="card-text text-center t_amount">
-                                            {{(saleSummary?.qtyTotal || 0) | number}}
-                                        </h5>
+                                <div class="col-6">
+                                    <div class="card text-white bg-primary">
+                                        <div class="card-body p-3">
+                                            <h5 class="card-title text-center mb-2">
+                                                Tạm ứng
+                                            </h5>
+                                            <h5 class="card-text text-center t_amount">
+                                                {{advanceBalance | number}}
+                                            </h5>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div>
+                        <app-partner-overview-appointment [partnerId]="partnerId"
+                        [customerAppointment]="customerAppointment">
+                        </app-partner-overview-appointment>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,30 @@
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
+    [scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
+    <kendo-grid-column field="date" title="Ngày" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date: 'shortDate'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column field="begin" class="text-right" title="Nợ đầu kỳ" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.begin | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="debit" format class="text-right" title="Phát sinh" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.debit | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="credit" class="text-right" title="Thanh toán" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.credit | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="end" class="text-right" title="Nợ cuối kỳ" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.end | number}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

@@ -160,6 +160,7 @@ namespace Infrastructure.Services
             var modelObj = GetService<IIRModelService>();
 
             var model = await modelObj.SearchQuery(x => x.Model == "Product").FirstOrDefaultAsync();
+            var modelPartner = await modelObj.SearchQuery(x => x.Model == "Partner").FirstOrDefaultAsync();
             var toAdd = new List<IRModelField>();
 
             toAdd.Add(new IRModelField
@@ -176,6 +177,23 @@ namespace Infrastructure.Services
                 Model = "product.product",
                 Name = "standard_price",
                 TType = "float",
+            });
+
+            toAdd.Add(new IRModelField
+            {
+                IRModelId = modelPartner.Id,
+                Model = "res.partner",
+                Name = "loyalty_points",
+                TType = "float",
+            });
+
+            toAdd.Add(new IRModelField
+            {
+                IRModelId = modelPartner.Id,
+                Model = "res.partner",
+                Name = "member_level",
+                TType = "many2one",
+                Relation = "member.level"
             });
 
             await fieldObj.CreateAsync(toAdd);
@@ -323,9 +341,25 @@ namespace Infrastructure.Services
 
             #endregion
 
+            var accCNKH = new AccountAccount
+            {
+                Name = "Công nợ khách hàng",
+                Code = "CNKH",
+                InternalType = currentLiabilities.Type,
+                UserTypeId = currentLiabilities.Id,
+                CompanyId = company.Id,
+            };
 
+            var accHH = new AccountAccount
+            {
+                Name = "Hoa hồng người giới thiệu",
+                Code = "HHNGT",
+                InternalType = currentLiabilities.Type,
+                UserTypeId = currentLiabilities.Id,
+                CompanyId = company.Id,
+            };
 
-            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU });
+            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU, accCNKH, accHH });
 
             #endregion
 
@@ -399,7 +433,29 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance });
+            var journalCNKH = new AccountJournal
+            {
+                Name = "Ghi công nợ",
+                Type = "debt",
+                UpdatePosted = true,
+                Code = "DEBT",
+                DefaultDebitAccountId = accCNKH.Id,
+                DefaultCreditAccountId = accCNKH.Id,
+                CompanyId = company.Id,
+            };
+
+            var journalHHA = new AccountJournal
+            {
+                Name = "Hoa hồng",
+                Type = "commission",
+                UpdatePosted = true,
+                Code = "COMMISSION",
+                DefaultDebitAccountId = accHH.Id,
+                DefaultCreditAccountId = accHH.Id,
+                CompanyId = company.Id,
+            };
+
+            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance, journalCNKH, journalHHA });
 
             #endregion
         }
@@ -827,6 +883,7 @@ namespace Infrastructure.Services
             var sequence_dict = new Dictionary<string, IRSequence>();
             var partner_title_dict = new Dictionary<string, PartnerTitle>();
             var paper_size_dict = new Dictionary<string, PrintPaperSize>();
+            var sms_campaign_dict = new Dictionary<string, SmsCampaign>();
 
             var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\dental_data.xml");
             XmlDocument doc = new XmlDocument();
@@ -968,6 +1025,33 @@ namespace Infrastructure.Services
                         }
                     }
                     paper_size_dict.Add(id, printPaperSize);
+                }else if (model == "sms.campaign")
+                {
+                    var smsCampaign = new SmsCampaign();
+                    var fields = record.GetElementsByTagName("field");
+                    for (var j = 0; j < fields.Count; j++)
+                    {
+                        XmlElement field = (XmlElement)fields[j];
+                        var field_name = field.GetAttribute("name");
+                        if (field_name == "name")
+                        {
+                            smsCampaign.Name = field.InnerText;
+                        }
+                        else if (field_name == "typeDate")
+                        {
+                            smsCampaign.TypeDate = field.InnerText;
+                        }
+                        else if (field_name == "state")
+                        {
+                            smsCampaign.State = field.InnerText;
+                        }
+                        else if (field_name == "defaultType")
+                        {
+                            smsCampaign.DefaultType = field.InnerText;
+                        }
+                       
+                    }
+                    sms_campaign_dict.Add(id, smsCampaign);
                 }
             }
 
@@ -980,8 +1064,8 @@ namespace Infrastructure.Services
             var seqObj = GetService<IIRSequenceService>();
             await seqObj.CreateAsync(sequence_dict.Values);
 
-            var partnerTitlte = GetService<IPartnerTitleService>();
-            await partnerTitlte.CreateAsync(partner_title_dict.Values);
+            var partnerTitlteObj = GetService<IPartnerTitleService>();
+            await partnerTitlteObj.CreateAsync(partner_title_dict.Values);
 
             var modelDataObj = GetService<IIRModelDataService>();
             await modelDataObj.CreateAsync(PrepareModelData(partner_title_dict, "res.partner.title"));

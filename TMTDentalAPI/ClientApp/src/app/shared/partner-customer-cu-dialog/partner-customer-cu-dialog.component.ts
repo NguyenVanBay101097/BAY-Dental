@@ -1,3 +1,4 @@
+import { AgentPaged, AgentService, AgentBasic } from './../../agents/agent.service';
 import { GenderPartner } from './../../partners/partner.service';
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { FormBuilder, FormGroup, Validators, FormArray } from "@angular/forms";
@@ -26,6 +27,7 @@ import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PermissionService } from '../permission.service';
 import { CheckPermissionService } from '../check-permission.service';
+import { AgentCreateUpdateDialogComponent } from '../agent-create-update-dialog/agent-create-update-dialog.component';
 
 @Component({
   selector: "app-partner-customer-cu-dialog",
@@ -36,7 +38,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   @ViewChild("sourceCbx", { static: true }) sourceCbx: ComboBoxComponent;
   @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
   @ViewChild("titleCbx", { static: true }) titleCbx: ComboBoxComponent;
-  @ViewChild("consultantCbx", { static: true }) consultantCbx: ComboBoxComponent;
+  @ViewChild("agentCbx", { static: true }) agentCbx: ComboBoxComponent;
 
   id: string;
   formGroup: FormGroup;
@@ -53,7 +55,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   provincesFilter: City[] = [];
   wardsFilter: Ward[] = [];
   filteredTitles: PartnerTitle[] = [];
-  filteredConsultants: EmployeeSimple[] = [];
+  filteredAgents: AgentBasic[] = [];
 
   dataSourceCities: Array<{ code: string; name: string }>;
   dataSourceDistricts: Array<{
@@ -102,15 +104,18 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   showPartnerSource = false;
   showPartnerHistories = false;
   showPartnerTitles = false;
-  showConsultant = false;
+  showAgent = false;
   showPartnerCategories = false;
+  showInfo = false;
   canCreateTitle = false;
+
 
   get f() { return this.formGroup.controls; }
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
+    private agentService: AgentService,
     private partnerCategoryService: PartnerCategoryService,
     private partnerSourceService: PartnerSourceService,
     private partnerService: PartnerService,
@@ -151,7 +156,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       dateObj: null,
       addressCheckDetail: 0,
       title: null,
-      consultant: null,
+      agent: null,
       avatar: null
     });
 
@@ -206,9 +211,9 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
             this.filteredTitles = _.unionBy(this.filteredTitles, [result.title], 'id');
           }
-
-          if (result.consultant) {
-            this.filteredConsultants = _.unionBy(this.filteredConsultants, [result.title], 'id');
+          
+          if (result.agent) {
+            this.filteredAgents = _.unionBy(this.filteredAgents, [result.agent], 'id');
           }
         });
       } else {
@@ -239,9 +244,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       if(this.showPartnerTitles){
         this.loadTitleList();
       }
-      if(this.showConsultant){
-        this.loadConsultantList();
-      }
+        this.loadAgentList();
 
 
       this.sourceCbx.filterChange
@@ -264,21 +267,22 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         tap(() => (this.titleCbx.loading = true)),
         switchMap((value) => this.searchTitles(value))
       )
-      .subscribe((result) => {
+      .subscribe((result) => {     
         this.filteredTitles = result;
         this.titleCbx.loading = false;
       });
 
-    this.consultantCbx.filterChange
+    this.agentCbx.filterChange
       .asObservable()
       .pipe(
         debounceTime(300),
-        tap(() => (this.consultantCbx.loading = true)),
-        switchMap((value) => this.searchConsultants(value))
+        tap(() => (this.agentCbx.loading = true)),
+        switchMap((value) => this.searchAgents(value))
       )
       .subscribe((result) => {
-        this.filteredConsultants = result;
-        this.consultantCbx.loading = false;
+        console.log(result);
+        this.filteredAgents = result.items;
+        this.agentCbx.loading = false;
       });
   }
 
@@ -346,6 +350,16 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     modalRef.result.then(result => {
       this.filteredTitles.push(result as PartnerTitle);
       this.formGroup.patchValue({ title: result });
+    }, () => {
+    });
+  }
+
+  quickCreateAgent() {
+    let modalRef = this.modalService.open(AgentCreateUpdateDialogComponent,  { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm người giới thiệu';
+    modalRef.result.then(result => {
+      this.filteredAgents.push(result as AgentBasic);
+      this.formGroup.patchValue({ agent: result });
     }, () => {
     });
   }
@@ -478,15 +492,15 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     });
   }
 
-  loadConsultantList() {
-    this.searchConsultants().subscribe((result) => {
-      this.filteredConsultants = _.unionBy(this.filteredConsultants, result, 'id');
+  loadAgentList() {
+    this.searchAgents().subscribe((result) => {
+      this.filteredAgents = _.unionBy(this.filteredAgents, result.items, 'id');
     });
   }
 
   quickCreatePartnerCategory() {
     let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -525,10 +539,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     return this.partnerTitleService.autocomplete(val);
   }
 
-  searchConsultants(q?: string) {
-    var val = new EmployeePaged();
-    val.search = q;
-    return this.employeeService.getEmployeeSimpleList(val);
+  searchAgents(q?: string) {
+    var val = new AgentPaged();
+    val.search = q || '';
+    return this.agentService.getPaged(val);
   }
 
   birthInit(begin: number, end: number) {
@@ -554,7 +568,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     val.birthDay = val.birthDayStr ? parseInt(val.birthDayStr) : null;
     val.birthMonth = val.birthMonthStr ? parseInt(val.birthMonthStr) : null;
     val.birthYear = val.birthYearStr ? parseInt(val.birthYearStr) : null;
-    val.consultantId = val.consultant ? val.consultant.id : null;
+    val.agentId = val.agent ? val.agent.id : null;
 
     if (this.id) {
       this.partnerService.update(this.id, val).subscribe(
@@ -587,11 +601,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   checkRole(){
-    this.showConsultant = this.checkPermissionService.check(["Catalog.Employee.Read"]);
-    this.showPartnerCategories = this.checkPermissionService.check(["Catalog.PartnerCategory.Read"]);
-    this.showPartnerTitles = this.checkPermissionService.check(["Catalog.PartnerTitle.Read"]);
-    this.showPartnerSource = this.checkPermissionService.check(["Catalog.PartnerSource.Read"]);
+    console.log(this.id);
+    
     this.showPartnerHistories = this.checkPermissionService.check(["Catalog.History.Read"]);
     this.canCreateTitle = this.checkPermissionService.check(["Catalog.PartnerTitle.Create"]);
+    this.showInfo = this.checkPermissionService.check(["Basic.Partner.ContactInfo"]);
   }
 }

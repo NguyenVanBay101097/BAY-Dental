@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -53,6 +55,14 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get([FromQuery] SaleOrderPaged val)
         {
             var result = await _saleOrderService.GetPagedResultAsync(val);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetSaleOrderForSms([FromQuery] SaleOrderPaged val)
+        {
+            var result = await _saleOrderService.GetSaleOrderForSms(val);
             return Ok(result);
         }
 
@@ -460,6 +470,88 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _saleOrderService.GetLineForProductRequest(id);
             return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetRevenueReport(SaleOrderRevenueReportPaged val) // dự kiến doanh thu
+        {
+            var res = await _saleOrderService.GetRevenueReport(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetRevenueSumTotal(GetRevenueSumTotalReq val) //Tổng dự kiến doanh thu
+        {
+            var res = await _saleOrderService.GetRevenueSumTotal(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> ExportExcelFile([FromQuery] SaleOrderPaged val)
+        {
+            var stream = new MemoryStream();
+            var data = await _saleOrderService.GetExcel(val);
+            byte[] fileContent;
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+                worksheet.Cells[1, 1].Value = "Ngày lập phiếu";
+                worksheet.Cells[1, 2].Value = "Số phiếu";
+                worksheet.Cells[1, 3].Value = "Khách hàng";
+                worksheet.Cells[1, 4].Value = "Tiền điều trị";
+                worksheet.Cells[1, 5].Value = "Thanh toán";
+                worksheet.Cells[1, 6].Value = "Còn lại";
+                worksheet.Cells["A1:F1"].Style.Font.Bold = true;
+
+                var row = 2;
+                var rowF = row;
+                var rowE = row;
+                foreach (var itemParent in data)
+                {
+                    worksheet.Cells[row, 1].Value = itemParent.DateOrder;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 2].Value = itemParent.Name;
+                    worksheet.Cells[row, 3].Value = itemParent.PartnerName;
+                    worksheet.Cells[row, 4].Value = itemParent.AmountTotal;
+                    worksheet.Cells[row, 5].Value = itemParent.TotalPaid;
+                    worksheet.Cells[row, 6].Value = itemParent.Residual;
+
+                    row++;
+                    rowF = row;
+                    worksheet.Cells[row, 1].Value = "";
+                    worksheet.Cells[row, 2].Value = "Dịch vụ";
+                    worksheet.Cells[row, 3].Value = "Số lượng";
+                    worksheet.Cells[row, 4].Value = "Thành tiền";
+                    worksheet.Cells[row, 5].Value = "Thanh toán";
+                    worksheet.Cells[row, 6].Value = "Còn lại";
+                    row++;
+                    foreach (var itemChild in itemParent.SaleOrderLineDisplays)
+                    {
+                        worksheet.Cells[row, 1].Value = "";
+                        worksheet.Cells[row, 2].Value = itemChild.Name;
+                        worksheet.Cells[row, 3].Value = itemChild.ProductUOMQty;
+                        worksheet.Cells[row, 4].Value = itemChild.PriceSubTotal;
+                        worksheet.Cells[row, 5].Value = itemChild.AmountPaid;
+                        worksheet.Cells[row, 6].Value = itemChild.AmountResidual;
+
+                        row++;
+
+                    }
+                    rowE = row-1;
+                    worksheet.Cells[$"B{rowF}:F{rowF}"].Style.Font.Bold = true;
+                    worksheet.Cells[$"A{rowF}:A{rowE}"].Merge = true;
+                    
+                }
+                worksheet.Cells.AutoFitColumns();
+                package.Save();
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
         }
     }
 }

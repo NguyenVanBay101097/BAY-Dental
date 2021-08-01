@@ -24,6 +24,10 @@
           {
             "Name": "Xuất excel",
             "Permission": "Basic.Partner.Export"
+          },
+          {
+            "Name": "Thông tin liên hệ",
+            "Permission": "Basic.Partner.ContactInfo"
           }
         ]
       },
@@ -45,6 +49,18 @@
           {
             "Name": "Xóa",
             "Permission": "Basic.SaleOrder.Delete"
+          },
+          {
+            "Name": "Hủy phiếu",
+            "Permission": "Basic.SaleOrder.Cancel"
+          },
+          {
+            "Name": "Giảm tiền dịch vụ",
+            "Permission": "Basic.SaleOrder.DiscountLine"
+          },
+          {
+            "Name": "Giảm tiền phiếu điều trị",
+            "Permission": "Basic.SaleOrder.DiscountOrder"
           },
           {
             "Name": "Thanh toán",
@@ -559,6 +575,10 @@
           {
             "Name": "Xóa",
             "Permission": "Catalog.Products.Delete"
+          },
+          {
+            "Name": "Giá vốn",
+            "Permission": "Catalog.Products.StandardPrice"
           }
         ]
       },
@@ -672,6 +692,27 @@
           {
             "Name": "Xóa",
             "Permission": "Catalog.Employee.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Người giới thiệu",
+        "Ops": [        
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Agent.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Agent.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Agent.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Agent.Delete"
           }
         ]
       },
@@ -1269,6 +1310,141 @@
             "Name": "Xem",
             "Permission": "TCare.Config.Create"
           }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "SMS Brandname",
+    "Functions": [
+      {
+        "Name": "Danh sách Brandname",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SMS.Account.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SMS.Account.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SMS.Account.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "SMS.Account.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Quản lý chiến dịch",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SMS.Campaign.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SMS.Campaign.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SMS.Campaign.Update"
+          }
+          //{
+          //  "Name": "Xóa",
+          //  "Permission": "SMS.Campaign.Delete"
+          //}
+        ]
+      },
+      {
+        "Name": "Quản lý tin nhắn",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SMS.Message.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SMS.Message.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SMS.Message.Update"
+          }
+          //{
+          //  "Name": "Xóa",
+          //  "Permission": "SMS.Campaign.Delete"
+          //}
+        ]
+      },
+      {
+        "Name": "Quản lý tin nhắn mẫu",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SMS.Template.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SMS.Template.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SMS.Template.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "SMS.Template.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Thiết lập tin nhắn tự động",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SMS.Config.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SMS.Config.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SMS.Config.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "SMS.Config.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo",
+        "Ops": [
+          {
+            "Name": "Xem thống kê tin nhắn",
+            "Permission": "SMS.Report.AllMessage"
+          },
+          {
+            "Name": "Xem báo cáo",
+            "Permission": "SMS.Report.AllSMS"
+          }
+          //{
+          //  "Name": "Thêm",
+          //  "Permission": "SMS.Report.Create"
+          //},
+          //{
+          //  "Name": "Cập nhật",
+          //  "Permission": "SMS.Report.Update"
+          //},
+          //{
+          //  "Name": "Xóa",
+          //  "Permission": "SMS.Report.Delete"
+          //}
         ]
       }
     ]

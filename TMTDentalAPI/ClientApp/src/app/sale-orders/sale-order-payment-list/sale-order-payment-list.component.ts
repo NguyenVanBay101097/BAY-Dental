@@ -16,7 +16,7 @@ import { PrintService } from 'src/app/shared/services/print.service';
 })
 export class SaleOrderPaymentListComponent implements OnInit {
   @Input() saleOrderId: string;
-  @Output() paymentOutput = new EventEmitter<any>();
+  @Output() hasDeletePayment = new EventEmitter<any>();
 
   paymentHistories: any = [];
   canCancel = false;
@@ -73,7 +73,7 @@ export class SaleOrderPaymentListComponent implements OnInit {
             type: { style: 'success', icon: true }
           });
 
-          this.paymentOutput.emit('');
+          this.hasDeletePayment.emit(true);
           this.loadPayments();
         }, err => {
           console.log(err);

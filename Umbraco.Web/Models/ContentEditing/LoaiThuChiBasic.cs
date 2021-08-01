@@ -14,9 +14,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Note { get; set; }
 
-        /// <summary>
-        /// Hiện trong báo cáo két quả kinh doanh
-        /// </summary>
+      
         public bool IsInclude { get; set; }
+
+        /// <summary>
+        /// Hiện trong hạch toán két quả kinh doanh
+        /// </summary>
+        public bool IsAccounting { get; set; }
     }
 }

@@ -51,7 +51,7 @@ export class MarketingCampaignCreateUpdateComponent implements OnInit {
   }
 
   showCreateUpdateLineModal(item: any, index) {
-    let modalRef = this.modalService.open(MarketingCampaignLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(MarketingCampaignLineDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     if (item) {
       modalRef.componentInstance.title = 'Chỉnh sửa hoạt động';
       modalRef.componentInstance.item = item;

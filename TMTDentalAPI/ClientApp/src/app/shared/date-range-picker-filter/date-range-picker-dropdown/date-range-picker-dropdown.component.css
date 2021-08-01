@@ -8,8 +8,8 @@
     max-width: none;
     padding: 0;
     margin-top: 7px;
-    top: 100px;
-    left: 20px;
+    /* top: 100px; */
+    /* left: 20px; */
     z-index: 3001;
     display: none;
     font-family: arial;
@@ -353,6 +353,10 @@
     width: 100%;
     border: none;
     background: none;
+}
+
+.daterangepicker .ranges li.active button {
+    color: #fff;
 }
 
 

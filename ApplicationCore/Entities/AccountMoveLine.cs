@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class AccountMoveLine: BaseEntity
+    public class AccountMoveLine : BaseEntity
     {
         public AccountMoveLine()
         {
@@ -117,7 +117,17 @@ namespace ApplicationCore.Entities
         //public SaleOrderPayment SaleOrderPayment { get; set; }
 
         public ICollection<CommissionSettlement> CommissionSettlements { get; set; } = new List<CommissionSettlement>();
-       
 
+        /// <summary>
+        /// Bác sĩ
+        /// </summary>
+        public Guid? EmployeeId { get; set; }
+        public Employee Employee { get; set; }
+
+        /// <summary>
+        /// Phụ tá
+        /// </summary>
+        public Guid? AssistantId { get; set; }
+        public Employee Assistant { get; set; }
     }
 }

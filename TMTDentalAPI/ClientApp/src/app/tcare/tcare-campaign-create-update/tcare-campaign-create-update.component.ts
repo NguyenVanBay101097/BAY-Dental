@@ -695,7 +695,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
             a.conditions.push(obj);
           });
         }
-        let modalRef = that.modalService.open(TcareCampaignDialogRuleComponent, { size: "lg", windowClass: "o_technical_modal", backdrop: "static", keyboard: false, });
+        let modalRef = that.modalService.open(TcareCampaignDialogRuleComponent, { size: 'xl', windowClass: "o_technical_modal", backdrop: "static", keyboard: false, });
         modalRef.componentInstance.title = "Cài đặt điều kiện";
         modalRef.componentInstance.audience_filter = a;
         modalRef.result.then(
@@ -758,7 +758,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
       var attribute = value.attributes[i];
       objx[attribute.name] = attribute.nodeValue;
     }
-    let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: "lg", windowClass: "o_technical_modal", scrollable: true, backdrop: "static", keyboard: false });
+    let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: 'xl', windowClass: "o_technical_modal", scrollable: true, backdrop: "static", keyboard: false });
     modalRef.componentInstance.title = "Cài đặt gửi tin";
     modalRef.componentInstance.model = objx;
     modalRef.componentInstance.textareaLength = this.textareaLength;

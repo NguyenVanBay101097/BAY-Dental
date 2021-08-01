@@ -54,7 +54,7 @@ namespace Infrastructure.Services
 
         Task<AppointmentBasic> GetNextAppointment(Guid id);
 
-        Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerPaged val);
+        Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerInfoPaged val);
         Task AddOrRemoveTags(PartnerAddRemoveTagsVM val, bool isAdd);
 
         Task<IQueryable<PartnerViewModel>> GetViewModelsAsync();
@@ -70,5 +70,13 @@ namespace Infrastructure.Services
         Task<PagedResult2<PartnerGetDebtPagedItem>> GetDebtPaged(Guid id, PartnerGetDebtPagedFilter val);
         Task<decimal> GetAmountAdvanceBalance(Guid id);
         Task<decimal> GetAmountAdvanceUsed(Guid id);
+
+        Task<IEnumerable<PartnerBasic>> GetCustomerBirthDay(PartnerPaged val);
+        Task<IEnumerable<PartnerBasic>> GetCustomerAppointments(PartnerPaged val);
+        Task<IEnumerable<Guid>> GetPartnerForTCare(PartnerForTCarePaged val);
+        Task<IEnumerable<PartnerSaleOrderDone>> GetPartnerOrderDone(PartnerPaged val);
+        Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged(PartnerInfoPaged val);
+        Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged2(PartnerInfoPaged val);
+
     }
 }

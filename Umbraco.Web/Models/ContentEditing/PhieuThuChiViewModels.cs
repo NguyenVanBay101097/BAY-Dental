@@ -8,6 +8,8 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public CompanyPrintVM Company { get; set; }
 
+        public PartnerPrintVM Partner { get; set; }
+
         /// <summary>
         /// Ngày lập phiếu
         /// </summary>
@@ -51,5 +53,47 @@ namespace Umbraco.Web.Models.ContentEditing
         public string CreatedByName { get; set; }
 
         public string PartnerName { get; set; }
+
+        public ApplicationUserSimple User { get; set; }
+    }
+
+    public class PrintVM
+    {
+        public CompanyPrintVM Company { get; set; }
+
+        public PartnerPrintVM Partner { get; set; }
+
+        public AgentPrintVM Agent { get; set; }
+
+        /// <summary>
+        /// Ngày lập phiếu
+        /// </summary>
+        public DateTime Date { get; set; }
+
+        public string JournalName { get; set; }
+
+        public string Name { get; set; }
+
+        public string Type { get; set; }
+
+        public string AccountType { get; set; }
+
+        /// <summary>
+        /// Số tiền
+        /// </summary>
+        public decimal Amount { get; set; }
+
+
+        /// <summary>
+        /// Lý do nộp
+        /// </summary>
+        public string Reason { get; set; }
+
+
+        public string AmountText { get; set; }
+
+        public string CreatedByName { get; set; }
+
+        public ApplicationUserSimple User { get; set; }
     }
 }

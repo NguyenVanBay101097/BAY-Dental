@@ -165,36 +165,6 @@ namespace Infrastructure.Services
             return res;
         }
 
-
-        public class ComputeAccountBalanceRes
-        {
-            public Guid AccountId { get; set; }
-
-            public decimal? Balance { get; set; }
-
-            public decimal? Debit { get; set; }
-
-            public decimal? Credit { get; set; }
-        }
-
-        public class ComputeReportBalanceDictValue
-        {
-            public ComputeReportBalanceDictValue()
-            {
-                Account = new Dictionary<Guid, ComputeAccountBalanceRes>();
-                Debit = 0;
-                Credit = 0;
-                Balance = 0;
-            }
-            public IDictionary<Guid, ComputeAccountBalanceRes> Account { get; set; }
-
-            public decimal? Debit { get; set; }
-
-            public decimal? Credit { get; set; }
-
-            public decimal? Balance { get; set; }
-        }
-
         public class GetAccountLinesItem
         {
             public GetAccountLinesItem()

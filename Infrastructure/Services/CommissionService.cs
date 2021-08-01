@@ -29,7 +29,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<Commission>(x => x.Name.Contains(val.Search)));
 
-            if(!string.IsNullOrEmpty(val.Type))
+            if (!string.IsNullOrEmpty(val.Type))
                 spec = spec.And(new InitialSpecification<Commission>(x => x.Type == val.Type));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
@@ -47,7 +47,7 @@ namespace Infrastructure.Services
             var res = await _mapper.ProjectTo<CommissionDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             if (res == null)
                 throw new NullReferenceException("Commission not found");
-           
+
             return res;
         }
 
@@ -116,6 +116,13 @@ namespace Infrastructure.Services
                 default:
                     return null;
             }
+        }
+
+        public async Task<decimal> getCommissionPercent(Guid? productId, Guid? CommissionId)
+        {
+            var ruleObj = GetService<ICommissionProductRuleService>();
+            var rule = await ruleObj.SearchQuery(x => x.ProductId == productId && x.CommissionId == CommissionId).FirstOrDefaultAsync();
+            return rule != null ? rule.Percent ?? 0 : 0;
         }
     }
 }

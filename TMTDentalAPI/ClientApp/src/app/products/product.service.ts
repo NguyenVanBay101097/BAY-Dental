@@ -45,6 +45,7 @@ export class ProductBasic2 {
   qtyAvailable: number;
   uomId: string;
   uom: UoMBasic;
+  type2: string;
 }
 
 export class ProductBasic3 {
@@ -268,4 +269,7 @@ export class ProductService {
     return this.http.post(this.baseApi + this.apiUrl + "/UpdateMedicineFromExcel", val);
   }
   
+  getProductsComingEnd(val){
+    return this.http.get(this.baseApi + this.apiUrl + "/GetProductsComingEnd", { params: new HttpParams({ fromObject: val }) });
+  }
 }

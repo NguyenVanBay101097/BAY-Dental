@@ -1,0 +1,35 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title + ' ' + item.productName}} <span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onCancel()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window p-2">
+    <kendo-grid [data]="gridData" #grid [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column field="moveName" title="Diễn giải" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="movePickingName" title="Số phiếu" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="date" title="Ngày nhập/xuất" width="120" format="{0:d}">
+        </kendo-grid-column>
+        <kendo-grid-column field="quantity" title="Tổng số lượng" width="120" class="text-right">
+        </kendo-grid-column>
+        <kendo-grid-excel [fileName]="fileExcelName" [fetchData]="allData">
+            <kendo-excelexport-column field="moveName" title="Diễn giải">
+            </kendo-excelexport-column>
+            <kendo-excelexport-column field="movePickingName" title="Số phiếu">
+            </kendo-excelexport-column>
+            <kendo-excelexport-column field="date" title="Ngày nhập/xuất" [cellOptions]="{format: 'dd/MM/yyyy'}">
+            </kendo-excelexport-column>
+            <kendo-excelexport-column field="quantity" title="Tổng số lượng" [cellOptions]="{format: '#,##0'}">
+            </kendo-excelexport-column>
+        </kendo-grid-excel>
+    </kendo-grid>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="exportExcelFile(grid)" accesskey="s">Xuất Excel</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q">Đóng</button>
+</footer>

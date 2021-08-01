@@ -17,6 +17,7 @@ export class PartnersBindingDirective extends DataBindingDirective implements On
         this.serviceSubscription = this.partnersService.subscribe((result) => {
             this.grid.loading = false;  // hide the loading indicator
             this.grid.data = result;
+            console.log(result);
             this.notifyDataChange(); // notify the grid that its data has changed
         });
 

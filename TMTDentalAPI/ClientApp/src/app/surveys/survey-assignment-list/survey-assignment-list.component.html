@@ -1,7 +1,7 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
-            <li class="active">Danh sách khảo sát</li>
+            <li class="active">Danh sách công việc</li>
         </ol>
         <div class="o_cp_searchview">
             <!-- <div class="o_cp_searchview_group">
@@ -15,8 +15,7 @@
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
                     <div class="d-flex">
-                        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'"
-                            [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
                         </app-tai-date-range-filter-dropdown>
                         <!-- <kendo-combobox [data]="filteredEmployees" [textField]="'name'" class="custom btn-sm" #empCbx [filterable]="true" [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)" [valueField]="'id'">
                         </kendo-combobox> -->
@@ -48,8 +47,7 @@
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <div class="d-flex">
-                    <kendo-combobox [data]="filteredStatus" [textField]="'name'" class="custom btn-sm"
-                        [placeholder]="'Tất cả trạng thái'" (valueChange)="statusChange($event)" [valueField]="'value'">
+                    <kendo-combobox [data]="filteredStatus" [textField]="'name'" class="custom btn-sm" [placeholder]="'Tất cả trạng thái'" (valueChange)="statusChange($event)" [valueField]="'value'">
                     </kendo-combobox>
                 </div>
             </div>
@@ -58,14 +56,11 @@
         </div>
     </div>
     <div class="o_cp_t_right">
-        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số phiếu điều trị"
-            type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số phiếu điều trị" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
 </div>
 <div class="o_content">
-    <kendo-grid class="pointer" [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset"
-        [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" (cellClick)="clickItem($event)"
-        [navigable]="true">
+    <kendo-grid class="pointer" [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" (cellClick)="clickItem($event)" [navigable]="true">
         <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-column="column">
                 <a class="text-primary" routerLink="/partners/customer/{{dataItem.partnerId}}/overview">
@@ -73,16 +68,16 @@
                 </a>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="partnerRef" title="Mã khách hàng" width="135">
-            <!-- <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+        <!-- <kendo-grid-column field="partnerRef" title="Mã khách hàng" width="135">
+            <ng-template kendoGridCellTemplate let-dataItem let-column="column">
                 <a class="text-primary" routerLink="/partners/customer/{{dataItem.partnerId}}/overview">
                     {{dataItem.partnerRef}}
                 </a>
-            </ng-template> -->
+            </ng-template>
+        </kendo-grid-column> -->
+        <kendo-grid-column field="partnerPhone" title="Điện thoại" width="100">
         </kendo-grid-column>
-        <kendo-grid-column field="partnerPhone" title="Điện thoại" width="115">
-        </kendo-grid-column>
-        <kendo-grid-column field="age" title="Tuổi" width="58">
+        <kendo-grid-column field="age" title="Tuổi" width="60">
         </kendo-grid-column>
         <!-- <kendo-grid-column field="partnerGenderDisplay" title="Giới tính" width="88">
         </kendo-grid-column> -->
@@ -105,14 +100,19 @@
                 {{dataItem.assignDate | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column [headerStyle]="{'white-space': 'initial'}" title="Ngày khảo sát" width="130">
+        <kendo-grid-column [headerStyle]="{'white-space': 'initial'}" title="Ngày hoàn thành" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.completeDate | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <!-- <kendo-grid-column field="userInputScore" title="Điểm" width="65">
-        </kendo-grid-column> -->
-        <kendo-grid-column title="Trạng thái" width="110">
+        <kendo-grid-column field="surveyTags" title="Nhãn khảo sát" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column title="Điểm khảo sát" class="text-right" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem?.userInputScore}}/{{dataItem?.userInputMaxScore}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Trạng thái" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{GetStatus(dataItem.status)}}
             </ng-template>

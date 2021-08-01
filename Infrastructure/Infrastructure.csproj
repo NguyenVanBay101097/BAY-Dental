@@ -118,6 +118,16 @@
     <Compile Remove="Data\Migrations\20210510070607_thuong_CreateQuotationPromotion.Designer.cs" />
     <Compile Remove="Data\Migrations\20210530102859_AddTuVanBaoGiaTables.cs" />
     <Compile Remove="Data\Migrations\20210530102859_AddTuVanBaoGiaTables.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210511035919_Update_SMS_1.cs" />
+    <Compile Remove="Data\Migrations\20210511035919_Update_SMS_1.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210511081934_Update_SMS_2.cs" />
+    <Compile Remove="Data\Migrations\20210511081934_Update_SMS_2.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210512044230_UpdateSms_3.cs" />
+    <Compile Remove="Data\Migrations\20210512044230_UpdateSms_3.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210603110234_add_accountfinancialrevenuereport.cs" />
+    <Compile Remove="Data\Migrations\20210603110234_add_accountfinancialrevenuereport.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210624153241_thuong_AddColumnAccessTokenSessionId_SmsAccount.cs" />
+    <Compile Remove="Data\Migrations\20210624153241_thuong_AddColumnAccessTokenSessionId_SmsAccount.Designer.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.Designer.cs" />
     <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.cs" />
@@ -141,6 +151,7 @@
     <PackageReference Include="HangFire" Version="1.7.11" />
     <PackageReference Include="Hangfire.Pro" Version="2.2.3" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />

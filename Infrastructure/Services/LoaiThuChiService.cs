@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +40,8 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 Name = x.Name,
                 Code = x.Code,
-                Note = x.Note
+                Note = x.Note,
+                IsAccounting = x.IsAccounting
             }).Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var totalItems = await query.CountAsync();
@@ -55,7 +57,7 @@ namespace Infrastructure.Services
             var res = new LoaiThuChiDisplay();
             res.Type = val.Type;
             res.CompanyId = CompanyId;
-            res.IsInclude = true;
+            res.IsAccounting = false;
             return res;
         }
 
@@ -97,7 +99,7 @@ namespace Infrastructure.Services
                 Code = self.Code,
                 Note = self.Note,
                 CompanyId = self.CompanyId ?? CompanyId,
-                IsExcludedProfitAndLossReport = !self.IsInclude,
+                IsExcludedProfitAndLossReport = self.IsInclude,
                 InternalType = usertype.Type,
                 UserTypeId = usertype.Id,
             };
@@ -122,7 +124,7 @@ namespace Infrastructure.Services
                 account.Name = val.Name;
                 account.Code = val.Code;
                 account.Note = val.Note;
-                account.IsExcludedProfitAndLossReport = !val.IsInclude;
+                account.IsExcludedProfitAndLossReport = val.IsAccounting;
                 await accountObj.UpdateAsync(account);
             }
 

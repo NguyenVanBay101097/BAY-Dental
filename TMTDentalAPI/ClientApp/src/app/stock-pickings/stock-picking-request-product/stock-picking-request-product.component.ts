@@ -96,7 +96,7 @@ export class StockPickingRequestProductComponent implements OnInit {
   }
 
   onUpdate(event) {
-    let modalRef = this.modalService.open(StockPickingRequestProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(StockPickingRequestProductDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.id = event.dataItem ? event.dataItem.id : null;
     modalRef.componentInstance.title = "Yêu cầu vật tư"
     modalRef.result.then(() => {

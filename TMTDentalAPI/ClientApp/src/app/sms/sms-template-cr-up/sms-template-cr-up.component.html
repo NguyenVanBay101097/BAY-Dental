@@ -1,0 +1,73 @@
+<header class="modal-header">
+    <h5 class="modal-title" ngbAutofocus>{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onCancel()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="">
+                    <table class="o_group o_inner_group o_group_col_12">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Tiêu đề tin nhắn mẫu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="name" id="name"
+                                        [class.border-danger]="submitted && f.name.value==''" />
+                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.name.errors.required">Nhập tiêu đề tin nhắn mẫu</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Loại tin nhắn mẫu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <select name="type" id="type" (change)="selectTemplate($event.target.value)"
+                                        class="form-control" formControlName="type" [attr.disabled]="id">
+                                        <option [value]="item.value" *ngFor="let item of listTemplates; let i = index"
+                                            [selected]="i==0"> {{item.name}}</option>
+                                    </select>
+                                    <div *ngIf="f.type.errors && (f.type.touched || f.type.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.type.errors.required">Chọn loại tin nhắn mẫu</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Nội dung</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea type="text" my-autosize class="form-control textarea textarea-required"
+                                        [class.border-danger]="submitted && f.body.value==''" id="textarea_mass"
+                                        formControlName="body" rows="5" #textarea></textarea>
+                                    <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.body.errors.required">Nhập nội dung tin nhắn</div>
+                                        <div *ngIf="f.body.errors.maxlength">Số kí tự đã vượt quá cho phép !
+                                        </div>
+                                    </div>
+                                    <app-sms-note-content></app-sms-note-content>
+                                    <app-sms-personalized-tabs [type]="typeValue"
+                                        (contentEmit)="addToContent($event)"></app-sms-personalized-tabs>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q">Đóng</button>
+</footer>

@@ -183,7 +183,7 @@ export class ProductListComponent implements OnInit {
   }
 
   importFromExcel() {
-    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static',scrollable:true });
+    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static',scrollable:true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.componentInstance.type2 = this.type;
     if (this.type == 'service') {
@@ -204,7 +204,7 @@ export class ProductListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.getTypeTitle();
     modalRef.componentInstance.type = this.type;
     if (this.type == 'service') {
@@ -241,7 +241,7 @@ export class ProductListComponent implements OnInit {
   }
 
   createService() {
-    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm dịch vụ';
 
     var productDefaultVal = new Product();
@@ -257,7 +257,7 @@ export class ProductListComponent implements OnInit {
   }
 
   createMedicine() {
-    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm thuốc';
 
     var productDefaultVal = new Product();
@@ -274,7 +274,7 @@ export class ProductListComponent implements OnInit {
   }
 
   createLabo() {
-    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm labo';
 
     var productDefaultVal = new Product();
@@ -290,7 +290,7 @@ export class ProductListComponent implements OnInit {
   }
 
   createProduct() {
-    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm vật tư';
 
     var productDefaultVal = new Product();
@@ -306,7 +306,7 @@ export class ProductListComponent implements OnInit {
   }
 
   editItem(item: Product) {
-    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: ' + this.getTypeTitle();
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.type = this.type;
@@ -318,7 +318,7 @@ export class ProductListComponent implements OnInit {
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa: ' + this.getTypeTitle();
 
     modalRef.result.then(() => {

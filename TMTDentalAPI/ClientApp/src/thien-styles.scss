@@ -1,7 +1,7 @@
-@for $i from 0 through 20 {
-    .w-#{$i * 5} {width: #{$i * 5 + '%'};}
-    .h-#{$i * 5} {height: #{$i * 5 + '%'};}
-}
+// @for $i from 0 through 20 {
+//     .w-#{$i * 5} {width: #{$i * 5 + '%'};}
+//     .h-#{$i * 5} {height: #{$i * 5 + '%'};}
+// }
 .w-fit-content {width: fit-content !important;}
 .cursor-pointer {cursor: pointer;}
 // -- table -- //
@@ -498,3 +498,110 @@ $rose-900: #881337;
 a.disabled {
     pointer-events: none;
 }
+
+.t-tooltip + .tooltip > .tooltip-inner {
+    background-color: white;
+    border: 1px solid #6c757d;
+    color: black;
+}
+.t-tooltip + .bs-tooltip-auto[x-placement^=top] .arrow::before,
+.t-tooltip + .bs-tooltip-top .arrow::before {
+  border-top-color: #6c757d;
+}
+.t-tooltip + .bs-tooltip-auto[x-placement^=right] .arrow::before,
+.t-tooltip + .bs-tooltip-right .arrow::before {
+  border-right-color: #6c757d;
+}
+.t-tooltip + .bs-tooltip-auto[x-placement^=bottom] .arrow::before,
+.t-tooltip + .bs-tooltip-bottom .arrow::before {
+  border-bottom-color: #6c757d;
+}
+.t-tooltip + .bs-tooltip-auto[x-placement^=left] .arrow::before,
+.t-tooltip + .bs-tooltip-left .arrow::before {
+  border-left-color: #6c757d;
+}
+
+.t-tooltip-500 + .tooltip > .tooltip-inner {
+    min-width: 500px;
+    background-color: white;
+    border-color: #06B6D4;
+    padding:0;
+}
+
+/* Accordion styles */
+.t-accordion {
+    .tab {
+        overflow: hidden;
+        margin-bottom: 0.25rem;
+        border-radius: 0.25rem;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        &-label {
+            padding: 0.5rem 1rem;
+            margin-bottom: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        &-content {
+            max-height: 0;
+            transition: all 0.35s;
+            border-top: 0px solid rgba(0, 0, 0, 0.125);
+            > div {
+                padding: 0.5rem 1rem;
+            }
+        }
+        &-close {
+            display: flex;
+            justify-content: flex-end;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.75em;
+            cursor: pointer;
+        }
+        input[id^='tab-'] {
+            position: absolute;
+            opacity: 0;
+            z-index: -1;
+            &:checked {
+              + .tab-label {
+
+              }
+              ~ .tab-content {
+                max-height: 100vh;
+                border-top: 1px solid rgba(0, 0, 0, 0.125);
+              }
+            }
+        }
+    }
+}
+/* Radio button */
+.t-form-check {
+    .form-check-input {
+        width: 1em;
+        height: 1em;
+        margin-top: .25em;
+        vertical-align: top;
+        background-color: #fff;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        border: 1px solid rgba(0,0,0,.25);
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+    }
+    .form-check-input[type=radio] {
+        border-radius: 50%;
+    }
+    .form-check-input:checked[type=radio] {
+        background-image: url("./assets/icons/dot.svg");
+    }
+    .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+}
+
+

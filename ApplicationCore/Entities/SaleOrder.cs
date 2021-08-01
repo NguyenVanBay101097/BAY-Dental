@@ -17,6 +17,11 @@ namespace ApplicationCore.Entities
             IsQuotation = false;
             InvoiceStatus = "no";
             IsFast = false;
+            AmountTotal = 0;
+            Residual = 0;
+            TotalPaid = 0;
+            AmountTax = 0;
+            AmountUntaxed = 0;
         }
 
         public SaleOrder(SaleOrder order)

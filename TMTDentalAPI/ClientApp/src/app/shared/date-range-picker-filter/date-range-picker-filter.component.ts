@@ -12,15 +12,17 @@ export class DateRangePickerFilterComponent implements OnInit {
   @Input() startDate: any;
   @Input() endDate: any;
   @Output() searchChange = new EventEmitter<any>();
+  @Input() opens: string = 'auto';
+  @Input() drops: string = 'auto';
 
-  selected: any;
+  @Input() selected: any;
   ranges: any = {
-    'Today': [moment(), moment()],
-    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-    'This Month': [moment().startOf('month'), moment().endOf('month')],
-    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+    'Hôm nay': [moment(new Date()), moment(new Date())],
+    'Hôm qua': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+    '7 ngày qua': [moment().subtract(6, 'days'), moment()],
+    '30 ngày qua': [moment().subtract(29, 'days'), moment()],
+    'Tháng này': [moment().startOf('month'), moment().endOf('month')],
+    'Tháng trước': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
   }
 
   public options: any = {
@@ -30,14 +32,16 @@ export class DateRangePickerFilterComponent implements OnInit {
 
   @ViewChild(DaterangepickerDirective, { static: false }) inputDr: DaterangepickerDirective;
   constructor() {
-   
+
   }
 
   ngOnInit() {
-    this.selected = {
-      startDate: moment(this.startDate),
-      endDate:moment(this.endDate)
-    }
+    this.selected = this.selected || (
+      (!this.startDate && !this.endDate) ? null :
+        {
+          startDate: moment(this.startDate),
+          endDate: moment(this.endDate)
+        })
   }
   ngAfterViewInit() {
   }
@@ -48,14 +52,14 @@ export class DateRangePickerFilterComponent implements OnInit {
   }
 
   open() {
-    this.inputDr.open();
+    // this.inputDr.open();
   }
 
   onApply() {
-    var value = {dateFrom: null, dateTo: null};
-    if(!this.selected) {
-    this.searchChange.emit(value);
-    return;
+    var value = { dateFrom: null, dateTo: null };
+    if (!this.selected) {
+      this.searchChange.emit(value);
+      return;
     }
     if (this.selected.startDate) {
       value.dateFrom = this.selected.startDate.toDate();

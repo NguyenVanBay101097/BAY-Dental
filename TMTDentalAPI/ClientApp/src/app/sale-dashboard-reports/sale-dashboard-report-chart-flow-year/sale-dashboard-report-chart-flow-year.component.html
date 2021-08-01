@@ -3,14 +3,13 @@
     </kendo-chart-title>
     <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
     <kendo-chart-series>
-        <ng-container
-            *ngIf="reportViewYearDicts[curYear] && reportViewYearDicts[curYear].length > 0 && reportViewYearDicts[oldYear] && reportViewYearDicts[oldYear].length > 0">
-            <kendo-chart-series-item *ngFor="let item of listYears" type="column" [data]="reportViewYearDicts[item]"
-                field="data" categoryField="month" [style]="'smooth'" [name]="'Năm '+item">
+        <ng-container *ngFor="let item of listYears">
+            <kendo-chart-series-item *ngIf="reportYearDicts[item]" type="column" [data]="reportYearDicts[item]"
+                field="balance" categoryField="month" [style]="'smooth'" [name]="'Năm '+ item">
                 <kendo-chart-series-item-tooltip>
                     <ng-template let-dataItem="dataItem">
                         Doanh thu tháng <b>{{dataItem.month}}/{{dataItem.year}}</b>:
-                        <b> {{(dataItem.data ? dataItem.data : 0) | number }} VNĐ</b>
+                        <b> {{dataItem.balance | number }} VNĐ</b>
                     </ng-template>
                 </kendo-chart-series-item-tooltip>
             </kendo-chart-series-item>

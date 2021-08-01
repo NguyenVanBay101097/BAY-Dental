@@ -52,11 +52,11 @@
                         <div class="left_header d-flex">
                             <div class="left border"></div>
                             <div class="right px-2 w-100">
-                                <div class="d-flex justify-content-center m-auto">
+                                <div class="d-flex justify-content-center m-auto" style="cursor: pointer;" (click)="showHistoryApplyPromotion()">
                                     <div class="d-flex align-items-center mr-2"><i class="fas fa-dollar-sign"></i></div>
-                                    <div style="cursor: pointer;" (click)="showHistoryApplyPromotion()">
-                                        <div><label class="o_form_label">Giá trị khuyến mãi</label></div>
-                                        <div class="d-flex justify-content-center text-success"><label
+                                    <div>
+                                        <div><label class="o_form_label" style="cursor: pointer;">Giá trị khuyến mãi</label></div>
+                                        <div class="d-flex justify-content-center text-success" ><label style="cursor: pointer;"
                                                 class="o_form_label">
                                                 {{program.amountTotal | number}}
                                             </label></div>
@@ -490,6 +490,23 @@
                                 <div *ngIf="f.discountSpecificPartners.errors && (f.discountSpecificPartners.touched || f.discountSpecificPartners.dirty || submitted)"
                                     class="text-danger mb-1">
                                     <div *ngIf="f.discountSpecificPartners.errors.required">Chọn khách hàng</div>
+                                </div>
+                            </div>
+
+                            <div class="custom-control custom-radio">
+                                <input type="radio" id="member_level" class="custom-control-input"
+                                    (change)="onChangePartnerApplyOn($event)" value="member_levels"
+                                    formControlName="applyPartnerOn">
+                                <label class="custom-control-label" for="member_level">Hạng thành viên</label>
+                            </div>
+                            <div [class.d-none]="applyPartnerOn != 'member_levels'">
+                                <kendo-multiselect class="cus-kendo-multiselect" [data]="filterMemberLevel" (filterChange)="onChangeMemberLevel($event)"
+                                    [filterable]="true" [textField]="'name'" [valueField]="'id'"
+                                    formControlName="discountMemberLevels">
+                                </kendo-multiselect>
+                                <div *ngIf="f.discountMemberLevels.errors && (f.discountMemberLevels.touched || f.discountMemberLevels.dirty || submitted)"
+                                    class="text-danger mb-1">
+                                    <div *ngIf="f.discountMemberLevels.errors.required">Chọn hạng thành viên</div>
                                 </div>
                             </div>
                         </div>

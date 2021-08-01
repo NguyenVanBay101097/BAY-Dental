@@ -1,7 +1,9 @@
 ﻿using ApplicationCore.Entities;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -11,7 +13,8 @@ namespace Umbraco.Web.Mapping
     {
         public SurveyAssignmentProfile()
         {
-            CreateMap<SurveyAssignment, SurveyAssignmentGridItem>();
+            CreateMap<SurveyAssignment, SurveyAssignmentGridItem>()
+                .ForMember(x => x.SurveyTags, x => x.MapFrom(s => s.UserInput.SurveyUserInputSurveyTagRels.Select(x=>x.SurveyTag.Name).Join(",")));
             CreateMap<SurveyAssignment, SurveyAssignmentDefaultGet>();
             CreateMap<SurveyAssignment, SurveyAssignmentSave>();
 

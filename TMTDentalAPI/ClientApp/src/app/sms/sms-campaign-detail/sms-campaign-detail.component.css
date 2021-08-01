@@ -1,0 +1,50 @@
+.pms-wrapper {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    display: flex;
+    background-color: white;
+}
+
+.pms-left {
+    /* flex: 1; */
+    width: 75%;
+    margin-right: 15px;
+    background-color: white;
+}
+
+.pms-right {
+    /* flex: 0 0 400px; */
+    width: 25%;
+}
+
+.btn-check {
+    position: absolute;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+
+.filter-active {
+    padding-top: 10px;
+    padding-right: 16px;
+    padding-left: 16px;
+}
+
+.rounded-left-0 {
+    border-top-left-radius: 0!important;
+    border-bottom-left-radius: 0!important;
+}
+
+.rounded-right-0 {
+    border-top-right-radius: 0!important;
+    border-bottom-right-radius: 0!important;
+}
+
+.o_cp_t_left {
+    justify-content: space-between;
+}
+
+.o_cp_t_left .o_cp_filter {
+    display: flex;
+}
+

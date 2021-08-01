@@ -88,7 +88,7 @@ export class LayoutHeaderComponent implements OnInit {
   }
 
   changePassword() {
-    let modalRef = this.modalService.open(ChangePasswordDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ChangePasswordDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Đổi mật khẩu';
 
     modalRef.result.then(() => {
@@ -131,7 +131,7 @@ export class LayoutHeaderComponent implements OnInit {
   }
 
   editProfile(item) {
-    let modalRef = this.modalService.open(UserProfileEditComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(UserProfileEditComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa thông tin';
     modalRef.componentInstance.id = item.id;
 

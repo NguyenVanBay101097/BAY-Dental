@@ -6,6 +6,7 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MyERP.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace Infrastructure.Services
             return paged;
         }
 
-        public async Task<PagedResult2<SaleOrderPaymentHistoryAdvance>> GetPagedResultHistoryAdvanceAsync(HistoryAdvancePaymentFilter val)
+        public async Task<PagedResult2<HistoryPartnerAdvanceResult>> GetPagedResultHistoryAdvanceAsync(HistoryPartnerAdvanceFilter val)
         {
             var journalObj = GetService<IAccountJournalService>();
             var paymentObj = GetService<IAccountPaymentService>();
@@ -76,19 +77,19 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.Select(x => new SaleOrderPaymentHistoryAdvance
+            var items = await query.Select(x => new HistoryPartnerAdvanceResult
             {
                 PaymentName = x.Name,
                 PaymentDate = x.PaymentDate,
                 PaymentAmount = x.Amount,
-                Orders = x.SaleOrderPaymentAccountPaymentRels.Select(s => new SaleOrderBasic
+                Orders = x.SaleOrderPaymentAccountPaymentRels.Select(s => new SaleOrderSimple
                 {
                     Id = s.SaleOrderPayment.OrderId,
                     Name = s.SaleOrderPayment.Order.Name
                 })
             }).ToListAsync();
 
-            var paged = new PagedResult2<SaleOrderPaymentHistoryAdvance>(totalItems, val.Offset, val.Limit)
+            var paged = new PagedResult2<HistoryPartnerAdvanceResult>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };
@@ -128,12 +129,11 @@ namespace Infrastructure.Services
             return saleOrderPaymentDisplay;
         }
 
-
         public async Task<SaleOrderPayment> CreateSaleOrderPayment(SaleOrderPaymentSave val)
         {
             //Mapper
             var saleOrderPayment = _mapper.Map<SaleOrderPayment>(val);
-            SaveLines(val, saleOrderPayment);
+            SaveLines(val, saleOrderPayment);        
             await CreateAsync(saleOrderPayment);
 
             return saleOrderPayment;
@@ -149,12 +149,16 @@ namespace Infrastructure.Services
                     lineToRemoves.Add(existLine);
             }
 
-            foreach (var line in lineToRemoves)
+            if (lineToRemoves.Any())
             {
-                orderPayment.Lines.Remove(line);
+                foreach (var line in lineToRemoves)
+                {
+                    orderPayment.Lines.Remove(line);
+                }
             }
 
-            foreach (var line in val.Lines)
+
+            foreach (var line in val.Lines.Where(x => x.Amount > 0))
             {
                 if (line.Id == Guid.Empty)
                 {
@@ -169,7 +173,6 @@ namespace Infrastructure.Services
             }
         }
 
-
         public async Task ActionPayment(IEnumerable<Guid> ids)
         {
             var moveObj = GetService<IAccountMoveService>();
@@ -177,6 +180,7 @@ namespace Infrastructure.Services
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var paymentObj = GetService<IAccountPaymentService>();
+            var partnerObj = GetService<IPartnerService>();
             /// truy vấn đủ dữ liệu của saleorder payment`
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move)
@@ -184,7 +188,6 @@ namespace Infrastructure.Services
                 .Include(x => x.Lines)
                 .Include(x => x.JournalLines)
                 .ToListAsync();
-
             foreach (var saleOrderPayment in saleOrderPayments)
             {
                 ///ghi sổ doang thu , công nợ lines               
@@ -210,10 +213,86 @@ namespace Infrastructure.Services
                 /// update state = "posted"
                 saleOrderPayment.State = "posted";
 
+                //Tich diem va cap nhat hang
+                //await ComputePointAndUpdateLevel(saleOrderPayment, saleOrderPayment.Order.PartnerId, "payment");
+                var loyaltyPoints = await ConvertAmountToPoint(saleOrderPayment.Amount);
+                var propertyObj = GetService<IIRPropertyService>();
+                var partnerPointsProp = propertyObj.get("loyalty_points", "res.partner", res_id: $"res.partner,{saleOrderPayment.Order.PartnerId}", force_company: saleOrderPayment.CompanyId);
+                var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
+
+                partnerPoints += loyaltyPoints;
+                var pointValuesDict = new Dictionary<string, object>()
+                {
+                    { $"res.partner,{saleOrderPayment.Order.PartnerId}", partnerPoints }
+                };
+
+                propertyObj.set_multi("loyalty_points", "res.partner", pointValuesDict, force_company: saleOrderPayment.CompanyId);
+
+                //lấy hạng thành viên hiện tại của partner
+                var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{saleOrderPayment.Order.PartnerId}", force_company: saleOrderPayment.CompanyId);
+                var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
+                var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
+
+                //cập nhật hạng
+                var mbObj = GetService<IMemberLevelService>();
+                var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
+                MemberLevel type = null;
+                if (partnerLevel != null)
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Point >= partnerLevel.Point && x.Id != partnerLevel.Id && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
+                        .FirstOrDefaultAsync();
+                else
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
+                          .FirstOrDefaultAsync();
+
+                if (type != null)
+                {
+                    var levelValuesDict = new Dictionary<string, object>()
+                    {
+                        { $"res.partner,{saleOrderPayment.Order.PartnerId}", type.Id }
+                    };
+                    propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: saleOrderPayment.CompanyId);
+                }
             }
-
+            //await partnerObj.UpdateMemberLevelForPartner(partnerIds);
             await UpdateAsync(saleOrderPayments);
+        }
 
+        public async Task<decimal> ConvertAmountToPoint(decimal amount)
+        {
+            //var prate = await GetLoyaltyPointExchangeRate();
+            var prate = 10000;
+            if (prate < 0)
+                return 0;
+            var points = amount / prate;
+            var res = FloatUtils.FloatRound((double)points, precisionRounding: 1);
+            return (decimal)res;
+        }
+
+        public async Task<decimal> GetLoyaltyPointExchangeRate()
+        {
+            var irConfigParameter = GetService<IIrConfigParameterService>();
+            var value = await irConfigParameter.GetParam("loyalty.point_exchange_rate");
+            if (!string.IsNullOrEmpty(value))
+                return Convert.ToDecimal(value);
+            return 1;
+        }
+
+        public async Task<string> _GetLevel(decimal? point)
+        {
+            var mbObj = GetService<IMemberLevelService>();
+            var levels = await mbObj.SearchQuery().OrderByDescending(x => x.Point).ToListAsync();
+            if (levels == null)
+                throw new Exception("Không có danh sách hạng thành viên");
+            for (int i = 0; i < levels.Count(); i++)
+            {
+                var pointValue = levels.ElementAt(i).Point;
+                if (point >= pointValue)
+                    return levels.ElementAt(i).Id.ToString();
+                else
+                    continue;
+
+            }
+            return null;
 
         }
 
@@ -225,6 +304,7 @@ namespace Infrastructure.Services
             // Invoice values.
             var invoice_vals = await _PrepareInvoice(self);
             var lines = await paymentLineObj.SearchQuery(x => x.SaleOrderPaymentId == self.Id)
+                .Include(x => x.SaleOrderPayment).ThenInclude(x => x.Order)
                 .Include(x => x.SaleOrderLine).ThenInclude(x => x.Employee)
                 .ToListAsync();
 
@@ -297,48 +377,88 @@ namespace Infrastructure.Services
                 ProductUoMId = self.SaleOrderLine.ProductUOMId,
                 Quantity = 1,
                 PriceUnit = self.Amount,
-                //SalesmanId = self.SalesmanId
+                EmployeeId = self.SaleOrderLine.EmployeeId,
+                AssistantId = self.SaleOrderLine.AssistantId
             };
 
+            var commObj = GetService<ICommissionService>();
+            var commSetObj = GetService<ICommissionSettlementService>();
+            var productObj = GetService<IProductService>();
             var lineObj = GetService<ISaleOrderLineService>();
-            var saleOrderLine = await lineObj.SearchQuery(x => x.Id == self.SaleOrderLineId).Include(x => x.Employee).Include(x => x.Assistant).Include(x => x.Counselor).FirstOrDefaultAsync();
+
+            var saleOrderLine = await lineObj.SearchQuery(x => x.Id == self.SaleOrderLineId)
+                .Include(x => x.Employee)
+                .Include(x => x.Assistant)
+                .Include(x => x.Counselor)
+                .FirstOrDefaultAsync();
+
+
+            //tổng thanh toán 
+            var totalPaid = saleOrderLine.AmountPaid + self.Amount;
+
+            //Tổng giá vốn
+            var totalStandPrice = (decimal)productObj.GetStandardPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId) * saleOrderLine.ProductUOMQty;
+
+            //tính lợi nhuận hoa hồng
+            var totalBaseAmount = await commSetObj.SearchQuery(x => x.SaleOrderLineId == self.SaleOrderLineId)
+                .Select(x => new { x.BaseAmount, x.MoveLineId }).Distinct().SumAsync(x => x.BaseAmount);
+
+            //Số tiền lợi nhuận hiên tại
+            var baseAmountCurrent = totalPaid - totalStandPrice - totalBaseAmount > 0 ? totalPaid - totalStandPrice - totalBaseAmount : 0;
 
             var today = DateTime.Today;
             //add hoa hồng bác sĩ
+
             if (saleOrderLine.EmployeeId.HasValue && saleOrderLine.Employee.CommissionId.HasValue)
             {
-
+                var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Employee.CommissionId);
                 res.CommissionSettlements.Add(new CommissionSettlement
                 {
                     EmployeeId = saleOrderLine.EmployeeId,
                     CommissionId = saleOrderLine.Employee.CommissionId,
                     ProductId = saleOrderLine.ProductId,
-                    Date = today
+                    Date = today,
+                    SaleOrderLineId = self.SaleOrderLineId,
+                    BaseAmount = baseAmountCurrent.Value,
+                    Amount = totalPaid > totalStandPrice ? (baseAmountCurrent.Value * commPercent) / 100 : 0,
+                    Percentage = commPercent,
+                    TotalAmount = self.Amount
                 });
             }
 
             //add hoa hồng phụ tá
             if (saleOrderLine.AssistantId.HasValue && saleOrderLine.Assistant.AssistantCommissionId.HasValue)
             {
-
+                var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Assistant.AssistantCommissionId);
                 res.CommissionSettlements.Add(new CommissionSettlement
                 {
                     EmployeeId = saleOrderLine.AssistantId,
                     CommissionId = saleOrderLine.Assistant.AssistantCommissionId,
                     ProductId = saleOrderLine.ProductId,
-                    Date = today
+                    Date = today,
+                    SaleOrderLineId = self.SaleOrderLineId,
+                    BaseAmount = baseAmountCurrent.Value,
+                    Amount = totalPaid > totalStandPrice ? (baseAmountCurrent.Value * commPercent) / 100 : 0,
+                    Percentage = commPercent,
+                    TotalAmount = self.Amount
                 });
             }
 
             //add hoa hồng tư vấn
             if (saleOrderLine.CounselorId.HasValue && saleOrderLine.Counselor.CounselorCommissionId.HasValue)
             {
+                var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Counselor.CounselorCommissionId);
                 res.CommissionSettlements.Add(new CommissionSettlement
                 {
                     EmployeeId = saleOrderLine.CounselorId,
                     CommissionId = saleOrderLine.Counselor.CounselorCommissionId,
                     ProductId = saleOrderLine.ProductId,
-                    Date = today
+                    Date = today,
+                    SaleOrderLineId = self.SaleOrderLineId,
+                    BaseAmount = baseAmountCurrent.Value,
+                    Amount = totalPaid > totalStandPrice ? (baseAmountCurrent.Value * commPercent) / 100 : 0,
+                    Percentage = commPercent,
+                    TotalAmount = self.Amount
                 });
             }
 
@@ -364,6 +484,7 @@ namespace Infrastructure.Services
                     PaymentDate = self.Date,
                     PaymentType = "inbound",
                     CompanyId = self.Order.CompanyId,
+                    Communication = self.Note
                 };
 
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = moveId });
@@ -391,37 +512,77 @@ namespace Infrastructure.Services
                 .ToListAsync();
 
 
-            foreach (var res in saleOrderPayments)
+            foreach (var saleOrderPayment in saleOrderPayments)
             {
                 ///check thanh toán trong mới cho hủy
-                if (firstDayOfMonth < res.Date && res.Date > lastDayOfMonth)
+                if (firstDayOfMonth < saleOrderPayment.Date && saleOrderPayment.Date > lastDayOfMonth)
                     throw new Exception("Bạn chỉ được hủy thanh toán trong tháng");
 
-                if(res.State == "cancel")
+                if (saleOrderPayment.State == "cancel")
                     throw new Exception("Không thể hủy phiếu ở trạng thái hủy");
 
                 ///xử lý tìm các payment update state = "cancel" va hóa đơn thanh toán để xóa
-                var payment_ids = res.PaymentRels.Select(x => x.PaymentId).ToList();
+                var payment_ids = saleOrderPayment.PaymentRels.Select(x => x.PaymentId).ToList();
                 await paymentObj.CancelAsync(payment_ids);
 
 
                 /// xóa các hoa hồng của bác sĩ                 
                 var settlementObj = GetService<ICommissionSettlementService>();
-                await settlementObj.Unlink(res.Move.Lines.Select(x => x.Id).ToList());
+                await settlementObj.Unlink(saleOrderPayment.Move.Lines.Select(x => x.Id).ToList());
 
                 /// tìm và xóa hóa đơn ghi sổ doanh thu , công nợ
-                if (res.Move.Lines.Any())
-                    await moveLineObj.RemoveMoveReconcile(res.Move.Lines.Select(x => x.Id).ToList());
+                if (saleOrderPayment.Move.Lines.Any())
+                    await moveLineObj.RemoveMoveReconcile(saleOrderPayment.Move.Lines.Select(x => x.Id).ToList());
 
-                await moveObj.ButtonCancel(new List<Guid>() { res.Move.Id });
-                await moveObj.Unlink(new List<Guid>() { res.Move.Id });
+                await moveObj.ButtonCancel(new List<Guid>() { saleOrderPayment.Move.Id });
+                await moveObj.Unlink(new List<Guid>() { saleOrderPayment.Move.Id });
 
 
                 //tính lại paid , residual saleorder , lines
-                await _ComputeSaleOrder(res.OrderId);
+                await _ComputeSaleOrder(saleOrderPayment.OrderId);
+                // cập nhập điểm và hạng thành viên
+                //await ComputePointAndUpdateLevel(res, res.Order.PartnerId,"cancel");
 
+                //Trừ điểm tích lũy và cập nhật lại hạng thành viên
+                //await ComputePointAndUpdateLevel(saleOrderPayment, saleOrderPayment.Order.PartnerId, "payment");
+                var loyaltyPoints = await ConvertAmountToPoint(saleOrderPayment.Amount);
+                var propertyObj = GetService<IIRPropertyService>();
+                var partnerPointsProp = propertyObj.get("loyalty_points", "res.partner", res_id: $"res.partner,{saleOrderPayment.Order.PartnerId}", force_company: saleOrderPayment.CompanyId);
+                var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
 
-                res.State = "cancel";
+                partnerPoints -= loyaltyPoints;
+                var pointValuesDict = new Dictionary<string, object>()
+                {
+                    { $"res.partner,{saleOrderPayment.Order.PartnerId}", partnerPoints }
+                };
+
+                propertyObj.set_multi("loyalty_points", "res.partner", pointValuesDict, force_company: saleOrderPayment.CompanyId);
+
+                //lấy hạng thành viên hiện tại của partner
+                var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{saleOrderPayment.Order.PartnerId}", force_company: saleOrderPayment.CompanyId);
+                var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
+                var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
+
+                //cập nhật hạng
+                var mbObj = GetService<IMemberLevelService>();
+                var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
+                MemberLevel type = null;
+                if (partnerLevel != null)
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Id != partnerLevel.Id && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
+                        .FirstOrDefaultAsync();
+                else
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
+                          .FirstOrDefaultAsync();
+
+                var typeId = type != null ? type.Id : Guid.Empty;
+
+                var levelValuesDict = new Dictionary<string, object>()
+                    {
+                        { $"res.partner,{saleOrderPayment.Order.PartnerId}", typeId }
+                    };
+                propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: saleOrderPayment.CompanyId);
+
+                saleOrderPayment.State = "cancel";
             }
 
             await UpdateAsync(saleOrderPayments);
@@ -453,6 +614,7 @@ namespace Infrastructure.Services
         }
 
 
+
         public override ISpecification<SaleOrderPayment> RuleDomainGet(IRRule rule)
         {
             var userObj = GetService<IUserService>();
@@ -475,10 +637,10 @@ namespace Infrastructure.Services
                 ).FirstOrDefaultAsync();
 
             var result = _mapper.Map<SaleOrderPaymentPrintVM>(payment);
-            if (result == null) 
+            if (result == null)
                 return null;
 
-            result.User = _mapper.Map<ApplicationUserSimple>(payment.CreatedBy);        
+            result.User = _mapper.Map<ApplicationUserSimple>(payment.CreatedBy);
             return result;
 
         }

@@ -407,7 +407,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
     }
 
     // 120 is the F9 key
-    let modalRef = this.modalService.open(ServiceCardOrderPaymentsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ServiceCardOrderPaymentsDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thanh toán';
     modalRef.componentInstance.defaultVal = this.formGroup.value;
     modalRef.result.then(res => {
@@ -434,7 +434,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
   }
 
   quickCreateCustomer() {
-    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm khách hàng';
 
     modalRef.result.then(result => {

@@ -235,7 +235,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   searchCustomerDialog() {
-    let modalRef = this.modalService.open(PartnerSearchDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(PartnerSearchDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Tìm khách hàng';
     modalRef.componentInstance.domain = { customer: true };
 
@@ -250,7 +250,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   createDoctorDialog() {
-    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm bác sĩ';
 
     modalRef.result.then(result => {
@@ -376,7 +376,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   updateCustomerModal() {
-    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa khách hàng';
     modalRef.componentInstance.id = this.partner.id;
 

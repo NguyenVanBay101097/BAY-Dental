@@ -57,4 +57,47 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid ProductId { get; set; }
         public List<ProductBomForSaleOrderLine> Boms { get; set; } = new List<ProductBomForSaleOrderLine>();
     }
+
+    public class SmsCareAfterOrderPaged
+    {
+        public SmsCareAfterOrderPaged()
+        {
+            Limit = 20;
+        }
+        public int Offset { get; set; }
+        public int Limit { get; set; }
+        public string Search { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? ProductId { get; set; }
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class SmsCareAfterOrder
+    {
+        public Guid SaleOrderLineId { get; set; }
+        public Guid? PartnerId { get; set; }
+        public string PartnerName { get; set; }
+        public string PartnerPhone { get; set; }
+        public string SaleOrderName { get; set; }
+        public string DoctorName { get; set; }
+        public DateTime? DateDone { get; set; }
+        public string ProductName { get; set; }
+    }
+
+    public class SaleOrderLineHistoryReq
+    {
+        public Guid? PartnerId { get; set; }
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class SaleOrderLineHistoryRes
+    {
+        public string Name { get; set; }
+        public IEnumerable<ToothSimple> Teeth { get; set; } = new List<ToothSimple>();
+        public string EmployeeName { get; set; }
+        public string Diagnostic { get; set; }
+        public string ToothType { get; set; }
+        public string OrderId { get; set; }
+    }
 }

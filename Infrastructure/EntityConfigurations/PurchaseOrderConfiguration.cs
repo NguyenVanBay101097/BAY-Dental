@@ -23,9 +23,17 @@ namespace Infrastructure.EntityConfigurations
                  .HasForeignKey(x => x.PickingTypeId)
                  .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(x => x.Journal)
+             .WithMany()
+             .HasForeignKey(x => x.JournalId);
+
             builder.HasOne(x => x.User)
               .WithMany()
               .HasForeignKey(x => x.UserId);
+
+            builder.HasOne(x => x.Picking)
+            .WithMany()
+            .HasForeignKey(x => x.PickingId);
 
             builder.HasOne(x => x.RefundOrder)
             .WithMany()

@@ -241,9 +241,10 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 13].Value = "Tổng lương";
                 worksheet.Cells[1, 14].Value = "Hoa hồng";
                 worksheet.Cells[1, 15].Value = "Phạt";
-                worksheet.Cells[1, 16].Value = "Tạm ứng";
-                worksheet.Cells[1, 17].Value = "Thực lĩnh";
-                worksheet.Cells[1, 18].Value = "Phiếu chi";
+                worksheet.Cells[1, 16].Value = "Thuế & BHXH";
+                worksheet.Cells[1, 17].Value = "Tạm ứng";
+                worksheet.Cells[1, 18].Value = "Thực lĩnh";
+                worksheet.Cells[1, 19].Value = "Phiếu chi";
                 worksheet.Cells["A1:R1"].Style.Font.Bold = true;
 
                 var row = 2;
@@ -264,9 +265,10 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 13].Value = item.TotalSalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
                     worksheet.Cells[row, 14].Value = item.CommissionSalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
                     worksheet.Cells[row, 15].Value = item.AmercementMoney.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 16].Value = item.AdvancePayment.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture); ;
-                    worksheet.Cells[row, 17].Value = item.NetSalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 18].Value = item.SalaryPayment !=null ? item.SalaryPayment.Name : "Chưa chi";
+                    worksheet.Cells[row, 16].Value = item.TaxNSocialInsurance.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
+                    worksheet.Cells[row, 17].Value = item.AdvancePayment.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture); ;
+                    worksheet.Cells[row, 18].Value = item.NetSalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
+                    worksheet.Cells[row, 19].Value = item.SalaryPayment !=null ? item.SalaryPayment.Name : "Chưa chi";
 
                     //format
                     //worksheet.Cells[row, 2].Style.Numberformat.Format = "#,#";

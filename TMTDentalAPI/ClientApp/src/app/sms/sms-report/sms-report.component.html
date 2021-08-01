@@ -1,0 +1,140 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Báo cáo SMS Brandname</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+<div class="o_content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6 py-3">
+                <div class="border">
+                    <div class="bg-light border-bottom p-2 font-weight-bold">
+                        Báo cáo tổng
+                    </div>
+                    <table class="table-report-total">
+                        <tr>
+                            <td class="table-title">
+                                <span>Brandname</span>
+                            </td>
+                            <td>
+                                <kendo-combobox class="w-100" [data]="filteredSmsBrandname"
+                                    [(value)]="smsBrandname_reportTotal" [textField]="'brandName'" [valueField]="'id'"
+                                    [filterable]="true" placeholder="Tất cả" #smsBrandnameCbx>
+                                    <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                        <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
+                                    </ng-template>
+                                </kendo-combobox>
+                            </td>
+                            <td class="table-title">
+                                <span>Thời gian</span>
+                            </td>
+                            <td class="table-datepicker">
+                                <kendo-datepicker class="w-100" [(value)]="date_reportTotal" [bottomView]="'year'"
+                                    [format]="'MM yyyy'">
+                                </kendo-datepicker>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-title">
+                                <span>Chiến dịch</span>
+                            </td>
+                            <td>
+                                <kendo-combobox class="w-100" [data]="filteredSmsCampaign"
+                                    [(value)]="smsCampaign_reportTotal" [textField]="'name'" [valueField]="'id'"
+                                    [filterable]="true" placeholder="Tất cả" #smsCampaignCbx>
+                                </kendo-combobox>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-sm px-2" (click)="getReportTotal()">Báo cáo</button>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    <div>
+                        <kendo-chart *ngIf="pieData_reportTotal.length" title="">
+                            <kendo-chart-legend position="bottom"></kendo-chart-legend>
+                            <kendo-chart-series>
+                                <kendo-chart-series-item [autoFit]="autofit" type="pie" [data]="pieData_reportTotal"
+                                    field="total" categoryField="stateDisplay"
+                                    [labels]="{ visible: true, content: labelContentReportTotal }">
+                                </kendo-chart-series-item>
+                            </kendo-chart-series>
+                        </kendo-chart>
+                        <div class="no-data-report" *ngIf="!pieData_reportTotal.length">
+                            Không có dữ liệu
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 py-3">
+                <div class="border">
+                    <div class="bg-light border-bottom p-2 font-weight-bold">
+                        Báo cáo theo tháng
+                    </div>
+                    <kendo-chart *ngIf="reportChartLinesAccounts && reportChartLinesAccounts.length > 0">
+                        <kendo-chart-legend position="bottom" orientation="horizontal"></kendo-chart-legend>
+                        <kendo-chart-tooltip></kendo-chart-tooltip>
+                        <kendo-chart-series>
+                            <kendo-chart-series-item name="Gửi thành công" type="line" [data]="reportChartLinesAccounts"
+                                field="totalSent" [color]="'#28a745'" categoryField="category">
+                                <kendo-chart-series-item-tooltip>
+                                    <ng-template let-dataItem="dataItem">
+                                        <span><b>Tổng tin nhắn: {{dataItem.totalSent +
+                                                dataItem.totalError}}</b></span><br>
+                                        <span><b>Gửi thành công: {{dataItem.totalSent}}</b></span>
+                                    </ng-template>
+                                </kendo-chart-series-item-tooltip>
+                            </kendo-chart-series-item>
+                            <kendo-chart-series-item type="line" name="Gửi thất bại" [data]="reportChartLinesAccounts"
+                                field="totalError"  [color]="'#dc3545'" categoryField="category">
+                                <kendo-chart-series-item-tooltip>
+                                    <ng-template let-dataItem="dataItem">
+                                        <span><b>Tổng tin nhắn: {{dataItem.totalSent +
+                                                dataItem.totalError}}</b></span><br>
+                                        <span><b>Gửi thất bại: {{dataItem.totalError}}</b></span>
+                                    </ng-template>
+                                </kendo-chart-series-item-tooltip>
+                            </kendo-chart-series-item>
+                        </kendo-chart-series>
+                    </kendo-chart>
+                    <div class="no-data-report"
+                        *ngIf="!reportChartLinesAccounts || reportChartLinesAccounts.length == 0">
+                        Không có dữ liệu
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="px-3">
+        <div class="border">
+            <div class="bg-light border-bottom p-2 font-weight-bold">
+                Báo cáo theo chiến dịch
+            </div>
+            <div class="d-flex justify-content-between m-2">
+                <app-date-range-picker-filter [startDate]="dateFromReportCampaign" [endDate]="dateToReportCampaign" (searchChange)="dateChangeReportCampaign($event)"></app-date-range-picker-filter>
+                <input class="form-control w-50" type="text" placeholder="Tìm kiếm theo tên chiến dịch"
+                    [(ngModel)]="searchReportCampaign" (ngModelChange)="this.searchUpdateReportCampaign.next($event)" />
+            </div>
+            <kendo-grid [data]="gridDataReportCampaign" [loading]="loadingReportCampaign">
+                <kendo-grid-column field="smsCampaignName" title="Chiến dịch"></kendo-grid-column>
+                <kendo-grid-column field="totalMessages" title="Tổng tin nhắn"></kendo-grid-column>
+                <kendo-grid-column field="totalSuccessfulMessages" title="Thành công"></kendo-grid-column>
+                <kendo-grid-column field="totalErrorMessages" title="Thất bại"></kendo-grid-column>
+            </kendo-grid>
+        </div>
+    </div>
+</div>

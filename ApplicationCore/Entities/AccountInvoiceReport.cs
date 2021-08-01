@@ -4,51 +4,52 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
+    /// <summary>
+    /// view from account move line and account move: account_invoice_report
+    /// </summary>
     public class AccountInvoiceReport
     {
-        public string number { get; set; }
+        /// <summary>
+        /// line id
+        /// </summary>
+        public Guid Id { get; set; }
 
-        public DateTime? date { get; set; }
+        public DateTime? InvoiceDate { get; set; }
+        public string InvoiceOrigin { get; set; }
 
-        public Guid? product_id { get; set; }
+        public Guid? ProductId { get; set; }
         public Product Product { get; set; }
 
-        public decimal product_qty { get; set; }
-
-        public Guid? categ_id { get; set; }
-        public ProductCategory Categ { get; set; }
-
-        public Guid? journal_id { get; set; }
-        public AccountJournal Journal { get; set; }
-
-        public Guid? partner_id { get; set; }
+        public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
 
-        public Guid? company_id { get; set; }
+        public Guid? JournalId { get; set; }
+        public AccountJournal Journal { get; set; }
+
+        public string InvoiceUserId { get; set; }
+        public ApplicationUser InvoiceUser { get; set; }
+
+        public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
-
-        public string user_id { get; set; }
-        public ApplicationUser User { get; set; }
-
-        public decimal price_total { get; set; }
-
-        public decimal discount_amount { get; set; }
-
-        public Guid? invoice_id { get; set; }
-        public AccountInvoice Invoice { get; set; }
-
-        public string type { get; set; }
-
-        public string state { get; set; }
-
-        public Guid? account_id { get; set; }
+        public string Type { get; set; }
+        public string AccountInternalType { get; set; }
+        public string State { get; set; }
+        public Guid? AccountId { get; set; }
         public AccountAccount Account { get; set; }
 
-        public Guid? account_line_id { get; set; }
-        public AccountAccount AccountLine { get; set; }
+        public decimal Quantity { get; set; }
+        public decimal PriceSubTotal { get; set; }
 
-        public decimal residual { get; set; }
+        /// <summary>
+        /// Bác sĩ
+        /// </summary>
+        public Guid? EmployeeId { get; set; }
+        public Employee Employee { get; set; }
 
-        public decimal amount_total { get; set; }
+        /// <summary>
+        /// Phụ tá
+        /// </summary>
+        public Guid? AssistantId { get; set; }
+        public Employee Assistant { get; set; }
     }
 }

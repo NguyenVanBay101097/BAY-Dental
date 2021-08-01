@@ -1,0 +1,26 @@
+<kendo-grid [data]="gridData" [loading]="loading" >
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="Name"
+        title="Dịch vụ" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        field="ProductUOMQty" title="Số lượng" width="100">
+    </kendo-grid-column>
+    <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        field="PriceSubTotal" title="Thành tiền" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.PriceSubTotal | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        field="AmountPaid" title="Thanh toán" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.AmountPaid | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        field="AmountResidual" title="Còn lại" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.AmountResidual | number}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

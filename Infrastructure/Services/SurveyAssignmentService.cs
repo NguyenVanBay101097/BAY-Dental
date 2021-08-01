@@ -77,7 +77,7 @@ namespace Infrastructure.Services
             var pnCateRelObj = GetService<IPartnerPartnerCategoryRelService>();
 
             var query = GetAllQuery(val);
-            query = query.Include(x => x.UserInput).Include(x => x.Employee).Include(x => x.Partner).Include(x => x.SaleOrder);
+            query = query.Include(x => x.UserInput).ThenInclude(x=>x.SurveyUserInputSurveyTagRels).ThenInclude(x=>x.SurveyTag).Include(x => x.Employee).Include(x => x.Partner).Include(x => x.SaleOrder);
             var count = await query.CountAsync();
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 

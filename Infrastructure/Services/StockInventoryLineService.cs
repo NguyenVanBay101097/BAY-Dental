@@ -112,7 +112,7 @@ namespace Infrastructure.Services
             var movesToAssign = new List<StockMove>();
             var move = new StockMove()
             {
-                Name = "INV:" + line.Inventory.Name,
+                Name = "Kiểm kho: " + line.Inventory.Name,
                 ProductId = line.ProductId,
                 ProductUOMId = line.ProductUOMId,
                 Date = line.Inventory.Date,

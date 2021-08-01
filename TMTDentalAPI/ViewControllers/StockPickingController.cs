@@ -30,6 +30,7 @@ namespace TMTDentalAPI.ViewControllers
                     .Include("Company.Partner")
                     .Include(x => x.CreatedBy)
                     .Include("MoveLines.Product")
+                    .Include("MoveLines.Product.Categ")
                     .Include("MoveLines.ProductUOM")
                     .FirstOrDefaultAsync();
 

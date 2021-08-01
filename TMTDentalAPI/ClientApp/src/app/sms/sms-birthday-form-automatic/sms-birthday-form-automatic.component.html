@@ -1,0 +1,117 @@
+<form class="o_form_view o_md_form_view" [formGroup]="formGroup">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="o_group mt-0">
+                <table class="o_group o_inner_group o_group_col_12">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bolder">
+                                    Kích hoạt
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <label class="switch">
+                                    <input type="checkbox" formControlName="active">
+                                    <span class="slider round"></span>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="o_td_label">
+                                <div class="font-weight-bolder mb-2">Điều kiện gửi tin</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Tên chiến dịch
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="text" [attr.disabled]="true" [value]="campaign?.name" class="form-control">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Brandname
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox [data]="filteredSmsAccount" [textField]="'brandName'"
+                                    formControlName="smsAccount" [filterable]="true" #smsAccountCbx [valueField]="'id'">
+                                    <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                        <span>{{dataItem ? dataItem.brandName :''}}
+                                            ({{dataItem ? dataItem.name : ''}})</span>
+                                    </ng-template>
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Thời gian gửi tin
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <select formControlName="dayBeforeSend" class="form-control" yy>
+                                    <option class="form-control" value="0">0 ngày</option>
+                                    <option class="form-control" value="1">1 ngày</option>
+                                    <option class="form-control" value="2">2 ngày</option>
+                                    <option class="form-control" value="3">3 ngày</option>
+                                    <option class="form-control" value="4">4 ngày</option>
+                                    <option class="form-control" value="5">5 ngày</option>
+                                </select>
+                                <span>&nbsp;trước khi sinh nhật</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Thời điểm gửi tin
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-timepicker formControlName="scheduleTimeObj"></kendo-timepicker>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="o_td_label">
+                                <div class="font-weight-bolder mb-2">Nội dung tin nhắn</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Tin nhắn mẫu
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
+                                    formControlName="template" [filterable]="true" #smsTemplateCbx
+                                    (valueChange)="onChangeTemplate($event)" [valueField]="'id'">
+                                </kendo-combobox>
+                                <div *ngIf="f.template.errors && (f.template.touched || f.template.dirty || submitted)"
+                                    class="text-danger">
+                                    <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="templateValue">
+                            <td colspan="2">
+                                <textarea type="text" my-autosize class="form-control textarea" id="textarea_mass"
+                                    [value]="templateValue.body" rows="4" #textarea [attr.disabled]="true"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary" (click)="onSave()">
+                    Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

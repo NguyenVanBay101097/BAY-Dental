@@ -15,6 +15,14 @@ namespace Infrastructure.EntityConfigurations
               .WithMany()
               .HasForeignKey(x => x.LoaiThuChiId);
 
+            builder.HasOne(x => x.Account)
+             .WithMany()
+             .HasForeignKey(x => x.AccountId);
+
+            builder.HasOne(x => x.Agent)
+            .WithMany()
+            .HasForeignKey(x => x.AgentId);
+
             builder.HasOne(x => x.Journal)
                .WithMany()
                .HasForeignKey(x => x.JournalId)

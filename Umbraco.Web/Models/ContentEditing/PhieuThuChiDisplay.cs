@@ -60,6 +60,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Communication { get; set; }
 
         /// <summary>
+        /// commission
+        /// customer_debt
+        /// other
+        /// </summary>
+        public string AccountType { get; set; }
+
+        /// <summary>
         /// Lý do nộp
         /// </summary>
         public string Reason { get; set; }
@@ -73,6 +80,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PartnerType { get; set; }
 
         public PartnerSimple Partner { get; set; }
+
+        public bool IsAccounting { get; set; }
     }
 
     public class PhieuThuChiDefaultGet

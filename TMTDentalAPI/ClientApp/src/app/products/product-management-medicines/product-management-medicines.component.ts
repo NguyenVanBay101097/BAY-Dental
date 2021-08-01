@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { ResConfigSettingsService } from 'src/app/res-config-settings/res-config-settings.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { Product } from '../product';
 import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
@@ -31,7 +32,9 @@ export class ProductManagementMedicinesComponent implements OnInit {
   searchMedicineUpdate = new Subject<string>();
   configsettings: any;
   categories: any[] = [];
-
+  canAdd = false;
+  canEdit = false;
+  canDelete = false;
 
 
   constructor(private route: ActivatedRoute,
@@ -39,7 +42,8 @@ export class ProductManagementMedicinesComponent implements OnInit {
     private productCategoryService: ProductCategoryService,
     private configSettingsService: ResConfigSettingsService,
     private productService: ProductService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
@@ -52,6 +56,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
     this.loadMedicines();
     this.loadConfigsettings();
     this.loadCategories();
+    this.checkPermission();
   }
 
 
@@ -132,7 +137,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
 
   createMedicine() {
     let modalRef = this.modalService.open(ProductMedicineCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -148,7 +153,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
 
   editMedicine(item: Product) {
     let modalRef = this.modalService.open(ProductMedicineCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -189,7 +194,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
 
   importFromExcel() {
     let modalRef = this.modalService.open(ProductImportExcelDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -232,7 +237,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
 
   updateMedicineFromExcel() {
     let modalRef = this.modalService.open(ProductImportExcelDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -248,6 +253,12 @@ export class ProductManagementMedicinesComponent implements OnInit {
       },
       () => { }
     );
+  }
+
+  checkPermission(){
+    this.canAdd = this.checkPermissionService.check(['Catalog.Products.Create']);
+    this.canEdit = this.checkPermissionService.check(['Catalog.Products.Update']);
+    this.canDelete = this.checkPermissionService.check(['Catalog.Products.Delete']);
   }
 
 }

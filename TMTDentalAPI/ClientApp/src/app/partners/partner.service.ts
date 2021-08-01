@@ -38,6 +38,7 @@ export class SaleOrderLineBasic {
     dateCreated: string;
     teeth: ToothDisplay;
     product: any;
+    toothType: string;
 }
 
 export class SaleOrderLinePaged {
@@ -159,6 +160,39 @@ export class PartnerGetDebtPagedFilter {
     offset: number;
     search: string;
     companyId: string;
+}
+
+export class PartnerInfoDisplay {
+	id: string;
+	dateCreated: string;
+	ref: string;
+	avatar?: any;
+	displayName: string;
+	name: string;
+	phone: string;
+	email: string;
+	birthYear: number;
+	birthMonth: number;
+	birthDay: number;
+	orderState: string;
+	orderResidual?: any;
+	totalDebit?: any;
+	memberLevelId?: any;
+	memberLevel?: any;
+	categories: any[];
+	dateOfBirth: string;
+	age: string;
+}
+
+export class PartnerInfoPaged{
+    limit: number;
+    offset: number;
+    search: string;
+    categIds: string[];
+    hasOrderResidual?: number;
+    hasTotalDebit?: number;
+    memberLevelId: string;
+    orderState: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -302,7 +336,6 @@ export class PartnerService {
     }
 
     getWardAship(request): Observable<Ward[]> {
-        debugger
         return this.http.post<Ward[]>(this.ashipApiUrl + "Ward/GetWards", request);
     }
 
@@ -526,6 +559,34 @@ export class PartnerService {
 
     getAmountAdvanceUsed(id){
         return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceUsed');
+    }
+
+    getCustomerInfo(id){
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/CustomerInfo');
+    }
+
+    checkUpdateLevel() {
+        return this.http.post(this.baseApi + this.apiUrl + '/CheckUpdateLevel', {});
+    }
+
+    getCustomerBirthDay(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetCustomerBirthDay', val);
+    }
+    
+    getCustomerAppointments(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetCustomerAppointments', val);
+    }
+
+    getAmountDebtBalance(id){
+        return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountDebtBalance');
+    }
+
+    getPartnerInfoPaged(val) {
+        return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged', {params: new HttpParams({fromObject: val})});
+    }
+
+    getPartnerInfoPaged2(val) {
+        return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged2', {params: new HttpParams({fromObject: val})});
     }
 }
 
