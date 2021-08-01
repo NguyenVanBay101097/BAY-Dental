@@ -12,7 +12,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 {
     public class AgentProcessUpdateHandler : INotificationHandler<ProcessUpdateNotification>
     {
-        private const string _version = "1.0.1.7";
+        private const string _version = "1.0.1.8";
         private IServiceScopeFactory _serviceScopeFactory;
 
 
