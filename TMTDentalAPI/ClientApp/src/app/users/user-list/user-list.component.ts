@@ -54,7 +54,7 @@ export class UserListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm người dùng';
 
     modalRef.result.then(() => {
@@ -64,7 +64,7 @@ export class UserListComponent implements OnInit {
   }
 
   editItem(item: UserBasic) {
-    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa người dùng';
     modalRef.componentInstance.id = item.id;
 
@@ -88,7 +88,7 @@ export class UserListComponent implements OnInit {
   }
 
   importFromExcel() {
-    const modalRef = this.modalService.open(UserListImportComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(UserListImportComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {

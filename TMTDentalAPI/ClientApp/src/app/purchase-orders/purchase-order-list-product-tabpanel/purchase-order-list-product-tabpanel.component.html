@@ -1,0 +1,46 @@
+<div>
+    <div class="product-filter">
+        <div class="product-filter-search">
+            <div class="o_searchview">
+                <i class="o_searchview_icon fa fa-search"></i>
+                <div class="o_searchview_input_container">
+                    <input #search accesskey="Q" class="o_searchview_input" placeholder="Tìm kiếm theo tên [Alt + Q]"
+                        type="text" id="search" (keyup)="onChangeSearch($event.target.value);">
+                </div>
+            </div>
+        </div>
+        <div class="product-filter-type">
+            <div class="btn-group">
+                <input class="btn-check" type="radio" [(ngModel)]="type2" name="radioButton" id="product"
+                    value="product" (change)="onChangeType($event.target.value)">
+                <label class="btn btn-sm btn-outline-primary" for="product">
+                    Vật tư
+                </label>
+                <input class="btn-check" type="radio" [(ngModel)]="type2" name="radioButton" id="medicine"
+                    value="medicine" (change)="onChangeType($event.target.value)">
+                <label class="btn btn-sm btn-outline-primary" for="medicine" hasGroups
+                    [groups]="'medicineOrder.group_medicine'">
+                    Thuốc
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Component Form Service List -->
+    <div class="product-list-container">
+        <table class="table table-sm table-borderless table-hover">
+            <thead>
+                <tr>
+                    <th>{{type2 == 'product' ? 'Tên vật tư':'Tên thuốc'}}</th>
+                    <th *ngIf="!isStock" class="text-right">Giá</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="cursor" (click)="onSelectValue(item)" *ngFor="let item of listProductFilter;let i = index">
+                    <td class="sticky-td">{{item.name}}</td>
+                    <td *ngIf="!isStock" class="sticky-td text-right">{{(item.type2 == 'medicine'? (item.standardPrice || 0 ) : (item.purchasePrice || 0) ) | number}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -15,7 +15,7 @@
         </div>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên khách hàng, số điện thoại" [(ngModel)]="search"
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo họ tên, số điện thoại" [(ngModel)]="search"
                     (ngModelChange)="this.searchUpdate.next($event)" />
             </div>
         </div>
@@ -30,7 +30,7 @@
     <kendo-grid-column field="partnerPhone" title="Số điện thoại" width="120"></kendo-grid-column>
     <kendo-grid-column field="name" title="Phiếu điều trị" width="120">
     </kendo-grid-column>
-    <kendo-grid-column title="Ngày hoàn thành điều trị" width="150">
+    <kendo-grid-column title="Ngày hoàn thành điều trị" width="220">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.dateDone | date:'HH:mm, dd/MM/yyyy'}}
         </ng-template>
@@ -42,7 +42,7 @@
             </span>
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Tổng tiền phiếu điều trị" width="150" class="text-right">
+    <kendo-grid-column title="Tổng tiền phiếu điều trị" width="200" class="text-right">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.amountTotal | number}}
         </ng-template>

@@ -80,6 +80,7 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints.GetCustomerInfo
                 WardName = x.WardName,
                 Ref = x.Ref,
                 Name = x.Name,
+                DisplayName = x.DisplayName,
                 Date = x.Date,
                 Email = x.Email,
                 Gender = x.Gender,

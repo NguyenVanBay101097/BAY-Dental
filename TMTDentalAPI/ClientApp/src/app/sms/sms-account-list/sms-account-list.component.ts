@@ -68,7 +68,7 @@ export class SmsAccountListComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm Brandname';
     modalRef.result.then(() => {
       this.loadDataFromApi();
-      this.notifyService.notify('success','Cấu hình thành công');
+      this.notifyService.notify('success','Lưu thành công');
     }, () => {
     });
   }
@@ -80,11 +80,11 @@ export class SmsAccountListComponent implements OnInit {
 
   editItem(item) {
     let modalRef = this.modalService.open(SmsAccountSettingDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = item.brandName || 'BrandName';
+    modalRef.componentInstance.title = 'Cập nhật Brandname: ' + item.brandName || 'BrandName';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();
-      this.notifyService.notify('success','Cập nhật cấu hình thành công');
+      this.notifyService.notify('success','Lưu thành công');
     }, () => {
     });
   }

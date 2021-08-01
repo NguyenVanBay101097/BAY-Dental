@@ -21,8 +21,14 @@ namespace Infrastructure.Services
         {
             context = _context;
         }
-        public async Task<object> createExcel<T>(IEnumerable<T> list, string titleSheet, IEnumerable<string> listHeader)
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">dữ liệu cần được xuất</param>
+        /// <param name="titleSheet">title cho sheet</param>
+        /// <param name="listHeader">list tiêu đề cột, nếu là null thì lấy theo epplusdisplay attribute, nếu null nữa thì lấy theo tên biến</param>
+        /// <returns></returns>
+        public async Task<object> createExcel<T>(IEnumerable<T> list, string titleSheet, List<string> listHeader = null)
         {
+            listHeader = listHeader ?? new List<string>();
             using (ExcelPackage package = new ExcelPackage())
             {
                 //create the excel file and set some properties
@@ -41,6 +47,7 @@ namespace Infrastructure.Services
            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
            .Where(p => !Attribute.IsDefined(p, typeof(EpplusIgnore)))
            .ToArray();
+
                 ws.Cells["A1"].LoadFromCollection(list, true, OfficeOpenXml.Table.TableStyles.None,
              BindingFlags.Instance | BindingFlags.Public,
              membersToInclude);
@@ -53,11 +60,18 @@ namespace Infrastructure.Services
 
                 //loop the header row to capitalize the values
                 var listheadCount = listHeader.Count();
+
                 for (int col = 1; col <= ws.Dimension.End.Column; col++)
                 {
+                    Object[] myAttributes = membersToInclude[col - 1].GetCustomAttributes(true);
+                    EpplusDisplay epplusDisplayAtttribute = myAttributes.FirstOrDefault(x => x.GetType() == typeof(EpplusDisplay)) as EpplusDisplay;
+
                     var cell = ws.Cells[1, col];
+                    if (epplusDisplayAtttribute != null)
+                        cell.Value = epplusDisplayAtttribute.DisplayName;
+
                     if (col <= listheadCount)
-                        cell.Value = listHeader.ToList()[col - 1].ToString();
+                        cell.Value = listHeader[col - 1].ToString();
                     else
                         cell.Value = cell.Value.ToString();
                 }
@@ -103,7 +117,7 @@ namespace Infrastructure.Services
                     //    || prop.PropertyType == typeof(float) || prop.PropertyType == typeof(float?))
                     if (isNum)
                     {
-                        range.Style.Numberformat.Format = "0,00";
+                        range.Style.Numberformat.Format = "#,###";
                     }
                 }
 
@@ -138,7 +152,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task CreateAndAddToHeader<T>(IEnumerable<T> list, string titleSheet, IEnumerable<string> listHeader)
+        public async Task CreateAndAddToHeader<T>(IEnumerable<T> list, string titleSheet, List<string> listHeader = null)
         {
             var package = await createExcel<T>(list, titleSheet, listHeader);
             await AddToHeader(package as byte[]);

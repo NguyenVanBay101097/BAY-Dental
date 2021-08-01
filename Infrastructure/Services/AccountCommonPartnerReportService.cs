@@ -157,7 +157,7 @@ namespace Infrastructure.Services
                 var debit = dict[item.Key].Debit;
                 var credit = dict[item.Key].Credit;
                 var end = begin + debit - credit;
-                if (val.Display == "not_zero" && end <= 0.00001M)
+                if ((val.Display == "not_zero" && end == 0) || (begin == 0 && debit == 0 && credit == 0))
                     continue;
                 var value = item.Value;
                 res.Add(new AccountCommonPartnerReportItem
@@ -168,7 +168,7 @@ namespace Infrastructure.Services
                     ResultSelection = val.ResultSelection,
                     PartnerRef = value.PartnerRef,
                     Begin = begin,
-                    Debit = debit,
+                    Debit = debit,  
                     Credit = credit,
                     End = end,
                     PartnerName = value.PartnerName,
@@ -447,6 +447,175 @@ namespace Infrastructure.Services
 
             var results = await query.ToListAsync();
             return _mapper.Map<IEnumerable<AccountMoveBasic>>(results);
+        }
+        public T GetService<T>()
+        {
+            return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
+        }
+        public async Task<IEnumerable<ReportPartnerDebitRes>> ReportPartnerDebit(ReportPartnerDebitReq val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var accObj = GetService<IAccountAccountService>();
+
+            IQueryable<AccountMoveLine> getQueryable(IQueryable<AccountMoveLine> query, ReportPartnerDebitReq val)
+            {
+                query = query.Where(x => x.Account.Code == "CNKH");
+                if (val.PartnerId.HasValue)
+                    query = query.Where(x => x.PartnerId == val.PartnerId);
+
+                if (!string.IsNullOrWhiteSpace(val.Search))
+                {
+                    query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                    x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+                }
+                return query;
+            }
+
+            var today = DateTime.Today;
+            var date_from = val.FromDate.HasValue ? val.FromDate.Value.AbsoluteBeginOfDate() : (DateTime?)null;
+            var date_to = val.ToDate.HasValue ? val.ToDate.Value.AbsoluteEndOfDate() : (DateTime?)null;
+
+            var res = new List<ReportPartnerDebitRes>();
+            if (date_from.HasValue)
+            {
+                var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, companyId: val.CompanyId);
+                query = getQueryable(query, val);
+
+                res = await query
+                   .GroupBy(x => new
+                   {
+                       PartnerId = x.Partner.Id,
+                       PartnerName = x.Partner.Name,
+                       PartnerRef = x.Partner.Ref,
+                       PartnerPhone = x.Partner.Phone,
+                   })
+                   .Select(x => new ReportPartnerDebitRes
+                   {
+                       PartnerId = x.Key.PartnerId,
+                       PartnerName = x.Key.PartnerName,
+                       PartnerRef = x.Key.PartnerRef,
+                       PartnerPhone = x.Key.PartnerPhone,
+                       Begin = x.Sum(s => s.Debit - s.Credit),
+                   }).Where(x=> x.Begin != 0).ToListAsync();
+            }
+
+            var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, companyId: val.CompanyId);
+            query2 = getQueryable(query2, val);
+
+            var list2 = await query2
+                      .GroupBy(x => new
+                      {
+                          PartnerId = x.Partner.Id,
+                          PartnerName = x.Partner.Name,
+                          PartnerRef = x.Partner.Ref,
+                          PartnerPhone = x.Partner.Phone,
+                      })
+                    .Select(x => new ReportPartnerDebitRes
+                    {
+                        PartnerId = x.Key.PartnerId,
+                        PartnerName = x.Key.PartnerName,
+                        PartnerRef = x.Key.PartnerRef,
+                        PartnerPhone = x.Key.PartnerPhone,
+                        Debit = x.Sum(s => s.Debit),
+                        Credit = x.Sum(s => s.Credit),
+                        Begin = 0
+                    }).ToListAsync();
+
+            foreach (var item in list2)
+            {
+                var resItem = res.FirstOrDefault(x => x.PartnerId == item.PartnerId);
+                if (resItem == null)
+                {
+                    res.Add(item);
+                }
+                else
+                {
+                    resItem.Debit = item.Debit;
+                    resItem.Credit = item.Credit;
+                }
+            }
+
+            foreach (var item in res)
+            {
+                item.End = item.Begin + item.Debit - item.Credit;
+                item.DateFrom = val.FromDate;
+                item.DateTo = val.ToDate;
+                item.CompanyId = val.CompanyId;
+            }
+
+            return res;
+        }
+
+        public async Task<IEnumerable<ReportPartnerDebitDetailRes>> ReportPartnerDebitDetail(ReportPartnerDebitDetailReq val)
+        {
+            var today = DateTime.Today;
+            var date_from = val.FromDate.HasValue ? val.FromDate.Value.AbsoluteBeginOfDate() : (DateTime?)null;
+            var date_to = val.ToDate.HasValue ? val.ToDate.Value.AbsoluteEndOfDate() : (DateTime?)null;
+
+            var amlObj = GetService<IAccountMoveLineService>();
+            var accObj = GetService<IAccountAccountService>();
+
+            decimal begin = 0;
+            if (date_from.HasValue)
+            {
+                var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, companyId: val.CompanyId);
+                query = query.Where(x => x.Account.Code == "CNKH");
+                if (val.PartnerId.HasValue)
+                    query = query.Where(x => x.PartnerId == val.PartnerId);
+                begin = await query.SumAsync(x => x.Debit - x.Credit);
+            }
+
+            var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, companyId: val.CompanyId);
+            query2 = query2.Where(x => x.Account.Code == "CNKH");
+            if (val.PartnerId.HasValue)
+                query2 = query2.Where(x => x.PartnerId == val.PartnerId);
+
+            var list2 = query2.OrderBy(x => x.DateCreated)
+                    .Select(x => new ReportPartnerDebitDetailRes
+                    {
+                        Date = x.Date,
+                        Debit = x.Debit,
+                        Credit = x.Credit,
+                        InvoiceOrigin = x.Move.InvoiceOrigin
+                    }).ToList();
+
+
+            foreach (var item in list2)
+            {
+                item.Begin = begin;
+                item.End = item.Begin + item.Debit - item.Credit;
+                begin = item.End;
+            }
+
+            return list2;
+
+        }
+
+        public async Task<ReportPartnerDebitSummaryRes> ReportPartnerDebitSummary(ReportPartnerDebitReq val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var accObj = GetService<IAccountAccountService>();
+
+            var date_from = val.FromDate.HasValue ? val.FromDate.Value.AbsoluteBeginOfDate() : (DateTime?)null;
+            var date_to = val.ToDate.HasValue ? val.ToDate.Value.AbsoluteEndOfDate() : (DateTime?)null;
+            var query = amlObj._QueryGet(dateTo: date_to, dateFrom: date_from, state: "posted", companyId: val.CompanyId);
+            query = query.Where(x => x.Account.Code == "CNKH");
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
+            var result = await query.GroupBy(x => 0).Select(x => new ReportPartnerDebitSummaryRes
+            {
+                Debit = x.Sum(s => s.Debit),
+                Credit = x.Sum(s => s.Credit),
+                Balance = x.Sum(s => s.Debit - s.Credit)
+            }).ToListAsync();
+
+            return new ReportPartnerDebitSummaryRes
+            {
+                Debit = result.Count > 0 ? result[0].Debit : 0,
+                Credit = result.Count > 0 ? result[0].Credit : 0,
+                Balance = result.Count > 0 ? result[0].Balance : 0,
+            };
         }
     }
 

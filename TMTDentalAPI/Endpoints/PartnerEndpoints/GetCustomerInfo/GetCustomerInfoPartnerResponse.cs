@@ -12,6 +12,8 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints.GetCustomerInfo
 
         public string Name { get; set; }
 
+        public string DisplayName { get; set; }
+
         public string Phone { get; set; }
 
         public DateTime? Date { get; set; }
@@ -30,7 +32,7 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints.GetCustomerInfo
                 {
                     case "female": return "Nữ";
                     case "male": return "Nam";
-                    default: return "khác";
+                    default: return "Khác";
                 }
             }
             set { }

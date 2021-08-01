@@ -90,21 +90,13 @@
             <tbody>
                 @foreach (var line in Model.OrderLines)
                 {
-                    <tr *ngFor="let line of saleOrderPrint.orderLines; let i=index">
-                        <td>@line.ProductName</td>
-                        <td class="text-right">@string.Format(culture, "{0:0}", @line.ProductUOMQty)</td>
-                        <td class="text-right">@string.Format(culture, "{0:0,0}", line.PriceUnit)</td>
-                        @if (line.DiscountType == "percentage")
-                        {
-                            <td class="text-right">@string.Format(culture, "{0:0}", line.Discount)%</td>
-                        }
-                        else if (line.DiscountType == "fixed")
-                        {
-                            <td class="text-right">@string.Format(culture, "{0:0,0}", line.DiscountFixed)</td>
-                        }
-
-                        <td class="text-right">@string.Format(culture, "{0:0,0}", line.PriceSubTotal)</td>
-                    </tr>
+                <tr *ngFor="let line of saleOrderPrint.orderLines; let i=index">
+                    <td>@line.ProductName</td>
+                    <td class="text-right">@string.Format(culture, "{0:0}", @line.ProductUOMQty)</td>
+                    <td class="text-right">@string.Format(culture, "{0:0,0}", line.PriceUnit)</td>
+                    <td class="text-right">@string.Format(culture, "{0:0,0}", line.AmountDiscountTotal)</td>                
+                    <td class="text-right">@string.Format(culture, "{0:0,0}", line.PriceSubTotal)</td>
+                </tr>
                 }
 
             </tbody>

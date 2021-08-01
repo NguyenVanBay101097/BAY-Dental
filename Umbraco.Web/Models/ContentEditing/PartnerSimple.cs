@@ -6,9 +6,33 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class PartnerSimple
     {
+        public PartnerSimple()
+        {
+        }
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string DisplayName { get; set; }
+        public string Gender { get; set; }
+        public string GenderConvertcom
+        {
+            get
+            {
+                switch (this.Gender)
+                {
+                    case "female": return "Nữ";
+                    case "male": return "Nam";
+                    default: return "khác";
+                }
+            }
+            set { }
+        }
+        public int? BirthMonth { get; set; }
+        public int? BirthDay { get; set; }
+        public int? BirthYear { get; set; }
+        public string JobTitle { get; set; }
+        public string MedicalHistory { get; set; }
+        public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
+        public MemberLevelBasic MemberLevel { get; set; }
 
     }
 

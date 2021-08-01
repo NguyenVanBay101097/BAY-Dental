@@ -13,28 +13,24 @@ export class FinancialRevenueReportComponent implements OnInit {
 
   FinancialRevenue: FinancialRevenueReportItem = new FinancialRevenueReportItem();
   filter: RevenueReportPar = new RevenueReportPar();
-  @Input() companyChangeSubject: Subject<any>;
+  @Input() companyId: string;
   constructor(
     private accFinancialRevenueService: AccountFinancialRevenueReportService
   ) { }
 
   ngOnInit() {
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-    this.filter.dateFrom = new Date(y, m, 1);
-    this.filter.dateTo = new Date(y, m + 1, 0);
+    this.filter.dateFrom = new Date();
+    this.filter.dateTo = new Date();
 
     this.loadReport();
-
-    this.companyChangeSubject.subscribe((v: any) => {
-      this.filter.companyId = v? v.id : '';
-      this.loadReport();
-    });
   }
 
   loadReport(){
     var val = Object.assign({}, this.filter);
-    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
-    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY-MM-DD') : null;
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY-MM-DD') : null;
+    val.companyId = this.companyId
     
     this.accFinancialRevenueService.GetRevenueReport(val).subscribe(res => {
       this.FinancialRevenue = res;

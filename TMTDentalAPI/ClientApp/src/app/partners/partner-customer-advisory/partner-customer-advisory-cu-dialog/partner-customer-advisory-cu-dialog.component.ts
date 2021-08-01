@@ -2,17 +2,19 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { result, values } from 'lodash';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { AdvisoryDefaultGet, AdvisoryService } from 'src/app/advisories/advisory.service';
 import { EmployeeBasic, EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-import { ToothDiagnosisService } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
+import { ToothDiagnosisPaged, ToothDiagnosisSave, ToothDiagnosisService } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 import {ToothDiagnosisPopoverComponent} from '../partner-customer-advisory-list/tooth-diagnosis-popover/tooth-diagnosis-popover.component'
 
 @Component({
@@ -23,6 +25,7 @@ import {ToothDiagnosisPopoverComponent} from '../partner-customer-advisory-list/
 export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
 
   @ViewChild("empCbx", { static: true }) empCbx: ComboBoxComponent;
+  @ViewChild('multiSelect', { static: true }) multiSelect: MultiSelectComponent;
   myForm: FormGroup;
   hamList: { [key: string]: {} };
   teethSelected: ToothDisplay[] = [];
@@ -41,6 +44,10 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     { name: "Hàm dưới", value: "lower_jaw" },
     { name: "Chọn răng", value: "manual" },
   ];
+  productSource: any;
+  toothDianosisSource: any;
+  searchUpdateToothDianosis = new Subject<string>();
+  searchUpdateProduct = new Subject<string>();
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -52,6 +59,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     private notificationService: NotificationService,
     private toothDiagnosisService: ToothDiagnosisService,
     private employeeService: EmployeeService,
+    private productService: ProductService,
     private router: Router
   ) { }
 
@@ -79,7 +87,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       })
       
       this.loadEmployees();
-
+      this.getPageDiagnosis('');
+      this.getPageProduct('');
       if(this.id) {
         this.getById();
       } else {
@@ -98,6 +107,32 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
         this.filterData = result.items;
         this.empCbx.loading = false;
       });
+    this.searchUpdateToothDianosis.pipe(
+      debounceTime(300),
+      distinctUntilChanged())
+      .subscribe(value => {
+        this.searchToothDiagnosis(value);
+      });
+    this.searchUpdateProduct.pipe(
+      debounceTime(300),
+      distinctUntilChanged())
+      .subscribe(value => {
+        this.getPageProduct(value);
+      });
+
+    this.f.toothDiagnosis.valueChanges.subscribe(data => {
+      var ids = data.map(x => x.id);
+      this.toothDiagnosisService.getProducts(ids).subscribe(result => {
+        var products = this.f.product.value;
+        products = products.filter(elem => this.productSelectedFromApi.findIndex(x => x.id == elem.id) == -1);
+        products = products.concat(result);
+        var unique = products.filter(function (elem, index, self) {
+          return index === self.findIndex(x => x.id == elem.id);
+        })
+        this.f.product.setValue(unique);
+        this.productSelectedFromApi = result;
+      })
+    })
   }
 
   get f() { return this.myForm.controls; }
@@ -183,10 +218,25 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     return this.employeeService.getEmployeePaged(val);
   }
 
+  searchToothDiagnosis(q?: string){
+    var val = new ToothDiagnosisPaged();
+    val.limit = 10;
+    val.offset = 0;
+    val.search = q || '';
+    this.toothDiagnosisService.getPaged(val).subscribe(
+    result => {
+      this.toothDianosisSource = result.items;
+    }, error => {
+      console.log(error);
+    });
+  }
+
   loadEmployees() {
     this.searchEmployees().subscribe(result => {
       this.filterData = result.items;
-    })
+    }, error => {
+      console.log(error);
+    });
   }
 
   onChangeToothCategory(value: any) {
@@ -267,9 +317,14 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     });
   }
 
+  onChange(data){
+    console.log(data);
+    
+  }
 
   updateDiagnosis(data) {
     this.f.toothDiagnosis.setValue(data);
+    
     var ids = data.map(x => x.id);
     this.toothDiagnosisService.getProducts(ids).subscribe(result => {
       var products = this.f.product.value;
@@ -300,6 +355,71 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   viewPartner() {
     this.router.navigate(['/partners/customer/'+this.customerId+'/overview']);
     this.activeModal.dismiss();
+  }
+
+  getPageDiagnosis(q?: string){
+    var val = new ToothDiagnosisPaged();
+    val.limit = 10;
+    val.offset = 0;
+    val.search = q || '';
+    this.toothDiagnosisService.getPaged(val).subscribe(result => {
+      this.toothDianosisSource = result.items;
+    })
+  }
+
+  getPageProduct(q?:string){
+    var val = new ProductPaged();
+    val.limit = 0;
+    val.offset = 0;
+    val.search = q || '';
+    val.type2 = 'service';
+    this.productService.getPaged(val).subscribe(result => {
+      this.productSource = result.items;
+    })
+  }
+
+  public valueNormalizer = (text$: Observable<string>): any => text$.pipe(
+    switchMap((text: string) => {
+      // Search in values
+      const matchingValue: any = this.f.toothDiagnosis.value.find((item: any) => {
+        // Search for matching item to avoid duplicates
+        return item['name'].toLowerCase() === text.toLowerCase();
+      });
+
+      if (matchingValue) {
+        // Return the already selected matching value and the component will remove it
+        return of(matchingValue);
+      }
+
+      // Search in data
+      const matchingItem: any = this.toothDianosisSource.find((item: any) => {
+        return item['name'].toLowerCase() === text.toLowerCase();
+      });
+
+      if (matchingItem) {
+        return of(matchingItem);
+      } else {
+        
+        return of(text).pipe(switchMap(this.service$));
+      }
+    })
+  )
+
+  public service$ = (text: string): any => {
+    var val = new ToothDiagnosisSave();
+    val.productIds = [];
+    val.name = text;
+    return this.toothDiagnosisService.create(val).pipe(
+      map((result: any) => {
+        console.log(result);
+        
+        return {
+          id: result.id,
+          name: result.name
+        }
+      })
+    );
+      
   }
   
 }

@@ -299,8 +299,14 @@ export class HrPayslipRunFormComponent implements OnInit {
   }
 
   printAllEmpSalary() {
+    const slipIds = this.slipsFormArray.value.filter(x => x.isCheck === true).map(x => x.id);
+    if (!slipIds.length) {
+      this.notify('error', 'Bạn chưa chọn nhân viên nào để in, vui lòng chọn nhân viên để tiếp tục.');
+      return false;
+    }
 
     var value = this.getFormData();
+    if (value)
     this.hrPaysliprunService.printAllEmpSalary(this.id, value).subscribe(
       (result:any) => {
         if (result) {
@@ -345,7 +351,7 @@ export class HrPayslipRunFormComponent implements OnInit {
 
       if(res.data.length > 0) {
 
-        const modalRef = this.modalService.open(HrSalaryPaymentComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        const modalRef = this.modalService.open(HrSalaryPaymentComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth() + 1}/${this.dateFC.value.getFullYear()}`;
         modalRef.componentInstance.payslipIds = slipIds;
         modalRef.componentInstance.payments = res.data;

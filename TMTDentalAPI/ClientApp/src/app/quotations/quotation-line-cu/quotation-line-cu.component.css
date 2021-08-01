@@ -105,6 +105,7 @@
     border-radius: 4px;
     color: #007BFF !important;
     max-width: 350px;
+    width: 250px;
 }
 
 .btn-radio {
@@ -118,4 +119,14 @@
 .button_actions .btn {
     padding: 0.125rem 0.35rem;
     margin-right: 5px;
+}
+
+.border_red{
+    border: 1px solid red;
+}
+.border_green{
+    border: 1px solid green;
+}
+.o_form_view .o_group.o_inner_group>tbody>tr>td {
+    padding: 0 7px 7px 0 !important;
 }

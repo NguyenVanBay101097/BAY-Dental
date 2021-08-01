@@ -38,6 +38,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type { get; set; }
         public string States { get; set; }
         public bool? Active { get; set; }
+        public Guid? CompanyId { get; set; }
 
     }
 
@@ -80,6 +81,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool Active { get; set; }
         public string ProductNames { get; set; }
         public string ProductCategoryNames { get; set; }
-
+        public string ApplyOn { get; set; }
     }
 }

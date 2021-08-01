@@ -8,23 +8,23 @@
     <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <div class="d-flex">
-                    <!-- <label class="btn-sm btn btn-outline-primary active mr-2" (click)="onItemChange('esms')">
+                <!-- <div class="d-flex">
+                     <label class="btn-sm btn btn-outline-primary active mr-2" (click)="onItemChange('esms')">
                         <input type="radio" checked autocomplete="off">E-SMS
                     </label>
                     <label class="btn-sm btn btn-outline-success" (click)="onItemChange('fpt')">
                         <input type="radio" autocomplete="off">FPT
                     </label>
-                -->
+                
 
-                    <div style="width:165px; margin-left:16px;">
+                    <div style="width:150px;">
                         <label class="o_form_label">Nhà cung cấp</label>
                     </div>
-                    <select (change)="onItemChange($event.target.value)" class="form-control" style="width: 372px;">
+                    <select (change)="onItemChange($event.target.value)" class="form-control" style="width: 419px;">
                         <option selected value="fpt">FPT</option>
-                        <!-- <option value="esms">ESMS</option> -->
+                        <option value="esms">ESMS</option>
                     </select>
-                </div>
+                </div> -->
                 <div class="o_group">
                     <div *ngIf="switchBrand">
                         <ng-template [ngIf]="switchBrand=='fpt'">
@@ -32,10 +32,21 @@
                                 <tbody>
                                     <tr>
                                         <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Nhà cung cấp</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <select (change)="onItemChange($event.target.value)" class="form-control">
+                                                <option selected value="fpt">FPT</option>
+                                                <!-- <option value="esms">ESMS</option> -->
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">Brand Name</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control" formControlName="brandName">
+                                            <input type="text"  [class.border-danger]="submitted && f.brandName.value==''" class="form-control" formControlName="brandName">
                                             <div *ngIf="f.brandName.errors && (f.brandName.touched || f.brandName.dirty || submitted)"
                                                 class="text-danger">
                                                 <div *ngIf="f.brandName.errors.required">Nhập Brandname</div>
@@ -48,7 +59,7 @@
                                         </td>
                                         <td colspan="1" style="width: 100%;">
                                             <input type="text" class="form-control"
-                                                [class.border-outline]="f.clientId.value==''"
+                                            [class.border-danger]="submitted && f.clientId.value==''"
                                                 formControlName="clientId">
                                             <div *ngIf="f.clientId.errors && (f.clientId.touched || f.clientId.dirty || submitted)"
                                                 class="text-danger">
@@ -63,7 +74,7 @@
                                         </td>
                                         <td colspan="1" style="width: 100%;">
                                             <input type="text" class="form-control"
-                                                [class.border-outline]="f.clientSecret.value==''"
+                                            [class.border-danger]="submitted && f.clientSecret.value==''"
                                                 formControlName="clientSecret">
                                             <div *ngIf="f.clientSecret.errors && (f.clientSecret.touched || f.clientSecret.dirty || submitted)"
                                                 class="text-danger">
@@ -161,7 +172,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Kết nối</button>
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

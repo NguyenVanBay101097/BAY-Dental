@@ -5,3 +5,26 @@
 .t_title {
     color: #0B92F3;
  }
+
+ .border_card{
+     border-left: 3px solid #007BFF;
+     background-color: #F9FBFF
+ }
+
+ label{
+     margin-bottom: 0!important;
+ }
+ 
+ .opacity-8{
+    opacity: 0.8;
+  }
+
+  .state{
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+  }

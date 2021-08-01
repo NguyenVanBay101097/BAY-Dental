@@ -395,16 +395,16 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Labos.Any(s => s.State == val.LaboState));
             }
 
+            var totalItems = await query.CountAsync();
 
             query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
-
             if (val.Limit > 0)
             {
                 query = query.Take(val.Limit).Skip(val.Offset);
             }
-            var items = await _mapper.ProjectTo<SaleOrderLineBasic>(query).ToListAsync();
 
-            var totalItems = await query.CountAsync();
+            var items = await _mapper.ProjectTo<SaleOrderLineBasic>(query).ToListAsync();
+           
             return new PagedResult2<SaleOrderLineBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
@@ -442,7 +442,7 @@ namespace Infrastructure.Services
                 throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
 
             if (self.Any(x => x.PaymentHistoryLines.Any(x => x.SaleOrderPayment.State == "posted")))
-                throw new Exception("Không thể xóa dịch vụ đã thanh toán");
+                throw new Exception("Bạn không thể xóa dịch vụ đã thanh toán");
 
             foreach (var line in self.Where(x => x.IsRewardLine))
             {
@@ -999,7 +999,7 @@ namespace Infrastructure.Services
                         foreach (var child in promotion.Lines)
                         {
                             child.Amount = promotion.Amount;
-                            child.PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0);
+                            child.PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount) : 0);
                         }
                     }
                 }
@@ -1082,6 +1082,126 @@ namespace Infrastructure.Services
             }).ToListAsync();
 
             return result;
+        }
+
+        public async Task<Dictionary<DateTime, IEnumerable<SaleOrderLineHistoryRes>>> GetHistory(SaleOrderLineHistoryReq val)
+        {
+            var query = SearchQuery(x => x.Order.State == "sale" || x.Order.State == "done");
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.OrderPartnerId == val.PartnerId);
+            var resList = await query.Include(x => x.Employee).Include(x => x.Order)
+                .Include("SaleOrderLineToothRels.Tooth").ToListAsync();
+            var resDict = resList.GroupBy(x => x.Order.DateOrder.Date, (key, val) => new
+            {
+                Key = key,
+                Value = _mapper.Map<IEnumerable<SaleOrderLineHistoryRes>>(val)
+            }).ToDictionary(x => x.Key, x => x.Value);
+            return resDict;
+        }
+
+        public async Task UpdateOrderLine(Guid id, SaleOrderLineSave val)
+        {
+            var entity = await SearchQuery(x=> x.Id == id).Include(x => x.SaleOrderLineToothRels).FirstOrDefaultAsync();
+            if (entity == null)
+                throw new Exception("Không tìm thấy dịch vụ!");
+            _mapper.Map(val, entity);
+            entity.SaleOrderLineToothRels.Clear();
+            if (val.ToothType == "manual")
+            {
+                foreach (var toothId in val.ToothIds)
+                {
+                    entity.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                    {
+                        ToothId = toothId
+                    });
+                }
+            }
+            await UpdateAsync(entity);
+            //compute sale order
+            var orderObj = GetService<ISaleOrderService>();
+            var order = await orderObj.SearchQuery(x => x.Id == entity.OrderId)
+               .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+               .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+               .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
+               .Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
+               .FirstOrDefaultAsync();
+
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            await orderObj.ComputeToUpdateSaleOrder(order);
+            await orderObj.UpdateAsync(order);
+        }
+
+        public async Task<SaleOrderLine> CreateOrderLine(SaleOrderLineSave val)
+        {
+            var saleLine = _mapper.Map<SaleOrderLine>(val);
+            saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
+
+            if (val.ToothType == "manual")
+            {
+                foreach (var toothId in val.ToothIds)
+                {
+                    saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                    {
+                        ToothId = toothId
+                    });
+                }
+            }
+
+            await CreateAsync(saleLine);
+
+            //compute sale order
+            var orderObj = GetService<ISaleOrderService>();
+            var order = await orderObj.SearchQuery(x => x.Id == saleLine.OrderId)
+               .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+               .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+               .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
+               .Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
+               .FirstOrDefaultAsync();
+
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            await orderObj.ComputeToUpdateSaleOrder(order);
+            await orderObj.UpdateAsync(order);
+
+            return saleLine;
+        }
+
+        public async Task RemoveOrderLine(Guid id)
+        {
+            var saleLine = await SearchQuery(x => x.Id == id && !x.IsCancelled).Include(x => x.SaleOrderLineToothRels).FirstOrDefaultAsync();
+            if (saleLine == null)
+                throw new Exception("Không tìm thấy dịch vụ!");
+
+            var promotionObj = GetService<ISaleOrderPromotionService>();
+            var dkStepObj = GetService<IDotKhamStepService>();
+            var removeDkSteps = await dkStepObj.SearchQuery(x => x.SaleLineId.Value == id).ToListAsync();
+            if (removeDkSteps.Any(x => x.IsDone))
+                throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
+
+            await dkStepObj.DeleteAsync(removeDkSteps);
+
+            ///remove promotions in saleorderline
+
+            var promotion_ids = await promotionObj.SearchQuery(x => x.SaleOrderId.HasValue && x.SaleOrderLineId.Value == id).Select(x => x.Id).ToListAsync();
+            if (promotion_ids.Any())
+                await promotionObj.RemovePromotion(promotion_ids);
+
+            await Unlink(new List<Guid>() { id});
+
+            //compute sale order
+            var orderObj = GetService<ISaleOrderService>();
+            var order = await orderObj.SearchQuery(x => x.Id == saleLine.OrderId)
+               .Include(x => x.Promotions).ThenInclude(x => x.Lines)
+               .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+               .Include(x => x.OrderLines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
+               .Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
+               .FirstOrDefaultAsync();
+
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            await orderObj.ComputeToUpdateSaleOrder(order);
+            await orderObj.UpdateAsync(order);
         }
     }
 }

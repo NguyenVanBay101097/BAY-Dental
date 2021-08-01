@@ -12,6 +12,6 @@ namespace Infrastructure.Services
     {
         Task<IEnumerable<MemberLevel>> Get();
         Task UpdateMember(IEnumerable<MemberLevelSave> entities);
-
+        Task<PagedResult2<MemberLevelSimple>> AutoComplete(MemberLevelAutoCompleteReq val);
     }
 }

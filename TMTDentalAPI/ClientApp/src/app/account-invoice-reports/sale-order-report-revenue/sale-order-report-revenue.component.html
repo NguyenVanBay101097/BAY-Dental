@@ -1,50 +1,53 @@
-<div class="flex-1-1-100 right border p-2 ml-2 d-flex flex-column w-100">
-    <h5 class="flex-0-0-auto">Dự kiến doanh thu</h5>
-    <div class="total d-flex">
-        <div class="border mr-2 px-5 py-2 text-center">
-            <label class="mb-0">Tổng điều trị</label>
-            <h5 class="text-info">{{sumRevenue.amountTotal | number}}</h5>
-        </div>
-        <div class="border mr-2 px-5 py-2 text-center">
-            <label class="mb-0">Tổng thanh toán</label>
-            <h5 class="text-success">{{sumRevenue.amountPaid | number}}</h5>
-        </div>
-        <div class="border mr-2 px-5 py-2 text-center">
-            <label class="mb-0">Dự kiến thu</label>
-            <h5 class="text-danger">{{sumRevenue.residual | number}}</h5>
-        </div>
+<div class="card">
+    <div class="card-body">
+        <h5 class="flex-0-0-auto">Dự kiến doanh thu</h5>
+        <div class="total d-flex">
+            <div class="border mr-2 px-5 py-2 text-center">
+                <label class="mb-0">Tổng điều trị</label>
+                <h5 class="text-info">{{sumRevenue.amountTotal | number}}</h5>
+            </div>
+            <div class="border mr-2 px-5 py-2 text-center">
+                <label class="mb-0">Tổng thanh toán</label>
+                <h5 class="text-success">{{sumRevenue.amountPaid | number}}</h5>
+            </div>
+            <div class="border mr-2 px-5 py-2 text-center">
+                <label class="mb-0">Dự kiến thu</label>
+                <h5 class="text-danger">{{sumRevenue.residual | number}}</h5>
+            </div>
 
+        </div>
+        <div class="filter d-flex flex-0-0-auto mt-2">
+            <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+            </kendo-combobox>
+            <!-- <button class="btn btn-primary mr-2 btn-sm" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
+                file</button> -->
+            <button class="btn btn-primary btn-sm" (click)="printReport()">In báo cáo</button>
+            <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo số phiếu, khách hàng" class="ml-auto form-control w-50 form-control-sm">
+        </div>
+        <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
+            <kendo-grid-column field="name" title="Số phiếu" width="120">
+            </kendo-grid-column>
+            <kendo-grid-column field="partnerName" title="Khách hàng" width="120">
+
+            </kendo-grid-column>
+            <kendo-grid-column field="amountTotal" class="text-right" title="Tiền điều trị" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.amountTotal || 0 | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="totalPaid" class="text-right" title="Thanh toán" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{(dataItem.amountTotal - dataItem.residual) | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="residual" class="text-right" title="Còn lại" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.residual || 0 | number}}
+                </ng-template>
+            </kendo-grid-column>
+
+            <kendo-grid-excel fileName="baocaodukienthu.xlsx" [fetchData]="allData">
+            </kendo-grid-excel>
+        </kendo-grid>
     </div>
-    <div class="filter d-flex flex-0-0-auto mt-2">
-        <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
-        </kendo-combobox>
-        <button class="btn btn-primary" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
-            file</button>
-        <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo số phiếu" class="ml-auto form-control w-50">
-    </div>
-    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Số phiếu" width="120">
-        </kendo-grid-column>
-        <kendo-grid-column field="partnerName" title="Khách hàng" width="120">
-
-        </kendo-grid-column>
-        <kendo-grid-column field="amountTotal" class="text-right" title="Tiền điều trị" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.amountTotal || 0 | number}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="totalPaid" class="text-right" title="Tiền thanh toán" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.totalPaid || 0 | number}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="residual" class="text-right" title="Còn lại" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.residual || 0 | number}}
-            </ng-template>
-        </kendo-grid-column>
-
-        <kendo-grid-excel fileName="baocaodukienthu.xlsx" [fetchData]="allData">
-        </kendo-grid-excel>
-    </kendo-grid>
 </div>

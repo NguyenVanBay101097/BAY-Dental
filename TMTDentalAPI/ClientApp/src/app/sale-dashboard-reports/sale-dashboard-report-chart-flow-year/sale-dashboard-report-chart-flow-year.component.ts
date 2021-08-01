@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin } from 'rxjs';
 import { RevenueReportSearch, RevenueReportService } from 'src/app/revenue-report/revenue-report.service';
 
@@ -7,7 +8,7 @@ import { RevenueReportSearch, RevenueReportService } from 'src/app/revenue-repor
   templateUrl: './sale-dashboard-report-chart-flow-year.component.html',
   styleUrls: ['./sale-dashboard-report-chart-flow-year.component.css']
 })
-export class SaleDashboardReportChartFlowYearComponent implements OnInit, OnChanges {
+export class SaleDashboardReportChartFlowYearComponent implements OnInit {
 
   @Input() companyId: string;
   curYear = new Date().getFullYear();
@@ -21,41 +22,42 @@ export class SaleDashboardReportChartFlowYearComponent implements OnInit, OnChan
   public listYears: any[] = [this.curYear, this.oldYear];
   constructor(
     private revenueReportService: RevenueReportService,
+    private intlService: IntlService
   ) { }
-  ngOnChanges(changes: SimpleChanges): void {
-    this.loadData();
-  }
 
   ngOnInit() {
     this.loadData();
   }
 
   loadData() {
-    forkJoin([this.loadReportRevenueYear(this.curYear), this.loadReportRevenueYear(this.oldYear)]).subscribe(results => {
+    forkJoin(this.listYears.map(x => this.loadReportRevenueYear(x))).subscribe(results => {
       results.forEach(res => {
-        if (res) {
-          if (res.details) {
-            res.details.forEach(detail => {
-              if (!this.reportYearDicts[detail.year]) {
-                this.reportYearDicts[detail.year] = [];
-              }
-              this.reportYearDicts[detail.year].push(detail);
-            });
+        var index = results.indexOf(res);
+        var year = this.listYears[index];
+
+        var data = [];
+        for (var i = 1; i <= 12; i++) {
+          var details = res.details.filter(x => x.month == i);
+          if (details.length) {
+            data.push({ month: details[0].month, year: year, balance: details[0].balance });
+          } else {
+            data.push({ month: i, year: year, balance: 0 });
           }
         }
+
+        this.reportYearDicts[year] = data;
       });
-      this.reportCurrentYear = results[0] ? results[0].details : [];
-      this.reportOldYear = results[1] ? results[1].details : [];
-      this.defindMonthOfYear();
     });
   }
 
   loadReportRevenueYear(year) {
+    var month = new Date().getMonth();
+    var monthEnd = new Date(year, month, new Date(year, month + 1, 0).getDate());
     var val = new RevenueReportSearch();
-    val.companyId = this.companyId ? this.companyId : '';
+    val.companyId = this.companyId || '';
     val.groupBy = "date:month";
     val.dateFrom = `${year}-01-01`
-    val.dateTo = `${year}-12-31T23:59`
+    val.dateTo = this.intlService.formatDate(monthEnd, 'yyyy-MM-dd');
     return this.revenueReportService.getReport(val);
   }
 

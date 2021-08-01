@@ -22,7 +22,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrderPaymentSave, SaleOrderPayment>()
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.Lines, x => x.Ignore());
+                .ForMember(x => x.Lines, x => x.Ignore())
+                .ForMember(x => x.JournalLines, x => x.MapFrom(s=>s.JournalLines.Where(c=>c.Amount > 0)));
 
             CreateMap<SaleOrderPaymentDisplay, SaleOrderPayment>()
                 .ForMember(x => x.Id, x => x.Ignore())

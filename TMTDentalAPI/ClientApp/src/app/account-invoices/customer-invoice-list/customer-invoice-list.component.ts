@@ -120,7 +120,7 @@ export class CustomerInvoiceListComponent implements OnInit {
     var val = new AccountRegisterPaymentDefaultGet();
     val.invoiceIds = this.selectedIds;
     this.registerPaymentService.defaultGet(val).subscribe(result => {
-      let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Thanh toán';
       modalRef.componentInstance.defaultVal = result;
       modalRef.result.then(() => {
@@ -136,7 +136,7 @@ export class CustomerInvoiceListComponent implements OnInit {
       return false;
     }
 
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa hóa đơn';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {

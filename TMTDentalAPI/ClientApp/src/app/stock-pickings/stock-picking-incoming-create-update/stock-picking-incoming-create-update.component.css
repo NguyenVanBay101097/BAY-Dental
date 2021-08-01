@@ -5,3 +5,58 @@
 .flex-1-1-100 {
     flex: 1 1 100%;
 }
+
+.form-check-input:checked+.form-check-label {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.form-check{
+    padding: 0;
+}
+
+.section_right table tbody tr{
+    border-bottom: 1px solid #dee2e6;
+}
+
+.section_right table tbody tr:last-child{
+    border-bottom: none;
+}
+
+.group_product{
+    padding: 4px;
+}
+
+.btn.btn_none_radius{
+    border-bottom-left-radius:0 !important;
+    border-bottom-right-radius:0 !important;
+}
+
+.text_bold{
+    font-weight: 500;
+    color: #007BFF;
+    font-size: 1.14rem;
+}
+
+.t_head{
+    padding-left: 20px;
+    background-color: #F2F2F2;
+}
+
+.t_tilte{
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 10px;
+    margin: 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table .th-light{
+    background-color: #F8F9FA;
+    border-color: #F8F9FA;
+}
+
+.table .th-light th{
+    font-weight: normal;
+}

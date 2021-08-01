@@ -25,7 +25,7 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
   items: AccountCommonPartnerReportItem[] = [];
   gridData: GridDataResult;
   limit = 20;
-  skip = 0;
+  skip = 0; 
   dateFrom: Date;
   dateTo: Date;
   resultSelection: string;
@@ -52,11 +52,11 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
   ngOnInit() {
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
-
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 
@@ -96,12 +96,14 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
 
   onSelectCompany(e){
     this.companyId = e ? e.id : null;
+    this.skip = 0;
     this.loadDataFromApi();
   }
   
   searchChangeDate(value: any) {
     this.dateFrom = value.dateFrom;
     this.dateTo = value.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
@@ -114,6 +116,7 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     val.search = this.search ? this.search : '';
     val.resultSelection = this.resultSelection;
     val.companyId = this.companyId || '';
+    val.display = "";
 
     this.reportService.getSummary(val).subscribe(res => {
       this.items = res;
@@ -127,7 +130,7 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadItems();
+    this.loadItems(); 
   }
 
   loadItems(): void {
@@ -144,6 +147,8 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     val.partnerId = null;
     val.search = this.search ? this.search : '';
     val.resultSelection = this.resultSelection;
+    val.companyId = this.companyId || '';
+    val.display = "";
 
     this.reportService.exportExcelFile(val).subscribe((res: any) => {
       const filename = this.resultSelection == 'customer'? `BaoCaoCongNoKhachHang` : 'BaoCaoCongNoNCC';

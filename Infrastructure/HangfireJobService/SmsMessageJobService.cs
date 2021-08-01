@@ -37,7 +37,7 @@ namespace Infrastructure.HangfireJobService
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var smsMessageService = new SmsMessageService(context, null, null,
+                var smsMessageService = new SmsMessageService(context, null, null,null, null,
                             new EfRepository<SaleOrderLine>(context),
                             new EfRepository<SaleOrder>(context),
                             new EfRepository<SmsMessage>(context),

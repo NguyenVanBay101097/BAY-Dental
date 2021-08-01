@@ -7,35 +7,31 @@ import { RevenueReportSearch, RevenueReportService } from 'src/app/revenue-repor
   templateUrl: './sale-dashboard-report-chart-flow-month.component.html',
   styleUrls: ['./sale-dashboard-report-chart-flow-month.component.css']
 })
-export class SaleDashboardReportChartFlowMonthComponent implements OnInit, OnChanges {
-  @Input() dateTo: string;
-  @Input() dateFrom: string;
+export class SaleDashboardReportChartFlowMonthComponent implements OnInit {
+  @Input() dateTo: Date;
+  @Input() dateFrom: Date;
   @Input() companyId: string;
 
   reportViewDateOfMonth: any[] = [];
   constructor(
     private revenueReportService: RevenueReportService,
+    private intlService: IntlService
   ) { }
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.dateFrom && this.dateTo) {
-      this.loadData();
-      this.month = new Date(this.dateFrom).getMonth() + 1;
-    }
-  }
 
   month: number;
 
   ngOnInit() {
-    this.month = new Date(this.dateFrom).getMonth() + 1;
-    if (this.dateFrom && this.dateTo) {
-      this.loadData();
-    }
+    this.loadData();
   }
 
   loadData() {
+    if (!this.dateFrom || !this.dateTo) {
+      return false;
+    }
+    
     var val = new RevenueReportSearch();
-    val.dateFrom = this.dateFrom;
-    val.dateTo = this.dateTo;
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
     val.companyId = this.companyId ? this.companyId : '';
     val.groupBy = "date:day";
     this.revenueReportService.getReport(val).subscribe(
@@ -43,13 +39,12 @@ export class SaleDashboardReportChartFlowMonthComponent implements OnInit, OnCha
         if (result && result.details) {
           this.defindDateOfMonth(result.details);
         }
-        console.log(result);
       }
     )
   }
 
   defindDateOfMonth(details) {
-    this.reportViewDateOfMonth = [];
+    var list = [];
     for (let index = 1; index <= new Date(this.dateTo).getDate(); index++) {
       var obj = {
         day: index,
@@ -60,10 +55,12 @@ export class SaleDashboardReportChartFlowMonthComponent implements OnInit, OnCha
       var model = details.find(x => x.day == index);
       if (model) {
         obj.data = model.balance;
-        this.reportViewDateOfMonth.push(obj);
+        list.push(obj);
       } else {
-        this.reportViewDateOfMonth.push(obj);
+        list.push(obj);
       }
     }
+
+    this.reportViewDateOfMonth = list;
   }
 }

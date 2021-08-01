@@ -13,31 +13,27 @@ export class SmsPersonalizedTabsComponent implements OnInit {
   listTabs = {
     "partner": [
       { name: 'Danh xưng', value: '{danh_xung}' },
-      { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
+      { name: 'Tên', value: '{ten}' },
       { name: 'Ngày sinh', value: '{ngay_sinh}' }
     ],
     "appointment": [
-      { name: 'Danh xưng', value: '{danh_xung}' },
+      { name: 'Danh xưng khách hàng', value: '{danh_xung_khach_hang}' },
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
       { name: 'Giờ hẹn', value: '{gio_hen}' },
       { name: 'Ngày hẹn', value: '{ngay_hen}' },
-      { name: 'Bác sĩ', value: '{bac_si_lich_hen}' }
+      { name: 'Tên bác sĩ', value: '{ten_bac_si}' }
     ],
     "saleOrderLine": [
-      { name: 'Danh xưng', value: '{danh_xung}' },
+      { name: 'Danh xưng khách hàng', value: '{danh_xung_khach_hang}' },
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
       { name: 'Số phiếu điều trị', value: '{so_phieu_dieu_tri}' },
-      { name: 'Dịch vụ', value: '{dich_vu}' },
-      { name: 'Bác sĩ', value: '{bac_si}' }
+      { name: 'Tên dịch vụ', value: '{ten_dich_vu}' },
+      { name: 'Tên bác sĩ', value: '{ten_bac_si}' }
     ],
     "saleOrder": [
-      { name: 'Danh xưng', value: '{danh_xung}' },
+      { name: 'Danh xưng khách hàng', value: '{danh_xung_khach_hang}' },
       { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
     ],
-    "partnerCampaign": [
-      { name: 'Danh xưng', value: '{danh_xung}' },
-      { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
-    ]
   }
   constructor() { }
 

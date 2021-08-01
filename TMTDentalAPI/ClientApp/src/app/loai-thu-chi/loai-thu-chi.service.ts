@@ -15,7 +15,7 @@ export class loaiThuChiBasic {
   name: string;
   code: string;
   note: string;
-  isInclude: boolean;
+  isAccounting: boolean;
 }
 
 export class loaiThuChiDefault { 
@@ -27,7 +27,7 @@ export class loaiThuChiSave {
   code: string;
   note: string;
   type: string;
-  isInclude: boolean;
+  isAccounting: boolean;
   accountId: string;
   account: any;
   companyId: string;
@@ -40,7 +40,7 @@ export class loaiThuChi {
   code: string;
   note: string;
   type: string;
-  isInclude: boolean;
+  isAccounting: boolean;
   accountId: string;
   account: any;
   companyId: string;

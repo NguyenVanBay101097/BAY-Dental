@@ -6,6 +6,9 @@ import { SmsCampaignService } from '../sms-campaign.service';
   selector: "app-sms-thanks-form",
   templateUrl: "./sms-thanks-form.component.html",
   styleUrls: ["./sms-thanks-form.component.css"],
+  host: {
+    class: "o_action o_view_controller",
+  },
 })
 export class SmsThanksFormComponent implements OnInit {
   campaign: any;

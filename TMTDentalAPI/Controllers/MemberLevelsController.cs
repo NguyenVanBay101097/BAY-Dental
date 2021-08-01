@@ -88,5 +88,12 @@ namespace TMTDentalAPI.Controllers
             _unitOfWorkAsync.Commit();
             return NoContent();
         } 
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> AutoComplete([FromQuery]MemberLevelAutoCompleteReq val)
+        {
+            var res = await _memberLevelService.AutoComplete(val);
+            return Ok(res);
+        }
     }
 }

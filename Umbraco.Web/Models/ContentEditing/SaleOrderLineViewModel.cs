@@ -84,4 +84,20 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateDone { get; set; }
         public string ProductName { get; set; }
     }
+
+    public class SaleOrderLineHistoryReq
+    {
+        public Guid? PartnerId { get; set; }
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class SaleOrderLineHistoryRes
+    {
+        public string Name { get; set; }
+        public IEnumerable<ToothSimple> Teeth { get; set; } = new List<ToothSimple>();
+        public string EmployeeName { get; set; }
+        public string Diagnostic { get; set; }
+        public string ToothType { get; set; }
+        public string OrderId { get; set; }
+    }
 }

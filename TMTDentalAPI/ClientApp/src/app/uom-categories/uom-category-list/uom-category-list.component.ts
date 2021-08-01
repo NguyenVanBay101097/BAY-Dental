@@ -65,7 +65,7 @@ export class UomCategoryListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(UomCategoryCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(UomCategoryCrUpComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -74,7 +74,7 @@ export class UomCategoryListComponent implements OnInit {
   }
 
   editItem(item) {
-    let modalRef = this.modalService.open(UomCategoryCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(UomCategoryCrUpComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {

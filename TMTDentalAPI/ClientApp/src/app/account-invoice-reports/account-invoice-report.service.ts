@@ -61,9 +61,6 @@ export class RevenueReportDetailPaged{
     employeeId?: string;
     assistantId?: string;
 }
-
-
-
 export class RevenueReportDetailDisplay {
 	invoiceDate: string;
 	invoiceOrigin: string;
@@ -74,6 +71,12 @@ export class RevenueReportDetailDisplay {
 	priceSubTotal: number;
 }
 
+export class SumRevenueReportPar{
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
+    partnerId?: string;
+}
 @Injectable()
 export class AccountInvoiceReportService {
     apiUrl = 'api/AccountInvoiceReports';
@@ -93,5 +96,21 @@ export class AccountInvoiceReportService {
 
     getRevenueReportDetailPaged(val:any ) {
         return this.http.get<PagedResult2<RevenueReportDetailDisplay>>(this.baseApi + this.apiUrl + "/GetRevenueReportDetailPaged", {params: new HttpParams({fromObject: val})});
+    }
+
+    getSumRevenueReport(val:any ) {
+        return this.http.get(this.baseApi + this.apiUrl + "/SumRevenueReport", {params: new HttpParams({fromObject: val})});
+    }
+    getPrintRevenueTimeReport(val:any ) {
+        return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueTimeReport",val,{ responseType: "text" });
+        
+    }
+    getPrintRevenueServiceReport(val:any ) {
+        return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueServiceReport",val,{ responseType: "text" });
+        
+    }
+    getPrintRevenueEmployeeReport(val:any ) {
+        return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueEmployeeReport",val,{ responseType: "text" });
+        
     }
 }

@@ -136,6 +136,7 @@ namespace TMTDentalAPI.Controllers
             res.CompanyId = CompanyId;
             var journal = await _journalService.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "cash").FirstOrDefaultAsync();
             res.Journal = _mapper.Map<AccountJournalSimple>(journal);
+            res.IsAccounting = false;
             return Ok(res);
         }
 

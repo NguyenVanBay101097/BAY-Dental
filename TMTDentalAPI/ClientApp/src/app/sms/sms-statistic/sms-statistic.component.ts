@@ -12,6 +12,9 @@ import { SmsMessageDetailPaged, SmsMessageDetailService } from '../sms-message-d
   selector: 'app-sms-statistic',
   templateUrl: './sms-statistic.component.html',
   styleUrls: ['./sms-statistic.component.css'],
+  host: {
+    class: "o_action o_view_controller",
+  },
 })
 export class SmsStatisticComponent implements OnInit {
   gridData: GridDataResult;
@@ -116,6 +119,7 @@ export class SmsStatisticComponent implements OnInit {
     val.search = q || '';
     val.limit = 20;
     val.offset = 0;
+    val.companyId = this.authService.userInfo.companyId;
     return this.smsCampaignService.getPaged(val);
   }
 

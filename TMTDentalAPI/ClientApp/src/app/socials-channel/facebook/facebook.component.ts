@@ -242,7 +242,7 @@ export class FacebookComponent implements OnInit {
   }
 
   showModalAddConnect() {
-    let modalRef = this.modalService.open(FacebookDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(FacebookDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.DataUser = this.DataUser;
     modalRef.componentInstance.DataFanpages = this.DataFanpages;
     modalRef.result.then((result) => {
@@ -256,7 +256,7 @@ export class FacebookComponent implements OnInit {
   }
 
   showModalCreatePartner() {
-    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm khách hàng';
 
     modalRef.result.then(res => {

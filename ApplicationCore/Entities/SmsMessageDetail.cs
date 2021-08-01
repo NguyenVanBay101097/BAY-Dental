@@ -34,6 +34,8 @@ namespace ApplicationCore.Entities
         //('sms_acc', 'Unregistered Account'),
         //('sms_blacklist', 'Blacklisted'),
         //('sms_duplicate', 'Duplicate'),
+        //('sms_ip_server', 'IP Server'),
+        //('sms_unknown', 'Unknown'),
         public string ErrorCode { get; set; }
         public Guid? SmsMessageId { get; set; }
         public SmsMessage SmsMessage { get; set; }

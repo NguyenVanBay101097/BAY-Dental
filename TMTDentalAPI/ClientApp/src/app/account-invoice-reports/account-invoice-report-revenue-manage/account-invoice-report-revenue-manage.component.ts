@@ -9,6 +9,9 @@ import { RevenueManageService } from './revenue-manage.service';
   selector: 'app-account-invoice-report-revenue',
   templateUrl: './account-invoice-report-revenue-manage.component.html',
   styleUrls: ['./account-invoice-report-revenue-manage.component.css'],
+  host: {
+    class: "o_action o_view_controller",
+  },
   providers:[RevenueManageService]
 })
 export class AccountInvoiceReportRevenueManageComponent implements OnInit {
@@ -47,13 +50,13 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
 
     rows.forEach((row, index) => {
       //colspan
-      if (row.type === 'header' || row.type == "footer") {
-        row.cells[1].colSpan = 6;
+      if (row.type == "footer") {
+        row.cells[1].colSpan = 7;
       }
       //làm màu
       if (row.type === "data" || row.type == 'footer') {
         row.cells[1].textAlign = 'right';
-        row.cells[1].colSpan = 6;
+        row.cells[1].colSpan = 7;
       }
     });
 
@@ -64,18 +67,20 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
       });
     }
 
-    var val = new RevenueReportDetailPaged();
-    val.dateFrom = filter.dateFrom ? moment(filter.dateFrom).format('YYYY/MM/DD') : '';
-    val.dateTo = filter.dateTo ? moment(filter.dateTo).format('YYYY/MM/DD') : '';
-    val.companyId = filter.companyId || '';
-    val.limit = 0;
+   
 
 
     // Fetch the data for all details
     for (let idx = 0; idx < data.length; idx++) {
+      var val = new RevenueReportDetailPaged();
+      val.dateFrom = filter.dateFrom ? moment(filter.dateFrom).format('YYYY/MM/DD') : '';
+      val.dateTo = filter.dateTo ? moment(filter.dateTo).format('YYYY/MM/DD') : '';
+      val.companyId = filter.companyId || '';
+      val.limit = 0;
+
       var dataIndex = data[idx];
-      val.dateFrom = dataIndex.date ?  moment(dataIndex.date).format('YYYY/MM/DD'): val.dateFrom ;
-      val.dateTo = dataIndex.date ?  moment(dataIndex.date).format('YYYY/MM/DD'): val.dateTo ;
+      val.dateFrom = dataIndex.invoiceDate ?  moment(dataIndex.invoiceDate).format('YYYY/MM/DD'): val.dateFrom ;
+      val.dateTo = dataIndex.invoiceDate ?  moment(dataIndex.invoiceDate).format('YYYY/MM/DD'): val.dateTo ;
       val.productId = dataIndex.productId || '';
       val.assistantId = dataIndex.employeeId || '';
       val.employeeId = dataIndex.groupBy && dataIndex.groupBy == 'employee'? dataIndex.toDetailEmployeeId : '';
@@ -93,32 +98,34 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
         // add the detail data
         for (let productIdx = lines.length - 1; productIdx >= 0; productIdx--) {
           const line = lines[productIdx];
-          rows.splice(idx + 2, 0, {
+          rows.splice(idx + 3, 0, {
             cells: [
               {},
               { value: moment(line.invoiceDate).format('DD/MM/YYYY') },
               { value: line.invoiceOrigin },
               { value: line.partnerName },
-              { value: line.employeeName || line.assistantName },
+              { value: line.employeeName },
+              { value: line.assistantName },
               { value: line.productName },
               { value: line.priceSubTotal.toLocaleString('vi'), textAlign: 'right' }
             ]
           });
         }
-
         // add the detail header
         listDetailHeaderIndex.push(idx + 2);
-        rows.splice(idx + 2, 0, {
+        rows.splice(idx + 3, 0, {
           cells: [
             {},
             Object.assign({}, headerOptions, { value: 'Ngày thanh toán', background: '#aabbcc', width: 20 }),
             Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
             Object.assign({}, headerOptions, { value: 'Khách hàng', background: '#aabbcc', width: 200 }),
-            Object.assign({}, headerOptions, { value: employeeFilter != 'none'? 'Bác sĩ/Phụ tá' : 'Bác sĩ', background: '#aabbcc', width: 200 }),
+            Object.assign({}, headerOptions, { value: 'Bác sĩ', background: '#aabbcc', width: 200 }),
+            Object.assign({}, headerOptions, { value: 'Phụ tá', background: '#aabbcc', width: 200 }),
             Object.assign({}, headerOptions, { value: 'Dịch vụ', background: '#aabbcc', width: 200 }),
             Object.assign({}, headerOptions, { value: 'Thanh toán', background: '#aabbcc', width: 200 })
           ]
         });
+        rows.splice(idx+2,0,{});
       }
       var a = workbook;
       delete a.sheets[0].columns[1].width;
@@ -136,21 +143,30 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
         width: 200
       };
       a.sheets[0].columns[6] = {
+        width: 220
+      };
+      a.sheets[0].columns[7] = {
         width: 150
       };
       rows.forEach((row, index) => {
         //colspan
-        if (row.type === 'header' || row.type == "footer") {
-          row.cells[1].colSpan = 6;
+        if (row.type == "footer") {
+          rows.splice(index,1);
           if (row.type === 'header') {
-            rows[index + 1].cells[1].colSpan = 6;
+            rows[index + 1].cells[1].colSpan = 7;
           }
+        }
+        if (index == 2){
+          rows.splice(index,1);
         }
         //làm màu
         if (row.type === "header") {
-          row.cells.forEach((cell) => {
-            cell.background = "#aabbcc";
-          });
+          if (index != 0 && index != 1){
+            row.cells.forEach((cell,index) => {
+              cell.background = "#aabbcc";
+            });
+          }
+          
         }
       });
       new Workbook(workbook).toDataURL().then((dataUrl: string) => {

@@ -102,7 +102,7 @@ export class LaboFinishLineListComponent implements OnInit {
   }
 
   deleteItem(item: LaboFinishLineBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa đường hoàn tất Labo';
     modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa đường hoàn tất Labo ${item.name}?`;
     modalRef.result.then(() => {
@@ -115,7 +115,7 @@ export class LaboFinishLineListComponent implements OnInit {
   }
 
   onImport() {
-    let modalRef = this.modalService.open(LaboFinnishLineImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable:true });
+    let modalRef = this.modalService.open(LaboFinnishLineImportComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable:true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.componentInstance.type = 'finish_line';
     modalRef.result.then(() => {

@@ -9,13 +9,18 @@ import { SharedModule } from '../shared/shared.module';
 import { PurchaseOrderService } from './purchase-order.service';
 import { PurchaseOrderLineService } from './purchase-order-line.service';
 import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order-list.component';
+import { PurchaseOrderListProductTabpanelComponent } from './purchase-order-list-product-tabpanel/purchase-order-list-product-tabpanel.component';
+import { NgbModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { PurchaseOrderAlmostOutDialogComponent } from './purchase-order-almost-out-dialog/purchase-order-almost-out-dialog.component';
 
 @NgModule({
-  declarations: [PurchaseOrderCreateUpdateComponent, PurchaseOrderListComponent],
+  declarations: [PurchaseOrderCreateUpdateComponent, PurchaseOrderListComponent, PurchaseOrderListProductTabpanelComponent, PurchaseOrderAlmostOutDialogComponent],
   imports: [
     CommonModule,
     PurchaseOrdersRoutingModule,
     FormsModule,
+    NgbModule,
+    NgbNavModule,
     ReactiveFormsModule,
     MyCustomKendoModule,
     SharedModule,
@@ -23,6 +28,12 @@ import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order
   providers: [
     PurchaseOrderService,
     PurchaseOrderLineService
+  ],
+  exports: [
+    PurchaseOrderListProductTabpanelComponent
+  ],
+  entryComponents: [
+    PurchaseOrderAlmostOutDialogComponent
   ]
 })
 export class PurchaseOrdersModule { }

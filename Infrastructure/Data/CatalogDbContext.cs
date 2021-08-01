@@ -302,6 +302,7 @@ namespace Infrastructure.Data
 
 
         public DbSet<Agent> Agents { get; set; }
+        public DbSet<PartnerInfo> PartnerInfos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -547,6 +548,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountTypeRelConfiguration());
             builder.ApplyConfiguration(new AccountFinancialRevenueReportAccountAccountRelConfiguration());
             builder.ApplyConfiguration(new AgentConfiguration());
+            builder.ApplyConfiguration(new PartnerInfoConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

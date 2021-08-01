@@ -60,6 +60,7 @@ export class PhieuThuChiSave {
   address: string;
   loaiThuChiId: string;
   loaiThuChi: any;
+  isAccounting: boolean;
 }
 
 export class CustomerDebtSave {
@@ -102,6 +103,7 @@ export class PhieuThuChiDisplay {
   address: string;
   loaiThuChiId: string;
   loaiThuChi: any;
+  isAccounting: boolean;
 }
 
 @Injectable({

@@ -205,7 +205,7 @@ namespace Infrastructure.Services
                 else if (field_type == "boolean")
                     valueStr = Convert.ToBoolean(value).ToString();
                 else if (field_type == "datetime")
-                    valueStr = Convert.ToDateTime(value).ToString();           
+                    valueStr = Convert.ToDateTime(value).ToString();
                 await irConfigParameter.SetParam(item.ConfigParameter, valueStr);
             }
 
@@ -213,21 +213,101 @@ namespace Infrastructure.Services
             await SetDefaultOtherFields(self, classified.Others);
 
             //Thêm dữ liệu cần thiết khi bật tắt tính năng ví dụ sms
-            foreach(var item in classified.Groups)
+            foreach (var item in classified.Groups)
             {
                 var name = item.Name;
                 var val = self.GetType().GetProperty(name).GetValue(self, null);
-                if (name == "GroupSms")
+                if (name == "GroupSms" && Convert.ToBoolean(val))
                 {
-                    var hostName = _tenant != null ? _tenant.Hostname : "localhost";
-                    var jobId = $"{hostName}_Send_Sms_message_detail";
-                    if (Equals(val, 1) || Equals(val, true))
+                    var campaignObj = GetService<ISmsCampaignService>();
+                    var modelDataObj = GetService<IIRModelDataService>();
+                    if (!campaignObj.SearchQuery().Any())
                     {
-                        RecurringJob.AddOrUpdate<ISmsMessageJobService>(jobId, x => x.RunJobFindSmsMessage(hostName), $"*/30 * * * *", TimeZoneInfo.Local);
-                    }
-                    else
-                    {
-                        RecurringJob.RemoveIfExists(jobId);
+                        //seed data
+                        var birthdayCampaign = new SmsCampaign
+                        {
+                            Name = "Chúc mừng sinh nhật",
+                        };
+
+                        var appointmentCampaign = new SmsCampaign
+                        {
+                            Name = "Nhắc lịch hẹn",
+                        };
+
+                        var thanksCustomerCampaign = new SmsCampaign
+                        {
+                            Name = "Cảm ơn khách hàng",
+                        };
+
+                        var careAfterCampaign = new SmsCampaign
+                        {
+                            Name = "Chăm sóc sau điều trị",
+                        };
+
+                        await campaignObj.CreateAsync(new List<SmsCampaign>() { birthdayCampaign, appointmentCampaign, thanksCustomerCampaign, careAfterCampaign });
+
+                        await modelDataObj.CreateAsync(new List<IRModelData>()
+                        {
+                            new IRModelData
+                            {
+                                Name = "sms_campaign_birthday",
+                                Module = "base",
+                                Model = "res.sms.campaign",
+                                ResId = birthdayCampaign.Id.ToString()
+                            },
+                            new IRModelData
+                            {
+                                Name = "sms_campaign_appointment_reminder",
+                                Module = "base",
+                                Model = "res.sms.campaign",
+                                ResId = appointmentCampaign.Id.ToString()
+                            },
+                            new IRModelData
+                            {
+                                Name = "sms_campaign_thanks_customer",
+                                Module = "base",
+                                Model = "res.sms.campaign",
+                                ResId = thanksCustomerCampaign.Id.ToString()
+                            },
+                            new IRModelData
+                            {
+                                Name = "sms_campaign_care_after_order",
+                                Module = "base",
+                                Model = "res.sms.campaign",
+                                ResId = careAfterCampaign.Id.ToString()
+                            }
+                        });
+
+                        //model and rulle
+                        var modelObj = GetService<IIRModelService>();
+                        var ruleObj = GetService<IIRRuleService>();
+                        var smsAccountModel = new IRModel { Name = "Sms Account", Model = "SmsAccount" };
+                        var smsCampaignModel = new IRModel { Name = "Sms Campaign", Model = "SmsCampaign" };
+                        var smsTemplateModel = new IRModel { Name = "Sms Template", Model = "SmsTemplate" };
+                        await modelObj.CreateAsync(new List<IRModel>() { smsAccountModel, smsCampaignModel, smsTemplateModel });
+
+                        var smsAccountRule = new IRRule
+                        {
+                            Code = "sms.sms_account_comp_rule",
+                            Name = "Sms Account company rule",
+                            ModelId = smsAccountModel.Id
+                        };
+
+                        var smsCampaignRule = new IRRule
+                        {
+                            Code = "sms.sms_campaign_comp_rule",
+                            Name = "Sms Campaign company rule",
+                            ModelId = smsCampaignModel.Id
+                        };
+
+                        var smsTemplateRule = new IRRule
+                        {
+                            Code = "sms.sms_template_comp_rule",
+                            Name = "Sms Template company rule",
+                            ModelId = smsTemplateModel.Id
+                        };
+
+                        await ruleObj.CreateAsync(new List<IRRule>() { smsAccountRule, smsCampaignRule, smsTemplateRule });
                     }
                 }
 

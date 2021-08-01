@@ -8,6 +8,7 @@ using Infrastructure.Data;
 using Infrastructure.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
@@ -35,6 +36,8 @@ namespace Infrastructure.Services
         private readonly IAsyncRepository<SaleOrder> _saleOrderRepository;
         private readonly IAsyncRepository<SmsCampaign> _smsCampaignRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpClientFactory _clientFactory;
+        private readonly IDistributedCache _cache;
 
         private readonly string SpecialCharactors = "@,_,{,},[,],|,~,\\,\\,$";
         private readonly string BacklistString = "khuyen mai,uu dai,tang,chiet khau,co hoi nhan ngay,co hoi boc tham,rut tham,trung thuong,giam***%,sale***upto,mua* tang*,giamgia,giam d," +
@@ -43,13 +46,16 @@ namespace Infrastructure.Services
         public SmsMessageService(CatalogDbContext context,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
+            IHttpClientFactory clientFactory,
+            IDistributedCache cache,
             IAsyncRepository<SaleOrderLine> saleLineRepository,
             IAsyncRepository<SaleOrder> saleOrderRepository,
             IAsyncRepository<SmsMessage> repository,
             IAsyncRepository<Partner> partnerRepository,
             IAsyncRepository<SmsMessageDetail> messageDetailRepository,
             IAsyncRepository<Appointment> appointmentRepository,
-            IAsyncRepository<SmsCampaign> smsCampaignRepository)
+            IAsyncRepository<SmsCampaign> smsCampaignRepository         
+            )
         {
             _mapper = mapper;
             _context = context;
@@ -61,6 +67,8 @@ namespace Infrastructure.Services
             _messageDetailRepository = messageDetailRepository;
             _appointmentRepository = appointmentRepository;
             _smsCampaignRepository = smsCampaignRepository;
+            _clientFactory = clientFactory;
+            _cache = cache;
         }
 
         private IQueryable<SmsMessage> GetQueryable(SmsMessagePaged val)
@@ -222,7 +230,8 @@ namespace Infrastructure.Services
                 _context.Entry(self).Collection(s => s.SmsMessageAppointmentRels).Load();
                 var appointmentIds = self.SmsMessageAppointmentRels.Select(x => x.AppointmentId).ToList();
                 objs = await _appointmentRepository.SearchQuery(x => appointmentIds.Contains(x.Id))
-                    .Include(x => x.Partner)
+                    .Include(x => x.Doctor)
+                    .Include(x => x.Partner).ThenInclude(x => x.Title)
                     .ToListAsync();
 
                 dict = XuLyNoiDungLichHen(self.Body, (IEnumerable<Appointment>)objs);
@@ -232,6 +241,7 @@ namespace Infrastructure.Services
                 _context.Entry(self).Collection(s => s.SmsMessageSaleOrderLineRels).Load();
                 var saleLinesIds = self.SmsMessageSaleOrderLineRels.Select(x => x.SaleOrderLineId).ToList();
                 objs = await _saleLineRepository.SearchQuery(x => saleLinesIds.Contains(x.Id))
+                    .Include(x => x.Product)
                     .Include(x => x.OrderPartner).ThenInclude(x => x.Title)
                     .Include(x => x.Order)
                     .Include(x => x.Employee)
@@ -253,9 +263,9 @@ namespace Infrastructure.Services
                 _context.Entry(self).Collection(s => s.SmsMessageSaleOrderRels).Load();
                 var saleOrderIds = self.SmsMessageSaleOrderRels.Select(x => x.SaleOrderId).ToList();
                 objs = await _saleOrderRepository.SearchQuery(x => saleOrderIds.Contains(x.Id))
-                    .Include(x => x.Partner).Select(x => x.Partner)
+                    .Include(x => x.Partner).ThenInclude(x => x.Title)
                     .ToListAsync();
-                dict = XuLyNoiDungKhachHang(self.Body, (IEnumerable<Partner>)objs);
+                dict = XuLyNoiDungPhieuDieuTri(self.Body, (IEnumerable<SaleOrder>)objs);
             }
             else
                 throw new Exception("not support");
@@ -264,6 +274,9 @@ namespace Infrastructure.Services
             foreach (var item in objs)
             {
                 var partner = GetPartnerFromObject(item);
+                if (string.IsNullOrEmpty(partner.Phone))
+                    continue;
+
                 var itemId = Guid.Parse(item.GetType().GetProperty("Id").GetValue(item).ToString());
                 var detail = new SmsMessageDetail
                 {
@@ -297,80 +310,41 @@ namespace Infrastructure.Services
 
             var backlists = BacklistString.Split(",");
             var specialChars = SpecialCharactors.Split(",");
-            // lấy random
-            var sessionId = StringUtils.RandomString(20);
-            var acesstoken = await GetAccessToken(account.ClientId, account.ClientSecret, sessionId);
-            if (acesstoken == null)
-                return;
 
-            var senderService = new FptSenderService(account.BrandName, acesstoken.access_token , sessionId);
+            //var senderService = new FptSenderService();
+            //var senderService = new FptSenderService(_clientFactory, account.ClientId , account.ClientSecret);
+            var senderService = new FptSmsService(_clientFactory.CreateClient());
+            senderService.AuthConfig = new FptAuthConfig(account.ClientId, account.ClientSecret, new string[] { "send_brandname", "send_brandname_otp" });
+
+
+            //Get accress token brand name send sms
+            //var access_token = await senderService.GetApiToken(account.ClientId , account.ClientSecret);
             foreach (var detail in sefts)
             {
                 //neu truong hop detail ma co noi dung trong blacklist thi chuyen sang state canceled
                 if (backlists.Any(x => detail.Body.Contains(x)) || specialChars.Any(x => detail.Body.Contains(x)))
                 {
-                    detail.State = "canceled";
-                    detail.ErrorCode = "sms_blacklist";
+                    detail.State = "error";
+                    detail.ErrorCode = "Nội dung chứa ký tự đặc biệt";
                 }
                 else
                 {
-                    var sendResult = await senderService.SendSMS(detail.Number, detail.Body);
-                    if (sendResult != null)
+                    var sendResult = await senderService.SendSms(account.BrandName, detail.Number, detail.Body);
+                    if (sendResult.Error == 0)
                     {
-                        if (!sendResult.Error.HasValue)
-                            detail.State = "sent";
-                        else
-                        {
-                            detail.State = "error";
-                            detail.ErrorCode = sendResult.Error_description;
-                        }
+                        detail.State = "sent";
+                        detail.ErrorCode = ""; //Trường hợp gửi tin nhắn lại thành công cần reset error code
                     }
                     else
                     {
                         detail.State = "error";
-                        detail.ErrorCode = "sms_server";
+                        detail.ErrorCode = sendResult.Error_Description;
                     }
-
                 }
             }
 
             await _messageDetailRepository.UpdateAsync(sefts);
-        }
-
-        public async Task<FPTAccessTokenResponseModel> GetAccessToken( string clientId, string clientsecret, string sessionId)
-        {
-            ////url dev test IP : 14.169.99.3
-            ///var url = "http://sandbox.sms.fpt.net/oauth2/token";
-
-            //url production IP: 14.169.99.3
-           var url = "https://app.sms.fpt.net/oauth2/token";
-
-            var data = new FPTAccessTokenRequestModel
-            {
-                client_id = clientId,
-                client_secret = clientsecret,
-                scope = "send_brandname_otp send_brandname",
-                session_id = sessionId,
-                grant_type = "client_credentials"              
-            };
-
-
-            var client = new HttpClient();
-
-            var jsonObject = JsonConvert.SerializeObject(data);
-            var stringContent = new StringContent(jsonObject, Encoding.UTF8, "application/json");
-            var result = await client.PostAsync(url, stringContent);
-
-            if (result.IsSuccessStatusCode)
-            {
-                var response = await result.Content.ReadAsStringAsync();
-                var tokenResponse = JsonConvert.DeserializeObject<FPTAccessTokenResponseModel>(response);
-
-                return tokenResponse;
-            }
-
-            return null;
-        }
+        }    
 
         private Partner GetPartnerFromObject(object item)
         {
@@ -404,11 +378,11 @@ namespace Infrastructure.Services
             foreach (var app in appointments)
             {
                 var content = template
-                    .Replace("{gio_hen}", app.Time.Split(' ').Last())
-                    .Replace("{ngay_hen}", app.Date.ToString("dd/MM/yyyy").Split(' ').Last())
-                    .Replace("{bac_si_lich_hen}", app.Doctor != null ? app.Doctor.Name.Split(' ').Last() : "")
+                    .Replace("{gio_hen}", app.Time)
+                    .Replace("{ngay_hen}", app.Date.ToString("dd/MM/yyyy"))
+                    .Replace("{ten_bac_si}", app.Doctor != null ? app.Doctor.Name.Split(' ').Last() : "")
                     .Replace("{ten_khach_hang}", app.Partner != null ? app.Partner.Name.Split(' ').Last() : "")
-                    .Replace("{danh_xung}", app.Partner != null && app.Partner.Title != null ? app.Partner.Title.Name.Split(' ').Last() : "");
+                    .Replace("{danh_xung_khach_hang}", app.Partner != null && app.Partner.Title != null ? app.Partner.Title.Name : "");
 
                 dict.Add(app.Id, content);
             }
@@ -422,11 +396,11 @@ namespace Infrastructure.Services
             foreach (var line in lines)
             {
                 var content = template
-                    .Replace("{bac_si}", line != null && line.Employee != null ? line.Employee.Name : "")
-                    .Replace("{so_phieu_dieu_tri}", line != null && line.Order != null ? line.Order.Name : "")
-                    .Replace("{dich_vu}", line != null ? line.Name : "")
+                    .Replace("{ten_bac_si}", line.Employee != null ? line.Employee.Name.Split(' ').Last() : "")
+                    .Replace("{so_phieu_dieu_tri}", line.Order != null ? line.Order.Name : "")
+                    .Replace("{ten_dich_vu}", line.Product != null ? line.Product.Name : "")
                     .Replace("{ten_khach_hang}", line.OrderPartner != null ? line.OrderPartner.Name.Split(' ').Last() : "")
-                    .Replace("{danh_xung}", line.OrderPartner != null && line.OrderPartner.Title != null ? line.OrderPartner.Title.Name.Split(' ').Last() : "");
+                    .Replace("{danh_xung_khach_hang}", line.OrderPartner != null && line.OrderPartner.Title != null ? line.OrderPartner.Title.Name : "");
                 dict.Add(line.Id, content);
             }
 
@@ -439,11 +413,26 @@ namespace Infrastructure.Services
             foreach (var partner in partners)
             {
                 var content = template
-                .Replace("{ten_khach_hang}", partner.Name.Split(' ').Last())
-                .Replace("{ngay_sinh}", partner.GetDateOfBirth().Split(' ').Last())
-                .Replace("{danh_xung}", partner.Title != null ? partner.Title.Name.Split(' ').Last() : "");
+                .Replace("{ten}", partner.Name.Split(' ').Last())
+                .Replace("{ngay_sinh}", partner.GetDateOfBirth())
+                .Replace("{danh_xung}", partner.Title != null ? partner.Title.Name : "");
 
                 dict.Add(partner.Id, content);
+            }
+
+            return dict;
+        }
+
+        public IDictionary<Guid, string> XuLyNoiDungPhieuDieuTri(string template, IEnumerable<SaleOrder> orders)
+        {
+            var dict = new Dictionary<Guid, string>();
+            foreach (var order in orders)
+            {
+                var content = template
+                .Replace("{ten_khach_hang}", order.Partner.Name.Split(' ').Last())
+                .Replace("{danh_xung_khach_hang}", order.Partner.Title != null ? order.Partner.Title.Name : "");
+
+                dict.Add(order.Id, content);
             }
 
             return dict;

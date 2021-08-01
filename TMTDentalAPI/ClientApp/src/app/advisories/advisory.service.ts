@@ -126,8 +126,11 @@ export class AdvisoryService {
     return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
   }
 
-  getPrint(ids) {
-    return this.http.get(this.baseApi + this.apiUrl + "/GetPrint", { params: new HttpParams({ fromObject: { ids: ids } }) });
+  // getPrint(ids) {
+  //   return this.http.get(this.baseApi + this.apiUrl + "/GetPrint", { params: new HttpParams({ fromObject: { ids: ids } }) });
+  // }
+  getPrint(ids){
+    return this.http.post(this.baseApi + "Advisory/Print",ids,{ responseType: "text" });
   }
 
   getToothAdvise(val?: AdvisoryToothAdvise) {

@@ -1,58 +1,99 @@
-<div class="o_cp_controller">
-    <div class="o_control_panel">
-        <div class="breadcrumb">
-            <div class="d-flex">
-                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchChange($event)">
-                </app-tai-date-range-filter-dropdown>
-                <button type="button" class="btn btn-primary btn-sm mx-1" (click)="exportExcelFile()">
-                    <i class="fas fa-download"></i>&nbsp;Xuất file</button>
-            </div>
+<div class="p-2 d-flex bg-white">
+    <div class="d-flex flex-fill">
+        <div class="mr-1">
+            <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                (searchChange)="onSearchChange($event)">
+            </app-tai-date-range-filter-dropdown>
         </div>
-        <div class="o_cp_searchview">
-            <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-            </div>
+        <div class="mr-1">
+            <kendo-combobox style="width: 200px;" [popupSettings]="" class="kendo-combobox-sm"
+                [placeholder]="'Tất cả sản phẩm'" [valuePrimitive]="true" [data]="filteredInventory" [valueField]="'value'" [textField]="'text'"
+                (valueChange)="inventoryChange($event)">
+            </kendo-combobox>
         </div>
-        <div class="o_cp_left">
-            <div class="o_cp_buttons">
-
-            </div>
-            <div class="o_cp_sidebar">
-            </div>
+        <div>
+            <button type="button" class="btn btn-primary btn-sm" (click)="exportExcelFile(grid)">
+                <i class="fas fa-download"></i>&nbsp;Xuất Excel</button>
         </div>
-        <div class="o_cp_right">
-
+    </div>
+    <div class="flex-fill">
+        <div class="o_searchview">
+            <i class="o_searchview_icon fa fa-search"></i>
+            <div class="o_searchview_input_container">
+                <input class="o_searchview_input" placeholder="Tìm kiếm mã, tên sản phẩm" type="text"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            </div>
         </div>
     </div>
 </div>
 
-<div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
-        <kendo-grid-column field="productCode" title="Mã sản phẩm">
+<div>
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        #grid="kendoGrid" (pageChange)="pageChange($event)" (dblclick)="onDblClick()" (cellClick)="onCellClick($event)">
+        <kendo-grid-column field="productCode" title="Mã sản phẩm" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span [class.text-danger]="dataItem.end<dataItem.minInventory">
+                    {{dataItem.productCode}}
+                </span>
+            </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="productName" title="Tên sản phẩm">
+        <kendo-grid-column field="productName" title="Tên sản phẩm" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span [class.text-danger]="dataItem.end < dataItem.minInventory">
+                    {{dataItem.productName}}
+                </span>
+            </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="productUomName" title="Đơn vị tính">
+        <kendo-grid-column field="productUomName" title="Đơn vị tính" width="120" footerClass="font-weight-600">
+            <ng-template kendoGridFooterTemplate>
+                Tổng
+            </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="begin" class="text-right" title="Tồn đầu kỳ">
+        <kendo-grid-column field="begin" class="text-right" title="Tồn đầu kỳ" width="120"
+            footerClass="text-right font-weight-600">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.begin | number}}
             </ng-template>
+            <ng-template kendoGridFooterTemplate>
+                {{sumBegin}}
+            </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="import" class="text-right" title="Nhập trong kỳ">
+        <kendo-grid-column field="import" class="text-right" title="Nhập trong kỳ" width="150"
+            footerClass="text-right font-weight-600">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.import | number}}
             </ng-template>
+            <ng-template kendoGridFooterTemplate>
+                {{sumImport}}
+            </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="export" class="text-right" title="Xuất trong kỳ">
+        <kendo-grid-column field="export" class="text-right" title="Xuất trong kỳ" width="150"
+            footerClass="text-right font-weight-600">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.export | number}}
             </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="end" class="text-right" title="Tồn cuối kỳ">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.end | number}}
+            <ng-template kendoGridFooterTemplate>
+                {{sumExport}}
             </ng-template>
         </kendo-grid-column>
+        <kendo-grid-column field="end" class="text-right" title="Tồn cuối kỳ" width="120"
+            footerClass="text-right font-weight-600">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span [class.text-danger]="dataItem.end<dataItem.minInventory">
+                    {{dataItem.end | number}}
+                </span>
+            </ng-template>
+            <ng-template kendoGridFooterTemplate>
+                {{sumEnd}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="minInventory" class="text-right" title="Mức tồn tối thiểu" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span [class.text-danger]="dataItem.end<dataItem.minInventory">
+                    {{(dataItem.minInventory || 0) | number}}
+                </span>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-excel fileName="NhapXuatTon.xlsx"></kendo-grid-excel>
     </kendo-grid>
 </div>

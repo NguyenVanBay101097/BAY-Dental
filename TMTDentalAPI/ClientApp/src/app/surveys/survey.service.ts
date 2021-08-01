@@ -39,6 +39,7 @@ export class SurveyAssignmentBasic {
   age: string;
   partnerBirthYear: string;
   partnerCategoriesDisplay: string;
+  surveyTags: string;
   assignDate: any;
 }
 

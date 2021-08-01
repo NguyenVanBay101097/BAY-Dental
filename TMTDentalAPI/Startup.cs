@@ -52,6 +52,8 @@ using TMTDentalAPI.OdataControllers;
 using Serilog;
 using MediatR;
 using Infrastructure.HangfireJobService;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace TMTDentalAPI
 {
@@ -359,7 +361,6 @@ namespace TMTDentalAPI
             services.AddScoped<ISmsMessageJobService, SmsMessageJobService>();
             services.AddScoped<ISmsMessageService, SmsMessageService>();
             services.AddScoped<ISmsCampaignService, SmsCampaignService>();
-
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -543,6 +544,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SmsCampaignProfile());
                 mc.AddProfile(new SmsMessageProfile());
                 mc.AddProfile(new AgentProfile());
+                mc.AddProfile(new StockReportProfile());
             };
 
             #endregion
@@ -562,7 +564,7 @@ namespace TMTDentalAPI
                 });
             });
             services.AddCors();
-            services.AddMemoryCache();
+            services.AddMemoryCache();          
 
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration
@@ -632,6 +634,7 @@ namespace TMTDentalAPI
 
             });
 
+            services.AddHttpClient();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -707,7 +710,7 @@ namespace TMTDentalAPI
             );
 
             app.UseMiddleware<GetTokenFromQueryStringMiddleware>();
-            app.UseMiddleware<MigrateDbMiddleware>();
+            app.UseMiddleware<CheckTenantMiddleware>();
             app.UseMiddleware(typeof(ProcessUpdateMiddleware));
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 

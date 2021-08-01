@@ -144,7 +144,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   printQuotation() {
     if (this.quotationId) {
       this.quotationService.printQuotation(this.quotationId).subscribe((result: any) => {
-        this.printService.printHtml(result.html);
+        this.printService.printHtml(result);
       })
     }
   }
@@ -234,7 +234,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           id: x.id,
           payment: x.payment,
           discountPercentType: x.discountPercentType,
-          date: x.date,
+          date: this.intlService.formatDate(x.date,'yyyy-MM-dd'),
           amount: x.amount,
         }
       }),
@@ -245,10 +245,17 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
 
   getAmountPayment(payment: PaymentQuotationDisplay) {
     if (payment.discountPercentType == 'cash') {
-      return payment.payment;
-    } else {
+      return payment.payment || 0;
+    } else {    
       var totalAmount = this.getAmountSubTotal() - this.getTotalDiscount();
       return (payment.payment / 100) * totalAmount;
+    }
+  }
+
+  changeDiscountType(value, index){
+    var payment = this.quotation.payments[index];
+    if(payment && payment.discountPercentType == value){
+      payment.payment = null;
     }
   }
 
@@ -466,6 +473,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.quotation = res;
           var newLine = this.quotation.lines[i];
           modalRef.componentInstance.quotationLine = newLine;
+          this.notifyService.notify('success','Xóa khuyến mãi thành công');
         }, err => {
           this.notify('error', err.error.error);
         });
@@ -528,7 +536,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         })
       )
         .subscribe(res => {
-          debugger
           this.quotation = res;
           modalRef.componentInstance.quotation = this.quotation;
         });
@@ -586,6 +593,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         .subscribe(res => {
           this.quotation = res;
           modalRef.componentInstance.quotation = this.quotation;
+          this.notifyService.notify('success','Xóa khuyến mãi thành công');
         }, err => {
           this.notify('error', err.error.error);
         });
@@ -599,7 +607,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   getTotalDiscount() {
-    return this.quotation.totalAmountDiscount;
+    return this.quotation.totalAmountDiscount == undefined ? 0 : this.quotation.totalAmountDiscount;
     // var res = this.quotation.lines.reduce((total, cur) => {
     //   return total + (cur.amountDiscountTotal || 0) * cur.qty;
     // }, 0);

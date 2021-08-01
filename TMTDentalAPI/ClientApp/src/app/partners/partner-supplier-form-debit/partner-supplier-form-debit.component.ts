@@ -136,7 +136,7 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
   onPayment() {
     if (this.selectedIds.length) {
       this.accountPaymentService.defaultGet(this.selectedIds).subscribe(rs2 => {
-        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
         modalRef.result.then(() => {
@@ -155,7 +155,7 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
       })
     } else {
       this.partnerService.getDefaultRegisterPayment(this.id).subscribe(rs2 => {
-        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
         modalRef.result.then(() => {
@@ -191,7 +191,7 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
     //   invoiceIds: this.rowsSelected.map(x => x.id)
     // }
     // this.accountPaymentService.supplierDefaultGet(val).subscribe(result => {
-    //   let modalRef = this.modalService.open(PartnerSupplierFormDebitPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    //   let modalRef = this.modalService.open(PartnerSupplierFormDebitPaymentDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     //   modalRef.componentInstance.rowsSelected = this.rowsSelected;
     //   modalRef.componentInstance.defaultVal = result;
     //   modalRef.result.then(() => {

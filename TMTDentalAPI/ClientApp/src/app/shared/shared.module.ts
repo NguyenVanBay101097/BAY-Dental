@@ -95,6 +95,8 @@ import { DaterangepickerDirective } from './date-range-picker-filter/config/date
 import { LocaleService } from './date-range-picker-filter/config/locale.service';
 import { DateRangePickerDropdownComponent } from './date-range-picker-filter/date-range-picker-dropdown/date-range-picker-dropdown.component';
 import { AgentCreateUpdateDialogComponent } from './agent-create-update-dialog/agent-create-update-dialog.component';
+import { ToothSelectionDialogComponent } from './tooth-selection-dialog/tooth-selection-dialog.component';
+import { TeethChartComponent } from './teeth-chart/teeth-chart.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -183,7 +185,9 @@ const config: LocaleConfig = {};
         DateRangePickerFilterComponent,
         DaterangepickerDirective,
         DateRangePickerDropdownComponent,
-        AgentCreateUpdateDialogComponent
+        AgentCreateUpdateDialogComponent,
+        ToothSelectionDialogComponent,
+        TeethChartComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -261,7 +265,9 @@ const config: LocaleConfig = {};
         DateRangePickerFilterComponent,
         DaterangepickerDirective,
         DateRangePickerDropdownComponent,
-        AgentCreateUpdateDialogComponent
+        AgentCreateUpdateDialogComponent,
+        ToothSelectionDialogComponent,
+        TeethChartComponent
     ],
     imports: [
         NgbModule,
@@ -310,7 +316,8 @@ const config: LocaleConfig = {};
         CashBookCuDialogComponent,
         DateRangePickerFilterComponent,
         DateRangePickerDropdownComponent,
-        AgentCreateUpdateDialogComponent
+        AgentCreateUpdateDialogComponent,
+        ToothSelectionDialogComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

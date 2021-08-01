@@ -427,14 +427,12 @@ namespace Infrastructure.Services
             payslip.Allowance = emp.Allowance.GetValueOrDefault();
 
             payslip.CommissionSalary = commission == null ? 0 : Math.Round(commission.Amount.GetValueOrDefault(), 0);
-            payslip.AmercementMoney = payslip.AmercementMoney ?? 0;
 
-            payslip.TotalSalary = payslip.TotalBasicSalary + payslip.OverTimeHourSalary + payslip.OverTimeDaySalary + payslip.Allowance
+            payslip.TotalSalary = (payslip.TotalBasicSalary ?? 0) + (payslip.OverTimeHourSalary ?? 0) + (payslip.OverTimeDaySalary ?? 0) + (payslip.Allowance ?? 0)
                + payslip.OtherAllowance.GetValueOrDefault() + payslip.RewardSalary.GetValueOrDefault() + payslip.HolidayAllowance.GetValueOrDefault()
-               + payslip.CommissionSalary - payslip.AmercementMoney.Value;
+               + (payslip.CommissionSalary ?? 0) - (payslip.AmercementMoney ?? 0) - (payslip.TaxNSocialInsurance ?? 0);
             payslip.AdvancePayment = advances.Sum(x => x.Amount);
             payslip.NetSalary = payslip.TotalSalary - payslip.AdvancePayment;
-
         }
 
         public async Task ComputeSalaryByRunId(Guid id)

@@ -8,15 +8,18 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface IPurchaseOrderService: IBaseService<PurchaseOrder>
+    public interface IPurchaseOrderService : IBaseService<PurchaseOrder>
     {
         Task<PagedResult2<PurchaseOrderBasic>> GetPagedResultAsync(PurchaseOrderPaged val);
         Task<PurchaseOrderDisplay> GetPurchaseDisplay(Guid id);
-        Task<PurchaseOrder> CreateLabo(PurchaseOrderDisplay val);
-        Task UpdateLabo(Guid id, PurchaseOrderDisplay val);
+        Task<PurchaseOrder> CreatePurchaseOrder(PurchaseOrderSave val);
+        Task<PurchaseOrderDisplay> GetRefundByOrder(Guid id);
+        Task UpdatePurchaseOrder(Guid id, PurchaseOrderSave val);
         Task Unlink(IEnumerable<Guid> ids);
-        PurchaseOrderDisplay DefaultGet(PurchaseOrderDefaultGet val);
+        Task<PurchaseOrderDisplay> DefaultGet(PurchaseOrderDefaultGet val);
+        Task<PurchaseOrderPrintVm> GetPrint(Guid id);
         Task ButtonConfirm(IEnumerable<Guid> ids);
         Task ButtonCancel(IEnumerable<Guid> ids);
+        Task PreparePurchase(IEnumerable<Guid> ids);
     }
 }

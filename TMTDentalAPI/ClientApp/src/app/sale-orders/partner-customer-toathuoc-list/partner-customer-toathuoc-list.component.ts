@@ -57,7 +57,7 @@ export class PartnerCustomerToathuocListComponent implements OnInit {
   }
 
   editProductToaThuoc(item: any) {
-    let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: Đơn Thuốc';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.partnerId = item.partnerId;

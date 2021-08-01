@@ -109,5 +109,10 @@ namespace ApplicationCore.Entities
 
         public Guid? AccountId { get; set; }
         public AccountAccount Account { get; set; }
+
+        /// <summary>
+        /// hạch toán
+        /// </summary>
+        public bool? IsAccounting { get; set; }
     }
 }

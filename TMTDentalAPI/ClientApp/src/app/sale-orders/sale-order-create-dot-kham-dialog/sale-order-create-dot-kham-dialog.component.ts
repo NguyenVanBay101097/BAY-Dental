@@ -112,7 +112,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
   }
 
   createDoctorDialog() {
-    let modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm bác sĩ';
     modalRef.componentInstance.isDoctor = true;
 
@@ -127,7 +127,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
   }
 
   createAssistantDialog() {
-    let modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(EmployeeCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm phụ tá';
     modalRef.componentInstance.isAssistant = true;
 
@@ -142,7 +142,7 @@ export class SaleOrderCreateDotKhamDialogComponent implements OnInit {
   }
 
   createUserDialog() {
-    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(UserCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm bác sĩ';
     // modalRef.componentInstance.isDoctor = true;
 

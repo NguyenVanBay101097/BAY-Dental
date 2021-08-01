@@ -60,6 +60,11 @@ export class SmsCareAfterOrderPaged {
     companyId: string;
 }
 
+export class SaleOrderLineHistoryReq{
+    partnerId: string;
+    companyId: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SaleOrderLineService {
     apiUrl = 'api/SaleOrderLines';
@@ -69,7 +74,7 @@ export class SaleOrderLineService {
         return this.http.post<SaleOrderLineOnChangeProductResult>(this.baseApi + this.apiUrl + '/OnChangeProduct', val);
     }
 
-    get(val: any) {
+    getPaged(val: any) {
         return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
@@ -120,7 +125,19 @@ export class SaleOrderLineService {
     getProductSmsCareAfterOrder(val: any): Observable<ProductSimple[]> {
         return this.http.get<ProductSimple[]>(this.baseApi + this.apiUrl + '/GetProductSmsCareAfterOrder',
             {
-                params: new HttpParams({fromObject: val})
+                params: new HttpParams({ fromObject: val })
             })
+    }
+
+    getHistories(val: any) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetHistory', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    update(id,val) {
+        return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
+    }
+
+    remove(id) {
+        return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 }

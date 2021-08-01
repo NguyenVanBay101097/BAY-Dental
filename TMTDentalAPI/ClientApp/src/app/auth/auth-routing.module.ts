@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ExpireComponent } from './expire/expire.component';
+import { NotAvaliableComponent } from './not-avaliable/not-avaliable.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,10 @@ const routes: Routes = [
   {
     path: 'expired',
     component: ExpireComponent
+  },
+  {
+    path: 'notavaliable',
+    component: NotAvaliableComponent
   }
 ];
 

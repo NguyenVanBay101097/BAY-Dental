@@ -169,7 +169,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   }
 
   setupTimeKeeping() {
-    const modalRef = this.modalService.open(TimeKeepingSettingDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(TimeKeepingSettingDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thiết lập chấm công';
     modalRef.result.then(() => {
       // this.loadData();
@@ -266,7 +266,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   clickTimeSheet(evt, id, date, employee) {
     evt.stopPropagation();
-    const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa chấm công';
     modalRef.componentInstance.id = id;
     modalRef.componentInstance.employee = employee;
@@ -289,7 +289,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   clickTimeSheetCreate(evt, date, employee) {
     evt.stopPropagation();
-    const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm chấm công';
     modalRef.componentInstance.employee = employee;
     modalRef.componentInstance.dateTime = date;

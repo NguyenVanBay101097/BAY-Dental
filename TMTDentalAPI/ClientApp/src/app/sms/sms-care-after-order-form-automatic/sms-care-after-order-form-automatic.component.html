@@ -26,14 +26,14 @@
 
 <kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="offset" [pageable]="true"
     [pageSize]="limit">
-    <kendo-grid-column field="name" title="Tên thiết lập"></kendo-grid-column>
-    <kendo-grid-column field="brandName" title="Brandname"></kendo-grid-column>
-    <kendo-grid-column title="Thời điểm gửi tin">
+    <kendo-grid-column field="name" title="Tên thiết lập" width="200"></kendo-grid-column>
+    <kendo-grid-column field="brandName" title="Brandname" width="150"></kendo-grid-column>
+    <kendo-grid-column title="Thời điểm gửi tin" width="150">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{dataItem.scheduleTime | date: 'HH:mm'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Thời gian gửi tin">
+    <kendo-grid-column title="Thời gian gửi tin" width="150">
         <ng-template kendoGridCellTemplate let-dataItem>
             <span>{{dataItem.timeBeforSend}}
                 <span *ngIf="dataItem.typeTimeBeforSend == 'day'">Ngày</span>
@@ -41,15 +41,15 @@
             </span>
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Nhóm dich vụ/Dịch vụ" width=300>
+    <kendo-grid-column title="Nhóm dịch vụ/Dịch vụ" width=300>
         <ng-template kendoGridCellTemplate let-dataItem>
             <span class="white-space-pre" [title]="'Dịch vụ: '+dataItem.productNames"
-                *ngIf="dataItem.productNames != ''">{{dataItem.productNames}}</span>
+                *ngIf="dataItem.productNames != '' && dataItem.applyOn == 'product'">{{dataItem.productNames}}</span>
             <span class="white-space-pre" [title]="'Nhóm dịch vụ: '+dataItem.productCategoryNames"
-                *ngIf="dataItem.productCategoryNames != ''">{{dataItem.productCategoryNames}}</span>
+                *ngIf="dataItem.productCategoryNames != '' && dataItem.applyOn == 'product_category'">{{dataItem.productCategoryNames}}</span>
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Trạng thái">
+    <kendo-grid-column title="Trạng thái" width="150">
         <ng-template kendoGridCellTemplate let-dataItem>
             <span class="text-success" *ngIf="dataItem.active">Kích hoạt</span>
             <span *ngIf="!dataItem.active">Không kích hoạt</span>

@@ -5,6 +5,7 @@ import { PartnersService } from 'src/app/shared/services/partners.service';
 import { PartnerDisplay } from '../../partner-simple';
 import { Pipe, PipeTransform } from '@angular/core';
 import { PartnerService } from '../../partner.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-partner-overview-info',
@@ -13,25 +14,20 @@ import { PartnerService } from '../../partner.service';
 })
 export class PartnerOverviewInfoComponent implements OnInit {
   @Input() partner: any;
-  categoriesOdata: any[] = [];
+  categories: any[] = [];
   @Output() updateEvent = new EventEmitter<any>();
+  showInfo = false;
 
   constructor(
     private modalService: NgbModal,
     private PartnerOdataService: PartnersService,
-    private partnerService: PartnerService
+    private partnerService: PartnerService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
-    this.partner.categories.forEach(item => {
-      var category = {
-        Id: item.id,
-        Name: item.name,
-        CompleteName: item.completeName,
-        Color: item.color
-      };
-      this.categoriesOdata.push(category);
-    });
+    this.categories = this.partner.categories
+    this.checkPermission()
   }
 
   onAvatarUploaded(data: any) {
@@ -60,16 +56,11 @@ export class PartnerOverviewInfoComponent implements OnInit {
     // });
     this.partnerService.getPartner(id).subscribe((result) => {
       this.partner = result;
-      this.partner.categories.forEach(item => {
-        var category = {
-          Id: item.id,
-          Name: item.name,
-          CompleteName: item.completeName,
-          Color: item.color
-        };
-        this.categoriesOdata.push(category);
-      });
     });
+  }
+
+  checkPermission() {
+    this.showInfo = this.checkPermissionService.check(["Basic.Partner.ContactInfo"]);
   }
 
 }

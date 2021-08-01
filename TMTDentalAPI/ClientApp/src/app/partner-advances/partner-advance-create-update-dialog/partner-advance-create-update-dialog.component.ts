@@ -126,7 +126,7 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm");
     val.journalId = val.journal ? val.journal.id : null;
     val.companyId = this.authService.userInfo.companyId;
-    val.PartnerId = this.partnerId;
+    val.partnerId = this.partnerId;
     val.type = this.type;
     val.state = this.partnerAdvance.state;
     return val;

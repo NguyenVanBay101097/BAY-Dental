@@ -32,7 +32,6 @@ export class SmsTemplateCrUpComponent implements OnInit {
     { name: 'Nhắc lịch hẹn', value: 'appointment' },
     { name: 'Chăm sóc sau điều trị', value: 'saleOrderLine' },
     { name: 'Cảm ơn', value: 'saleOrder' },
-    { name: 'Chiến dịch khác', value: 'partnerCampaign' },
   ]
   constructor(
     public activeModal: NgbActiveModal,
@@ -57,6 +56,11 @@ export class SmsTemplateCrUpComponent implements OnInit {
 
   }
 
+
+  get typeValue() {
+    return this.formGroup.get('type').value;
+  }
+
   get f() { return this.formGroup.controls; }
   get textValue() { return this.formGroup.get('body').value; }
 
@@ -72,8 +76,6 @@ export class SmsTemplateCrUpComponent implements OnInit {
     this.submitted = true;
     if (this.formGroup.invalid) { return false; }
     var formValue = this.formGroup.value;
-    this.template.text = formValue.body;
-    formValue.body = JSON.stringify(this.template);
     if (this.id) {
       this.smsTemplateService.update(this.id, formValue).subscribe(
         (res) => {
@@ -139,7 +141,7 @@ export class SmsTemplateCrUpComponent implements OnInit {
     this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
   }
 
-  onCancel(){
+  onCancel() {
     this.activeModal.dismiss();
   }
 }

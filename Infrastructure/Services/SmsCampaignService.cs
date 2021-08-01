@@ -29,8 +29,6 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State == val.State);
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.CompanyId.HasValue || x.CompanyId == val.CompanyId);
             if (val.UserCampaign.HasValue)
                 query = query.Where(x => x.UserCampaign == val.UserCampaign);
 
@@ -111,6 +109,15 @@ namespace Infrastructure.Services
                 }).ToListAsync();
             var statistics_dict = statistics.ToDictionary(x => x.CampaignId, x => x);
 
+            var statistics2 = await smsMessageObj.SearchQuery().Where(x => x.SmsCampaignId.HasValue && ids.Contains(x.SmsCampaignId.Value))
+                .GroupBy(x => x.SmsCampaignId.Value)
+                .Select(x => new
+                {
+                    CampaignId = x.Key,
+                    TotalInQueue = x.Sum(s => s.State == "in_queue" ? 1 : 0),
+                }).ToListAsync();
+            var statistics_dict_2 = statistics2.ToDictionary(x => x.CampaignId, x => x);
+
             foreach (var item in items)
             {
                 if (!statistics_dict.ContainsKey(item.Id))
@@ -119,6 +126,14 @@ namespace Infrastructure.Services
                 item.TotalMessage = statistic.Total;
                 item.TotalSuccessfulMessages = statistic.TotalSent;
                 item.TotalErrorMessages = statistic.TotalError;
+            }
+
+            foreach (var item in items)
+            {
+                if (!statistics_dict_2.ContainsKey(item.Id))
+                    continue;
+                var statistic2 = statistics_dict_2[item.Id];
+                item.TotalWaitedMessages = statistic2.TotalInQueue;
             }
 
             return new PagedResult2<SmsCampaignBasic>(totalItems, val.Offset, val.Limit)
@@ -182,33 +197,6 @@ namespace Infrastructure.Services
         {
             var modelDataObj = GetService<IIRModelDataService>();
             var campaign = await modelDataObj.GetRef<SmsCampaign>("base.sms_campaign_birthday");
-            if (campaign == null)
-            {
-                campaign = new SmsCampaign
-                {
-                    Name = "Chúc mừng sinh nhật",
-                    CompanyId = CompanyId,
-                    TypeDate = "unlimited",
-                    State = "running",
-                    LimitMessage = 0,
-                    DefaultType = "sms_campaign_birthday"
-                };
-
-                await CreateAsync(campaign);
-
-                await modelDataObj.CreateAsync(new IRModelData
-                {
-                    Name = "sms_campaign_birthday",
-                    Module = "base",
-                    Model = "res.sms.campaign",
-                    ResId = campaign.Id.ToString()
-                });
-            }
-            else if (!campaign.CompanyId.HasValue)
-            {
-                campaign.CompanyId = CompanyId;
-                await UpdateAsync(campaign);
-            }
             return campaign;
         }
 
@@ -216,33 +204,6 @@ namespace Infrastructure.Services
         {
             var modelDataObj = GetService<IIRModelDataService>();
             var campaign = await modelDataObj.GetRef<SmsCampaign>("base.sms_campaign_appointment_reminder");
-            if (campaign == null)
-            {
-                campaign = new SmsCampaign
-                {
-                    Name = "Nhắc lịch hẹn",
-                    CompanyId = CompanyId,
-                    LimitMessage = 0,
-                    TypeDate = "unlimited",
-                    DefaultType = "sms_campaign_appointment_reminder",
-                    State = "running"
-                };
-
-                await CreateAsync(campaign);
-
-                await modelDataObj.CreateAsync(new IRModelData
-                {
-                    Name = "sms_campaign_appointment_reminder",
-                    Module = "base",
-                    Model = "res.sms.campaign",
-                    ResId = campaign.Id.ToString()
-                });
-            }
-            else if (!campaign.CompanyId.HasValue)
-            {
-                campaign.CompanyId = CompanyId;
-                await UpdateAsync(campaign);
-            }
             return campaign;
         }
 
@@ -250,33 +211,6 @@ namespace Infrastructure.Services
         {
             var modelDataObj = GetService<IIRModelDataService>();
             var campaign = await modelDataObj.GetRef<SmsCampaign>("base.sms_campaign_default");
-            if (campaign == null)
-            {
-                campaign = new SmsCampaign
-                {
-                    Name = "Chiến dịch mặc định",
-                    CompanyId = CompanyId,
-                    LimitMessage = 0,
-                    TypeDate = "unlimited",
-                    State = "running",
-                    DefaultType = "sms_campaign_default"
-                };
-
-                await CreateAsync(campaign);
-
-                await modelDataObj.CreateAsync(new IRModelData
-                {
-                    Name = "sms_campaign_default",
-                    Module = "base",
-                    Model = "res.sms.campaign",
-                    ResId = campaign.Id.ToString()
-                });
-            }
-            else if (!campaign.CompanyId.HasValue)
-            {
-                campaign.CompanyId = CompanyId;
-                await UpdateAsync(campaign);
-            }
             return campaign;
         }
 
@@ -284,34 +218,6 @@ namespace Infrastructure.Services
         {
             var modelDataObj = GetService<IIRModelDataService>();
             var campaign = await modelDataObj.GetRef<SmsCampaign>("base.sms_campaign_thanks_customer");
-            if (campaign == null)
-            {
-                campaign = new SmsCampaign
-                {
-                    Name = "Cảm ơn khách hàng",
-                    CompanyId = CompanyId,
-                    LimitMessage = 0,
-                    TypeDate = "unlimited",
-                    State = "running",
-                    DefaultType = "sms_campaign_thanks_customer"
-                };
-
-                await CreateAsync(campaign);
-
-                await modelDataObj.CreateAsync(new IRModelData
-                {
-                    Name = "sms_campaign_thanks_customer",
-                    Module = "base",
-                    Model = "res.sms.campaign",
-                    ResId = campaign.Id.ToString()
-                });
-            }
-            else if (!campaign.CompanyId.HasValue)
-            {
-                campaign.CompanyId = CompanyId;
-                await UpdateAsync(campaign);
-            }
-
             return campaign;
         }
 
@@ -319,33 +225,6 @@ namespace Infrastructure.Services
         {
             var modelDataObj = GetService<IIRModelDataService>();
             var campaign = await modelDataObj.GetRef<SmsCampaign>("base.sms_campaign_care_after_order");
-            if (campaign == null)
-            {
-                campaign = new SmsCampaign
-                {
-                    Name = "Chăm sóc sau điều trị",
-                    CompanyId = CompanyId,
-                    LimitMessage = 0,
-                    TypeDate = "unlimited",
-                    State = "running",
-                    DefaultType = "sms_campaign_care_after_order"
-                };
-
-                await CreateAsync(campaign);
-
-                await modelDataObj.CreateAsync(new IRModelData
-                {
-                    Name = "sms_campaign_care_after_order",
-                    Module = "base",
-                    Model = "res.sms.campaign",
-                    ResId = campaign.Id.ToString()
-                });
-            }
-            else if (!campaign.CompanyId.HasValue)
-            {
-                campaign.CompanyId = CompanyId;
-                await UpdateAsync(campaign);
-            }
             return campaign;
         }
 

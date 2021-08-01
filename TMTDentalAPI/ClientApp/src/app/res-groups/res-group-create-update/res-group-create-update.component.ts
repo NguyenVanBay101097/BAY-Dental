@@ -83,7 +83,7 @@ export class ResGroupCreateUpdateComponent implements OnInit {
   }
 
   addAccess() {
-    let modalRef = this.modalService.open(ResGroupAccessCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ResGroupAccessCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm quyền truy cập';
 
     modalRef.result.then((result) => {
@@ -93,7 +93,7 @@ export class ResGroupCreateUpdateComponent implements OnInit {
   }
 
   editLine(line: FormGroup) {
-    let modalRef = this.modalService.open(ResGroupAccessCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ResGroupAccessCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa quyền truy cập';
     modalRef.componentInstance.item = line.value;
     modalRef.result.then((result) => {

@@ -27,7 +27,6 @@ import { environment } from '../environments/environment';
 import { PartnerGeneralSettingsComponent } from './partner-general-settings/partner-general-settings.component';
 import { AppHomeComponent } from './app-home/app-home.component';
 
-
 export function tokenGetter() {
   return localStorage.getItem("access_token");
 }

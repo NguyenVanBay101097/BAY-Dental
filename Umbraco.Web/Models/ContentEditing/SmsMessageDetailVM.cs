@@ -69,9 +69,9 @@ namespace Umbraco.Web.Models.ContentEditing
             get
             {
                 if (State == "sent")
-                    return "Thành công";
+                    return "Gửi thành công";
                 if (State == "error")
-                    return "Thất bại";
+                    return "Gửi thất bại";
                 return string.Empty;
             }
         }
@@ -81,16 +81,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ReportCampaignPaged
     {
-        public ReportCampaignPaged()
-        {
-            Limit = 20;
-            Offset = 0;
-        }
-        public int Limit { get; set; }
-        public int Offset { get; set; }
         public string Search { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class ReportCampaignOutputItem
@@ -110,9 +104,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ReportSupplierPaged
     {
-        public Guid? AccountId { get; set; }
-        public string State { get; set; }
-        public string Provider { get; set; }
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 
     public class ReportSupplierOutputItem
@@ -124,12 +120,19 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ReportSupplierChart
     {
-        public string Color { get; set; }
         public int Month { get; set; }
-        public string StateName { get; set; }
         public int Year { get; set; }
-        public int Count { get; set; }
-        public int Total { get; set; }
+        public int TotalSent { get; set; }
+        public int TotalError { get; set; }
+
+        public string Category
+        {
+            get
+            {
+                var date = new DateTime(Year, Month, 1);
+                return date.ToString("MM/yyyy");
+            }
+        }
     }
 
     public class ReportSupplierOutputItemData

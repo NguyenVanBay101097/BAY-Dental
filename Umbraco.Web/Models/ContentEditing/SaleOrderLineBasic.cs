@@ -27,11 +27,29 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeBasic Employee { get; set; }
 
         public EmployeeBasic Assistant { get; set; }
-        public decimal PriceTotal { get; set; }
         public ToothCategoryBasic ToothCategory { get; set; }
         public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
 
         public bool IsListLabo { get; set; }
+
+        public decimal ProductUOMQty { get; set; }
+
+        public decimal PriceSubTotal { get; set; }
+
+        public decimal PriceTotal { get; set; }
+
+        /// <summary>
+        /// Số tiền đã thanh toán
+        /// </summary>
+        public decimal? AmountPaid { get; set; }
+
+        public decimal? AmountResidual
+        {
+            get
+            {
+                return PriceTotal - AmountPaid;
+            }
+        }
     }
 
     public class SaleOrderLineSmsSimple

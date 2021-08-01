@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -107,7 +108,13 @@ namespace Infrastructure.Services
                             DisplayDetail = "detail_with_hierarchy",
                             Sequence = 3,
                             Sign = -1,
-                            //FinancialRevenueReportAccountAccountRels = chờ column cộng
+                            FinancialRevenueReportAccountRels = new List<AccountFinancialRevenueReportAccountAccountRel>(){
+                                                    new AccountFinancialRevenueReportAccountAccountRel()
+                                                {
+                                                    AccountCode = "CNKH",
+                                                    Column = 1,
+                                                     JournalTypes = "cash,bank"
+                                                } }
                         },
                           new AccountFinancialRevenueReport()
                         {
@@ -121,7 +128,7 @@ namespace Infrastructure.Services
                                                     new AccountFinancialRevenueReportAccountAccountRel()
                                                 {
                                                     AccountCode = "331",
-                                                    Column = 2,
+                                                    Column = 1,
                                                      JournalTypes = "cash,bank"
                                                 } }
                          },
@@ -180,7 +187,13 @@ namespace Infrastructure.Services
                             DisplayDetail = "detail_with_hierarchy",
                             Sequence = 2,
                             Sign = -1,
-                            //FinancialRevenueReportAccountAccountRels = chờ column trừ
+                             FinancialRevenueReportAccountRels = new List<AccountFinancialRevenueReportAccountAccountRel>(){
+                                                    new AccountFinancialRevenueReportAccountAccountRel()
+                                                {
+                                                    AccountCode = "CNKH",
+                                                    Column = 2,
+                                                     JournalTypes = "debt"
+                                                } }
                         }
                             }
                         }
@@ -222,6 +235,8 @@ namespace Infrastructure.Services
 
         public async Task<FinancialRevenueReportItem> getRevenueReport(RevenueReportPar val)
         {
+            val.DateFrom = val.DateFrom.HasValue? val.DateFrom.Value.AbsoluteBeginOfDate() : (DateTime?)null;
+            val.DateTo = val.DateTo.HasValue? val.DateTo.Value.AbsoluteEndOfDate() : (DateTime?)null;
             //lấy ra đối tượng revenue record
             var report = await GetRevenueRecord();
             // biến thành list revenue  include accounttype and acocunt account and childs

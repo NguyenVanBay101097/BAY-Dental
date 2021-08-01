@@ -31,6 +31,39 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Create(SaleOrderLineSave val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var line = await _saleLineService.CreateOrderLine(val);
+            _unitOfWork.Commit();
+
+            var basic = _mapper.Map<SaleOrderLineDisplay>(line);
+            return Ok(basic);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Guid id, SaleOrderLineSave val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.UpdateOrderLine(id, val);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.RemoveOrderLine(id);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         [HttpPost("OnChangeProduct")]
         public async Task<IActionResult> OnChangeProduct(SaleOrderLineOnChangeProduct val)
         {
@@ -192,6 +225,13 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _saleLineService.GetProductSmsCareAfterOrder(dateFrom, dateTo, companyId);
             return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetHistory([FromQuery]SaleOrderLineHistoryReq val)
+        {
+            var res = await _saleLineService.GetHistory(val);
+            return Ok(res);
         }
     }
 }

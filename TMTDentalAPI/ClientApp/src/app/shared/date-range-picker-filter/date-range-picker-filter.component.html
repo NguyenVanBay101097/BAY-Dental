@@ -1,12 +1,12 @@
 <div class="input-group" ngxDaterangepickerMd (datesUpdated)="onApply()" [showClearButton]="true" [(ngModel)]="selected" [opens]="opens" [drops]="drops" [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" [ranges]="ranges" [linkedCalendars]="true"
     [showCancel]="true">
-    <span *ngIf="selected?.startDate && selected?.endDate" class="form-control custom-input border-right-0">
+    <span *ngIf="selected?.startDate && selected?.endDate" class="form-control custom-input border-right-0 text-nowrap">
         {{ selected.startDate | date:'dd/MM/yyyy' }} - {{ selected.endDate| date:'dd/MM/yyyy' }}
     </span>
     <span class="form-control custom-input border-right-0" *ngIf="!selected?.startDate && !selected?.endDate">Chọn thời gian</span>
     <div (click)="open()" class="input-group-append cursor-pointer">
         <span class="input-group-text">
-        <i style="font-size: 20px;" class="fas fa-calendar-alt"></i>
+        <i class="fas fa-calendar-alt"></i>
      </span>
     </div>
     <!-- <div (click)="clear()" *ngIf="selected?.startDate && selected?.endDate" class="input-group-append cursor-pointer clear">

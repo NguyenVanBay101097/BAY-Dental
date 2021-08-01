@@ -29,16 +29,16 @@ export const DefaultLocaleConfig: LocaleConfig = {
     weekLabel: 'W',
     applyLabel: 'Áp dụng',
     cancelLabel: 'Đóng',
-    clearLabel: 'Xóa',
+    clearLabel: 'Hủy',
     customRangeLabel: 'Chọn ngày',
     daysOfWeek: [
+        "CN",
         "T2",
         "T3",
         "T4",
         "T5",
         "T6",
-        "T7",
-        "CN"
+        "T7"
     ],
     monthNames: [
         "Tháng 1",
@@ -54,6 +54,6 @@ export const DefaultLocaleConfig: LocaleConfig = {
         "Tháng 11",
         "Tháng 12"
     ],
-    firstDay: moment.localeData().firstDayOfWeek(),
+    firstDay: 1,
     format: "DD/MM/YYYY",
 };

@@ -100,7 +100,7 @@ export class AccountPaymentListComponent implements OnInit {
       return false;
     }
 
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa thanh toán';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
@@ -120,7 +120,7 @@ export class AccountPaymentListComponent implements OnInit {
   }
 
   // createItem() {
-  //   let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+  //   let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
   //   modalRef.componentInstance.title = 'Thêm nhóm sản phẩm';
 
   //   modalRef.result.then(result => {
@@ -134,7 +134,7 @@ export class AccountPaymentListComponent implements OnInit {
   }
 
   deleteItem(item: AccountPaymentBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa thanh toán';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {

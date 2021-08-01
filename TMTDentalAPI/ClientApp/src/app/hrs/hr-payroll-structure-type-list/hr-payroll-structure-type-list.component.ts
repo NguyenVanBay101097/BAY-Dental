@@ -58,7 +58,7 @@ export class HrPayrollStructureTypeListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(HrPayrollStructureTypeCreateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(HrPayrollStructureTypeCreateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -72,7 +72,7 @@ export class HrPayrollStructureTypeListComponent implements OnInit {
   }
 
   editItem(item) {
-    let modalRef = this.modalService.open(HrPayrollStructureTypeCreateComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(HrPayrollStructureTypeCreateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: ' + this.title;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {

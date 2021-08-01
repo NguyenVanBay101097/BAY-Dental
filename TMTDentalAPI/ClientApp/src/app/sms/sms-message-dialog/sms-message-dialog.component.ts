@@ -70,7 +70,7 @@ export class SmsMessageDialogComponent implements OnInit {
       name: ['', Validators.required],
       smsCampaign: [null, Validators.required],
       smsAccount: [null, Validators.required],
-      template: null,
+      template: [null, Validators.required],
       typeSend: "manual", // manual: gửi ngay, automatic: đặt lịch
       scheduleDateObj: new Date(),
       templateName: '',
@@ -203,7 +203,7 @@ export class SmsMessageDialogComponent implements OnInit {
   }
 
   onSelectPartners() {
-    const modalRef = this.modalService.open(SmsPartnerListDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(SmsPartnerListDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Danh sách khách hàng';
     modalRef.result.then((res) => {
       this.partnerIds = res;
@@ -237,11 +237,27 @@ export class SmsMessageDialogComponent implements OnInit {
     if (this.formGroup.invalid) return;
     if ((this.errorSendLimit && !this.noLimit) || this.partnerIds.length == 0) return;
     var val = this.GetValueFormGroup();
+    if (this.isTemplateCopy && val.templateName != '') {
+      let template = {
+        text: val.body,
+        templateType: 'text'
+      }
+      let valueTemplate = {
+        name: val.templateName,
+        body: JSON.stringify(template),
+        type: this.templateTypeTab
+      }
+      this.smsTemplateService.create(valueTemplate).subscribe(
+        () => {
+          this.loadSmsTemplate();
+        }
+      )
+    }
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.campaign = val.smsCampaign;
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
     modalRef.componentInstance.brandName = val.smsAccount.brandName;
-    modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.scheduleDateObj, "dd-MM-yyyy HH:mm");;
+    modalRef.componentInstance.timeSendSms = val.typeSend == 'manual' ? "Gửi ngay" : this.intlService.formatDate(val.scheduleDateObj, "HH:mm dd-MM-yyyy");;
     modalRef.componentInstance.body = val.body;
     modalRef.componentInstance.numberSms = this.partnerIds ? this.partnerIds.length : 0;
     modalRef.result.then(() => {
@@ -249,27 +265,10 @@ export class SmsMessageDialogComponent implements OnInit {
         (res: any) => {
           this.smsMessageService.actionSendSms(res.id).subscribe(
             () => {
-              this.notify("Gửi tin nhắn thành công", true);
+              this.notify("Gửi tin thành công", true);
               this.activeModal.close();
             }
           )
-
-          if (this.isTemplateCopy && val.templateName != '') {
-            let template = {
-              text: val.body,
-              templateType: 'text'
-            }
-            let valueTemplate = {
-              name: val.templateName,
-              body: JSON.stringify(template),
-              type: this.templateTypeTab
-            }
-            this.smsTemplateService.create(valueTemplate).subscribe(
-              () => {
-                this.loadSmsTemplate();
-              }
-            )
-          }
         }
       )
     })
@@ -281,6 +280,22 @@ export class SmsMessageDialogComponent implements OnInit {
     if ((this.errorSendLimit && !this.noLimit) || this.partnerIds.length == 0) return;
     var val = this.GetValueFormGroup();
     val.body = this.template ? this.template.text : '';
+    if (this.isTemplateCopy && val.templateName != '') {
+      let template = {
+        text: val.body,
+        templateType: 'text'
+      }
+      let valueTemplate = {
+        name: val.templateName,
+        body: JSON.stringify(template),
+        type: this.templateTypeTab
+      }
+      this.smsTemplateService.create(valueTemplate).subscribe(
+        () => {
+          this.loadSmsTemplate();
+        }
+      )
+    }
     const modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.campaign = val.smsCampaign;
     modalRef.componentInstance.title = "Xác nhận gửi tin nhắn";
@@ -301,23 +316,6 @@ export class SmsMessageDialogComponent implements OnInit {
                 this.activeModal.close();
               }
             )
-
-          if (this.isTemplateCopy && val.templateName != '') {
-            let template = {
-              text: val.body,
-              templateType: 'text'
-            }
-            let valueTemplate = {
-              name: val.templateName,
-              body: JSON.stringify(template),
-              type: this.templateTypeTab
-            }
-            this.smsTemplateService.create(valueTemplate).subscribe(
-              () => {
-                this.loadSmsTemplate();
-              }
-            )
-          }
         }
       )
     })

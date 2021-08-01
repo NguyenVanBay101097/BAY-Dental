@@ -5,7 +5,10 @@ import { SmsCampaignService } from '../sms-campaign.service';
 @Component({
   selector: 'app-sms-appointment-form',
   templateUrl: './sms-appointment-form.component.html',
-  styleUrls: ['./sms-appointment-form.component.css']
+  styleUrls: ['./sms-appointment-form.component.css'],
+  host: {
+    class: "o_action o_view_controller",
+  },
 })
 export class SmsAppointmentFormComponent implements OnInit {
 

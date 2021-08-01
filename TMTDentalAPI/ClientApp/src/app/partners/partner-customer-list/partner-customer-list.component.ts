@@ -1,5 +1,5 @@
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { PartnerPaged, PartnerBasic } from '../partner-simple';
 import { map, debounceTime, distinctUntilChanged, tap, switchMap, subscribeOn } from 'rxjs/operators';
@@ -11,13 +11,15 @@ import { PartnerImportComponent } from '../partner-import/partner-import.compone
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { PartnerService } from '../partner.service';
+import { PartnerInfoPaged, PartnerService } from '../partner.service';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
 import { PartnerCategoryPopoverComponent } from './partner-category-popover/partner-category-popover.component';
 import { PartnersBindingDirective } from 'src/app/shared/directives/partners-binding.directive';
 import { PartnerCustomerAutoGenerateCodeDialogComponent } from '../partner-customer-auto-generate-code-dialog/partner-customer-auto-generate-code-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { MemberLevelAutoCompleteReq, MemberLevelService } from 'src/app/member-level/member-level.service';
+import { values } from 'lodash';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -30,53 +32,73 @@ import { CheckPermissionService } from 'src/app/shared/check-permission.service'
 export class PartnerCustomerListComponent implements OnInit {
 
   gridData: GridDataResult;
-  limit = 10;
-  skip = 0;
+  filter = new PartnerInfoPaged();
   loading = false;
   opened = false;
 
-  search: string;
-  searchCategs: PartnerCategoryBasic[];
   filteredCategs: PartnerCategoryBasic[];
   searchUpdate = new Subject<string>();
 
   @ViewChild("categMst", { static: true }) categMst: MultiSelectComponent;
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
-  @ViewChild(PartnersBindingDirective, { static: true }) dataBinding: PartnersBindingDirective;
-
-  gridFilter: CompositeFilterDescriptor = {
-    logic: "and",
-    filters: [
-      { field: "Customer", operator: "eq", value: true },
-    ]
-  };
-
-  gridSort = [{ field: 'DateCreated', dir: 'desc' }];
-  advanceFilter: any = {
-    // expand: 'Tags,Source',
-    params: {}
-  };
+  @ViewChild('cbxLevel', { static: true }) public cbxLevel: ComboBoxComponent;
 
   canExport = false;
   canAdd = false;
   canImport = false;
   canFilterPartnerCategory = false;
   canUpdateExcel = false;
+  
+  OrderResiduals: { text: string, value: number }[] = [
+    { text: 'Có dự kiến thu', value: 1 },
+    { text: 'Không có dự kiến thu', value: 0}
+  ];
+
+  totalDebits: { text: string, value: number }[] = [
+    { text: 'Có công nợ', value: 1 },
+    { text: 'Không có công nợ', value: 0 }
+  ];
+  memberLevels = [];
+  orderStateDisplay = {
+    'sale':'Đang điều trị',
+    'done':'Hoàn thành',
+    'draft':'Chưa phát sinh'
+  };
+
+  cbxPopupSettings = {
+    width: 'auto'
+  };
+
+  color='red';
+
+  showInfo = false;
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
-    private checkPermissionService: CheckPermissionService) { }
+    private checkPermissionService: CheckPermissionService,
+    private memberLevelService: MemberLevelService
+    
+    ) { }
 
   ngOnInit() {
+    this.initFilter();
+    this.refreshData();
     this.checkRole();
+    this.loadMemberLevel();
+    this.cbxLevel.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.cbxLevel.loading = true)),
+      switchMap(value => this.searchMemberLevel(value))
+    ).subscribe(result => {
+      this.memberLevels = result.items;
+      this.cbxLevel.loading = false;
+    });
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
-        this.dataBinding.filter = this.generateFilter();
-        this.dataBinding.skip = 0;
         this.refreshData();
-        this.skip = 0;
+        this.filter.offset = 0;
       });
 
     if (this.canFilterPartnerCategory && this.categMst) {
@@ -98,37 +120,27 @@ export class PartnerCustomerListComponent implements OnInit {
     }
   }
 
-  updateFilter() {
-    this.gridFilter = this.generateFilter();
+  initFilter() {
+    this.filter.limit = 20;
+    this.filter.offset = 0;
+    this.filter.hasOrderResidual = -1;
+    this.filter.hasTotalDebit = -1;
+    this.filter.orderState='';
   }
 
   refreshData() {
-    debugger
-    this.dataBinding.rebind();
-  }
-
-  generateFilter() {
-    var filter: CompositeFilterDescriptor = {
-      logic: "and",
-      filters: [
-        { field: "Customer", operator: "eq", value: true },
-      ]
-    };
-
-    if (this.search) {
-      filter.filters.push({
-        logic: "or",
-        filters: [
-          { field: "Name", operator: "contains", value: this.search },
-          { field: "NameNoSign", operator: "contains", value: this.search },
-          { field: "Ref", operator: "contains", value: this.search },
-          { field: "Phone", operator: "contains", value: this.search }
-        ]
-      });
-    }
-
-    return filter;
-
+    var val = Object.assign({}, this.filter);
+    this.loading = true;
+   this.partnerService.getPartnerInfoPaged2(val).subscribe(res => {
+     this.gridData = <GridDataResult> {
+      data : res.items,
+      total : res.totalItems
+     };
+   },()=> {},
+   ()=>{
+     this.loading = false;
+   }
+   );
   }
 
   toggleTagsPopOver(popover: any, dataItem: any) {
@@ -139,8 +151,22 @@ export class PartnerCustomerListComponent implements OnInit {
     }
   }
 
+  searchMemberLevel(s?) {
+    var val = new MemberLevelAutoCompleteReq();
+    val.offset = 0;
+    val.limit = 20;
+    val.search = s || '';
+    return this.memberLevelService.autoComplete(val);
+  }
+
+  loadMemberLevel(){
+    this.searchMemberLevel().subscribe(res => {
+      this.memberLevels = res.items;
+    });
+  }
+
   importFromExcel() {
-    const modalRef = this.modalService.open(PartnerImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    const modalRef = this.modalService.open(PartnerImportComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.type = 'customer';
     modalRef.componentInstance.title = 'Import Excel'
     modalRef.result.then(() => {
@@ -150,7 +176,7 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   updateFromExcel() {
-    const modalRef = this.modalService.open(PartnerImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    const modalRef = this.modalService.open(PartnerImportComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.type = 'customer';
     modalRef.componentInstance.title = 'Cập nhật Excel';
     modalRef.componentInstance.isUpdate = true;
@@ -167,15 +193,8 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   onCategChange(value) {
-    this.searchCategs = value;
-    var tagIds = this.searchCategs.map(x => x.id);
-    if (tagIds.length) {
-      this.advanceFilter.params.tagIds = tagIds;
-    } else {
-      delete this.advanceFilter.params.tagIds;
-    }
-
-    this.dataBinding.skip = 0;
+   this.filter.categIds = value.map(x=> x.id);
+    this.filter.offset = 0;
     this.refreshData();
   }
 
@@ -186,14 +205,8 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   exportPartnerExcelFile() {
-    var paged = new PartnerPaged();
-    paged.customer = true;
-    paged.search = this.search || "";
-
-    var categs = this.searchCategs || [];
-    paged.tagIds = categs.map(x => x.id);
-    // paged.categoryId = this.searchCateg ? this.searchCateg.id : null;
-    this.partnerService.exportPartnerExcelFile(paged).subscribe((rs) => {
+    var val = Object.assign({}, this.filter);
+    this.partnerService.exportPartnerExcelFile(val).subscribe((rs) => {
       let filename = "danh_sach_khach_hang";
       let newBlob = new Blob([rs], {
         type:
@@ -223,7 +236,7 @@ export class PartnerCustomerListComponent implements OnInit {
   editItem(item: any) {
     const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa khách hàng';
-    modalRef.componentInstance.id = item.Id;
+    modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.refreshData();
     }, () => {
@@ -233,9 +246,17 @@ export class PartnerCustomerListComponent implements OnInit {
   deleteItem(item: any) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa khách hàng';
+    modalRef.componentInstance.body = 'Bạn có muốn xóa khách hàng không?';
 
     modalRef.result.then(() => {
-      this.partnerService.delete(item.Id).subscribe(() => {
+      this.partnerService.delete(item.id).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xóa khách hàng thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.refreshData();
       }, () => {
       });
@@ -265,5 +286,32 @@ export class PartnerCustomerListComponent implements OnInit {
     this.canImport = this.checkPermissionService.check(['Basic.Partner.Create']);
     this.canFilterPartnerCategory = this.checkPermissionService.check(["Catalog.PartnerCategory.Read"])
     this.canUpdateExcel = this.checkPermissionService.check(["Basic.Partner.Update"]);
+    this.showInfo = this.checkPermissionService.check(["Basic.Partner.ContactInfo"]);
+  }
+
+  onResidualSelect(e)
+  {
+    this.filter.hasOrderResidual = e? e.value : '';
+    this.filter.offset = 0;
+    this.refreshData();
+  }
+
+  onDebitSelect(e)
+  {
+    this.filter.hasTotalDebit = e? e.value : '';
+    this.filter.offset = 0;
+    this.refreshData();
+  }
+
+  onMemberLevelSelect(e)
+  {
+    this.filter.memberLevelId = e? e.id : '';
+    this.filter.offset = 0;
+    this.refreshData();
+  }
+
+  public onPageChange(event: PageChangeEvent): void {
+    this.filter.offset = event.skip;;
+    this.refreshData();
   }
 }

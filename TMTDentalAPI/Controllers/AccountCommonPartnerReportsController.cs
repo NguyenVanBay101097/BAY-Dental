@@ -62,7 +62,7 @@ namespace TMTDentalAPI.Controllers
             var res = await _reportService.ReportSalaryEmployee(val);
             return Ok(res);
         }
-        
+
         [HttpPost("ReportSalaryEmployeeDetail")]
         [CheckAccess(Actions = "Report.AccountPartner")]
         public async Task<IActionResult> ReportSalaryEmployeeDetail(AccountCommonPartnerReportItem val)
@@ -100,13 +100,13 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 2].Value = item.PartnerRef;
                     worksheet.Cells[row, 3].Value = item.PartnerPhone;
                     worksheet.Cells[row, 4].Value = item.Begin;
-                    worksheet.Cells[row, 4].Style.Numberformat.Format = item.Begin >0? "#,###" : "";
+                    worksheet.Cells[row, 4].Style.Numberformat.Format = "#,###0";
                     worksheet.Cells[row, 5].Value = item.Debit;
-                    worksheet.Cells[row, 5].Style.Numberformat.Format = item.Debit > 0 ? "#,###" : "";
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#,###0";
                     worksheet.Cells[row, 6].Value = item.Credit;
-                    worksheet.Cells[row, 6].Style.Numberformat.Format = item.Credit > 0 ? "#,###" : "";
+                    worksheet.Cells[row, 6].Style.Numberformat.Format ="#,###0";
                     worksheet.Cells[row, 7].Value = item.End;
-                    worksheet.Cells[row, 7].Style.Numberformat.Format = item.End > 0 ? "#,###" : "";
+                    worksheet.Cells[row, 7].Style.Numberformat.Format ="#,###0";
                     row++;
                 }
 
@@ -122,6 +122,30 @@ namespace TMTDentalAPI.Controllers
             stream.Position = 0;
 
             return new FileContentResult(fileContent, mimeType);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> ReportPartnerDebit(ReportPartnerDebitReq val)// công nợ khách hàng
+        {
+            var res = await _reportService.ReportPartnerDebit(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> ReportPartnerDebitDetail(ReportPartnerDebitDetailReq val)// công nợ khách hàng chi tiết
+        {
+            var res = await _reportService.ReportPartnerDebitDetail(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> ReportPartnerDebitSummary(ReportPartnerDebitReq val)// công nợ khách hàng
+        {
+            var res = await _reportService.ReportPartnerDebitSummary(val);
+            return Ok(res);
         }
     }
 }

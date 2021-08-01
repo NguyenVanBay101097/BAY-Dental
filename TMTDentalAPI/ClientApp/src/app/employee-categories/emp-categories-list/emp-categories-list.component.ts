@@ -92,7 +92,7 @@ export class EmpCategoriesListComponent implements OnInit {
   }
 
   deleteCategEmployee(id) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa nhóm nhân viên';
     modalRef.result.then(() => {
       this.service.deleteCategEmployee(id).subscribe(

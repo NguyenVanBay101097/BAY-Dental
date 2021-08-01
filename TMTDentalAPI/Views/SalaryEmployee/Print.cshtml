@@ -174,7 +174,6 @@
                                 <td class="text-left">Phụ cấp lễ tết</td>
                                 <td class="text-right">@(slip.HolidayAllowance.HasValue ? string.Format(culture, "{0:0,0}", slip.HolidayAllowance.Value) : "0")</td>
                             </tr>
-
                             <tr>
                                 <td class="text-center">8</td>
                                 <td class="text-left">Hoa hồng</td>
@@ -185,13 +184,18 @@
                                 <td class="text-left">Phạt</td>
                                 <td class="text-right">@(slip.AmercementMoney.HasValue && slip.AmercementMoney.Value != 0 ? string.Format(culture, "{0:0,0}", slip.AmercementMoney.Value) : "0")</td>
                             </tr>
+                            <tr>
+                                <td class="text-center">10</td>
+                                <td class="text-left">Thuế & BHXH</td>
+                                <td class="text-right">@(slip.TaxNSocialInsurance.HasValue && slip.TaxNSocialInsurance.Value != 0 ? string.Format(culture, "{0:0,0}", slip.TaxNSocialInsurance.Value) : "0")</td>
+                            </tr>
                             <tr class="bg-info font-semibold">
                                 <td></td>
                                 <td class="text-left">Tổng lương</td>
                                 <td class="text-right">@(slip.TotalSalary.HasValue && slip.TotalSalary.Value != 0 ? string.Format(culture, "{0:0,0}", slip.TotalSalary.Value) : "0")</td>
                             </tr>
                             <tr>
-                                <td class="text-center">10</td>
+                                <td class="text-center">11</td>
                                 <td class="text-left">Tạm ứng</td>
                                 <td class="text-right">@(slip.AdvancePayment.HasValue && slip.AdvancePayment.Value != 0 ? string.Format(culture, "{0:0,0}", slip.AdvancePayment.Value) : "0")</td>
                             </tr>

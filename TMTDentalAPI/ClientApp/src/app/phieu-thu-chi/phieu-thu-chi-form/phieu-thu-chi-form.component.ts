@@ -281,7 +281,7 @@ export class PhieuThuChiFormComponent implements OnInit {
   }
 
   quickCreateLoaiThuChi() {
-    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(LoaiThuChiFormComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm ' + this.converttype();
     modalRef.componentInstance.type = this.type;
     modalRef.result.then((result: any) => {

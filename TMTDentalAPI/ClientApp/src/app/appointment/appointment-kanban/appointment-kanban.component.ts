@@ -123,7 +123,7 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   createAppointment() {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.result.then(result => {
       this.loadData();
     }, () => { });
@@ -159,7 +159,7 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   deleteAppointment(appointment: AppointmentBasic) {
-    const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(ConfirmDialogComponent, {  windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa lịch hẹn';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa lịch hẹn này?';
     modalRef.result.then(() => {
@@ -177,7 +177,7 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   editAppointment(appointment: AppointmentBasic) {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = appointment.id;
     modalRef.result.then(() => {
       this.loadData();
@@ -270,7 +270,7 @@ export class AppointmentKanbanComponent implements OnInit {
     this.dotkhamService.getPaged(paged).subscribe((rs: any) => {
       if (rs.items.length) {
         console.log(rs.items);
-        let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Tạo đợt khám';
         modalRef.componentInstance.saleOrderId = rs.items[0].saleOrderId;
 

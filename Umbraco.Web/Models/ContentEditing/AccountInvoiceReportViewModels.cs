@@ -107,8 +107,52 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PartnerName { get; set; }
         public string EmployeeName { get; set; }
         public string AssistantName { get; set; }
+        public Guid? ProductId { get; set; }
         public string ProductName { get; set; }
         public decimal PriceSubTotal { get; set; }
+    }
+  
+    public class SumRevenueReportPar
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
+        public Guid? PartnerId { get; set; }
+    }
+
+
+    public class RevenueTimeReportPrintVM
+    {
+        public DateTime InvoiceDate { get; set; }
+        public decimal PriceSubTotal { get; set; }
+        public IEnumerable<RevenueReportDetailDisplay> RevenueReportDetailPrints { get; set; } = new List<RevenueReportDetailDisplay>();
+    }
+    public class RevenueServiceReportPrintVM
+    {
+        public Guid ProductId { get; set; }
+        public string ProductName { get; set; }
+        public decimal PriceSubTotal { get; set; }
+        public IEnumerable<RevenueReportDetailDisplay> RevenueReportDetailPrints { get; set; } = new List<RevenueReportDetailDisplay>();
+    }
+    public class RevenueEmployeeAssistantReportDetailDisplay
+    {
+        public DateTime? InvoiceDate { get; set; }
+        public string InvoiceOrigin { get; set; }
+        public string PartnerName { get; set; }
+        public string EmployeeName { get; set; }
+        public string AssistantName { get; set; }
+        public Guid? ProductId { get; set; }
+        public string ProductName { get; set; }
+        public decimal PriceSubTotal { get; set; }
+        public Guid? GroupById { get; set; }
+        public string GroupBy { get; set; }
+    }
+    public class RevenueEmployeeReportPrintVM
+    {
+        public Guid? Id { get; set; }
+        public string Name { get; set; }
+        public decimal PriceSubTotal { get; set; }
+        public IEnumerable<RevenueEmployeeAssistantReportDetailDisplay> RevenueReportDetailPrints { get; set; } = new List<RevenueEmployeeAssistantReportDetailDisplay>();
     }
 
 }

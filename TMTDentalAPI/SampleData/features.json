@@ -24,6 +24,10 @@
           {
             "Name": "Xuất excel",
             "Permission": "Basic.Partner.Export"
+          },
+          {
+            "Name": "Thông tin liên hệ",
+            "Permission": "Basic.Partner.ContactInfo"
           }
         ]
       },

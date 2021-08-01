@@ -41,7 +41,7 @@
                                     <span *ngIf="formReadonly">{{phieuThuChiDisplay.loaiThuChi?.name}}</span>
                                     <div [class.d-none]="formReadonly">
                                         <div class="d-flex">
-                                            <kendo-combobox [data]="loaiThuChiList" [textField]="'name'"
+                                            <kendo-combobox (selectionChange)="onChangeLoai($event)" [data]="loaiThuChiList" [textField]="'name'"
                                                 [filterable]="true" #loaiThuChiCbx formControlName="loaiThuChi"
                                                 [valueField]="'id'">
                                             </kendo-combobox>
@@ -142,6 +142,30 @@
                                         [valueField]="'id'">
                                     </kendo-combobox>
                                     <span *ngIf="formReadonly">{{phieuThuChiDisplay.partner?.displayName}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                      
+                                        <div class="form-check mr-2">
+                                            <input class="form-check-input" type="checkbox" formControlName="isAccounting" id="isAccounting">
+                                            <label class="form-check-label" for="isAccounting">
+                                                Hạch toán kết quả kinh doanh
+                                            </label>
+                                        </div>
+                                        <div class="icon-hover">
+                                            <i class="fas fa-info-circle text-primary" triggers="mouseenter:mouseleave" placement="top" [autoClose]="true"  [ngbPopover]="popContent"></i>
+                                        </div>
+                                        <ng-template #popContent>
+                                            Hạch toán vào chỉ tiêu {{type == 'thu' ? 'thu nhập' : 'chi phí'}} khác trong báo cáo kết quả kinh doanh
+                                        </ng-template>
+                                    </div>
+                                   
                                 </td>
                             </tr>
                         </tbody>

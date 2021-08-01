@@ -57,19 +57,14 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: null,
+      template: [null, Validators.required],
       smsAccount: [null, Validators.required],
       active: false,
       typeTimeBeforSend: 'hour',
       timeBeforSend: [1, Validators.required],
       templateName: '',
-      body: ['', Validators.required]
     })
-    var user_change_company_vm = localStorage.getItem('user_change_company_vm');
-    if (user_change_company_vm) {
-      var companyInfo = JSON.parse(user_change_company_vm);
-      this.companyId = companyInfo.currentCompany.id;
-    }
+  
     this.loadDataFormApi();
     this.loadSmsTemplate();
     this.loadDefaultCampaignThanksCustomer();
@@ -121,12 +116,6 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
         if (res) {
           this.id = res.id;
           this.formGroup.patchValue(res);
-          if (res.body) {
-            this.template = {
-              text: res.body,
-              templateType: 'text'
-            }
-          }
           if (res.dateSend) {
             this.formGroup.get('dateTimeSend').patchValue(new Date(res.dateSend))
           }
@@ -141,10 +130,17 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     this.searchAccount().subscribe(
       (result: any) => {
         if (result && result.items) {
-          this.filteredSmsAccount = result.items
+          this.filteredSmsAccount = result.items;
+          if (result.items[0]) {
+            this.formGroup.get('smsAccount').patchValue(result.items[0]);
+          }
         }
       }
     )
+  }
+
+  get templateValue() {
+    return this.formGroup.get('template').value;
   }
 
   searchAccount(q?: string) {
@@ -157,22 +153,10 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
 
   loadSmsTemplate() {
     this.searchSmsTemplate().subscribe(
-      (res: any) => {
-        this.filteredTemplate = res;
+      (result: any) => {
+        this.filteredTemplate = result;
       }
     )
-  }
-
-  onChangeTemplate(event) {
-    if (event && event.body) {
-      this.template = JSON.parse(event.body);
-    } else {
-      this.template = {
-        text: '',
-        templateType: 'text'
-      }
-    }
-    this.f.body.setValue(this.template.text);
   }
 
   searchSmsTemplate(q?: string) {
@@ -188,7 +172,6 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     var val = this.formGroup.value;
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
-    val.companyId = this.companyId;
     val.templateId = val.template ? val.template.id : null;
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
     this.smsConfigService.saveConfig(val).subscribe(
@@ -196,26 +179,10 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
         this.notify("Thiết lập thành công", true);
       }
     )
-    if (this.isTemplateCopy && val.templateName != '') {
-      var template = {
-        text: val.body,
-        templateType: 'text'
-      }
-      var valueTemplate = {
-        name: val.templateName,
-        body: JSON.stringify(template),
-        type: "saleOrder"
-      }
-      this.smsTemplateService.create(valueTemplate).subscribe(
-        () => {
-          this.loadSmsTemplate();
-        }
-      )
-    }
   }
 
   addTemplate() {
-    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo mẫu tin';
     modalRef.componentInstance.templateTypeTab = "saleOrder";
     modalRef.result.then((val) => {

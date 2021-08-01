@@ -286,7 +286,7 @@ namespace Infrastructure.Services
 
             //var items = query.GroupBy(x => new { EmployeeId = x.EmployeeId.Value, EmployeeName = x.Employee.Name, Date = x.Date.Value.Date, CommissionType = x.Commission.Type });
             var items = await query.Include(x => x.Employee).Include(x => x.Commission).ToListAsync();
-            var totalItems =  items.Select(x => x.EmployeeId).Count();
+           
           
             var res = items.GroupBy(x=> new {
                 EmployeeId = x.EmployeeId.Value,
@@ -300,6 +300,8 @@ namespace Infrastructure.Services
                 EmployeeId = x.Key.EmployeeId,
                 EmployeeName = x.Key.EmployeeName
             }).ToList();
+
+            var totalItems = res.Count();
 
             return new PagedResult2<CommissionSettlementReportRes>(totalItems, val.Offset, val.Limit)
             {

@@ -15,13 +15,15 @@ namespace ApplicationCore.Entities
         }
         public string Name { get; set; }
 
-        public string State { get; set; }
 
         public string PartnerRef { get; set; }
 
         public Guid PartnerId { get; set; }
         public Partner Partner { get; set; }
 
+        /// <summary>
+        /// ngày mua/trả hàng
+        /// </summary>
         public DateTime DateOrder { get; set; }
 
         public DateTime? DateApprove { get; set; }
@@ -29,7 +31,32 @@ namespace ApplicationCore.Entities
         public Guid PickingTypeId { get; set; }
         public StockPickingType PickingType { get; set; }
 
+        /// <summary>
+        /// phiếu nhập/xuất kho
+        /// </summary>
+        public Guid? PickingId { get; set; }
+        public StockPicking Picking { get; set; }
+
+        /// <summary>
+        /// tiền thanh toán chỉ áp dụng lần thanh toán đầu
+        /// </summary>
+        public decimal? AmountPayment { get; set; }
+
+        /// <summary>
+        /// phương thức thanh toán chỉ áp dụng lần thanh toán đầu
+        /// </summary>
+        public Guid? JournalId { get; set; }
+        public AccountJournal Journal { get; set; }
+
+        /// <summary>
+        /// Tổng tiền
+        /// </summary>
         public decimal? AmountTotal { get; set; }
+
+        /// <summary>
+        /// tiền còn nợ
+        /// </summary>
+        public decimal? AmountResidual { get; set; }
 
         public decimal? AmountUntaxed { get; set; }
 
@@ -55,6 +82,14 @@ namespace ApplicationCore.Entities
         /// Dung de phan loai: don mua hang hay don tra hang
         /// </summary>
         public string Type { get; set; }
+
+
+        /// <summary>
+        /// draft : nháp
+        /// purchase : đơn hàng
+        /// done : hoàn thành
+        /// </summary>
+        public string State { get; set; }
 
         public Guid? RefundOrderId { get; set; }
         public PurchaseOrder RefundOrder { get; set; }

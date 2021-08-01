@@ -24,7 +24,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td class="o_td_label">
                                     <label class="o_form_label">Thời gian chạy</label>
                                 </td>
@@ -57,7 +57,7 @@
                                         </div>
                                     </div>
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <td class="o_td_label d-flex">
                                     <label class="o_form_label">Hạn mức gửi tin</label>
@@ -69,7 +69,7 @@
                                 <td class="w-100">
                                     <div class="d-flex align-items-center">
                                         <kendo-numerictextbox class="w-fit-content" [min]="0" [format]="'n0'"
-                                            formControlName="limitMessage">
+                                            formControlName="limitMessage" (valueChange)="limitChange($event)">
                                         </kendo-numerictextbox>
                                         <div class="mx-2">SMS</div>
 

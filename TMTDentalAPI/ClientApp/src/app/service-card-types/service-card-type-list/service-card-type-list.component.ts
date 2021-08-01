@@ -73,7 +73,7 @@ export class ServiceCardTypeListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(ServiceCardTypeCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ServiceCardTypeCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
 
     modalRef.result.then(() => {
@@ -83,7 +83,7 @@ export class ServiceCardTypeListComponent implements OnInit {
   }
 
   editItem(item: any) {
-    let modalRef = this.modalService.open(ServiceCardTypeCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ServiceCardTypeCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.title = 'Sửa: ' + this.title;
 

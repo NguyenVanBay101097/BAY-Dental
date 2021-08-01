@@ -97,10 +97,6 @@ namespace Infrastructure.Services
             return paged;
         }
 
-
-
-
-
         public async Task<SaleOrderPaymentDisplay> GetDisplay(Guid id)
         {
             var paymentJournalLineObj = GetService<ISaleOrderPaymentJournalLineService>();
@@ -133,12 +129,11 @@ namespace Infrastructure.Services
             return saleOrderPaymentDisplay;
         }
 
-
         public async Task<SaleOrderPayment> CreateSaleOrderPayment(SaleOrderPaymentSave val)
         {
             //Mapper
             var saleOrderPayment = _mapper.Map<SaleOrderPayment>(val);
-            SaveLines(val, saleOrderPayment);
+            SaveLines(val, saleOrderPayment);        
             await CreateAsync(saleOrderPayment);
 
             return saleOrderPayment;
@@ -154,12 +149,16 @@ namespace Infrastructure.Services
                     lineToRemoves.Add(existLine);
             }
 
-            foreach (var line in lineToRemoves)
+            if (lineToRemoves.Any())
             {
-                orderPayment.Lines.Remove(line);
+                foreach (var line in lineToRemoves)
+                {
+                    orderPayment.Lines.Remove(line);
+                }
             }
 
-            foreach (var line in val.Lines)
+
+            foreach (var line in val.Lines.Where(x => x.Amount > 0))
             {
                 if (line.Id == Guid.Empty)
                 {
@@ -173,7 +172,6 @@ namespace Infrastructure.Services
                 }
             }
         }
-
 
         public async Task ActionPayment(IEnumerable<Guid> ids)
         {
@@ -208,7 +206,7 @@ namespace Infrastructure.Services
                 var payments = _PreparePayments(saleOrderPayment, invoice.Id);
                 await paymentObj.CreateAsync(payments);
                 await paymentObj.Post(payments.Select(x => x.Id).ToList());
-              
+
                 saleOrderPayment.MoveId = invoice.Id;
                 foreach (var payment in payments)
                     saleOrderPayment.PaymentRels.Add(new SaleOrderPaymentAccountPaymentRel { PaymentId = payment.Id });
@@ -240,10 +238,10 @@ namespace Infrastructure.Services
                 var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
                 MemberLevel type = null;
                 if (partnerLevel != null)
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Point >= partnerLevel.Point && x.Id != partnerLevel.Id, orderBy: x => x.OrderByDescending(s => s.Point))
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Point >= partnerLevel.Point && x.Id != partnerLevel.Id && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
                         .FirstOrDefaultAsync();
                 else
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints, orderBy: x => x.OrderByDescending(s => s.Point))
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
                           .FirstOrDefaultAsync();
 
                 if (type != null)
@@ -394,23 +392,23 @@ namespace Infrastructure.Services
                 .Include(x => x.Counselor)
                 .FirstOrDefaultAsync();
 
-           
+
             //tổng thanh toán 
             var totalPaid = saleOrderLine.AmountPaid + self.Amount;
 
-           //Tổng giá vốn
+            //Tổng giá vốn
             var totalStandPrice = (decimal)productObj.GetStandardPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId) * saleOrderLine.ProductUOMQty;
 
             //tính lợi nhuận hoa hồng
             var totalBaseAmount = await commSetObj.SearchQuery(x => x.SaleOrderLineId == self.SaleOrderLineId)
-                .Select(x=> new { x.BaseAmount, x.MoveLineId}).Distinct().SumAsync(x=> x.BaseAmount);
+                .Select(x => new { x.BaseAmount, x.MoveLineId }).Distinct().SumAsync(x => x.BaseAmount);
 
             //Số tiền lợi nhuận hiên tại
-            var baseAmountCurrent = totalPaid - totalStandPrice - totalBaseAmount > 0 ? totalPaid - totalStandPrice - totalBaseAmount: 0;
+            var baseAmountCurrent = totalPaid - totalStandPrice - totalBaseAmount > 0 ? totalPaid - totalStandPrice - totalBaseAmount : 0;
 
             var today = DateTime.Today;
             //add hoa hồng bác sĩ
-        
+
             if (saleOrderLine.EmployeeId.HasValue && saleOrderLine.Employee.CommissionId.HasValue)
             {
                 var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Employee.CommissionId);
@@ -464,7 +462,7 @@ namespace Infrastructure.Services
                 });
             }
 
-             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
+            res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
 
             return res;
@@ -520,7 +518,7 @@ namespace Infrastructure.Services
                 if (firstDayOfMonth < saleOrderPayment.Date && saleOrderPayment.Date > lastDayOfMonth)
                     throw new Exception("Bạn chỉ được hủy thanh toán trong tháng");
 
-                if(saleOrderPayment.State == "cancel")
+                if (saleOrderPayment.State == "cancel")
                     throw new Exception("Không thể hủy phiếu ở trạng thái hủy");
 
                 ///xử lý tìm các payment update state = "cancel" va hóa đơn thanh toán để xóa
@@ -570,20 +568,19 @@ namespace Infrastructure.Services
                 var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
                 MemberLevel type = null;
                 if (partnerLevel != null)
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Id != partnerLevel.Id, orderBy: x => x.OrderByDescending(s => s.Point))
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Id != partnerLevel.Id && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
                         .FirstOrDefaultAsync();
                 else
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints, orderBy: x => x.OrderByDescending(s => s.Point))
+                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
                           .FirstOrDefaultAsync();
 
-                if (type != null)
-                {
-                    var levelValuesDict = new Dictionary<string, object>()
+                var typeId = type != null ? type.Id : Guid.Empty;
+
+                var levelValuesDict = new Dictionary<string, object>()
                     {
-                        { $"res.partner,{saleOrderPayment.Order.PartnerId}", type.Id }
+                        { $"res.partner,{saleOrderPayment.Order.PartnerId}", typeId }
                     };
-                    propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: saleOrderPayment.CompanyId);
-                }
+                propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: saleOrderPayment.CompanyId);
 
                 saleOrderPayment.State = "cancel";
             }

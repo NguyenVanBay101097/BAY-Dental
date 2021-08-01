@@ -106,7 +106,9 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   showPartnerTitles = false;
   showAgent = false;
   showPartnerCategories = false;
+  showInfo = false;
   canCreateTitle = false;
+
 
   get f() { return this.formGroup.controls; }
 
@@ -498,7 +500,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   quickCreatePartnerCategory() {
     let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
@@ -599,7 +601,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   checkRole(){
+    console.log(this.id);
+    
     this.showPartnerHistories = this.checkPermissionService.check(["Catalog.History.Read"]);
     this.canCreateTitle = this.checkPermissionService.check(["Catalog.PartnerTitle.Create"]);
+    this.showInfo = this.checkPermissionService.check(["Basic.Partner.ContactInfo"]);
   }
 }

@@ -12,20 +12,22 @@
             <div class="o_cp_buttons">
                 <ul class="nav nav-pills">
                     <li class="nav-item">
-                        <a routerLink="overview" class="nav-link px-3 py-1" routerLinkActive="active">Hồ sơ - Điều
-                            trị</a>
+                        <a routerLink="overview" class="nav-link px-3 py-1" routerLinkActive="active">Hồ sơ</a>
                     </li>
                     <li class="nav-item">
-                        <a routerLink="advisories" class="nav-link px-3 py-1" routerLinkActive="active">Tư vấn</a>
-                    </li>
-                    <li class="nav-item">
-                        <a *ngIf="labo_orders" routerLink="labo-orders" class="nav-link px-3 py-1" routerLinkActive="active">Labo</a>
+                        <a routerLink="advisories" class="nav-link px-3 py-1" routerLinkActive="active">Tình trạng răng</a>
                     </li>
                     <li class="nav-item">
                         <a *ngIf="treatment" routerLink="treatment" class="nav-link px-3 py-1" routerLinkActive="active">Phiếu điều trị</a>
                     </li>
                     <li class="nav-item">
                         <a *ngIf="advances" routerLink="advances" class="nav-link px-3 py-1" routerLinkActive="active">Tạm ứng</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="debt" class="nav-link px-3 py-1" routerLinkActive="active">Sổ công nợ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="quotations" class="nav-link px-3 py-1" routerLinkActive="active">Báo giá</a>
                     </li>
                     <!-- <li class="nav-item">
                         <a routerLink="advances" class="nav-link px-3 py-1" routerLinkActive="active">Tạm ứng</a>
@@ -34,13 +36,10 @@
                         <a routerLink="quotations" class="nav-link px-3 py-1" routerLinkActive="active">Tư vấn</a>
                     </li> -->
                     <li class="nav-item">
-                        <a routerLink="quotations" class="nav-link px-3 py-1" routerLinkActive="active">Báo giá</a>
-                    </li>
-                    <li class="nav-item">
                         <a routerLink="appointment" class="nav-link px-3 py-1" routerLinkActive="active">Lịch hẹn</a>
                     </li>
                     <li class="nav-item">
-                        <a routerLink="debt" class="nav-link px-3 py-1" routerLinkActive="active">Sổ công nợ</a>
+                        <a *ngIf="labo_orders" routerLink="labo-orders" class="nav-link px-3 py-1" routerLinkActive="active">Labo</a>
                     </li>
                 </ul>
             </div>

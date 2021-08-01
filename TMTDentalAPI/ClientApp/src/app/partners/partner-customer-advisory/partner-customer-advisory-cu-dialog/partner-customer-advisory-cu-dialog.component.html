@@ -104,26 +104,30 @@
                     <div class="mb-2">
                         <h5>Chẩn đoán răng</h5>
                         <div>
-                            <app-tooth-diagnosis-popover [tags]="f.toothDiagnosis.value" (onSave)="updateDiagnosis($event)">
-                            </app-tooth-diagnosis-popover>
-                            <div *ngIf = "f.toothDiagnosis.value.length == 0 && submitted" class="text-danger">
+                            <kendo-multiselect [filterable]="true" class="mr-3" [data]="toothDianosisSource" [allowCustom]="true"
+                                [valueNormalizer]="valueNormalizer" (filterChange)="this.searchUpdateToothDianosis.next($event)" [filterable]="true"
+                                [textField]="'name'" [valueField]="'id'" formControlName="toothDiagnosis">
+                            </kendo-multiselect>
+                            <div *ngIf="f.toothDiagnosis.value.length == 0 && submitted" class="text-danger">
                                 Chọn chẩn đoán răng
                             </div>
                         </div>
                     </div>
                     <div class="mb-2">
-                        <h5>Dịch vụ tư vấn</h5>
+                        <h5>Dịch vụ</h5>
                         <div>
-                            <app-consulting-service-popover [tags]="f.product.value" (onSave)="updateProduct($event)">
-                            </app-consulting-service-popover>
-                            <div *ngIf = "f.product.value.length == 0 && submitted" class="text-danger">
+                            <kendo-multiselect [filterable]="true" class="mr-3" [data]="productSource" [filterable]="true"
+                                (filterChange)="this.searchUpdateProduct.next($event)" [textField]="'name'" [valueField]="'id'"
+                                formControlName="product">
+                            </kendo-multiselect>
+                            <div *ngIf="f.product.value.length == 0 && submitted" class="text-danger">
                                 Chọn dịch vụ tư vấn
                             </div>
                         </div>
-                        
+                    
                     </div>
                     <div class="mb-2">
-                        <h5>Ghi chú tư vấn</h5>
+                        <h5>Ghi chú tiểu sử răng</h5>
                         <textarea formControlName="note" class="form-control"></textarea>
                     </div>
                 </div>

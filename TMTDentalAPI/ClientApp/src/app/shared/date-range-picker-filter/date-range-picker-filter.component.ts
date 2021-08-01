@@ -15,9 +15,9 @@ export class DateRangePickerFilterComponent implements OnInit {
   @Input() opens: string = 'auto';
   @Input() drops: string = 'auto';
 
-  selected: any;
+  @Input() selected: any;
   ranges: any = {
-    'Hôm nay': [moment(), moment()],
+    'Hôm nay': [moment(new Date()), moment(new Date())],
     'Hôm qua': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
     '7 ngày qua': [moment().subtract(6, 'days'), moment()],
     '30 ngày qua': [moment().subtract(29, 'days'), moment()],
@@ -32,14 +32,16 @@ export class DateRangePickerFilterComponent implements OnInit {
 
   @ViewChild(DaterangepickerDirective, { static: false }) inputDr: DaterangepickerDirective;
   constructor() {
-   
+
   }
 
   ngOnInit() {
-    this.selected = {
-      startDate: moment(this.startDate),
-      endDate:moment(this.endDate)
-    }
+    this.selected = this.selected || (
+      (!this.startDate && !this.endDate) ? null :
+        {
+          startDate: moment(this.startDate),
+          endDate: moment(this.endDate)
+        })
   }
   ngAfterViewInit() {
   }
@@ -54,10 +56,10 @@ export class DateRangePickerFilterComponent implements OnInit {
   }
 
   onApply() {
-    var value = {dateFrom: null, dateTo: null};
-    if(!this.selected) {
-    this.searchChange.emit(value);
-    return;
+    var value = { dateFrom: null, dateTo: null };
+    if (!this.selected) {
+      this.searchChange.emit(value);
+      return;
     }
     if (this.selected.startDate) {
       value.dateFrom = this.selected.startDate.toDate();

@@ -19,6 +19,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int TotalSuccessfulMessages { get; set; }
         public int TotalCancelMessages { get; set; }
         public int TotalErrorMessages { get; set; }
+        public int TotalWaitedMessages { get; set; }
         public DateTime? DateStart { get; set; }
         public string TypeDate { get; set; }
         public string State { get; set; }
@@ -64,7 +65,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
         public string Search { get; set; }
         public string State { get; set; }
-        public Guid? CompanyId { get; set; }
         public bool? UserCampaign { get; set; }
     }
 
