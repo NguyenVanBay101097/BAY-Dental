@@ -71,6 +71,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.IsAllowSurvey == val.IsAllowSurvey.Value);
             }
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
             query = query.OrderBy(s => s.Name);
             return query;
         }

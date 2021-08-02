@@ -12,6 +12,7 @@ export class EmployeePaged {
     isAssistant: boolean;
     ids: string[];
     active: any = true;
+    companyId: string;
 }
 
 export class EmployeeBasic {

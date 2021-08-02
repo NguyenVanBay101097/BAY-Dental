@@ -185,6 +185,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? IsAllowSurvey { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class EmployeeSave
