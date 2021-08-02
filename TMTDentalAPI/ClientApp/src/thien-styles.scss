@@ -557,3 +557,488 @@ a.disabled {
         border-color: #0d6efd;
     }
 }
+
+/* New Calendar */
+
+.cont-calendar {
+    /* height: 100vh; */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* padding: .9rem; */
+    height: 100%;
+    
+    .toolbar-calendar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: .9rem;
+    }
+    
+    .main-calender {
+        flex-grow: 1;
+        overflow: auto;
+    }
+    
+    .btn-check {
+        position: absolute;
+        clip: rect(0, 0, 0, 0);
+        pointer-events: none;
+    }
+    
+    .btn-white {
+        color: #858f9b;
+        border-color: #e2e7ed;
+        background-color: #e2e7ed;
+    }
+    
+    .btn-white:hover {
+        border-color: #e2e7ed;
+        background-color: #d7dadd;
+    }
+    
+    .btn-check + label {
+        margin-bottom: 0;
+    }
+    
+    .btn-check + .btn {
+        color: #929daa;
+        border-color: #e2e7ed;
+        border-radius: 0;
+        border-right-width: 0;
+    }
+    
+    .btn-check + .btn:hover {
+        border-color: #e2e7ed;
+        background-color: #e2e7ed;
+    }
+    
+    .btn-check:first-of-type + .btn {
+        border-top-left-radius: 0.2rem;
+        border-bottom-left-radius: 0.2rem;
+    }
+    
+    .btn-check:last-of-type + .btn {
+        border-top-right-radius: 0.2rem;
+        border-bottom-right-radius: 0.2rem;
+        border-right-width: 1px;
+    }
+    
+    .btn-check:active + .btn,
+    .btn-check:checked + .btn {
+        color: #fff;
+        border-color: #0d6efd;
+        background-color: #0d6efd;
+    }
+    
+    .btn-check:active + .btn-white,
+    .btn-check:checked + .btn-white {
+        color: #858f9b;
+        border-color: #e2e7ed;
+        background-color: #fff;
+    }
+    
+    .btn-gray {
+        color: #929daa !important;
+        border-color: #f8f9fb !important;
+        background-color: #f8f9fb !important;
+    }
+    
+    .btn-gray:hover {
+        color: #929daa;
+        border-color: #e2e7ed;
+        background-color: #e2e7ed;
+    }
+    
+    .toolbar-today {
+        width: 100%;
+        max-width: 155px;
+    }
+    
+    .toolbar-date {
+        color: #2c333a;
+        display: flex;
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .toolbar-date .btn-gray {
+        color: #2c333a;
+    }
+    
+    .toolbar-date .btn:focus {
+        box-shadow: none;
+    }
+    
+    .toolbar-date .btn:first-of-type {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    
+    .toolbar-date .btn:last-of-type {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    
+    .toolbar-date .title-toolbar {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        font-weight: 500;
+        width: 100%;
+        background-color: #f8f9fb;
+        text-align: center;
+    }
+    
+    .toolbar-time-period {
+        display: flex;
+    }
+    
+    .btn.focus,
+    .btn:focus {
+        outline: 0;
+        box-shadow: none;
+    }
+    
+    .calendar-table {
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 0 !important;
+        height: 100%;
+    }
+    
+    .calendar-table th,
+    .calendar-table td {
+        text-align: right;
+    }
+    
+    .calendar-table th {
+        font-size: 13px;
+        font-weight: 600;
+        border-bottom: 1px solid #dee2e6 !important;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: white;
+    }
+    
+    .calendar-table th.th-v2 {
+        text-align: center;
+        background: #F8F9FB;
+    }
+    
+    .calendar-table th.th-v2 div:first-child {
+        font-size: 1.5rem;
+        /* color: #5A6271; */
+    }
+    
+    .calendar-table th.th-v2 div:last-child {
+        font-weight: normal;
+        color: #929DAA;
+    }
+    
+    .calendar-table th.th-v2 div.now {
+        color: #007BFF;
+    }
+    
+    .calendar-table td.td-time {
+        width: 1%;
+        white-space: nowrap;
+        font-size: 14px;
+        color: #929DAA;
+        border-right: 1px solid #dee2e6;
+    }
+    
+    .calendar-table td.td-time.now {
+        font-weight: 600;
+        color: #007BFF;
+    }
+    
+    .calendar-table td.td-day {
+        position: relative;
+        padding: 0;
+    }
+    
+    .calendar-table td.td-week {
+        position: relative;
+        padding: 0;
+    }
+    
+    .calendar-table td.td-month {
+        height: 120px;
+    }
+    
+    .calendar-table td.td-month.active:hover {
+        cursor: pointer;
+        background: #F8F9FB;
+    }
+    
+    .calendar-table tbody tr:first-child td {
+        border-top: 0 !important;
+    }
+    
+    /* .date-event {} */
+    
+    .date-event-v2 {
+        padding: .65rem .5rem;
+        border-radius: 6px;
+        text-align: left;
+        /* cursor: pointer; */
+        width: 100%;
+        max-width: 200px;
+        border-left: 3px solid #2395FF; /* default */
+        background: #E5F2FF; /* default */
+    }
+    
+    .date-event-v2 .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: .5rem;
+    }
+    
+    .date-event-v2 .header .status {
+        font-size: 12px;
+        padding: .1rem .5rem;
+        border-radius: 4px;
+        color: white;
+        background: #2395FF; /* default */
+    } 
+    
+    .date-event-v2 .header .action {
+        display: flex;
+        align-items: center;
+        color: #858F9B;
+    }
+    
+    .date-event-v2 .header .action div {
+        cursor: pointer;
+    }
+    
+    .date-event-v2 .header .action div:hover {
+        opacity: .8;
+    }
+    
+    .date-event-v2 .header .action div:first-child {
+        font-size: 14px;
+    }
+    
+    .date-event-v2 .header .action div:last-child {
+        margin-left: .5rem;
+        font-size: 17px;
+    }
+    
+    .date-event-v2 .customer-name {
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: underline;
+    }
+    
+    .date-event-v2 .content {
+        font-size: 12px;
+        margin-top: 4px;
+    }
+    
+    .date-event-v2 .content i {
+        width: 16px;
+        opacity: 0.5;
+        color: #1A6DE3; /* default */
+    }
+    
+    .date-event-v2 .content span {
+        color: #6B7280;
+    }
+    
+    /* .list-data-event-day */
+    
+    .list-data-event-day {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .list-data-event-day .date-event-v2 {
+        margin-left: .75rem;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .list-data-event-day .date-event-v2:hover {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
+    }
+    
+    .list-data-event-day .date-event-v2:first-child {
+        margin-left: 0;
+    }
+    
+    .list-data-event-day {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        padding: .75rem;
+    }
+    
+    .list-data-event-day:hover {
+        cursor: pointer;
+        background: #F8F9FB;
+    }
+    
+    .td-day-overwrite {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        background: white;
+        opacity: 0;
+    }
+    
+    .list-data-event-day .date-event-v2:hover ~ .td-day-overwrite {
+        opacity: 1 !important;
+    }
+    
+    /* .list-data-event-week */
+    
+    /* .list-data-event-week {} */
+    
+    .list-data-event-week .date-event-v2 {
+        margin-top: .75rem;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .list-data-event-week .date-event-v2:hover {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
+    }
+    
+    .list-data-event-week .date-event-v2:first-child {
+        margin-top: 0;
+    }
+    
+    .list-data-event-week {
+        width: 100%;
+        height: 100%;
+        padding: .75rem;
+    }
+    
+    .list-data-event-week:hover {
+        cursor: pointer;
+        background: #F8F9FB;
+    }
+    
+    .td-week-overwrite {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        background: white;
+        opacity: 0;
+    }
+    
+    .list-data-event-week .date-event-v2:hover ~ .td-week-overwrite {
+        opacity: 1 !important;
+    }
+    
+    .date-text {
+        font-size: 13px;
+    }
+    
+    .bg-now {
+        border-top-color: #007bff !important;
+        box-shadow: inset 0px 2px 0px #007bff;
+    }
+    
+    .dot-status {
+        display: flex;
+        align-items: center;
+    }
+    
+    .dot-sematic {
+        height: 7px;
+        width: 7px;
+        border-radius: 50%;
+        margin-right: 8px;
+        background: #007bff; /* default */
+    }
+    
+    .dot-status span {
+        font-size: .9rem;
+    }
+    
+    .bg-confirmed {
+        background: #2395FF; /* đang hẹn */
+    }
+    
+    .bg-arrived {
+        background: #28A745; /* đã đến */
+    }
+    
+    .bg-cancel {
+        background: #EB3B5B; /* hủy hẹn */
+    }
+    
+    .bg-overdue {
+        background: #FFC107; /* quá hạn */
+    }
+    
+    /* đang hẹn */
+    .event-confirmed {
+        border-left: 3px solid #2395FF;
+        background: #E5F2FF;
+    }
+    
+    .event-confirmed .header .status {
+        background: #2395FF;
+    }
+    
+    .event-confirmed .content i {
+        color: #1A6DE3;
+    }
+    
+    /* đã đến */
+    .event-arrived {
+        border-left: 3px solid #28A745;
+        background: #E9F6EC;
+    }
+    
+    .event-arrived .header .status {
+        background: #28A745;
+    }
+    
+    .event-arrived .content i {
+        color: #28A745;
+    }
+    
+    /* hủy hẹn */
+    .event-cancel {
+        border-left: 3px solid #EB3B5B;
+        background: #FDEBE9;
+    }
+    
+    .event-cancel .header .status {
+        background: #EB3B5B;
+    }
+    
+    .event-cancel .content i {
+        color: #EB3B5B;
+    }
+    
+    /* quá hạn */
+    .event-overdue {
+        border-left: 3px solid #FFC107;
+        background: #FEF6E9;
+    }
+    
+    .event-overdue .header .status {
+        background: #FFC107;
+    }
+    
+    .event-overdue .content i {
+        color: #FFC107;
+    }
+}
+

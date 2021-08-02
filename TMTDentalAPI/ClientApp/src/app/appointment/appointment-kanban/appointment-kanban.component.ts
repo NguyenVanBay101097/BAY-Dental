@@ -56,8 +56,8 @@ export class AppointmentKanbanComponent implements OnInit {
   canEmployeeRead = this.checkPermissionService.check(["Catalog.Employee.Read"]);
   canCustomerLink = this.checkPermissionService.check(["Basic.Partner.Read"]);
 
-  public today: Date = new Date(new Date().toDateString());
-  public next3days: Date = new Date(new Date(new Date().setDate(new Date().getDate() + 3)).toDateString());
+  // public today: Date = new Date(new Date().toDateString());
+  // public next3days: Date = new Date(new Date(new Date().setDate(new Date().getDate() + 3)).toDateString());
 
   appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
 
@@ -81,15 +81,96 @@ export class AppointmentKanbanComponent implements OnInit {
   limit: number = 20;
   offset: number = 0
   loading: boolean = false;
-  events = [];
-  calendarApi: Calendar;
-  calendarPlugins = [dayGridPlugin, timeGrigPlugin, interactionPlugin];
-  @ViewChild('fullcalendar',{static: true}) calendarComponent: FullCalendarComponent;
-  titleDateToolbar: string = "";
-  viewToolbar: string = "timeGridWeek"; // "timeGridDay", "timeGridWeek", "dayGridMonth"
-  validRange: DateRangeInput;
+  // events = [];
+  // calendarApi: Calendar;
+  // calendarPlugins = [dayGridPlugin, timeGrigPlugin, interactionPlugin];
+  // @ViewChild('fullcalendar',{static: true}) calendarComponent: FullCalendarComponent;
+  // titleDateToolbar: string = "";
+  // viewToolbar: string = "timeGridWeek"; // "timeGridDay", "timeGridWeek", "dayGridMonth"
+  // validRange: DateRangeInput;
   listData = [];
   doctors = [];
+  // New Calendar //
+  calendarTableEl = null;
+  calendarTheadEl = null;
+  calendarTbodyEl = null;
+  // Dialog
+  contDialogCalendarEl = null;
+  selectStatusEl = null;
+  inputCustomerNameEl = null;
+  inputCustomerPhoneEl = null;
+  inputReferrerNameEl = null;
+
+  today = new Date();
+  todayFormat = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate(), 0, 0, 0);
+  currentDay = 0;
+  currentWeek = 0;
+  currentMonth = this.todayFormat.getMonth();
+  currentYear = this.todayFormat.getFullYear();
+
+  daysOfWeek = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"];
+  // months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]; 
+  months = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+
+  timePeriod = 'month';
+  firstTime = 6; // format 24h : 0h - 23h
+  lastTime = 23; // format 24h : 0h - 23h
+  dateAppointmentFormat = null; // format "year month day hour"
+  appointmentIDChoose = null;
+  dataAppointmentsGrouped = null;
+
+  dataAppointments: any[] = [
+    {
+      id: 0,
+      date: new Date(2021, 7, 5, 8, 30, 5),
+      status: 'confirmed',
+      customerName: 'Thomas K. Wilson',
+      customerPhone: 1909123123,
+      referrerName: 'Wendy R. Sherman'
+    },
+    {
+      id: 1,
+      date: new Date(2021, 7, 4, 8, 15),
+      status: 'arrived',
+      customerName: 'Jeff Bezos',
+      customerPhone: 1909123123,
+      referrerName: 'Anne Mulcahy'
+    },
+    {
+      id: 2,
+      date: new Date(2021, 7, 2, 8),
+      status: 'overdue',
+      customerName: 'Thomas K. Wilson',
+      customerPhone: 1909123123,
+      referrerName: 'Anne Mulcahy'
+    },
+    {
+      id: 3,
+      date: new Date(2021, 7, 1, 8, 30),
+      status: 'arrived',
+      customerName: 'Jeff Bezos',
+      customerPhone: 1909123123,
+      referrerName: 'Thomas K. Wilson'
+    },
+    {
+      id: 4,
+      date: new Date(2021, 7, 4, 8, 45, 10),
+      status: 'cancel',
+      customerName: 'Tom Holland',
+      customerPhone: 1909123123,
+      referrerName: 'Barbara Conan'
+    },
+    {
+      id: 5,
+      date: new Date(2021, 7, 9, 8),
+      status: 'confirmed',
+      customerName: 'Uzumaki Naruto',
+      customerPhone: 1909123123,
+      referrerName: 'Uchiha Sasuke'
+    }
+  ];
+
+  titleToolbar = "";
 
   constructor (
     private appointmentService: AppointmentService,
@@ -104,9 +185,9 @@ export class AppointmentKanbanComponent implements OnInit {
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
     //Add 'implements AfterViewInit' to the class.
-    this.calendarApi = this.calendarComponent.getApi();
-    this.calendarApi.changeView(this.viewToolbar);
-    this.titleDateToolbar = this.getDateToolbar();
+    // this.calendarApi = this.calendarComponent.getApi();
+    // this.calendarApi.changeView(this.viewToolbar);
+    // this.titleDateToolbar = this.getDateToolbar();
     this.loadGridData();
     // console.log(this.calendarApi.view.activeStart);
     // console.log(this.calendarApi.view.activeEnd);
@@ -114,6 +195,18 @@ export class AppointmentKanbanComponent implements OnInit {
     //     document.getElementsByClassName("fc-next-button")[0].addEventListener("click",()=> {
 
     //     });
+
+    // New Calendar //
+    this.getElements();
+    
+    this.dataAppointments = this.dataAppointments.map(v => ({
+      ...v,
+      dateFormat: new Date(v.date).setHours(0, 0, 0, 0),
+      dateHour: v.date.getHours()
+    }));
+    this.groupByDataAppointments(); // group by 
+
+    this.showCalendarMonth(this.currentYear, this.currentMonth);
   }
   ngOnInit() {
     var curr = new Date; // get current date
@@ -294,22 +387,22 @@ export class AppointmentKanbanComponent implements OnInit {
 
     //   this.appointmentByDate[key].push(item);
     // }
-    this.events = [];
-    for (var i = 0; i < paged.items.length; i++) {
-      var item = paged.items[i];
-      var d = new Date();
-      d.setHours(0, 0, 0, 0);
-      let date = new Date(item.date);
-      this.events = this.events.concat([
-        <EventInput>{
-          title: item.partnerName,
-          date: this.intlService.formatDate(date, 'yyyy-MM-ddTHH:mm:ss'),
-          backgroundColor: new Date(item.date) >= d ? (this.states.find(x => x.value == item.state) ? this.states.find(x => x.value == item.state).bgColor : '') : '#FFC107',
-          id: item.id,
-          textColor: 'white'
-        }
-      ]);
-    }
+    // this.events = [];
+    // for (var i = 0; i < paged.items.length; i++) {
+    //   var item = paged.items[i];
+    //   var d = new Date();
+    //   d.setHours(0, 0, 0, 0);
+    //   let date = new Date(item.date);
+    //   this.events = this.events.concat([
+    //     <EventInput>{
+    //       title: item.partnerName,
+    //       date: this.intlService.formatDate(date, 'yyyy-MM-ddTHH:mm:ss'),
+    //       backgroundColor: new Date(item.date) >= d ? (this.states.find(x => x.value == item.state) ? this.states.find(x => x.value == item.state).bgColor : '') : '#FFC107',
+    //       id: item.id,
+    //       textColor: 'white'
+    //     }
+    //   ]);
+    // }
   }
   calendarEvents = [
     { title: 'event 1', date: '2019-04-01' }
@@ -434,49 +527,49 @@ export class AppointmentKanbanComponent implements OnInit {
     //  });
 
   }
-  dateToday() {
-    var currentStart = this.calendarApi.view.currentStart;
-    var currentEnd = this.calendarApi.view.currentEnd;
-    var today = this.calendarApi.getNow();
-    if (today < currentStart || today > currentEnd) 
-      this.calendarApi.today();
-    this.titleDateToolbar = this.getDateToolbar();
-    this.loadGridData();
-  }
-  datePrev() {
-    this.calendarApi.prev();
-    this.titleDateToolbar = this.getDateToolbar();
-    this.loadGridData();
-  }
-  dateNext() {
-    this.calendarApi.next();
-    this.titleDateToolbar = this.getDateToolbar();
-    this.loadGridData();
-  }
-  getDateToolbar() {
-    var currentStart = this.calendarApi.view.currentStart;
-    currentStart.setDate(currentStart.getDate() + 1);
-    var currentStartString = ("0" + currentStart.getUTCDate()).slice(-2) + "/" + 
-                            ("0" + (currentStart.getUTCMonth()+1)).slice(-2) + "/" + 
-                            currentStart.getUTCFullYear();
+  // dateToday() {
+  //   var currentStart = this.calendarApi.view.currentStart;
+  //   var currentEnd = this.calendarApi.view.currentEnd;
+  //   var today = this.calendarApi.getNow();
+  //   if (today < currentStart || today > currentEnd) 
+  //     this.calendarApi.today();
+  //   this.titleDateToolbar = this.getDateToolbar();
+  //   this.loadGridData();
+  // }
+  // datePrev() {
+  //   this.calendarApi.prev();
+  //   this.titleDateToolbar = this.getDateToolbar();
+  //   this.loadGridData();
+  // }
+  // dateNext() {
+  //   this.calendarApi.next();
+  //   this.titleDateToolbar = this.getDateToolbar();
+  //   this.loadGridData();
+  // }
+  // getDateToolbar() {
+  //   var currentStart = this.calendarApi.view.currentStart;
+  //   currentStart.setDate(currentStart.getDate() + 1);
+  //   var currentStartString = ("0" + currentStart.getUTCDate()).slice(-2) + "/" + 
+  //                           ("0" + (currentStart.getUTCMonth()+1)).slice(-2) + "/" + 
+  //                           currentStart.getUTCFullYear();
 
-    var currentEnd = this.calendarApi.view.currentEnd;
-    var currentEndString = ("0" + currentEnd.getUTCDate()).slice(-2) + "/" + 
-                          ("0" + (currentEnd.getUTCMonth()+1)).slice(-2) + "/" + 
-                          currentEnd.getUTCFullYear();
+  //   var currentEnd = this.calendarApi.view.currentEnd;
+  //   var currentEndString = ("0" + currentEnd.getUTCDate()).slice(-2) + "/" + 
+  //                         ("0" + (currentEnd.getUTCMonth()+1)).slice(-2) + "/" + 
+  //                         currentEnd.getUTCFullYear();
                                                 
-    if (currentStartString == currentEndString) {
-      return currentStartString;
-    } else {
-      return `${currentStartString} - ${currentEndString}`;
-    }
-  }
-  changeViewToolbar(event) {
-    this.viewToolbar = event;
-    this.calendarApi.changeView(this.viewToolbar);
-    this.titleDateToolbar = this.getDateToolbar();
-    this.loadGridData();
-  }
+  //   if (currentStartString == currentEndString) {
+  //     return currentStartString;
+  //   } else {
+  //     return `${currentStartString} - ${currentEndString}`;
+  //   }
+  // }
+  // changeViewToolbar(event) {
+  //   this.viewToolbar = event;
+  //   this.calendarApi.changeView(this.viewToolbar);
+  //   this.titleDateToolbar = this.getDateToolbar();
+  //   this.loadGridData();
+  // }
   changeViewKanban(event) {
     this.viewKanban = event;
   }
@@ -485,26 +578,29 @@ export class AppointmentKanbanComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.offset;
     val.doctorId = this.employeeSelected || '';
-    var currentStart = this.calendarApi.view.currentStart;
-    var currentEnd = this.calendarApi.view.currentEnd;
-    currentEnd.setDate(currentEnd.getDate() - 1);
-    if (this.dateFrom || this.dateTo) {
-      var dateRange_1 = new MyDateRange(currentStart, currentEnd);
-      const dateFrom_temp = this.dateFrom ? this.dateFrom : (this.dateTo >= currentStart ? currentStart : this.dateTo);
-      const dateTo_temp = this.dateTo ? this.dateTo : (this.dateFrom <= currentEnd ? currentEnd : this.dateFrom);
-      var dateRange_2 = new MyDateRange(dateFrom_temp, dateTo_temp);
-      const result_intersection = this.intersectionTwoDateRange(dateRange_1, dateRange_2);
-      if (result_intersection) {
-        val.dateTimeFrom = this.intlService.formatDate(result_intersection.start, 'yyyy-MM-dd');
-        val.dateTimeTo = this.intlService.formatDate(result_intersection.end, 'yyyy-MM-dd');
-      } else {
-        this.gridData = null;
-        return;
-      }
-    } else {
-      val.dateTimeFrom = this.intlService.formatDate(currentStart, 'yyyy-MM-dd');
-      val.dateTimeTo = this.intlService.formatDate(currentEnd, 'yyyy-MM-dd');
-    }
+    // val.dateTimeFrom
+    // val.dateTimeTo
+
+    // var currentStart = this.calendarApi.view.currentStart;
+    // var currentEnd = this.calendarApi.view.currentEnd;
+    // currentEnd.setDate(currentEnd.getDate() - 1);
+    // if (this.dateFrom || this.dateTo) {
+    //   var dateRange_1 = new MyDateRange(currentStart, currentEnd);
+    //   const dateFrom_temp = this.dateFrom ? this.dateFrom : (this.dateTo >= currentStart ? currentStart : this.dateTo);
+    //   const dateTo_temp = this.dateTo ? this.dateTo : (this.dateFrom <= currentEnd ? currentEnd : this.dateFrom);
+    //   var dateRange_2 = new MyDateRange(dateFrom_temp, dateTo_temp);
+    //   const result_intersection = this.intersectionTwoDateRange(dateRange_1, dateRange_2);
+    //   if (result_intersection) {
+    //     val.dateTimeFrom = this.intlService.formatDate(result_intersection.start, 'yyyy-MM-dd');
+    //     val.dateTimeTo = this.intlService.formatDate(result_intersection.end, 'yyyy-MM-dd');
+    //   } else {
+    //     this.gridData = null;
+    //     return;
+    //   }
+    // } else {
+    //   val.dateTimeFrom = this.intlService.formatDate(currentStart, 'yyyy-MM-dd');
+    //   val.dateTimeTo = this.intlService.formatDate(currentEnd, 'yyyy-MM-dd');
+    // }
 
     this.appointmentService.getPaged(val).pipe(
       map((response: any) =>
@@ -537,4 +633,607 @@ export class AppointmentKanbanComponent implements OnInit {
     if (min.end < max.start) return null;
     return new MyDateRange(max.start, min.end < max.end ? min.end : max.end);
   }
+
+  // New Calendar //
+  getElements() {
+    this.calendarTableEl = document.getElementById('calendar-table');
+    this.calendarTheadEl = document.getElementById('calendar-thead');
+    this.calendarTbodyEl = document.getElementById('calendar-tbody');
+    // Dialog
+    this.contDialogCalendarEl = document.getElementById('cont-dialog-calendar');
+    this.selectStatusEl = document.getElementById('select-status') as HTMLInputElement;
+    this.inputCustomerNameEl = document.getElementById('input-customer-name') as HTMLInputElement;
+    this.inputCustomerPhoneEl = document.getElementById('input-customer-phone') as HTMLInputElement;
+    this.inputReferrerNameEl = document.getElementById('input-referrer-name') as HTMLInputElement;
+  }
+
+  groupByDataAppointments() {
+    if (this.dataAppointments.length > 0) {
+      this.dataAppointmentsGrouped = this.dataAppointments.reduce(function (r, a) {
+        r[a['dateFormat']] = r[a['dateFormat']] || [];
+        r[a['dateFormat']].push(a);
+        return r;
+      }, Object.create(null));
+    }
+  }
+
+  next() {
+    if (this.timePeriod === 'day') {
+      this.currentDay++;
+      this.showCalendarDay(this.currentYear, this.currentMonth, null, this.currentDay);
+    } else if (this.timePeriod === 'week') {
+      this.currentWeek++;
+      this.showCalendarWeek(this.currentYear, this.currentMonth, this.currentWeek);
+    } else {
+      // month
+      this.currentMonth = (this.currentMonth + 1) % 12;
+      this.currentYear = this.currentMonth === 11 ? this.currentYear + 1 : this.currentYear;
+      this.showCalendarMonth(this.currentYear, this.currentMonth);
+    }
+  }
+
+  previous() {
+    if (this.timePeriod === 'day') {
+      this.currentDay--;
+      this.showCalendarDay(this.currentYear, this.currentMonth, null, this.currentDay);
+    } else if (this.timePeriod === 'week') {
+      this.currentWeek--;
+      this.showCalendarWeek(this.currentYear, this.currentMonth, this.currentWeek);
+    } else {
+      // month
+      this.currentMonth = this.currentMonth === 0 ? 11 : this.currentMonth - 1;
+      this.currentYear = this.currentMonth === 0 ? this.currentYear - 1 : this.currentYear;
+      this.showCalendarMonth(this.currentYear, this.currentMonth);
+    }
+  }
+
+  jump_today() {
+    this.currentDay = 0;
+    this.currentWeek = 0;
+    this.currentMonth = this.todayFormat.getMonth();
+    this.currentYear = this.todayFormat.getFullYear();
+    if (this.timePeriod === 'day') {
+      this.showCalendarDay(this.currentYear, this.currentMonth, null, null);
+    } else if (this.timePeriod === 'week') {
+      this.showCalendarWeek(this.currentYear, this.currentMonth, this.currentWeek);
+    } else {
+      // month
+      this.showCalendarMonth(this.currentYear, this.currentMonth);
+    }
+  }
+
+  changeTimePeriod(event) {
+    // if (this.timePeriod === event) return;
+    // this.timePeriod = event;
+    this.jump_today();
+    console.log(event);
+  }
+
+  setTitleToolbar(firstDate = null, lastDate = null, month = null, year = null) {
+    if (this.timePeriod === 'day') {
+      if (firstDate !== null) {
+        var firstDateString =
+          ('0' + firstDate.getDate()).slice(-2) +
+          '/' +
+          ('0' + (firstDate.getMonth() + 1)).slice(-2) +
+          '/' +
+          firstDate.getFullYear();
+        this.titleToolbar = firstDateString;
+      }
+    } else if (this.timePeriod === 'week') {
+      if (firstDate !== null && lastDate !== null) {
+        var firstDateString =
+          ('0' + firstDate.getDate()).slice(-2) +
+          '/' +
+          ('0' + (firstDate.getMonth() + 1)).slice(-2) +
+          '/' +
+          firstDate.getFullYear();
+        var lastDateString =
+          ('0' + lastDate.getDate()).slice(-2) +
+          '/' +
+          ('0' + (lastDate.getMonth() + 1)).slice(-2) +
+          '/' +
+          lastDate.getFullYear();
+        this.titleToolbar = `${firstDateString} - ${lastDateString}`;
+      }
+    } else {
+      // month
+      if (month !== null && year !== null) {
+        this.titleToolbar = this.months[month] + ', ' + year;
+      }
+    }
+  }
+
+  showCalendarThead(date = null) {
+    this.calendarTheadEl.textContent = '';
+    let row = document.createElement('tr');
+    if (this.timePeriod === 'day') {
+      if (date !== null) {
+        let cell = document.createElement('th');
+        cell.classList.add('th-v2');
+        cell.colSpan = 2;
+        if (
+          date.getDate() === this.todayFormat.getDate() &&
+          date.getMonth() === this.todayFormat.getMonth() &&
+          date.getFullYear() === this.todayFormat.getFullYear()
+        ) {
+          cell.innerHTML = `
+                      <div class="now">${('0' + date.getDate()).slice(-2)}</div>
+                      <div>${this.daysOfWeek[(date.getDay() + 6) % 7]}</div>
+                  `;
+        } else {
+          cell.innerHTML = `
+                      <div>${('0' + date.getDate()).slice(-2)}</div>
+                      <div>${this.daysOfWeek[(date.getDay() + 6) % 7]}</div>
+                  `;
+        }
+        row.appendChild(cell);
+      }
+    } else if (this.timePeriod === 'week') {
+      if (date !== null) {
+        this.daysOfWeek.forEach(el => {
+          let cell = document.createElement('th');
+          cell.classList.add('th-v2');
+          if (
+            date.getDate() === this.todayFormat.getDate() &&
+            date.getMonth() === this.todayFormat.getMonth() &&
+            date.getFullYear() === this.todayFormat.getFullYear()
+          ) {
+            cell.innerHTML = `
+                          <div class="now">${('0' + date.getDate()).slice(
+              -2
+            )}</div>
+                          <div>${el}</div>
+                      `;
+          } else {
+            cell.innerHTML = `
+                          <div>${('0' + date.getDate()).slice(-2)}</div>
+                          <div>${el}</div>
+                      `;
+          }
+          row.appendChild(cell);
+          date.setDate(date.getDate() + 1);
+        });
+      }
+    } else {
+      // month
+      this.daysOfWeek.forEach(el => {
+        let cell = document.createElement('th');
+        cell.textContent = el;
+        row.appendChild(cell);
+      });
+    }
+    this.calendarTheadEl.append(row);
+  }
+
+  addCellTimeNow(date) {
+    var d = new Date();
+    var h = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours() + 1, 0, 0, 0);
+    var e = h.getTime() - d.getTime();
+    if (e > 100) {
+      // some arbitrary time period
+      window.setTimeout(() => {
+        this.addCellTimeNow(date);
+      }, e);
+    }
+
+    if (
+      date.getDate() === this.todayFormat.getDate() &&
+      date.getMonth() === this.todayFormat.getMonth() &&
+      date.getFullYear() === this.todayFormat.getFullYear()
+    ) {
+      const hour = new Date().getHours();
+      const cellTimePast = document.getElementById((hour - 1 < 0 ? 23 : hour - 1).toString());
+      const cellTimeNow = document.getElementById(hour.toString());
+      if (cellTimePast) {
+        cellTimePast.classList.remove('now');
+      }
+      if (cellTimeNow) {
+        cellTimeNow.classList.add('now');
+      }
+    }
+  }
+
+  showCalendarDay(year, month, day, changeDay) {
+    day = day === null ? this.todayFormat.getDate() : day;
+    changeDay = changeDay === null ? 0 : changeDay;
+    let firstDate = new Date(year, month, day + changeDay);
+
+    this.setTitleToolbar(firstDate);
+
+    this.showCalendarThead(firstDate);
+
+    this.calendarTbodyEl.innerHTML = ''; // Clear calendar-tbody
+    this.calendarTableEl.style.tableLayout = 'auto';
+
+    /// check add events
+    let dataAppointmentsGroupedHour = null;
+    if (this.dataAppointmentsGrouped !== null) {
+      let dateFormat = new Date(year, month, day + changeDay).setHours(0);
+      if (this.dataAppointmentsGrouped[dateFormat]) {
+        dataAppointmentsGroupedHour = this.dataAppointmentsGrouped[dateFormat].reduce(
+          function (r, a) {
+            r[a.dateHour] = r[a.dateHour] || [];
+            r[a.dateHour].push(a);
+            return r;
+          },
+          Object.create(null)
+        );
+      }
+    }
+
+    // Create cells in calendar-tbody
+    for (let i = this.firstTime; i <= this.lastTime; i++) {
+      let row = document.createElement('tr');
+      let cellTime = document.createElement('td');
+      cellTime.classList.add('td-time');
+      cellTime.id = i.toString();
+      cellTime.textContent = `${i < 10 ? `0${i}` : i}:00 - ${i + 1 < 10 ? `0${i + 1}` : i + 1
+        }:00`;
+      let cell = document.createElement('td');
+      cell.classList.add('td-day');
+      cell.id = `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day
+        }-${i < 10 ? `0${i}` : i}`;
+      /// td-day click
+      cell.addEventListener('click', () => {
+        this.dateAppointmentFormat = new Date(year, month, day, i);
+        this.showPopup();
+      });
+
+      let cell_dateEvent = document.createElement('div');
+      cell_dateEvent.classList.add('list-data-event-day');
+
+      /// check add events
+      if (dataAppointmentsGroupedHour && dataAppointmentsGroupedHour[i]) {
+        dataAppointmentsGroupedHour[i].forEach(dataAppointment => {
+          cell_dateEvent.appendChild(this.getEventDayNWeek(dataAppointment));
+        });
+      }
+
+      /// td-day-overwrite
+      let tdDayOverwrite = document.createElement('div');
+      tdDayOverwrite.classList.add('td-day-overwrite');
+
+      cell_dateEvent.appendChild(tdDayOverwrite);
+      cell.appendChild(cell_dateEvent);
+      row.appendChild(cellTime);
+      row.appendChild(cell);
+      this.calendarTbodyEl.appendChild(row);
+    }
+    this.addCellTimeNow(firstDate);
+  }
+
+  showCalendarWeek(year, month, week) {
+    let firstDay = this.todayFormat.getDate() - this.todayFormat.getDay() + 1 + 7 * week; // First day is the day of the month - the day of the week
+    let lastDay = firstDay + 6; // last day is the first day + 6
+    let firstDate = new Date(year, month, firstDay);
+    let lastDate = new Date(year, month, lastDay);
+
+    this.setTitleToolbar(firstDate, lastDate);
+
+    this.showCalendarThead(firstDate);
+
+    this.calendarTbodyEl.innerHTML = ''; // Clear calendar-tbody
+    this.calendarTableEl.style.tableLayout = 'fixed';
+
+    // Create cells in calendar-tbody
+    let row = document.createElement('tr');
+    for (let i = 0; i < this.daysOfWeek.length; i++) {
+      let cell = document.createElement('td');
+      cell.classList.add('td-week');
+      /// td-week click
+      cell.addEventListener('click', () => {
+        this.timePeriod = 'day';
+        this.showCalendarDay(year, month, firstDay + i, null);
+      });
+
+      let cell_dateEvent = document.createElement('div');
+      cell_dateEvent.classList.add('list-data-event-week');
+
+      /// check add events
+      if (this.dataAppointmentsGrouped !== null) {
+        let dateFormat = new Date(year, month, firstDay + i).setHours(0);
+        if (this.dataAppointmentsGrouped[dateFormat]) {
+          this.dataAppointmentsGrouped[dateFormat].forEach(dataAppointment => {
+            cell_dateEvent.appendChild(this.getEventDayNWeek(dataAppointment));
+          });
+        }
+      }
+
+      /// td-week-overwrite
+      let tdWeekOverwrite = document.createElement('div');
+      tdWeekOverwrite.classList.add('td-week-overwrite');
+
+      cell_dateEvent.appendChild(tdWeekOverwrite);
+      cell.appendChild(cell_dateEvent);
+      row.appendChild(cell);
+    }
+    this.calendarTbodyEl.appendChild(row);
+  }
+
+  showCalendarMonth(year, month) {
+    let firstDay = (new Date(year, month).getDay() + 6) % 7;
+    let daysInMonth = 32 - new Date(year, month, 32).getDate();
+
+    this.setTitleToolbar(null, null, month, year);
+
+    this.showCalendarThead();
+
+    this.calendarTbodyEl.innerHTML = ''; // Clear calendar-tbody
+    this.calendarTableEl.style.tableLayout = 'fixed';
+
+    // Create cells in calendar-tbody
+    let date = 1;
+    for (let i = 0; i < 6; i++) {
+      let row = document.createElement('tr');
+
+      for (let j = 0; j < 7; j++) {
+        let cell = document.createElement('td');
+        cell.classList.add('td-month');
+        cell.id = date.toString();
+        let cell_dateText = document.createElement('div');
+        cell_dateText.classList.add('date-text');
+        let cell_dateEvent = document.createElement('div');
+        cell_dateEvent.classList.add('date-event');
+        if (i === 0 && j < firstDay) {
+          cell_dateText.textContent = '';
+        } else if (date > daysInMonth) {
+          if (j === 0) {
+            break;
+          } else {
+            cell_dateText.textContent = '';
+          }
+        } else {
+          cell.classList.add('active');
+          /// td-month click
+          cell.addEventListener('click', () => {
+            this.timePeriod = 'day';
+            this.showCalendarDay(year, month, parseInt(cell.id), null);
+          });
+
+          cell_dateText.textContent = (date < 10 ? `0${date}` : date).toString();
+
+          /// check add events
+          if (this.dataAppointmentsGrouped !== null) {
+            let dateFormat = new Date(year, month, date).setHours(0);
+            if (this.dataAppointmentsGrouped[dateFormat]) {
+              let dataAppointmentsGroupedStatus = this.dataAppointmentsGrouped[
+                dateFormat
+              ].reduce(function (r, a) {
+                r[a.status] = r[a.status] || [];
+                r[a.status].push(a);
+                return r;
+              }, Object.create(null));
+              let eventMonthString = '';
+              for (const [key, value] of (<any>Object).entries(
+                dataAppointmentsGroupedStatus
+              )) {
+                eventMonthString += this.getEventMonth(key, value.length);
+              }
+              cell_dateEvent.innerHTML = eventMonthString;
+            }
+          }
+
+          date++;
+        }
+        cell.appendChild(cell_dateText);
+        cell.appendChild(cell_dateEvent);
+        row.appendChild(cell);
+      }
+      this.calendarTbodyEl.appendChild(row);
+    }
+  }
+
+  convertDateToId(date, hasHours = true) {
+    let result = `${date.getFullYear()}-${('0' + date.getMonth()).slice(-2)}-${(
+      '0' + date.getDate()
+    ).slice(-2)}`;
+    if (hasHours) {
+      result += `-${('0' + date.getHours()).slice(-2)}`;
+    }
+    return result;
+  }
+
+  getEventDayNWeek(appointment, isDay = true) {
+    if (!appointment) {
+      return document.createElement('div');
+    }
+
+    let statusShow = '';
+    let classEvent = '';
+    switch (appointment.status) {
+      case 'confirmed':
+        statusShow = 'Đang hẹn';
+        classEvent = 'event-confirmed';
+        break;
+      case 'arrived':
+        statusShow = 'Đã đến';
+        classEvent = 'event-arrived';
+        break;
+      case 'cancel':
+        statusShow = 'Hủy hẹn';
+        classEvent = 'event-cancel';
+        break;
+      case 'overdue':
+        statusShow = 'Quá hạn';
+        classEvent = 'event-overdue';
+        break;
+      default:
+        break;
+    }
+
+    let dateEventV2El = document.createElement('div');
+    dateEventV2El.classList.add("date-event-v2");
+    dateEventV2El.classList.add(`${classEvent}`);
+    dateEventV2El.id = `appointment-${appointment.id}`;
+
+    dateEventV2El.addEventListener('click', el => {
+      this.showPopup(parseInt(dateEventV2El.id.replace('appointment-', '')));
+      el.stopPropagation();
+    });
+
+    const htmlString = `
+          <div class="header">
+              <div class="status">${statusShow}</div>
+              <div class="action">
+                  <div class="edit">
+                    <i class="fas fa-pen"></i>
+                  </div>
+                  <div class="delete" id="delete-appointment" 
+                    onclick="deleteAppointment(event, ${appointment.id})">
+                    <i class="fas fa-sign-out-alt"></i>
+                  </div>
+              </div>
+          </div>
+          <a href="#" class="customer-name">${appointment.customerName}</a>
+          <div class="content phone">
+              <i class="fas fa-phone-alt"></i>
+              <span>${appointment.customerPhone}</span>
+          </div>
+          <div class="content time">
+              <i class="fas fa-info-circle"></i>
+              <span>
+                  ${`${('0' + appointment.date.getHours()).slice(-2)}:00 - ${(
+        '0' +
+        (parseInt(appointment.date.getHours()) + 1)
+      ).slice(-2)}:00`}
+              </span>
+          </div>
+          <div class="content referrer">
+              <i class="fas fa-user-plus"></i>
+              <span>${appointment.referrerName}</span>
+          </div>
+      `;
+    dateEventV2El.innerHTML = htmlString;
+
+    return dateEventV2El;
+  }
+
+  getEventMonth(status, count) {
+    let statusShow = '';
+    let classBg = '';
+    switch (status) {
+      case 'confirmed':
+        statusShow = 'Đang hẹn';
+        classBg = 'bg-confirmed';
+        break;
+      case 'arrived':
+        statusShow = 'Đã đến';
+        classBg = 'bg-arrived';
+        break;
+      case 'cancel':
+        statusShow = 'Hủy hẹn';
+        classBg = 'bg-cancel';
+        break;
+      case 'overdue':
+        statusShow = 'Quá hạn';
+        classBg = 'bg-overdue';
+        break;
+      default:
+        break;
+    }
+    const htmlString = `
+          <div class="dot-status">
+              <div class="dot-sematic ${classBg}"></div>
+              <span>${statusShow}: ${count}</span>
+          </div>
+      `;
+    return htmlString;
+  }
+
+  showPopup(id = null) {
+    this.contDialogCalendarEl.classList.remove('hidden');
+    if (id !== null) {
+      this.appointmentIDChoose = id;
+      const dataAppointment = this.dataAppointments.find(
+        x => x.id === this.appointmentIDChoose
+      );
+      if (dataAppointment) {
+        this.dateAppointmentFormat = dataAppointment['dateFormat'];
+        this.selectStatusEl.value = dataAppointment.status;
+        this.inputCustomerNameEl.value = dataAppointment.customerName;
+        this.inputCustomerPhoneEl.value = dataAppointment.customerPhone.toString();
+        this.inputReferrerNameEl.value = dataAppointment.referrerName;
+      }
+    }
+  }
+
+  closePopup() {
+    this.contDialogCalendarEl.classList.add('hidden');
+    this.appointmentIDChoose = null;
+    this.dateAppointmentFormat = null;
+    this.selectStatusEl.value = 'confirmed';
+    this.inputCustomerNameEl.value = '';
+    this.inputCustomerPhoneEl.value = '';
+    this.inputReferrerNameEl.value = '';
+  }
+
+  saveAppointment() {
+    if (this.appointmentIDChoose !== null) {
+      const dataAppointmentIndex = this.dataAppointments.findIndex(
+        x => x.id === this.appointmentIDChoose
+      );
+      if (dataAppointmentIndex >= 0) {
+        this.dataAppointments[dataAppointmentIndex].status = this.selectStatusEl.value;
+        this.dataAppointments[dataAppointmentIndex].customerName = this.inputCustomerNameEl.value;
+        this.dataAppointments[dataAppointmentIndex].customerPhone = parseInt(this.inputCustomerPhoneEl.value);
+        this.dataAppointments[dataAppointmentIndex].referrerName = this.inputReferrerNameEl.value;
+        let dateEventV2El = document.getElementById(
+          `appointment-${this.dataAppointments[dataAppointmentIndex].id}`
+        );
+        const dateEventV2NewEl = this.getEventDayNWeek(
+          this.dataAppointments[dataAppointmentIndex]
+        );
+        dateEventV2El.replaceWith(dateEventV2NewEl);
+      }
+    } else {
+      const dataAppointment = {
+        id: this.dataAppointments.length,
+        date: new Date(this.dateAppointmentFormat),
+        dateFormat: new Date(this.dateAppointmentFormat).setHours(0, 0, 0, 0),
+        dateHour: new Date(this.dateAppointmentFormat).getHours(),
+        status: this.selectStatusEl.value,
+        customerName: this.inputCustomerNameEl.value,
+        customerPhone: this.inputCustomerPhoneEl.value,
+        referrerName: this.inputReferrerNameEl.value
+      };
+      this.dataAppointments.push(dataAppointment);
+
+      if (this.dateAppointmentFormat !== null) {
+        const listDataEventDay = document.getElementById(
+          this.convertDateToId(this.dateAppointmentFormat, true)
+        ).firstChild; // list-data-event-day
+        const tdDayOverwriteEl = listDataEventDay.lastChild;
+        listDataEventDay.removeChild(tdDayOverwriteEl);
+        if (listDataEventDay) {
+          listDataEventDay.appendChild(this.getEventDayNWeek(dataAppointment));
+        }
+        listDataEventDay.appendChild(tdDayOverwriteEl);
+      }
+    }
+    // localStorage.setItem("dataAppointments", JSON.stringify(dataAppointments));
+    this.groupByDataAppointments();
+    this.closePopup();
+  }
+
+  // deleteAppointment(event, id) {
+  //   this.appointmentIDChoose = id;
+  //   if (this.appointmentIDChoose !== null) {
+  //     const dataAppointmentIndex = this.dataAppointments.findIndex(
+  //       x => x.id === this.appointmentIDChoose
+  //     );
+  //     if (dataAppointmentIndex >= 0) {
+  //       this.dataAppointments.splice(dataAppointmentIndex, 1);
+  //     }
+  //     let dateEventV2El = document.getElementById(
+  //       `appointment-${this.appointmentIDChoose}`
+  //     );
+  //     if (dateEventV2El) {
+  //       dateEventV2El.remove();
+  //     }
+  //   }
+  //   // localStorage.setItem("dataAppointments", JSON.stringify(dataAppointments));
+  //   this.groupByDataAppointments();
+  //   event.stopPropagation();
+  // }
 }

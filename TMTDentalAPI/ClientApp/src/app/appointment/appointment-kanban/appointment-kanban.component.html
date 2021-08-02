@@ -118,39 +118,43 @@
             </div> -->
             <div class="cont-wrapper">
                 <div class="cont-left overflow-auto">
-                    <div class="header-toolbar-calendar mb-3">
-                        <div>
-                            <button type="button" class="btn btn-primary btn-sm" (click)="dateToday()">
-                                Today
-                            </button>
-                        </div>
-                        <div class="toolbar-date">
-                            <button type="button" class="btn btn-gray btn-sm" (click)="datePrev()">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <div class="date">
-                                {{titleDateToolbar}}
+                    <div class="cont-calendar">
+                        <div class="toolbar-calendar">
+                            <div class="toolbar-today">
+                                <button type="button" class="btn btn-primary btn-sm" (click)="jump_today()">
+                                    Today
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-gray btn-sm" (click)="dateNext()">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
+                            <div class="toolbar-date">
+                                <button type="button" class="btn btn-gray btn-sm" id="previous">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <div class="title-toolbar">{{titleToolbar}}</div>
+                                <button type="button" class="btn btn-gray btn-sm" id="next">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div class="toolbar-time-period">
+                                <input type="radio" class="btn-check" name="time-period" id="day" autocomplete="off" [value]="'day'"
+                                    [(ngModel)]="timePeriod" (ngModelChange)="changeTimePeriod($event)">
+                                <label class="btn btn-sm" for="day">Ngày</label>
+                                <input type="radio" class="btn-check" name="time-period" id="week" autocomplete="off" [value]="'week'"
+                                    [(ngModel)]="timePeriod" (ngModelChange)="changeTimePeriod($event)">
+                                <label class="btn btn-sm" for="week">Tuần</label>
+                                <input type="radio" class="btn-check" name="time-period" id="month" autocomplete="off" [value]="'month'"
+                                    [(ngModel)]="timePeriod" (ngModelChange)="changeTimePeriod($event)">
+                                <label class="btn btn-sm" for="month">Tháng</label>
+                            </div>
                         </div>
-                        <div>
-                            <input type="radio" class="btn-check" name="viewToolbar" id="timeGridDay" autocomplete="off" 
-                            [value]="'timeGridDay'" [(ngModel)]="viewToolbar" (ngModelChange)="changeViewToolbar($event)">
-                            <label class="btn btn-outline-gray btn-sm" for="timeGridDay">Ngày</label>
-                            <input type="radio" class="btn-check" name="viewToolbar" id="timeGridWeek" autocomplete="off" 
-                            [value]="'timeGridWeek'" [(ngModel)]="viewToolbar" (ngModelChange)="changeViewToolbar($event)">
-                            <label class="btn btn-outline-gray btn-sm" for="timeGridWeek">Tuần</label>
-                            <input type="radio" class="btn-check" name="viewToolbar" id="dayGridMonth" autocomplete="off" 
-                            [value]="'dayGridMonth'" [(ngModel)]="viewToolbar" (ngModelChange)="changeViewToolbar($event)">
-                            <label class="btn btn-outline-gray btn-sm" for="dayGridMonth">Tháng</label>
+                        <div class="main-calender">
+                            <table class="table calendar-table" id="calendar-table">
+                                <thead id="calendar-thead">
+                                </thead>
+                                <tbody id="calendar-tbody">
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <full-calendar [class.d-none]="viewKanban!='th-large'" #fullcalendar [plugins]="calendarPlugins" [editable]="true" [defaultView]="'dayGridMonth'" [header]="false"
-                        [height]="'auto'" [dir]="'ltr'" [eventDurationEditable]="false" [eventStartEditable]="false" (eventRender)="handleEventRender($event)" [events]="events" (eventClick)="handleEventClick($event)" [locale]="'vi'" [firstDay]="1"
-                        [fixedWeekCount]="false">
-                    </full-calendar>
                     <kendo-grid *ngIf="viewKanban=='list-ul'" [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset" [pageable]="true"
                         [loading]="loading" (pageChange)="pageChange($event)">
                         <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="250">
