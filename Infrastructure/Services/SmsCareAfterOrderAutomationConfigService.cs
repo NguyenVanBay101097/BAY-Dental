@@ -51,6 +51,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => stateBools.Contains(x.Active));
             }
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
             var totalItems = await query.CountAsync();
             var items = await query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x => x.DateCreated).Select(x => new SmsCareAfterOrderAutomationConfigGrid
             {
@@ -63,7 +66,7 @@ namespace Infrastructure.Services
                 TypeTimeBeforSend = x.TypeTimeBeforSend,
                 ProductNames = x.SmsConfigProductRels != null && x.SmsConfigProductRels.Any() ? string.Join(", ", x.SmsConfigProductRels.Select(x => x.Product.Name)) : null,
                 ProductCategoryNames = x.SmsConfigProductCategoryRels != null && x.SmsConfigProductCategoryRels.Any() ? string.Join(", ", x.SmsConfigProductCategoryRels.Select(x => x.ProductCategory.Name)) : null,
-
+                ApplyOn = x.ApplyOn
             }).ToListAsync();
             return new PagedResult2<SmsCareAfterOrderAutomationConfigGrid>(totalItems, val.Offset, val.Limit) { Items = items };
         }

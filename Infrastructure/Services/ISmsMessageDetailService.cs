@@ -17,7 +17,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<SmsMessageDetailStatistic>> GetPagedStatistic(SmsMessageDetailPaged val);
         IQueryable<SmsMessageDetail> SearchQuery();
         Task<IEnumerable<SmsMessageDetailReportSummaryResponse>> GetReportTotal(SmsMessageDetailReportSummaryRequest val);
-        Task<PagedResult2<ReportCampaignOutputItem>> GetReportCampaign(ReportCampaignPaged val);
+        Task<IEnumerable<ReportCampaignOutputItem>> GetReportCampaign(ReportCampaignPaged val);
         Task<IEnumerable<ReportSupplierChart>> GetReportSupplierSumary(ReportSupplierPaged val);
     }
 }

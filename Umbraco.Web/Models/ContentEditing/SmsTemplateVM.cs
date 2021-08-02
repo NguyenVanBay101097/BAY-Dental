@@ -8,9 +8,6 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Name { get; set; }
         public string Body { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
         public string Type { get; set; }
     }
 
@@ -19,7 +16,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Body { get; set; }
-        public DateTime DateCreated { get; set; }
+        public DateTime? DateCreated { get; set; }
         public string Type { get; set; }
     }
 

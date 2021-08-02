@@ -39,7 +39,6 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   campaign: any;
   type: string;
   filteredTemplate: any[];
-  filter: string = 'product_category';
   textareaLimit: number = 200;
   isTemplateCopy = false;
   template: any = {
@@ -69,19 +68,16 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: null,
+      template: [null, Validators.required],
       smsAccount: [null, Validators.required],
       active: false,
       scheduleTimeObj: new Date(),
       applyOn: ['product_category', Validators.required],
       products: null,
-      productCategories: [null, Validators.required],
+      productCategories: [null],
       typeTimeBeforSend: ['day', Validators.required],
       timeBeforSend: [1, Validators.required],
       name: ['', Validators.required],
-      templateName: '',
-      body: ['', Validators.required]
-
     })
 
     if (this.id) {
@@ -113,19 +109,15 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
 
   }
 
+  get applyOnValue() {
+    return this.formGroup.get('applyOn').value;
+  }
+
   loadDataFormApi() {
     this.smsConfigService.getDisplay(this.id).subscribe(
       (res: any) => {
         if (res) {
-          if (res.products && res.products.length > 0) {
-            this.filter = "product"
-            res.filter = "product"
-          }
           this.campaign = res.smsCampaign
-          if (res.productCategories && res.productCategories.length > 0) {
-            this.filter = "product_category"
-            res.filter = "product_category"
-          }
           this.formGroup.patchValue(res);
           if (res.body) {
             this.template = {
@@ -158,7 +150,10 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     this.searchAccount().subscribe(
       (result: any) => {
         if (result && result.items) {
-          this.filteredSmsAccount = result.items
+          this.filteredSmsAccount = result.items;
+          if (result.items[0]) {
+            this.formGroup.get('smsAccount').patchValue(result.items[0]);
+          }
         }
       }
     )
@@ -174,23 +169,14 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
 
   loadSmsTemplate() {
     this.searchSmsTemplate().subscribe(
-      (res: any) => {
-        this.filteredTemplate = res;
+      (result: any) => {
+        this.filteredTemplate = result;
       }
     )
   }
 
-  onChangeTemplate(event) {
-    if (event && event.body) {
-      this.template = JSON.parse(event.body);
-    } else {
-      this.template = {
-        text: '',
-        templateType: 'text'
-      }
-    }
-    this.f.body.setValue(this.template.text);
-
+  get templateValue() {
+    return this.formGroup.get('template').value;
   }
 
   searchSmsTemplate(q?: string) {
@@ -226,26 +212,10 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
         }
       )
     }
-    if (this.isTemplateCopy && val.templateName != '') {
-      var template = {
-        text: val.body,
-        templateType: 'text'
-      }
-      var valueTemplate = {
-        name: val.templateName,
-        body: JSON.stringify(template),
-        type: "saleOrderLine"
-      }
-      this.smsTemplateService.create(valueTemplate).subscribe(
-        () => {
-          this.loadSmsTemplate();
-        }
-      )
-    }
   }
 
   // addTemplate() {
-  //   const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+  //   const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'xl', windowClass: 'o_technical_modal' });
   //   modalRef.componentInstance.title = 'Tạo mẫu tin';
   //   modalRef.componentInstance.templateTypeTab = "saleOrderLine";
   //   modalRef.result.then((val) => {
@@ -263,14 +233,14 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
   }
 
   onChangeRadioButton(event: any) {
-    this.filter = event.target.value;
-    if (this.filter == 'product') {
+    var filter = event.target.value;
+    if (filter == 'product') {
       this.f.productCategories.clearValidators();
       this.f.productCategories.updateValueAndValidity();
       this.f.products.setValidators(Validators.required);
       this.f.products.updateValueAndValidity();
     }
-    else if (this.filter == 'product_category') {
+    else if (filter == 'product_category') {
       this.f.products.clearValidators();
       this.f.products.updateValueAndValidity();
       this.f.productCategories.setValidators(Validators.required);

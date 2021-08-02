@@ -62,13 +62,13 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: null,
+      template: [null, Validators.required],
       smsAccount: [null, Validators.required],
       active: false,
       scheduleTimeObj: new Date(),
       dayBeforeSend: 0,
       templateName: '',
-      body: ['', Validators.required]
+      body: ''
     })
     var user_change_company_vm = localStorage.getItem('user_change_company_vm');
     if (user_change_company_vm) {
@@ -149,10 +149,17 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     this.searchAccount().subscribe(
       (result: any) => {
         if (result && result.items) {
-          this.filteredSmsAccount = result.items
+          this.filteredSmsAccount = result.items;
+          if (result.items[0]) {
+            this.formGroup.get('smsAccount').patchValue(result.items[0]);
+          }
         }
       }
     )
+  }
+
+  get templateValue() {
+    return this.formGroup.get('template').value;
   }
 
   searchAccount(q?: string) {
@@ -165,8 +172,12 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
 
   loadSmsTemplate() {
     this.searchSmsTemplate().subscribe(
-      (res: any) => {
-        this.filteredTemplate = res;
+      (result: any) => {
+        this.filteredTemplate = result;
+        if (result) {
+          this.formGroup.get('template').patchValue(result[0]);
+          this.onChangeTemplate(result[0])
+        }
       }
     )
   }

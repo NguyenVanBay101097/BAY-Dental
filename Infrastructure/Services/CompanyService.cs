@@ -341,9 +341,25 @@ namespace Infrastructure.Services
 
             #endregion
 
+            var accCNKH = new AccountAccount
+            {
+                Name = "Công nợ khách hàng",
+                Code = "CNKH",
+                InternalType = currentLiabilities.Type,
+                UserTypeId = currentLiabilities.Id,
+                CompanyId = company.Id,
+            };
 
+            var accHH = new AccountAccount
+            {
+                Name = "Hoa hồng người giới thiệu",
+                Code = "HHNGT",
+                InternalType = currentLiabilities.Type,
+                UserTypeId = currentLiabilities.Id,
+                CompanyId = company.Id,
+            };
 
-            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU });
+            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU, accCNKH, accHH });
 
             #endregion
 
@@ -417,7 +433,29 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance });
+            var journalCNKH = new AccountJournal
+            {
+                Name = "Ghi công nợ",
+                Type = "debt",
+                UpdatePosted = true,
+                Code = "DEBT",
+                DefaultDebitAccountId = accCNKH.Id,
+                DefaultCreditAccountId = accCNKH.Id,
+                CompanyId = company.Id,
+            };
+
+            var journalHHA = new AccountJournal
+            {
+                Name = "Hoa hồng",
+                Type = "commission",
+                UpdatePosted = true,
+                Code = "COMMISSION",
+                DefaultDebitAccountId = accHH.Id,
+                DefaultCreditAccountId = accHH.Id,
+                CompanyId = company.Id,
+            };
+
+            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance, journalCNKH, journalHHA });
 
             #endregion
         }
@@ -1036,11 +1074,6 @@ namespace Infrastructure.Services
             await paperSizeObj.CreateAsync(paper_size_dict.Values);
 
             await modelDataObj.CreateAsync(PrepareModelData(paper_size_dict, "print.paper.size"));
-
-            var smsCampaignObj = GetService<ISmsCampaignService>();
-            await smsCampaignObj.CreateAsync(sms_campaign_dict.Values);
-
-            await modelDataObj.CreateAsync(PrepareModelData(sms_campaign_dict, "res.sms.campaign"));
 
         }
 

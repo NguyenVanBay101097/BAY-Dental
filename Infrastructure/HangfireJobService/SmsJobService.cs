@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -22,9 +23,12 @@ namespace Infrastructure.HangfireJobService
     public class SmsJobService : ISmsJobService
     {
         private readonly IConfiguration _configuration;
-        public SmsJobService(IConfiguration configuration)
+        private readonly IHttpClientFactory _clientFactory;
+        public SmsJobService(IConfiguration configuration,
+            IHttpClientFactory clientFactory)
         {
             _configuration = configuration;
+            _clientFactory = clientFactory;
         }
 
         public async Task RunAppointmentAutomatic(string db, Guid companyId)
@@ -33,15 +37,11 @@ namespace Infrastructure.HangfireJobService
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var config = await context.SmsAppointmentAutomationConfigs.Where(x => x.CompanyId.HasValue && x.CompanyId.Value == companyId && x.Active == true).FirstOrDefaultAsync();
+                var config = await context.SmsAppointmentAutomationConfigs.Where(x => x.CompanyId.HasValue && x.CompanyId.Value == companyId && x.Active == true)
+                    .Include(x => x.Template)
+                    .FirstOrDefaultAsync();
                 if (config == null)
                     return;
-
-                if (string.IsNullOrEmpty(config.Body) && config.TemplateId.HasValue)
-                {
-                    var template = await context.SmsTemplates.Where(x => x.Id == config.TemplateId.Value).FirstOrDefaultAsync();
-                    config.Body = template.Body;
-                }
 
                 DateTime? lastExecution = config.LastCron;
                 var now = DateTime.Now;
@@ -58,7 +58,7 @@ namespace Infrastructure.HangfireJobService
                         .ToListAsync();
                 if (listAppointments.Any())
                 {
-                    var smsMessageService = new SmsMessageService(context, null, null, null, null,
+                    var smsMessageService = new SmsMessageService(context, null, null, _clientFactory, null,
                         new EfRepository<SaleOrderLine>(context),
                         new EfRepository<SaleOrder>(context),
                         new EfRepository<SmsMessage>(context),
@@ -72,7 +72,7 @@ namespace Infrastructure.HangfireJobService
                     smsMessage.SmsCampaignId = config.SmsCampaignId;
                     smsMessage.Name = $"Nhắc lịch hẹn";
                     smsMessage.SmsTemplateId = config.TemplateId;
-                    smsMessage.Body = config.Body;
+                    smsMessage.Body = config.Template.Body;
                     smsMessage.ResModel = "appointment";
                     smsMessage.CompanyId = config.CompanyId;
 
@@ -102,26 +102,22 @@ namespace Infrastructure.HangfireJobService
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var config = await context.SmsBirthdayAutomationConfigs.Where(x => x.CompanyId.HasValue && x.CompanyId.Value == companyId && x.Active == true).FirstOrDefaultAsync();
+                var config = await context.SmsBirthdayAutomationConfigs.Where(x => x.CompanyId.HasValue && x.CompanyId.Value == companyId && x.Active == true)
+                    .Include(x => x.Template)
+                    .FirstOrDefaultAsync();
+
                 if (config == null)
                     return;
 
-                if (string.IsNullOrEmpty(config.Body) && config.TemplateId.HasValue)
-                {
-                    config.Template = await context.SmsTemplates.Where(x => x.Id == config.TemplateId.Value).FirstOrDefaultAsync();
-                    config.Body = config.Template.Body;
-                }
-
-                var dayNow = DateTime.Today.AddDays(-config.DayBeforeSend).Day;
-                var MonthNow = DateTime.Today.Month;
+                var birthdate = DateTime.Today.AddDays(config.DayBeforeSend);
                 var partners = await context.Partners.Where(x =>
                 x.CompanyId == config.CompanyId &&
-                x.BirthMonth.HasValue && x.BirthMonth.Value == MonthNow &&
-                x.BirthDay.HasValue && x.BirthDay.Value == dayNow
+                x.BirthMonth.HasValue && x.BirthMonth.Value == birthdate.Month &&
+                x.BirthDay.HasValue && x.BirthDay.Value == birthdate.Day
                 ).ToListAsync();
                 if (partners.Any())
                 {
-                    var smsMessageService = new SmsMessageService(context, null, null,null, null,
+                    var smsMessageService = new SmsMessageService(context, null, null, _clientFactory, null,
                             new EfRepository<SaleOrderLine>(context),
                             new EfRepository<SaleOrder>(context),
                             new EfRepository<SmsMessage>(context),
@@ -135,7 +131,7 @@ namespace Infrastructure.HangfireJobService
                     smsMessage.CompanyId = config.CompanyId;
                     smsMessage.Name = $"Chúc mừng sinh nhật";
                     smsMessage.SmsTemplateId = config.TemplateId;
-                    smsMessage.Body = config.Body;
+                    smsMessage.Body = config.Template.Body;
                     smsMessage.ResModel = "partner";
 
                     foreach (var item in partners)
@@ -165,6 +161,7 @@ namespace Infrastructure.HangfireJobService
             {
                 var config = await context.SmsCareAfterOrderAutomationConfigs
                     .Where(x => x.Id == configId && x.Active == true)
+                    .Include(x => x.Template)
                     .Include(x => x.SmsConfigProductCategoryRels)
                     .Include(x => x.SmsConfigProductRels)
                     .FirstOrDefaultAsync();
@@ -193,7 +190,7 @@ namespace Infrastructure.HangfireJobService
 
                 if (lines.Any())
                 {
-                    var smsMessageService = new SmsMessageService(context, null, null,null, null,
+                    var smsMessageService = new SmsMessageService(context, null, null, _clientFactory, null,
                          new EfRepository<SaleOrderLine>(context),
                          new EfRepository<SaleOrder>(context),
                          new EfRepository<SmsMessage>(context),
@@ -207,7 +204,7 @@ namespace Infrastructure.HangfireJobService
                     smsMessage.CompanyId = config.CompanyId;
                     smsMessage.Name = $"Chăm sóc sau điều trị";
                     smsMessage.SmsTemplateId = config.TemplateId;
-                    smsMessage.Body = config.Body;
+                    smsMessage.Body = config.Template.Body;
                     smsMessage.ResModel = "sale-order-line";
 
                     foreach (var line in lines)
@@ -236,15 +233,12 @@ namespace Infrastructure.HangfireJobService
             await using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var config = await context.SmsThanksCustomerAutomationConfigs.Where(x => x.CompanyId.HasValue && x.CompanyId.Value == companyId && x.Active == true).FirstOrDefaultAsync();
+                var config = await context.SmsThanksCustomerAutomationConfigs.Where(x => x.CompanyId.HasValue && x.CompanyId.Value == companyId && x.Active == true)
+                    .Include(x => x.Template)
+                    .FirstOrDefaultAsync();
+
                 if (config == null)
                     return;
-
-                if (string.IsNullOrEmpty(config.Body) && config.TemplateId.HasValue)
-                {
-                    config.Template = await context.SmsTemplates.Where(x => x.Id == config.TemplateId.Value).FirstOrDefaultAsync();
-                    config.Body = config.Template.Body;
-                }
 
                 var now = DateTime.Now;
                 DateTime? lastExecution = config.LastCron;
@@ -259,7 +253,7 @@ namespace Infrastructure.HangfireJobService
                 ).ToListAsync();
                 if (orders.Any())
                 {
-                    var smsMessageService = new SmsMessageService(context, null, null,null, null,
+                    var smsMessageService = new SmsMessageService(context, null, null, _clientFactory, null,
                             new EfRepository<SaleOrderLine>(context),
                             new EfRepository<SaleOrder>(context),
                             new EfRepository<SmsMessage>(context),
@@ -273,7 +267,7 @@ namespace Infrastructure.HangfireJobService
                     smsMessage.CompanyId = config.CompanyId;
                     smsMessage.Name = $"Tin nhắn cảm ơn";
                     smsMessage.SmsTemplateId = config.TemplateId;
-                    smsMessage.Body = config.Body;
+                    smsMessage.Body = config.Template.Body;
                     smsMessage.ResModel = "sale-order";
 
                     foreach (var item in orders)

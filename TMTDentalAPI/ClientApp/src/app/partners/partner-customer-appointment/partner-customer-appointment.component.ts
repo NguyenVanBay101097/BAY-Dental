@@ -83,7 +83,7 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
   }
 
   dialogAppointment(appointment: AppointmentBasic) {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
 
     if (appointment) {
       modalRef.componentInstance.appointId = appointment.id;

@@ -17,6 +17,12 @@ export class PartnerCustomerTreatmentSaleOrderLineComponent implements OnInit {
   gridData: any = [];
   details: SaleOrderLineDisplay[];
   loading = false;
+  toothTypeDict = [
+    { name: "Hàm trên", value: "upper_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
+    { name: "Hàm dưới", value: "lower_jaw" },
+    { name: "Chọn răng", value: "manual" },
+  ];
 
   public total: any;
   constructor(
@@ -50,10 +56,16 @@ export class PartnerCustomerTreatmentSaleOrderLineComponent implements OnInit {
       });
   }
   getInfor(item:any){
-    var infor = item.Teeth.map(x => x.Name).join();
-    if(item.Diagnostic){
-      infor += "; " + item.Diagnostic;
+    var res = '';
+    if (item.ToothType && item.ToothType == "manual") {
+      res = item.Teeth.map(x => x.Name).join(',');
+    } else if (item.ToothType && item.ToothType != "manual") {
+      res = this.toothTypeDict.find(x => x.value == item.ToothType).name;
     }
-    return infor;
+    else {
+      res = '';
+    }
+    var sub = item.Diagnostic? (( res ?'; ' : '') + item.Diagnostic) : '';
+    return res +  sub;
   }
 }

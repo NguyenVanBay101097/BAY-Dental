@@ -60,7 +60,7 @@ export class UomListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(UomCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(UomCrUpComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -74,7 +74,7 @@ export class UomListComponent implements OnInit {
   }
 
   editItem(item) {
-    let modalRef = this.modalService.open(UomCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(UomCrUpComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {

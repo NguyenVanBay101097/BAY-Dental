@@ -3162,6 +3162,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("StructureTypeId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal?>("TaxNSocialInsurance")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal?>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 

@@ -266,7 +266,7 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
   actionPayment() {
     if (this.id) {
       this.paymentService.serviceCardOrderDefaultGet([this.id]).subscribe(rs2 => {
-        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
         modalRef.result.then(() => {
@@ -304,7 +304,7 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
   }
 
   showAddLineModal() {
-    let modalRef = this.modalService.open(ServiceCardOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ServiceCardOrderLineDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm chi tiết';
 
     modalRef.result.then(result => {
@@ -318,7 +318,7 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
   }
 
   editLine(line: FormGroup) {
-    let modalRef = this.modalService.open(ServiceCardOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ServiceCardOrderLineDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa chi tiết';
     modalRef.componentInstance.line = line.value;
 
@@ -362,7 +362,7 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
   }
 
   quickCreateCustomer() {
-    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm khách hàng';
 
     modalRef.result.then(result => {

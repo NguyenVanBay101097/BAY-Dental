@@ -12,7 +12,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 {
     public class AgentProcessUpdateHandler : INotificationHandler<ProcessUpdateNotification>
     {
-        private const string _version = "1.0.1.7";
+        private const string _version = "1.0.1.8";
         private IServiceScopeFactory _serviceScopeFactory;
 
 
@@ -161,8 +161,8 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                                 Type = "commission",
                                 UpdatePosted = true,
                                 Code = "COMMISSION",
-                                DefaultDebitAccountId = accCNKH.Id,
-                                DefaultCreditAccountId = accCNKH.Id,
+                                DefaultDebitAccountId = accHH.Id,
+                                DefaultCreditAccountId = accHH.Id,
                                 SequenceId = seq.Id,
                                 CompanyId = company.Id,
                             };

@@ -51,8 +51,10 @@ namespace TMTDentalAPI.Controllers
             else
             {
                 entity = _mapper.Map<SmsAppointmentAutomationConfig>(val);
+                entity.CompanyId = CompanyId;
                 entity = await _smsConfigService.CreateAsync(entity);
             }
+
             _unitOfWorkAsync.Commit();
 
 

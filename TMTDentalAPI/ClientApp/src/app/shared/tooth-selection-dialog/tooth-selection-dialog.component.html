@@ -8,29 +8,34 @@
     <form [formGroup]="myForm">
         <!-- nhóm răng-->
         <div class="mb-2 d-flex">
-            <div class="form-check t-form-check mr-2"
-                *ngFor="let item of filteredToothCategories; let toothCategoryIndex = index">
-                <input class="form-check-input" type="radio" name="toothCategory" [checked]="cateId === item.id"
-                    [id]="'toothCategory' + toothCategoryIndex" [value]="item.id" formControlName="toothCategory">
-                <label class="form-check-label" [for]="'toothCategory' + toothCategoryIndex"
-                    (click)="onChangeToothCategory(item)">
+            <div class="form-check t-form-check mr-2" *ngFor="let item of filteredToothCategories">
+                <input class="form-check-input" type="radio" [id]="'toothCategoryId_' + item.id" [value]="item.id"
+                    formControlName="toothCategoryId" (change)="onChangeToothCategory(item)">
+                <label class="form-check-label" [for]="'toothCategoryId_' + item.id">
                     {{item.name}}
                 </label>
             </div>
         </div>
         <!-- loại răng chọn -->
-        <div class="mb-2">
-            <ng-container *ngFor="let item of toothTypeDict; let toothTypeIndex = index">
-                <input (change)="onChangeToothType(item.value)" [value]="item.value"
-                    [checked]="item.value === getFormValue('toothType')" class="btn-check hide" type="radio"
-                    name="toothType" formControlName="toothType" [id]="'toothType' + toothTypeIndex">
-                <label class="btn btn-sm mb-0 mr-2"
-                    [ngClass]="item.value === getFormValue('toothType') ? 'btn-primary' : 'btn-tooth-type'"
-                    [for]="'toothType' + toothTypeIndex">{{item.name}}</label>
+        <div>
+            <ng-container *ngFor="let item of toothTypeDict">
+                <input [value]="item.value" class="btn-check" type="radio" formControlName="toothType"
+                    [id]="'toothType_' + item.value" autocomplete="off" (change)="onChangeToothType(item.value)">
+                <label class="btn btn-sm btn-outline-primary mr-1"
+                    [for]="'toothType_' + item.value">{{item.name}}</label>
             </ng-container>
         </div>
         <!-- răng -->
-        <div class="teeth-map" [class.d-none]="getFormValue('toothType') != 'manual'">
+        <div class="text-center" style="overflow: auto;" [class.d-none]="getFormValue('toothType') != 'manual'">
+            <app-teeth-chart [teeth]="filterTeeths" [(selectedKeys)]="toothSelectedIds"></app-teeth-chart>
+        </div>
+        <div *ngIf="(getFormValue('toothType') == 'manual'
+            && toothSelectedIds.length == 0) 
+            && submitted" class="text-danger">
+            Chọn răng
+        </div>
+
+        <!-- <div class="teeth-map" [class.d-none]="getFormValue('toothType') != 'manual'">
             <table class="table-tooth table table-sm w-100">
                 <tr *ngFor="let ham of hamList | keyvalue">
                     <td *ngFor="let vitri of ham.value | keyvalue" [ngClass]="{'text-right' : vitri.key === '0_right'}">
@@ -48,15 +53,15 @@
                         && submitted" class="text-danger">
                 Chọn răng
             </div>
-        </div>
+        </div> -->
     </form>
 </div>
 
-<footer class="modal-footer justify-content-end border-top-0">
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
+        <span>Lưu</span>
+    </button>
     <button type="button" class="btn btn-light border btn-sm" (click)="onCancel()">
         <span>Đóng</span>
-    </button>
-    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
-        <span>Xác nhận</span>
     </button>
 </footer>

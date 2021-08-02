@@ -58,7 +58,7 @@ export class SmsManualDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      template: null,
+      template: [null, Validators.required],
       smsAccount: [null, Validators.required],
       name: ['', Validators.required],
       templateName: '',
@@ -107,7 +107,7 @@ export class SmsManualDialogComponent implements OnInit {
   }
 
   addTemplate() {
-    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(SmsTemplateCrUpComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo mẫu tin';
     modalRef.componentInstance.templateTypeTab = this.templateTypeTab;
     modalRef.result.then((val) => {
@@ -117,22 +117,19 @@ export class SmsManualDialogComponent implements OnInit {
 
   loadSmsTemplate() {
     this.searchSmsTemplate().subscribe(
-      (res: any) => {
-        this.filteredTemplate = res;
+      (result: any) => {
+        this.filteredTemplate = result;
+        if (result) {
+          this.formGroup.get('template').patchValue(result[0]);
+          this.onChangeTemplate(result[0])
+        }
       }
     )
   }
 
   onChangeTemplate(event) {
-    if (event && event.body) {
-      this.template = JSON.parse(event.body);
-    } else {
-      this.template = {
-        text: '',
-        templateType: 'text'
-      }
-    }
-    this.f.body.setValue(this.template.text);
+    var body = event ? event.body : '';
+    this.f.body.setValue(body);
   }
 
   getLimitText() {

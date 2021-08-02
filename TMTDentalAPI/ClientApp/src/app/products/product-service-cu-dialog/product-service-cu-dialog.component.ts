@@ -439,7 +439,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   createMaterialProduct() {
     let modalRef = this.modalService.open(ProductProductCuDialogComponent, {
-      size: "lg",
+      size: 'xl',
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",

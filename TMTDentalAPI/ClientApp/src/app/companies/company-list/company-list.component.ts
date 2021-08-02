@@ -65,7 +65,7 @@ export class CompanyListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(CompanyCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(CompanyCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm chi nhánh';
 
     modalRef.result.then(() => {
@@ -75,7 +75,7 @@ export class CompanyListComponent implements OnInit {
   }
 
   editItem(item: CompanyBasic) {
-    let modalRef = this.modalService.open(CompanyCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(CompanyCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa chi nhánh';
     modalRef.componentInstance.id = item.id;
 

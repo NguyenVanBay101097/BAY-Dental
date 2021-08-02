@@ -8,6 +8,7 @@ import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/c
 import { GetRevenueSumTotalReq, SaleOrderReportRevenuePaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { saveAs } from '@progress/kendo-file-saver';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-sale-order-report-revenue',
@@ -32,7 +33,8 @@ export class SaleOrderReportRevenueComponent implements OnInit {
 
   constructor(
     private companyService: CompanyService,
-    private saleOrderService: SaleOrderService
+    private saleOrderService: SaleOrderService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -167,11 +169,20 @@ export class SaleOrderReportRevenueComponent implements OnInit {
 
   public onExcelExport(args: any): void {
     // Prevent automatically saving the file. We will save it manually after we fetch and add the details
+    const workbook = args.workbook;
+    var sheet = workbook.sheets[0];
+    var rows = sheet.rows;
+    sheet.name = 'BaoCaoDoanhThu_TheoNV';
+    sheet.rows.splice(0, 0, { cells: [{
+      value:"BÁO CÁO DỰ KIẾN THU",
+      textAlign: "center"
+    }], type: 'header' });
+    sheet.mergedCells = ["A1:E1"];
+    sheet.frozenRows = 3;
+    
     args.preventDefault();
     this.loading = true;
-    const workbook = args.workbook;
-
-    const rows = workbook.sheets[0].rows;
+    
 
     rows.forEach((row, index) => {
       //làm màu
@@ -180,7 +191,23 @@ export class SaleOrderReportRevenueComponent implements OnInit {
         row.cells[3].textAlign = 'right';
         row.cells[4].textAlign = 'right';
       }
+      else {
+        if (index != 0){
+          row.cells.forEach((cell,index) => {
+            cell.background = "#aabbcc";
+            cell.color = "#000000";
+          });
+        }
+        if (index == 1){
+          row.cells[2].textAlign = 'right';
+          row.cells[3].textAlign = 'right';
+          row.cells[4].textAlign = 'right';
+        }
+       
+      }
     });
+    console.log(rows);
+    
 
     new Workbook(workbook).toDataURL().then((dataUrl: string) => {
       // https://www.telerik.com/kendo-angular-ui/components/filesaver/
@@ -188,6 +215,16 @@ export class SaleOrderReportRevenueComponent implements OnInit {
       this.loading = false;
     });
 
+  }
+
+  printReport(){
+    var val = Object.assign({}, this.filter);
+    val.companyId = val.companyId || val.companyId;
+    val.search = '';
+    this.saleOrderService.getPrintRevenueReport(val).subscribe(result => {
+      this.printService.printHtml(result);
+    })
+    
   }
 
 }

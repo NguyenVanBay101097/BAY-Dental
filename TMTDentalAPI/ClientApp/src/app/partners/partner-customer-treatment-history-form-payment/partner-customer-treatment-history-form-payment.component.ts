@@ -256,7 +256,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
           },
         });
 
-        let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+        let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
         modalRef.componentInstance.orderId = result.id;
         modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
         modalRef.result.then(() => {
@@ -279,7 +279,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     if (this.id) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
-          let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+          let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
           modalRef.componentInstance.orderId = this.id;
           modalRef.result.then(() => {
             this.loadRecord();
@@ -287,7 +287,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
           });
         })
       } else {
-        let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.orderId = this.id;
         modalRef.result.then(() => {
           this.loadRecord();
@@ -306,7 +306,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
           },
         });
 
-        let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.orderId = result.id;
         modalRef.result.then(() => {
           this.loadRecord();
@@ -581,7 +581,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
 
   actionLabo(item?) {
     if (this.id) {
-      let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       if (item && item.id) {
         modalRef.componentInstance.title = 'Cập nhật phiếu labo';
         modalRef.componentInstance.id = item.id;
@@ -683,7 +683,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
   }
 
   showConfirmApplyPromotion(id) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Quên cập nhật khuyến mãi?';
     modalRef.componentInstance.body = 'Hệ thống phát hiện có chương trình khuyến mãi có thể áp dụng cho đơn hàng này, bạn có muốn áp dụng trước khi xác nhận không?';
     modalRef.result.then(() => {
@@ -834,7 +834,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     //   return false;
     // }
 
-    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm dịch vụ điều trị';
     modalRef.componentInstance.partnerId = this.partnerId;
     var pricelist = this.formGroup.get('pricelist').value;
@@ -921,7 +921,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
       return false;
     }
 
-    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
     modalRef.componentInstance.line = line.value;
     modalRef.componentInstance.partnerId = partner.Id;
@@ -1031,7 +1031,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
   actionSaleOrderPayment() {
     if (this.id) {
       this.paymentService.saleDefaultGet([this.id]).subscribe(rs2 => {
-        let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
         modalRef.result.then(() => {
@@ -1088,7 +1088,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
 
   // actionCreateDotKham() {
   //   if (this.id) {
-  //     let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+  //     let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
   //     modalRef.componentInstance.title = 'Tạo đợt khám';
   //     modalRef.componentInstance.saleOrderId = this.id;
 
@@ -1106,7 +1106,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
   // }
 
   // actionEditDotKham(item) {
-  //   let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+  //   let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
   //   modalRef.componentInstance.title = 'Cập nhật đợt khám';
   //   modalRef.componentInstance.id = item.id;
   //   modalRef.componentInstance.partnerId = this.partner.id;

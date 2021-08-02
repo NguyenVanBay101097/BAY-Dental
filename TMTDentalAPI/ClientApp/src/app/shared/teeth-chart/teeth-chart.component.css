@@ -1,0 +1,36 @@
+
+.duong_chia_doi {
+  height: 0;
+  overflow: hidden;
+  border-top: 1px solid #ccc;
+}
+
+.teeth_nameTeeth {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #ccc;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.teeth_container {
+  display: inline-block;
+}
+
+.teethElement {
+  display: flex;
+  height: 46px;
+  flex-flow: column;
+  justify-content: center;
+}
+
+.chia_doi_doc {
+  width: 1px;
+  border-left: 1px solid #ccc;
+  height: 46px;
+}
+
+.teeth_nameTeeth.selected {
+  color: #212529;
+  background-color: #dae0e5;
+  border-color: #d3d9df;
+}

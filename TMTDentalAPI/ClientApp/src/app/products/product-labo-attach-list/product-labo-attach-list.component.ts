@@ -112,7 +112,7 @@ export class ProductLaboAttachListComponent implements OnInit {
   }
 
   onImport() {
-    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static',scrollable: true });
+    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static',scrollable: true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.componentInstance.type = 'labo_attach';
     modalRef.result.then(() => {

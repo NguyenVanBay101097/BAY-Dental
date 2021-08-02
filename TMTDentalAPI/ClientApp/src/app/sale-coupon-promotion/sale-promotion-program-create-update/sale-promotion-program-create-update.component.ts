@@ -354,7 +354,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
 
   generateCoupons() {
     if (this.id) {
-      let modalRef = this.modalService.open(SaleCouponProgramGenerateCouponsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(SaleCouponProgramGenerateCouponsDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.programId = this.id;
       modalRef.result.then(() => {
         this.loadRecord();
@@ -368,7 +368,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       var value = this.formGroup.value;
       this.programService.create(value).subscribe(result => {
         this.router.navigate(['programs/promotion-programs/form'], { queryParams: { id: result.id } });
-        let modalRef = this.modalService.open(SaleCouponProgramGenerateCouponsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleCouponProgramGenerateCouponsDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.programId = result.id;
         modalRef.result.then(() => {
           this.loadRecord();
@@ -513,7 +513,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   onPause() {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạm ngừng chương trình khuyến mãi';
     modalRef.componentInstance.body = 'Bạn có muốn tạm ngừng chương trình khuyến mãi?';
     modalRef.result.then(() => {
@@ -525,7 +525,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   onActive() {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Kích hoạt chương trình khuyến mãi';
     modalRef.componentInstance.body = 'Bạn có muốn kích hoạt chương trình khuyến mãi?';
     modalRef.result.then(() => {

@@ -5,7 +5,10 @@ import {SmsCampaignService} from '../sms-campaign.service';
 @Component({
   selector: 'app-sms-birthday-form',
   templateUrl: './sms-birthday-form.component.html',
-  styleUrls: ['./sms-birthday-form.component.css']
+  styleUrls: ['./sms-birthday-form.component.css'],
+  host: {
+    class: "o_action o_view_controller",
+  },
 })
 export class SmsBirthdayFormComponent implements OnInit {
 

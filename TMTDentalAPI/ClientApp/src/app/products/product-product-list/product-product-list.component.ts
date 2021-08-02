@@ -119,7 +119,7 @@ export class ProductProductListComponent implements OnInit {
   }
 
   importFromExcel() {
-    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.componentInstance.type = 'product';
     modalRef.result.then(() => {
@@ -129,7 +129,7 @@ export class ProductProductListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(ProductProductCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductProductCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -138,7 +138,7 @@ export class ProductProductListComponent implements OnInit {
   }
 
   editItem(item: Product) {
-    let modalRef = this.modalService.open(ProductProductCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductProductCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: ' + this.title;
     modalRef.componentInstance.id = item.id;
 

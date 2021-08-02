@@ -452,7 +452,7 @@ namespace Infrastructure.Services
                 throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
 
             if (self.Any(x => x.PaymentHistoryLines.Any(x => x.SaleOrderPayment.State == "posted")))
-                throw new Exception("Không thể xóa dịch vụ đã thanh toán");
+                throw new Exception("Bạn không thể xóa dịch vụ đã thanh toán");
 
             foreach (var line in self.Where(x => x.IsRewardLine))
             {
@@ -1145,7 +1145,8 @@ namespace Infrastructure.Services
             await orderObj.ComputeToUpdateSaleOrder(order);
             await orderObj.UpdateAsync(order);
             //action done order
-            var isOrderDone = await SearchQuery(x => x.OrderId == entity.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel");
+            var isOrderDone = (await SearchQuery(x => x.OrderId == entity.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel"))
+                && (await SearchQuery(x => x.OrderId == entity.OrderId).AnyAsync(x => x.State == "done"));
             if (isOrderDone)
                 await orderObj.ActionDone(new List<Guid>() { entity.OrderId });
         }
@@ -1182,7 +1183,11 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             await orderObj.ComputeToUpdateSaleOrder(order);
             await orderObj.UpdateAsync(order);
-
+            //action done order
+            var isOrderDone = (await SearchQuery(x => x.OrderId == saleLine.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel"))
+                && (await SearchQuery(x => x.OrderId == saleLine.OrderId).AnyAsync(x => x.State == "done"));
+            if (isOrderDone)
+                await orderObj.ActionDone(new List<Guid>() { saleLine.OrderId });
             return saleLine;
         }
 
@@ -1230,7 +1235,8 @@ namespace Infrastructure.Services
                 line.DateDone = DateTime.Now;
             await UpdateAsync(line);
             //action done saleorder
-            var isOrderDone = await SearchQuery(x => x.OrderId == line.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel");
+            var isOrderDone = (await SearchQuery(x => x.OrderId == line.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel"))
+                && (await SearchQuery(x => x.OrderId == line.OrderId).AnyAsync(x => x.State == "done"));
             var orderObj = GetService<ISaleOrderService>();
             if (isOrderDone)
                await orderObj.ActionDone(new List<Guid>() { line.OrderId });

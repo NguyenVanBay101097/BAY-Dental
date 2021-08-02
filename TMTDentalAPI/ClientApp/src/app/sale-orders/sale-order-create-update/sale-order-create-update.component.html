@@ -15,7 +15,7 @@
                     <a [routerLink]="['/partners/customer/' + customerId + '/treatment']" class="btn btn-secondary btn-sm mr-1">
                         Trở lại
                     </a>
-                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder && saleOrder.state != 'done'" (click)="onSave()">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder && saleOrder.state == 'draft'" (click)="onSave()">
                         Lưu
                     </button>
                     <button type="button" accesskey="1" *ngIf="saleOrder && saleOrder.state == 'draft'" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
@@ -55,7 +55,122 @@
     <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <div class="t-accordion mb-2">
+                <div class="accordion" *ngIf="saleOrder.partner">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                            <button class="accordion-button collapsed px-3 py-2 align-items-start" (click)="togglePartnerInfo()" type="button" data-toggle="collapse" href="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                                <div style="flex: 1">
+                                    Khách hàng:
+                                    <a class="font-weight-600" [routerLink]="['/partners/customer/' + saleOrder.partner.id]">
+                                        {{saleOrder.partner.displayName}}
+                                    </a>
+                                </div>
+                                <div style="flex: 1">Ngày sinh: <span
+                                        class="font-weight-600">{{saleOrder.partner.dateOfBirth}}</span></div>
+                                <div style="flex: 1">Tuổi: <span class="font-weight-600">{{saleOrder.partner.age}}</span></div>
+                            </button>
+                        </h2>
+                        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                            <div class="accordion-body p-3">
+                                <div style="display: flex;" *ngIf="partnerDisplay">
+                                    <div style="flex: 0 0 90px;margin-right: 1rem;">
+                                        <img class="img-fluid" [src]="partnerDisplay?.avatar || 'assets/images/no-avatar.png'" alt="" onerror="this.src='assets/images/no-avatar.png';" />
+                                    </div>
+                                    <div style="flex: 1 1 100%;">
+                                        <div class="o_group m-0">
+                                            <table class="o_group m-0 o_inner_group o_group_col_4">
+                                                <tbody>
+                                                    <!-- <tr>
+                                                        <td colspan="1" class="o_td_label">
+                                                            <label class="o_form_label">
+                                                                Ngày sinh
+                                                            </label>
+                                                        </td>
+                                                        <td colspan="1" style="width: 100%;">
+                                                            <span>{{partner?.dateOfBirth}}</span>
+                                                        </td>
+                                                    </tr> -->
+                                                    <tr>
+                                                        <td colspan="1" class="o_td_label">
+                                                            <label class="o_form_label">
+                                                                Giới tính
+                                                            </label>
+                                                        </td>
+                                                        <td colspan="1" style="width: 100%;">
+                                                            <span>{{partnerDisplay?.genderConvertcom}}</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="1" class="o_td_label">
+                                                            <label class="o_form_label">
+                                                                Nhãn
+                                                            </label>
+                                                        </td>
+                                                        <td colspan="1" style="width: 100%;">
+                                                            <span *ngFor="let tag of partnerDisplay.categories" class="badge badge-secondary mr-1" [ngClass]="'o_tag_color_' + tag.color">
+                                                                {{tag.name}}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <table class="o_group m-0 o_inner_group o_group_col_4">
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="1" class="o_td_label">
+                                                            <label class="o_form_label">
+                                                                Nghề nghiệp
+                                                            </label>
+                                                        </td>
+                                                        <td colspan="1" style="width: 100%;">
+                                                            <span>{{partnerDisplay?.jobTitle}}</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="1" class="o_td_label">
+                                                            <label class="o_form_label">
+                                                                Tiểu sử bệnh
+                                                            </label>
+                                                        </td>
+                                                        <td colspan="1" style="width: 100%;">
+                                                            <span>{{partnerDisplay?.historiesString}}</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <table class="o_group m-0 o_inner_group o_group_col_4">
+                                                <tbody>
+                                                    <!-- <tr>
+                                                        <td colspan="1" class="o_td_label">
+                                                            <label class="o_form_label">
+                                                                Tuổi
+                                                            </label>
+                                                        </td>
+                                                        <td colspan="1" style="width: 100%;">
+                                                            <span>{{partner?.age}}</span>
+                                                        </td>
+                                                    </tr> -->
+                                                    <tr>
+                                                        <td colspan="1" class="o_td_label">
+                                                            <label class="o_form_label">
+                                                                Hạng thành viên
+                                                            </label>
+                                                        </td>
+                                                        <td colspan="1" style="width: 100%;">
+                                                            <span>{{partnerDisplay.memberLevel?.name}}</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="t-accordion mb-2">
                     <div class="tab">
                         <input type="checkbox" id="tab-checkbox-1" [checked]="checkedAccordion" (change)="checkedAccordion = !checkedAccordion" />
                         <label class="tab-label" for="tab-checkbox-1">
@@ -152,7 +267,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="o_notebook d-flex flex-column">
                     <!-- Nav tabs -->
@@ -184,10 +299,10 @@
                                     </app-service-list-search-dropdown>
                                 </div>
                                 <div class="d-flex w-100">
-                                    <div class="w-75 d-flex flex-column">
+                                    <div class="d-flex flex-column" style="flex: 1 1 100%;">
                                         <!-- saleorderline -->
 
-                                        <div class="div-table w-100">
+                                        <div class="div-table w-100 mb-2">
                                             <div class="div-row bg-primary text-white">
                                                 <div class="py-1 pl-2">Danh sách dịch vụ</div>
                                             </div>
@@ -199,12 +314,13 @@
                                             </div>
                                             <ng-container *ngFor="let line of saleOrder.orderLines; let i=index">
                                                 <app-sale-order-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion(i)" [initialListEmployees]="initialListEmployees" [initialFilteredToothCategories]="filteredToothCategories" [initialListTeeths]="listTeeths" [line]="line" [initialToothTypeDict]="toothTypeDict"
-                                                    (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)" (onActiveEvent)="onActiveLine($event, line)" (onUpdateStateEvent)="onUpdateStateLine($event, line)">
+                                                    (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)" (onActiveEvent)="onActiveLine($event, line)" (onUpdateStateEvent)="onUpdateStateLine($event, line)"
+                                                    [orderState]="saleOrder?.state">
                                                 </app-sale-order-line-cu>
                                             </ng-container>
                                         </div>
                                     </div>
-                                    <div class="w-25 pl-3">
+                                    <div class="pl-3" style="flex: 0 0 auto;width: 320px;">
                                         <!-- ưu đãi -->
                                         <div class="card mb-3">
                                             <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">

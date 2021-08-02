@@ -270,7 +270,7 @@ export class AccountInvoiceCreateUpdateComponent implements OnInit {
 
   showAddLineModal() {
     if (this.getPartner) {
-      let modalRef = this.modalService.open(AccountInvoiceLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(AccountInvoiceLineDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Thêm dịch vụ điều trị';
       modalRef.componentInstance.invoiceType = this.type;
       modalRef.componentInstance.partnerId = this.getPartner.id;
@@ -296,7 +296,7 @@ export class AccountInvoiceCreateUpdateComponent implements OnInit {
   }
 
   editLine(line: FormGroup) {
-    let modalRef = this.modalService.open(AccountInvoiceLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(AccountInvoiceLineDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
     modalRef.componentInstance.invoiceType = this.type;
     modalRef.componentInstance.line = line.value;
@@ -455,7 +455,7 @@ export class AccountInvoiceCreateUpdateComponent implements OnInit {
       var val = new AccountRegisterPaymentDefaultGet();
       val.invoiceIds = [this.id];
       this.registerPaymentService.defaultGet(val).subscribe(result => {
-        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = result;
         modalRef.result.then(() => {
@@ -507,7 +507,7 @@ export class AccountInvoiceCreateUpdateComponent implements OnInit {
   }
 
   actionCreateDotKham() {
-    let modalRef = this.modalService.open(InvoiceCreateDotkhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(InvoiceCreateDotkhamDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Tạo đợt khám';
     modalRef.componentInstance.invoiceId = this.id;
 

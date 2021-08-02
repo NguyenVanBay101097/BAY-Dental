@@ -8,28 +8,39 @@
     <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <div class="d-flex">
-                    <!-- <label class="btn-sm btn btn-outline-primary active mr-2" (click)="onItemChange('esms')">
+                <!-- <div class="d-flex">
+                     <label class="btn-sm btn btn-outline-primary active mr-2" (click)="onItemChange('esms')">
                         <input type="radio" checked autocomplete="off">E-SMS
                     </label>
                     <label class="btn-sm btn btn-outline-success" (click)="onItemChange('fpt')">
                         <input type="radio" autocomplete="off">FPT
                     </label>
-                -->
+                
 
-                    <div style="width:165px; margin-left:16px;">
+                    <div style="width:150px;">
                         <label class="o_form_label">Nhà cung cấp</label>
                     </div>
-                    <select (change)="onItemChange($event.target.value)" class="form-control" style="width: 372px;">
+                    <select (change)="onItemChange($event.target.value)" class="form-control" style="width: 419px;">
                         <option selected value="fpt">FPT</option>
-                        <!-- <option value="esms">ESMS</option> -->
+                        <option value="esms">ESMS</option>
                     </select>
-                </div>
+                </div> -->
                 <div class="o_group">
                     <div *ngIf="switchBrand">
                         <ng-template [ngIf]="switchBrand=='fpt'">
                             <table class="o_group o_inner_group o_group_col_12 modal-body m-0">
                                 <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Nhà cung cấp</label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <select (change)="onItemChange($event.target.value)" class="form-control">
+                                                <option selected value="fpt">FPT</option>
+                                                <!-- <option value="esms">ESMS</option> -->
+                                            </select>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">Brand Name</label>
@@ -161,7 +172,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Kết nối</button>
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

@@ -44,7 +44,8 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "SMS.Message.Update")]
         public async Task<IActionResult> ReSend(IEnumerable<Guid> ids)
         {
-            var details = await _smsMessageDetailService.SearchQuery().Where(x => ids.Contains(x.Id) && x.CompanyId == CompanyId).Include(x => x.SmsAccount).ToListAsync();
+            var details = await _smsMessageDetailService.SearchQuery().Where(x => ids.Contains(x.Id) && x.CompanyId == CompanyId && x.State == "error")
+                .Include(x => x.SmsAccount).ToListAsync();
             if (details != null && details.Any())
                 await _smsMessageDetailService.ReSendSms(details);
             return NoContent();

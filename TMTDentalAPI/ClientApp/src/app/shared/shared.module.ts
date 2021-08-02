@@ -96,6 +96,7 @@ import { LocaleService } from './date-range-picker-filter/config/locale.service'
 import { DateRangePickerDropdownComponent } from './date-range-picker-filter/date-range-picker-dropdown/date-range-picker-dropdown.component';
 import { AgentCreateUpdateDialogComponent } from './agent-create-update-dialog/agent-create-update-dialog.component';
 import { ToothSelectionDialogComponent } from './tooth-selection-dialog/tooth-selection-dialog.component';
+import { TeethChartComponent } from './teeth-chart/teeth-chart.component';
 import { SaleOrderLineSwitchStatePopoverComponent } from '../sale-orders/sale-order-line-switch-state-popover/sale-order-line-switch-state-popover.component';
 
 const config: LocaleConfig = {};
@@ -186,6 +187,8 @@ const config: LocaleConfig = {};
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
         ToothSelectionDialogComponent,
+        TeethChartComponent,
+        ToothSelectionDialogComponent,
         SaleOrderLineSwitchStatePopoverComponent
     ],
     exports: [
@@ -264,6 +267,8 @@ const config: LocaleConfig = {};
         DaterangepickerDirective,
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
+        ToothSelectionDialogComponent,
+        TeethChartComponent,
         ToothSelectionDialogComponent,
         SaleOrderLineSwitchStatePopoverComponent
     ],

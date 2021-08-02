@@ -68,7 +68,7 @@ export class PartnerCustomerTreatmentPaymentDetailComponent implements OnInit {
   }
 
   addSaleOrderLine() {
-    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.saleOrderId = this.saleOrderId;
     modalRef.result.then(result => {
       if (result) {
@@ -80,7 +80,7 @@ export class PartnerCustomerTreatmentPaymentDetailComponent implements OnInit {
 
 
   addTreatment() {
-    let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Tạo đợt khám';
     modalRef.componentInstance.saleOrderId = this.saleOrderId;
     modalRef.componentInstance.partner = this.partner;
@@ -90,7 +90,7 @@ export class PartnerCustomerTreatmentPaymentDetailComponent implements OnInit {
   }
 
   viewTreatment(id) {
-    let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Chi tiết đợt khám';
     modalRef.componentInstance.id = id;
     modalRef.componentInstance.partner = this.partner;
@@ -111,7 +111,7 @@ export class PartnerCustomerTreatmentPaymentDetailComponent implements OnInit {
   }
 
   addLabo() {
-    let modalRef = this.modalService.open(LaboOrderQuickCreateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(LaboOrderQuickCreateDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Tạo phiếu Labo';
     modalRef.componentInstance.saleOrderId = this.saleOrderId;
     modalRef.result.then(() => {
@@ -120,7 +120,7 @@ export class PartnerCustomerTreatmentPaymentDetailComponent implements OnInit {
   }
 
   clickLabo(id) {
-    // let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    // let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     // modalRef.componentInstance.title = 'Chi tiết phiếu Labo';
     // if (id) {
     //   modalRef.componentInstance.id = id;
@@ -132,7 +132,7 @@ export class PartnerCustomerTreatmentPaymentDetailComponent implements OnInit {
   }
 
   deleteLabo(id) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu labo';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {

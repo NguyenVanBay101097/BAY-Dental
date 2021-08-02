@@ -44,7 +44,6 @@ export class DateRangePickerFilterComponent implements OnInit {
         })
   }
   ngAfterViewInit() {
-
   }
   // ngOnChanges(changes: SimpleChanges): void {
   //   //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.

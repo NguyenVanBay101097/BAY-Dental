@@ -91,7 +91,7 @@ export class PromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   addRule() {
-    let modalRef = this.modalService.open(PromotionProgramRuleCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(PromotionProgramRuleCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm điều kiện và phần thưởng';
 
     modalRef.result.then(result => {
@@ -101,7 +101,7 @@ export class PromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   editRule(rule: FormGroup) {
-    let modalRef = this.modalService.open(PromotionProgramRuleCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(PromotionProgramRuleCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Cập nhật điều kiện và phần thưởng';
     modalRef.componentInstance.formGroup = _.cloneDeep(rule);
     modalRef.result.then(result => {

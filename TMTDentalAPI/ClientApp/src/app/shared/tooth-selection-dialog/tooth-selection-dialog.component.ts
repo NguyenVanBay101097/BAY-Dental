@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToothDisplay } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic } from 'src/app/tooth-categories/tooth-category.service';
@@ -12,17 +12,27 @@ import { ToothCategoryBasic } from 'src/app/tooth-categories/tooth-category.serv
 export class ToothSelectionDialogComponent implements OnInit {
 
   myForm: FormGroup;
-  toothTypeDict: any[] = [];
+  toothTypeDict = [
+    { name: "Nguyên hàm", value: "whole_jaw" },
+    { name: "Hàm trên", value: "upper_jaw" },
+    { name: "Hàm dưới", value: "lower_jaw" },
+    { name: "Chọn răng", value: "manual" },
+  ];
+
   hamList: { [key: string]: {} };
+
   teethSelected: ToothDisplay[] = [];
   filteredToothCategories: any[] = [];
   listTeeths: any[] = [];
+  filterTeeths: any[] = [];
   cateId: string;
   submitted: boolean = false;
   @Input() toothDataInfo: any;
   toothSource: any[] = [];
   toothRemove: any[] = [];
   get f() { return this.myForm.controls; }
+
+  toothSelectedIds: string[] = [];
 
   getFormValue(key: string) {
     return this.myForm.get(key).value;
@@ -35,63 +45,27 @@ export class ToothSelectionDialogComponent implements OnInit {
 
   ngOnInit() {
     this.myForm = this.fb.group({
-      toothCategory: '',
-      toothType: "manual",
-      teeth: [],
-    })
-    if (this.toothDataInfo.toothType && this.toothDataInfo.toothCategory) {
-      this.myForm.setValue(this.toothDataInfo);
-      this.toothDataInfo.teeth.forEach(teeth => {
-        this.toothSource.push(Object.assign({}, teeth))
-      });
-      this.teethSelected = this.toothDataInfo.teeth;
-      this.cateId = this.toothDataInfo.toothCategory ? this.toothDataInfo.toothCategory.id : '';
-      this.loadTeethMap(this.toothDataInfo.toothCategory);
-    }
-    else {
-      if (this.filteredToothCategories.length > 0) {
-        this.cateId = this.filteredToothCategories[0].id;
-        this.f.toothCategory.setValue(this.filteredToothCategories[0]);
-        this.loadTeethMap(this.filteredToothCategories[0]);
-      }
-    }
+      toothCategoryId: [this.toothDataInfo.toothCategory ? this.toothDataInfo.toothCategory.id : null],
+      toothType: [this.toothDataInfo.toothType || "manual"],
+    });
+
+    this.toothSelectedIds = this.toothDataInfo.teeth.map(x => x.id);
+    this.loadTeethMap(this.toothDataInfo.toothCategory);
   }
 
   loadTeethMap(categ: ToothCategoryBasic) {
     var teeth = this.listTeeths.filter(el => el.categoryId == categ.id);
-    this.processTeeth(teeth);
-  }
-
-  processTeeth(teeth: ToothDisplay[]) {
-    this.hamList = {
-      '0_up': { '0_right': [], '1_left': [] },
-      '1_down': { '0_right': [], '1_left': [] }
-    };
-
-    for (var i = 0; i < teeth.length; i++) {
-      var tooth = teeth[i];
-      if (tooth.position === '1_left') {
-        this.hamList[tooth.viTriHam][tooth.position].push(tooth);
-      } else {
-        this.hamList[tooth.viTriHam][tooth.position].unshift(tooth);
-      }
-    }
+    this.filterTeeths = [].concat(teeth);
   }
 
   onChangeToothCategory(value: any) {
-    if (value.id) {
-      this.teethSelected = [];
-      this.f.teeth.setValue(this.teethSelected);
-      this.loadTeethMap(value);
-      this.cateId = value.id;
-      this.f.toothCategory.setValue(value);
-    }
+    this.loadTeethMap(value);
+    this.toothSelectedIds = [];
   }
 
   onChangeToothType(toothType) {
     if (toothType != "manual") {
-      this.teethSelected = [];
-      this.f.teeth.setValue(this.teethSelected);
+      this.toothSelectedIds = [];
     }
   }
 
@@ -128,13 +102,23 @@ export class ToothSelectionDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+    if (this.myForm.invalid || (this.getFormValue('toothType') == 'manual'
+      && this.toothSelectedIds.length == 0)) {
+      return false;
+    }
+
     var val = this.myForm.value;
-    val.toothCategoryId = val.toothCategory ? val.toothCategory.id : '';
-    this.activeModal.close(val);
+    var result = {
+      toothType: val.toothType,
+      toothCategory: this.filteredToothCategories.find(x => x.id == val.toothCategoryId),
+      teeth: this.listTeeths.filter(x => this.toothSelectedIds.indexOf(x.id) !== -1)
+    };
+
+    this.activeModal.close(result);
   }
 
   onCancel() {
-    this.toothDataInfo.teeth = this.toothSource;
-    this.activeModal.close(this.toothDataInfo);
+    this.activeModal.dismiss();
   }
 }

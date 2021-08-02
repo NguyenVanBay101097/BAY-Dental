@@ -13,6 +13,12 @@ namespace ApplicationCore.Entities
         {
             State = "draft";
             TotalAmount = 0;
+            OtherAllowance = 0;
+            RewardSalary = 0;
+            HolidayAllowance = 0;
+            CommissionSalary = 0;
+            AmercementMoney = 0;
+            TaxNSocialInsurance = 0;
         }
 
         /// <summary>
@@ -131,6 +137,10 @@ namespace ApplicationCore.Entities
         /// lương hoa hồng
         /// </summary>
         public decimal? CommissionSalary { get; set; }
+        /// <summary>
+        /// Thuế và BHXH
+        /// </summary>
+        public decimal? TaxNSocialInsurance { get; set; }
         /// <summary>
         /// tạm ứng lương
         /// </summary>

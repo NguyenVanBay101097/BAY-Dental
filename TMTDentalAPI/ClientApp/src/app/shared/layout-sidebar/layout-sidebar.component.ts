@@ -60,23 +60,13 @@ export class LayoutSidebarComponent implements OnInit {
       ],
       permissions: ['Labo.LaboOrder.Read', 'Labo.OrderLabo.Read', 'Labo.ExportLabo.Read']
     },
-    // {
-    //   name: 'Khảo sát đánh giá',
-    //   icon: 'fas fa-poll',
-    //   children: [
-    //     { name: 'Danh sách khảo sát', link: '/surveys', groups:'survey_Nhanvien.survey_assignment_Nhanvien,survey_Quanly.survey_assignment_Quanly' },
-    //     { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey_Quanly.survey_assignment_Quanly' },
-    //     { name: 'Cấu hình đánh giá', link: '/surveys/config', groups: 'survey_Quanly.survey_assignment_Quanly' },
-    //   ],
-    //   groups: 'survey_Nhanvien.survey_assignment_Nhanvien,survey_Quanly.survey_assignment_Quanly'
-    // },
     {
       name: 'Khảo sát đánh giá',
       icon: 'fas fa-poll',
       children: [
-        { name: 'Danh sách khảo sát', link: '/surveys', permissions: ['Survey.UserInput.Read'] },
-        { name: 'Quản lý phân việc', link: '/surveys/manage', permissions: ['Survey.Assignment.Read'] },
-        { name: 'Câu hỏi khảo sát', link: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'] },
+        { name: 'Danh sách khảo sát', link: '/surveys', permissions: ['Survey.UserInput.Read'], groups:'survey.group_user,survey.group_manager' },
+        { name: 'Quản lý phân việc', link: '/surveys/manage', permissions: ['Survey.Assignment.Read'], groups:'survey.group_manager' },
+        { name: 'Câu hỏi khảo sát', link: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'], groups:'survey.group_manager' },
       ],
       groups: 'survey.group_survey',
       permissions: ['Survey.UserInput.Read', 'Survey.Assignment.Read', 'Survey.Question.Read']
@@ -155,21 +145,21 @@ export class LayoutSidebarComponent implements OnInit {
       ],
       permissions: ['LoyaltyCard.CardCard.Read', 'LoyaltyCard.CardType.Read']
     },
-    {
-      name: 'Chăm sóc tự động',
-      icon: 'fab fa-facebook-f',
-      children: [
-        { name: 'Kết nối facebook page', link: '/socials/facebook-connect' },
-        { name: 'Kết nối Zalo', link: '/zalo-config' },
-        { name: 'Danh sách kênh', link: '/socials/channels', permissions: ['TCare.Channel.Read'] },
-        { name: 'Kịch bản', link: '/tcare/scenarios', permissions: ['TCare.Scenario.Read'] },
-        { name: 'Thống kê gửi tin', link: '/tcare/messagings', permissions: ['TCare.Messaging.Read'] },
-        { name: 'Mẫu tin nhắn', link: '/tcare/message-templates', permissions: ['TCare.MessTemplate.Read'] },
-        { name: 'Thiết lập tự động', link: '/tcare/config', permissions: ['TCare.Config.Create'] },
-      ],
-      groups: 'tcare.group_tcare',
-      permissions: ['TCare.Channel.Read', 'TCare.Scenario.Read', 'TCare.Messaging.Read', 'TCare.MessTemplate.Read', 'TCare.Config.Create']
-    },
+    // {
+    //   name: 'Chăm sóc tự động',
+    //   icon: 'fab fa-facebook-f',
+    //   children: [
+    //     { name: 'Kết nối facebook page', link: '/socials/facebook-connect' },
+    //     { name: 'Kết nối Zalo', link: '/zalo-config' },
+    //     { name: 'Danh sách kênh', link: '/socials/channels', permissions: ['TCare.Channel.Read'] },
+    //     { name: 'Kịch bản', link: '/tcare/scenarios', permissions: ['TCare.Scenario.Read'] },
+    //     { name: 'Thống kê gửi tin', link: '/tcare/messagings', permissions: ['TCare.Messaging.Read'] },
+    //     { name: 'Mẫu tin nhắn', link: '/tcare/message-templates', permissions: ['TCare.MessTemplate.Read'] },
+    //     { name: 'Thiết lập tự động', link: '/tcare/config', permissions: ['TCare.Config.Create'] },
+    //   ],
+    //   groups: 'tcare.group_tcare',
+    //   permissions: ['TCare.Channel.Read', 'TCare.Scenario.Read', 'TCare.Messaging.Read', 'TCare.MessTemplate.Read', 'TCare.Config.Create']
+    // },
     {
       name: 'SMS Brandname',
       icon: 'fas fa-sms',
@@ -178,7 +168,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhắc lịch hẹn', link: '/sms/appointment-reminder', permissions: ['SMS.Message.Read'] },
         { name: 'Chăm sóc sau điều trị', link: '/sms/care-after-order', permissions: ['SMS.Message.Read'] },
         { name: 'Tin nhắn cảm ơn', link: '/sms/thanks-customer', permissions: ['SMS.Message.Read'] },
-        { name: 'Quản lý chiến dịch', link: '/sms/campaign', permissions: ['SMS.Campaign.Read'] },
+        // { name: 'Quản lý chiến dịch', link: '/sms/campaign', permissions: ['SMS.Campaign.Read'] },
         { name: 'Theo dõi tin nhắn', link: '/sms/statistic', permissions: ['SMS.Report.AllMessage'] },
         { name: 'Báo cáo', link: '/sms/report', permissions: ['SMS.Report.AllSMS'] },
         { name: 'Tin nhắn mẫu', link: '/sms/templates', permissions: ['SMS.Template.Read'] },
@@ -255,19 +245,19 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Báo cáo tổng quan', link: '/sale-dashboard-reports' },
         { name: 'Kết quả kinh doanh', link: '/financial-report', permissions: ['Report.Financial'] },
-        { name: 'Tiền mặt, ngân hàng', link: '/report-general-ledgers/cash-bank', permissions: ['Report.CashBankAccount'] },
+        // { name: 'Tiền mặt, ngân hàng', link: '/report-general-ledgers/cash-bank', permissions: ['Report.CashBankAccount'] },
         { name: 'Báo cáo doanh thu', link: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
         { name: 'Báo cáo dịch vụ', link: '/sale-report/service-report', permissions: ['Report.Sale'] },
         { name: 'Thống kê điều trị', link: '/sale-report', permissions: ['Report.Sale'] },
         { name: 'Công nợ khách hàng', link: '/report-account-common/partner-debit', permissions: ['Report.AccountPartner'] },
         { name: 'Công nợ nhà cung cấp', link: '/report-account-common/partner', params: { result_selection: 'supplier' }, permissions: ['Report.AccountPartner'] },
-        { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton', permissions: ['Report.Stock'] },
-        { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report', permissions: ['Report.RealRevenue'] },
+        // { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton', permissions: ['Report.Stock'] },
+        // { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report', permissions: ['Report.RealRevenue'] },
         // { name: 'Thống kê công việc', link: '/dot-kham-report' },
         // { name: 'Thống kê hoa hồng', link: '/commission-settlements/report', permissions: ['Report.Commission'] },
         { name: 'Khách hàng lân cận phòng khám', link: '/partner-report-location', permissions: ['Report.PartnerLocation'] },
         { name: 'Thống kê nguồn khách hàng', link: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
-        { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/partner', permissions: ['Report.PartnerOldNew'] },
+        // { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/partner', permissions: ['Report.PartnerOldNew'] },
         { name: 'Quản lý điều trị', link: '/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
         // { name: 'Thống kê khách hàng', link: '/customer-statistics' },
         // { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/old-new-partner' },

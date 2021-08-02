@@ -58,7 +58,7 @@ export class PartnerTabSaleOrderListComponent implements OnInit {
   }
 
   deleteBtnClick(item: SaleOrderBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu điều trị';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {

@@ -89,7 +89,7 @@ namespace Infrastructure.Services
             var order = _mapper.Map<SaleOrder>(val);
             await CreateAsync(order);
 
-            var lines = new List<SaleOrderLine>();
+            //var lines = new List<SaleOrderLine>();
             //var sequence = 0;
             //foreach (var item in val.OrderLines)
             //{
@@ -112,8 +112,8 @@ namespace Infrastructure.Services
             //    lines.Add(saleLine);
             //}
 
-            var saleLineService = GetService<ISaleOrderLineService>();
-            await saleLineService.CreateAsync(lines);
+            //var saleLineService = GetService<ISaleOrderLineService>();
+            //await saleLineService.CreateAsync(lines);
 
             //_AmountAll(order);
             //await UpdateAsync(order);
@@ -1253,11 +1253,14 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderDisplay> GetSaleOrderForDisplayAsync(Guid id)
         {
-            var saleOrder = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var saleOrder = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .FirstOrDefaultAsync();
+
             var display = _mapper.Map<SaleOrderDisplay>(saleOrder);
 
             var lineObj = GetService<ISaleOrderLineService>();
-            var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))
+            var lines = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderByDescending(s => s.DateCreated))
                 .Include(x => x.Advisory)
                 .Include(x => x.Assistant)
                 .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
@@ -1269,7 +1272,7 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderPartner).ToListAsync();
 
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
-            display.AmountDiscountTotal = Math.Round(lines.Sum(z => (decimal)z.AmountDiscountTotal * z.ProductUOMQty));
+            display.AmountDiscountTotal = Math.Round(lines.Sum(z => (decimal)(z.AmountDiscountTotal??0) * z.ProductUOMQty));
 
             var promotionObj = GetService<ISaleOrderPromotionService>();
             display.Promotions = await promotionObj.SearchQuery(x => x.SaleOrderId.HasValue && x.SaleOrderId == display.Id && !x.SaleOrderLineId.HasValue).Select(x => new SaleOrderPromotionBasic
@@ -1968,7 +1971,7 @@ namespace Infrastructure.Services
                 AmountDiscountTotal = x.AmountDiscountTotal,
                 PriceUnit = x.PriceUnit,
                 PriceSubTotal = x.PriceSubTotal,
-                Sequence = x.Sequence
+                Sequence = x.Sequence,
             }).ToListAsync();
             //order.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);        
             order.DotKhams = await _GetListDotkhamInfo(order.Id);
@@ -3048,7 +3051,7 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 PartnerId = x.PartnerId,
                 PartnerPhone = x.Partner.Phone,
-                PartnerName = x.Partner.DisplayName,
+                PartnerName = x.Partner.Name,
                 AmountTotal = x.AmountTotal,
                 DateDone = x.DateDone,
                 Name = x.Name,
@@ -3062,7 +3065,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SaleOrderRevenueReport>> GetRevenueReport(SaleOrderRevenueReportPaged val)
         {
-            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft");
+            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft" && x.Residual > 0);
             if (val.CompanyId.HasValue)
             {
                 query = query.Where(x => x.CompanyId == val.CompanyId);
@@ -3072,13 +3075,12 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search) || x.Partner.Name.Contains(val.Search)
                                          || x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
             }
-
             var count = await query.CountAsync();
-
+            query = query.OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
 
-            var res = await _mapper.ProjectTo<SaleOrderRevenueReport>(query.Where(x=> x.Residual > 0).OrderByDescending(x => x.DateCreated)).ToListAsync();
-
+            var res = await _mapper.ProjectTo<SaleOrderRevenueReport>(query).ToListAsync();
+            
             return new PagedResult2<SaleOrderRevenueReport>(count, val.Offset, val.Limit) { Items = res };
         }
 

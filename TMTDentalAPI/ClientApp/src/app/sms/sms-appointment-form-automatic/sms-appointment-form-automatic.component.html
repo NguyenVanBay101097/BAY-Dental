@@ -89,33 +89,26 @@
                                         </td>
                                         <td colspan="1" style="width: 80%;">
                                             <kendo-combobox [data]="filteredTemplate" [textField]="'name'"
-                                                formControlName="template" [filterable]="true" #smsTemplateCbx
-                                                (valueChange)="onChangeTemplate($event)" [valueField]="'id'"
+                                                formControlName="template" [filterable]="true" #smsTemplateCbx [valueField]="'id'"
                                                 class="mb-2">
                                             </kendo-combobox>
+                                            <div *ngIf="f.template.errors && (f.template.touched || f.template.dirty || submitted)"
+                                                class="text-danger">
+                                                <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>
+                                            </div>
                                             <!-- <a class="btn btn-sm btn-light" (click)="addTemplate()">
                                                 <span class="k-icon k-i-plus"></span>
                                             </a> -->
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <tr *ngIf="templateValue">
                                         <td colspan="2" style="width: 80%;">
                                             <textarea type="text" my-autosize
-                                                class="form-control textarea textarea-required"
-                                                [class.border-danger]="submitted && f.body.value==''" id="textarea_mass"
-                                                formControlName="body" rows="5" #textarea></textarea>
-                                            <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
-                                                class="text-danger">
-                                                <div *ngIf="f.body.errors.required">Nhập nội dung tin nhắn</div>
-                                                <div *ngIf="f.body.errors.maxlength">Số kí tự đã vượt quá cho phép !
-                                                </div>
-                                            </div>
-                                            <app-sms-note-content></app-sms-note-content>
-                                            <app-sms-personalized-tabs [type]="'appointment'"
-                                                (contentEmit)="addToContent($event)"></app-sms-personalized-tabs>
+                                                class="form-control textarea" id="textarea_mass" [value]="templateValue.body" rows="4" #textarea
+                                                [attr.disabled]="true"></textarea>
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <!-- <tr>
                                         <td>
                                             <div class="form-check mt-2">
                                                 <input class="form-check-input" type="checkbox" value=""
@@ -134,7 +127,7 @@
                                                     mẫu</div>
                                             </div>
                                         </td>
-                                    </tr>
+                                    </tr> -->
                                 </table>
                             </td>
                         </tr>
@@ -143,10 +136,7 @@
             </div>
             <div>
                 <div class="btns">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
-                        <span *ngIf="!id; else elseBlock">Lưu</span>
-                        <ng-template #elseBlock>Sửa</ng-template>
-                    </button>
+                    <button type="button" class="btn btn-primary" (click)="onSave()">Lưu</button>
                 </div>
             </div>
         </div>

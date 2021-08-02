@@ -53,6 +53,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   // hamList: { [key: string]: {} };
   @Input() initialListTeeths: any[] = [];
   @Input() initialToothTypeDict: any[] = [];
+  @Input() orderState: string = 'draft';
   formGroupInfo: FormGroup;
   submitted = false;
   get f() { return this.formGroupInfo.controls; }
@@ -89,6 +90,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.line);
     this.formGroupInfo = this.fb.group({});
     // this.formGroupInfo.setControl('teeth', this.fb.array(this.line.teeth));
     // this.formGroupInfo.setControl('promotions', this.fb.array(this.line.promotions));
@@ -103,7 +105,6 @@ export class SaleOrderLineCuComponent implements OnInit {
       toothCategory: this.line.toothCategory,
       toothType: this.line.toothType
     }
-    this.viewTeeth(this.toothData);
   }
 
   get TeethFA() {
@@ -130,7 +131,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   editLine() {
-    this.viewTeeth(this.toothDataLine);
+    // this.viewTeeth(this.toothDataLine);
     this.onEditEvent.emit(this.line);
   }
 
@@ -160,7 +161,6 @@ export class SaleOrderLineCuComponent implements OnInit {
       toothCategory: (this.isUpdated || this.lineId) ? this.line.toothCategory : null,
       toothType: (this.isUpdated || this.lineId) ? this.line.toothType : ''
     }
-    this.viewTeeth(this.toothDataLine)
     // this.loadTeethMap(this.line.toothCategory);
     this.filteredEmployeesDoctor = this.initialListEmployees.filter(x => x.isDoctor == true).slice();
     this.filteredEmployeesCounselor = this.initialListEmployees.slice();
@@ -342,18 +342,11 @@ export class SaleOrderLineCuComponent implements OnInit {
     // })
 
     let val = this.formGroupInfo.value;
-
-    this.toothData = {
-      teeth: val.teeth,
-      toothCategory: val.toothCategory,
-      toothType: val.toothType
-    }
-    this.viewTeeth(this.toothData);
     this.isEditting = false;
 
     // this.isItSeff = this.isItSeff;
     // this.notify('success', 'Cập nhật thành công');
-      this.onUpdateEvent.emit(val);
+    this.onUpdateEvent.emit(val);
     return true;
   }
 
@@ -430,24 +423,21 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   onCancel() {
     this.TeethFA.clear();
-    this.toothDataLine = {
-      teeth: (this.isUpdated || this.lineId) ? this.line.teeth : [],
-      toothCategory: (this.isUpdated || this.lineId) ? this.line.toothCategory : null,
-      toothType: (this.isUpdated || this.lineId) ? this.line.toothType : ''
-    }
-    this.viewTeeth(this.toothDataLine);
     this.isEditting = false;
     this.onCancelEvent.emit(this.line);
   }
 
-  viewTeeth(toothData: any) {
-    if (toothData.toothType && toothData.toothType == "manual") {
-      this.teethList = toothData.teeth.map(x => x.name).join(',');
-    } else if (toothData.toothType && toothData.toothType != "manual") {
-      this.teethList = this.initialToothTypeDict.find(x => x.value == toothData.toothType).name;
-    }
-    else {
-      this.teethList = '';
+  showTeethList(line) {
+    //dựa vào this.line
+    switch (line.toothType) {
+      case 'whole_jaw':
+        return 'Nguyên hàm';
+      case 'upper_jaw':
+        return 'Hàm trên';
+      case 'lower_jaw':
+        return 'Hàm dưới';
+      default:
+        return line.teeth.map(x => x.name).join(', ');
     }
   }
 
@@ -462,26 +452,20 @@ export class SaleOrderLineCuComponent implements OnInit {
       toothCategory: val.toothCategory,
       toothType: val.toothType
     }
-    let modalRef = this.modalService.open(ToothSelectionDialogComponent, { size: 'md', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+
+    let modalRef = this.modalService.open(ToothSelectionDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.toothDataInfo = this.toothData;
     modalRef.componentInstance.filteredToothCategories = this.initialFilteredToothCategories;
-    modalRef.componentInstance.toothTypeDict = this.initialToothTypeDict;
     modalRef.componentInstance.listTeeths = this.initialListTeeths;
     modalRef.result.then(result => {
-      // var val = this.formGroupInfo.value;
-      this.toothDataLine = {
-        teeth: this.isUpdated ? this.line.teeth : [],
-        toothCategory: this.isUpdated ? this.line.toothCategory : null,
-        toothType: this.isUpdated ? this.line.toothType : ''
-      }
       this.formGroupInfo.get("toothCategory").setValue(result.toothCategory);
       this.formGroupInfo.get("toothType").setValue(result.toothType);
       this.TeethFA.clear();
       result.teeth.forEach(value => {
         this.TeethFA.push(this.fb.group(value));
-        this.onChangeToothTypeLine(this.formInfoControl("toothType").value);
-      })
-      this.viewTeeth(result);
+      });
+
+      this.onChangeToothTypeLine(this.formInfoControl("toothType").value);
     }, (reason) => {
     });
   }

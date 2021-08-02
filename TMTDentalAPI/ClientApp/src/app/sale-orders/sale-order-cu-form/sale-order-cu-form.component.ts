@@ -184,7 +184,7 @@ export class SaleOrderCuFormComponent implements OnInit, OnChanges {
       return false;
     }
 
-    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm dịch vụ điều trị';
     modalRef.componentInstance.partnerId = partner.id;
     var pricelist = this.formGroup.get('pricelist').value;
@@ -210,7 +210,7 @@ export class SaleOrderCuFormComponent implements OnInit, OnChanges {
 
     console.log(line.value);
 
-    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
     modalRef.componentInstance.line = line.value;
     modalRef.componentInstance.partnerId = partner.Id;

@@ -118,7 +118,7 @@ export class LaboOrderLineListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.title = 'Tạo labo';
 
     modalRef.result.then(() => {
@@ -128,7 +128,7 @@ export class LaboOrderLineListComponent implements OnInit {
   }
 
   editItem(item: LaboOrderLineDisplay) {
-    let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    let modalRef = this.modalService.open(LaboOrderLineCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.title = 'Sửa labo';
     modalRef.componentInstance.id = item.id;
 

@@ -96,6 +96,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('paymentComp', { static: false }) paymentComp: SaleOrderPaymentListComponent;
 
   partner: any;
+  partnerDisplay: any;
   saleOrder: any;
   saleOrderPrint: any;
   laboOrders: LaboOrderBasic[] = [];
@@ -160,7 +161,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.formGroup = this.fb.group({
       dateOrderObj: [null, Validators.required],
     });
-    this.loadCustomerInfo();
+
+    this.route.data.subscribe(data => {
+      this.partner = data.partner;
+    });
+
     if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((res: any) => {
         this.saleOrder = res;
@@ -169,6 +174,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     } else {
       this.saleOrderService.defaultGet().subscribe((res: any) => {
         this.saleOrder = res;
+        if (this.partner) {
+          this.saleOrder.partner = this.partner;
+        }
+        
         this.updateFormGroup(res);
       });
     }
@@ -177,6 +186,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadTeethList();
     this.loadToothCategories();
     this.loadEmployees();
+  }
+
+  togglePartnerInfo() {
+    if (!this.partnerDisplay) {
+      this.partnerService.getCustomerInfo(this.saleOrder.partner.id).subscribe((result) => {
+        this.partnerDisplay = result;
+      });
+    }
   }
 
   loadCustomerInfo() {
@@ -437,7 +454,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   getFormDataSave() {
     var val = {
       dateOrder: this.saleOrder.dateOrder,
-      partnerId: this.partner.id,
+      partnerId: this.saleOrder.partner.id,
       companyId: this.saleOrder.companyId,
       // orderLines: this.saleOrder.orderLines.map(x => {
       //   return {
@@ -709,8 +726,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       state: this.saleOrder.state,
       teeth: [],
       promotions: [],
-      toothCategory: null,
-      toothCategoryId: '',
+      toothCategory: toothCategory,
+      toothCategoryId: toothCategory.id,
       counselor: null,
       counselorId: null,
       toothType: '',
@@ -721,7 +738,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       date: new Date()
     };
 
-    this.saleOrder.orderLines.push(value);
+    this.saleOrder.orderLines.unshift(value);
     // this.orderLines.push(value);
     // this.orderLines.markAsDirty();
     // this.computeAmountTotal();
@@ -764,11 +781,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionSaleOrderPayment() {
     if (this.saleOrderId) {
       this.saleOrderService.getSaleOrderPaymentBySaleOrderId(this.saleOrderId).subscribe(rs2 => {
-        let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
         modalRef.componentInstance.advanceAmount = this.amountAdvanceBalance;
-        modalRef.componentInstance.partner = this.partner;
+        modalRef.componentInstance.partner = this.saleOrder.partner;
 
         modalRef.result.then(result => {
           this.notificationService.show({
@@ -812,7 +829,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
   createProductToaThuoc() {
     if (this.saleOrder) {
-      let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Thêm: Đơn Thuốc';
       modalRef.componentInstance.defaultVal = { partnerId: this.saleOrder.partnerId, saleOrderId: this.saleOrder.id };
       modalRef.result.then((result: any) => {
@@ -827,7 +844,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   dialogAppointment() {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.defaultVal = { partnerId: (this.partner && this.partner.id), saleOrderId: this.saleOrderId };
     modalRef.result.then(() => {
       this.notify('success', 'Tạo lịch hẹn thành công');
@@ -865,7 +882,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           if (line == this.lineSelected) {
             this.lineSelected = null;
           }
-          this.notify('success', 'Lưu thành công');
+          this.notify('success', 'Xóa dịch vụ thành công');
           this.loadSaleOrder();
         })
       });
@@ -963,6 +980,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         .subscribe(res => {
           this.resetData(res);
           modalRef.componentInstance.saleOrder = this.saleOrder;
+          this.notify('success', "Xóa khuyến mãi thành công");
         }, err => {
           console.log(err);
           this.notify('error', err.error.error);
@@ -1125,6 +1143,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           this.resetData(res);
           var newLine = this.saleOrder.orderLines[i];
           modalRef.componentInstance.saleOrderLine = newLine;
+          this.notify('success', "Xóa khuyến mãi thành công");
         }, err => {
           console.log(err);
           this.notify('error', err.error.error);
@@ -1254,7 +1273,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       if(this.saleOrder.orderLines.every(x=> x.state == 'done' || x.state == 'cancel') &&
       this.saleOrder.orderLines.some(x=> x.state == 'done')
       )
-      this.saleOrder.state = 'done';
+      {
+        this.saleOrder.state = 'done';
+      }
     });
     })
   }

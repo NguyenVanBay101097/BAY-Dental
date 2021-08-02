@@ -38,6 +38,7 @@ export class SaleOrderLineBasic {
     dateCreated: string;
     teeth: ToothDisplay;
     product: any;
+    toothType: string;
 }
 
 export class SaleOrderLinePaged {

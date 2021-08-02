@@ -142,7 +142,7 @@ export class StockXuatNhapTonComponent implements OnInit {
 
   onDblClick() {
     const product = this.clickedRowItem;
-    const modalRef = this.modalService.open(StockXuatNhapTonDetailDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(StockXuatNhapTonDetailDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Lịch sử nhập - xuất';
     modalRef.componentInstance.item = product;
   }

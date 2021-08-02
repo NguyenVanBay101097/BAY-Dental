@@ -69,7 +69,7 @@ export class IrRuleListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(IrRuleCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(IrRuleCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm ' + this.title;
 
     modalRef.result.then(() => {
@@ -79,7 +79,7 @@ export class IrRuleListComponent implements OnInit {
   }
 
   editItem(item: IRRuleBasic) {
-    let modalRef = this.modalService.open(IrRuleCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(IrRuleCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa ' + this.title;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
@@ -89,7 +89,7 @@ export class IrRuleListComponent implements OnInit {
   }
 
   deleteItem(item: IRRuleBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa ' + this.title + ": " + item.name;
     modalRef.result.then(() => {
       this.ruleService.delete(item.id).subscribe(() => {

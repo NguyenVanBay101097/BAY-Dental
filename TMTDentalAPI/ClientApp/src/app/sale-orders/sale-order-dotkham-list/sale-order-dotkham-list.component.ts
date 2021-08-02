@@ -37,7 +37,7 @@ export class SaleOrderDotkhamListComponent implements OnInit {
 
   actionCreateDotKham() {
     if (this.saleOrder.Id) {
-      let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Tạo đợt khám';
       modalRef.componentInstance.saleOrderId = this.saleOrder.Id;
 
@@ -55,7 +55,7 @@ export class SaleOrderDotkhamListComponent implements OnInit {
   }
 
   actionEditDotKham(item) {
-    let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Cập nhật đợt khám';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.partnerId = this.saleOrder.Partner.Id;

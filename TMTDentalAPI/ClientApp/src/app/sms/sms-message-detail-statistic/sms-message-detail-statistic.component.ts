@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
@@ -16,7 +17,10 @@ import { SmsTemplateService } from '../sms-template.service';
 @Component({
   selector: 'app-sms-message-detail-statistic',
   templateUrl: './sms-message-detail-statistic.component.html',
-  styleUrls: ['./sms-message-detail-statistic.component.css']
+  styleUrls: ['./sms-message-detail-statistic.component.css'],
+  host: {
+    class: "o_action o_view_controller",
+  },
 })
 export class SmsMessageDetailStatisticComponent implements OnInit {
   title: string;
@@ -50,6 +54,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private notificationService: NotificationService,
     private intlService: IntlService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -77,6 +82,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
     val.dateTo = this.dateFrom ? this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59") : '';
     val.state = this.state ? this.state : '';
+    val.companyId = this.authService.userInfo.companyId;
     this.smsMessageDetailService.getPaged(val).pipe(
       map((response: any) =>
       (<GridDataResult>{
@@ -97,8 +103,6 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
 
   stranslateCodeResponse(code) {
     switch (code) {
-      case "" || null:
-        return "Gửi thành công";
       case "sms_server":
         return "Lỗi hệ thống đối tác";
       case "sms_acc":
@@ -110,7 +114,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
       case "sms_template":
         return "Mẫu tin nhắn chưa đúng";
       default:
-        return "Lý do khác";
+        return "";
     }
   }
 
@@ -144,7 +148,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
       }
       var modalRef = this.modalService.open(SmsComfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal" });
       modalRef.componentInstance.title = "Xác nhận gửi lại tin nhắn";
-      modalRef.componentInstance.bodyContent = 'Bạn chắc chắn muốn gửi lại tin nhắn chúc mừng sinh nhật?';
+      modalRef.componentInstance.bodyContent = 'Bạn chắc chắn muốn gửi lại tin nhắn?';
       modalRef.componentInstance.bodyNote = 'Lưu ý: Hệ thống chỉ gửi lại những tin nhắn đã thất bại';
       modalRef.result.then(
         result => {
