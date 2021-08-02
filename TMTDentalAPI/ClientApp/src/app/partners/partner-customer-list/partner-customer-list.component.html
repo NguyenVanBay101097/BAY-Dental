@@ -11,7 +11,7 @@
     <div class="o_cp_left">
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
-                <button *ngIf="canAdd" type="button" accesskey="c" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
+                <button *ngIf="canAdd" type="button" accesskey="c" class="btn btn-primary" (click)="createItem()">Thêm</button>
             </div>
         </div>
         <div class="o_cp_sidebar">
@@ -21,11 +21,11 @@
         <div class="w-100">
             <div class="d-flex align-items-center justify-content-between w-100">
                 <div class="mr-1 w-100" *ngIf="canFilterPartnerCategory">
-                    <kendo-multiselect class="kendo-combobox-sm" [data]="filteredCategs" [valueField]="'id'" [textField]="'name'" [placeholder]="'Lọc theo nhãn'" [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
+                    <kendo-multiselect [data]="filteredCategs" [valueField]="'id'" [textField]="'name'" [placeholder]="'Lọc theo nhãn'" [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
                     </kendo-multiselect>
                 </div>
                 <div ngbDropdown>
-                    <button type="button" id="dropdownBasic1" ngbDropdownToggle class="btn btn-secondary btn-sm">
+                    <button type="button" id="dropdownBasic1" ngbDropdownToggle class="btn btn-secondary">
                             Mở rộng
                         </button>
                     <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
@@ -45,11 +45,11 @@
                 </div>
             </div>
             <div class="d-flex align-items-center justify-content-lg-between w-100 mt-1">
-                <kendo-combobox style="width: 250px;" [popupSettings]="cbxPopupSettings" class="mr-1 kendo-combobox-sm" [placeholder]="'Tất cả dự kiến thu'" [data]="OrderResiduals" [valueField]="'value'" [textField]="'text'" (valueChange)="onResidualSelect($event)">
+                <kendo-combobox style="width: 250px;" [popupSettings]="cbxPopupSettings" class="mr-1" [placeholder]="'Tất cả dự kiến thu'" [data]="OrderResiduals" [valueField]="'value'" [textField]="'text'" (valueChange)="onResidualSelect($event)">
                 </kendo-combobox>
-                <kendo-combobox style="width: 230px;" [popupSettings]="cbxPopupSettings" class="mr-1 kendo-combobox-sm" [placeholder]="'Tất cả công nợ'" [data]="totalDebits" [valueField]="'value'" [textField]="'text'" (valueChange)="onDebitSelect($event)">
+                <kendo-combobox style="width: 230px;" [popupSettings]="cbxPopupSettings" class="mr-1" [placeholder]="'Tất cả công nợ'" [data]="totalDebits" [valueField]="'value'" [textField]="'text'" (valueChange)="onDebitSelect($event)">
                 </kendo-combobox>
-                <kendo-combobox style="width: 250px;" [filterable]="true" #cbxLevel [popupSettings]="cbxPopupSettings" class="kendo-combobox-sm" [placeholder]="'Tất cả hạng thành viên'" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberLevelSelect($event)">
+                <kendo-combobox style="width: 250px;" [filterable]="true" #cbxLevel [popupSettings]="cbxPopupSettings" [placeholder]="'Tất cả hạng thành viên'" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberLevelSelect($event)">
                 </kendo-combobox>
             </div>
         </div>
@@ -59,13 +59,13 @@
 <div class="o_content">
     <div class="d-flex py-2 px-3 order-state">
         <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="" type="radio" class="btn-check hidden hide" name="orderStates" id="all" autocomplete="off" [checked]="true">
-        <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="all">Tất cả</label>
+        <label class="btn btn-outline-primary mr-2 mb-0" for="all">Tất cả</label>
         <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="sale" type="radio" class="btn-check hidden hide" name="orderStates" id="sale" autocomplete="off" [checked]="true">
-        <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="sale">Đang điều trị</label>
+        <label class="btn btn-outline-primary mr-2 mb-0" for="sale">Đang điều trị</label>
         <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="done" type="radio" class="btn-check hidden hide" name="orderStates" id="done" autocomplete="off" [checked]="true">
-        <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="done">Hoàn thành</label>
+        <label class="btn btn-outline-primary mr-2 mb-0" for="done">Hoàn thành</label>
         <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="draft" type="radio" class="btn-check hidden hide" name="orderStates" id="draft" autocomplete="off" [checked]="true">
-        <label class="btn btn-outline-primary btn-sm mr-2 mb-0" for="draft">Chưa phát sinh</label>
+        <label class="btn btn-outline-primary mr-2 mb-0" for="draft">Chưa phát sinh</label>
 
     </div>
     <kendo-grid [data]="gridData" [pageable]="true" (pageChange)="onPageChange($event)" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid>
@@ -121,11 +121,11 @@
 
         <kendo-grid-column field="Id" title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-dataItem>
-                <!-- <button class="btn btn-info btn-sm mr-2" title="In Hồ sơ khách hàng" (click)="printItem(dataItem)">
+                <!-- <button class="btn btn-info mr-2" title="In Hồ sơ khách hàng" (click)="printItem(dataItem)">
                     <span class="fas fa-print"></span></button> -->
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <i class="far fa-edit"></i></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                <button class="btn btn-danger" title="Xóa" (click)="deleteItem(dataItem)">
                     <i class="far fa-trash-alt"></i></button>
             </ng-template>
         </kendo-grid-column>

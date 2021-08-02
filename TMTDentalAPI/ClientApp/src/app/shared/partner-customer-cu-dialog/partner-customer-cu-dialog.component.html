@@ -107,7 +107,7 @@
                                                 <div class="d-flex">
                                                     <kendo-combobox formControlName="title" [filterable]="true" [placeholder]="'ví dụ ông, bà, anh, chị...'" [data]="filteredTitles" [valueField]="'id'" #titleCbx [textField]="'name'">
                                                     </kendo-combobox>
-                                                    <a *ngIf="canCreateTitle" class="btn btn-sm btn-light" (click)="quickCreateTitle()">
+                                                    <a *ngIf="canCreateTitle" class="btn btn-light" (click)="quickCreateTitle()">
                                                         <span class="k-icon k-i-plus"></span>
                                                     </a>
                                                 </div>
@@ -153,7 +153,7 @@
                                                 <div class="d-flex">
                                                     <kendo-combobox formControlName="agent" [filterable]="true" [data]="filteredAgents" [valueField]="'id'" #agentCbx [textField]="'name'">
                                                     </kendo-combobox>
-                                                    <a class="btn btn-sm btn-light" (click)="quickCreateAgent()">
+                                                    <a class="btn btn-light" (click)="quickCreateAgent()">
                                                         <span class="k-icon k-i-plus"></span>
                                                     </a>
                                                 </div>                                              
@@ -271,7 +271,7 @@
 
 <div class="modal-footer">
     <div>
-        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
-        <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+        <button type="button" class="btn btn-primary mr-2" (click)="onSave()" accesskey="s">Lưu</button>
+        <button type="button" class="btn btn-light mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
     </div>
 </div>
