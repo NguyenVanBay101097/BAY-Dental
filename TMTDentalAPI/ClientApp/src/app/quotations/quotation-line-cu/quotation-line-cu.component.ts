@@ -347,8 +347,10 @@ export class QuotationLineCuComponent implements OnInit {
       toothCategory: val.toothCategory,
       toothType: val.toothType
     }
-    let modalRef = this.modalService.open(ToothSelectionDialogComponent, { size: 'md', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ToothSelectionDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.toothDataInfo = this.toothData;
+    modalRef.componentInstance.filteredToothCategories = this.filteredToothCategories;
+    modalRef.componentInstance.listTeeths = this.initialListTeeths;
     modalRef.result.then(result => {
       this.toothDataLine = {
         teeth: this.isUpdated ? this.line.teeth : [],
