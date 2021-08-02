@@ -1,6 +1,6 @@
-<div class="d-inline-block dropup" ngbDropdown container="body" #myDrop="ngbDropdown" (openChange)="toggleDropdown($event)">
+<div class="d-inline-block dropup" ngbDropdown container="body" #myDrop="ngbDropdown">
     <div class="edit_remove_action">
-        <button type="button" id="dropdownManual" class="o-no-caret" ngbDropdownToggle >
+        <button type="button" id="dropdownManual" class="o-no-caret" ngbDropdownAnchor (focus)="myDrop.open()" >
             <i class="far fa-edit"></i>
         </button>
 

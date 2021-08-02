@@ -179,30 +179,33 @@ export class ToaThuocCuDialogComponent implements OnInit {
   }
 
   selectionChangeSamplePrescription(item) {
-    this.samplePrescriptionsService.get(item.id).subscribe(
-      (result) => {
-        this.toaThuocForm.get("note").patchValue(result.note);
-
-        this.lines.clear();
-
-        result.lines.forEach((line) => {
-          this.lines.push(
-            this.fb.group({
-              product: [line.product, Validators.required],
-              productUoM: line.productUoM,
-              numberOfTimes: line.numberOfTimes,
-              amountOfTimes: line.amountOfTimes,
-              quantity: line.quantity,
-              numberOfDays: line.numberOfDays,
-              useAt: line.useAt,
-            })
-          );
-        });
-      },
-      (err) => {
-        this.errorService.show(err);
-      }
-    );
+    if (item) {
+      this.samplePrescriptionsService.get(item.id).subscribe(
+        (result) => {
+          this.toaThuocForm.get("note").patchValue(result.note);
+  
+          this.lines.clear();
+  
+          result.lines.forEach((line) => {
+            this.lines.push(
+              this.fb.group({
+                product: [line.product, Validators.required],
+                productUoM: line.productUoM,
+                numberOfTimes: line.numberOfTimes,
+                amountOfTimes: line.amountOfTimes,
+                quantity: line.quantity,
+                numberOfDays: line.numberOfDays,
+                useAt: line.useAt,
+                note: null
+              })
+            );
+          });
+        },
+        (err) => {
+          this.errorService.show(err);
+        }
+      );
+    }
   }
 
   onChangeUseAt(index, val) {

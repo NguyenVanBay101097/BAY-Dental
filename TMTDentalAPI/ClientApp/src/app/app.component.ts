@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, HostListener, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, HostListener, ElementRef, OnInit } from '@angular/core';
 import { AuthService } from './auth/auth.service';
 import { Router } from '@angular/router';
 import { PrintService } from './print.service';
@@ -11,13 +11,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { IrConfigParameterService } from './core/services/ir-config-parameter.service';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'TDental';
   _areAccessKeyVisible = false;
   value: string;
@@ -30,7 +31,8 @@ export class AppComponent {
     private permissionService: PermissionService,
     private http: HttpClient,
     private modalService: NgbModal,
-    private irConfigParamService: IrConfigParameterService) {
+    private irConfigParamService: IrConfigParameterService,
+    private swUpdate: SwUpdate) {
     this.loadGroups();
 
     this.authService.currentUser.subscribe((user) => {
@@ -45,6 +47,17 @@ export class AppComponent {
       this.loadIrConfigParam();
       this.authService.getGroups().subscribe((result: any) => {
         this.permissionService.define(result);
+      });
+    }
+  }
+
+  ngOnInit(): void {
+
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.available.subscribe(() => {
+        if (confirm("Có phiên bản mới, tải ngay?")) {
+          window.location.reload();
+        }
       });
     }
   }

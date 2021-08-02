@@ -81,8 +81,8 @@ export class ToaThuocLineUseatPopoverComponent implements OnInit {
     }
   }
 
-  toggleDropdown(myDrop) {
-    if (!myDrop) {
+  toggleDropdown(myDrop: NgbDropdown) {
+    if (myDrop.isOpen()) {
       myDrop.close();
     } else {
       this.formGroup.reset();
