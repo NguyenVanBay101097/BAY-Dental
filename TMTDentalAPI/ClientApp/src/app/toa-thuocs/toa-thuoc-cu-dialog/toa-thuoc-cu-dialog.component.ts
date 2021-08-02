@@ -196,7 +196,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
                 quantity: line.quantity,
                 numberOfDays: line.numberOfDays,
                 useAt: line.useAt,
-                note: null
+                note: line.note
               })
             );
           });

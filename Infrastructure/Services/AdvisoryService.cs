@@ -369,30 +369,35 @@ namespace Infrastructure.Services
                 var sequence = 0;
                 foreach (var product in products)
                 {
+                    var qty = advisory.ToothType == "manual" ? toothIds.Count : 1;
                     var saleOrderLine = new SaleOrderLine();
-                    saleOrderLine.State = "draft";
                     saleOrderLine.Name = product.Name;
                     saleOrderLine.PriceUnit = product.ListPrice;
                     saleOrderLine.ProductId = product.Id;
-                    saleOrderLine.ProductUOMQty = toothIds.Count() > 0 ? toothIds.Count() : 1;
+                    saleOrderLine.ProductUOMQty = qty;
+                    saleOrderLine.ToothType = advisory.ToothType;
                     saleOrderLine.Order = saleOrder;
                     saleOrderLine.Sequence = sequence++;
-                    saleOrderLine.AmountResidual = saleOrderLine.PriceSubTotal - saleOrderLine.AmountPaid;
                     saleOrderLine.ToothCategoryId = advisory.ToothCategoryId;
-                    foreach (var toothId in toothIds)
+
+                    if (advisory.ToothType == "manual")
                     {
-                        saleOrderLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                        foreach (var toothId in toothIds)
                         {
-                            ToothId = toothId
-                        });
+                            saleOrderLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                            {
+                                ToothId = toothId
+                            });
+                        }
                     }
+                
                     saleOrderLine.Diagnostic = string.Join(", ", toothDiagnosisName);
                     saleOrderLine.CounselorId = advisory.EmployeeId;
                     saleOrderLine.AdvisoryId = advisory.Id;
-                    saleOrderLine.ToothType = "manual";
                     saleOrderLines.Add(saleOrderLine);
                 }
             }
+
             await saleOrderLineObj.CreateAsync(saleOrderLines);
             saleOrderObj._AmountAll(saleOrder);
             await saleOrderObj.UpdateAsync(saleOrder);

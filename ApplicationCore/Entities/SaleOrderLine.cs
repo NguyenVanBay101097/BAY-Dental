@@ -22,6 +22,7 @@ namespace ApplicationCore.Entities
             AmountResidual = 0;
             AmountInvoiced = 0;
             AmountDiscountTotal = 0;
+            IsActive = true;
         }
 
         public SaleOrderLine(SaleOrderLine line)

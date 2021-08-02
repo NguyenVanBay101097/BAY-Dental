@@ -38,6 +38,7 @@ export class SamplePrescriptionLineSave {
   numberOfDays: number;
   quantity: number;
   useAt: string;
+  note: string;
 }
 
 export class SamplePrescriptionsPaged {
