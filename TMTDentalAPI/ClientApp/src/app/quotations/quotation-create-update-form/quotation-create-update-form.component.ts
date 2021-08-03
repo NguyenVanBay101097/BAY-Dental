@@ -326,7 +326,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       amountDiscountTotal: 0,
     };
 
-    this.quotation.lines.push(value);
+    this.quotation.lines.unshift(value);
     this.lineSelected = value;
 
     // mặc định là trạng thái sửa
