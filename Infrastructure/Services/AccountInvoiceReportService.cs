@@ -59,6 +59,14 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
             }
 
+            if(!string.IsNullOrEmpty(val.SearchPartner))
+            {
+                query = query.Where(x=> x.Partner.Name.Contains(val.SearchPartner)
+                                        || x.Partner.NameNoSign.Contains(val.SearchPartner)
+                                        || x.Partner.Phone.Contains(val.SearchPartner)
+                                        || x.Partner.Ref.Contains(val.SearchPartner));
+            }
+
             return query;
         }
 
@@ -170,6 +178,10 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.AssistantId == null);
             }
+            if (val.PartnertId.HasValue)
+            {
+                query = query.Where(x => x.PartnerId == val.PartnertId);
+            }
 
             count = await query.CountAsync();
             query = query.OrderByDescending(x => x.InvoiceDate);
@@ -199,6 +211,27 @@ namespace Infrastructure.Services
             var res = await query.SumAsync(x=> x.PriceSubTotal);
             return res;
         }
+
+        public async Task<IEnumerable<RevenuePartnerReportDisplay>> GetRevenuePartnerReport(RevenuePartnerReportPar val)
+        {
+            var query = GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId, val.Search));
+           
+            var queryRes = query.GroupBy(x => new { x.PartnerId, x.Partner.Name });
+
+            var res = await queryRes.Select(x => new RevenuePartnerReportDisplay
+            {
+                PartnerId = x.Key.PartnerId.Value,
+                PartnerName = x.Key.Name,
+                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                DateTo = val.DateTo,
+                DateFrom = val.DateFrom,
+                CompanyId = val.CompanyId,
+                Search = val.Search
+            }).ToListAsync();
+
+            return res;
+        }
+
 
 
         //public override ISpecification<AccountInvoiceReport> RuleDomainGet(IRRule rule)

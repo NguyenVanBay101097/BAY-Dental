@@ -7,15 +7,17 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class RevenueReportQueryCommon
     {
-        public RevenueReportQueryCommon(DateTime? dateFrom, DateTime? dateTo, Guid? companyId)
+        public RevenueReportQueryCommon(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string searchPartner = "")
         {
             this.DateFrom = dateFrom;
             this.DateTo = dateTo;
             this.CompanyId = companyId;
+            this.SearchPartner = searchPartner;
         }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? CompanyId { get; set; }
+        public string SearchPartner { get; set; }
     }
 
     public class RevenueTimeReportPar
@@ -43,6 +45,16 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string GroupBy { get; set; }
         public Guid? GroupById { get; set; }
+
+    }
+
+
+    public class RevenuePartnerReportPar
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
+        public string Search { get; set; }
 
     }
 
@@ -83,6 +95,17 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid ToDetailEmployeeId { get; set; }
     }
 
+    public class RevenuePartnerReportDisplay
+    {
+        public string PartnerName { get; set; }
+        public Guid? PartnerId { get; set; }
+        public decimal PriceSubTotal { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
+        public string Search { get; set; }
+    }
+
 
     public class RevenueReportDetailPaged
     {
@@ -98,6 +121,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductId { get; set; }
         public Guid? EmployeeId { get; set; }
         public Guid? AssistantId { get; set; }
+        public Guid? PartnertId { get; set; }
     }
 
     public class RevenueReportDetailDisplay
