@@ -46,6 +46,40 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
+    public class RevenueReportFilter
+    {
+        public RevenueReportFilter()
+        {
+            Limit = 20;
+        }
+
+        public int Limit { get; set; }
+
+        public int Offset { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public string Search { get; set; }
+
+        public Guid? ProductId { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+
+        public Guid? AssistantId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+
+        /// <summary>
+        /// group_date: group theo ngày
+        /// group_month: group theo tháng
+        /// group_product: group theo dịch vụ
+        /// group_employee: group theo nhân viên
+        /// </summary>
+        public string GroupBy { get; set; }
+    }
+
     public class EmployeeAssistantKeyGroup
     {
         public Guid? Id { get; set; }
@@ -153,6 +187,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public decimal PriceSubTotal { get; set; }
         public IEnumerable<RevenueEmployeeAssistantReportDetailDisplay> RevenueReportDetailPrints { get; set; } = new List<RevenueEmployeeAssistantReportDetailDisplay>();
+    }
+
+    public class RevenueReportItem
+    {
+        public DateTime InvoiceDate { get; set; }
+        public decimal PriceSubTotal { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
 }

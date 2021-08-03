@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
@@ -61,6 +62,50 @@ namespace Infrastructure.Services
 
             return query;
         }
+
+        //public async Task<IEnumerable<RevenueReportItem>> GetRevenueReportPaged(RevenueReportFilter val)
+        //{
+        //    var userObj = GetService<IUserService>();
+        //    var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+
+        //    var query = _context.AccountInvoiceReports.Where(x => (x.Type == "out_invoice" || x.Type == "out_refund") && x.State == "posted"
+        //    && x.AccountInternalType != "receivable"
+        //    && (!x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value)));
+
+        //    if (val.DateFrom.HasValue)           
+        //        query = query.Where(x => x.InvoiceDate >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+
+        //    if (val.DateTo.HasValue)           
+        //        query = query.Where(x => x.InvoiceDate <= val.DateTo.Value.AbsoluteEndOfDate());
+
+
+        //    if (val.CompanyId.HasValue)
+        //        query = query.Where(x => x.CompanyId == val.CompanyId);
+
+        //    if (val.GroupBy == "group_date")
+        //    {
+        //        if (!string.IsNullOrEmpty(val.Search))
+        //            query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+        //            x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+
+        //        var result = await query.GroupBy(x => x.InvoiceDate.Value.Date)
+        //          .Select(x => new RevenueReportItem
+        //          {
+        //              InvoiceDate = x.Key,
+        //              PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+        //              CompanyId = val.CompanyId,
+        //              DateFrom = val.DateFrom,
+        //              DateTo = val.DateTo,
+        //          }).ToListAsync();
+        //        return result;
+        //    }
+        //    else if (val.GroupBy == "group_month")
+        //    {
+        //        return 
+        //    }
+
+        //}
 
         public async Task<IEnumerable<RevenueTimeReportDisplay>> GetRevenueTimeReport(RevenueTimeReportPar val)
         {
