@@ -119,60 +119,61 @@ export class AppointmentKanbanComponent implements OnInit {
   appointmentIDChoose = null;
   dataAppointmentsGrouped = null;
 
-  dataAppointments: any[] = [
-    {
-      id: 0,
-      date: new Date(2021, 7, 5, 8, 30, 5),
-      status: 'confirmed',
-      customerName: 'Thomas K. Wilson',
-      customerPhone: 1909123123,
-      referrerName: 'Wendy R. Sherman'
-    },
-    {
-      id: 1,
-      date: new Date(2021, 7, 4, 8, 15),
-      status: 'arrived',
-      customerName: 'Jeff Bezos',
-      customerPhone: 1909123123,
-      referrerName: 'Anne Mulcahy'
-    },
-    {
-      id: 2,
-      date: new Date(2021, 7, 2, 8),
-      status: 'overdue',
-      customerName: 'Thomas K. Wilson',
-      customerPhone: 1909123123,
-      referrerName: 'Anne Mulcahy'
-    },
-    {
-      id: 3,
-      date: new Date(2021, 7, 1, 8, 30),
-      status: 'arrived',
-      customerName: 'Jeff Bezos',
-      customerPhone: 1909123123,
-      referrerName: 'Thomas K. Wilson'
-    },
-    {
-      id: 4,
-      date: new Date(2021, 7, 4, 8, 45, 10),
-      status: 'cancel',
-      customerName: 'Tom Holland',
-      customerPhone: 1909123123,
-      referrerName: 'Barbara Conan'
-    },
-    {
-      id: 5,
-      date: new Date(2021, 7, 9, 8),
-      status: 'confirmed',
-      customerName: 'Uzumaki Naruto',
-      customerPhone: 1909123123,
-      referrerName: 'Uchiha Sasuke'
-    }
-  ];
+  // dataAppointments: any[] = [
+  //   {
+  //     id: 0,
+  //     date: new Date(2021, 7, 5, 8, 30, 5),
+  //     state: 'confirmed',
+  //     partnerName: 'Thomas K. Wilson',
+  //     partnerPhone: 1909123123,
+  //     doctorName: 'Wendy R. Sherman'
+  //   },
+  //   {
+  //     id: 1,
+  //     date: new Date(2021, 7, 4, 8, 15),
+  //     state: 'arrived',
+  //     partnerName: 'Jeff Bezos',
+  //     partnerPhone: 1909123123,
+  //     doctorName: 'Anne Mulcahy'
+  //   },
+  //   {
+  //     id: 2,
+  //     date: new Date(2021, 7, 2, 8),
+  //     state: 'overdue',
+  //     partnerName: 'Thomas K. Wilson',
+  //     partnerPhone: 1909123123,
+  //     doctorName: 'Anne Mulcahy'
+  //   },
+  //   {
+  //     id: 3,
+  //     date: new Date(2021, 7, 1, 8, 30),
+  //     state: 'arrived',
+  //     partnerName: 'Jeff Bezos',
+  //     partnerPhone: 1909123123,
+  //     doctorName: 'Thomas K. Wilson'
+  //   },
+  //   {
+  //     id: 4,
+  //     date: new Date(2021, 7, 4, 8, 45, 10),
+  //     state: 'cancel',
+  //     partnerName: 'Tom Holland',
+  //     partnerPhone: 1909123123,
+  //     doctorName: 'Barbara Conan'
+  //   },
+  //   {
+  //     id: 5,
+  //     date: new Date(2021, 7, 9, 8),
+  //     state: 'confirmed',
+  //     partnerName: 'Uzumaki Naruto',
+  //     partnerPhone: 1909123123,
+  //     doctorName: 'Uchiha Sasuke'
+  //   }
+  // ];
 
+  dataAppointments: any[] = [];
   titleToolbar = "";
 
-  constructor (
+  constructor(
     private appointmentService: AppointmentService,
     private intlService: IntlService,
     private modalService: NgbModal,
@@ -198,15 +199,14 @@ export class AppointmentKanbanComponent implements OnInit {
 
     // New Calendar //
     this.getElements();
-    
-    this.dataAppointments = this.dataAppointments.map(v => ({
-      ...v,
-      dateFormat: new Date(v.date).setHours(0, 0, 0, 0),
-      dateHour: v.date.getHours()
-    }));
-    this.groupByDataAppointments(); // group by 
+    // this.dataAppointments = this.dataAppointments.map(v => ({
+    //   ...v,
+    //   dateFormat: new Date(v.date).setHours(0, 0, 0, 0),
+    //   dateHour: v.date.getHours()
+    // }));
+    // this.groupByDataAppointments(); // group by 
 
-    this.showCalendarMonth(this.currentYear, this.currentMonth);
+    // this.showCalendarMonth(this.currentYear, this.currentMonth);
   }
   ngOnInit() {
     var curr = new Date; // get current date
@@ -228,7 +228,7 @@ export class AppointmentKanbanComponent implements OnInit {
       });
 
     // this.loadListEmployees();
-    this.loadDoctorList();
+    // this.loadDoctorList();
   }
 
   loadDoctorList() {
@@ -269,15 +269,16 @@ export class AppointmentKanbanComponent implements OnInit {
 
   createAppointment() {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = "Đặt lịch hẹn";
     modalRef.result.then(result => {
       this.loadData();
       this.loadGridData();
     }, () => { });
 
-    modalRef.componentInstance.getBtnDeleteObs.subscribe(() => {
-      this.loadData();
-      this.loadGridData();
-    })
+    // modalRef.componentInstance.getBtnDeleteObs.subscribe(() => {
+    //   this.loadData();
+    //   this.loadGridData();
+    // })
   }
 
   refreshData() {
@@ -297,7 +298,32 @@ export class AppointmentKanbanComponent implements OnInit {
 
     this.appointmentService.getPaged(val).subscribe((result: any) => {
       this.addAppointments(result);
-      this.listData = result.items;
+      this.listData = [];
+      console.log(result.items);
+
+      for (const item of result.items) {
+        const event = {
+          id: item.id,
+          date: new Date(item.date),
+          state: item.state,
+          partnerName: item.partnerName,
+          partnerId: item.partnerId,
+          partnerPhone: item.partnerPhone,
+          doctorName: item.doctorName
+        }
+        this.listData.push(event);
+      }
+      this.dataAppointments = [...this.listData];
+      this.dataAppointments = this.dataAppointments.map(v => ({
+        ...v,
+        dateFormat: new Date(v.date).setHours(0, 0, 0, 0),
+        dateHour: v.date.getHours()
+      }));
+
+      this.groupByDataAppointments();
+      this.jump_today()
+      // this.showCalendarMonth(this.currentYear, this.currentMonth);
+
     }, (error: any) => {
       console.log(error);
     });
@@ -557,7 +583,7 @@ export class AppointmentKanbanComponent implements OnInit {
   //   var currentEndString = ("0" + currentEnd.getUTCDate()).slice(-2) + "/" + 
   //                         ("0" + (currentEnd.getUTCMonth()+1)).slice(-2) + "/" + 
   //                         currentEnd.getUTCFullYear();
-                                                
+
   //   if (currentStartString == currentEndString) {
   //     return currentStartString;
   //   } else {
@@ -706,7 +732,7 @@ export class AppointmentKanbanComponent implements OnInit {
     // if (this.timePeriod === event) return;
     // this.timePeriod = event;
     this.jump_today();
-    console.log(event);
+    // console.log(event);
   }
 
   setTitleToolbar(firstDate = null, lastDate = null, month = null, year = null) {
@@ -1000,8 +1026,8 @@ export class AppointmentKanbanComponent implements OnInit {
               let dataAppointmentsGroupedStatus = this.dataAppointmentsGrouped[
                 dateFormat
               ].reduce(function (r, a) {
-                r[a.status] = r[a.status] || [];
-                r[a.status].push(a);
+                r[a.state] = r[a.state] || [];
+                r[a.state].push(a);
                 return r;
               }, Object.create(null));
               let eventMonthString = '';
@@ -1041,7 +1067,7 @@ export class AppointmentKanbanComponent implements OnInit {
 
     let statusShow = '';
     let classEvent = '';
-    switch (appointment.status) {
+    switch (appointment.state) {
       case 'confirmed':
         statusShow = 'Đang hẹn';
         classEvent = 'event-confirmed';
@@ -1068,7 +1094,8 @@ export class AppointmentKanbanComponent implements OnInit {
     dateEventV2El.id = `appointment-${appointment.id}`;
 
     dateEventV2El.addEventListener('click', el => {
-      this.showPopup(parseInt(dateEventV2El.id.replace('appointment-', '')));
+      // this.showPopup(parseInt(dateEventV2El.id.replace('appointment-', '')));
+      this.showPopup(appointment.id);
       el.stopPropagation();
     });
 
@@ -1085,10 +1112,10 @@ export class AppointmentKanbanComponent implements OnInit {
                   </div>
               </div>
           </div>
-          <a href="#" class="customer-name">${appointment.customerName}</a>
+          <a href="#" class="customer-name">${appointment.partnerName}</a>
           <div class="content phone">
-              <i class="fas fa-phone-alt"></i>
-              <span>${appointment.customerPhone}</span>
+              <i class="fas fa-phone"></i>
+              <span>${appointment.partnerPhone}</span>
           </div>
           <div class="content time">
               <i class="fas fa-info-circle"></i>
@@ -1101,7 +1128,7 @@ export class AppointmentKanbanComponent implements OnInit {
           </div>
           <div class="content referrer">
               <i class="fas fa-user-plus"></i>
-              <span>${appointment.referrerName}</span>
+              <span>${appointment.doctorName}</span>
           </div>
       `;
     dateEventV2El.innerHTML = htmlString;
@@ -1142,20 +1169,29 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   showPopup(id = null) {
-    this.contDialogCalendarEl.classList.remove('hidden');
-    if (id !== null) {
-      this.appointmentIDChoose = id;
-      const dataAppointment = this.dataAppointments.find(
-        x => x.id === this.appointmentIDChoose
-      );
-      if (dataAppointment) {
-        this.dateAppointmentFormat = dataAppointment['dateFormat'];
-        this.selectStatusEl.value = dataAppointment.status;
-        this.inputCustomerNameEl.value = dataAppointment.customerName;
-        this.inputCustomerPhoneEl.value = dataAppointment.customerPhone.toString();
-        this.inputReferrerNameEl.value = dataAppointment.referrerName;
-      }
-    }
+    console.log("id: " + id);
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.appointId = id;
+    modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
+    modalRef.result.then(result => {
+      this.loadData();
+      this.loadGridData();
+    }, () => { });
+
+    // this.contDialogCalendarEl.classList.remove('hidden');
+    // if (id !== null) {
+    //   this.appointmentIDChoose = id;
+    //   const dataAppointment = this.dataAppointments.find(
+    //     x => x.id === this.appointmentIDChoose
+    //   );
+    //   if (dataAppointment) {
+    //     this.dateAppointmentFormat = dataAppointment['dateFormat'];
+    //     this.selectStatusEl.value = dataAppointment.status;
+    //     this.inputCustomerNameEl.value = dataAppointment.partnerName;
+    //     this.inputCustomerPhoneEl.value = dataAppointment.partnerPhone.toString();
+    //     this.inputReferrerNameEl.value = dataAppointment.doctorName;
+    //   }
+    // }
   }
 
   closePopup() {
@@ -1175,9 +1211,9 @@ export class AppointmentKanbanComponent implements OnInit {
       );
       if (dataAppointmentIndex >= 0) {
         this.dataAppointments[dataAppointmentIndex].status = this.selectStatusEl.value;
-        this.dataAppointments[dataAppointmentIndex].customerName = this.inputCustomerNameEl.value;
-        this.dataAppointments[dataAppointmentIndex].customerPhone = parseInt(this.inputCustomerPhoneEl.value);
-        this.dataAppointments[dataAppointmentIndex].referrerName = this.inputReferrerNameEl.value;
+        this.dataAppointments[dataAppointmentIndex].partnerName = this.inputCustomerNameEl.value;
+        this.dataAppointments[dataAppointmentIndex].partnerPhone = parseInt(this.inputCustomerPhoneEl.value);
+        this.dataAppointments[dataAppointmentIndex].doctorName = this.inputReferrerNameEl.value;
         let dateEventV2El = document.getElementById(
           `appointment-${this.dataAppointments[dataAppointmentIndex].id}`
         );
@@ -1193,9 +1229,9 @@ export class AppointmentKanbanComponent implements OnInit {
         dateFormat: new Date(this.dateAppointmentFormat).setHours(0, 0, 0, 0),
         dateHour: new Date(this.dateAppointmentFormat).getHours(),
         status: this.selectStatusEl.value,
-        customerName: this.inputCustomerNameEl.value,
-        customerPhone: this.inputCustomerPhoneEl.value,
-        referrerName: this.inputReferrerNameEl.value
+        partnerName: this.inputCustomerNameEl.value,
+        partnerPhone: this.inputCustomerPhoneEl.value,
+        doctorName: this.inputReferrerNameEl.value
       };
       this.dataAppointments.push(dataAppointment);
 
