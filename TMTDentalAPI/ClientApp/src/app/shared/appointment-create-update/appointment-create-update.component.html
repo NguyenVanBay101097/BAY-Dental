@@ -159,6 +159,9 @@
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <input type="text" class="form-control" formControlName="reason" />
+                                        <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.reason.errors.required">Nhập lý do hủy hẹn</div>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
