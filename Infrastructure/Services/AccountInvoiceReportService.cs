@@ -197,6 +197,7 @@ namespace Infrastructure.Services
                 EmployeeName = x.Employee.Name,
                 InvoiceOrigin = x.InvoiceOrigin,
                 PartnerName = x.Partner.Name,
+                PartnerId = x.PartnerId,
                 PriceSubTotal = Math.Abs(x.PriceSubTotal),
                 ProductName = x.Product.Name
             }).ToListAsync();
@@ -248,11 +249,23 @@ namespace Infrastructure.Services
         public async Task<RevenueReportPrintVM<RevenuePartnerReportPrint>> GetRevenuePartnerReportPrint(RevenuePartnerReportPar val)
         {
             var data = _mapper.Map<IEnumerable<RevenuePartnerReportPrint>>(await GetRevenuePartnerReport(val));
-            var res = new RevenueReportPrintVM<RevenuePartnerReportPrint>()
+            var detailReq = new RevenueReportDetailPaged()
+            {
+                CompanyId = val.CompanyId,
+                Limit = 0,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            };
+            var allLines = await GetRevenueReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.PartnerId == item.PartnerId).ToList();
+            }
+
+            var res = new RevenueReportPrintVM<RevenuePartnerReportPrint>(val.DateFrom, val.DateTo)
             {
                 Data = data,
-                DateFrom = val.DateFrom,
-                DateTo = val.DateTo,
                 User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
             };
 

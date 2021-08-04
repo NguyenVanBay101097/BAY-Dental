@@ -40,6 +40,7 @@ export class PrintService {
     var body = document.querySelector('body');
     var iframe = this.renderer.createElement("iframe");
     this.renderer.setStyle(iframe, "visibility", "hidden");
+    this.renderer.setStyle(iframe, "display", "none");
     //gán vào body
     this.renderer.appendChild(body, iframe);
     iframe.onload = function () {

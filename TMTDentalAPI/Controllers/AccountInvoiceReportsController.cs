@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Utilities;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,12 +21,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IAccountInvoiceReportService _invoiceReportService;
         private readonly IProductService _productService;
         private readonly IViewRenderService _viewRenderService;
+        private IConverter _converter;
         public AccountInvoiceReportsController(IAccountInvoiceReportService invoiceReportService, IProductService productService,
-            IViewRenderService viewRenderService)
+            IViewRenderService viewRenderService, IConverter converter)
         {
             _productService = productService;
             _invoiceReportService = invoiceReportService;
             _viewRenderService = viewRenderService;
+            _converter = converter;
         }
 
         [HttpGet("[action]")]
@@ -83,6 +87,37 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _invoiceReportService.GetRevenuePartnerReport(val);
             return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
+        public async Task<IActionResult> GetRevenuePartnerReportPdf([FromQuery] RevenuePartnerReportPar val)
+        {
+            var data = await _invoiceReportService.GetRevenuePartnerReportPrint(val);
+            var html = _viewRenderService.Render("AccountInvoiceReport/RevenuePartnerReportPdf", data);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Portrait,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo doanh thu", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "baocaodoanhthu_theoKH.pdf");
         }
     }
 }

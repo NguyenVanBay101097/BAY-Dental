@@ -1,0 +1,76 @@
+﻿@model Umbraco.Web.Models.ContentEditing.RevenueReportPrintVM<RevenuePartnerReportPrint>
+@using Umbraco.Web.Models.ContentEditing;
+@{
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+
+}
+
+<div class="text-center mb-2">
+    <div class="text-3xl font-semibold">BÁO CÁO DOANH THU THEO KHÁCH HÀNG</div>
+    <div>
+        @((Model.DateFrom.HasValue? "Từ ngày " + Model.DateFrom.Value.ToString("dd/MM/yyyy") : "") +
+                (Model.DateFrom.HasValue ? " đến ngày " + Model.DateTo.Value.ToString("dd/MM/yyyy") : ""))
+    </div>
+</div>
+
+<div class="o_form_view mb-2">
+    <div class="h-60 w-100 pt-3">
+        @foreach (var item in Model.Data)
+        {
+            <div class="d-flex">
+                <div class="w-50">
+                    <div class="text-lg font-semibold mb-1">Khách hàng: @(item.PartnerName ?? "")</div>
+                </div>
+                <div class="w-50">
+                    <div class="float-right text-lg font-semibold mb-1">Tổng doanh thu @(string.Format(culture, "{0:N0}", item.PriceSubTotal))</div>
+                </div>
+            </div>
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr class="bg-info font-semibold">
+                        <th scope="col" class="" style="width:100px">Ngày thanh toán</th>
+                        <th scope="col" class="" style="width:100px">Số phiếu</th>
+                        <th scope="col" class="" style="width:100px">Khách hàng</th>
+                        <th scope="col" class="" style="width:100px">Bác sĩ</th>
+                        <th scope="col" class="" style="width:100px">Phụ tá</th>
+                        <th scope="col" class="" style="width:100px">Dịch vụ/Thuốc</th>
+                        <th scope="col" class="text-right" style="width:100px">Thanh toán</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in item.Lines)
+                    {
+                        <tr>
+                            <td class="" style="width:100px">@(row.InvoiceDate.Value.ToString("dd/MM/yyyy"))</td>
+                            <td class="" style="width:100px">@(row.InvoiceOrigin)</td>
+                            <td class="" style="width:100px">@(row.PartnerName)</td>
+                            <td class="" style="width:100px">@(row.EmployeeName)</td>
+                            <td class="" style="width:100px">@(row.AssistantName)</td>
+                            <td class="" style="width:100px">@(row.ProductName)</td>
+                            <td class="text-right" style="width:100px">@(string.Format(culture, "{0:0,0}", row.PriceSubTotal))</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+
+    </div>
+    <div class="d-flex">
+        <div class="col-6">
+
+        </div>
+        <div class="col-6">
+            <div class="text-center">
+                <span>Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year </span> <br />
+                <span class="font-semibold">Người lập báo cáo</span> <br />
+                <i>(Ký và ghi rõ họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">@(Model.User == null ? "" : Model.User.Name.ToUpper())</span>
+            </div>
+        </div>
+    </div>
+</div>

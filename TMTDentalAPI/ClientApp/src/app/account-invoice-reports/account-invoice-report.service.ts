@@ -140,4 +140,8 @@ export class AccountInvoiceReportService {
         return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenuePartnerReport",val,{ responseType: "text" });
         
     }
+
+    getRevenuePartnerReportPdf(val:any ) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetRevenuePartnerReportPdf", {params: new HttpParams({fromObject: val}),  responseType: 'blob'  });
+    }
 }

@@ -128,6 +128,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public DateTime? InvoiceDate { get; set; }
         public string InvoiceOrigin { get; set; }
+        public Guid? PartnerId { get; set; }
         public string PartnerName { get; set; }
         public string EmployeeName { get; set; }
         public string AssistantName { get; set; }
@@ -186,6 +187,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class RevenueReportPrintVM<T> where T : class
     {
+        public RevenueReportPrintVM(DateTime? dateFrom, DateTime? dateTo)
+        {
+            this.DateTo = dateTo;
+            this.DateFrom = dateFrom;
+        }
+        public RevenueReportPrintVM() { }
         public CompanyPrintVM Company { get; set;}
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
