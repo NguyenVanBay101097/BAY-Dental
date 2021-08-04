@@ -253,7 +253,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   onDelete(){
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'md', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa lịch hẹn';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {

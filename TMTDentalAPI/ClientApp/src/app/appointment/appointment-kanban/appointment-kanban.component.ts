@@ -31,6 +31,7 @@ import { FullCalendarComponent } from '@fullcalendar/angular';
 import { DateRangeInput } from '@fullcalendar/core/datelib/date-range';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { MyDateRange } from '../my-date-range';
+import { CustomerReceipCreateUpdateComponent } from 'src/app/shared/customer-receip-create-update/customer-receip-create-update.component';
 @Component({
   selector: 'app-appointment-kanban',
   templateUrl: './appointment-kanban.component.html',
@@ -926,11 +927,11 @@ export class AppointmentKanbanComponent implements OnInit {
     // load addEventListener
     var btn_edit_appointment_list = this.elementRef.nativeElement.querySelectorAll('.edit-appointment');
     btn_edit_appointment_list.forEach(btn_edit_appointment => {
-      btn_edit_appointment.addEventListener('click', this.showPopup.bind(this, parseInt(btn_edit_appointment.id)));
+      btn_edit_appointment.addEventListener('click', this.showPopup.bind(this, btn_edit_appointment.id));
     });
     var btn_delete_appointment_list = this.elementRef.nativeElement.querySelectorAll('.delete-appointment');
     btn_delete_appointment_list.forEach(btn_delete_appointment => {
-      btn_delete_appointment.addEventListener('click', this.deleteAppointment.bind(this, parseInt(btn_delete_appointment.id)));
+      btn_delete_appointment.addEventListener('click', this.receipPopup.bind(this, btn_delete_appointment.id));
     });
   }
 
@@ -987,7 +988,7 @@ export class AppointmentKanbanComponent implements OnInit {
     });
     var btn_delete_appointment_list = this.elementRef.nativeElement.querySelectorAll('.delete-appointment');
     btn_delete_appointment_list.forEach(btn_delete_appointment => {
-      btn_delete_appointment.addEventListener('click', this.deleteAppointment.bind(this, btn_delete_appointment.id));
+      btn_delete_appointment.addEventListener('click', this.receipPopup.bind(this, btn_delete_appointment.id));
     });
   }
 
@@ -1205,6 +1206,18 @@ export class AppointmentKanbanComponent implements OnInit {
     //     this.inputReferrerNameEl.value = dataAppointment.doctorName;
     //   }
     // }
+  }
+
+  // popup tiếp nhận
+  receipPopup(id = null) {
+    console.log("id: " + id);
+    const modalRef = this.modalService.open(CustomerReceipCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.appointId = id;
+    modalRef.componentInstance.title = "Tiếp nhận";
+    // modalRef.result.then(result => {
+    //   this.loadData();
+    //   this.loadGridData();
+    // }, () => { });
   }
 
   closePopup() {
