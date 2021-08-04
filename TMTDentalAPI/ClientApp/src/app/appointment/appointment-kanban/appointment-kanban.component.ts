@@ -181,7 +181,8 @@ export class AppointmentKanbanComponent implements OnInit {
     private notificationService: NotificationService,
     private router: Router,
     private employeeService: EmployeeService,
-    private checkPermissionService: CheckPermissionService
+    private checkPermissionService: CheckPermissionService,
+    private elementRef: ElementRef
   ) { }
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
@@ -900,11 +901,6 @@ export class AppointmentKanbanComponent implements OnInit {
       cell.classList.add('td-day');
       cell.id = `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day
         }-${i < 10 ? `0${i}` : i}`;
-      /// td-day click
-      cell.addEventListener('click', () => {
-        this.dateAppointmentFormat = new Date(year, month, day, i);
-        this.showPopup();
-      });
 
       let cell_dateEvent = document.createElement('div');
       cell_dateEvent.classList.add('list-data-event-day');
@@ -927,6 +923,15 @@ export class AppointmentKanbanComponent implements OnInit {
       this.calendarTbodyEl.appendChild(row);
     }
     this.addCellTimeNow(firstDate);
+    // load addEventListener
+    var btn_edit_appointment_list = this.elementRef.nativeElement.querySelectorAll('.edit-appointment');
+    btn_edit_appointment_list.forEach(btn_edit_appointment => {
+      btn_edit_appointment.addEventListener('click', this.showPopup.bind(this, parseInt(btn_edit_appointment.id)));
+    });
+    var btn_delete_appointment_list = this.elementRef.nativeElement.querySelectorAll('.delete-appointment');
+    btn_delete_appointment_list.forEach(btn_delete_appointment => {
+      btn_delete_appointment.addEventListener('click', this.deleteAppointment.bind(this, parseInt(btn_delete_appointment.id)));
+    });
   }
 
   showCalendarWeek(year, month, week) {
@@ -975,6 +980,15 @@ export class AppointmentKanbanComponent implements OnInit {
       row.appendChild(cell);
     }
     this.calendarTbodyEl.appendChild(row);
+    // load addEventListener
+    var btn_edit_appointment_list = this.elementRef.nativeElement.querySelectorAll('.edit-appointment');
+    btn_edit_appointment_list.forEach(btn_edit_appointment => {
+      btn_edit_appointment.addEventListener('click', this.showPopup.bind(this, btn_edit_appointment.id));
+    });
+    var btn_delete_appointment_list = this.elementRef.nativeElement.querySelectorAll('.delete-appointment');
+    btn_delete_appointment_list.forEach(btn_delete_appointment => {
+      btn_delete_appointment.addEventListener('click', this.deleteAppointment.bind(this, btn_delete_appointment.id));
+    });
   }
 
   showCalendarMonth(year, month) {
@@ -1095,7 +1109,7 @@ export class AppointmentKanbanComponent implements OnInit {
 
     dateEventV2El.addEventListener('click', el => {
       // this.showPopup(parseInt(dateEventV2El.id.replace('appointment-', '')));
-      this.showPopup(appointment.id);
+      // this.showPopup(appointment.id);
       el.stopPropagation();
     });
 
@@ -1103,11 +1117,10 @@ export class AppointmentKanbanComponent implements OnInit {
           <div class="header">
               <div class="status">${statusShow}</div>
               <div class="action">
-                  <div class="edit">
+                  <div class="edit edit-appointment" id="${appointment.id}">
                     <i class="fas fa-pen"></i>
                   </div>
-                  <div class="delete" id="delete-appointment" 
-                    onclick="deleteAppointment(event, ${appointment.id})">
+                  <div class="delete delete-appointment" id="${appointment.id}">
                     <i class="fas fa-sign-out-alt"></i>
                   </div>
               </div>
@@ -1252,7 +1265,7 @@ export class AppointmentKanbanComponent implements OnInit {
     this.closePopup();
   }
 
-  // deleteAppointment(event, id) {
+  // deleteAppointment(id) {
   //   this.appointmentIDChoose = id;
   //   if (this.appointmentIDChoose !== null) {
   //     const dataAppointmentIndex = this.dataAppointments.findIndex(
@@ -1270,6 +1283,5 @@ export class AppointmentKanbanComponent implements OnInit {
   //   }
   //   // localStorage.setItem("dataAppointments", JSON.stringify(dataAppointments));
   //   this.groupByDataAppointments();
-  //   event.stopPropagation();
   // }
 }
