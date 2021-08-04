@@ -325,5 +325,13 @@ namespace TMTDentalAPI.ViewControllers
             return View(dict.Values.ToList());
         }
 
+        [PrinterNameFilterAttribute(Name = AppConstants.RevenuePartnerReport)]
+        [CheckAccess(Actions = "Report.Revenue")]
+        public async Task<IActionResult> PrintRevenuePartnerReport([FromBody] RevenuePartnerReportPar val)
+        {
+            var data = await _accountInvoiceReportService.GetRevenuePartnerReportPrint(val);
+            return View(data);
+        } 
+
     }
 }

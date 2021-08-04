@@ -75,7 +75,14 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _invoiceReportService.SumRevenueReport(val);
             return Ok(res);
-        }    
+        }
 
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
+        public async Task<IActionResult> GetRevenuePartnerReportPaged([FromQuery] RevenuePartnerReportPar val)
+        {
+            var res = await _invoiceReportService.GetRevenuePartnerReport(val);
+            return Ok(res);
+        }
     }
 }

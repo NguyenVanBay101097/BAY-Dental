@@ -23,6 +23,13 @@ export class RevenueEmployeeReportPar{
     groupById: string;
 }
 
+export class RevenuePartnerReportPar{
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
+    search?: string;
+}
+
 export class RevenueTimeReportDisplay {
 	invoiceDate?: any;
 	priceSubTotal: number;
@@ -51,6 +58,16 @@ export class RevenueEmployeeReportDisplay {
     toDetailEmployeeId: string;
 }
 
+export class RevenuePartnerReportDisplay {
+	productName: string;
+	productId: string;
+	priceSubTotal: number;
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
+    search?: string;
+}
+
 export class RevenueReportDetailPaged{
     dateFrom?: any;
     dateTo?: any;
@@ -60,6 +77,7 @@ export class RevenueReportDetailPaged{
     productId?: string;
     employeeId?: string;
     assistantId?: string;
+    partnerId?: string;
 }
 export class RevenueReportDetailDisplay {
 	invoiceDate: string;
@@ -111,6 +129,15 @@ export class AccountInvoiceReportService {
     }
     getPrintRevenueEmployeeReport(val:any ) {
         return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueEmployeeReport",val,{ responseType: "text" });
+        
+    }
+
+    getRevenuePartnerReport(val:any ) {
+        return this.http.get<RevenueServiceReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenuePartnerReportPaged", {params: new HttpParams({fromObject: val})});
+    }
+
+    getPrintRevenuePartnerReport(val:any ) {
+        return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenuePartnerReport",val,{ responseType: "text" });
         
     }
 }

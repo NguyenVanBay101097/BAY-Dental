@@ -41,6 +41,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<AccountInvoice, AccountInvoicePrint>();
 
             CreateMap <AccountInvoice, AccountInvoiceSimple>();
+            CreateMap<RevenuePartnerReportDisplay, RevenuePartnerReportPrint>();
+
         }
     }
 }

@@ -121,7 +121,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductId { get; set; }
         public Guid? EmployeeId { get; set; }
         public Guid? AssistantId { get; set; }
-        public Guid? PartnertId { get; set; }
+        public Guid? PartnerId { get; set; }
     }
 
     public class RevenueReportDetailDisplay
@@ -177,6 +177,20 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public decimal PriceSubTotal { get; set; }
         public IEnumerable<RevenueEmployeeAssistantReportDetailDisplay> RevenueReportDetailPrints { get; set; } = new List<RevenueEmployeeAssistantReportDetailDisplay>();
+    }
+
+    public class RevenuePartnerReportPrint: RevenuePartnerReportDisplay
+    {
+        public IEnumerable<RevenueReportDetailDisplay> Lines { get; set; } = new List<RevenueReportDetailDisplay>();
+    }
+
+    public class RevenueReportPrintVM<T> where T : class
+    {
+        public CompanyPrintVM Company { get; set;}
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public IEnumerable<T> Data { get; set; } = new List<T>();
+        public ApplicationUserSimple User { get; set; }
     }
 
 }
