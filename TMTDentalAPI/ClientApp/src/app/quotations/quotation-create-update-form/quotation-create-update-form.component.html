@@ -36,7 +36,7 @@
   <form class="o_form_view" #form="ngForm" (ngSubmit)="onSave(form)">
     <div class="o_form_sheet_bg">
       <div class="o_form_sheet">
-        <div class="o_group">
+        <div class="o_group mt-0">
           <table class="o_group o_inner_group o_group_col_6">
             <tbody>
               <tr>
@@ -303,19 +303,19 @@
                   </div>
                   <div class="card-body px-3 py-2">
                     <p class="d-flex justify-content-between mb-0">
-                      <label class="">Thành tiền</label>
+                      <label class="font-weight-600">Thành tiền</label>
                       <label class="font-weight-600">{{
                         getAmountSubTotal() | number
                         }}</label>
                     </p>
                     <p class="d-flex justify-content-between mb-0">
-                      <label class="">Tổng giảm giá</label>
+                      <label class="font-weight-600">Tổng giảm giá</label>
                       <label class="font-weight-600">{{
                         getTotalDiscount() | number: "1.0-0"
                         }}</label>
                     </p>
                     <p class="d-flex justify-content-between mb-0">
-                      <label class="">Tổng tiền</label>
+                      <label class="font-weight-600">Tổng tiền</label>
                       <label class="font-weight-600">{{
                         getAmountSubTotal() - getTotalDiscount() | number
                         }}</label>
