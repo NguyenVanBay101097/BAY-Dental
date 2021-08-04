@@ -248,6 +248,8 @@ p {
 
 .d-flex {
     display: flex !important;
+    display: -webkit-box;
+    display: -webkit-flex;
 }
 
 .mt-0 {

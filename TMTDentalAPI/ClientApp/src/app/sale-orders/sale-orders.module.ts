@@ -111,7 +111,7 @@ import { SaleOrderLineManagementComponent } from './sale-order-line-management/s
     SaleOrdersDotkhamCuComponent,
     SaleOrderProductRequestDialogComponent,
     SaleOrderPromotionDialogComponent,
-    SaleOrderLinePromotionDialogComponent
+    
   ]
 })
 export class SaleOrdersModule { }

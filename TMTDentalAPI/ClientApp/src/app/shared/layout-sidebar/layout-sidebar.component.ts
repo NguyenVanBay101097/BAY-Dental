@@ -247,6 +247,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Kết quả kinh doanh', link: '/financial-report', permissions: ['Report.Financial'] },
         // { name: 'Tiền mặt, ngân hàng', link: '/report-general-ledgers/cash-bank', permissions: ['Report.CashBankAccount'] },
         { name: 'Báo cáo doanh thu', link: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
+        { name: 'Báo cáo dịch vụ', link: '/sale-report/service-report', permissions: ['Report.Sale'] },
         { name: 'Thống kê điều trị', link: '/sale-report', permissions: ['Report.Sale'] },
         { name: 'Công nợ khách hàng', link: '/report-account-common/partner-debit', permissions: ['Report.AccountPartner'] },
         { name: 'Công nợ nhà cung cấp', link: '/report-account-common/partner', params: { result_selection: 'supplier' }, permissions: ['Report.AccountPartner'] },

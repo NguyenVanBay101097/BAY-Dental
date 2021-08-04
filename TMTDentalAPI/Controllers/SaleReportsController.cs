@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Utilities;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,12 +22,17 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly ISaleReportService _saleReportService;
         private readonly ISaleOrderLineService _saleOrderLineService;
+        private readonly IViewRenderService _viewRenderService;
+        private IConverter _converter;
 
-        public SaleReportsController(ISaleReportService saleReportService,
+        public SaleReportsController(ISaleReportService saleReportService, IViewRenderService viewRenderService,
+            IConverter converter,
             ISaleOrderLineService saleOrderLineService)
         {
             _saleReportService = saleReportService;
             _saleOrderLineService = saleOrderLineService;
+            _viewRenderService = viewRenderService;
+            _converter = converter;
         }
 
         [HttpGet("GetTopService")]
@@ -175,6 +183,92 @@ namespace TMTDentalAPI.Controllers
             }).ToListAsync();
 
             return Ok(res.Count > 0 ? res[0] : new GetSummarySaleReportResponse());
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> GetServiceReportByTime(ServiceReportReq val)
+        {
+            var res = await _saleReportService.GetServiceReportByTime(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> GetServiceReportByService(ServiceReportReq val)
+        {
+            var res = await _saleReportService.GetServiceReportByService(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> GetServiceReportDetailPaged([FromQuery] ServiceReportDetailReq val)
+        {
+            var res = await _saleReportService.GetServiceReportDetailPaged(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> GetServiceReportByServicePdf(ServiceReportReq val)
+        {
+            var data = await _saleReportService.ServiceReportByServicePrint(val);
+            var html = _viewRenderService.Render("SaleReport/ServiceReportPdf", data);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 5},
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo dịch vụ", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "ServiceReportService.pdf");
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> GetServiceReportByTimePdf(ServiceReportReq val)
+        {
+            var data = await _saleReportService.ServiceReportByTimePrint(val);
+            var html = _viewRenderService.Render("SaleReport/ServiceReportPdf", data);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo dịch vụ", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "ServiceReportService.pdf");
         }
     }
 }

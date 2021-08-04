@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -22,13 +28,21 @@ namespace TMTDentalAPI.Controllers
         private readonly ISaleOrderLineService _saleLineService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IExportExcelService _exportExcelService;
+        private readonly IViewRenderService _viewRenderService;
+        private readonly ISaleOrderService _saleOrderService;
 
-        public SaleOrderLinesController(ISaleOrderLineService saleLineService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork)
+        private IConverter _converter;
+        public SaleOrderLinesController(ISaleOrderLineService saleLineService, IMapper mapper,IExportExcelService exportExcelService,
+        IUnitOfWorkAsync unitOfWork, IViewRenderService viewRenderService, IConverter converter, ISaleOrderService saleOrderService)
         {
             _saleLineService = saleLineService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _exportExcelService = exportExcelService;
+            _viewRenderService = viewRenderService;
+            _converter = converter;
+            _saleOrderService = saleOrderService;
         }
 
         [HttpPost]
@@ -232,6 +246,91 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _saleLineService.GetHistory(val);
             return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSaleReportExportExcel([FromQuery] SaleOrderLinesPaged val)
+        {
+            val.Limit = int.MaxValue;
+            var res = await _saleLineService.GetPagedResultAsync(val);
+            var data = _mapper.Map<IEnumerable<ServiceSaleReportExcel>>(res.Items);
+            byte[] fileContent;
+            var packageByte = await _exportExcelService.createExcel(data, "báo cáo dịch vụ");
+            using (MemoryStream memStream = new MemoryStream(packageByte as byte[]))
+            {
+                //ExcelPackage packageResult = new ExcelPackage(memStream);
+                //packageResult.Load(memStream);
+                ////await _exportExcelService.AddToHeader(packageResult.GetAsByteArray());
+                //packageResult.Save();
+
+                //fileContent = memStream.ToArray();
+                //string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+                //return new FileContentResult(fileContent, mimeType);
+                ExcelPackage package = new ExcelPackage(memStream);
+                package.Load(memStream);
+
+                var worksheet = package.Workbook.Worksheets[0];
+                worksheet.Cells[1, 1, 1, 9].Style.Font.Bold = true;
+
+                //insert title
+                worksheet.InsertRow(1,3);
+                worksheet.Cells[1,1,1,worksheet.Dimension.Columns].Merge = true;
+                worksheet.Cells[1, 1].Value = "BÁO CÁO DỊCH VỤ ĐANG ĐIỀU TRỊ";
+                worksheet.Cells[1, 1].Style.Font.Bold = true;
+                worksheet.Cells[1, 1].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells[2,1,2,worksheet.Dimension.Columns].Merge = true;
+                worksheet.Cells[2, 1].Value = (val.DateOrderFrom.HasValue ? "Từ ngày " + val.DateOrderFrom.Value.ToString("dd/MM/yyyy") : "") +
+                                               (val.DateOrderTo.HasValue ? " đến ngày " + val.DateOrderTo.Value.ToString("dd/MM/yyyy") : "");
+
+
+                worksheet.Cells.AutoFitColumns();
+                
+
+
+                await _exportExcelService.AddToHeader(package.GetAsByteArray());
+            }
+
+            return Ok();
+          
+        }
+
+        [HttpPut("{id}/[action]")]
+        public async Task<IActionResult> UpdateState(Guid id, string state)
+        {
+            await _saleLineService.UpdateState(id,state);
+            return Ok();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSaleReportExportPdf([FromQuery] SaleOrderLinesPaged val)
+        {
+            val.Limit = int.MaxValue;
+            var res = await _saleLineService.SaleReportPrint(val);
+            var html = _viewRenderService.Render("SaleOrderLine/SaleReportPdf", res);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo dịch vụ", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "SaleReport.pdf");
         }
     }
 }

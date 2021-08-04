@@ -1,0 +1,32 @@
+<kendo-grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
+    <kendo-grid-column field="date" title="Ngày tạo" width="110">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.date | date: 'dd/MM/yyyy'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="orderPartnerName" title="Khách hàng" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Dịch vụ" width="200">
+    </kendo-grid-column>
+    <kendo-grid-column field="employeeName" title="Bác sĩ" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column field="teeth" class="text-primary" title="Răng" width="80">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{getTeethDisplay(dataItem.teeth)}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column c field="productUOMQty" class="text-right" [headerClass]="'text-right'" title="Số lượng" width="90">
+    </kendo-grid-column>
+    <kendo-grid-column class="text-right" [headerClass]="'text-right'" field="priceSubTotal" title="Thành tiền" width="110">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.priceSubTotal | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="state" title="Trạng thái" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{!dataItem.isActive?'Ngừng điều trị' : stateDisplay[dataItem.state]}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="orderName" title="phiếu điều trị" width="120">
+    </kendo-grid-column>
+</kendo-grid>

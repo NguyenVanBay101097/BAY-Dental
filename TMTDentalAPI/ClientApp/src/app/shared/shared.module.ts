@@ -97,6 +97,7 @@ import { DateRangePickerDropdownComponent } from './date-range-picker-filter/dat
 import { AgentCreateUpdateDialogComponent } from './agent-create-update-dialog/agent-create-update-dialog.component';
 import { ToothSelectionDialogComponent } from './tooth-selection-dialog/tooth-selection-dialog.component';
 import { TeethChartComponent } from './teeth-chart/teeth-chart.component';
+import { SaleOrderLineSwitchStatePopoverComponent } from '../sale-orders/sale-order-line-switch-state-popover/sale-order-line-switch-state-popover.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -179,7 +180,6 @@ const config: LocaleConfig = {};
         DashboardPartnerCustomerReportComponent,
         DashboardSaleReportComponent,
         DashboardServiceTodayReportComponent,
-        SaleOrderLineCuComponent,
         CashBankTodayReportComponent,
         SaleOrderLineCuComponent,
         DateRangePickerFilterComponent,
@@ -187,7 +187,9 @@ const config: LocaleConfig = {};
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
         ToothSelectionDialogComponent,
-        TeethChartComponent
+        TeethChartComponent,
+        ToothSelectionDialogComponent,
+        SaleOrderLineSwitchStatePopoverComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -261,13 +263,14 @@ const config: LocaleConfig = {};
         DashboardServiceTodayReportComponent,
         SaleOrderLineCuComponent,
         CashBankTodayReportComponent,
-        SaleOrderLineCuComponent,
         DateRangePickerFilterComponent,
         DaterangepickerDirective,
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
         ToothSelectionDialogComponent,
-        TeethChartComponent
+        TeethChartComponent,
+        ToothSelectionDialogComponent,
+        SaleOrderLineSwitchStatePopoverComponent
     ],
     imports: [
         NgbModule,

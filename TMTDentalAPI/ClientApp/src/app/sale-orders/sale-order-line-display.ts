@@ -38,4 +38,5 @@ export class SaleOrderLineDisplay {
     amountPromotionToOrder: number;
     amountPromotionToOrderLine: number;
     orderPartnerId: string;
+    date: any;
 }

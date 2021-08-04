@@ -75,7 +75,7 @@ export class SaleOrderLineService {
     }
 
     getPaged(val: any) {
-        return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
+        return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
     create(val): Observable<SaleOrderLineDisplay> {
@@ -139,5 +139,21 @@ export class SaleOrderLineService {
 
     remove(id) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+    }
+
+    getSaleReportExportExcel(val) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetSaleReportExportExcel', { params: new HttpParams({ fromObject: val }),  responseType: 'blob'  });
+    }
+
+    updateState(id,state){
+        return this.http.put(this.baseApi + this.apiUrl + '/'+id+ '/UpdateState?State=' + state, null);
+    }
+
+    SaleReportPrint(val){
+        return this.http.get(this.baseApi + 'SaleOrderLine/SaleReportPrint', { params: new HttpParams({ fromObject: val }), responseType: 'text'});
+    }
+
+    getSaleReportExportPdf(val) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetSaleReportExportPdf', { params: new HttpParams({ fromObject: val }),  responseType: 'blob'  });
     }
 }

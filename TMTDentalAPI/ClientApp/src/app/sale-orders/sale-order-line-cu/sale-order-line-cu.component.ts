@@ -37,6 +37,8 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Output() onEditEvent = new EventEmitter<any>();
   @Output() onCancelEvent = new EventEmitter<any>();
   @Output() onActiveEvent = new EventEmitter<any>();
+  @Output() onUpdateStateEvent = new EventEmitter<any>();
+
   onUpdateSignSubject = new Subject<boolean>();//emit true: đã update xong, false: fail update
 
   isEditting: boolean = false;
@@ -51,6 +53,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   // hamList: { [key: string]: {} };
   @Input() initialListTeeths: any[] = [];
   @Input() initialToothTypeDict: any[] = [];
+  @Input() orderState: string = 'draft';
   formGroupInfo: FormGroup;
   submitted = false;
   get f() { return this.formGroupInfo.controls; }
@@ -67,6 +70,14 @@ export class SaleOrderLineCuComponent implements OnInit {
   };
   isUpdated: boolean = false;
   lineId: string = '';
+  public listState = [
+   {text:'Đang điều trị', value:'sale'},
+   {text:'Hoàn thành', value:'done'},
+   {text:'Ngừng điều trị', value:'cancel'},
+  ];
+
+  stateEdit= ['draft', 'sale'];
+
   constructor(
     private fb: FormBuilder,
     private employeeService: EmployeeService,
@@ -138,6 +149,8 @@ export class SaleOrderLineCuComponent implements OnInit {
       counselor: this.line.counselor,
       diagnostic: this.line.diagnostic,
       teeth: this.fb.array(this.line.teeth),
+      date: typeof this.line.date == 'string'? new Date(this.line.date) : this.line.date,
+      state: this.line.state
     });
 
     this.formGroupInfo.get('toothType').setValue(this.line.toothType);
@@ -455,5 +468,15 @@ export class SaleOrderLineCuComponent implements OnInit {
       this.onChangeToothTypeLine(this.formInfoControl("toothType").value);
     }, (reason) => {
     });
+  }
+
+  getStateDisplay(state){
+    var r = this.listState.find(x=> x.value == state);
+    return r? r.text : '';
+  }
+
+  onSWitchState(line) {
+    if(line.state == this.line.state) return;
+   this.onUpdateStateEvent.next(line.state);
   }
 }
