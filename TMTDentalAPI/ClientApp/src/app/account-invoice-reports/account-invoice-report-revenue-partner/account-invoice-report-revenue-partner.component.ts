@@ -32,7 +32,7 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
   constructor(
     private companyPartner: CompanyService,
-    private accInvPartner: AccountInvoiceReportService,
+    private accInvService: AccountInvoiceReportService,
     private revenueManagePartner: RevenueManageService,
     private printPartner: PrintService,
     private intlPartner: IntlService,
@@ -63,7 +63,7 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
-    this.accInvPartner.getRevenuePartnerReport(val).subscribe(res => {
+    this.accInvService.getRevenuePartnerReport(val).subscribe(res => {
       this.allDataInvoice = res;
       this.loading = false;
       this.loadReport();
@@ -214,7 +214,8 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
     val.companyId = val.companyId || '';
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
-    this.accInvPartner.getPrintRevenuePartnerReport(val).subscribe(result=>this.printPartner.printHtml(result));
+    val.search = val.search || '';
+    this.accInvService.getPrintRevenuePartnerReport(val).subscribe(result=>this.printPartner.printHtml(result));
   }
 
   onExportPDF() {
@@ -222,8 +223,9 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
     val.companyId = val.companyId || '';
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.search = val.search || '';
     this.loading = true;
-    this.accInvPartner.getRevenuePartnerReportPdf(val).subscribe(res => {
+    this.accInvService.getRevenuePartnerReportPdf(val).subscribe(res => {
       this.loading = false;
       let filename ="BaoCaodoanhthu_theoKH";
 

@@ -1,4 +1,4 @@
-﻿@model Umbraco.Web.Models.ContentEditing.RevenueReportPrintVM<RevenuePartnerReportPrint>
+﻿@model Umbraco.Web.Models.ContentEditing.RevenueReportPrintVM<RevenueTimeReportPrint>
 @using Umbraco.Web.Models.ContentEditing;
 @{
     var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
@@ -6,7 +6,7 @@
 }
 
 <div class="text-center mb-2">
-    <div class="text-3xl font-semibold">BÁO CÁO DOANH THU THEO KHÁCH HÀNG</div>
+    <div class="text-3xl font-semibold">BÁO CÁO DOANH THU THEO THỜI GIAN</div>
     <div>
         @((Model.DateFrom.HasValue? "Từ ngày " + Model.DateFrom.Value.ToString("dd/MM/yyyy") : "") +
                 (Model.DateFrom.HasValue ? " đến ngày " + Model.DateTo.Value.ToString("dd/MM/yyyy") : ""))
@@ -19,7 +19,7 @@
         {
             <div class="d-flex">
                 <div class="w-50">
-                    <div class="text-lg font-semibold mb-1">Khách hàng: @(item.PartnerName ?? "Không xác định")</div>
+                    <div class="text-lg font-semibold mb-1">Ngày @(item.InvoiceDate.HasValue? item.InvoiceDate.Value.ToString("dd/MM/yyyy"): "Không xác định")</div>
                 </div>
                 <div class="w-50">
                     <div class="float-right text-lg font-semibold mb-1">Tổng doanh thu @(string.Format(culture, "{0:N0}", item.PriceSubTotal))</div>

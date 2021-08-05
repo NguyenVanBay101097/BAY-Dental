@@ -1,0 +1,56 @@
+﻿@model Umbraco.Web.Models.ContentEditing.RevenueReportPrintVM<SaleOrderRevenueReport>
+@using Umbraco.Web.Models.ContentEditing;
+@{
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+
+}
+
+<div class="text-center mb-3">
+    <div class="text-3xl font-semibold">BÁO CÁO DỰ KIẾN THU</div>
+</div>
+<div class="o_form_view mb-2">
+    <div class="h-60 w-100 pt-3">
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr class="bg-info font-semibold">
+                    <th scope="col" class="" style="width:100px">Số phiếu</th>
+                    <th scope="col" class="" style="width:100px">Khách hàng</th>
+                    <th scope="col" class="text-right" style="width:100px">Tiền điều trị</th>
+                    <th scope="col" class="text-right" style="width:100px">Thanh toán</th>
+                    <th scope="col" class="text-right" style="width:100px">Còn lại</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.Data)
+                {
+                    <tr>
+                        <td class="" style="width:100px">@(row.Name)</td>
+                        <td class="" style="width:100px">@(row.PartnerName)</td>
+                        <td class="text-right" style="width:100px">@(string.Format(culture, "{0:N0}", row.AmountTotal))</td>
+                        <td class="text-right" style="width:100px">@(string.Format(culture, "{0:N0}", row.TotalPaid))</td>
+                        <td class="text-right" style="width:100px">@(string.Format(culture, "{0:N0}", row.Residual))</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+    <div class="d-flex">
+        <div class="col-6">
+
+        </div>
+        <div class="col-6">
+            <div class="text-center">
+                <span>Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year </span> <br />
+                <span class="font-semibold">Người lập báo cáo</span> <br />
+                <i>(Ký và ghi rõ họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">@(Model.User == null ? "" : Model.User.Name.ToUpper())</span>
+            </div>
+        </div>
+    </div>
+</div>

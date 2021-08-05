@@ -141,6 +141,18 @@ export class AccountInvoiceReportService {
         
     }
 
+    getRevenueTimeReportPdf(val:any ) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetRevenueTimeReportPdf", {params: new HttpParams({fromObject: val}),  responseType: 'blob'  });
+    }
+
+    getRevenueServiceReportPdf(val:any ) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetRevenueServiceReportPdf", {params: new HttpParams({fromObject: val}),  responseType: 'blob'  });
+    }
+
+    getRevenueEmployeeReportPdf(val:any ) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetRevenueEmployeeReportPdf", {params: new HttpParams({fromObject: val}),  responseType: 'blob'  });
+    }
+
     getRevenuePartnerReportPdf(val:any ) {
         return this.http.get(this.baseApi + this.apiUrl + "/GetRevenuePartnerReportPdf", {params: new HttpParams({fromObject: val}),  responseType: 'blob'  });
     }

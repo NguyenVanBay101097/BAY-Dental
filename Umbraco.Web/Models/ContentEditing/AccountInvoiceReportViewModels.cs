@@ -130,7 +130,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string InvoiceOrigin { get; set; }
         public Guid? PartnerId { get; set; }
         public string PartnerName { get; set; }
+        public Guid? EmployeeId { get; set; }
         public string EmployeeName { get; set; }
+        public Guid? AssistantId { get; set; }
         public string AssistantName { get; set; }
         public Guid? ProductId { get; set; }
         public string ProductName { get; set; }
@@ -184,7 +186,20 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public IEnumerable<RevenueReportDetailDisplay> Lines { get; set; } = new List<RevenueReportDetailDisplay>();
     }
+    public class RevenueTimeReportPrint : RevenueTimeReportDisplay
+    {
+        public IEnumerable<RevenueReportDetailDisplay> Lines { get; set; } = new List<RevenueReportDetailDisplay>();
+    }
+    public class RevenueServiceReportPrint : RevenueServiceReportDisplay
+    {
+        public IEnumerable<RevenueReportDetailDisplay> Lines { get; set; } = new List<RevenueReportDetailDisplay>();
+    }
 
+    public class RevenueEmployeeReportPrint : RevenueEmployeeReportDisplay
+    {
+        public IEnumerable<RevenueReportDetailDisplay> Lines { get; set; } = new List<RevenueReportDetailDisplay>();
+    }
+  
     public class RevenueReportPrintVM<T> where T : class
     {
         public RevenueReportPrintVM(DateTime? dateFrom, DateTime? dateTo)

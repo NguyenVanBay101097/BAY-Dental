@@ -7,7 +7,7 @@
         <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
         <div class="dropdown mr-1">
-            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-download"></i> Xuất File</button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <a class="dropdown-item" (click)="exportExcel(grid)">Xuất Excel</a>

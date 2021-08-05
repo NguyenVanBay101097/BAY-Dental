@@ -99,7 +99,7 @@ namespace TMTDentalAPI.Controllers
             var globalSettings = new GlobalSettings
             {
                 ColorMode = ColorMode.Color,
-                Orientation = Orientation.Portrait,
+                Orientation = Orientation.Landscape,
                 PaperSize = PaperKind.A4,
                 Margins = new MarginSettings { Top = 10 },
                 DocumentTitle = "PDF Report"
@@ -118,6 +118,99 @@ namespace TMTDentalAPI.Controllers
             };
             var file = _converter.Convert(pdf);
             return File(file, "application/pdf", "baocaodoanhthu_theoKH.pdf");
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
+        public async Task<IActionResult> GetRevenueTimeReportPdf([FromQuery] RevenueTimeReportPar val)
+        {
+            var data = await _invoiceReportService.GetRevenueTimeReportPrint(val);
+            var html = _viewRenderService.Render("AccountInvoiceReport/RevenueTimeReportPdf", data);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo doanh thu", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "baocaodoanhthu_theoTG.pdf");
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
+        public async Task<IActionResult> GetRevenueServiceReportPdf([FromQuery] RevenueServiceReportPar val)
+        {
+            var data = await _invoiceReportService.GetRevenueServiceReportPrint(val);
+            var html = _viewRenderService.Render("AccountInvoiceReport/RevenueServiceReportPdf", data);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo doanh thu", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "baocaodoanhthu_theoDV.pdf");
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
+        public async Task<IActionResult> GetRevenueEmployeeReportPdf([FromQuery] RevenueEmployeeReportPar val)
+        {
+            var data = await _invoiceReportService.GetRevenueEmployeeReportPrint(val);
+            var html = _viewRenderService.Render("AccountInvoiceReport/RevenueEmployeeReportPdf", data);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo doanh thu", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "baocaodoanhthu_theoNV.pdf");
         }
     }
 }

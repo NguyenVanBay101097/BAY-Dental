@@ -245,5 +245,33 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
     this.accInvService.getPrintRevenueServiceReport(val).subscribe(result=>this.printService.printHtml(result));
   }
 
+  onExportPDF() {
+    var val = Object.assign({}, this.filter) as RevenueServiceReportPar;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.productId = val.productId || '';
+    this.loading = true;
+    this.accInvService.getRevenueServiceReportPdf(val).subscribe(res => {
+      this.loading = false;
+      let filename ="BaoCaodoanhthu_theoDV";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
 
 }

@@ -1,0 +1,35 @@
+﻿@model Umbraco.Web.Models.ContentEditing.RevenueReportPrintVM<RevenueServiceReportPrint>
+@using Umbraco.Web.Models.ContentEditing;
+@{
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    Layout = "~/Views/Shared/_PdfLayout.cshtml";
+
+}
+<div class="">
+    @if (Model.Company != null)
+    {
+        <div class="d-flex mb-2">
+            @if (!string.IsNullOrEmpty(Model.Company.Logo))
+            {
+                <img class="img-fluid me-3" style="width: 150px;" src="@Model.Company.Logo" alt="@Model.Company.Name">
+            }
+            <div>
+                <div class="text-xl font-semibold">@Model.Company.Name</div>
+                @if (!string.IsNullOrEmpty(Model.Company.Address))
+                {
+                    <div>Địa chỉ: @Model.Company.Address</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Company.Phone))
+                {
+                    <div>ĐT: @Model.Company.Phone</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Company.Email))
+                {
+                    <div>Email: @Model.Company.Email</div>
+                }
+            </div>
+        </div>
+    }
+
+    @await Html.PartialAsync("../AccountInvoiceReport/PartialView/PrintRevenueServicePartial", Model)
+</div>
