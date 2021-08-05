@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, ViewChildren, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, ViewChildren, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { AppointmentVMService } from '../appointment-vm.service';
 import { AppointmentService } from '../appointment.service';
 import { forkJoin, Subject } from 'rxjs';
@@ -33,6 +33,8 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { MyDateRange } from '../my-date-range';
 import { CustomerReceipCreateUpdateComponent } from 'src/app/shared/customer-receip-create-update/customer-receip-create-update.component';
 @Component({
+  encapsulation: ViewEncapsulation.None, //<<<<< this one! 
+  // To css active with innerHTML
   selector: 'app-appointment-kanban',
   templateUrl: './appointment-kanban.component.html',
   styleUrls: ['./appointment-kanban.component.css'],
@@ -77,7 +79,7 @@ export class AppointmentKanbanComponent implements OnInit {
   listEmployees: EmployeeBasic[] = [];
   employeeSelected: string = '';
 
-  viewKanban: string = "th-large"; // "th-large", "list-ul"
+  viewKanban: string = "calendar"; // "calendar", "list"
   gridData: GridDataResult;
   limit: number = 20;
   offset: number = 0
@@ -89,18 +91,11 @@ export class AppointmentKanbanComponent implements OnInit {
   // titleDateToolbar: string = "";
   // viewToolbar: string = "timeGridWeek"; // "timeGridDay", "timeGridWeek", "dayGridMonth"
   // validRange: DateRangeInput;
-  listData = [];
   doctors = [];
   // New Calendar //
   calendarTableEl = null;
   calendarTheadEl = null;
   calendarTbodyEl = null;
-  // Dialog
-  contDialogCalendarEl = null;
-  selectStatusEl = null;
-  inputCustomerNameEl = null;
-  inputCustomerPhoneEl = null;
-  inputReferrerNameEl = null;
 
   today = new Date();
   todayFormat = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate(), 0, 0, 0);
@@ -116,61 +111,7 @@ export class AppointmentKanbanComponent implements OnInit {
   timePeriod = 'month';
   firstTime = 6; // format 24h : 0h - 23h
   lastTime = 23; // format 24h : 0h - 23h
-  dateAppointmentFormat = null; // format "year month day hour"
-  appointmentIDChoose = null;
   dataAppointmentsGrouped = null;
-
-  // dataAppointments: any[] = [
-  //   {
-  //     id: 0,
-  //     date: new Date(2021, 7, 5, 8, 30, 5),
-  //     state: 'confirmed',
-  //     partnerName: 'Thomas K. Wilson',
-  //     partnerPhone: 1909123123,
-  //     doctorName: 'Wendy R. Sherman'
-  //   },
-  //   {
-  //     id: 1,
-  //     date: new Date(2021, 7, 4, 8, 15),
-  //     state: 'arrived',
-  //     partnerName: 'Jeff Bezos',
-  //     partnerPhone: 1909123123,
-  //     doctorName: 'Anne Mulcahy'
-  //   },
-  //   {
-  //     id: 2,
-  //     date: new Date(2021, 7, 2, 8),
-  //     state: 'overdue',
-  //     partnerName: 'Thomas K. Wilson',
-  //     partnerPhone: 1909123123,
-  //     doctorName: 'Anne Mulcahy'
-  //   },
-  //   {
-  //     id: 3,
-  //     date: new Date(2021, 7, 1, 8, 30),
-  //     state: 'arrived',
-  //     partnerName: 'Jeff Bezos',
-  //     partnerPhone: 1909123123,
-  //     doctorName: 'Thomas K. Wilson'
-  //   },
-  //   {
-  //     id: 4,
-  //     date: new Date(2021, 7, 4, 8, 45, 10),
-  //     state: 'cancel',
-  //     partnerName: 'Tom Holland',
-  //     partnerPhone: 1909123123,
-  //     doctorName: 'Barbara Conan'
-  //   },
-  //   {
-  //     id: 5,
-  //     date: new Date(2021, 7, 9, 8),
-  //     state: 'confirmed',
-  //     partnerName: 'Uzumaki Naruto',
-  //     partnerPhone: 1909123123,
-  //     doctorName: 'Uchiha Sasuke'
-  //   }
-  // ];
-
   dataAppointments: any[] = [];
   titleToolbar = "";
 
@@ -185,41 +126,13 @@ export class AppointmentKanbanComponent implements OnInit {
     private checkPermissionService: CheckPermissionService,
     private elementRef: ElementRef
   ) { }
-  ngAfterViewInit(): void {
-    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-    //Add 'implements AfterViewInit' to the class.
-    // this.calendarApi = this.calendarComponent.getApi();
-    // this.calendarApi.changeView(this.viewToolbar);
-    // this.titleDateToolbar = this.getDateToolbar();
-    this.loadGridData();
-    // console.log(this.calendarApi.view.activeStart);
-    // console.log(this.calendarApi.view.activeEnd);
 
-    //     document.getElementsByClassName("fc-next-button")[0].addEventListener("click",()=> {
-
-    //     });
-
+  ngOnInit() {
     // New Calendar //
     this.getElements();
-    // this.dataAppointments = this.dataAppointments.map(v => ({
-    //   ...v,
-    //   dateFormat: new Date(v.date).setHours(0, 0, 0, 0),
-    //   dateHour: v.date.getHours()
-    // }));
-    // this.groupByDataAppointments(); // group by 
 
-    // this.showCalendarMonth(this.currentYear, this.currentMonth);
-  }
-  ngOnInit() {
-    var curr = new Date; // get current date
-    var first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
-    var last = first + 6; // last day is the first day + 6
-
-    this.dateFrom = new Date(curr.setDate(first));
-    this.dateTo = new Date(curr.setDate(last));
-
-    // this.dateList = this.getDateList();
     this.loadData();
+    this.loadGridData();
 
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -230,7 +143,7 @@ export class AppointmentKanbanComponent implements OnInit {
       });
 
     // this.loadListEmployees();
-    // this.loadDoctorList();
+    this.loadDoctorList();
   }
 
   loadDoctorList() {
@@ -257,10 +170,10 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   onChangeDate(e) {
-    this.dateFrom = e.dateFrom;
-    this.dateTo = e.dateTo;
-    this.loadData();
-    this.loadGridData();
+    // this.dateFrom = e.dateFrom;
+    // this.dateTo = e.dateTo;
+    // this.loadData();
+    // this.loadGridData();
   }
 
   onChangeState(state) {
@@ -276,11 +189,6 @@ export class AppointmentKanbanComponent implements OnInit {
       this.loadData();
       this.loadGridData();
     }, () => { });
-
-    // modalRef.componentInstance.getBtnDeleteObs.subscribe(() => {
-    //   this.loadData();
-    //   this.loadGridData();
-    // })
   }
 
   refreshData() {
@@ -299,32 +207,18 @@ export class AppointmentKanbanComponent implements OnInit {
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
 
     this.appointmentService.getPaged(val).subscribe((result: any) => {
-      this.addAppointments(result);
-      this.listData = [];
+      // this.addAppointments(result);
       console.log(result.items);
 
-      for (const item of result.items) {
-        const event = {
-          id: item.id,
-          date: new Date(item.date),
-          state: item.state,
-          partnerName: item.partnerName,
-          partnerId: item.partnerId,
-          partnerPhone: item.partnerPhone,
-          doctorName: item.doctorName
-        }
-        this.listData.push(event);
-      }
-      this.dataAppointments = [...this.listData];
-      this.dataAppointments = this.dataAppointments.map(v => ({
+      this.dataAppointments = result.items.map(v => ({
         ...v,
+        date: new Date(v.date),
         dateFormat: new Date(v.date).setHours(0, 0, 0, 0),
-        dateHour: v.date.getHours()
+        dateHour: new Date(v.date).getHours()
       }));
 
       this.groupByDataAppointments();
       this.jump_today()
-      // this.showCalendarMonth(this.currentYear, this.currentMonth);
 
     }, (error: any) => {
       console.log(error);
@@ -389,52 +283,6 @@ export class AppointmentKanbanComponent implements OnInit {
       this.appointmentByDate[key].unshift(item);
     });
   }
-
-  formatDate(date) {
-    var d = new Date(date),
-      month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear();
-
-    if (month.length < 2)
-      month = '0' + month;
-    if (day.length < 2)
-      day = '0' + day;
-
-    return [year, month, day].join('-');
-  }
-
-  addAppointments(paged: PagedResult2<AppointmentBasic>) {
-    // for (var i = 0; i < paged.items.length; i++) {
-    //   var item = paged.items[i];
-    //   var date = new Date(item.date);
-    //   var key = date.toDateString();
-    //   if (!this.appointmentByDate[key]) {
-    //     this.appointmentByDate[key] = [];
-    //   }
-
-    //   this.appointmentByDate[key].push(item);
-    // }
-    // this.events = [];
-    // for (var i = 0; i < paged.items.length; i++) {
-    //   var item = paged.items[i];
-    //   var d = new Date();
-    //   d.setHours(0, 0, 0, 0);
-    //   let date = new Date(item.date);
-    //   this.events = this.events.concat([
-    //     <EventInput>{
-    //       title: item.partnerName,
-    //       date: this.intlService.formatDate(date, 'yyyy-MM-ddTHH:mm:ss'),
-    //       backgroundColor: new Date(item.date) >= d ? (this.states.find(x => x.value == item.state) ? this.states.find(x => x.value == item.state).bgColor : '') : '#FFC107',
-    //       id: item.id,
-    //       textColor: 'white'
-    //     }
-    //   ]);
-    // }
-  }
-  calendarEvents = [
-    { title: 'event 1', date: '2019-04-01' }
-  ];
 
   getDateList() {
     if (!this.dateFrom || !this.dateTo) {
@@ -547,88 +395,17 @@ export class AppointmentKanbanComponent implements OnInit {
     });
   }
 
-  handleEventRender(e) {
-    //     debugger;
-    //    e.el.innerHTML = '<div>fdasf</div> <br> <button class="a"   (click)="a()">ddd</button>';
-    //    (e.el.getElementsByClassName('a'))[0].click(function(){
-    //     console.log('a')
-    //  });
-
-  }
-  // dateToday() {
-  //   var currentStart = this.calendarApi.view.currentStart;
-  //   var currentEnd = this.calendarApi.view.currentEnd;
-  //   var today = this.calendarApi.getNow();
-  //   if (today < currentStart || today > currentEnd) 
-  //     this.calendarApi.today();
-  //   this.titleDateToolbar = this.getDateToolbar();
-  //   this.loadGridData();
-  // }
-  // datePrev() {
-  //   this.calendarApi.prev();
-  //   this.titleDateToolbar = this.getDateToolbar();
-  //   this.loadGridData();
-  // }
-  // dateNext() {
-  //   this.calendarApi.next();
-  //   this.titleDateToolbar = this.getDateToolbar();
-  //   this.loadGridData();
-  // }
-  // getDateToolbar() {
-  //   var currentStart = this.calendarApi.view.currentStart;
-  //   currentStart.setDate(currentStart.getDate() + 1);
-  //   var currentStartString = ("0" + currentStart.getUTCDate()).slice(-2) + "/" + 
-  //                           ("0" + (currentStart.getUTCMonth()+1)).slice(-2) + "/" + 
-  //                           currentStart.getUTCFullYear();
-
-  //   var currentEnd = this.calendarApi.view.currentEnd;
-  //   var currentEndString = ("0" + currentEnd.getUTCDate()).slice(-2) + "/" + 
-  //                         ("0" + (currentEnd.getUTCMonth()+1)).slice(-2) + "/" + 
-  //                         currentEnd.getUTCFullYear();
-
-  //   if (currentStartString == currentEndString) {
-  //     return currentStartString;
-  //   } else {
-  //     return `${currentStartString} - ${currentEndString}`;
-  //   }
-  // }
-  // changeViewToolbar(event) {
-  //   this.viewToolbar = event;
-  //   this.calendarApi.changeView(this.viewToolbar);
-  //   this.titleDateToolbar = this.getDateToolbar();
-  //   this.loadGridData();
-  // }
   changeViewKanban(event) {
     this.viewKanban = event;
   }
+
   loadGridData() {
     var val = new AppointmentPaged();
     val.limit = this.limit;
     val.offset = this.offset;
     val.doctorId = this.employeeSelected || '';
-    // val.dateTimeFrom
-    // val.dateTimeTo
-
-    // var currentStart = this.calendarApi.view.currentStart;
-    // var currentEnd = this.calendarApi.view.currentEnd;
-    // currentEnd.setDate(currentEnd.getDate() - 1);
-    // if (this.dateFrom || this.dateTo) {
-    //   var dateRange_1 = new MyDateRange(currentStart, currentEnd);
-    //   const dateFrom_temp = this.dateFrom ? this.dateFrom : (this.dateTo >= currentStart ? currentStart : this.dateTo);
-    //   const dateTo_temp = this.dateTo ? this.dateTo : (this.dateFrom <= currentEnd ? currentEnd : this.dateFrom);
-    //   var dateRange_2 = new MyDateRange(dateFrom_temp, dateTo_temp);
-    //   const result_intersection = this.intersectionTwoDateRange(dateRange_1, dateRange_2);
-    //   if (result_intersection) {
-    //     val.dateTimeFrom = this.intlService.formatDate(result_intersection.start, 'yyyy-MM-dd');
-    //     val.dateTimeTo = this.intlService.formatDate(result_intersection.end, 'yyyy-MM-dd');
-    //   } else {
-    //     this.gridData = null;
-    //     return;
-    //   }
-    // } else {
-    //   val.dateTimeFrom = this.intlService.formatDate(currentStart, 'yyyy-MM-dd');
-    //   val.dateTimeTo = this.intlService.formatDate(currentEnd, 'yyyy-MM-dd');
-    // }
+    val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
+    val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
 
     this.appointmentService.getPaged(val).pipe(
       map((response: any) =>
@@ -644,10 +421,12 @@ export class AppointmentKanbanComponent implements OnInit {
       this.loading = false;
     })
   }
+
   pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
     this.loadGridData();
   }
+
   computeNameSerivc(items: any[]) {
     var serviceName = "";
     if (items && items.length > 0) {
@@ -655,6 +434,7 @@ export class AppointmentKanbanComponent implements OnInit {
     }
     return serviceName;
   }
+
   intersectionTwoDateRange(a: MyDateRange, b: MyDateRange) {
     var min: MyDateRange = a.start < b.start ? a : b;
     var max: MyDateRange = min == a ? b : a;
@@ -667,16 +447,10 @@ export class AppointmentKanbanComponent implements OnInit {
     this.calendarTableEl = document.getElementById('calendar-table');
     this.calendarTheadEl = document.getElementById('calendar-thead');
     this.calendarTbodyEl = document.getElementById('calendar-tbody');
-    // Dialog
-    this.contDialogCalendarEl = document.getElementById('cont-dialog-calendar');
-    this.selectStatusEl = document.getElementById('select-status') as HTMLInputElement;
-    this.inputCustomerNameEl = document.getElementById('input-customer-name') as HTMLInputElement;
-    this.inputCustomerPhoneEl = document.getElementById('input-customer-phone') as HTMLInputElement;
-    this.inputReferrerNameEl = document.getElementById('input-referrer-name') as HTMLInputElement;
   }
 
   groupByDataAppointments() {
-    if (this.dataAppointments.length > 0) {
+    if (this.dataAppointments !== null && this.dataAppointments.length > 0) {
       this.dataAppointmentsGrouped = this.dataAppointments.reduce(function (r, a) {
         r[a['dateFormat']] = r[a['dateFormat']] || [];
         r[a['dateFormat']].push(a);
@@ -725,16 +499,12 @@ export class AppointmentKanbanComponent implements OnInit {
     } else if (this.timePeriod === 'week') {
       this.showCalendarWeek(this.currentYear, this.currentMonth, this.currentWeek);
     } else {
-      // month
       this.showCalendarMonth(this.currentYear, this.currentMonth);
     }
   }
 
   changeTimePeriod(event) {
-    // if (this.timePeriod === event) return;
-    // this.timePeriod = event;
     this.jump_today();
-    // console.log(event);
   }
 
   setTitleToolbar(firstDate = null, lastDate = null, month = null, year = null) {
@@ -788,12 +558,12 @@ export class AppointmentKanbanComponent implements OnInit {
           cell.innerHTML = `
                       <div class="now">${('0' + date.getDate()).slice(-2)}</div>
                       <div>${this.daysOfWeek[(date.getDay() + 6) % 7]}</div>
-                  `;
+                    `;
         } else {
           cell.innerHTML = `
                       <div>${('0' + date.getDate()).slice(-2)}</div>
                       <div>${this.daysOfWeek[(date.getDay() + 6) % 7]}</div>
-                  `;
+                    `;
         }
         row.appendChild(cell);
       }
@@ -808,15 +578,13 @@ export class AppointmentKanbanComponent implements OnInit {
             date.getFullYear() === this.todayFormat.getFullYear()
           ) {
             cell.innerHTML = `
-                          <div class="now">${('0' + date.getDate()).slice(
-              -2
-            )}</div>
-                          <div>${el}</div>
+                        <div class="now">${('0' + date.getDate()).slice(-2)}</div>
+                        <div>${el}</div>
                       `;
           } else {
             cell.innerHTML = `
-                          <div>${('0' + date.getDate()).slice(-2)}</div>
-                          <div>${el}</div>
+                        <div>${('0' + date.getDate()).slice(-2)}</div>
+                        <div>${el}</div>
                       `;
           }
           row.appendChild(cell);
@@ -896,12 +664,10 @@ export class AppointmentKanbanComponent implements OnInit {
       let cellTime = document.createElement('td');
       cellTime.classList.add('td-time');
       cellTime.id = i.toString();
-      cellTime.textContent = `${i < 10 ? `0${i}` : i}:00 - ${i + 1 < 10 ? `0${i + 1}` : i + 1
-        }:00`;
+      cellTime.textContent = `${i < 10 ? `0${i}` : i}:00 - ${i + 1 < 10 ? `0${i + 1}` : i + 1}:00`;
       let cell = document.createElement('td');
       cell.classList.add('td-day');
-      cell.id = `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day
-        }-${i < 10 ? `0${i}` : i}`;
+      cell.id = `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}-${i < 10 ? `0${i}` : i}`;
 
       let cell_dateEvent = document.createElement('div');
       cell_dateEvent.classList.add('list-data-event-day');
@@ -924,15 +690,6 @@ export class AppointmentKanbanComponent implements OnInit {
       this.calendarTbodyEl.appendChild(row);
     }
     this.addCellTimeNow(firstDate);
-    // load addEventListener
-    var btn_edit_appointment_list = this.elementRef.nativeElement.querySelectorAll('.edit-appointment');
-    btn_edit_appointment_list.forEach(btn_edit_appointment => {
-      btn_edit_appointment.addEventListener('click', this.showPopup.bind(this, btn_edit_appointment.id));
-    });
-    var btn_delete_appointment_list = this.elementRef.nativeElement.querySelectorAll('.delete-appointment');
-    btn_delete_appointment_list.forEach(btn_delete_appointment => {
-      btn_delete_appointment.addEventListener('click', this.receipPopup.bind(this, btn_delete_appointment.id));
-    });
   }
 
   showCalendarWeek(year, month, week) {
@@ -981,15 +738,6 @@ export class AppointmentKanbanComponent implements OnInit {
       row.appendChild(cell);
     }
     this.calendarTbodyEl.appendChild(row);
-    // load addEventListener
-    var btn_edit_appointment_list = this.elementRef.nativeElement.querySelectorAll('.edit-appointment');
-    btn_edit_appointment_list.forEach(btn_edit_appointment => {
-      btn_edit_appointment.addEventListener('click', this.showPopup.bind(this, btn_edit_appointment.id));
-    });
-    var btn_delete_appointment_list = this.elementRef.nativeElement.querySelectorAll('.delete-appointment');
-    btn_delete_appointment_list.forEach(btn_delete_appointment => {
-      btn_delete_appointment.addEventListener('click', this.receipPopup.bind(this, btn_delete_appointment.id));
-    });
   }
 
   showCalendarMonth(year, month) {
@@ -1109,43 +857,65 @@ export class AppointmentKanbanComponent implements OnInit {
     dateEventV2El.id = `appointment-${appointment.id}`;
 
     dateEventV2El.addEventListener('click', el => {
-      // this.showPopup(parseInt(dateEventV2El.id.replace('appointment-', '')));
-      // this.showPopup(appointment.id);
       el.stopPropagation();
     });
 
-    const htmlString = `
-          <div class="header">
-              <div class="status">${statusShow}</div>
-              <div class="action">
-                  <div class="edit edit-appointment" id="${appointment.id}">
-                    <i class="fas fa-pen"></i>
-                  </div>
-                  <div class="delete delete-appointment" id="${appointment.id}">
-                    <i class="fas fa-sign-out-alt"></i>
-                  </div>
-              </div>
-          </div>
-          <a href="#" class="customer-name">${appointment.partnerName}</a>
-          <div class="content phone">
-              <i class="fas fa-phone"></i>
-              <span>${appointment.partnerPhone}</span>
-          </div>
-          <div class="content time">
-              <i class="fas fa-info-circle"></i>
-              <span>
-                  ${`${('0' + appointment.date.getHours()).slice(-2)}:00 - ${(
-        '0' +
-        (parseInt(appointment.date.getHours()) + 1)
-      ).slice(-2)}:00`}
-              </span>
-          </div>
-          <div class="content referrer">
-              <i class="fas fa-user-plus"></i>
-              <span>${appointment.doctorName}</span>
-          </div>
-      `;
-    dateEventV2El.innerHTML = htmlString;
+    let headerEl = document.createElement('div');
+    headerEl.classList.add("header");
+    let statusEl = document.createElement('div');
+    statusEl.classList.add("status");
+    statusEl.innerText = statusShow;
+    let actionEl = document.createElement('div');
+    actionEl.classList.add("t-action");
+    let btnEditEl = document.createElement('div');
+    btnEditEl.classList.add("edit");
+    btnEditEl.innerHTML = `<i class="fas fa-pen"></i>`;
+    btnEditEl.addEventListener("click", () => {
+      this.showPopup(appointment.id);
+    });
+    let btnDeleteEl = document.createElement('div');
+    btnDeleteEl.classList.add("delete");
+    btnDeleteEl.innerHTML = `<i class="fas fa-times"></i>`;
+    btnDeleteEl.addEventListener("click", () => {
+      this.receipPopup(appointment.id);
+    });
+    actionEl.appendChild(btnEditEl);
+    actionEl.appendChild(btnDeleteEl);
+    headerEl.appendChild(statusEl);
+    headerEl.appendChild(actionEl);
+    let customerNameEl = document.createElement('a');
+    customerNameEl.classList.add("customer-name", "text-primary");
+    customerNameEl.title = "Xem hồ sơ khách hàng";
+    customerNameEl.innerText = appointment.partnerName;
+    customerNameEl.addEventListener("click", () => {
+      this.router.navigate(['/partners/customer/' + appointment.partnerId]);
+    });
+    let contentPhoneEl = document.createElement('div');
+    contentPhoneEl.classList.add("content", "phone");
+    contentPhoneEl.innerHTML = `
+      <i class="fas fa-phone"></i>
+      <span>${appointment.partnerPhone}</span>
+    `;
+    let contentTimeEl = document.createElement('div');
+    contentTimeEl.classList.add("content", "time");
+    contentTimeEl.innerHTML = `
+      <i class="fas fa-info-circle"></i>
+      <span>
+          ${`${('0' + appointment.date.getHours()).slice(-2)}:00 - ${('0' + (parseInt(appointment.date.getHours()) + 1)).slice(-2)}:00`}
+      </span>
+    `;
+    let contentReferrerEl = document.createElement('div');
+    contentReferrerEl.classList.add("content", "referrer");
+    contentReferrerEl.innerHTML = `
+      <i class="fas fa-user-plus"></i>
+      <span>${appointment.doctorName}</span>
+    `;
+
+    dateEventV2El.appendChild(headerEl);
+    dateEventV2El.appendChild(customerNameEl);
+    dateEventV2El.appendChild(contentPhoneEl);
+    dateEventV2El.appendChild(contentTimeEl);
+    dateEventV2El.appendChild(contentReferrerEl);
 
     return dateEventV2El;
   }
@@ -1191,21 +961,6 @@ export class AppointmentKanbanComponent implements OnInit {
       this.loadData();
       this.loadGridData();
     }, () => { });
-
-    // this.contDialogCalendarEl.classList.remove('hidden');
-    // if (id !== null) {
-    //   this.appointmentIDChoose = id;
-    //   const dataAppointment = this.dataAppointments.find(
-    //     x => x.id === this.appointmentIDChoose
-    //   );
-    //   if (dataAppointment) {
-    //     this.dateAppointmentFormat = dataAppointment['dateFormat'];
-    //     this.selectStatusEl.value = dataAppointment.status;
-    //     this.inputCustomerNameEl.value = dataAppointment.partnerName;
-    //     this.inputCustomerPhoneEl.value = dataAppointment.partnerPhone.toString();
-    //     this.inputReferrerNameEl.value = dataAppointment.doctorName;
-    //   }
-    // }
   }
 
   // popup tiếp nhận
@@ -1214,87 +969,6 @@ export class AppointmentKanbanComponent implements OnInit {
     const modalRef = this.modalService.open(CustomerReceipCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = id;
     modalRef.componentInstance.title = "Tiếp nhận";
-    // modalRef.result.then(result => {
-    //   this.loadData();
-    //   this.loadGridData();
-    // }, () => { });
   }
 
-  closePopup() {
-    this.contDialogCalendarEl.classList.add('hidden');
-    this.appointmentIDChoose = null;
-    this.dateAppointmentFormat = null;
-    this.selectStatusEl.value = 'confirmed';
-    this.inputCustomerNameEl.value = '';
-    this.inputCustomerPhoneEl.value = '';
-    this.inputReferrerNameEl.value = '';
-  }
-
-  saveAppointment() {
-    if (this.appointmentIDChoose !== null) {
-      const dataAppointmentIndex = this.dataAppointments.findIndex(
-        x => x.id === this.appointmentIDChoose
-      );
-      if (dataAppointmentIndex >= 0) {
-        this.dataAppointments[dataAppointmentIndex].status = this.selectStatusEl.value;
-        this.dataAppointments[dataAppointmentIndex].partnerName = this.inputCustomerNameEl.value;
-        this.dataAppointments[dataAppointmentIndex].partnerPhone = parseInt(this.inputCustomerPhoneEl.value);
-        this.dataAppointments[dataAppointmentIndex].doctorName = this.inputReferrerNameEl.value;
-        let dateEventV2El = document.getElementById(
-          `appointment-${this.dataAppointments[dataAppointmentIndex].id}`
-        );
-        const dateEventV2NewEl = this.getEventDayNWeek(
-          this.dataAppointments[dataAppointmentIndex]
-        );
-        dateEventV2El.replaceWith(dateEventV2NewEl);
-      }
-    } else {
-      const dataAppointment = {
-        id: this.dataAppointments.length,
-        date: new Date(this.dateAppointmentFormat),
-        dateFormat: new Date(this.dateAppointmentFormat).setHours(0, 0, 0, 0),
-        dateHour: new Date(this.dateAppointmentFormat).getHours(),
-        status: this.selectStatusEl.value,
-        partnerName: this.inputCustomerNameEl.value,
-        partnerPhone: this.inputCustomerPhoneEl.value,
-        doctorName: this.inputReferrerNameEl.value
-      };
-      this.dataAppointments.push(dataAppointment);
-
-      if (this.dateAppointmentFormat !== null) {
-        const listDataEventDay = document.getElementById(
-          this.convertDateToId(this.dateAppointmentFormat, true)
-        ).firstChild; // list-data-event-day
-        const tdDayOverwriteEl = listDataEventDay.lastChild;
-        listDataEventDay.removeChild(tdDayOverwriteEl);
-        if (listDataEventDay) {
-          listDataEventDay.appendChild(this.getEventDayNWeek(dataAppointment));
-        }
-        listDataEventDay.appendChild(tdDayOverwriteEl);
-      }
-    }
-    // localStorage.setItem("dataAppointments", JSON.stringify(dataAppointments));
-    this.groupByDataAppointments();
-    this.closePopup();
-  }
-
-  // deleteAppointment(id) {
-  //   this.appointmentIDChoose = id;
-  //   if (this.appointmentIDChoose !== null) {
-  //     const dataAppointmentIndex = this.dataAppointments.findIndex(
-  //       x => x.id === this.appointmentIDChoose
-  //     );
-  //     if (dataAppointmentIndex >= 0) {
-  //       this.dataAppointments.splice(dataAppointmentIndex, 1);
-  //     }
-  //     let dateEventV2El = document.getElementById(
-  //       `appointment-${this.appointmentIDChoose}`
-  //     );
-  //     if (dateEventV2El) {
-  //       dateEventV2El.remove();
-  //     }
-  //   }
-  //   // localStorage.setItem("dataAppointments", JSON.stringify(dataAppointments));
-  //   this.groupByDataAppointments();
-  // }
 }

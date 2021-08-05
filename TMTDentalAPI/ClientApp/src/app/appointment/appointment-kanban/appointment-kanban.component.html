@@ -25,14 +25,14 @@
                             [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
                         </kendo-combobox>
                     </div> -->
-                    <input type="radio" class="btn-check" name="view" id="th-large" autocomplete="off" 
-                    [value]="'th-large'" [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
-                    <label class="btn btn-white btn-sm" for="th-large">
+                    <input type="radio" class="btn-check" name="view" id="calendar" autocomplete="off" 
+                    [value]="'calendar'" [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
+                    <label class="btn btn-white btn-sm" for="calendar">
                         <i class="fas fa-th-large"></i>
                     </label>
-                    <input type="radio" class="btn-check" name="view" id="list-ul" autocomplete="off" 
-                    [value]="'list-ul'" [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
-                    <label class="btn btn-white btn-sm" for="list-ul">
+                    <input type="radio" class="btn-check" name="view" id="list" autocomplete="off" 
+                    [value]="'list'" [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
+                    <label class="btn btn-white btn-sm" for="list">
                         <i class="fas fa-list-ul"></i>
                     </label>
                 </div>
@@ -117,7 +117,7 @@
                 </div>
             </div> -->
             <div class="cont-wrapper">
-                <div class="cont-left overflow-auto">
+                <div class="cont-left">
                     <div class="cont-calendar">
                         <div class="toolbar-calendar">
                             <div class="toolbar-today">
@@ -146,7 +146,7 @@
                                 <label class="btn btn-sm" for="month">Tháng</label>
                             </div>
                         </div>
-                        <div class="main-calender">
+                        <div class="main-calender" [class.d-none]="viewKanban !== 'calendar'">
                             <table class="table calendar-table" id="calendar-table">
                                 <thead id="calendar-thead">
                                 </thead>
@@ -154,59 +154,61 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="main-list" *ngIf="viewKanban === 'list'">
+                            <kendo-grid [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset" [pageable]="true"
+                                [loading]="loading" (pageChange)="pageChange($event)">
+                                <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="250">
+                                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                        <div>
+                                            <a class="text-primary" title="Xem hồ sơ khách hàng"
+                                                [routerLink]="['/partners/customer/' + dataItem.partner?.id]"
+                                                [class.disabled]="!canCustomerLink">
+                                                {{dataItem.partnerDisplayName}}
+                                            </a>
+                                        </div>
+                                    </ng-template>
+                                </kendo-grid-column>
+                                <kendo-grid-column field="partnerPhone" title="Số điện thoại" width="150">
+                                </kendo-grid-column>
+                                <kendo-grid-column field="name" title="Thời gian hẹn" width="170">
+                                    <ng-template kendoGridCellTemplate let-dataItem>
+                                        <label class="mb-0" *ngIf="dataItem.time!=''">{{dataItem.time}}, <label class="mb-0"
+                                                *ngIf="dataItem.date"> {{dataItem.date |
+                                                date:'shortDate'}}</label></label>
+                        
+                                    </ng-template>
+                                </kendo-grid-column>
+                                <kendo-grid-column title="Dịch vụ" width="250">
+                                    <ng-template kendoGridCellTemplate let-dataItem>
+                                        <span class="service">{{computeNameSerivc(dataItem.services)}}</span>
+                                    </ng-template>
+                                </kendo-grid-column>
+                                <kendo-grid-column field="doctorName" title="Bác sĩ" width="150">
+                                </kendo-grid-column>
+                                <kendo-grid-column field="note" title="Nội dung" width="150">
+                                </kendo-grid-column>
+                                <kendo-grid-column title="Trạng thái" width="150">
+                                    <ng-template kendoGridCellTemplate let-dataItem>
+                                        <label *ngIf="dataItem.state=='cancel'">Hủy hẹn</label>
+                                        <label *ngIf="dataItem.state=='confirmed'">Đang hẹn</label>
+                                    </ng-template>
+                                </kendo-grid-column>
+                                <kendo-grid-column field="reason" title="Lý do" width="150">
+                                </kendo-grid-column>
+                                <kendo-grid-column field="id" width="100" *ngIf="canAppointmentEdit">
+                                    <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                                        Thao tác
+                                    </ng-template>
+                                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                        <button *ngIf="canAppointmentEdit" class="btn btn-success btn-sm mr-2" (click)="editAppointment(dataItem)">
+                                            <i class="far fa-edit"></i></button>
+                                    </ng-template>
+                                </kendo-grid-column>
+                            </kendo-grid>
+                        </div>
                     </div>
-                    <kendo-grid *ngIf="viewKanban=='list-ul'" [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset" [pageable]="true"
-                        [loading]="loading" (pageChange)="pageChange($event)">
-                        <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="250">
-                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                <div>
-                                    <a class="text-primary" title="Xem hồ sơ khách hàng"
-                                        [routerLink]="['/partners/customer/' + dataItem.partner?.id]"
-                                        [class.disabled]="!canCustomerLink">
-                                        {{dataItem.partnerDisplayName}}
-                                    </a>
-                                </div>
-                            </ng-template>
-                        </kendo-grid-column>
-                        <kendo-grid-column field="partnerPhone" title="Số điện thoại" width="150">
-                        </kendo-grid-column>
-                        <kendo-grid-column field="name" title="Thời gian hẹn" width="170">
-                            <ng-template kendoGridCellTemplate let-dataItem>
-                                <label class="mb-0" *ngIf="dataItem.time!=''">{{dataItem.time}}, <label class="mb-0"
-                                        *ngIf="dataItem.date"> {{dataItem.date |
-                                        date:'shortDate'}}</label></label>
-                
-                            </ng-template>
-                        </kendo-grid-column>
-                        <kendo-grid-column title="Dịch vụ" width="250">
-                            <ng-template kendoGridCellTemplate let-dataItem>
-                                <span class="service">{{computeNameSerivc(dataItem.services)}}</span>
-                            </ng-template>
-                        </kendo-grid-column>
-                        <kendo-grid-column field="doctorName" title="Bác sĩ" width="150">
-                        </kendo-grid-column>
-                        <kendo-grid-column field="note" title="Nội dung" width="150">
-                        </kendo-grid-column>
-                        <kendo-grid-column title="Trạng thái" width="150">
-                            <ng-template kendoGridCellTemplate let-dataItem>
-                                <label *ngIf="dataItem.state=='cancel'">Hủy hẹn</label>
-                                <label *ngIf="dataItem.state=='confirmed'">Đang hẹn</label>
-                            </ng-template>
-                        </kendo-grid-column>
-                        <kendo-grid-column field="reason" title="Lý do" width="150">
-                        </kendo-grid-column>
-                        <kendo-grid-column field="id" width="100" *ngIf="canAppointmentEdit">
-                            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                                Thao tác
-                            </ng-template>
-                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                <button *ngIf="canAppointmentEdit" class="btn btn-success btn-sm mr-2" (click)="editAppointment(dataItem)">
-                                    <i class="far fa-edit"></i></button>
-                            </ng-template>
-                        </kendo-grid-column>
-                    </kendo-grid>
                 </div>
-                <div class="cont-right ov">
+                <div class="cont-right">
                     <div class="filter">
                         <div class="filter-title">Bộ lọc</div>
                         <div class="filter-label">Thời gian</div>
