@@ -1,9 +1,8 @@
 .header-title {
-    padding: 15px;
     width: 50% !important;
     font-size: 24px;
     font-weight: bolder;
-    color: #007bff;
+    font-weight: 600;
     height: 100% !important;
 }
 
@@ -38,4 +37,24 @@
 
 .p-cu {
     padding: 28px;
+}
+
+.btn-group{
+    cursor: pointer;
+}
+
+.form-check-input:checked+.form-check-label {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.form-check-label {
+    padding: 4px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.form-check {
+    padding-left: 2px;
 }

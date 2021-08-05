@@ -1,0 +1,29 @@
+<kendo-chart class="mh-chart-year p-2">
+    <kendo-chart-title color="black" text="BIỂU ĐỒ THU CHI">
+    </kendo-chart-title>
+    <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
+    <kendo-chart-category-axis>
+        <kendo-chart-category-axis-item [categories]="cashbookCategs">
+            <kendo-chart-category-axis-item-labels [content]="labelContent">
+            </kendo-chart-category-axis-item-labels>
+        </kendo-chart-category-axis-item>
+    </kendo-chart-category-axis>
+    <kendo-chart-series>
+        <ng-container *ngIf="cashBooks.length > 0">
+            <kendo-chart-series-item
+            *ngFor="let item of cashbookSeries"
+            [type]="item.type"
+            [name]="item.name"
+            [data]="item.data" >
+          </kendo-chart-series-item>
+            <!-- <kendo-chart-series-item type="column" [data]="cashbookThu" [style]="'smooth'">
+            </kendo-chart-series-item>
+            <kendo-chart-series-item type="column" [data]="cashbookChi" [style]="'smooth'">
+            </kendo-chart-series-item>
+            <kendo-chart-series-item [data]="cashbookTotal" type="line" [markers]="{ visible: false }">
+                <kendo-chart-series-item-labels>
+                </kendo-chart-series-item-labels>
+            </kendo-chart-series-item> -->
+        </ng-container>
+    </kendo-chart-series>
+</kendo-chart>

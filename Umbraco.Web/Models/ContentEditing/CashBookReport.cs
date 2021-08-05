@@ -35,4 +35,13 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string InvoiceOrigin { get; set; }
     }
+
+    public class CashBookReportItem
+    {
+        public DateTime? Date { get; set; }
+        public decimal Begin { get; set; }
+        public decimal TotalAmount { get; set; }
+        public decimal TotalChi { get; set; }
+        public decimal TotalThu { get; set; }
+    }
 }

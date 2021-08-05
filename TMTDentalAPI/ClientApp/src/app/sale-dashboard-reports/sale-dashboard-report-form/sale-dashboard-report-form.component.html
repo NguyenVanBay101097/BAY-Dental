@@ -1,19 +1,51 @@
-<div class="row custom py-3">
-    <div class="col-12 mb-3">
-        <div class="border border-secondary rounded col-12 d-flex">
+<!-- <div class="row custom py-3">
+    <div class="col mb-2">
+        <div class="d-flex justify-content-center align-items-center">
             <div class="header-title">
                 BÁO CÁO TỔNG QUAN
             </div>
             <div class="header-filter">
-                <kendo-combobox [(ngModel)]="companyId" (valueChange)="changeCompany($event)" class="form-control" [data]="filteredCompanies" [textField]="'name'" [filterable]="true" #companyCbx [valueField]="'id'" [valuePrimitive]="true" [placeholder]="'Tất cả chi nhánh'">
+                <kendo-combobox [(ngModel)]="companyId" (valueChange)="changeCompany($event)" class="form-control"
+                    [data]="filteredCompanies" [textField]="'name'" [filterable]="true" #companyCbx [valueField]="'id'"
+                    [valuePrimitive]="true" [placeholder]="'Tất cả chi nhánh'">
                 </kendo-combobox>
             </div>
         </div>
         <div class="row">
-            <div class="col-8 pt-3">
+            <div class="col-12 pt-2">
+                <div class="dashboard-filter">
+                    <div class="btn-group">
+                        <div>
+                            <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="day"
+                                value="groupby:day" (change)="onChangeType($event.target.value)">
+                            <label class="btn btn-sm btn-outline-primary mr-2" for="day">
+                                Ngày
+                            </label>
+                        </div>
+                        <div>
+                            <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="month"
+                                value="groupby:month" (change)="onChangeType($event.target.value)">
+                            <label class="btn btn-sm btn-outline-primary mr-2" for="month">
+                                Tháng
+                            </label>
+                        </div>
+                        <div>
+                            <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom"
+                                [endDate]="dateTo" (searchChange)="onSearchDateChange($event)">
+                            </app-date-range-picker-filter>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col pt-2">
                 <div class="border border-secondary rounded bg-white">
                     <app-sale-dashboard-report-chart-flow-year [companyId]="companyId">
                     </app-sale-dashboard-report-chart-flow-year>
+                    <app-sale-dashboard-invoice-report [companyId]="companyId" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                        [groupby]="groupBy">
+                    </app-sale-dashboard-invoice-report>
                 </div>
             </div>
             <div class="col-4">
@@ -60,7 +92,7 @@
                         <a (click)="redirectTo('money-report')" class="position-absolute btn text-info">Chi tiết >></a>
                     </div>
                 </div>
-                <!-- <div class="pb-3">
+                <div class="pb-3">
                     <div class="position-relative text-center bg-white p-3 border border-secondary rounded">
                         <div class="pb-2 font-weight-bold">BÁO CÁO KHÁCH HÀNG CŨ - MỚI
                         </div>
@@ -83,7 +115,7 @@
                         <a (click)="redirectTo('new-old-customer-report')" class="position-absolute btn text-info
                         ">Chi tiết >></a>
                     </div>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
@@ -96,15 +128,20 @@
             <div class="header-filter">
                 <div class="float-right">
                     <b class="mr-2">Thời gian</b>
-                    <kendo-datepicker [(ngModel)]="filterMonthDate" (valueChange)="changeMonth()" [format]="'MM-yyyy'" [bottomView]="'year'"></kendo-datepicker>
+                    <kendo-datepicker [(ngModel)]="filterMonthDate" (valueChange)="changeMonth()" [format]="'MM-yyyy'"
+                        [bottomView]="'year'"></kendo-datepicker>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-12 pt-3">
                 <div class="border border-secondary rounded">
-                    <app-sale-dashboard-report-chart-flow-month [dateTo]="dateTo" [dateFrom]="dateFrom" [companyId]="companyId">
+                    <app-sale-dashboard-report-chart-flow-month [dateTo]="dateTo" [dateFrom]="dateFrom"
+                        [companyId]="companyId">
                     </app-sale-dashboard-report-chart-flow-month>
+                    <app-sale-dashboard-cashbook-report [companyId]="companyId" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                    [groupby]="groupBy">
+                </app-sale-dashboard-cashbook-report>
                 </div>
             </div>
             <div class="col-6 pt-3">
@@ -180,9 +217,102 @@
 
             </div>
 
-            <!-- báo cáo nguồn thu -->
             <div class="col-12 mt-3">
                 <app-financial-revenue-report [companyId]="companyId"></app-financial-revenue-report>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                <span>BÁO CÁO TỔNG QUAN</span>
+            </li>
+        </ol>
+        <div class="o_cp_searchview">
+            <kendo-combobox [(ngModel)]="companyId" (valueChange)="changeCompany($event)" class="form-control"
+                [data]="filteredCompanies" [textField]="'name'" [filterable]="true" #companyCbx [valueField]="'id'"
+                [valuePrimitive]="true" [placeholder]="'Tất cả chi nhánh'">
+            </kendo-combobox>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+
+                <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="day"
+                    value="groupby:day" (change)="onChangeType($event.target.value)">
+                <label class="btn btn-sm btn-outline-primary mr-2" for="day">
+                    Ngày
+                </label>
+
+
+                <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="month"
+                    value="groupby:month" (change)="onChangeType($event.target.value)">
+                <label class="btn btn-sm btn-outline-primary mr-2" for="month">
+                    Tháng
+                </label>
+                <div>
+                    <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom"
+                        [endDate]="dateTo" (searchChange)="onSearchDateChange($event)">
+                    </app-date-range-picker-filter>
+
+                </div>
+
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="o_dashboard_view">
+        <div class="o_group">
+            <div class="o_group o_group_col_12">
+                <div class="o_aggregate_col o_group_col_3">
+                    <div class="o_aggregate">
+                        <label>Nợ đầu kỳ</label>
+                        <div class="o_value text-info">{{0 | number }}</div>
+                    </div>
+                </div>
+                <div class="o_aggregate_col o_group_col_3">
+                    <div class="o_aggregate">
+                        <label>Tiền phát sinh</label>
+                        <div class="o_value text-primary">{{0 | number }}</div>
+                    </div>
+                </div>
+                <div class="o_aggregate_col o_group_col_3">
+                    <div class="o_aggregate">
+                        <label>Tiền thanh toán</label>
+                        <div class="o_value text-success">{{0 | number }}</div>
+                    </div>
+                </div>
+                <div class="o_aggregate_col o_group_col_3">
+                    <div class="o_aggregate text-danger">
+                        <label>Nợ cuối kỳ</label>
+                        <div class="o_value">{{0 | number }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="o_group">
+        <div class="border border-secondary rounded bg-white">
+            <app-sale-dashboard-invoice-report [companyId]="companyId" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                [groupby]="groupBy">
+            </app-sale-dashboard-invoice-report>
+        </div>
+    </div>
+    <div class="o_group">
+        <div class="o_group o_group_col_12">
+            <div class="border border-secondary rounded">
+                <app-sale-dashboard-cashbook-report [companyId]="companyId" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                    [groupby]="groupBy">
+                </app-sale-dashboard-cashbook-report>
             </div>
         </div>
     </div>

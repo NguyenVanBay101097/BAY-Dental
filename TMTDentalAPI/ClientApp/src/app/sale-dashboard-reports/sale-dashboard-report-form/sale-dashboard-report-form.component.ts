@@ -6,7 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { values } from 'lodash';
 import { forkJoin, observable, Observable, Subject } from 'rxjs';
-import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, map, switchMap, tap, groupBy } from 'rxjs/operators';
 import { AccountCommonPartnerReportSearch, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService, ReportPartnerDebitReq } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { AccountFinancialReportBasic, AccountFinancialReportService } from 'src/app/account-financial-report/account-financial-report.service';
 import { AccoutingReport, ReportFinancialService } from 'src/app/account-financial-report/report-financial.service';
@@ -73,6 +73,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   public reportOldYears: any[];
   companyId: string;
   filterMonthDate: Date = new Date();
+  groupBy: string = 'groupby:day';
 
   currentYear = new Date().getFullYear();
   oldYear = this.currentYear - 1;
@@ -177,6 +178,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
     })
   }
 
+
   loadDataMoney() {
     var companyId = this.companyId ? this.companyId : null;
     let cash = this.cashBookService.getTotal({ resultSelection: "cash", companyId: companyId });
@@ -199,6 +201,17 @@ export class SaleDashboardReportFormComponent implements OnInit {
       this.monthReport.loadData(); 
     });
   }
+
+  onChangeType(value) {
+    this.groupBy = value;
+  }
+
+  onSearchDateChange(e) {
+    this.dateFrom = e.dateFrom;
+    this.dateTo = e.dateTo;
+    // this.loadAllData();
+  }
+
 
   loadByMonthAndCompany() {
     this.loadFinacialReport();

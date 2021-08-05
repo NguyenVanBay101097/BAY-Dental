@@ -72,10 +72,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
 
         /// <summary>
-        /// group_date: group theo ngày
-        /// group_month: group theo tháng
-        /// group_product: group theo dịch vụ
-        /// group_employee: group theo nhân viên
+        /// groupby:day  group theo ngày
+        /// groupby:month: group theo tháng
+        /// groupby:product: group theo dịch vụ
+        /// groupby:employee: group theo nhân viên
+        /// groupby:assistant: group theo phụ tá
         /// </summary>
         public string GroupBy { get; set; }
     }
@@ -195,7 +196,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal PriceSubTotal { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
+        public Guid? ProductId { get; set; }
+        public string ProductName { get; set; }
+        public string EmployeeName { get; set; }
+        public Guid? EmployeeId { get; set; }
         public Guid? CompanyId { get; set; }
+        public Guid ToDetailEmployeeId { get; set; }
     }
 
 }

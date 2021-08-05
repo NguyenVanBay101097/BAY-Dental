@@ -63,49 +63,109 @@ namespace Infrastructure.Services
             return query;
         }
 
-        //public async Task<IEnumerable<RevenueReportItem>> GetRevenueReportPaged(RevenueReportFilter val)
-        //{
-        //    var userObj = GetService<IUserService>();
-        //    var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+        public async Task<IEnumerable<RevenueReportItem>> GetRevenueReport(RevenueReportFilter val)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            var res = new List<RevenueReportItem>();
 
-        //    var query = _context.AccountInvoiceReports.Where(x => (x.Type == "out_invoice" || x.Type == "out_refund") && x.State == "posted"
-        //    && x.AccountInternalType != "receivable"
-        //    && (!x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value)));
+            var query = _context.AccountInvoiceReports.Where(x => (x.Type == "out_invoice" || x.Type == "out_refund") && x.State == "posted"
+            && x.AccountInternalType != "receivable"
+            && (!x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value)));
 
-        //    if (val.DateFrom.HasValue)           
-        //        query = query.Where(x => x.InvoiceDate >= val.DateFrom.Value.AbsoluteBeginOfDate());
-
-
-        //    if (val.DateTo.HasValue)           
-        //        query = query.Where(x => x.InvoiceDate <= val.DateTo.Value.AbsoluteEndOfDate());
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.InvoiceDate >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
 
-        //    if (val.CompanyId.HasValue)
-        //        query = query.Where(x => x.CompanyId == val.CompanyId);
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.InvoiceDate <= val.DateTo.Value.AbsoluteEndOfDate());
 
-        //    if (val.GroupBy == "group_date")
-        //    {
-        //        if (!string.IsNullOrEmpty(val.Search))
-        //            query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
-        //            x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+            if (val.AssistantId.HasValue)
+                query = query.Where(x => x.AssistantId == val.AssistantId);
 
-        //        var result = await query.GroupBy(x => x.InvoiceDate.Value.Date)
-        //          .Select(x => new RevenueReportItem
-        //          {
-        //              InvoiceDate = x.Key,
-        //              PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
-        //              CompanyId = val.CompanyId,
-        //              DateFrom = val.DateFrom,
-        //              DateTo = val.DateTo,
-        //          }).ToListAsync();
-        //        return result;
-        //    }
-        //    else if (val.GroupBy == "group_month")
-        //    {
-        //        return 
-        //    }
 
-        //}
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
+            if (val.GroupBy == "groupby:day")
+            {
+                if (!string.IsNullOrEmpty(val.Search))
+                    query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                    x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+
+                res = await query.GroupBy(x => x.InvoiceDate.Value.Date)
+                  .Select(x => new RevenueReportItem
+                  {
+                      InvoiceDate = x.Key,
+                      PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                      CompanyId = val.CompanyId,
+                      DateFrom = val.DateFrom,
+                      DateTo = val.DateTo,
+                  }).ToListAsync();
+            }
+            else if (val.GroupBy == "groupby:month")
+            {
+                res =  await query.GroupBy(x => new
+                {
+                    x.InvoiceDate.Value.Year,
+                    x.InvoiceDate.Value.Month,
+                })
+                 .Select(x => new RevenueReportItem
+                 {
+                     InvoiceDate = new DateTime(x.Key.Year, x.Key.Month, 1),
+                     PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                     CompanyId = val.CompanyId,
+                     DateFrom = val.DateFrom,
+                     DateTo = val.DateTo,
+                 }).ToListAsync();
+            }
+            else if(val.GroupBy == "groupby:employee")
+            {
+                res = await query.GroupBy(x => new { x.EmployeeId, x.Employee.Name }).Select(x => new RevenueReportItem
+                {
+                    EmployeeId = x.Key.EmployeeId,
+                    EmployeeName = x.Key.Name,
+                    PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                    CompanyId = val.CompanyId,
+                    DateFrom = val.DateFrom,
+                    DateTo = val.DateTo,
+                    ToDetailEmployeeId = x.Key.EmployeeId ?? Guid.Empty
+                }).ToListAsync();
+
+            }
+            else if (val.GroupBy == "groupby:assistant")
+            {
+                res = await query.GroupBy(x => new { x.AssistantId, x.Assistant.Name }).Select(x => new RevenueReportItem
+                {
+                    EmployeeId = x.Key.AssistantId,
+                    EmployeeName = x.Key.Name,
+                    PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                    CompanyId = val.CompanyId,
+                    DateFrom = val.DateFrom,
+                    DateTo = val.DateTo,
+                    ToDetailEmployeeId = x.Key.AssistantId ?? Guid.Empty
+                }).ToListAsync();
+
+            }
+            else if (val.GroupBy == "groupby:product")
+            {
+
+                res = await query.GroupBy(x => new { x.ProductId, x.Product.Name } ).Select(x => new RevenueReportItem
+                {
+                    ProductId = x.Key.ProductId.Value,
+                    ProductName = x.Key.Name,
+                    PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                    DateTo = val.DateTo,
+                    DateFrom = val.DateFrom,
+                    CompanyId = val.CompanyId
+                }).ToListAsync();
+            }
+
+
+
+            return res;
+        }
 
         public async Task<IEnumerable<RevenueTimeReportDisplay>> GetRevenueTimeReport(RevenueTimeReportPar val)
         {

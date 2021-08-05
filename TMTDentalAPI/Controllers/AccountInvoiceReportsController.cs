@@ -59,6 +59,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
+        public async Task<IActionResult> GetRevenueReport(RevenueReportFilter val)
+        {
+            var res = await _invoiceReportService.GetRevenueReport(val);
+            return Ok(res);
+        }
+
         //[HttpGet("[action]")]
         //public async Task<IActionResult> GetRevenueReportDetailPrint([FromQuery] RevenueReportDetailPaged val)
         //{

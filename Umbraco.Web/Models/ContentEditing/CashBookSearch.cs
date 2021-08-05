@@ -58,4 +58,19 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public int Offset { get; set; }
     }
+
+    public class CashBookReportFilter
+    {
+        public DateTime? DateTo { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public Guid? CompanyId { get; set; }
+
+        /// <summary>
+        /// groupby:day group theo ngay
+        /// groupby:month group theo tháng
+        /// </summary>
+        public string GroupBy { get; set; }
+    }
 }
