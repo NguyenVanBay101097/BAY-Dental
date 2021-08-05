@@ -77,21 +77,23 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     private productService: ProductService,
     private employeeService: EmployeeService,
     private notificationService: NotificationService,
-    private customerReceiptService: CustomerReceiptService
+    private customerReceiptService: CustomerReceiptService,
+    private appointmentService: AppointmentService,
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
+      partnerId: '',
       partnerAge: null,
       partnerPhone: null,
       dateObj: [null, Validators.required],
       note: null,
-      doctor:  [null, Validators.required],
+      doctor: [null, Validators.required],
       timeExpected: '30',
       state: 'waiting',
       reason: null,
-      products: [],
+      services: [],
       isRepeatCustomer: false,
       isNoTreatment: false
     })
@@ -310,6 +312,8 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     ).subscribe(
       rs => {
         this.customerSimpleFilter = rs;
+        console.log(rs);
+
         this.partnerCbx.loading = false;
       }
     )
@@ -358,23 +362,36 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
 
   loadDefault() {
     if (this.appointId) {
-      this.customerReceipt = this.defaultData;
-      this.formGroup.patchValue(this.defaultData);
+      this.appointmentService.get(this.appointId).subscribe(
+        (rs: any) => {
+          console.log(rs);
+          this.defaultData = rs;
+          this.customerReceipt = this.defaultData;
+          this.formGroup.patchValue(this.defaultData);
+          let date = new Date(rs.date);
+          this.formGroup.get('dateObj').patchValue(date);
+          console.log(this.formGroup.value);
 
-      if (this.defaultData.partner) {
-        this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [this.defaultData.partner], 'id');
-        this.onChangePartner();
-      }
+          if (this.defaultData.partner) {
+            this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [this.defaultData.partner], 'id');
+            this.onChangePartner();
+          }
 
-      if (this.defaultData.doctor) {
-        this.filteredEmployees = _.unionBy(this.filteredEmployees, [this.defaultData.doctor], 'id');
-      }
+          if (this.defaultData.doctor) {
+            this.filteredEmployees = _.unionBy(this.filteredEmployees, [this.defaultData.doctor], 'id');
+          }
 
-      if(this.appointId ) {
-        this.f.partner.disable();      
-      }
+          if (this.defaultData.services) {
+            this.filteredServices = _.unionBy(this.filteredServices, this.defaultData.services, 'id');
+          }
 
-    }   
+          if(this.appointId ) {
+            this.f.partner.disable();      
+          }
+        },
+        er => { console.log(er) }
+      )
+    }
 
     let date = new Date();
     this.formGroup.get('dateObj').patchValue(date);
@@ -404,7 +421,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
           //   this.f.dateObj.disable();
           // }
 
-          if(this.id && this.customerReceipt.state == 'done') {
+          if (this.id && this.customerReceipt.state == 'done') {
             this.formGroup.controls['note'].disable();
             this.formGroup.controls['reason'].disable();
             this.formGroup.controls['state'].disable();
@@ -471,6 +488,8 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       return false;
     }
     var receipt = this.formGroup.value;
+    console.log(receipt);
+    
     var res = new CustomerReceiptRequest();
     res.partnerId = receipt.partner ? receipt.partner.id : null;
     res.doctorId = receipt.doctor ? receipt.doctor.id : null;
