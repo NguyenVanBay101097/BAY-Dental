@@ -200,8 +200,12 @@
                                         Thao tác
                                     </ng-template>
                                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                        <button *ngIf="canAppointmentEdit" class="btn btn-success btn-sm mr-2" (click)="editAppointment(dataItem)">
+                                        <!-- <button *ngIf="canAppointmentEdit" class="btn btn-success btn-sm mr-2" (click)="editAppointment(dataItem)">
+                                            <i class="far fa-edit"></i></button> -->
+                                        <button *ngIf="canAppointmentEdit" class="btn btn-success btn-sm mr-2" (click)="appointmentUpdate(dataItem.id)">
                                             <i class="far fa-edit"></i></button>
+                                        <button class="btn btn-info btn-sm" (click)="receiveAppointment(dataItem.id)">
+                                            <i class="fas fa-sign-out-alt"></i></button>
                                     </ng-template>
                                 </kendo-grid-column>
                             </kendo-grid>

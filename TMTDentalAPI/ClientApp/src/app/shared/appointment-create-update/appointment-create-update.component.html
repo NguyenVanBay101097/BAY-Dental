@@ -176,12 +176,12 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()">
+    <button type="button" class="btn btn-primary mr-2" (click)="onSave()">
         Lưu</button>
-    <button *ngIf="appointId" type="button" class="btn btn-danger btn-sm mr-2" (click)="onDelete()">
+    <button *ngIf="appointId" type="button" class="btn btn-danger mr-2 ml-0" (click)="onDelete()">
         Xóa</button>
-    <button *ngIf="appointId" type="button" class="btn btn-secondary btn-sm mr-2" (click)="onDuplicate()">
+    <button *ngIf="appointId" type="button" class="btn btn-secondary mr-2 ml-0" (click)="onDuplicate()">
         Sao chép</button>
-    <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="activeModal.dismiss()">
+    <button type="button" class="btn btn-light mr-2 ml-0" (click)="activeModal.dismiss()">
         Đóng</button>
 </div>
