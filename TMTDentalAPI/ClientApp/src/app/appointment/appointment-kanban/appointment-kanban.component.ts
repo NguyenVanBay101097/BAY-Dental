@@ -208,8 +208,6 @@ export class AppointmentKanbanComponent implements OnInit {
 
     this.appointmentService.getPaged(val).subscribe((result: any) => {
       // this.addAppointments(result);
-      console.log(result.items);
-
       this.dataAppointments = result.items.map(v => ({
         ...v,
         date: new Date(v.date),
@@ -869,18 +867,20 @@ export class AppointmentKanbanComponent implements OnInit {
     actionEl.classList.add("t-action");
     let btnEditEl = document.createElement('div');
     btnEditEl.classList.add("edit");
+    btnEditEl.title = "Sửa";
     btnEditEl.innerHTML = `<i class="fas fa-pen"></i>`;
     btnEditEl.addEventListener("click", () => {
-      this.showPopup(appointment.id);
+      this.appointmentUpdate(appointment.id);
     });
-    let btnDeleteEl = document.createElement('div');
-    btnDeleteEl.classList.add("delete");
-    btnDeleteEl.innerHTML = `<i class="fas fa-times"></i>`;
-    btnDeleteEl.addEventListener("click", () => {
-      this.receipPopup(appointment.id);
+    let btnReceiveEl = document.createElement('div');
+    btnReceiveEl.classList.add("receive");
+    btnReceiveEl.title = "Tiếp nhận";
+    btnReceiveEl.innerHTML = `<i class="fas fa-sign-out-alt"></i>`;
+    btnReceiveEl.addEventListener("click", () => {
+      this.receiveAppointment(appointment.id);
     });
     actionEl.appendChild(btnEditEl);
-    actionEl.appendChild(btnDeleteEl);
+    actionEl.appendChild(btnReceiveEl);
     headerEl.appendChild(statusEl);
     headerEl.appendChild(actionEl);
     let customerNameEl = document.createElement('a');
@@ -952,8 +952,7 @@ export class AppointmentKanbanComponent implements OnInit {
     return htmlString;
   }
 
-  showPopup(id = null) {
-    console.log("id: " + id);
+  appointmentUpdate(id = null) {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = id;
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
@@ -963,12 +962,28 @@ export class AppointmentKanbanComponent implements OnInit {
     }, () => { });
   }
 
-  // popup tiếp nhận
-  receipPopup(id = null) {
-    console.log("id: " + id);
-    const modalRef = this.modalService.open(CustomerReceipCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.appointId = id;
-    modalRef.componentInstance.title = "Tiếp nhận";
+  // form tiếp nhận
+  receiveAppointment(id = null) {
+    if (id) {
+      const appoint = this.dataAppointments.find(value => value.id === id)
+      if (appoint && (appoint.state === 'cancel' || appoint.state === 'overdue')) {
+        this.notificationService.show({
+          content: 'Không thể tiếp nhận lịch hẹn ở trạng thái hủy hẹn và quá hạn',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'error', icon: true }
+        });
+        return false;
+      }
+      const modalRef = this.modalService.open(CustomerReceipCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.appointId = id;
+      modalRef.componentInstance.title = "Tiếp nhận";
+      modalRef.result.then(result => {
+        this.loadData();
+        this.loadGridData();
+      }, () => { });
+    }
   }
 
 }

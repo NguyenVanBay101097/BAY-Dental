@@ -21,13 +21,13 @@
                             </td>
                             <td colspan="1">
                                 <div class="d-flex">
-                                    <div class="flex-grow-1 mr-2">
+                                    <div class="flex-grow-1">
                                         <kendo-combobox formControlName="partner" [filterable]="true"
                                             [data]="customerSimpleFilter" (valueChange)="onChangePartner()" #partnerCbx
-                                            [valueField]="'id'" [textField]="'name'" [disabled]="id || defaultData">
+                                            [valueField]="'id'" [textField]="'name'" [attr.disabled]="id || defaultData">
                                         </kendo-combobox>
                                     </div>
-                                    <div *ngIf="!id || defaultData">
+                                    <div *ngIf="!id && !defaultData" class="ml-2">
                                         <a type="button" title="Thêm khách hàng" class=" btn btn-primary pl-2 py-1"
                                             (click)="quickCreateCustomerModal()">
                                             <i class="fas fa-plus text-white"></i>
@@ -45,7 +45,7 @@
                                 <label class="o_form_label">Số điện thoại</label>
                             </td>
                             <td colspan="1">
-                                {{f.partner.value ? f.partnerPhone.value : ''}}
+                                {{partnerPhone}}
                             </td>
                         </tr>
                         <tr>
@@ -54,7 +54,7 @@
                             </td>
                             <td colspan="1">
                                 <kendo-combobox formControlName="doctor" [filterable]="true" [data]="filteredEmployees"
-                                    #doctorCbx [valueField]="'id'" [textField]="'name'" [disabled]="id || defaultData">
+                                    #doctorCbx [valueField]="'id'" [textField]="'name'">
                                 </kendo-combobox>
                                 <div *ngIf="f.doctor.errors && (f.doctor.touched || f.doctor.dirty || submitted)"
                                     class="text-danger">
@@ -69,7 +69,7 @@
                             <td colspan="1">
                                 <div class="d-flex justify-content-between">
                                     <div class="mr-2 ">
-                                        <kendo-timepicker formControlName="dateObj" format="HH:mm" [disabled]="id || defaultData"
+                                        <kendo-timepicker formControlName="dateObj" format="HH:mm"
                                             [class.border-invalid]="f.dateObj.errors"></kendo-timepicker>
                                         <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
                                             class="text-danger">
@@ -110,7 +110,7 @@
                             <td colspan="1">
                                 <kendo-multiselect [data]="filteredServices" [valueField]="'id'" [allowCustom]="true"
                                     [textField]="'name'" [placeholder]="'Chọn dịch vụ'" formControlName="services"
-                                    [filterable]="true" #serviceMultiSelect  [disabled]="id && customerReceipt?.state == 'done' ? true : null">
+                                    [filterable]="true" #serviceMultiSelect  [attr.disabled]="id && customerReceipt?.state == 'done' ? true : null">
                                     <ng-template kendoMultiSelectTagTemplate let-dataItem>
                                         <div class="template">
                                             <span [title]="dataItem.name">{{dataItem.name}}</span>
@@ -124,7 +124,7 @@
                                 <label class="o_form_label">Nội dung</label>
                             </td>
                             <td colspan="1">
-                                <textarea [disabled]="id && customerReceipt?.state == 'done'" class="form-control" rows="3" formControlName="note"
+                                <textarea [attr.disabled]="id && customerReceipt?.state == 'done'" class="form-control" rows="3" formControlName="note"
                                     [placeholder]="'Nhập nội dung'" ></textarea>
                             </td>
                         </tr>
@@ -169,10 +169,10 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" *ngIf="!appointId && customerReceipt?.state != 'done'" class="btn btn-primary btn-sm mr-2" accesskey="s" (click)="onSave()">
+    <button type="button" *ngIf="!appointId && customerReceipt?.state != 'done'" class="btn btn-primary mr-2" accesskey="s" (click)="onSave()">
         Lưu</button>
-    <button type="button" *ngIf="appointId && customerReceipt?.state != 'done'" class="btn btn-primary btn-sm mr-2" accesskey="s" (click)="onSaveToAppoint()">
+    <button type="button" *ngIf="appointId && customerReceipt?.state != 'done'" class="btn btn-primary mr-2" accesskey="s" (click)="onSaveToAppoint()">
         Lưu</button>
-    <button type="button" class="btn btn-secondary btn-sm mr-2" accesskey="q" (click)="activeModal.dismiss()">
+    <button type="button" class="btn btn-secondary mr-2" accesskey="q" (click)="activeModal.dismiss()">
         Đóng</button>
 </div>

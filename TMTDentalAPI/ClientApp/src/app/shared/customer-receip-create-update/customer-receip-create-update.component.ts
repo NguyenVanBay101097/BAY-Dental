@@ -47,7 +47,9 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   showIsNoTreatment = false;
   defaultData: any;
   customerReceipt: CustomerReceiptDisplay;
-
+  partnerPhone: string = '';
+  partnerId: string = '';
+  // partnerAge: string = '';
 
   defaultVal: any;
   formGroup: FormGroup;
@@ -84,9 +86,9 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
-      partnerId: '',
-      partnerAge: null,
-      partnerPhone: null,
+      // partnerId: '',
+      // partnerAge: null,
+      // partnerPhone: null,
       dateObj: [null, Validators.required],
       note: null,
       doctor: [null, Validators.required],
@@ -188,7 +190,6 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       return false;
     }
 
-    debugger
     var receipt = this.formGroup.value;
     receipt.partnerId = receipt.partner ? receipt.partner.id : null;
     receipt.doctorId = receipt.doctor ? receipt.doctor.id : null;
@@ -196,7 +197,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : (this.customerReceipt.dateExamination ? this.customerReceipt.dateExamination : null);
     receipt.dateDone = this.stateControl == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : null;
     receipt.timeExpected = Number.parseInt(receipt.timeExpected);
-    receipt.products = receipt.products == null ? [] : receipt.products;
+    receipt.products = receipt.services == null ? [] : receipt.services;
     receipt.companyId = this.authService.userInfo.companyId;
     if (this.id) {
       this.customerReceiptService.update(this.id, receipt).subscribe(
@@ -312,8 +313,6 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     ).subscribe(
       rs => {
         this.customerSimpleFilter = rs;
-        console.log(rs);
-
         this.partnerCbx.loading = false;
       }
     )
@@ -364,13 +363,10 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     if (this.appointId) {
       this.appointmentService.get(this.appointId).subscribe(
         (rs: any) => {
-          console.log(rs);
           this.defaultData = rs;
           this.customerReceipt = this.defaultData;
           this.formGroup.patchValue(this.defaultData);
-          let date = new Date(rs.date);
-          this.formGroup.get('dateObj').patchValue(date);
-          console.log(this.formGroup.value);
+          this.partnerId = this.defaultData.partner ? this.defaultData.partner.id : '';
 
           if (this.defaultData.partner) {
             this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [this.defaultData.partner], 'id');
@@ -385,8 +381,8 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
             this.filteredServices = _.unionBy(this.filteredServices, this.defaultData.services, 'id');
           }
 
-          if(this.appointId ) {
-            this.f.partner.disable();      
+          if (this.appointId) {
+            this.f.partner.disable();
           }
         },
         er => { console.log(er) }
@@ -450,13 +446,13 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     return this.formGroup.get('partner').value;
   }
 
-  get partnerAge() {
-    return this.formGroup.get('partnerAge').value;
-  }
+  // get partnerAge() {
+  //   return this.formGroup.get('partnerAge').value;
+  // }
 
-  get partnerPhone() {
-    return this.formGroup.get('partnerPhone').value;
-  }
+  // get partnerPhone() {
+  //   return this.formGroup.get('partnerPhone').value;
+  // }
 
   get state() {
     return this.formGroup.get('state').value;
@@ -488,18 +484,17 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       return false;
     }
     var receipt = this.formGroup.value;
-    console.log(receipt);
-    
     var res = new CustomerReceiptRequest();
-    res.partnerId = receipt.partner ? receipt.partner.id : null;
+    res.partnerId = this.partnerId ? this.partnerId : null;
     res.doctorId = receipt.doctor ? receipt.doctor.id : null;
     res.dateWaiting = this.intlService.formatDate(receipt.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     res.timeExpected = Number.parseInt(receipt.timeExpected);
     res.companyId = this.authService.userInfo.companyId;
-    res.products = receipt.products;
+    res.products = receipt.services == null ? [] : receipt.services;
     res.isRepeatCustomer = this.isRepeatCustomer;
     res.note = receipt.note;
     res.appointmentId = this.appointId;
+
     this.dashboardReportService.createCustomerReceiptToAppointment(res).subscribe(
       rs => {
         this.activeModal.close(rs);
@@ -532,8 +527,9 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   onChangePartner() {
     if (this.partner) {
       this.partnerService.getCustomerInfo(this.partner.id).subscribe((rs: any) => {
-        this.formGroup.get('partnerAge').patchValue(rs.age);
-        this.formGroup.get('partnerPhone').patchValue(rs.phone);
+        // this.formGroup.get('partnerAge').patchValue(rs.age);
+        // this.formGroup.get('partnerPhone').patchValue(rs.phone);
+        this.partnerPhone = rs.phone;
       });
     }
   }
